@@ -1,0 +1,14 @@
+parameters:
+    database_driver: pdo_mysql
+    database_host: localhost
+    database_port: null
+    database_name: terptube-symfony
+    database_user: terptube-symfonyuser
+    database_password: 1mdCu53R
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: en
+    secret: 7c21e2f982644a4db7ef6b7d7d9d0775
+    database_path: null
