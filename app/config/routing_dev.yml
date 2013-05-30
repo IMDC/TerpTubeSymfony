@@ -25,3 +25,8 @@ _configurator:
 
 _main:
     resource: routing.yml
+
+_paultest:
+    resource: "@IMDCTerpTubeBundle/Controller/DefaultController.php"
+    type:     annotation
+    prefix:   /paultest

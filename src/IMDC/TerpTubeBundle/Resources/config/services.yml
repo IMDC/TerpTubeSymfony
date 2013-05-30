@@ -1,0 +1,7 @@
+parameters:
+#    imdc_terp_tube.example.class: IMDC\TerpTubeBundle\Example
+
+services:
+#    imdc_terp_tube.example:
+#        class: %imdc_terp_tube.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

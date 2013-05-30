@@ -1,0 +1,3 @@
+imdc_terp_tube_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: IMDCTerpTubeBundle:Default:index }
