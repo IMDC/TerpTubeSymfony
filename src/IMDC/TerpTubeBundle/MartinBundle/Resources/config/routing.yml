@@ -1,0 +1,7 @@
+imdc_terp_tube_bundle_martin_homepage:
+    pattern:  /martinTest/
+    defaults: { _controller: IMDCTerpTubeBundleMartinBundle:Default:index }
+    
+imdc_terp_tube_bundle_martin_test:
+    pattern:  /martinTest/{name}
+    defaults: { _controller: IMDCTerpTubeBundleMartinBundle:Test:index }

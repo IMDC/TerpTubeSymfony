@@ -1,0 +1,7 @@
+parameters:
+#    imdc_terp_tube_bundle_martin.example.class: IMDC\TerpTubeBundle\MartinBundle\Example
+
+services:
+#    imdc_terp_tube_bundle_martin.example:
+#        class: %imdc_terp_tube_bundle_martin.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
