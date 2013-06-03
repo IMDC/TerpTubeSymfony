@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new IMDC\TerpTubeBundle\IMDCTerpTubeBundle(),
             new Acme\HelloBundle\AcmeHelloBundle(),
             new IMDC\TerpTubeBundle\MartinBundle\IMDCTerpTubeBundleMartinBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

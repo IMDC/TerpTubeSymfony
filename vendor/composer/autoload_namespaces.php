@@ -23,6 +23,7 @@ return array(
     'JMS\\DiExtraBundle' => $vendorDir . '/jms/di-extra-bundle',
     'JMS\\AopBundle' => $vendorDir . '/jms/aop-bundle',
     'JMS\\' => $vendorDir . '/jms/parser-lib/src',
+    'FOS\\UserBundle' => $vendorDir . '/friendsofsymfony/user-bundle',
     'Doctrine\\ORM' => $vendorDir . '/doctrine/orm/lib',
     'Doctrine\\DBAL' => $vendorDir . '/doctrine/dbal/lib',
     'Doctrine\\Common\\Lexer\\' => $vendorDir . '/doctrine/lexer/lib',
