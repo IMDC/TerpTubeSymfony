@@ -69,3 +69,6 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: IMDC\TerpTubeBundle\Entity\User
+    registration:
+          form:
+              type: imdc_terptube_user_registration
