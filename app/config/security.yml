@@ -47,7 +47,15 @@ security:
             form_login:
                 provider: fos_userbundle
                 csrf_provider: form.csrf_provider
-            logout:       true
+                login_path: /login
+                use_forward: false
+                check_path: /login_check
+                success_handler: imdc_terptube.component.authentication.handler.login_success_handler
+                failure_path: null
+            logout:       
+                path: /logout
+                target: /
+                success_handler: imdc_terptube.component.authentication.handler.logout_success_handler
             anonymous:    true
 
     access_control:

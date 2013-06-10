@@ -1,5 +1,7 @@
 parameters:
 #    imdc_terp_tube.example.class: IMDC\TerpTubeBundle\Example
+      imdc_terptube.component.authentication.handler.login_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LoginSuccessHandler
+      imdc_terptube.component.authentication.handler.logout_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LogoutSuccessHandler
 
 services:
 #    imdc_terp_tube.example:
@@ -11,3 +13,16 @@ services:
           arguments: [%fos_user.model.user.class%]
           tags:
               - { name: form.type, alias: imdc_terptube_user_registration }
+              
+     imdc_terptube.component.authentication.handler.login_success_handler:
+          class: %imdc_terptube.component.authentication.handler.login_success_handler.class%
+          arguments: [@service_container, @router, @security.context]
+          tags:
+              - {name: 'monolog.logger', channel: 'security' }
+              
+     imdc_terptube.component.authentication.handler.logout_success_handler:
+          class: %imdc_terptube.component.authentication.handler.logout_success_handler.class%
+          arguments: [@service_container, @router]
+          tags:
+              - {name: 'monolog.logger', channel: 'security' }
+              
