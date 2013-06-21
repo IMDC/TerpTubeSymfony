@@ -12,14 +12,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class DefaultController extends Controller
 {
-     /**
-     * @Route("/{name}", name="_paultest")
-     */
-    public function indexAction($name)
+    public function indexAction()
     {
         //return $this->render('IMDCTerpTubeBundle:Default:index.html.twig', array('name' => $name));
         // return $this->render('<html><body>Hello world</body></html>');
-        return new Response('<html><body>Hello ' . $name . '!</body></html>');
+        return $this->render('IMDCTerpTubeBundle:Default:index.html.twig');
         // return array();
     }
 }

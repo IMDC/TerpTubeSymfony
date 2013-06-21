@@ -1,3 +1,7 @@
 imdc_terp_tube_homepage:
-    pattern:  /hello/{name}
+    pattern:  /
     defaults: { _controller: IMDCTerpTubeBundle:Default:index }
+    
+imdc_terp_tube_user_splash:
+    pattern: /home
+    defaults: { _controller: IMDCTerpTubeBundle:Home:index }
