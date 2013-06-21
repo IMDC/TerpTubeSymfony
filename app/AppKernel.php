@@ -23,6 +23,8 @@ class AppKernel extends Kernel
             new Acme\HelloBundle\AcmeHelloBundle(),
             new IMDC\TerpTubeBundle\MartinBundle\IMDCTerpTubeBundleMartinBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new Acme\StoreBundle\AcmeStoreBundle(),
+            new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

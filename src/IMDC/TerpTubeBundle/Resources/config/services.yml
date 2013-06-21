@@ -16,13 +16,13 @@ services:
               
      imdc_terptube.component.authentication.handler.login_success_handler:
           class: %imdc_terptube.component.authentication.handler.login_success_handler.class%
-          arguments: [@service_container, @router, @security.context]
+          arguments: [@router, @security.context]
           tags:
               - {name: 'monolog.logger', channel: 'security' }
               
      imdc_terptube.component.authentication.handler.logout_success_handler:
           class: %imdc_terptube.component.authentication.handler.logout_success_handler.class%
-          arguments: [@service_container, @router]
+          arguments: [@router, @security.context]
           tags:
               - {name: 'monolog.logger', channel: 'security' }
               

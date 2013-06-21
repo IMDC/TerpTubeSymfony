@@ -1,5 +1,17 @@
-Changelog since Version 4.x.x
-=============================
+Changelog
+=========
+
+5.0.1 (2013-06-17)
+------------------
+
+ * changed the spool to only start the transport when a mail has to be sent
+ * fixed compatibility with PHP 5.2
+ * fixed LICENSE file
+
+5.0.0 (2013-04-30)
+------------------
+
+ * changed the license from LGPL to MIT
 
 4.3.1 (2013-04-11)
 ------------------

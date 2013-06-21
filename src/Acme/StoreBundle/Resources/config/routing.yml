@@ -1,0 +1,15 @@
+acme_store_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: AcmeStoreBundle:Default:index }
+
+acme_store_createproduct:
+    pattern:  /createproduct/
+    defaults: { _controller: AcmeStoreBundle:Default:create }
+
+acme_store_showproduct:
+    pattern:  /showproduct/{id}
+    defaults: { _controller: AcmeStoreBundle:Default:show }
+    
+acme_store_showallproducts:
+    pattern:  /showall/
+    defaults: { _controller: AcmeStoreBundle:Default:showall }
