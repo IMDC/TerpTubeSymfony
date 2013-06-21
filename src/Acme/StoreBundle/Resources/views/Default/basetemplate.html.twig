@@ -29,7 +29,14 @@
 					<div class="nav-collapse collapse">
 						<p class="navbar-text pull-right">
 							{% block loginarea %}
-							Logged in as <a href="#" class="navbar-link">Username</a>
+							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+              				  {{ 'layout.logged_in_as'| trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+               					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
+                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+               					 </a>
+				            {% else %}
+				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+				            {% endif %}
 							{% endblock loginarea %}
 						</p>
 						<ul class="nav">
