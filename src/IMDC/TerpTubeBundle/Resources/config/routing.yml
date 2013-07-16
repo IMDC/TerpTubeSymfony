@@ -5,3 +5,7 @@ imdc_terp_tube_homepage:
 imdc_terp_tube_user_splash:
     pattern: /home
     defaults: { _controller: IMDCTerpTubeBundle:Home:index }
+
+imdc_messsage_create:
+    pattern: /createMessage
+    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage } 

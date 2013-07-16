@@ -1,0 +1,21 @@
+{# src/Acme/TaskBundle/Resources/views/Default/new.html.twig #}
+<h1>Create a new task</h1>
+{# {{  form(form)  }} #}
+
+{{  form_start(form) }}
+    {{ form_errors(form) }}
+    
+    <div>
+        {{ form_label(form.task, 'Task Description') }}
+        {{ form_errors(form.task) }}
+        {{ form_widget(form.task, {'attr': {'class': 'task_field'}}) }}
+    </div>
+    <div>
+        {{ form_label(form.dueDate) }}
+        {{ form_errors(form.dueDate) }}
+        {{ form_widget(form.dueDate) }}
+    </div>
+    <div>
+        <input type="submit" />
+    </div>
+{{ form_end(form) }}

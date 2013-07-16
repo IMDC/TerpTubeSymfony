@@ -1,0 +1,19 @@
+IMDC\TerpTubeBundle\Entity\Message:
+    type: entity
+    table: null
+    repositoryClass: IMDC\TerpTubeBundle\Entity\MessageRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        subject:
+            type: string
+            length: '255'
+        content:
+            type: text
+        sentDate:
+            type: datetime
+    lifecycleCallbacks: 
+        prePersist: [setSentValue]

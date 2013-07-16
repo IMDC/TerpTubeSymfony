@@ -5,7 +5,7 @@
 		<title>{% block title %}Welcome!{% endblock %}</title>
 		{% block stylesheets %}
 		<!-- Bootstrap -->
-		<link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.css') }}">
+		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
 		{% endblock %}
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 	</head>
@@ -16,6 +16,6 @@
 		<script>
 			window.jQuery || document.write('<script src="{{ asset('js/jquery.js') }}"><\/script>')
 		</script>
-		<script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 	</body>
 </html>
