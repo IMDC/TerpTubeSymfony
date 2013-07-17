@@ -15,6 +15,12 @@ class Message
     private $id;
 
     /**
+     * @var \IMDC\TerpTubeBundle\Entity\User
+     */
+    private $user;
+    
+    
+    /**
      * @var string
      */
     private $subject;
@@ -39,6 +45,7 @@ class Message
     {
         return $this->id;
     }
+    
 
     /**
      * Set subject
@@ -119,5 +126,28 @@ class Message
     {
         $this->sentDate = new \DateTime('NOW');
         return $this;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return Message
+     */
+    public function setUser(\IMDC\TerpTubeBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
     }
 }

@@ -9,3 +9,8 @@ imdc_terp_tube_user_splash:
 imdc_messsage_create:
     pattern: /createMessage
     defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage } 
+    
+imdc_message_view_all:
+    pattern: /allMessages
+    defaults: { _controller: IMDCTerpTubeBundle:Message:viewAllMessages }
+    

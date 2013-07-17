@@ -1,6 +1,13 @@
 IMDC\TerpTubeBundle\Entity\Message:
     type: entity
-    table: null
+    table: message
+    manyToOne:
+        user:
+            targetEntity: User
+            inversedBy: messages
+            joinColumn:
+                name: user_id
+                referencedColumnName: id
     repositoryClass: IMDC\TerpTubeBundle\Entity\MessageRepository
     fields:
         id:

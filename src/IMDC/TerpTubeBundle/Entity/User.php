@@ -10,6 +10,8 @@ class User extends BaseUser
     protected $id;
 	protected $firstName;
 	protected $lastName;
+	
+	protected $messages;
 
     public function __construct()
     {
@@ -38,4 +40,47 @@ class User extends BaseUser
 	}
 	
 	
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Add messages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $messages
+     * @return User
+     */
+    public function addMessage(\IMDC\TerpTubeBundle\Entity\Message $messages)
+    {
+        $this->messages[] = $messages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove messages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $messages
+     */
+    public function removeMessage(\IMDC\TerpTubeBundle\Entity\Message $messages)
+    {
+        $this->messages->removeElement($messages);
+    }
+
+    /**
+     * Get messages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
 }

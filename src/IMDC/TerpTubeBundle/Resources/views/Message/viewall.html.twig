@@ -1,0 +1,14 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block herounit %}
+    <h1>Message Center</h1>
+    <h2>Your messages appear below:</h2>
+    <table>
+    <th>Subject</th><th>Content</th>
+    {% for message in messages %}
+        <tr><td>{{ message.subject }}</td><td>{{ message.content }}</td></tr>
+    {% else %}
+            <tr>No messages yet</tr>
+    {% endfor %}
+    </table>
+{% endblock herounit %}

@@ -1,6 +1,10 @@
 IMDC\TerpTubeBundle\Entity\User:
     type:  entity
     table: fos_user
+    oneToMany:
+        messages:
+            targetEntity: Message
+            mappedBy: user
     id:
         id:
             type: integer
