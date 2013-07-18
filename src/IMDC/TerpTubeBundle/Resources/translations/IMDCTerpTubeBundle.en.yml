@@ -94,7 +94,13 @@ form:
     password_confirmation: "Verification:"
     new_password: "New password:"
     new_password_confirmation: "Verification:"
-    firstName: "First name:"
-    lastName: "Last name:" 
+    
+    profile:
+        firstName: "First name:"
+        lastName: "Last name:" 
+        middleName: "Middle name:" 
+        birthDate: "Birth date:"
+        city: "City:"
+        country: "Country:"
     
 fos_user_profile_form_user_firstName: "HELLO"

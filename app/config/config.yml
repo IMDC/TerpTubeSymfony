@@ -116,6 +116,10 @@ fos_user:
               enabled: true
           form:
               type: imdc_terptube_user_registration
+    profile:
+           form:
+                type: imdc_terptube_user_profile
+                
     from_email:
         address: noreply@imdc.ca
         sender_name: Terptube IMDC bundle email

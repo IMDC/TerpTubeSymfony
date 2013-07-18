@@ -1,0 +1,11 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block herounit %}
+<h1>This is {{ profile.firstName }} {{ profile.lastName }}'s profile</h1>
+<p>{{ 'profile.show.username'|trans }}: {{ user.username }}</p>
+<p>{{ 'profile.show.middleName'|trans }}: {{ profile.middleName }}</p>
+<p>{{ 'profile.show.birthDate'|trans }}: {{ profile.birthDate|date('Y-m-d') }}</p>
+<p>{{ 'profile.show.city'|trans }}: {{ profile.city}}</p>
+<p>{{ 'profile.show.country'|trans }}: {{ profile.country }}</p>
+<p>{{ 'profile.show.gender'|trans }}: {{ profile.gender }}</p>
+{% endblock herounit %}

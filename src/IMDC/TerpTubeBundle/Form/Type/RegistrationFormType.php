@@ -12,15 +12,14 @@ class RegistrationFormType extends BaseType
         parent::buildForm($builder, $options);
 
         // add your custom field
-        $builder->add('firstName', null, array('label' => 'form.firstName', 'translation_domain' => 'FOSUserBundle'));
-       // $builder->add('firstName');
-		//$builder->add('lastName');
-		$builder->add('lastName', null, array('label' => 'form.lastName', 'translation_domain' => 'FOSUserBundle'));
+        $builder->add('profile', new ProfileFormType());
+		
     }
 
     public function getName()
     {
         return 'imdc_terptube_user_registration';
     }
+    
 }
 ?>

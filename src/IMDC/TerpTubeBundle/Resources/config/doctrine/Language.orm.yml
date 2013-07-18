@@ -1,0 +1,16 @@
+IMDC\TerpTubeBundle\Entity\Language:
+    type: entity
+    table: language
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+                 
+    fields: 
+        type:       #spoken, sign
+            type: string
+            length: 15
+        proficiency:    #scale?
+            type: integer
+              

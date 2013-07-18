@@ -11,11 +11,11 @@ IMDC\TerpTubeBundle\Entity\User:
             generator:
                 strategy: AUTO
                 
-    fields: 
-        firstName:
-            type: string
-            length: 255
-        lastName:
-            type: string
-            length: 255
+    oneToOne:
+        profile:
+            targetEntity: UserProfile
+            joinColumn:
+                name: profile_id
+                referencedColumnName: id
+            cascade: ["all"]
               

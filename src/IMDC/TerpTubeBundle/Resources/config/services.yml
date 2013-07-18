@@ -14,6 +14,12 @@ services:
           tags:
               - { name: form.type, alias: imdc_terptube_user_registration }
               
+     imdc_terptube_user.profile.form.type:
+          class: IMDC\TerpTubeBundle\Form\Type\ProfileFormType
+          arguments: [%fos_user.model.user.class%]
+          tags:
+              - { name: form.type, alias: imdc_terptube_user_profile }
+              
      imdc_terptube.component.authentication.handler.login_success_handler:
           class: %imdc_terptube.component.authentication.handler.login_success_handler.class%
           arguments: [@router, @security.context]

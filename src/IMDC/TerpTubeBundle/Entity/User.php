@@ -8,36 +8,37 @@ use FOS\UserBundle\Model\User as BaseUser;
 class User extends BaseUser
 {
     protected $id;
-	protected $firstName;
-	protected $lastName;
+	protected $profile;
+// 	protected $lastName;
 	
 	protected $messages;
 
     public function __construct()
     {
         parent::__construct();
+     //   $profile = new UserProfile();
         // your own logic
     }
 	
-	public function getFirstName()
-	{
-		return $this->firstName;
-	}
+// 	public function getFirstName()
+// 	{
+// 		return $this->firstName;
+// 	}
 	
-	public function setFirstName($firstName)
-	{
-		$this->firstName = $firstName;
-	}
+// 	public function setFirstName($firstName)
+// 	{
+// 		$this->firstName = $firstName;
+// 	}
 	
-	public function getLastName()
-	{
-		return $this->lastName;
-	}
+// 	public function getLastName()
+// 	{
+// 		return $this->lastName;
+// 	}
 	
-	public function setLastName($lastName)
-	{
-		$this->lastName = $lastName;
-	}
+// 	public function setLastName($lastName)
+// 	{
+// 		$this->lastName = $lastName;
+// 	}
 	
 	
 
@@ -50,6 +51,30 @@ class User extends BaseUser
     {
         return $this->id;
     }
+
+    /**
+     * Set profile
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\UserProfile $profile
+     * @return User
+     */
+    public function setProfile(\IMDC\TerpTubeBundle\Entity\UserProfile $profile = null)
+    {
+        $this->profile = $profile;
+    
+        return $this;
+    }
+
+    /**
+     * Get profile
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\UserProfile 
+     */
+    public function getProfile()
+    {
+        return $this->profile;
+    }
+
 
     /**
      * Add messages
