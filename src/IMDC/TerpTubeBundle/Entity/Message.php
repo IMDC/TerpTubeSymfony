@@ -15,6 +15,7 @@ class Message
     private $id;
 
     /**
+     * The user who is creating this message
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $user;

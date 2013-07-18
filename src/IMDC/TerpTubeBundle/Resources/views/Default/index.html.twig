@@ -1,4 +1,12 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block flashmessages %}
+    {% for msg in app.session.flashbag.get('notice') %}
+        <div class="flash-notice">
+            <h2>Error</h2>
+            <h2>{{ msg }}</h2>
+        </div>
+    {% endfor %}
+{% endblock flashmessages %}
 
 {% block herounit %}
 <h1>Hello there this is the welcome page</h1>

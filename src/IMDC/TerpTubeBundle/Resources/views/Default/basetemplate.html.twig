@@ -31,6 +31,9 @@
 							{% block loginarea %}
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
               				  {{ 'layout.logged_in_as'| trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+               					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
+               					    {{  'layout.user_inbox'|trans({}, 'FOSUserBundle') }}
+               					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
                    					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
                					 </a>
@@ -59,6 +62,13 @@
 		{% endblock navbar_top %}
 
 		<div class="container-fluid">
+		    <div class="row-fluid">
+		        <div class="span3">&nbsp;</div>
+    			<div class="span9">
+    				{% block flashmessages %}
+    				{% endblock flashmessages %}
+    			</div>
+			</div>
 			{% block content %}
 			<div class="row-fluid">
 				<div class="span3">

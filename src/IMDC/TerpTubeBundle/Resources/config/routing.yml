@@ -18,6 +18,6 @@ imdc_messsage_create:
     defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage } 
     
 imdc_message_view_all:
-    pattern: /allMessages
+    pattern: /inbox
     defaults: { _controller: IMDCTerpTubeBundle:Message:viewAllMessages }
     
