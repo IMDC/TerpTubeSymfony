@@ -36,7 +36,7 @@ bc_bootstrap:
 assetic:
     debug:          %kernel.debug%
     use_controller: false
-    bundles:        [ ]
+    bundles:        [ IMDCTerpTubeBundle ]
     #java: /usr/bin/java
     filters:
         lessphp:

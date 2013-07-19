@@ -9,9 +9,9 @@ class User extends BaseUser
 {
     protected $id;
 	protected $profile;
-// 	protected $lastName;
 	
-	protected $messages;
+	protected $sentMessages;
+	protected $receivedMessages;
 
     public function __construct()
     {
@@ -19,28 +19,6 @@ class User extends BaseUser
      //   $profile = new UserProfile();
         // your own logic
     }
-	
-// 	public function getFirstName()
-// 	{
-// 		return $this->firstName;
-// 	}
-	
-// 	public function setFirstName($firstName)
-// 	{
-// 		$this->firstName = $firstName;
-// 	}
-	
-// 	public function getLastName()
-// 	{
-// 		return $this->lastName;
-// 	}
-	
-// 	public function setLastName($lastName)
-// 	{
-// 		$this->lastName = $lastName;
-// 	}
-	
-	
 
     /**
      * Get id
@@ -77,35 +55,68 @@ class User extends BaseUser
 
 
     /**
-     * Add messages
+     * Add sentMessages
      *
-     * @param \IMDC\TerpTubeBundle\Entity\Message $messages
+     * @param \IMDC\TerpTubeBundle\Entity\Message $sentMessages
      * @return User
      */
-    public function addMessage(\IMDC\TerpTubeBundle\Entity\Message $messages)
+    public function addSentMessage(\IMDC\TerpTubeBundle\Entity\Message $sentMessages)
     {
-        $this->messages[] = $messages;
+        $this->sentMessages[] = $sentMessages;
     
         return $this;
     }
 
     /**
-     * Remove messages
+     * Remove sentMessages
      *
-     * @param \IMDC\TerpTubeBundle\Entity\Message $messages
+     * @param \IMDC\TerpTubeBundle\Entity\Message $sentMessages
      */
-    public function removeMessage(\IMDC\TerpTubeBundle\Entity\Message $messages)
+    public function removeSentMessage(\IMDC\TerpTubeBundle\Entity\Message $sentMessages)
     {
-        $this->messages->removeElement($messages);
+        $this->sentMessages->removeElement($sentMessages);
     }
 
     /**
-     * Get messages
+     * Get sentMessages
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getMessages()
+    public function getSentMessages()
     {
-        return $this->messages;
+        return $this->sentMessages;
+    }
+
+    /**
+     * Add receivedMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $receivedMessages
+     * @return User
+     */
+    public function addReceivedMessage(\IMDC\TerpTubeBundle\Entity\Message $receivedMessages)
+    {
+        $this->receivedMessages[] = $receivedMessages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove receivedMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $receivedMessages
+     */
+    public function removeReceivedMessage(\IMDC\TerpTubeBundle\Entity\Message $receivedMessages)
+    {
+        $this->receivedMessages->removeElement($receivedMessages);
+    }
+
+    /**
+     * Get receivedMessages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getReceivedMessages()
+    {
+        return $this->receivedMessages;
     }
 }

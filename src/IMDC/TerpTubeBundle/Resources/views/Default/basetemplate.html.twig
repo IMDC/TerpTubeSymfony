@@ -3,7 +3,9 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>{% block title %}Welcome!{% endblock %}</title>
-		{% block stylesheets %}{% endblock %}
+		{% block stylesheets %}
+		    <link href="{{ asset('bundles/imdcterptube/css/main.css') }}" rel="stylesheet" />
+		{% endblock %}
 		<!-- Bootstrap -->
 		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
@@ -222,7 +224,7 @@
 		</div><!--/.fluid-container-->
 
 		{% block javascripts %}
-
+		    <script src="{{ asset('bundles/imdcterptube/js/main.js') }}"></script>
 		{% endblock javascripts %}
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script>

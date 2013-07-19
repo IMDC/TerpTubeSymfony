@@ -1,6 +1,6 @@
 <?php
 
-namespace IMDC\TerpTubeBundle\Entity;
+namespace Acme\TaskBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,40 +9,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Message
 {
-    /**
-     * @var integer
-     */
+
     private $id;
 
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
-     */
-    private $sender;
-    
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
-     */
-    protected $recipients;
-    
-    /**
-     * @var string
-     */
+    private $owner;
+
     private $subject;
 
-    /**
-     * @var string
-     */
     private $content;
 
-    /**
-     * @var \DateTime
-     */
     private $sentDate;
 
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
-     */
-    private $owner;
+    protected $recipients = null;
     
     /**
      * Constructor
@@ -51,7 +29,6 @@ class Message
     {
         $this->recipients = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
     
     /**
      * Get id
@@ -62,7 +39,6 @@ class Message
     {
         return $this->id;
     }
-    
 
     /**
      * Set subject
@@ -132,27 +108,14 @@ class Message
     {
         return $this->sentDate;
     }
-    
-    /**
-     * Lifecycle callback to set sent value to 
-     * when the message is inserted into the database
-     * 
-     * @return Message
-     */
-    public function setSentValue() 
-    {
-        $this->sentDate = new \DateTime('NOW');
-        return $this;
-    }
 
-    
     /**
      * Set owner
      *
-     * @param \IMDC\TerpTubeBundle\Entity\User $owner
+     * @param \Acme\TaskBundle\Entity\Person $owner
      * @return Message
      */
-    public function setOwner(\IMDC\TerpTubeBundle\Entity\User $owner = null)
+    public function setOwner(\Acme\TaskBundle\Entity\Person $owner = null)
     {
         $this->owner = $owner;
     
@@ -162,7 +125,7 @@ class Message
     /**
      * Get owner
      *
-     * @return \IMDC\TerpTubeBundle\Entity\User 
+     * @return \Acme\TaskBundle\Entity\Person 
      */
     public function getOwner()
     {
@@ -172,10 +135,10 @@ class Message
     /**
      * Add recipients
      *
-     * @param \IMDC\TerpTubeBundle\Entity\User $recipients
+     * @param \Acme\TaskBundle\Entity\Person $recipients
      * @return Message
      */
-    public function addRecipient(\IMDC\TerpTubeBundle\Entity\User $recipients)
+    public function addRecipient(\Acme\TaskBundle\Entity\Person $recipients)
     {
         $this->recipients[] = $recipients;
     
@@ -185,9 +148,9 @@ class Message
     /**
      * Remove recipients
      *
-     * @param \IMDC\TerpTubeBundle\Entity\User $recipients
+     * @param \Acme\TaskBundle\Entity\Person $recipients
      */
-    public function removeRecipient(\IMDC\TerpTubeBundle\Entity\User $recipients)
+    public function removeRecipient(\Acme\TaskBundle\Entity\Person $recipients)
     {
         $this->recipients->removeElement($recipients);
     }

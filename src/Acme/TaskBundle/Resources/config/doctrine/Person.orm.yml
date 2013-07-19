@@ -1,0 +1,27 @@
+Acme\TaskBundle\Entity\Person:
+    type: entity
+    table: person
+    repositoryClass: Acme\TaskBundle\Entity\PersonRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        firstname:
+            type: string
+            length: 255
+        lastname:
+            type: string
+            length: '255'
+        email:
+            type: string
+            length: '255'
+    oneToMany:
+        sentMessages:
+            targetEntity: Message
+            mappedBy: owner
+        receivedMessages:
+            targetEntity: Message
+            mappedBy: recipients
+    lifecycleCallbacks: {  }

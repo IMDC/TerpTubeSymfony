@@ -1,0 +1,7 @@
+# IMDC/TerpTubeBundle/Resources/config/validation.yml
+
+IMDC\TerpTubeBundle\Entity\Message:
+    properties:
+        recipients:
+            - NotBlank: ~
+        

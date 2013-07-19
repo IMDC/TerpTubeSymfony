@@ -3,7 +3,8 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>{% block title %}Welcome!{% endblock %}</title>
-		{% block stylesheets %}{% endblock %}
+		{% block stylesheets %}
+		{% endblock stylesheets%}
 		<!-- Bootstrap -->
 		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
@@ -61,7 +62,7 @@
 		<div class="container-fluid">
 			{% block content %}
 			<div class="row-fluid">
-				<div class="span3">
+				<div class="span2">
 					<div class="well sidebar-nav">
 						<ul class="nav nav-list">
 							{% block sidebarlinks %}
@@ -117,7 +118,7 @@
 						</ul>
 					</div><!--/.well -->
 				</div><!--/span-->
-				<div class="span9">
+				<div class="span10">
 					<div class="hero-unit">
 						{% block herounit %}
 						<h1>Hello, world!</h1>
