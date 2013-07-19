@@ -30,9 +30,10 @@
 						<p class="navbar-text pull-right">
 							{% block loginarea %}
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-              				  {{ 'layout.logged_in_as'| trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+							  {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'">' ~app.user.username~'</a>' %}
+              				  {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    {{  'layout.user_inbox'|trans({}, 'FOSUserBundle') }}
+               					    {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }}
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
                    					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
