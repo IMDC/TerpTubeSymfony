@@ -3,14 +3,19 @@ imdc_terp_tube_homepage:
     defaults: { _controller: IMDCTerpTubeBundle:Default:index }
     
 imdc_terp_tube_user_splash:
-    pattern: /home
+    pattern: /home/
     defaults: { _controller: IMDCTerpTubeBundle:Home:index }
 
+imdc_terp_tube_user_profile_specific:
+    pattern: /profile/{userName}
+    defaults: { _controller: IMDCTerpTubeBundle:Profile:showSpecific }
+    
 imdc_terp_tube_user_profile:
-    pattern: /profile
+    pattern: /profile/
     defaults: { _controller: IMDCTerpTubeBundle:Profile:show }
+    
 imdc_terp_tube_user_profile_edit:
-    pattern: /profile/edit
+    pattern: /profile/{userName}/edit
     defaults: { _controller: IMDCTerpTubeBundle:Profile:edit }
 
 imdc_messsage_create:

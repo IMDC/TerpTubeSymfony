@@ -103,5 +103,23 @@ form:
         birthDate: "Birth date:"
         city: "City:"
         country: "Country:"
+        gender:
+            title: "Gender:" 
+            m: "Male"
+            f: "Female"
     
-fos_user_profile_form_user_firstName: "HELLO"
+profile:
+    show:
+        userName:   "User name"
+        firstName: "First name"
+        lastName: "Last name" 
+        middleName: "Middle name" 
+        birthDate: "Birth date"
+        city: "City"
+        country: "Country"
+        gender:
+            title: "Gender" 
+            m: "Male"
+            f: "Female"
+            null: "Not set"
+        

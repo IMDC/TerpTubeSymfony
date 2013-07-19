@@ -1,6 +1,8 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -48,16 +50,36 @@ class ProfileController extends BaseController
 		{
 			throw new AccessDeniedException('This user does not have access to this section.');
 		}
-		$userManager = $this->container->get('fos_user.user_manager');
-		$userObject = $userManager->findUserByUsername($user);
-		$profile = $userObject->getProfile();
-	//	var_dump($user);
-	//	var_dump($profile);
-		return $this->container->get('templating')
-				->renderResponse(
-						'IMDCTerpTubeBundle:Profile:show.html.'
-								. $this->container->getParameter('fos_user.template.engine'), array('user' => $userObject, 'profile' =>$profile));
+		$response = new RedirectResponse($this->container->get('router')->generate('imdc_terp_tube_user_profile_specific', array('userName'=>$user->getUsername())));
+		return $response;
+// 		$userManager = $this->container->get('fos_user.user_manager');
+// 		$userObject = $userManager->findUserByUsername($user);
+// 		$profile = $userObject->getProfile();
+// 	//	var_dump($user);
+// 	//	var_dump($profile);
+// 		return $this->container->get('templating')
+// 				->renderResponse(
+// 						'IMDCTerpTubeBundle:Profile:show.html.'
+// 								. $this->container->getParameter('fos_user.template.engine'), array('user' => $userObject, 'profile' =>$profile));
 
+	}
+	public function showSpecificAction($userName)
+	{
+		$user = $this->container->get('security.context')->getToken()->getUser();
+		if (!is_object($user) || !$user instanceof UserInterface)
+		{
+			throw new AccessDeniedException('This user does not have access to this section.');
+		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($userName);
+		$profile = $userObject->getProfile();
+		//	var_dump($user);
+		//	var_dump($profile);
+		return $this->container->get('templating')
+		->renderResponse(
+				'IMDCTerpTubeBundle:Profile:show.html.'
+				. $this->container->getParameter('fos_user.template.engine'), array('user' => $userObject, 'profile' =>$profile));
+	
 	}
 
 	/**
@@ -70,6 +92,9 @@ class ProfileController extends BaseController
 		{
 			throw new AccessDeniedException('This user does not have access to this section.');
 		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($user->getUsername());
+		$profile = $userObject->getProfile();
 
 		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
 		$dispatcher = $this->container->get('event_dispatcher');
@@ -86,7 +111,7 @@ class ProfileController extends BaseController
 		$formFactory = $this->container->get('fos_user.profile.form.factory');
 
 		$form = $formFactory->createForm();
-		$form->setData($user);
+		$form->setData($profile);
 
 		if ('POST' === $request->getMethod())
 		{

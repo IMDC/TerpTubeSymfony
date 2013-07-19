@@ -23,6 +23,7 @@ class AppKernel extends Kernel
             new Acme\HelloBundle\AcmeHelloBundle(),
             new IMDC\TerpTubeBundle\MartinBundle\IMDCTerpTubeBundleMartinBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+        	new Sonata\IntlBundle\SonataIntlBundle(),
             new Acme\StoreBundle\AcmeStoreBundle(),
             new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             new Acme\TaskBundle\AcmeTaskBundle(),
