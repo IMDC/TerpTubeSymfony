@@ -122,4 +122,7 @@ profile:
             m: "Male"
             f: "Female"
             null: "Not set"
+            
+    edit:
+        submit: "Update Profile"
         

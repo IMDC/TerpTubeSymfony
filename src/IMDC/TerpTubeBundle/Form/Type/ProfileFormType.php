@@ -20,6 +20,14 @@ class ProfileFormType extends BaseType
 		$builder->add('gender', 'choice', array('choices'=>array('m' => 'form.profile.gender.m', 'f' => 'form.profile.gender.f'), 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.gender.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 
 	}
+	
+	public function buildUserForm($builder, $options)
+	{
+		parent::buildUserForm($builder, $options);
+		$builder->add('profile',new MyProfileFormType(),array(
+				'label' => 'PROFILE'
+		));
+	}
 
 	public function getName()
 	{

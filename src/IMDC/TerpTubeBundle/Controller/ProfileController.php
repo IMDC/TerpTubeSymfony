@@ -129,7 +129,7 @@ class ProfileController extends BaseController
 
 				if (null === $response = $event->getResponse())
 				{
-					$url = $this->container->get('router')->generate('fos_user_profile_show');
+					$url = $this->container->get('router')->generate('imdc_terp_tube_user_profile');
 					$response = new RedirectResponse($url);
 				}
 
