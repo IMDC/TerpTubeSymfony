@@ -20,6 +20,17 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
                       referencedColumnName: id
                       unique: true          
             nullable: true;  
+            
+    oneToOne:
+        avatar: #avatar to hold the picture from a resource file
+            targetEntity: ResourceFile
+            joinColumn:
+                name: avatar
+                referencedColumnName: id
+            inverseColumn:
+                name: owner_id
+                referencedColumnName: id
+                
     fields: 
         firstName:
             type: string
@@ -45,7 +56,6 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
         #education
         #Affiliations/memberships/organizations ?
             #Deaf community connection ? (deaf parents, etc)
-        #Photo/icon
         #Video bio file
         #Text bio (can this option be greyed out until a video bio is uploaded?)
         #Skype name

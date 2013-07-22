@@ -265,4 +265,32 @@ class UserProfile
     {
         return $this->languages;
     }
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
+     */
+    private $avatar;
+
+
+    /**
+     * Set avatar
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $avatar
+     * @return UserProfile
+     */
+    public function setAvatar(\IMDC\TerpTubeBundle\Entity\ResourceFile $avatar = null)
+    {
+        $this->avatar = $avatar;
+    
+        return $this;
+    }
+
+    /**
+     * Get avatar
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\ResourceFile 
+     */
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
 }

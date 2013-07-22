@@ -6,7 +6,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use FOS\UserBundle\Form\Type\ProfileFormType as BaseType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class ProfileFormType extends BaseType
+class RegistrationProfileFormType extends BaseType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
@@ -17,7 +17,6 @@ class ProfileFormType extends BaseType
 		$builder->add('birthDate', 'date', array('years' => range(date('Y'), date('Y') - 110),'label' => 'form.profile.birthDate', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('city', null, array('label' => 'form.profile.city', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('country', 'country', array('label' => 'form.profile.country', 'translation_domain' => 'IMDCTerpTubeBundle'));
-		$builder->add('gender', 'choice', array('choices'=>array('m' => 'form.profile.gender.m', 'f' => 'form.profile.gender.f'), 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.gender.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 
 	}
 	

@@ -6,6 +6,11 @@ imdc_terp_tube_user_splash:
     pattern: /home/
     defaults: { _controller: IMDCTerpTubeBundle:Home:index }
 
+imdc_terp_tube_user_profile_change-password:
+    pattern: /profile/{userName}/change-password
+    defaults: { _controller: FOSUserBundle:ChangePassword:changePassword }
+    methods:  [GET|POST]
+    
 imdc_terp_tube_user_profile_specific:
     pattern: /profile/{userName}
     defaults: { _controller: IMDCTerpTubeBundle:Profile:showSpecific }

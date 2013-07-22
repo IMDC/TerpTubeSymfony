@@ -20,4 +20,8 @@ IMDC\TerpTubeBundle\Entity\User:
                 name: profile_id
                 referencedColumnName: id
             cascade: ["all"]
+    oneToMany:
+        resourceFiles:
+            targetEntity: ResourceFile
+            mappedBy: owner
               

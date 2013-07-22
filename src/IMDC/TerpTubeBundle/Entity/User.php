@@ -119,4 +119,42 @@ class User extends BaseUser
     {
         return $this->receivedMessages;
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $resourceFiles;
+
+
+    /**
+     * Add resourceFiles
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles
+     * @return User
+     */
+    public function addResourceFile(\IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles)
+    {
+        $this->resourceFiles[] = $resourceFiles;
+    
+        return $this;
+    }
+
+    /**
+     * Remove resourceFiles
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles
+     */
+    public function removeResourceFile(\IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles)
+    {
+        $this->resourceFiles->removeElement($resourceFiles);
+    }
+
+    /**
+     * Get resourceFiles
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getResourceFiles()
+    {
+        return $this->resourceFiles;
+    }
 }

@@ -20,6 +20,10 @@ security:
         password: "Password:"
         remember_me: Remember me
         submit: Login
+        not_registered: "Not registered?"
+        register_here: "Click here to register!"
+        forgot_password: "Forgot your password?"
+        password_reset: "Click here to reset it!"
 
 # Profile
 profile:
@@ -125,4 +129,5 @@ profile:
             
     edit:
         submit: "Update Profile"
+        changePassword: "Change your password"
         

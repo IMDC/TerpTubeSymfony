@@ -1,15 +1,23 @@
-{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% extends "FOSUserBundle::layout.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block herounit %}
-{%		set gender = 'profile.show.gender.'~profile.gender %}
 <h1>This is {{ profile.firstName }} {{ profile.middleName }} {{ profile.lastName }}'s profile</h1>
-{% if app.user == user.userName %}
-<p><a href="{{ path('imdc_terp_tube_user_profile_edit',{'userName': app.user}) }}">Edit</a></p>
-{% endif %}
-<p>{{ 'profile.show.userName'|trans }}: {{ user.username }}</p>
-<p>{{ 'profile.show.birthDate'|trans }}: {{ profile.birthDate|date('Y-m-d') }}</p>
-<p>{{ 'profile.show.city'|trans }}: {{ profile.city}}</p>
-<p>{{ 'profile.show.country'|trans }}: {{ profile.country | country }}</p>
-<p>{{ 'profile.show.gender.title'|trans }}: {{ gender |trans }}</p>
 {% endblock herounit %}
+
+{% block underherounitrow1 %}
+        <div>
+            {% block fos_user_content %}
+         {%		set gender = 'profile.show.gender.'~profile.gender %}   
+		{% if app.user == user.userName %}
+		<p><a href="{{ path('imdc_terp_tube_user_profile_edit',{'userName': app.user}) }}">Edit</a></p>
+		{% endif %}
+		<p>{{ 'profile.show.userName'|trans }}: {{ user.username }}</p>
+		<p>{{ 'profile.show.birthDate'|trans }}: {{ profile.birthDate|date('Y-m-d') }}</p>
+		<p>{{ 'profile.show.city'|trans }}: {{ profile.city}}</p>
+		<p>{{ 'profile.show.country'|trans }}: {{ profile.country | country }}</p>
+		<p>{{ 'profile.show.gender.title'|trans }}: {{ gender |trans }}</p>
+            {% endblock fos_user_content %}
+        </div>
+        
+{% endblock underherounitrow1 %}

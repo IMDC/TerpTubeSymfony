@@ -12,10 +12,12 @@ class RegistrationFormType extends BaseType
         parent::buildForm($builder, $options);
 
         // add your custom field
-        $builder->add('profile', new ProfileFormType());
+        $builder->add('profile', new RegistrationProfileFormType('User'));
+        
 		
     }
 
+    
     public function getName()
     {
         return 'imdc_terptube_user_registration';

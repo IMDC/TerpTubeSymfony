@@ -1,6 +1,8 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -23,26 +25,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class ProfileController extends BaseController
 {
-	// 	public function showAction()
-	// 	{
-	// 		$securityContext = $this->container->get('security.context');
-	// 		if ($securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
-	// 		{
-	// 			return $this->render('IMDCTerpTubeBundle:Home:index.html.twig');
-	// 			//			return new Response('<html><body>Hello!</body></html>');
-	// 		}
-	// 		else
-	// 		{
-	// 			$response = new RedirectResponse($this->generateUrl('imdc_terp_tube_homepage'));
-	// 			return $response;
-	// 			//return new Response('<html><body>Bye!</body></html>');
-	// 		}
 
-	// 		// return $this->render('<html><body>Hello world</body></html>');
-	// 		//return new Response('<html><body>Hello!</body></html>');
-	// 		// return array();
-	// 	}
-
+	/**
+	 * Show your own profile
+	 * @throws AccessDeniedException - occurs if you are not logged in
+	 */
 	public function showAction()
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
@@ -50,19 +37,19 @@ class ProfileController extends BaseController
 		{
 			throw new AccessDeniedException('This user does not have access to this section.');
 		}
-		$response = new RedirectResponse($this->container->get('router')->generate('imdc_terp_tube_user_profile_specific', array('userName'=>$user->getUsername())));
+		$response = new RedirectResponse(
+				$this->container->get('router')
+						->generate('imdc_terp_tube_user_profile_specific', array('userName' => $user->getUsername())));
 		return $response;
-// 		$userManager = $this->container->get('fos_user.user_manager');
-// 		$userObject = $userManager->findUserByUsername($user);
-// 		$profile = $userObject->getProfile();
-// 	//	var_dump($user);
-// 	//	var_dump($profile);
-// 		return $this->container->get('templating')
-// 				->renderResponse(
-// 						'IMDCTerpTubeBundle:Profile:show.html.'
-// 								. $this->container->getParameter('fos_user.template.engine'), array('user' => $userObject, 'profile' =>$profile));
 
 	}
+	
+	/**
+	 * Show the profile of a specific user
+	 * @param unknown_type $userName - The user's profile to show
+	 * @throws AccessDeniedException - occurs if you are not logged in
+	 * @throws NotFoundHttpException - occurs if the user does not exist
+	 */
 	public function showSpecificAction($userName)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
@@ -72,25 +59,36 @@ class ProfileController extends BaseController
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($userName);
+		if ($userObject==null)
+		{
+			throw new NotFoundHttpException("This user does not exist");
+		}
 		$profile = $userObject->getProfile();
-		//	var_dump($user);
-		//	var_dump($profile);
 		return $this->container->get('templating')
-		->renderResponse(
-				'IMDCTerpTubeBundle:Profile:show.html.'
-				. $this->container->getParameter('fos_user.template.engine'), array('user' => $userObject, 'profile' =>$profile));
-	
+				->renderResponse(
+						'IMDCTerpTubeBundle:Profile:show.html.'
+								. $this->container->getParameter('fos_user.template.engine'),
+						array('user' => $userObject, 'profile' => $profile));
+
 	}
 
 	/**
 	 * Edit the user
+	 * If you try to edit a different user, not your own, you are redirected to only show their profile
 	 */
-	public function editAction(Request $request)
+	public function editAction(Request $request, $userName)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!is_object($user) || !$user instanceof UserInterface)
 		{
 			throw new AccessDeniedException('This user does not have access to this section.');
+		}
+		if ($user->getUsername()!= $userName)
+		{
+			$response = new RedirectResponse(
+				$this->container->get('router')
+						->generate('imdc_terp_tube_user_profile_specific', array('userName' => $userName)));
+			return $response;
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -143,7 +141,8 @@ class ProfileController extends BaseController
 
 		return $this->container->get('templating')
 				->renderResponse(
-						'IMDCTerpTubeBundle:Profile:edit.html.' . $this->container->getParameter('fos_user.template.engine'),
+						'IMDCTerpTubeBundle:Profile:edit.html.'
+								. $this->container->getParameter('fos_user.template.engine'),
 						array('form' => $form->createView()));
 	}
 }

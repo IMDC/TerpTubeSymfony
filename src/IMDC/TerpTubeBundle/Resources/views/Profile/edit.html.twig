@@ -1,8 +1,11 @@
-{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% extends "FOSUserBundle::layout.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 {% block herounit %}
 <h1>This is your Editable profile</h1>
+{% endblock herounit %}
 
+{% block underherounitrow1 %}
+<a href="{{ path('imdc_terp_tube_user_profile_change-password', {'userName': app.user.username}) }}" />{{ 'profile.edit.changePassword'|trans }}</a>
 
 <form action="{{ path('imdc_terp_tube_user_profile_edit', {'userName': app.user.username}) }}" {{ form_enctype(form) }} method="POST" class="fos_user_profile_edit">
     {{ form_widget(form) }}
@@ -11,4 +14,4 @@
     </div>
 </form>
 
-{% endblock herounit %}
+{% endblock underherounitrow1 %}
