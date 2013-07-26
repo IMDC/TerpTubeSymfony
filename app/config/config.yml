@@ -107,6 +107,23 @@ swiftmailer:
     password:  %mailer_password%
     spool:     { type: memory }
 
+#Uploader bundle configuration
+#See https://github.com/dustin10/VichUploaderBundle/blob/master/Resources/doc/index.md for configuration
+vich_uploader:
+    db_driver: orm # or mongodb
+    twig: true
+    gaufrette: false # set to true to enable gaufrette support
+    storage: vich_uploader.storage.file_system
+#   mappings:
+#        product_image:
+#            uri_prefix: web # uri prefix to resource
+#            upload_destination: ~ # gaufrette storage fs id, required
+#            namer: ~ # specify a file namer service id for this entity, null default
+#            directory_namer: ~ # specify a directory namer service id for this entity, null default
+#            delete_on_remove: true # determines whether to delete file upon removal of entity
+#            inject_on_load: true # determines whether to inject a File instance upon load
+        # ... more mappings
+        
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main

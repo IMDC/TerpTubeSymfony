@@ -1,0 +1,13 @@
+IMDC\TerpTubeBundle\Entity\MetaData:
+    type:  entity
+    table: meta_data
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        size:
+               type: bigint
+
+                

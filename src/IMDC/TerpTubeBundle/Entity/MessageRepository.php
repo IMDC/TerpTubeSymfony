@@ -12,19 +12,4 @@ use Doctrine\ORM\EntityRepository;
  */
 class MessageRepository extends EntityRepository
 {
-    public function deleteMessageFromInbox($messageid, $recipientid) {
-        return $this->getEntityManager()
-                ->createQuery('
-                        DELETE * FROM :table WHERE message_id = :mid AND recipient_id = :rid LIMIT 1')
-                ->setParameter('table', 'message_user')
-                ->setParameter('mid', $messageid)
-                ->setParameter('rid', $recipientid);
-    }
-    
-    public function getPrivateMessagesForUser($userid) {
-        return $this->getEntityManager()
-                    ->createQuery('
-                            SELECT * from user_message where recipient_id = :rid')
-                    ->setParameter('rid', $userid);
-    }
 }

@@ -26,6 +26,10 @@
 		"leafo/lessphp": "dev-master",
         "sonata-project/jquery-bundle": "1.9.1",
         "incenteev/composer-parameter-handler": "~2.0",
+        "gregwar/captcha-bundle": "dev-master",
+        "vich/uploader-bundle": "dev-master",
+        "knplabs/knp-gaufrette-bundle" : "dev-master",
+        "knplabs/gaufrette": "0.2.*@dev",
         "sonata-project/intl-bundle": "dev-master"
     },
     "scripts": {

@@ -1,0 +1,39 @@
+IMDC\TerpTubeBundle\Entity\Media:
+    type:  entity
+    table: media
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        type: #0-image, 1-video, 2-audio
+               type: smallint
+        
+    oneToOne:
+        resource: #resource object to hold the data
+            targetEntity: ResourceFile
+            joinColumn:
+                name: resource
+                referencedColumnName: id
+            inverseColumn:
+                name: media_id
+                referencedColumnName: id
+                
+    manyToOne:
+        owner:
+            targetEntity: User
+            inversedBy: resourceFiles
+            joinColumn:
+                name: owner_id
+                referencedColumnName: id
+                
+    oneToOne:
+        metaData: #metadata object to hold the information about the data
+            targetEntity: MetaData
+            joinColumn:
+                name: meta_data
+                referencedColumnName: id
+
+    
+                

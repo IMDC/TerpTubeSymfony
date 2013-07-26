@@ -15,16 +15,6 @@ class Message
     private $id;
 
     /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
-     */
-    private $sender;
-    
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
-     */
-    protected $recipients;
-    
-    /**
      * @var string
      */
     private $subject;
@@ -43,7 +33,12 @@ class Message
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $owner;
-    
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $recipients;
+
     /**
      * Constructor
      */
@@ -51,7 +46,6 @@ class Message
     {
         $this->recipients = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
     
     /**
      * Get id
@@ -62,7 +56,6 @@ class Message
     {
         return $this->id;
     }
-    
 
     /**
      * Set subject
@@ -132,20 +125,7 @@ class Message
     {
         return $this->sentDate;
     }
-    
-    /**
-     * Lifecycle callback to set sent value to 
-     * when the message is inserted into the database
-     * 
-     * @return Message
-     */
-    public function setSentValue() 
-    {
-        $this->sentDate = new \DateTime('NOW');
-        return $this;
-    }
 
-    
     /**
      * Set owner
      *
@@ -200,5 +180,12 @@ class Message
     public function getRecipients()
     {
         return $this->recipients;
+    }
+    /**
+     * @ORM\PrePersist
+     */
+    public function setSentValue()
+    {
+        // Add your code here
     }
 }

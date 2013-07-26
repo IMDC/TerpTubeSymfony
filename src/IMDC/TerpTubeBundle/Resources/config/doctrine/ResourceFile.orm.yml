@@ -10,11 +10,13 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
         filename:
                type: text
 
-    manyToOne:
-        owner:
-            targetEntity: User
-            inversedBy: resourceFiles
+    oneToOne:
+        resource: #resource object to hold the data
+            targetEntity: Media
             joinColumn:
-                name: owner_id
+                name: media_id
+                referencedColumnName: id
+            inverseColumn:
+                name: resource
                 referencedColumnName: id
                 

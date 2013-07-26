@@ -20,9 +20,9 @@ class ResourceFile
     private $filename;
 
     /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
+     * @var \IMDC\TerpTubeBundle\Entity\Media
      */
-    private $owner;
+    private $resource;
 
 
     /**
@@ -59,25 +59,25 @@ class ResourceFile
     }
 
     /**
-     * Set owner
+     * Set resource
      *
-     * @param \IMDC\TerpTubeBundle\Entity\User $owner
+     * @param \IMDC\TerpTubeBundle\Entity\Media $resource
      * @return ResourceFile
      */
-    public function setOwner(\IMDC\TerpTubeBundle\Entity\User $owner = null)
+    public function setResource(\IMDC\TerpTubeBundle\Entity\Media $resource = null)
     {
-        $this->owner = $owner;
+        $this->resource = $resource;
     
         return $this;
     }
 
     /**
-     * Get owner
+     * Get resource
      *
-     * @return \IMDC\TerpTubeBundle\Entity\User 
+     * @return \IMDC\TerpTubeBundle\Entity\Media 
      */
-    public function getOwner()
+    public function getResource()
     {
-        return $this->owner;
+        return $this->resource;
     }
 }

@@ -47,12 +47,42 @@ class UserProfile
     /**
      * @var string
      */
-    private $gender = null;
+    private $gender;
+
+    /**
+     * @var string
+     */
+    private $skypeName;
+
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoredByMentor;
+
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoredByInterpreter;
+
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoringMentor;
+
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoredingInterpreter;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\Media
+     */
+    private $avatar;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $languages = null;
+    private $languages;
 
     /**
      * Constructor
@@ -234,6 +264,144 @@ class UserProfile
     }
 
     /**
+     * Set skypeName
+     *
+     * @param string $skypeName
+     * @return UserProfile
+     */
+    public function setSkypeName($skypeName)
+    {
+        $this->skypeName = $skypeName;
+    
+        return $this;
+    }
+
+    /**
+     * Get skypeName
+     *
+     * @return string 
+     */
+    public function getSkypeName()
+    {
+        return $this->skypeName;
+    }
+
+    /**
+     * Set interestedInMentoredByMentor
+     *
+     * @param boolean $interestedInMentoredByMentor
+     * @return UserProfile
+     */
+    public function setInterestedInMentoredByMentor($interestedInMentoredByMentor)
+    {
+        $this->interestedInMentoredByMentor = $interestedInMentoredByMentor;
+    
+        return $this;
+    }
+
+    /**
+     * Get interestedInMentoredByMentor
+     *
+     * @return boolean 
+     */
+    public function getInterestedInMentoredByMentor()
+    {
+        return $this->interestedInMentoredByMentor;
+    }
+
+    /**
+     * Set interestedInMentoredByInterpreter
+     *
+     * @param boolean $interestedInMentoredByInterpreter
+     * @return UserProfile
+     */
+    public function setInterestedInMentoredByInterpreter($interestedInMentoredByInterpreter)
+    {
+        $this->interestedInMentoredByInterpreter = $interestedInMentoredByInterpreter;
+    
+        return $this;
+    }
+
+    /**
+     * Get interestedInMentoredByInterpreter
+     *
+     * @return boolean 
+     */
+    public function getInterestedInMentoredByInterpreter()
+    {
+        return $this->interestedInMentoredByInterpreter;
+    }
+
+    /**
+     * Set interestedInMentoringMentor
+     *
+     * @param boolean $interestedInMentoringMentor
+     * @return UserProfile
+     */
+    public function setInterestedInMentoringMentor($interestedInMentoringMentor)
+    {
+        $this->interestedInMentoringMentor = $interestedInMentoringMentor;
+    
+        return $this;
+    }
+
+    /**
+     * Get interestedInMentoringMentor
+     *
+     * @return boolean 
+     */
+    public function getInterestedInMentoringMentor()
+    {
+        return $this->interestedInMentoringMentor;
+    }
+
+    /**
+     * Set interestedInMentoredingInterpreter
+     *
+     * @param boolean $interestedInMentoredingInterpreter
+     * @return UserProfile
+     */
+    public function setInterestedInMentoredingInterpreter($interestedInMentoredingInterpreter)
+    {
+        $this->interestedInMentoredingInterpreter = $interestedInMentoredingInterpreter;
+    
+        return $this;
+    }
+
+    /**
+     * Get interestedInMentoredingInterpreter
+     *
+     * @return boolean 
+     */
+    public function getInterestedInMentoredingInterpreter()
+    {
+        return $this->interestedInMentoredingInterpreter;
+    }
+
+    /**
+     * Set avatar
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $avatar
+     * @return UserProfile
+     */
+    public function setAvatar(\IMDC\TerpTubeBundle\Entity\Media $avatar = null)
+    {
+        $this->avatar = $avatar;
+    
+        return $this;
+    }
+
+    /**
+     * Get avatar
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Media 
+     */
+    public function getAvatar()
+    {
+        return $this->avatar;
+    }
+
+    /**
      * Add languages
      *
      * @param \IMDC\TerpTubeBundle\Entity\Language $languages
@@ -264,33 +432,5 @@ class UserProfile
     public function getLanguages()
     {
         return $this->languages;
-    }
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
-     */
-    private $avatar;
-
-
-    /**
-     * Set avatar
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $avatar
-     * @return UserProfile
-     */
-    public function setAvatar(\IMDC\TerpTubeBundle\Entity\ResourceFile $avatar = null)
-    {
-        $this->avatar = $avatar;
-    
-        return $this;
-    }
-
-    /**
-     * Get avatar
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\ResourceFile 
-     */
-    public function getAvatar()
-    {
-        return $this->avatar;
     }
 }

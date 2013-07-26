@@ -22,6 +22,6 @@ IMDC\TerpTubeBundle\Entity\User:
             cascade: ["all"]
     oneToMany:
         resourceFiles:
-            targetEntity: ResourceFile
+            targetEntity: Media
             mappedBy: owner
               

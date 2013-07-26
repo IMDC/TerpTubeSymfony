@@ -23,7 +23,7 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
             
     oneToOne:
         avatar: #avatar to hold the picture from a resource file
-            targetEntity: ResourceFile
+            targetEntity: Media
             joinColumn:
                 name: avatar
                 referencedColumnName: id
@@ -53,15 +53,26 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
             type: string
             length: 1
             nullable: true
+        skypeName:
+            type: string
+            length: 255
+            nullable: true
+        interestedInMentoredByMentor:
+            type: boolean
+            nullable: true
+        interestedInMentoredByInterpreter:
+            type: boolean
+            nullable: true
+        interestedInMentoringMentor:
+            type: boolean
+            nullable: true
+        interestedInMentoredingInterpreter:
+            type: boolean
+            nullable: true
         #education
         #Affiliations/memberships/organizations ?
             #Deaf community connection ? (deaf parents, etc)
         #Video bio file
         #Text bio (can this option be greyed out until a video bio is uploaded?)
-        #Skype name
-        #Interested in being mentored by an ASL mentor? Yes/No/null
-        #Interested in being mentored by another interpreter? Yes/No/null
-        #Interested in being an ASL mentor? Yes/No/null
-        #Interested in being an interpreter mentor? Yes/No/null
         #Interests and specialties fields. Radio buttons for the common options.
         #Seperate tab for professional experience in profile
