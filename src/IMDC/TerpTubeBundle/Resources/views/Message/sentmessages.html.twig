@@ -1,0 +1,53 @@
+{% extends "IMDCTerpTubeBundle:Message:inbox.html.twig" %}
+{% block title %}
+Sent Messages
+{% endblock title %}
+{% block herounit %}
+    <h1>Sent Messages</h1>
+    <h2>Your previously sent messages appear below:</h2>
+{% endblock herounit %}
+{% block underherounitrow1 %}
+    {% if app.session.flashbag.get('inbox') is defined %}
+        {% for flashMessage in app.session.flashbag.get('inbox') %}
+        <div class="flash-notice">
+            <h4>{{ flashMessage }}</h4>
+        </div>
+        {% endfor %}
+    {% endif %}
+    <div>
+        <a href="{{ path('imdc_message_create') }}">Create new message</a>
+    </div>
+    <div>
+        <ul class="inbox-list">
+            <li><a href="{{ path('imdc_message_view_all') }}">Inbox</a></li>
+            <li><a href="{{ path('imdc_message_view_sent_messages') }}" class="active" >Sent</a></li>
+            <li><a href="{{ path('imdc_message_view_archive') }}">Archive</a></li>
+        </ul>
+    </div>
+    <h2>Sent Messages</h2>
+    <div class="row-fluid">
+        <div class="span-9">
+            <table class="messagetable sentmessagestable">
+                <tr><th>Date Sent</th><th>To</th><th>Subject</th><th>Content</th></tr>
+                {% for message in messages %}
+                    <tr>
+                            <td>{{ message.sentDate|date('r') }}</td>
+                            <td>
+                                <div class="message-recipient-wrap">
+                                    {% for recpt in message.recipients %}
+                                        <a href="#">{{ recpt }} </a> 
+                                    {% endfor %}
+                                </div>
+                            </td>
+                            <td>{{ message.subject }}</td>
+                            <td>{{ message.content|trim[:50] }}...</td>
+                    </tr>
+                {% else %}
+                    <tr>No messages yet</tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}

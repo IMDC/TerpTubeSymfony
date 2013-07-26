@@ -53,11 +53,17 @@ class MessageController extends Controller
             // set owner/author of the message to be the currently logged in user
             $message->setOwner($this->getUser());
 
+            $user = $this->getUser();
+            $user->addSentMessage($message);
+            foreach ($message->getRecipients() as $recp) {
+                $recp->addReceivedMessage($message);
+            }
+            
             // flush object to database
             $em = $this->getDoctrine()->getManager();
             $em->persist($message);
             $em->flush();
-            
+           
             $this->get('session')->getFlashBag()->add(
                     'inbox',
                     'Message sent successfully!'
@@ -74,7 +80,7 @@ class MessageController extends Controller
         
     }
     
-    public function viewAllMessagesAction($feedbackmsg=NULL) 
+    public function viewAllPrivateMessagesAction($feedbackmsg=NULL) 
     {
         // check if user logged in
         $securityContext = $this->container->get('security.context');
@@ -88,20 +94,28 @@ class MessageController extends Controller
         }
         
         $user = $this->getUser();
+        /**
         $messages = $this->getDoctrine()
                         ->getRepository('IMDCTerpTubeBundle:Message')
                         ->findBy(array('owner' => $user->getId()));
+        **/
+        
+        //$messages = $user->getReceivedMessages();
+        
+        $em = $this->getDoctrine()->getManager();
+        $messages = $em->getRepository('IMDCTerpTubeBundle:Message')
+                            ->findAllReceivedMessagesForUser($user);
         
         // if no feedback message, just show all messages
         if (is_null($feedbackmsg)) {
-            $response = $this->render('IMDCTerpTubeBundle:Message:viewall.html.twig',
+            $response = $this->render('IMDCTerpTubeBundle:Message:inbox.html.twig',
                                   array('messages' => $messages)
                         );
             return $response;
         }
         // show all messages and the feedback message
         else {
-            $response = $this->render('IMDCTerpTubeBundle:Message:viewall.html.twig',
+            $response = $this->render('IMDCTerpTubeBundle:Message:inbox.html.twig',
                                   array('messages' => $messages,
                                         'feedback' => $feedbackmsg)
                         );
@@ -161,5 +175,53 @@ class MessageController extends Controller
             );
             return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
         }
+    }
+    
+    public function viewSentMessagesAction() 
+    {
+        // check if user logged in
+        $securityContext = $this->container->get('security.context');
+        if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        {
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Please log in first'
+            );
+            return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+        }
+        
+        $user = $this->getUser();
+        /**
+         $messages = $this->getDoctrine()
+         ->getRepository('IMDCTerpTubeBundle:Message')
+         ->findBy(array('owner' => $user->getId()));
+        **/
+        
+        //$messages = $user->getSentMessages();
+        
+        $em = $this->getDoctrine()->getManager();
+        $messages = $em->getRepository('IMDCTerpTubeBundle:Message')
+                        ->findAllSentMessagesForUser($user);
+        
+        // if no feedback message, just show all messages
+        if (is_null($feedbackmsg)) {
+            $response = $this->render('IMDCTerpTubeBundle:Message:sentmessages.html.twig',
+                    array('messages' => $messages)
+            );
+            return $response;
+        }
+        // show all messages and the feedback message
+        else {
+            $response = $this->render('IMDCTerpTubeBundle:Message:sentmessages.html.twig',
+                    array('messages' => $messages,
+                          'feedback' => $feedbackmsg)
+            );
+            return $response;
+        }
+    }
+    
+    public function viewArchivedMessagesAction()
+    {
+        
     }
 }

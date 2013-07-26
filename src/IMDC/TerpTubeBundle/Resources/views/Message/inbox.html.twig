@@ -21,13 +21,26 @@
     <div>
         <a href="{{ path('imdc_message_create') }}">Create new message</a>
     </div>
+    <div>
+        <ul class="inbox-list">
+            <li><a href="{{ path('imdc_message_view_all') }}">Inbox</a></li>
+            <li><a href="{{ path('imdc_message_view_sent_messages') }}">Sent</a></li>
+            <li><a href="{{ path('imdc_message_view_archive') }}">Archive</a></li>
+            
+        </ul>
+    </div>
     <h2>Private Messages</h2>
     <div class="row-fluid">
         <div class="span-9">
-            <table class="pmtable">
+            <table class="messagetable pmtable">
                 <tr><th>Tools</th><th>From</th><th>Subject</th><th>Content</th></tr>
                 {% for message in messages %}
-                    <tr><td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}">Delete</a></td><td>{{ message.owner }}</td><td>{{ message.subject }}</td><td>{{ message.content|trim[:50] }}...</td></tr>
+                    <tr>
+                        <td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}">Delete</a></td>
+                        <td>{{ message.owner }}</td>
+                        <td>{{ message.subject }}</td>
+                        <td>{{ message.content|trim[:50] }}...</td>
+                    </tr>
                 {% else %}
                     <tr>No messages yet</tr>
                 {% endfor %}

@@ -29,8 +29,16 @@ imdc_message_create:
     
 imdc_message_view_all:
     pattern: /inbox
-    defaults: { _controller: IMDCTerpTubeBundle:Message:viewAllMessages }
+    defaults: { _controller: IMDCTerpTubeBundle:Message:viewAllPrivateMessages }
     
 imdc_message_delete:
     pattern: /deleteMessage/{messageid}
     defaults: { _controller: IMDCTerpTubeBundle:Message:deleteMessage }
+
+imdc_message_view_sent_messages:
+    pattern: /sentMessages
+    defaults: { _controller: IMDCTerpTubeBundle:Message:viewSentMessages }
+    
+imdc_message_view_archive:
+    pattern: /archivedMessages
+    defaults: { _controller: IMDCTerpTubeBundle:Message:viewArchivedMessages }

@@ -19,8 +19,19 @@ IMDC\TerpTubeBundle\Entity\Message:
         owner:
             targetEntity: User
             inversedBy: sentMessages
+            joinColumn:
+                name: owner_id
+                referencedColumnName: id
     manyToMany:
         recipients:
             targetEntity: User
+            joinTable:
+                name: messages_recipients_users
+                joinColumns:
+                    message_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
     lifecycleCallbacks: 
         prePersist: [setSentValue]

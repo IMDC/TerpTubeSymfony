@@ -9,10 +9,18 @@ IMDC\TerpTubeBundle\Entity\User:
     oneToMany:
         sentMessages:
             targetEntity: Message
-            mappedBy: sender
+            mappedBy: owner
+    oneToMany:
         receivedMessages:
             targetEntity: Message
-            mappedBy: receipients
+            joinTable:
+                name: users_received_messages
+                joinColumns:
+                    user_id: 
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
     oneToOne:
         profile:
             targetEntity: UserProfile
