@@ -10,8 +10,11 @@ table.messagetable {
 table.messagetable th {
 	text-align: left;
 	border-bottom: 1px solid gray;
+	background: #999;
 }
 
+table.messagetable tr:nth-child(odd) {
+  background-color: #ddffdd;
 table.pmtable {
 	
 }

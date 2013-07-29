@@ -1,0 +1,59 @@
+{# src/IMDC/TerpTubeBundle/Resources/views/Message/viewprivatemessage.html.twig #}
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/inbox.css') }}" rel="stylesheet" />
+    <link href="{{  asset('bundles/imdcterptube/css/privatemessage.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block title %}
+{{ message.subject }} - Private Message Inbox
+{% endblock title %}
+
+{% block rightsidecontent %}
+<div class="span10">
+    <br />
+    <a href="{{ path('imdc_message_view_all') }}">Back to inbox</a>
+    <div class="message-info-wrap">
+        <div class="row-fluid message-info-header">
+            <div class="span1">
+                Sent:
+            </div>
+            <div class="span9">
+                {{ message.sentDate|date('g:ia F j Y') }}
+            </div>
+        </div>
+        <div class="row-fluid message-info-header">
+            <div class="span1">
+                From:
+            </div>
+            <div class="span9">
+                {{ message.owner }}
+            </div>
+        </div>
+        <div class="row-fluid message-info-header">
+            <div class="span1">
+                To:
+            </div>
+            <div class="span9">
+                {{ message.recipients|join(', ') }}
+            </div>
+        </div>
+        <div class="row-fluid message-info-header">
+            <div class="span1">
+                Subject:
+            </div>
+            <div class="span9">
+                {{ message.subject }}
+            </div>
+        </div>
+        <div class="row-fluid message-info-header lastbottomborder">
+            <div class="span9 message-content-wrap">
+                {{ message.content }}
+            </div>
+        </div>
+    </div><!--  message-info-wrap -->
+</div><!-- span10 -->
+{% endblock rightsidecontent %}
+

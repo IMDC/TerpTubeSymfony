@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/braincrafted/bootstrap-bundle.git",
-                "reference": "v1.4.2"
+                "reference": "c086ff70f6746ae4290ba50a68b6ab159925ceaa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/v1.4.2",
-                "reference": "v1.4.2",
+                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/c086ff70f6746ae4290ba50a68b6ab159925ceaa",
+                "reference": "c086ff70f6746ae4290ba50a68b6ab159925ceaa",
                 "shasum": ""
             },
             "require": {
@@ -37,7 +37,7 @@
                 "knplabs/knp-menu": "Required to use KnpMenuBundle.",
                 "knplabs/knp-menu-bundle": "BraincraftedBootstrapBundle styles the menus provided by KnpMenuBundle.",
                 "knplabs/knp-paginator-bundle": "BraincraftedBootstrapBundle styles the pagination provided by KnpPaginatorBundle.",
-                "twitter/bootstrap": "Twitter Bootstrap provides the assets (images, CSS and JS)"
+                "twbs/bootstrap": "Twitter Bootstrap provides the assets (images, CSS and JS)"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -61,7 +61,7 @@
             "keywords": [
                 "bootstrap"
             ],
-            "time": "2013-04-12 23:57:05"
+            "time": "2013-07-28 21:51:00"
         },
         {
             "name": "doctrine/common",
@@ -1167,26 +1167,26 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "1.5.0"
+                "reference": "1.6.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1.5.0",
-                "reference": "1.5.0",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/1.6.0",
+                "reference": "1.6.0",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
-                "psr/log": ">=1.0,<2.0"
+                "psr/log": "~1.0"
             },
             "require-dev": {
                 "doctrine/couchdb": "dev-master",
                 "mlehner/gelf-php": "1.0.*",
-                "raven/raven": "0.3.*"
+                "raven/raven": "0.5.*"
             },
             "suggest": {
                 "doctrine/couchdb": "Allow sending log messages to a CouchDB server",
@@ -1198,7 +1198,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.4.x-dev"
+                    "dev-master": "1.6.x-dev"
                 }
             },
             "autoload": {
@@ -1225,7 +1225,7 @@
                 "logging",
                 "psr-3"
             ],
-            "time": "2013-04-23 10:09:48"
+            "time": "2013-07-28 22:38:30"
         },
         {
             "name": "phpoption/phpoption",

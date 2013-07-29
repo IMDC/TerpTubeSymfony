@@ -14,33 +14,29 @@ Sent Messages
         </div>
         {% endfor %}
     {% endif %}
-    <div>
-        <a href="{{ path('imdc_message_create') }}">Create new message</a>
-    </div>
-    <div>
-        <ul class="inbox-list">
-            <li><a href="{{ path('imdc_message_view_all') }}">Inbox</a></li>
-            <li><a href="{{ path('imdc_message_view_sent_messages') }}" class="active" >Sent</a></li>
-            <li><a href="{{ path('imdc_message_view_archive') }}">Archive</a></li>
-        </ul>
-    </div>
+    {{ include('IMDCTerpTubeBundle:Message:inboxlist.html.twig') }}
     <h2>Sent Messages</h2>
+    <div class="row-fluid">
+        <div class="span3">
+            <a href="{{ path('imdc_message_create') }}">Create new message</a>
+        </div>
+    </div>
     <div class="row-fluid">
         <div class="span-9">
             <table class="messagetable sentmessagestable">
-                <tr><th>Date Sent</th><th>To</th><th>Subject</th><th>Content</th></tr>
+                <tr><th>To</th><th>Subject</th><th>Content</th><th>Date Sent</th></tr>
                 {% for message in messages %}
                     <tr>
-                            <td>{{ message.sentDate|date('r') }}</td>
-                            <td>
-                                <div class="message-recipient-wrap">
-                                    {% for recpt in message.recipients %}
-                                        <a href="#">{{ recpt }} </a> 
-                                    {% endfor %}
-                                </div>
-                            </td>
-                            <td>{{ message.subject }}</td>
-                            <td>{{ message.content|trim[:50] }}...</td>
+                        <td>
+                            <div class="message-recipient-wrap">
+                                {% for recpt in message.recipients %}
+                                    <a href="#">{{ recpt }} </a> 
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>{{ message.subject }}</td>
+                        <td>{{ message.content|trim[:50] }}...</td>
+                        <td>{{ message.sentDate|date('g:ia M j') }}</td>
                     </tr>
                 {% else %}
                     <tr>No messages yet</tr>

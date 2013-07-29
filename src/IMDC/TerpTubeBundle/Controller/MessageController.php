@@ -224,4 +224,28 @@ class MessageController extends Controller
     {
         
     }
+    
+    public function viewMessageAction($messageid) 
+    {
+        // check if user logged in
+        $securityContext = $this->container->get('security.context');
+        if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        {
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Please log in first'
+            );
+            return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+        }
+        
+        $user = $this->getUser();
+        
+        $message = $this->getDoctrine()->getRepository('IMDCTerpTubeBundle:Message')->findOneBy(array('id' => $messageid));
+
+        $response = $this->render('IMDCTerpTubeBundle:Message:viewprivatemessage.html.twig',
+                array('message' => $message)
+        );
+        return $response;
+
+    }
 }

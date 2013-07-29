@@ -42,3 +42,8 @@ imdc_message_view_sent_messages:
 imdc_message_view_archive:
     pattern: /archivedMessages
     defaults: { _controller: IMDCTerpTubeBundle:Message:viewArchivedMessages }
+
+imdc_message_view_message:
+    pattern: /viewMessage/{messageid}
+    defaults: { _controller: IMDCTerpTubeBundle:Message:viewMessage }
+    
