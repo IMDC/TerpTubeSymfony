@@ -18,10 +18,7 @@ IMDC\TerpTubeBundle\Entity\Message:
     manyToOne:
         owner:
             targetEntity: User
-            inversedBy: sentMessages
-            joinColumn:
-                name: owner_id
-                referencedColumnName: id
+            mapppedBy: sentMessages
     manyToMany:
         recipients:
             targetEntity: User

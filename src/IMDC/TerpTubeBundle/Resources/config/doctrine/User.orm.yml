@@ -9,7 +9,7 @@ IMDC\TerpTubeBundle\Entity\User:
     oneToMany:
         sentMessages:
             targetEntity: Message
-            mappedBy: owner
+            inversedBy: owner
     oneToMany:
         receivedMessages:
             targetEntity: Message
