@@ -30,5 +30,15 @@ IMDC\TerpTubeBundle\Entity\Message:
                 inverseJoinColumns:
                     user_id:
                         referencedColumnName: id
+        usersRead:
+            targetEntity: User
+            joinTable: 
+                name: messages_readby_users
+                joinColumns:
+                    message_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
     lifecycleCallbacks: 
         prePersist: [setSentValue]

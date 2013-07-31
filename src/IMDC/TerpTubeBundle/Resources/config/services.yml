@@ -31,4 +31,9 @@ services:
           arguments: [@router, @security.context]
           tags:
               - {name: 'monolog.logger', channel: 'security' }
-              
+     
+     # enable the truncate extension in twig
+     twig.extension.text:
+          class: Twig_Extensions_Extension_Text
+          tags:
+              - { name: twig.extension }

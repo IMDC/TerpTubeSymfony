@@ -34,14 +34,20 @@ Inbox
     <div class="row-fluid">
         <div class="span-9">
             <table class="messagetable pmtable">
-                <tr><th>Tools</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
+                <tr><th>Tools</th><th>Read</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
                 {% for message in messages %}
                     <tr>
                         <td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}">Delete</a></td>
+                        <td>{%  if message.getMessageRead() %}
+                                Read
+                            {%  else %}
+                                Unread
+                            {%  endif %}
+                        </td>
                         <td>{{ message.owner }}</td>
                         <td><a href="{{ path('imdc_message_view_message', {'messageid': message.id}) }}">{{ message.subject }}</a></td>
-                        <td><a href="{{ path('imdc_message_view_message', {'messageid': message.id}) }}">{{ message.content|trim[:50] }}...</a></td>
-                        <td>{{ message.sentDate|date('g:ia M:j') }}</td>
+                        <td><a href="{{ path('imdc_message_view_message', {'messageid': message.id}) }}">{{ message.content|truncate(50) }}</a></td>
+                        <td>{{ message.sentDate|date('g:ia M j') }}</td>
                     </tr>
                 {% else %}
                     <tr>No messages yet</tr>

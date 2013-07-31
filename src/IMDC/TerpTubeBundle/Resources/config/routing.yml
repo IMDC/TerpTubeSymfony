@@ -47,3 +47,10 @@ imdc_message_view_message:
     pattern: /viewMessage/{messageid}
     defaults: { _controller: IMDCTerpTubeBundle:Message:viewMessage }
     
+imdc_message_mark_as_read:
+    pattern: /messageRead/{messageid}
+    defaults: { _controller: IMDCTerpTubeBundle:Message:markMessageAsRead }
+    requirements:
+        _method:  POST
+
+    

@@ -106,6 +106,15 @@ class MessageController extends Controller
         $messages = $em->getRepository('IMDCTerpTubeBundle:Message')
                             ->findAllReceivedMessagesForUser($user);
         
+        foreach ($messages as $msg) {
+            if ($msg->isMessageRead($user)) {
+                $msg->setMessageRead();
+            }
+            else {
+                $msg->setMessageUnread();
+            }
+        }
+        
         // if no feedback message, just show all messages
         if (is_null($feedbackmsg)) {
             $response = $this->render('IMDCTerpTubeBundle:Message:inbox.html.twig',
@@ -241,11 +250,52 @@ class MessageController extends Controller
         $user = $this->getUser();
         
         $message = $this->getDoctrine()->getRepository('IMDCTerpTubeBundle:Message')->findOneBy(array('id' => $messageid));
-
+        
+        $alreadyRead = $message->getUsersRead();
+        
+        // if the message is already read, don't try to insert it again as this causes SQL errors
+        if ($alreadyRead->contains($user)) {
+            // skip
+        }
+        else {
+            $message->addUsersRead($user);
+            // flush object to database
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($message);
+            $em->persist($user);
+            $em->flush();
+        }
+        
         $response = $this->render('IMDCTerpTubeBundle:Message:viewprivatemessage.html.twig',
                 array('message' => $message)
         );
         return $response;
 
+    }
+    
+    public function markMessageAsReadAction($messageid)
+    {
+        $user = $this->getUser();
+        $request = $this->get('request');
+        $mid = $request->request->get('msgId');
+        
+        $repository = $this->getDoctrine()->getRepository('IMDCTerpTubeBundle:Message');
+        $message = $repository->findOneById($mid);
+        
+        if ($message->isMessageRead($user)) {
+            $return = array('responseCode' => 200, 'feedback' => 'Message marked as read');
+        }
+        else {
+            $return = array('responseCode' => 400, 'feedback'=> 'Error marking message as read');
+        }
+        
+        $return = json_encode($return); // json encode the array
+        return new Response($return, 200, array('Content-Type'=>'application/json')); //make sure it has the correct content type
+        
+    }
+    
+    public function recentMessagesAction($max = 30)
+    {
+        
     }
 }

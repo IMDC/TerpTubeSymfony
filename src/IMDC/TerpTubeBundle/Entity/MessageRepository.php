@@ -29,6 +29,7 @@ class MessageRepository extends EntityRepository
                     FROM IMDCTerpTubeBundle:Message m
                     JOIN IMDCTerpTubeBundle:User u
                     WHERE :uid MEMBER OF m.recipients
+                    ORDER BY m.sentDate DESC
                 ')
                 ->setParameter('uid', $user->getId())
         ->getResult();

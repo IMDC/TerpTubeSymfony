@@ -14,6 +14,8 @@
 {% block rightsidecontent %}
 <div class="span10">
     <br />
+    <a id="messageRead" data-mid="{{ message.id }}" href="{{  path('imdc_message_mark_as_read',{'messageid': message.id}) }}" style="display:none;"></a>
+    <div id="readOutput"></div>
     <a href="{{ path('imdc_message_view_all') }}">Back to inbox</a>
     <div class="message-info-wrap">
         <div class="row-fluid message-info-header">
@@ -56,4 +58,9 @@
     </div><!--  message-info-wrap -->
 </div><!-- span10 -->
 {% endblock rightsidecontent %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/imdcterptube/js/viewmessage.js') }}"></script>
+{% endblock javascripts %}
 

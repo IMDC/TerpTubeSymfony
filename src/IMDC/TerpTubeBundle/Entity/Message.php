@@ -38,13 +38,21 @@ class Message
      * @var \Doctrine\Common\Collections\Collection
      */
     private $recipients;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $usersRead;
 
+    private $read;
+    
     /**
      * Constructor
      */
     public function __construct()
     {
         $this->recipients = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->usersRead = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -187,5 +195,65 @@ class Message
     public function setSentValue()
     {
         // Add your code here
+    }
+
+    /**
+     * Add usersRead
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $usersRead
+     * @return Message
+     */
+    public function addUsersRead(\IMDC\TerpTubeBundle\Entity\User $usersRead)
+    {
+        $this->usersRead[] = $usersRead;
+    
+        return $this;
+    }
+
+    /**
+     * Remove usersRead
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $usersRead
+     */
+    public function removeUsersRead(\IMDC\TerpTubeBundle\Entity\User $usersRead)
+    {
+        $this->usersRead->removeElement($usersRead);
+    }
+
+    /**
+     * Get usersRead
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUsersRead()
+    {
+        return $this->usersRead;
+    }
+    
+    public function isMessageRead(User $user)
+    {
+        if ($this->usersRead->contains($user)) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+    
+    public function setMessageRead() 
+    {
+        $this->read = TRUE;
+        
+        return $this;
+    }
+    
+    public function setMessageUnread()
+    {
+        $this->read = FALSE;
+        
+        return $this;
+    }
+    
+    public function getMessageRead()
+    {
+        return $this->read;
     }
 }
