@@ -15,6 +15,9 @@ IMDC\TerpTubeBundle\Entity\Message:
             type: text
         sentDate:
             type: datetime
+        tempRead:
+            type: boolean
+            nullable: true
     manyToOne:
         owner:
             targetEntity: User
@@ -34,6 +37,26 @@ IMDC\TerpTubeBundle\Entity\Message:
             targetEntity: User
             joinTable: 
                 name: messages_readby_users
+                joinColumns:
+                    message_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        usersArchived:
+            targetEntity: User
+            joinTable:
+                name: messages_archived_users
+                joinColumns:
+                    message_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        usersDeleted:
+            targetEntity: User
+            joinTable:
+                name: messages_deleted_users
                 joinColumns:
                     message_id:
                         referencedColumnName: id

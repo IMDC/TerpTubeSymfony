@@ -100,18 +100,17 @@ class MessageController extends Controller
                         ->findBy(array('owner' => $user->getId()));
         **/
         
-        //$messages = $user->getReceivedMessages();
-        
         $em = $this->getDoctrine()->getManager();
         $messages = $em->getRepository('IMDCTerpTubeBundle:Message')
-                            ->findAllReceivedMessagesForUser($user);
+                            ->findAllReceivedInboxMessagesForUser($user, 30);
         
+        // loop through the messages and temporarily mark them as read or unread
         foreach ($messages as $msg) {
             if ($msg->isMessageRead($user)) {
-                $msg->setMessageRead();
+                $msg->setTempRead(TRUE);
             }
             else {
-                $msg->setMessageUnread();
+                $msg->setTempRead(FALSE);
             }
         }
         
@@ -155,35 +154,44 @@ class MessageController extends Controller
     
     public function deleteMessageAction($messageid)
     {
+        // check if user logged in
         $securityContext = $this->container->get('security.context');
-        if( $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
         {
-            $em = $this->getDoctrine()->getManager();
-            $message = $em->getRepository('IMDCTerpTubeBundle:Message')
-                          ->findOneById($messageid);
-            
-            if (!$message) {
-                throw $this->createNotFoundException(
-                        'No message found for id: '.$id
-                        );
-            }
-            
-            $em->getRepository('IMDCTerpTubeBundle:Message')
-                ->deleteMessageFromInbox($messageid, $this->getUser()->getId());
-            
-            $this->get('session')->getFlashBag()->add(
-                    'inbox',
-                    'Message id: ' .$message->getId() . ' deleted'
-            );
-            return $this->redirect($this->generateUrl('imdc_message_view_all'));
-        }
-        else {
             $this->get('session')->getFlashBag()->add(
                     'notice',
-                    'You do not have access to this resource.'
+                    'Please log in first'
             );
             return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
         }
+        
+        $user = $this->getUser();
+        
+        $messages = $user->getReceivedMessages();
+
+        $em = $this->getDoctrine()->getManager();
+        $message = $em->getRepository('IMDCTerpTubeBundle:Message')
+                      ->findOneById($messageid);
+        
+        if (!$messages->contains($message)) {
+            throw $this->createNotFoundException(
+                    'No message found for id: '.$messageid
+            );
+        }
+        
+/*         $em->getRepository('IMDCTerpTubeBundle:Message')
+            ->deleteMessageFromInbox($messageid, $this->getUser()->getId()); */
+
+        $message->addUsersDeleted($user);
+        $em->persist($message);
+        $em->flush();
+        
+        $this->get('session')->getFlashBag()->add(
+                'inbox',
+                'Message id: ' .$message->getId() . ' deleted'
+        );
+        return $this->redirect($this->generateUrl('imdc_message_view_all'));
+
     }
     
     public function viewSentMessagesAction() 

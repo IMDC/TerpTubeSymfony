@@ -38,7 +38,7 @@ Inbox
                 {% if messages %}
                     {% for message in messages %}
                     {% set msgread = false %}
-                    {% if message.getMessageRead() %}
+                    {% if message.getTempRead() %}
                         {% set msgread = true %}
                     <tr class="tr-message message-read" onclick="goToPrivateMessage('{{ path('imdc_message_view_message', {'messageid': message.id}) }}');">
                     {% else %}

@@ -9,18 +9,13 @@ IMDC\TerpTubeBundle\Entity\User:
     oneToMany:
         sentMessages:
             targetEntity: Message
-            inversedBy: owner
-    oneToMany:
+            mappedBy: owner
         receivedMessages:
             targetEntity: Message
-            joinTable:
-                name: users_received_messages
-                joinColumns:
-                    user_id: 
-                        referencedColumnName: id
-                inverseJoinColumns:
-                    message_id:
-                        referencedColumnName: id
+            mappedBy: owner
+        resourceFiles:
+            targetEntity: Media
+            mappedBy: owner
     oneToOne:
         profile:
             targetEntity: UserProfile
@@ -28,8 +23,5 @@ IMDC\TerpTubeBundle\Entity\User:
                 name: profile_id
                 referencedColumnName: id
             cascade: ["all"]
-    oneToMany:
-        resourceFiles:
-            targetEntity: Media
-            mappedBy: owner
+        
               
