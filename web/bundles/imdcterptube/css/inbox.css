@@ -15,6 +15,8 @@ table.messagetable th {
 
 table.messagetable tr:nth-child(odd) {
   background-color: #ddffdd;
+}
+
 table.pmtable {
 	
 }
@@ -25,4 +27,13 @@ ul.inbox-list {
 
 ul.inbox-list li {
 	display: inline;
+	padding-right: 1em;
+}
+
+.pmtable tr.tr-message {
+	cursor: pointer;
+}
+
+.pmtable tr.message-unread {
+	font-weight: bold;
 }

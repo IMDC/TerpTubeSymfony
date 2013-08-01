@@ -36,9 +36,15 @@ Inbox
             <table class="messagetable pmtable">
                 <tr><th>Tools</th><th>Read</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
                 {% for message in messages %}
-                    <tr>
+                    {% set msgread = false %}
+                    {% if message.getMessageRead() %}
+                        {% set msgread = true %}
+                    <tr class="tr-message message-read" onclick="goToPrivateMessage('{{ path('imdc_message_view_message', {'messageid': message.id}) }}');">
+                    {% else %}
+                    <tr class="tr-message message-unread" onclick="goToPrivateMessage('{{ path('imdc_message_view_message', {'messageid': message.id}) }}');">
+                    {% endif %}
                         <td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}">Delete</a></td>
-                        <td>{%  if message.getMessageRead() %}
+                        <td>{%  if msgread %}
                                 Read
                             {%  else %}
                                 Unread
@@ -69,3 +75,8 @@ Inbox
         {% endif %}
     </table>
 {% endblock underherounitrow2 %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/imdcterptube/js/inbox.js') }}"></script>
+{% endblock javascripts %}
