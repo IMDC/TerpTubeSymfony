@@ -16,8 +16,8 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        $this->$sentMessages     = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->$receivedMessages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->sentMessages     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->receivedMessages = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
