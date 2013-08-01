@@ -84,7 +84,7 @@ resetting:
 # Global strings
 layout:
     logout: Logout
-    login: Login
+    login: Login/Register
     register: Register
     logged_in_as: Logged in as %username%
     user_inbox: Inbox
