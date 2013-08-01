@@ -19,9 +19,15 @@ imdc_terp_tube_user_profile:
     pattern: /profile/
     defaults: { _controller: IMDCTerpTubeBundle:Profile:show }
     
+imdc_terp_tube_user_avatar_edit: 
+    pattern: /profile/{userName}/edit/avatar
+    defaults: { _controller: IMDCTerpTubeBundle:Profile:updateAvatar }
+    
 imdc_terp_tube_user_profile_edit:
     pattern: /profile/{userName}/edit
     defaults: { _controller: IMDCTerpTubeBundle:Profile:edit }
+    
+
 
 imdc_message_create:
     pattern: /createMessage

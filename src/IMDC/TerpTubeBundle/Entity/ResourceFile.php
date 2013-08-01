@@ -3,10 +3,8 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-/**
- * ResourceFile
- */
 class ResourceFile
 {
     /**
@@ -18,11 +16,6 @@ class ResourceFile
      * @var string
      */
     private $filename;
-
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\Media
-     */
-    private $resource;
 
 
     /**
@@ -57,27 +50,189 @@ class ResourceFile
     {
         return $this->filename;
     }
+    /**
+     * @var string
+     */
+    private $path;
+
 
     /**
-     * Set resource
+     * Set path
      *
-     * @param \IMDC\TerpTubeBundle\Entity\Media $resource
+     * @param string $path
      * @return ResourceFile
      */
-    public function setResource(\IMDC\TerpTubeBundle\Entity\Media $resource = null)
+    public function setPath($path)
     {
-        $this->resource = $resource;
+        $this->path = $path;
     
         return $this;
     }
 
     /**
-     * Get resource
+     * Get path
+     *
+     * @return string 
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+    
+    public function getWebPath()
+    {
+    	return null === $this->path
+    	? null
+    	: $this->getUploadDir().'/'.$this->id.'.'.$this->path;
+    }
+    
+    protected function getUploadRootDir()
+    {
+    	// the absolute directory path where uploaded
+    	// documents should be saved
+    	return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+    
+    protected function getUploadDir()
+    {
+    	// get rid of the __DIR__ so it doesn't screw up
+    	// when displaying uploaded doc/image in the view.
+    	return 'uploads/media';
+    }
+    
+    private $file;
+    
+    /**
+     * Sets file.
+     *
+     * @param UploadedFile $file
+     */
+    public function setFile(UploadedFile $file = null)
+    {
+        $this->file = $file;
+        // check if we have an old image path
+        if (is_file($this->getAbsolutePath())) {
+            // store the old name to delete after the update
+            $this->temp = $this->getAbsolutePath();
+        } else {
+            $this->path = 'initial';
+        }
+    }
+    
+    /**
+     * Get file.
+     *
+     * @return UploadedFile
+     */
+    public function getFile()
+    {
+    	return $this->file;
+    }
+    
+    public function preUpload()
+    {
+    	if (null !== $this->getFile()) {
+    		$this->path = $this->getFile()->guessExtension();
+    	}
+    }
+    
+    public function upload()
+    {
+    	if (null === $this->getFile()) {
+    		return;
+    	}
+    
+    	// check if we have an old image
+    	if (isset($this->temp)) {
+    		// delete the old image
+    		unlink($this->temp);
+    		// clear the temp image path
+    		$this->temp = null;
+    	}
+    
+    	// you must throw an exception here if the file cannot be moved
+    	// so that the entity is not persisted to the database
+    	// which the UploadedFile move() method does
+    	$this->getFile()->move(
+    			$this->getUploadRootDir(),
+    			$this->id.'.'.$this->getFile()->guessExtension()
+    	);
+    
+    	$this->setFile(null);
+    }
+    
+    public function storeFilenameForRemove()
+    {
+    	$this->temp = $this->getAbsolutePath();
+    }
+    
+    public function removeUpload()
+    {
+    	if (isset($this->temp)) {
+    		unlink($this->temp);
+    	}
+    }
+    
+    public function getAbsolutePath()
+    {
+    	return null === $this->path
+    	? null
+    	: $this->getUploadRootDir().'/'.$this->id.'.'.$this->path;
+    }
+    /**
+     * @var string
+     */
+    private $name;
+
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return ResourceFile
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\Media
+     */
+    private $media;
+
+
+    /**
+     * Set media
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $media
+     * @return ResourceFile
+     */
+    public function setMedia(\IMDC\TerpTubeBundle\Entity\Media $media = null)
+    {
+        $this->media = $media;
+    
+        return $this;
+    }
+
+    /**
+     * Get media
      *
      * @return \IMDC\TerpTubeBundle\Entity\Media 
      */
-    public function getResource()
+    public function getMedia()
     {
-        return $this->resource;
+        return $this->media;
     }
 }

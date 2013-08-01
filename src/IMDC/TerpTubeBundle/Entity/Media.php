@@ -9,6 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Media
 {
+	const TYPE_IMAGE = 0;
+	const TYPE_VIDEO = 1;
+	const TYPE_AUDIO = 2;
     /**
      * @var integer
      */
@@ -29,7 +32,7 @@ class Media
      */
     private $owner;
 
-
+    
     /**
      * Get id
      *
@@ -107,5 +110,62 @@ class Media
     public function getOwner()
     {
         return $this->owner;
+    }
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
+     */
+    private $resourceObject;
+
+
+    /**
+     * Set resourceObject
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resourceObject
+     * @return Media
+     */
+    public function setResourceObject(\IMDC\TerpTubeBundle\Entity\ResourceFile $resourceObject = null)
+    {
+        $this->resourceObject = $resourceObject;
+    
+        return $this;
+    }
+    
+
+    /**
+     * Get resourceObject
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\ResourceFile 
+     */
+    public function getResourceObject()
+    {
+        return $this->resourceObject;
+    }
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
+     */
+    private $resource;
+
+
+    /**
+     * Set resource
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resource
+     * @return Media
+     */
+    public function setResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $resource = null)
+    {
+        $this->resource = $resource;
+    
+        return $this;
+    }
+
+    /**
+     * Get resource
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\ResourceFile 
+     */
+    public function getResource()
+    {
+        return $this->resource;
     }
 }

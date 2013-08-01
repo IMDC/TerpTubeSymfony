@@ -14,7 +14,7 @@ class ProfileFormType extends BaseType
 		$builder->add('firstName', null, array('label' => 'form.profile.firstName', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('middleName', null, array('label' => 'form.profile.middleName', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('lastName', null, array('label' => 'form.profile.lastName', 'translation_domain' => 'IMDCTerpTubeBundle'));
-		$builder->add('avatar', file, array('label' => 'form.profile.avatar', 'translation_domain' => 'IMDCTerpTubeBundle'));
+	//	$builder->add('avatar', new ImageMediaFormType());
 		$builder->add('birthDate', 'birthday', array('label' => 'form.profile.birthDate', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('city', null, array('label' => 'form.profile.city', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('country', 'country', array('label' => 'form.profile.country', 'translation_domain' => 'IMDCTerpTubeBundle'));

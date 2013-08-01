@@ -1,6 +1,14 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use Symfony\Component\Form\FormFactory;
+
+use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
+
+use IMDC\TerpTubeBundle\Entity\Media;
+
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
+
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -43,7 +51,7 @@ class ProfileController extends BaseController
 		return $response;
 
 	}
-	
+
 	/**
 	 * Show the profile of a specific user
 	 * @param unknown_type $userName - The user's profile to show
@@ -59,7 +67,7 @@ class ProfileController extends BaseController
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($userName);
-		if ($userObject==null)
+		if ($userObject == null)
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
@@ -70,6 +78,66 @@ class ProfileController extends BaseController
 								. $this->container->getParameter('fos_user.template.engine'),
 						array('user' => $userObject, 'profile' => $profile));
 
+	}
+
+	public function updateAvatarAction(Request $request, $userName)
+	{
+		$user = $this->container->get('security.context')->getToken()->getUser();
+		if (!is_object($user) || !$user instanceof UserInterface)
+		{
+			throw new AccessDeniedException('This user does not have access to this section.');
+		}
+		if ($user->getUsername() != $userName)
+		{
+			$response = new RedirectResponse(
+					$this->container->get('router')
+							->generate('imdc_terp_tube_user_profile_specific', array('userName' => $userName)));
+			return $response;
+		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($user->getUsername());
+		/** @var $profile \IMDC\TerpTubeBundle\Entity\UserProfile */
+		$profile = $userObject->getProfile();
+
+		$avatar = new Media();
+
+		$formFactory = $this->container->get('form.factory');
+
+		$form = $formFactory->create(new ImageMediaFormType(), $avatar, array());
+
+		// 		$form = $this->createForm(new ImageMediaFormType(), $avatar);
+
+		if ('POST' === $request->getMethod())
+		{
+			$form->bind($request);
+
+			if ($form->isValid())
+			{
+				$avatar->setOwner($userObject);
+				$avatar->setType(Media::TYPE_IMAGE);
+				// flush object to database
+				$em = $this->container->get('doctrine')->getManager();
+				$em->persist($avatar);
+				// Remove old avatar from DB:
+				if (($oldAvatar = $profile->getAvatar())!== null )
+					$em->remove($profile->getAvatar());
+				$profile->setAvatar($avatar);
+
+				$em->flush();
+
+				$this->container->get('session')->getFlashBag()->add('avatar', 'Avatar updated successfully!');
+
+				$url = $this->container->get('router')->generate('imdc_terp_tube_user_profile');
+				$response = new RedirectResponse($url);
+				return $response;
+			}
+		}
+		// form not valid, show the basic form
+		return $this->container->get('templating')
+				->renderResponse(
+						'IMDCTerpTubeBundle:Profile:edit_avatar.html.'
+								. $this->container->getParameter('fos_user.template.engine'),
+						array('form' => $form->createView()));
 	}
 
 	/**
@@ -83,15 +151,16 @@ class ProfileController extends BaseController
 		{
 			throw new AccessDeniedException('This user does not have access to this section.');
 		}
-		if ($user->getUsername()!= $userName)
+		if ($user->getUsername() != $userName)
 		{
 			$response = new RedirectResponse(
-				$this->container->get('router')
-						->generate('imdc_terp_tube_user_profile_specific', array('userName' => $userName)));
+					$this->container->get('router')
+							->generate('imdc_terp_tube_user_profile_specific', array('userName' => $userName)));
 			return $response;
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
+		/** @var $profile \IMDC\TerpTubeBundle\Entity\UserProfile */
 		$profile = $userObject->getProfile();
 
 		/** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
@@ -122,7 +191,6 @@ class ProfileController extends BaseController
 
 				$event = new FormEvent($form, $request);
 				$dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
-
 				$userManager->updateUser($user);
 
 				if (null === $response = $event->getResponse())

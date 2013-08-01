@@ -30,7 +30,8 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
             inverseColumn:
                 name: owner_id
                 referencedColumnName: id
-                
+            cascade: ["all"]
+            
     fields: 
         firstName:
             type: string

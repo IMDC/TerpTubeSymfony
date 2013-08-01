@@ -111,6 +111,7 @@ form:
             title: "Gender:" 
             m: "Male"
             f: "Female"
+           
     
 profile:
     show:
@@ -126,8 +127,13 @@ profile:
             m: "Male"
             f: "Female"
             null: "Not set"
+        ownAvatar: "Edit profile picture"
             
     edit:
         submit: "Update Profile"
         changePassword: "Change your password"
+        avatar:
+            submit: "Update profile picture"
+            cancel: "Cancel"
+            title: "Choose a new profile picture"    
         

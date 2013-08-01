@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+
+img.avatar
+{
+	width: 200px;
+	height: 200px;	
+	border: 2px solid black;
+}
+
+img.avatar:hover
+{
+	border: 2px solid blue;
+}

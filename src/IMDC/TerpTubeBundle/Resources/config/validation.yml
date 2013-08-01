@@ -4,4 +4,3 @@ IMDC\TerpTubeBundle\Entity\Message:
     properties:
         recipients:
             - NotBlank: ~
-        
