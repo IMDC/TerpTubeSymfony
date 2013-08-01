@@ -231,7 +231,26 @@ class MessageController extends Controller
     
     public function viewArchivedMessagesAction()
     {
+        // check if user logged in
+        $securityContext = $this->container->get('security.context');
+        if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        {
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Please log in first'
+            );
+            return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+        }
         
+        $user = $this->getUser();
+        
+        // todo: implement message archive system
+        $messages = null;
+        
+        $response = $this->render('IMDCTerpTubeBundle:Message:archivedmessages.html.twig',
+                array('messages' => $messages)
+        );
+        return $response;
     }
     
     public function viewMessageAction($messageid) 

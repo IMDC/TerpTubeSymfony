@@ -1,10 +1,10 @@
 {% extends "IMDCTerpTubeBundle:Message:inbox.html.twig" %}
 {% block title %}
-Sent Messages
+Message Archive
 {% endblock title %}
 {% block herounit %}
-    <h1>Sent Messages</h1>
-    <h2>Your previously sent messages appear below:</h2>
+    <h1>Message Archive</h1>
+    <h2>Your archived messages appear below:</h2>
 {% endblock herounit %}
 {% block underherounitrow1 %}
     {% if app.session.flashbag.get('inbox') is defined %}
@@ -23,7 +23,7 @@ Sent Messages
     </div>
     <div class="row-fluid">
         <div class="span-9">
-            <table class="messagetable sentmessagestable">
+            <table class="messagetable archivedmessagetable">
                 <tr><th>To</th><th>Subject</th><th>Content</th><th>Date Sent</th></tr>
                 {% if messages %}
                     {% for message in messages %}
