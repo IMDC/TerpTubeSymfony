@@ -18,7 +18,7 @@ Inbox
     {% if app.session.flashbag.get('inbox') is defined %}
         {% for flashMessage in app.session.flashbag.get('inbox') %}
         <div class="flash-notice">
-            <eeh4>{{ flashMessage }}</h4>
+            <h4>{{ flashMessage }}</h4>
         </div>
         {% endfor %}
     {% endif %}
@@ -35,7 +35,8 @@ Inbox
         <div class="span-9">
             <table class="messagetable pmtable">
                 <tr><th>Tools</th><th>Read</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
-                {% for message in messages %}
+                {% if messages %}
+                    {% for message in messages %}
                     {% set msgread = false %}
                     {% if message.getMessageRead() %}
                         {% set msgread = true %}
@@ -50,14 +51,15 @@ Inbox
                                 Unread
                             {%  endif %}
                         </td>
-                        <td>{{ message.owner }}</td>
+                        <td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName' : message.owner}) }}">{{ message.owner }}</a></td>
                         <td><a href="{{ path('imdc_message_view_message', {'messageid': message.id}) }}">{{ message.subject }}</a></td>
                         <td><a href="{{ path('imdc_message_view_message', {'messageid': message.id}) }}">{{ message.content|truncate(50) }}</a></td>
                         <td>{{ message.sentDate|date('g:ia M j') }}</td>
                     </tr>
+                    {% endfor %}
                 {% else %}
                     <tr>No messages yet</tr>
-                {% endfor %}
+                {% endif %}
             </table>
         </div>
     </div>

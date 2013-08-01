@@ -31,7 +31,7 @@
                 From:
             </div>
             <div class="span9">
-                {{ message.owner }}
+                <a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName' : app.user }) }}">{{ message.owner }}</a>
             </div>
         </div>
         <div class="row-fluid message-info-header">
