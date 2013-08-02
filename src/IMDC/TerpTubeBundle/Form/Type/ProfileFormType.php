@@ -15,10 +15,12 @@ class ProfileFormType extends BaseType
 		$builder->add('middleName', null, array('label' => 'form.profile.middleName', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('lastName', null, array('label' => 'form.profile.lastName', 'translation_domain' => 'IMDCTerpTubeBundle'));
 	//	$builder->add('avatar', new ImageMediaFormType());
+		$builder->add('textBio', 'textarea', array('label' => 'form.profile.textBio', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('birthDate', 'birthday', array('label' => 'form.profile.birthDate', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('city', null, array('label' => 'form.profile.city', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('country', 'country', array('label' => 'form.profile.country', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('gender', 'choice', array('choices'=>array('m' => 'form.profile.gender.m', 'f' => 'form.profile.gender.f'), 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.gender.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
+		$builder->add('skypeName', null, array('label' => 'form.profile.skypeName', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		
 	}
 	

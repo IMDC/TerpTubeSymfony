@@ -42,8 +42,10 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
         middleName:
             type: string
             length: 255
+            nullable: true
         birthDate:
             type: date
+            nullable: true
         city:
             type: string
             length: 255
@@ -64,12 +66,16 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
         interestedInMentoredByInterpreter:
             type: boolean
             nullable: true
-        interestedInMentoringMentor:
+        interestedInMentoringSignLanguage:
             type: boolean
             nullable: true
         interestedInMentoredingInterpreter:
             type: boolean
             nullable: true
+        textBio:
+            type: text
+            nullable: true
+            
         #education
         #Affiliations/memberships/organizations ?
             #Deaf community connection ? (deaf parents, etc)

@@ -2,29 +2,33 @@
 
 namespace IMDC\TerpTubeBundle\Form\Type;
 
+use Symfony\Component\Validator\Constraints\File;
+
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Symfony\Component\Form\AbstractType;
 use IMDC\TerpTubeBundle\Entity\Media;
 
-class ImageMediaFormType extends AbstractType
+class AudioResourceFileFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('resource', new ImageResourceFileFormType());
-		$builder->add('type', 'hidden', array('data'=> Media::TYPE_IMAGE));
+		$audioConstraint = new File();
+		$audioConstraint->mimeTypes = array('audio/*');
+		$builder->add('file', 'file', array('constraints'=>array($audioConstraint), 'attr'=>array('accept'=>'audio/*')));
+		
 	}
 	
 
 	public function getName()
 	{
-		return 'imdc_terptube_image_media';
+		return 'imdc_terptube_audio_resource_file';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
-		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\Media',));
+		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\ResourceFile',));
 	}
 }
 ?>

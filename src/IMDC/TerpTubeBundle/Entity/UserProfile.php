@@ -433,4 +433,60 @@ class UserProfile
     {
         return $this->languages;
     }
+    /**
+     * @var string
+     */
+    private $textBio;
+
+
+    /**
+     * Set textBio
+     *
+     * @param string $textBio
+     * @return UserProfile
+     */
+    public function setTextBio($textBio)
+    {
+        $this->textBio = $textBio;
+    
+        return $this;
+    }
+
+    /**
+     * Get textBio
+     *
+     * @return string 
+     */
+    public function getTextBio()
+    {
+        return $this->textBio;
+    }
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoringSignLanguage;
+
+
+    /**
+     * Set interestedInMentoringSignLanguage
+     *
+     * @param boolean $interestedInMentoringSignLanguage
+     * @return UserProfile
+     */
+    public function setInterestedInMentoringSignLanguage($interestedInMentoringSignLanguage)
+    {
+        $this->interestedInMentoringSignLanguage = $interestedInMentoringSignLanguage;
+    
+        return $this;
+    }
+
+    /**
+     * Get interestedInMentoringSignLanguage
+     *
+     * @return boolean 
+     */
+    public function getInterestedInMentoringSignLanguage()
+    {
+        return $this->interestedInMentoringSignLanguage;
+    }
 }

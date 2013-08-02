@@ -111,7 +111,8 @@ form:
             title: "Gender:" 
             m: "Male"
             f: "Female"
-           
+        textBio: "Tell us a little bit about yourself"
+        skypeName: "Skype name"
     
 profile:
     show:
