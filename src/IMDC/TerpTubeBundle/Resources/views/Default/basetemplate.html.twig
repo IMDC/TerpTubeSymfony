@@ -30,25 +30,25 @@
 					{% endblock brand %}
 					<div class="nav-collapse collapse">
 						<p class="navbar-text pull-right">
-							{% block loginarea %}
+						{% block loginarea %}
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-							  {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'">' ~app.user.username~'</a>' %}
-              				  {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
+                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'">' ~app.user.username~'</a>' %}
+                                {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
                					    {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }}
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
                    					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-               					 </a>
+               					</a>
 				            {% else %}
 				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }}</a>
 				            {% endif %}
-							{% endblock loginarea %}
+						{% endblock loginarea %}
 						</p>
 						<ul class="nav">
 							{% block nav_ul %}
 							<li class="active">
-								<a href="#">Home</a>
+								<a href="{{ path('imdc_terp_tube_user_splash') }}">Home</a>
 							</li>
 							<li>
 								<a href="#about">About</a>
@@ -76,55 +76,28 @@
 			<div class="row-fluid">
 				<div class="span2">
 					<div class="well sidebar-nav">
-						<ul class="nav nav-list">
+						<ul class="nav nav-list text-center">
 							{% block sidebarlinks %}
 							<li class="nav-header">
-								Sidebar
+								TerpTube
 							</li>
 							<li class="active">
-								<a href="#">Link</a>
+								<a href="{{ path('imdc_terp_tube_user_splash') }}"><img src="{{ asset('img/global_nav_icon_home.png') }}" />Home</a>
 							</li>
 							<li>
-								<a href="#">Link</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_vlogs.png') }}" />Video Logs</a>
 							</li>
 							<li>
-								<a href="#">Link</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" />Forums</a>
 							</li>
 							<li>
-								<a href="#">Link</a>
-							</li>
-							<li class="nav-header">
-								Sidebar
+								<a href="#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" />Pages</a>
 							</li>
 							<li>
-								<a href="#">Link</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_member.png') }}" />Members</a>
 							</li>
 							<li>
-								<a href="#">Link</a>
-							</li>
-							<li>
-								<a href="#">Link</a>
-							</li>
-							<li>
-								<a href="#">Link</a>
-							</li>
-							<li>
-								<a href="#">Link</a>
-							</li>
-							<li>
-								<a href="#">Link</a>
-							</li>
-							<li class="nav-header">
-								Sidebar
-							</li>
-							<li>
-								<a href="#">Link</a>
-							</li>
-							<li>
-								<a href="#">Link</a>
-							</li>
-							<li>
-								<a href="#">Link</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_help.png') }}" /><br />Help</a>
 							</li>
 							{% endblock sidebarlinks %}
 						</ul>

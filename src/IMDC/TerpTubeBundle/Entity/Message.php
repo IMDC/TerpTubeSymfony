@@ -202,12 +202,14 @@ class Message
     {
         return $this->recipients;
     }
+    
     /**
      * @ORM\PrePersist
      */
     public function setSentValue()
     {
-        // Add your code here
+        $this->sentDate = new \DateTime('NOW');
+        return $this;
     }
 
     /**
