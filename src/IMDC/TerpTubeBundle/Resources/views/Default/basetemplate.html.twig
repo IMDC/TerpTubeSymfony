@@ -26,19 +26,19 @@
 						<span class="icon-bar"></span>
 					</button>
 					{% block brand %}
-					<a class="brand" href="#">TerpTube</a>
+					<a class="brand" href="{{ path('imdc_terp_tube_user_splash') }}">TerpTube</a>
 					{% endblock brand %}
 					<div class="nav-collapse collapse">
 						<p class="navbar-text pull-right">
 						{% block loginarea %}
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'">' ~app.user.username~'</a>' %}
+                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="icon-user"></i> ' ~app.user.username~'</a>' %}
                                 {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
+               					    <i class="icon-envelope"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
-                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="icon-off"></i>
                					</a>
 				            {% else %}
 				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }}</a>

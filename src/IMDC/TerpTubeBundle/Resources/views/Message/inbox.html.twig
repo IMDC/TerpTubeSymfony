@@ -44,7 +44,7 @@ Inbox
                     {% else %}
                     <tr class="tr-message message-unread" onclick="goToPrivateMessage('{{ path('imdc_message_view_message', {'messageid': message.id}) }}');">
                     {% endif %}
-                        <td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><img class="icon-remove" />Delete</a></td>
+                        <td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove"></i>Delete</a></td>
                         <td>{%  if msgread %}
                                 <img src="{{ asset('img/user_notification_icon_message.jpg') }}" />Read
                             {%  else %}
