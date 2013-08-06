@@ -21,7 +21,7 @@ IMDC\TerpTubeBundle\Entity\Message:
     manyToOne:
         owner:
             targetEntity: User
-            mapppedBy: sentMessages
+            inversedBy: sentMessages
     manyToMany:
         recipients:
             targetEntity: User

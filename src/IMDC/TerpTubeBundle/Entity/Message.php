@@ -64,8 +64,10 @@ class Message
      */
     public function __construct()
     {
-        $this->recipients = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->usersRead = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->recipients    = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->usersRead     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->usersArchived = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->usersDeleted  = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**

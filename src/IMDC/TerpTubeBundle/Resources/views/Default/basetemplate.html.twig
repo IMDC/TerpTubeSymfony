@@ -35,7 +35,7 @@
                                 {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'">' ~app.user.username~'</a>' %}
                                 {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }}
+               					    {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
                    					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
@@ -82,19 +82,19 @@
 								TerpTube
 							</li>
 							<li class="active">
-								<a href="{{ path('imdc_terp_tube_user_splash') }}"><img src="{{ asset('img/global_nav_icon_home.png') }}" />Home</a>
+								<a href="{{ path('imdc_terp_tube_user_splash') }}"><img src="{{ asset('img/global_nav_icon_home.png') }}" /><br />Home</a>
 							</li>
 							<li>
-								<a href="#"><img src="{{ asset('img/global_nav_icon_vlogs.png') }}" />Video Logs</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_vlogs.png') }}" /><br />Video Logs</a>
 							</li>
 							<li>
-								<a href="#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" />Forums</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Forums</a>
 							</li>
 							<li>
-								<a href="#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" />Pages</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Pages</a>
 							</li>
 							<li>
-								<a href="#"><img src="{{ asset('img/global_nav_icon_member.png') }}" />Members</a>
+								<a href="#"><img src="{{ asset('img/global_nav_icon_member.png') }}" /><br />Members</a>
 							</li>
 							<li>
 								<a href="#"><img src="{{ asset('img/global_nav_icon_help.png') }}" /><br />Help</a>

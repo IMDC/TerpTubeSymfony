@@ -12,12 +12,18 @@ class User extends BaseUser
 	
 	protected $sentMessages;
 	protected $receivedMessages;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $resourceFiles;
 
     public function __construct()
     {
         parent::__construct();
         $this->sentMessages     = new \Doctrine\Common\Collections\ArrayCollection();
         $this->receivedMessages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->resourceFiles    = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -119,10 +125,6 @@ class User extends BaseUser
     {
         return $this->receivedMessages;
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $resourceFiles;
 
 
     /**
@@ -156,5 +158,21 @@ class User extends BaseUser
     public function getResourceFiles()
     {
         return $this->resourceFiles;
+    }
+    /**
+     * Get the number of unread private messages for the user
+     * 
+     * @return number
+     */
+    public function getNumUnreadPMs() 
+    {
+        $msg_count = 0;
+        $allrecmessages = $this->getReceivedMessages();
+        foreach ($allrecmessages as $mess) {
+            if ( !$mess->isMessageRead($this) ) {
+                $msg_count++;
+            }
+        }
+        return $msg_count;
     }
 }

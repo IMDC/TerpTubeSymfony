@@ -10,9 +10,6 @@ IMDC\TerpTubeBundle\Entity\User:
         sentMessages:
             targetEntity: Message
             mappedBy: owner
-        receivedMessages:
-            targetEntity: Message
-            mappedBy: owner
         resourceFiles:
             targetEntity: Media
             mappedBy: owner
@@ -23,5 +20,17 @@ IMDC\TerpTubeBundle\Entity\User:
                 name: profile_id
                 referencedColumnName: id
             cascade: ["all"]
-        
+    #functions as one to many
+    manyToMany:
+        receivedMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_received_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+                        unique: true
               
