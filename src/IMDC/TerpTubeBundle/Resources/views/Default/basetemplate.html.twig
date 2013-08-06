@@ -32,16 +32,16 @@
 						<p class="navbar-text pull-right">
 						{% block loginarea %}
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="icon-user"></i> ' ~app.user.username~'</a>' %}
+                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="icon-user icon-white"></i> ' ~app.user.username~'</a>' %}
                                 {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    <i class="icon-envelope"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
+               					    <i class="icon-envelope icon-white"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
-                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="icon-off"></i>
+                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="icon-off icon-white"></i>
                					</a>
 				            {% else %}
-				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }}</a>
+				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}"><i class="icon-share-alt icon-white"></i> {{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }} <i class="icon-plus icon-white"></i></a>
 				            {% endif %}
 						{% endblock loginarea %}
 						</p>

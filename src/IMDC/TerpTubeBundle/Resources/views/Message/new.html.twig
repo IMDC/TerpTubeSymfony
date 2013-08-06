@@ -6,6 +6,19 @@
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-{{  form(form) }}
+<div class="span9">
+    {{  form(form) }}
+    
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        
+        {{ form_row(form.recipients) }}
+        {{ form_row(form.subject) }}
+        {{ form_row(form.content) }}
+        
+    {{ form_end(form) }}
+</div>
 {% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}
 

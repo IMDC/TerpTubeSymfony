@@ -13,7 +13,7 @@ class PrivateMessageType extends AbstractType
     {
         $builder->add('recipients');
         $builder->add('subject');
-        $builder->add('content');
+        $builder->add('content', 'textarea');
         $builder->add('submit', 'submit');
     }
     

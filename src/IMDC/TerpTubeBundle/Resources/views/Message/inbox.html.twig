@@ -34,7 +34,7 @@ Inbox
     <div class="row-fluid">
         <div class="span-9">
             <table class="messagetable pmtable">
-                <tr><th>Tools</th><th>Read</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
+                <tr><th><i class="icon-wrench"></i> Tools</th><th>Read</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
                 {% if messages %}
                     {% for message in messages %}
                     {% set msgread = false %}
@@ -44,7 +44,7 @@ Inbox
                     {% else %}
                     <tr class="tr-message message-unread" onclick="goToPrivateMessage('{{ path('imdc_message_view_message', {'messageid': message.id}) }}');">
                     {% endif %}
-                        <td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove"></i>Delete</a></td>
+                        <td><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove-sign"></i>Delete</a></td>
                         <td>{%  if msgread %}
                                 <img src="{{ asset('img/user_notification_icon_message.jpg') }}" />Read
                             {%  else %}
