@@ -29,10 +29,6 @@ class UserProfile
      */
     private $middleName;
 
-    /**
-     * @var \DateTime
-     */
-    private $birthDate;
 
     /**
      * @var string
@@ -171,28 +167,6 @@ class UserProfile
         return $this->middleName;
     }
 
-    /**
-     * Set birthDate
-     *
-     * @param \DateTime $birthDate
-     * @return UserProfile
-     */
-    public function setBirthDate($birthDate)
-    {
-        $this->birthDate = $birthDate;
-    
-        return $this;
-    }
-
-    /**
-     * Get birthDate
-     *
-     * @return \DateTime 
-     */
-    public function getBirthDate()
-    {
-        return $this->birthDate;
-    }
 
     /**
      * Set city
@@ -488,5 +462,61 @@ class UserProfile
     public function getInterestedInMentoringSignLanguage()
     {
         return $this->interestedInMentoringSignLanguage;
+    }
+    /**
+     * @var string
+     */
+    private $birthDate;
+
+
+    /**
+     * Set birthDate
+     *
+     * @param string $birthDate
+     * @return UserProfile
+     */
+    public function setBirthDate($birthDate)
+    {
+        $this->birthDate = $birthDate;
+    
+        return $this;
+    }
+
+    /**
+     * Get birthDate
+     *
+     * @return string 
+     */
+    public function getBirthDate()
+    {
+        return $this->birthDate;
+    }
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoringInterpreter;
+
+
+    /**
+     * Set interestedInMentoringInterpreter
+     *
+     * @param boolean $interestedInMentoringInterpreter
+     * @return UserProfile
+     */
+    public function setInterestedInMentoringInterpreter($interestedInMentoringInterpreter)
+    {
+        $this->interestedInMentoringInterpreter = $interestedInMentoringInterpreter;
+    
+        return $this;
+    }
+
+    /**
+     * Get interestedInMentoringInterpreter
+     *
+     * @return boolean 
+     */
+    public function getInterestedInMentoringInterpreter()
+    {
+        return $this->interestedInMentoringInterpreter;
     }
 }

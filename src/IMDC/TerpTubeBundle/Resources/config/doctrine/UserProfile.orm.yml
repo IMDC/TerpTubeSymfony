@@ -69,9 +69,11 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
         interestedInMentoringSignLanguage:
             type: boolean
             nullable: true
-        interestedInMentoredingInterpreter:
+        interestedInMentoringInterpreter:
             type: boolean
             nullable: true
+        
+        #can be greyed out until video bio is updated
         textBio:
             type: text
             nullable: true
@@ -80,6 +82,5 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
         #Affiliations/memberships/organizations ?
             #Deaf community connection ? (deaf parents, etc)
         #Video bio file
-        #Text bio (can this option be greyed out until a video bio is uploaded?)
         #Interests and specialties fields. Radio buttons for the common options.
         #Seperate tab for professional experience in profile

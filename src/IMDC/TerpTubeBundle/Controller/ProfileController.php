@@ -1,6 +1,8 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use IMDC\TerpTubeBundle\Event\UploadEvent;
+
 use Symfony\Component\Form\FormFactory;
 
 use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
@@ -127,6 +129,10 @@ class ProfileController extends BaseController
 
 				$this->container->get('session')->getFlashBag()->add('avatar', 'Avatar updated successfully!');
 
+				$eventDispatcher = $this->container->get('event_dispatcher');
+				$uploadedEvent = new UploadEvent($avatar);
+				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
+				
 				$url = $this->container->get('router')->generate('imdc_terp_tube_user_profile');
 				$response = new RedirectResponse($url);
 				return $response;

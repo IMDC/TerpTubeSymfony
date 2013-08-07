@@ -12,7 +12,7 @@ class RegistrationFormType extends BaseType
         parent::buildForm($builder, $options);
 
         // add your custom field
-        $builder->add('profile', new RegistrationProfileFormType('User'));
+        $builder->add('profile', new RegistrationProfileFormType('User'), array('label'=>' ', 'translation_domain' => 'IMDCTerpTubeBundle'));
         
 		
     }

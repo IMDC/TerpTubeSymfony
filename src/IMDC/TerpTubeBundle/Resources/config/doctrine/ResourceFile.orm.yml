@@ -11,7 +11,7 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
                type: string
                length: 255
                nullable: true
-
+               
     lifecycleCallbacks:
         prePersist: [ preUpload ]
         postPersist: [ upload ]

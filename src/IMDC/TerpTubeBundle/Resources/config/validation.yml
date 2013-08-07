@@ -4,8 +4,3 @@ IMDC\TerpTubeBundle\Entity\Message:
     properties:
         recipients:
             - NotBlank: ~
-
-IMDC\TerpTubeBundle\Entity\UserProfile:
-    properties:
-        gender:
-            - Choice: { choices: [[m, male], [f, female]] }

@@ -8,6 +8,16 @@ IMDC\TerpTubeBundle\Entity\MetaData:
                 strategy: AUTO
     fields:
         size:
-               type: bigint
+            type: bigint
+        width:
+            type: integer
+            nullable: true
+        height:
+            type: integer
+            nullable: true
+        duration:
+            type: bigint
+            nullable: true
+        
 
                 

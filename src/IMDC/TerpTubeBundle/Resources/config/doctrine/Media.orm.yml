@@ -8,7 +8,11 @@ IMDC\TerpTubeBundle\Entity\Media:
                 strategy: AUTO
     fields:
         type: #0-image, 1-video, 2-audio
-               type: smallint
+            type: smallint
+        title:  #user given title of the media
+            type: string
+            length: 255
+            nullable: true;
         
     manyToOne:
         owner:

@@ -104,15 +104,36 @@ form:
         firstName: "First name:"
         lastName: "Last name:" 
         middleName: "Middle name:" 
-        birthDate: "Birth date:"
+        birthDate: 
+            title: "Birth date:"
+            empty: "Not set"
+            invalid: 'You entered an invalid date'
         city: "City:"
         country: "Country:"
         gender:
             title: "Gender:" 
             m: "Male"
             f: "Female"
+            empty: "Not set"
         textBio: "Tell us a little bit about yourself"
         skypeName: "Skype name"
+        interestedInMentoredByMentor:
+            title: "Are you interested in being mentored by a Sign language mentor?"
+        interestedInMentoredByInterpreter:
+            title: "Are you interested in being mentored by a Sign language interpreter?"
+        interestedInMentoringSignLanguage:
+            title: "Are you interested in being a Sign language mentor?"
+        interestedInMentoredingInterpreter:
+            title: "Are you interested in being Sign language interpreter mentor?"
+            
+    generic:
+        allFieldsRequired: 'All fields are required!'
+        empty: 'Not set'
+        yes: 'Yes'
+        no: 'No'
+        1: 'Yes'
+        0: 'No'
+        null: 'Not set'
     
 profile:
     show:
@@ -129,6 +150,16 @@ profile:
             f: "Female"
             null: "Not set"
         ownAvatar: "Edit profile picture"
+        skypeName: "Skype name"
+        interestedInMentoredByMentor:
+            title: "Interested in being mentored by a Sign language mentor"
+        interestedInMentoredByInterpreter:
+            title: "Interested in being mentored by a Sign language interpreter"
+        interestedInMentoringSignLanguage:
+            title: "Interested in being a Sign language mentor"
+        interestedInMentoringInterpreter:
+            title: "Interested in being Sign language interpreter mentor"
+        textBio: "Bio"
             
     edit:
         submit: "Update Profile"

@@ -2,6 +2,10 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
+use Doctrine\Common\EventManager;
+
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -136,6 +140,9 @@ class ResourceFile
     	}
     }
     
+    /**
+     * Dispatches an uploaded event after the file is uploaded and passes the object as an argument.
+     */
     public function upload()
     {
     	if (null === $this->getFile()) {
@@ -159,6 +166,7 @@ class ResourceFile
     	);
     
     	$this->setFile(null);
+    	
     }
     
     public function storeFilenameForRemove()

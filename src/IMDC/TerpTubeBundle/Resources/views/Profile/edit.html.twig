@@ -5,6 +5,14 @@
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
+{% for type, messages in app.session.flashbag.all() %}
+		{% for key, message in messages %}
+       		<div class="flash-{{ type }}">
+            	{{ message|trans({}, 'FOSUserBundle') }}
+            </div>
+      	{% endfor %}
+   	{% endfor %}
+   	
 <a href="{{ path('imdc_terp_tube_user_profile_change-password', {'userName': app.user.username}) }}" />{{ 'profile.edit.changePassword'|trans }}</a>
 
 <form action="{{ path('imdc_terp_tube_user_profile_edit', {'userName': app.user.username}) }}" {{ form_enctype(form) }} method="POST" class="fos_user_profile_edit">

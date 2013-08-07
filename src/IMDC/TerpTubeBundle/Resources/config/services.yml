@@ -2,6 +2,8 @@ parameters:
 #    imdc_terp_tube.example.class: IMDC\TerpTubeBundle\Example
       imdc_terptube.component.authentication.handler.login_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LoginSuccessHandler
       imdc_terptube.component.authentication.handler.logout_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LogoutSuccessHandler
+      imdc_terptube.upload_resource_listener.class: IMDC\TerpTubeBundle\EventListener\UploadListener
+      imdc_terptube.event.uploadEvent: 'imdc_terptube.event.uploadEvent'
 
 services:
 #    imdc_terp_tube.example:
@@ -31,6 +33,13 @@ services:
           arguments: [@router, @security.context]
           tags:
               - {name: 'monolog.logger', channel: 'security' }
+              
+     imdc_terptube.upload_resource_listener:
+            class: %imdc_terptube.upload_resource_listener.class%
+            arguments: ["@logger", @doctrine]
+            tags:
+                - { name: kernel.event_listener, event: %imdc_terptube.event.uploadEvent%, method: onUpload}
+                - { name: 'monolog.logger', channel: 'imdc' }
      
      # enable the truncate extension in twig
      twig.extension.text:

@@ -2,6 +2,8 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
+use Doctrine\Common\EventManager;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,7 +34,6 @@ class Media
      */
     private $owner;
 
-    
     /**
      * Get id
      *
@@ -114,35 +115,6 @@ class Media
     /**
      * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
      */
-    private $resourceObject;
-
-
-    /**
-     * Set resourceObject
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resourceObject
-     * @return Media
-     */
-    public function setResourceObject(\IMDC\TerpTubeBundle\Entity\ResourceFile $resourceObject = null)
-    {
-        $this->resourceObject = $resourceObject;
-    
-        return $this;
-    }
-    
-
-    /**
-     * Get resourceObject
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\ResourceFile 
-     */
-    public function getResourceObject()
-    {
-        return $this->resourceObject;
-    }
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
-     */
     private $resource;
 
 
@@ -167,5 +139,33 @@ class Media
     public function getResource()
     {
         return $this->resource;
+    }
+    /**
+     * @var string
+     */
+    private $title;
+
+
+    /**
+     * Set title
+     *
+     * @param string $title
+     * @return Media
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+    
+        return $this;
+    }
+
+    /**
+     * Get title
+     *
+     * @return string 
+     */
+    public function getTitle()
+    {
+        return $this->title;
     }
 }
