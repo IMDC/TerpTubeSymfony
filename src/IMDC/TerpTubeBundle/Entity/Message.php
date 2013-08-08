@@ -208,7 +208,7 @@ class Message
     /**
      * @ORM\PrePersist
      */
-    public function setSentValue()
+    public function setSentValueToNow()
     {
         $this->sentDate = new \DateTime('NOW');
         return $this;
@@ -255,7 +255,7 @@ class Message
      */
     public function isMessageRead(User $user)
     {
-        if ($this->usersRead->contains($user)) {
+        if ( $user->getReadMessages()->contains($this) ) {
             return TRUE;
         }
         return FALSE;
@@ -293,7 +293,7 @@ class Message
      */
     public function isMessageArchived(User $user) 
     {
-        if ($this->usersArchived->contains($user)) {
+        if ( $user->getArchivedMessages()->contains($this) ) {
             return TRUE;
         }
         return FALSE;
@@ -341,7 +341,7 @@ class Message
      */
     public function isMessageDeleted(User $user)
     {
-        if ($this->usersDeleted->contains($user)) {
+        if ( $user->getDeletedMessages()->contains($this)) {
             return TRUE;
         }
         return FALSE;

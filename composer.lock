@@ -46,7 +46,7 @@
                     "homepage": "http://www.lickmychip.com/"
                 },
                 {
-                    "name": "Nicolas Le Goff",
+                    "name": "nlegoff",
                     "email": "legoff.n@gmail.com"
                 },
                 {
@@ -167,7 +167,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes Schmitt",
+                    "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -618,12 +618,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Gregwar/CaptchaBundle.git",
-                "reference": "0b08b38cb03aee70c01703bc1cb823adefdbfa9e"
+                "reference": "0ab26cac8134847687eba371a3937d90eb9346e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Gregwar/CaptchaBundle/zipball/0b08b38cb03aee70c01703bc1cb823adefdbfa9e",
-                "reference": "0b08b38cb03aee70c01703bc1cb823adefdbfa9e",
+                "url": "https://api.github.com/repos/Gregwar/CaptchaBundle/zipball/0ab26cac8134847687eba371a3937d90eb9346e6",
+                "reference": "0ab26cac8134847687eba371a3937d90eb9346e6",
                 "shasum": ""
             },
             "require": {
@@ -662,7 +662,7 @@
                 "spam",
                 "visual"
             ],
-            "time": "2013-08-07 13:46:23"
+            "time": "2013-08-08 12:38:09"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -797,7 +797,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -904,7 +904,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -955,7 +955,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1059,7 +1059,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1288,12 +1288,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafo/lessphp.git",
-                "reference": "d14e9327d4dd898c29de920a2a3ba34b2f1213e5"
+                "reference": "a66c3d8a939a629ba44a927fc96a9dd3ad2f7515"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/lessphp/zipball/d14e9327d4dd898c29de920a2a3ba34b2f1213e5",
-                "reference": "d14e9327d4dd898c29de920a2a3ba34b2f1213e5",
+                "url": "https://api.github.com/repos/leafo/lessphp/zipball/a66c3d8a939a629ba44a927fc96a9dd3ad2f7515",
+                "reference": "a66c3d8a939a629ba44a927fc96a9dd3ad2f7515",
                 "shasum": ""
             },
             "type": "library",
@@ -1321,7 +1321,7 @@
             ],
             "description": "lessphp is a compiler for LESS written in PHP.",
             "homepage": "http://leafo.net/lessphp/",
-            "time": "2013-08-07 16:58:08"
+            "time": "2013-08-08 04:43:41"
         },
         {
             "name": "monolog/monolog",
@@ -1391,12 +1391,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alchemy-fr/PHP-FFmpeg.git",
-                "reference": "21a7d990aab8f056ac755fb9fe49c37d09a8b55e"
+                "reference": "28b373e24e5c90e204a5aed98b7bc9d7920a56e2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alchemy-fr/PHP-FFmpeg/zipball/21a7d990aab8f056ac755fb9fe49c37d09a8b55e",
-                "reference": "21a7d990aab8f056ac755fb9fe49c37d09a8b55e",
+                "url": "https://api.github.com/repos/alchemy-fr/PHP-FFmpeg/zipball/28b373e24e5c90e204a5aed98b7bc9d7920a56e2",
+                "reference": "28b373e24e5c90e204a5aed98b7bc9d7920a56e2",
                 "shasum": ""
             },
             "require": {
@@ -1451,7 +1451,7 @@
                 "video",
                 "video processing"
             ],
-            "time": "2013-08-06 14:41:17"
+            "time": "2013-08-08 10:16:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -1489,7 +1489,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],

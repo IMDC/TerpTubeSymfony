@@ -20,8 +20,8 @@ IMDC\TerpTubeBundle\Entity\User:
                 name: profile_id
                 referencedColumnName: id
             cascade: ["all"]
-    #functions as one to many
     manyToMany:
+        #functions as one to many
         receivedMessages:
             targetEntity: Message
             joinTable:
@@ -33,4 +33,49 @@ IMDC\TerpTubeBundle\Entity\User:
                     message_id:
                         referencedColumnName: id
                         unique: true
-              
+        #functions as one to many
+        readMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_read_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+                        unique: true
+        #functions as one to many
+        archivedMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_archived_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+                        unique: true
+        #functions as one to many
+        deletedMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_deleted_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+                        unique: true
+        userGroups:
+            targetEntity: UserGroup
+            joinTable:
+                name: fos_user_group
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    userGroup_id:
+                        referencedColumnName: id

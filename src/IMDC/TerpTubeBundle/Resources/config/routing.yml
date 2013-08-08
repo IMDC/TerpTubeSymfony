@@ -58,7 +58,15 @@ imdc_message_view_all:
 imdc_message_delete:
     pattern: /deleteMessage/{messageid}
     defaults: { _controller: IMDCTerpTubeBundle:Message:deleteMessage }
-
+    requirements:
+        messageid: \d+
+        
+imdc_message_archive:
+    pattern: /archiveMessage/{messageid}
+    defaults: { _controller: IMDCTerpTubeBundle:Message:archiveMessage }
+    requirements:
+        messageid: \d+
+        
 imdc_message_view_sent_messages:
     pattern: /sentMessages
     defaults: { _controller: IMDCTerpTubeBundle:Message:viewSentMessages }
@@ -73,8 +81,11 @@ imdc_message_view_message:
     
 imdc_message_mark_as_read:
     pattern: /messageRead/{messageid}
-    defaults: { _controller: IMDCTerpTubeBundle:Message:markMessageAsRead }
+    defaults: { _controller: IMDCTerpTubeBundle:Message:isMessageRead }
     requirements:
         _method:  POST
+        messageid: \d+
 
-    
+fos_user_group:
+    resource: "@FOSUserBundle/Resources/config/routing/group.xml"
+    prefix: /group

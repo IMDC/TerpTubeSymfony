@@ -132,6 +132,8 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: IMDC\TerpTubeBundle\Entity\User
+    group:
+          group_class: IMDC\TerpTubeBundle\Entity\UserGroup
     registration:
           confirmation:
               enabled: true
@@ -143,4 +145,4 @@ fos_user:
                 
     from_email:
         address: noreply@imdc.ca
-        sender_name: Terptube IMDC bundle email
+        sender_name: Terptube IMDC

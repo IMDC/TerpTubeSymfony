@@ -10,8 +10,35 @@ class User extends BaseUser
     protected $id;
 	protected $profile;
 	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
 	protected $sentMessages;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
 	protected $receivedMessages;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $readMessages;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $archivedMessages;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $deletedMessages;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $userGroups;
 	
 	/**
 	 * @var \Doctrine\Common\Collections\Collection
@@ -23,6 +50,10 @@ class User extends BaseUser
         parent::__construct();
         $this->sentMessages     = new \Doctrine\Common\Collections\ArrayCollection();
         $this->receivedMessages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->readMessages     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->archivedMessages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->deletedMessages  = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userGroups       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->resourceFiles    = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -174,5 +205,137 @@ class User extends BaseUser
             }
         }
         return $msg_count;
+    }
+
+    /**
+     * Add archivedMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $archivedMessages
+     * @return User
+     */
+    public function addArchivedMessage(\IMDC\TerpTubeBundle\Entity\Message $archivedMessages)
+    {
+        $this->archivedMessages[] = $archivedMessages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove archivedMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $archivedMessages
+     */
+    public function removeArchivedMessage(\IMDC\TerpTubeBundle\Entity\Message $archivedMessages)
+    {
+        $this->archivedMessages->removeElement($archivedMessages);
+    }
+
+    /**
+     * Get archivedMessages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getArchivedMessages()
+    {
+        return $this->archivedMessages;
+    }
+
+    /**
+     * Add deletedMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $deletedMessages
+     * @return User
+     */
+    public function addDeletedMessage(\IMDC\TerpTubeBundle\Entity\Message $deletedMessages)
+    {
+        $this->deletedMessages[] = $deletedMessages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove deletedMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $deletedMessages
+     */
+    public function removeDeletedMessage(\IMDC\TerpTubeBundle\Entity\Message $deletedMessages)
+    {
+        $this->deletedMessages->removeElement($deletedMessages);
+    }
+
+    /**
+     * Get deletedMessages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getDeletedMessages()
+    {
+        return $this->deletedMessages;
+    }
+
+    /**
+     * Add readMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $readMessages
+     * @return User
+     */
+    public function addReadMessage(\IMDC\TerpTubeBundle\Entity\Message $readMessages)
+    {
+        $this->readMessages[] = $readMessages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove readMessages
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Message $readMessages
+     */
+    public function removeReadMessage(\IMDC\TerpTubeBundle\Entity\Message $readMessages)
+    {
+        $this->readMessages->removeElement($readMessages);
+    }
+
+    /**
+     * Get readMessages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getReadMessages()
+    {
+        return $this->readMessages;
+    }
+
+    /**
+     * Add userGroups
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $userGroups
+     * @return User
+     */
+    public function addUserGroup(\IMDC\TerpTubeBundle\Entity\UserGroup $userGroups)
+    {
+        $this->userGroups[] = $userGroups;
+    
+        return $this;
+    }
+
+    /**
+     * Remove userGroups
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $userGroups
+     */
+    public function removeUserGroup(\IMDC\TerpTubeBundle\Entity\UserGroup $userGroups)
+    {
+        $this->userGroups->removeElement($userGroups);
+    }
+
+    /**
+     * Get userGroups
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUserGroups()
+    {
+        return $this->userGroups;
     }
 }

@@ -33,6 +33,16 @@ class Media
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $owner;
+    
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
+     */
+    private $resource;
+    
+    /**
+     * @var string
+     */
+    private $title;
 
     /**
      * Get id
@@ -112,11 +122,6 @@ class Media
     {
         return $this->owner;
     }
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
-     */
-    private $resource;
-
 
     /**
      * Set resource
@@ -140,10 +145,6 @@ class Media
     {
         return $this->resource;
     }
-    /**
-     * @var string
-     */
-    private $title;
 
 
     /**

@@ -1,0 +1,17 @@
+IMDC\TerpTubeBundle\Entity\UserGroup:
+    type: entity
+    table: fos_group
+    repositoryClass: IMDC\TerpTubeBundle\Entity\UserGroupRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        dateCreated:
+            type: datetime
+    oneToOne:
+        userFounder:
+            targetEntity: User
+    lifecycleCallbacks: 
+        prePersist: [setDateCreatedToNow]
