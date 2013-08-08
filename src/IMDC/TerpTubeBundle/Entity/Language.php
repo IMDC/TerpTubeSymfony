@@ -17,6 +17,11 @@ class Language
     /**
      * @var string
      */
+    private $name;
+
+    /**
+     * @var integer
+     */
     private $type;
 
     /**
@@ -36,9 +41,32 @@ class Language
     }
 
     /**
+     * Set name
+     *
+     * @param string $name
+     * @return Language
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Set type
      *
-     * @param string $type
+     * @param integer $type
      * @return Language
      */
     public function setType($type)
@@ -51,7 +79,7 @@ class Language
     /**
      * Get type
      *
-     * @return string 
+     * @return integer 
      */
     public function getType()
     {

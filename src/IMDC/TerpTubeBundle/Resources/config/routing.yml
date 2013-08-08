@@ -22,6 +22,24 @@ imdc_terp_tube_user_profile:
 imdc_terp_tube_user_avatar_edit: 
     pattern: /profile/{userName}/edit/avatar
     defaults: { _controller: IMDCTerpTubeBundle:Profile:updateAvatar }
+
+imdc_terp_tube_user_languages_edit: 
+    pattern: /profile/{userName}/edit/languages
+    defaults: { _controller: IMDCTerpTubeBundle:Profile:updateLanguages }
+    
+imdc_terp_tube_user_language_edit: 
+    pattern: /profile/{userName}/edit/languages/{languageid}
+    defaults: { _controller: IMDCTerpTubeBundle:Profile:updateLanguage }
+    requirements:
+        languageid: \d+
+        
+imdc_terp_tube_user_language_add: 
+    pattern: /profile/{userName}/edit/languages/add
+    defaults: { _controller: IMDCTerpTubeBundle:Profile:addLanguage }
+    
+imdc_terp_tube_user_language_delete: 
+    pattern: /profile/{userName}/edit/languages/delete/{languageid}
+    defaults: { _controller: IMDCTerpTubeBundle:Profile:deleteLanguages }
     
 imdc_terp_tube_user_profile_edit:
     pattern: /profile/{userName}/edit

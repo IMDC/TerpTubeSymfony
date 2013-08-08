@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
         	new Knp\Bundle\GaufretteBundle\KnpGaufretteBundle(),
         	new Vich\UploaderBundle\VichUploaderBundle(),
+        	new Dubture\FFmpegBundle\DubtureFFmpegBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

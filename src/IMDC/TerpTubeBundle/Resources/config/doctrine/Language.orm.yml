@@ -8,9 +8,11 @@ IMDC\TerpTubeBundle\Entity\Language:
                 strategy: AUTO
                  
     fields: 
-        type:       #spoken, sign
+        name:
             type: string
-            length: 15
+            length: 50
+        type:       #spoken, sign
+            type: smallint
         proficiency:    #scale?
-            type: integer
+            type: smallint
               
