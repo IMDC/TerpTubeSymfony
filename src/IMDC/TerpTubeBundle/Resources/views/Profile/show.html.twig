@@ -41,18 +41,19 @@
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringSignLanguage.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringSignLanguage is null?'form.generic.empty'|trans: profile.interestedInMentoringSignLanguage? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringInterpreter.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringInterpreter  is null?'form.generic.empty'|trans: profile.interestedInMentoringInterpreter? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.languages.title'|trans }}:</span>
-		{% if profile.languages %}
+		{% if profile.languages and profile.languages|length >0 %}
+			<ul>
             {% for language in profile.languages %}
-            	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.name'|trans }}</span><span class="field_value"> {{ language.name |trans }}</span> <a href="{{ path('imdc_terp_tube_user_language_edit',{'userName': app.user, 'languageid': language.id}) }}">{{ 'form.profile.language.edit'|trans }}</a> </div>        
-            	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.type.title'|trans }}</span><span class="field_value"> {{ ('form.profile.language.type.'~language.type) |trans }}</span> <a href="{{ path('imdc_terp_tube_user_language_delete',{'userName': app.user, 'languageid': language.id}) }}">{{ 'form.profile.language.delete'|trans }}</a> </div>
+            <li>
+            	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.name'|trans }}</span><span class="field_value"> {{ language.name |trans }}</span> </div>        
+            	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.type.title'|trans }}</span><span class="field_value"> {{ ('form.profile.language.type.'~language.type) |trans }}</span></div>
             	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.proficiency.title'|trans }}</span><span class="field_value"> {{ ('form.profile.language.proficiency.'~language.proficiency) |trans }}</span> </div>
+            </li>
             {% endfor %}
+            </ul>
       	{% else %}
         	<span class="field_value"> {{ 'profile.show.languages.empty' |trans }}</span>
         {% endif %}
-        <div class="link edit_profile"><a href="{{ path('imdc_terp_tube_user_language_add',{'userName': app.user}) }}">{{ 'form.profile.language.add'|trans }}</a></div>
-		</div>
-		
             {% endblock fos_user_content %}
         </div>
         

@@ -20,10 +20,12 @@ class ProfileFormType extends BaseType
 		$builder->add('city', null, array('label' => 'form.profile.city', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('country', 'country', array('label' => 'form.profile.country', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('skypeName', null, array('required'=>false, 'label' => 'form.profile.skypeName', 'translation_domain' => 'IMDCTerpTubeBundle'));
+		$builder->add('languages', 'collection', array('required'=>false, 'type' => new LanguageFormType(), 'allow_add'=> true, 'allow_delete'=>true, 'options' => array('required'=>true, 'label' => ' ', 'translation_domain' => 'IMDCTerpTubeBundle')));
 		$builder->add('interestedInMentoredByMentor', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoredByMentor.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('interestedInMentoredByInterpreter', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoredByInterpreter.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('interestedInMentoringSignLanguage', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoringSignLanguage.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('interestedInMentoringInterpreter', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoredingInterpreter.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
+		$builder->add('submit', 'submit', array('label' => 'profile.edit.submit', 'translation_domain' => 'IMDCTerpTubeBundle'));
 	}
 	
 

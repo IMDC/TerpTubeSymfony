@@ -20,6 +20,7 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
                       referencedColumnName: id
                       unique: true          
             nullable: true;  
+            cascade: ["all"]
             
     oneToOne:
         avatar: #avatar to hold the picture from a resource file

@@ -108,14 +108,19 @@ form:
             title: "Birth date:"
             empty: "Not set"
             invalid: 'You entered an invalid date'
+        languages:
+            title: "Languages:"
         language:
+            edit: "Edit"
+            delete: "Delete"
+            add: "Add a language"
             title: "Language:"
             type: 
                 title: "Language Type:"
                 0: "Sign"
                 1: "Spoken"
             name: "Language Name:"
-            proficiency:
+            proficiency: #Using ILR scale: http://en.wikipedia.org/wiki/ILR_scale
                 title: "Level of proficiency:"
                 1: "Elementary proficiency"
                 2: "Limited working proficiency"
@@ -176,6 +181,7 @@ profile:
         textBio: "Bio"
         languages:
             title: "Languages"
+            empty: "No languages provided"
             
     edit:
         submit: "Update Profile"
