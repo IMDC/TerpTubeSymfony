@@ -109,7 +109,7 @@
             "authors": [
                 {
                     "name": "Florian Eckerstorfer",
-                    "email": "florian@eckerstorfer.co",
+                    "email": "florian@theroadtojoy.at",
                     "homepage": "http://florianeckerstorfer.com",
                     "role": "Developer"
                 }
@@ -167,7 +167,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -500,12 +500,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "f82149141bedbb966ae409e54f4c6fdeaaab2080"
+                "reference": "96c58334211aab5f57376f0f4f817a7fda853c4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/f82149141bedbb966ae409e54f4c6fdeaaab2080",
-                "reference": "f82149141bedbb966ae409e54f4c6fdeaaab2080",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/96c58334211aab5f57376f0f4f817a7fda853c4f",
+                "reference": "96c58334211aab5f57376f0f4f817a7fda853c4f",
                 "shasum": ""
             },
             "require": {
@@ -560,7 +560,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2013-07-31 06:42:13"
+            "time": "2013-08-09 14:47:08"
         },
         {
             "name": "gregwar/captcha",
@@ -1288,12 +1288,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafo/lessphp.git",
-                "reference": "a66c3d8a939a629ba44a927fc96a9dd3ad2f7515"
+                "reference": "v0.4.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/lessphp/zipball/a66c3d8a939a629ba44a927fc96a9dd3ad2f7515",
-                "reference": "a66c3d8a939a629ba44a927fc96a9dd3ad2f7515",
+                "url": "https://api.github.com/repos/leafo/lessphp/zipball/v0.4.0",
+                "reference": "v0.4.0",
                 "shasum": ""
             },
             "type": "library",
@@ -1321,7 +1321,7 @@
             ],
             "description": "lessphp is a compiler for LESS written in PHP.",
             "homepage": "http://leafo.net/lessphp/",
-            "time": "2013-08-08 04:43:41"
+            "time": "2013-08-09 17:09:19"
         },
         {
             "name": "monolog/monolog",

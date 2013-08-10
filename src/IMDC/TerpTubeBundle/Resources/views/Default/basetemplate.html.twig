@@ -58,9 +58,9 @@
 							{% endblock nav_ul %}
 						</ul>
 					</div><!--/.nav-collapse -->
-				</div>
-			</div>
-		</div>
+				</div> <!--  /.container-fluid -->
+			</div> <!--  /.navbar-inner -->
+		</div> <!-- /.navbar .navbar-inverse .navbar-fixed-top -->
 		{% endblock navbar_top %}
 
 		<div class="container-fluid">
@@ -69,8 +69,8 @@
     			<div class="span10">
     				{% block flashmessages %}
     				{% endblock flashmessages %}
-    			</div>
-			</div>
+    			</div><!-- /.span10 -->
+			</div><!-- /.row-fluid -->
 			{% block content %}
 			<div class="row-fluid">
 				<div class="span2">
@@ -99,9 +99,9 @@
 								<a href="#"><img src="{{ asset('img/global_nav_icon_help.png') }}" /><br />Help</a>
 							</li>
 							{% endblock sidebarlinks %}
-						</ul>
-					</div><!--/.well -->
-				</div><!--/span-->
+						</ul><!-- /.nav nav-list text-center -->
+					</div><!--/.well /.sidebar-nav -->
+				</div><!--/.span2 -->
 				{% block rightsidecontent %}
 				<div class="span10">
 					<div class="hero-unit">
@@ -153,7 +153,6 @@
 					</div><!--/row-->
 					<div class="row-fluid">
 					{% block underherounitrow2 %}
-					
 						<div class="span4">
 							<h2>Heading</h2>
 							<p>
@@ -162,7 +161,7 @@
 							<p>
 								<a class="btn" href="#">View details &raquo;</a>
 							</p>
-						</div><!--/span-->
+						</div><!--/.span4-->
 						<div class="span4">
 							<h2>Heading</h2>
 							<p>
@@ -171,7 +170,7 @@
 							<p>
 								<a class="btn" href="#">View details &raquo;</a>
 							</p>
-						</div><!--/span-->
+						</div><!--/.span4-->
 						<div class="span4">
 							<h2>Heading</h2>
 							<p>
@@ -180,14 +179,12 @@
 							<p>
 								<a class="btn" href="#">View details &raquo;</a>
 							</p>
-						</div><!--/span-->
-					
+						</div><!--/.span4-->
 					{% endblock underherounitrow2 %}
-					</div><!--/row-->
-				</div><!--/span-->
+					</div><!--/.row-fluid -->
+				</div><!--/.span10 -->
 				{% endblock rightsidecontent %}
-			</div><!--/row-->
-
+			</div><!--/.row-fluid -->
 			<hr>
 			{% block footer %}
 			<footer>
@@ -196,9 +193,8 @@
 				</p>
 			</footer>
 			{% endblock footer %}
-
 			{% endblock content %}
-		</div><!--/.fluid-container-->
+		</div><!--/.container-fluid -->
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script>
