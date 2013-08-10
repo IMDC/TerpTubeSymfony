@@ -177,7 +177,7 @@ profile:
         interestedInMentoringSignLanguage:
             title: "Interested in being a Sign language mentor"
         interestedInMentoringInterpreter:
-            title: "Interested in being Sign language interpreter mentor"
+            title: "Interested in being a Sign language interpreter mentor"
         textBio: "Bio"
         languages:
             title: "Languages"

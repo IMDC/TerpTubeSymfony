@@ -14,9 +14,6 @@
 		<!--[if lt IE 9]>
 		<script src="../assets/js/html5shiv.js"></script>
 		<![endif]-->
-		<script>
-			window.jQuery || document.write('<script src="{{ asset('js/jquery.js') }}"><\/script>')
-		</script>
 		</head>
 		{% block navbar_top %}
 		<div class="navbar navbar-inverse navbar-fixed-top">
@@ -204,6 +201,9 @@
 		</div><!--/.fluid-container-->
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script>
+			window.jQuery || document.write('<script src="{{ asset('js/jquery.js') }}"><\/script>')
+		</script>
 		{% block javascripts %}
 		    <script src="{{ asset('bundles/imdcterptube/js/main.js') }}"></script>
 		{% endblock javascripts %}

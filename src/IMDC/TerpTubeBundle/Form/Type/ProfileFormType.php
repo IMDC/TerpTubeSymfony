@@ -25,7 +25,6 @@ class ProfileFormType extends BaseType
 		$builder->add('interestedInMentoredByInterpreter', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoredByInterpreter.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('interestedInMentoringSignLanguage', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoringSignLanguage.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('interestedInMentoringInterpreter', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoredingInterpreter.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
-		$builder->add('submit', 'submit', array('label' => 'profile.edit.submit', 'translation_domain' => 'IMDCTerpTubeBundle'));
 	}
 	
 

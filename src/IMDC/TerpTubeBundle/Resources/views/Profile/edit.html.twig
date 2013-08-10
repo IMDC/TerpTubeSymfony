@@ -29,7 +29,7 @@
 	{{ form_label(form.languages) }}
 	{{ form_errors(form.languages) }}
 	<div class="languages">
-	<ul id="foss_user_profile_form_languages" data-prototype="{{ form_widget(form.languages.vars.prototype) | e }}">
+	<ul id="foss_user_profile_form_languages" data-delete-language-text='{{ "form.profile.language.delete"|trans }}' data-no-languages-text="{{ 'profile.show.languages.empty' |trans }}" data-prototype="{{ form_widget(form.languages.vars.prototype) | e }}">
 	{% if form.languages and form.languages|length > 0 %}
 		{% for language in form.languages %}
 	   	 	<li>
@@ -49,51 +49,23 @@
     {{ form_row(form.interestedInMentoringSignLanguage) }}
     {{ form_row(form.interestedInMentoringInterpreter) }}
     {{ form_row (form._token) }}
-    {{ form_row(form.submit) }}
+    <input type="submit" value="{{ 'profile.edit.submit'|trans }}" />
+    <input type="button" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile') }}'" />
 {{ form_end(form, {'render_rest': false}) }}
-<script type="text/javascript">
-    // keep track of how many language fields have been rendered
-    var languageCount = '{{ form.languages | length }}';
+{% endblock underherounitrow1 %}
 
-    $(document).ready(function() {
+{% block javascripts %}
+    {{ parent() }}
+    <script type='text/javascript'>
+ // keep track of how many language fields have been rendered and set up the text for the links
+   $(document).ready(function() {
         $('#add-another-language').click(function(e) {
-        	e.preventDefault();
-        	$('#no-languages').remove();
-            var languageList = $('#foss_user_profile_form_languages');
-
-            // grab the prototype template
-            var newWidget = languageList.attr('data-prototype');
-            // replace the "__name__" used in the id and name of the prototype
-            // with a number that's unique to your emails
-            // end name attribute looks like name="contact[emails][2]"
-            deleteButton = $('<a href="#" class="delete-language"></a>').html('{{ "form.profile.language.delete"|trans }}');
-            $(deleteButton).click(function(e){
-            	return deleteLanguage($(this));
-                });
-            newWidget = newWidget.replace(/__name__/g,languageCount);
-            languageCount++;
-
-            // create a new list element and add it to the list
-            var newLi = $('<li></li>').html(newWidget);
-            newLi.appendTo($('#foss_user_profile_form_languages'));
-			deleteButton.appendTo($(newLi));
-            return false;
+        	return addLanguage($(this));
         });
         $('.delete-language').click(function(e) {
         	return deleteLanguage($(this));
         });
     });
-	function deleteLanguage (currentElement)
-	{
-		console.log($(currentElement));
-	    $(currentElement).parent().remove();
-	    console.log($('#foss_user_profile_form_languages > li').length);
-	    if ($('#foss_user_profile_form_languages > li').length == 0)
-	    {
-	    	var noLanguages= $('<span id="no-languages"></span>').html("{{ 'profile.show.languages.empty' |trans }}");
-			noLanguages.appendTo($('#foss_user_profile_form_languages'));
-	    }
-	    return false;
-	}
-</script>
-{% endblock underherounitrow1 %}
+    </script>
+    <script src="{{ asset('bundles/imdcterptube/js/profileEdit.js') }}"></script>
+{% endblock javascripts %}
