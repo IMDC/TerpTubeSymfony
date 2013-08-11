@@ -13,9 +13,9 @@ table.messagetable th {
 	background: #999;
 }
 
-table.messagetable tr:nth-child(odd) {
+/* table.messagetable tr:nth-child(odd) {
   background-color: #ddffdd;
-}
+} */
 
 table.pmtable {
 	

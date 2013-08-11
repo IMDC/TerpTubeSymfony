@@ -41,6 +41,13 @@ services:
                 - { name: kernel.event_listener, event: %imdc_terptube.event.uploadEvent%, method: onUpload}
                 - { name: 'monolog.logger', channel: 'imdc' }
      
+     imdc_terptube.new_user_intro_email_listener:
+            class: IMDC\TerpTubeBundle\EventListener\NewUserRegistrationListener
+            arguments: ["@logger", @doctrine]
+            tags:
+                - { name: kernel.event_subscriber }
+                - { name: 'monolog.logger', channel: 'imdc' }
+     
      # enable the truncate extension in twig
      twig.extension.text:
           class: Twig_Extensions_Extension_Text
