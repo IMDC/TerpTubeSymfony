@@ -47,6 +47,13 @@ services:
             tags:
                 - { name: kernel.event_subscriber }
                 - { name: 'monolog.logger', channel: 'imdc' }
+                
+     imdc_terptube.new_group_founder_listener:
+            class: IMDC\TerpTubeBundle\EventListener\GroupListener
+            arguments: ["@logger", @doctrine, @router, @security.context]
+            tags:
+                - { name: kernel.event_subscriber }
+                - { name: 'monolog.logger', channel: 'imdc' }
      
      # enable the truncate extension in twig
      twig.extension.text:

@@ -11,6 +11,14 @@ use IMDC\TerpTubeBundle\Entity\User;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 
+/**
+ * Listener for the 'completed' event of user registration.
+ * Creates an introduction message so the user finds a message
+ * in their inbox upon first login
+ * 
+ * @author paul
+ *
+ */
 class NewUserRegistrationListener implements EventSubscriberInterface
 {
 	private $logger;

@@ -10,8 +10,11 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
                 strategy: AUTO
         dateCreated:
             type: datetime
-    oneToOne:
+    manyToOne:
         userFounder:
             targetEntity: User
+            joinColumn:
+                name: userFounder_id
+                referencedColumnName: id
     lifecycleCallbacks: 
         prePersist: [setDateCreatedToNow]
