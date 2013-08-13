@@ -161,10 +161,10 @@ class User extends BaseUser
     /**
      * Add resourceFiles
      *
-     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles
+     * @param \IMDC\TerpTubeBundle\Entity\Media $resourceFiles
      * @return User
      */
-    public function addResourceFile(\IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles)
+    public function addResourceFile(\IMDC\TerpTubeBundle\Entity\Media $resourceFiles)
     {
         $this->resourceFiles[] = $resourceFiles;
     
@@ -174,9 +174,9 @@ class User extends BaseUser
     /**
      * Remove resourceFiles
      *
-     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles
+     * @param \IMDC\TerpTubeBundle\Entity\Media $resourceFiles
      */
-    public function removeResourceFile(\IMDC\TerpTubeBundle\Entity\ResourceFile $resourceFiles)
+    public function removeResourceFile(\IMDC\TerpTubeBundle\Entity\Media $resourceFiles)
     {
         $this->resourceFiles->removeElement($resourceFiles);
     }

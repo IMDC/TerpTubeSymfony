@@ -14,6 +14,7 @@ class Media
 	const TYPE_IMAGE = 0;
 	const TYPE_VIDEO = 1;
 	const TYPE_AUDIO = 2;
+	const TYPE_OTHER = 9;
     /**
      * @var integer
      */

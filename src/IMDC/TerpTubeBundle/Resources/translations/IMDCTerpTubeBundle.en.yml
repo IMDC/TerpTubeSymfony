@@ -81,6 +81,8 @@ resetting:
             Regards,
             the Team.
 
+nav:
+    my_files: "My Files" 
 # Global strings
 layout:
     logout: Logout
@@ -89,6 +91,17 @@ layout:
     logged_in_as: Logged in as %username%
     user_inbox: Inbox
 
+myFilesGateway:
+    title: "My Files"
+    
+addGateway:
+    title: "Select a file"
+    buttons:
+        audio: "Upload Audio file"
+        video: "Upload Video file"
+        image: "Upload Image file"
+        other: "Upload Other file"
+        record: "Record a video"
 # Form field labels
 form:
     group_name: "Group name:"
@@ -99,6 +112,10 @@ form:
     password_confirmation: "Verification:"
     new_password: "New password:"
     new_password_confirmation: "Verification:"
+    
+    media:
+        upload: "Upload"
+        record: "Record"
     
     profile:
         firstName: "First name:"
@@ -153,6 +170,8 @@ form:
         1: 'Yes'
         0: 'No'
         null: 'Not set'
+        cancel: "Cancel"
+        submit: "Submit"
     
 profile:
     show:

@@ -23,29 +23,39 @@ imdc_terp_tube_user_avatar_edit:
     pattern: /profile/{userName}/edit/avatar
     defaults: { _controller: IMDCTerpTubeBundle:Profile:updateAvatar }
 
-imdc_terp_tube_user_languages_edit: 
-    pattern: /profile/{userName}/edit/languages
-    defaults: { _controller: IMDCTerpTubeBundle:Profile:updateLanguages }
-    
-imdc_terp_tube_user_language_edit: 
-    pattern: /profile/{userName}/edit/languages/{languageid}
-    defaults: { _controller: IMDCTerpTubeBundle:Profile:updateLanguage }
-    requirements:
-        languageid: \d+
-        
-imdc_terp_tube_user_language_add: 
-    pattern: /profile/{userName}/edit/languages/add
-    defaults: { _controller: IMDCTerpTubeBundle:Profile:addLanguage }
-    
-imdc_terp_tube_user_language_delete: 
-    pattern: /profile/{userName}/edit/languages/delete/{languageid}
-    defaults: { _controller: IMDCTerpTubeBundle:Profile:deleteLanguages }
-    
 imdc_terp_tube_user_profile_edit:
     pattern: /profile/{userName}/edit
     defaults: { _controller: IMDCTerpTubeBundle:Profile:edit }
     
 
+imdc_files_gateway: 
+    pattern: /myFiles
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:gateway }
+    
+imdc_files_add_gateway: 
+    pattern: /myFiles/add
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:gateway, isAjax: false, url: 'imdc_terp_tube_user_profile' }
+    
+imdc_files_gateway_audio: 
+    pattern: /myFiles/add/audio
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addAudio, isAjax: false, url: 'imdc_terp_tube_user_profile' }
+    
+imdc_files_gateway_video: 
+    pattern: /myFiles/add/video
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addVideo, isAjax: false, url: imdc_terp_tube_user_profile }
+    
+imdc_files_gateway_image: 
+    pattern: /myFiles/add/image
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addImage, isAjax: false, url: imdc_terp_tube_user_profile }
+    
+imdc_files_gateway_record: 
+    pattern: /myFiles/add/record
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, isAjax: false, url: imdc_terp_tube_user_profile }
+
+imdc_files_gateway_other: 
+    pattern: /myFiles/add/other
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addOther, isAjax: false, url: imdc_terp_tube_user_profile }
+    
 
 imdc_message_create:
     pattern: /createMessage

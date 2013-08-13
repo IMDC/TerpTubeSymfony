@@ -1,3 +1,4 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
 <!DOCTYPE html>
 <html>
 	<head>
@@ -56,6 +57,13 @@
 								<a href="#contact">Contact</a>
 							</li>
 							{% endblock nav_ul %}
+							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+								{% block nav_ul_authenticated %}
+									<li>
+										<a href="{{ path('imdc_files_gateway') }}">{{ 'nav.my_files'|trans }}</a>
+									</li>
+								{% endblock nav_ul_authenticated %}
+						 	{% endif %}
 						</ul>
 					</div><!--/.nav-collapse -->
 				</div> <!--  /.container-fluid -->
@@ -67,8 +75,6 @@
 		    <div class="row-fluid">
 		        <div class="span2">&nbsp;</div>
     			<div class="span10">
-    				{% block flashmessages %}
-    				{% endblock flashmessages %}
     			</div><!-- /.span10 -->
 			</div><!-- /.row-fluid -->
 			{% block content %}
@@ -104,6 +110,12 @@
 				</div><!--/.span2 -->
 				{% block rightsidecontent %}
 				<div class="span10">
+					<div class="row-fluid">
+						<div class="span4">
+						{% block flashmessages %}
+	    				{% endblock flashmessages %}
+	    				</div>
+    				</div>
 					<div class="hero-unit">
 						{% block herounit %}
 						<h1>Hello, world!</h1>
@@ -186,13 +198,14 @@
 				{% endblock rightsidecontent %}
 			</div><!--/.row-fluid -->
 			<hr>
-			{% block footer %}
 			<footer>
+			{% block footer %}
 				<p>
 					&copy; IMDC, EKU 2013
 				</p>
-			</footer>
 			{% endblock footer %}
+			</footer>
+			
 			{% endblock content %}
 		</div><!--/.container-fluid -->
 

@@ -1,0 +1,16 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+{% block herounit %}
+<h1>{{ 'addGateway.title'|trans }}</h1>
+{% endblock herounit %}
+
+{% block underherounitrow1 %}
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div>
+        <input type="submit" value="{{ 'form.media.upload'|trans }}" />
+        <input type="button" value="{{ 'form.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile') }}'" />
+    </div>
+{{ form_end(form) }}
+
+{% endblock underherounitrow1 %}

@@ -29,7 +29,6 @@ class UploadListener
 		//TODO look into resizing images
 		$media = $event->getMedia();
 		$mediaType = $media->getType();
-		
 		//$ffmpeg = FFMpeg::create();
 
 		$metaData = new MetaData();

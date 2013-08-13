@@ -1,6 +1,8 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
+    - { resource: @IMDCTerpTubeBundle/Resources/config/constants/Events.xml }
+    - { resource: @IMDCTerpTubeBundle/Resources/config/constants/Filters.xml }
 
 framework:
     #esi:             ~
