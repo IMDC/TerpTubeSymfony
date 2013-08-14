@@ -43,7 +43,7 @@ services:
      
      imdc_terptube.new_user_intro_email_listener:
             class: IMDC\TerpTubeBundle\EventListener\NewUserRegistrationListener
-            arguments: ["@logger", @doctrine]
+            arguments: ["@logger", @doctrine, @fos_user.user_manager]
             tags:
                 - { name: kernel.event_subscriber }
                 - { name: 'monolog.logger', channel: 'imdc' }
@@ -54,10 +54,6 @@ services:
             tags:
                 - { name: kernel.event_subscriber }
                 - { name: 'monolog.logger', channel: 'imdc' }
-    
-     imdc_admin_create_once:
-            class: IMDC\TerpTubeBundle\Entity\UserRepository
-            arguments: [fos_user.user_manager]
      
      # enable the truncate extension in twig
      twig.extension.text:

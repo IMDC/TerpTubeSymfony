@@ -18,11 +18,15 @@ class DefaultController extends Controller
     public function indexAction()
     {
         //return $this->render('IMDCTerpTubeBundle:Default:index.html.twig', array('name' => $name));
-        // return $this->render('<html><body>Hello world</body></html>');
         return $this->render('IMDCTerpTubeBundle:Default:index.html.twig');
-        // return array();
     }
     
+    /**
+     * Creates a new user in the database using the FOSUserBundle usermanager
+     * The user has a username of 'noreply' and using a native SQL query, an ID of 0
+     * 
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function createNoReplyOnceAction() 
     {
         // check if user logged in
@@ -37,7 +41,7 @@ class DefaultController extends Controller
         }
         
         $em = $this->getDoctrine()->getManager();
-        $userManager = $this->get('fos_user.user_manager');
+        $userManager = $this->container->get('fos_user.user_manager');
         
         $user = $userManager->createUser();
         $randnum = rand(0, 10000);
@@ -83,10 +87,6 @@ class DefaultController extends Controller
                     'error',
                     'SQL error');
         }
-
         return $this->render('IMDCTerpTubeBundle:Default:index.html.twig');
-
     }
-        
-        
 }

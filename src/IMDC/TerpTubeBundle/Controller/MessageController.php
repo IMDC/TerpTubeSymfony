@@ -246,6 +246,7 @@ class MessageController extends Controller
         
         //$message->addUsersArchived($user);
         $user->addArchivedMessage($message);
+        $user->removeReceivedMessage($message);
        
         //$em->persist($message);
         $em->persist($user);

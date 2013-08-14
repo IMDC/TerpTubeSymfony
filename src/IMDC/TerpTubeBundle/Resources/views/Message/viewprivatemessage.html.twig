@@ -17,6 +17,12 @@
     <a id="messageRead" data-mid="{{ message.id }}" href="{{  path('imdc_message_mark_as_read',{'messageid': message.id}) }}" style="display:none;"></a>
     <div id="readOutput"></div>
     <a href="{{ path('imdc_message_view_all') }}">Back to inbox</a>
+    <div class="pull-right">
+        <ul class="unstyled inline">
+            <li><a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove-sign"></i>Delete</a></li>
+            <li><a href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-time"></i>Archive</a></li>
+        </ul>
+    </div>
     <div class="message-info-wrap">
         <div class="row-fluid message-info-header">
             <div class="span1">
@@ -31,7 +37,11 @@
                 From:
             </div>
             <div class="span9">
-                <a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName' : app.user }) }}">{{ message.owner }}</a>
+                {% if message.owner=='noreply' %}
+                {{ message.owner }}
+                {% else %}
+                <a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName' : message.owner }) }}">{{ message.owner }}</a>
+                {% endif %}
             </div>
         </div>
         <div class="row-fluid message-info-header">

@@ -15,7 +15,7 @@ Message Archive
         {% endfor %}
     {% endif %}
     {{ include('IMDCTerpTubeBundle:Message:inboxlist.html.twig') }}
-    <h2>Sent Messages</h2>
+    <h2>Archived Messages</h2>
     <div class="row-fluid">
         <div class="span3">
             <a href="{{ path('imdc_message_create') }}">Create new message</a>
@@ -30,9 +30,11 @@ Message Archive
                     <tr>
                         <td>
                             <div class="message-recipient-wrap">
+                                <ul class="unstyled inline">
                                 {% for recpt in message.recipients %}
-                                    <a href="#">{{ recpt }} </a> 
+                                    <li><a href="#">{{ recpt }} </a></li> 
                                 {% endfor %}
+                                </ul>
                             </div>
                         </td>
                         <td>{{ message.subject }}</td>

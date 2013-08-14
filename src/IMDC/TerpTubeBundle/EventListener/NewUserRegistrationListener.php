@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use IMDC\TerpTubeBundle\Entity\User;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
+use FOS\UserBundle\Doctrine\UserManager;
 
 /**
  * Listener for the 'completed' event of user registration.
@@ -23,11 +24,13 @@ class NewUserRegistrationListener implements EventSubscriberInterface
 {
 	private $logger;
 	private $doctrine;
+	private $userManager;
 	
-	public function __construct($logger, $doctrine)
+	public function __construct($logger, $doctrine, $usermanager)
 	{
 		$this->logger   = $logger;
 		$this->doctrine = $doctrine;
+		$this->userManager = $usermanager;
 	}
 	
 	/**
@@ -45,12 +48,13 @@ class NewUserRegistrationListener implements EventSubscriberInterface
     	$this->logger->info('I am inside generateIntroductionEmail');
     	$em = $this->doctrine->getManager();
     	$user = $event->getUser();
-    	    	
+    	$fromuser = $this->userManager->findUserByUsername('noreply');
     	$message = new Message;
     	$message->addRecipient($user);
     	// todo: set the owner of this email to the admin of the website
     	// todo: create a user with id=0 that can be the admin of the website
-    	$message->setOwner($user);
+
+    	$message->setOwner($fromuser);
     	$message->setSubject('Welcome to TerpTube');
     	$message->setContent('Hi ' . $user->getProfile()->getFirstName() . 
     							"\n\nWelcome to Terptube, we are glad to have you!".
