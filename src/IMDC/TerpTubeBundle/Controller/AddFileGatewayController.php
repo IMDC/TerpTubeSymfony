@@ -116,7 +116,7 @@ class AddFileGatewayController extends Controller
 				$uploadedEvent = new UploadEvent($audioMedia);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 		
-				$uploadedEvent->getResponse();
+// 				$uploadedEvent->getResponse();
 				if ($isAjax)
 				{
 					$response = $audioMedia->getId();
