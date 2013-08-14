@@ -50,8 +50,11 @@ class GroupListener implements EventSubscriberInterface
         
         $group->setUserFounder($user);
         
+        $user->addUserGroup($group);
+        
         $em = $this->doctrine->getManager();
         $em->persist($group);
+        $em->persist($user);
         $em->flush();
         
         $url = $this->router->generate('fos_user_group_list');

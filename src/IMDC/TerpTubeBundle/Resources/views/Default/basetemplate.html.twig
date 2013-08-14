@@ -110,12 +110,19 @@
 				</div><!--/.span2 -->
 				{% block rightsidecontent %}
 				<div class="span10">
-					<div class="row-fluid">
-						<div class="span4">
-						{% block flashmessages %}
-	    				{% endblock flashmessages %}
-	    				</div>
-    				</div>
+				    {% block flashmessages %}
+				    {% for type, messages in app.session.flashbag.all() %}
+				    <div class="row-fluid">
+				        <div class="span9">
+                		{% for key, message in messages %}
+                       		<div class="flash-{{ type }} text-info">
+                            	{{ message|trans }}
+                            </div>
+                      	{% endfor %}
+                      	</div>
+                  	</div>
+                   	{% endfor %}
+    				{% endblock flashmessages %}
 					<div class="hero-unit">
 						{% block herounit %}
 						<h1>Hello, world!</h1>

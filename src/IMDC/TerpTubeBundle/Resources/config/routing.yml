@@ -99,3 +99,7 @@ imdc_message_mark_as_read:
 fos_user_group:
     resource: "@FOSUserBundle/Resources/config/routing/group.xml"
     prefix: /group
+    
+imdc_initial_noreply_user_create:
+    pattern: /createNoReplyOnce
+    defaults: { _controller: IMDCTerpTubeBundle:Default:createNoReplyOnce }

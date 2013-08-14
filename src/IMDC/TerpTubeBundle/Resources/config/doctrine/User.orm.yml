@@ -1,6 +1,7 @@
 IMDC\TerpTubeBundle\Entity\User:
     type:  entity
     table: fos_user
+    repositoryClass: IMDC\TerpTubeBundle\Entity\UserRepository
     id:
         id:
             type: integer

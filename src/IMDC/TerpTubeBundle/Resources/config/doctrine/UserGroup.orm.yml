@@ -1,7 +1,6 @@
 IMDC\TerpTubeBundle\Entity\UserGroup:
     type: entity
     table: fos_group
-    repositoryClass: IMDC\TerpTubeBundle\Entity\UserGroupRepository
     fields:
         id:
             type: integer

@@ -54,6 +54,10 @@ services:
             tags:
                 - { name: kernel.event_subscriber }
                 - { name: 'monolog.logger', channel: 'imdc' }
+    
+     imdc_admin_create_once:
+            class: IMDC\TerpTubeBundle\Entity\UserRepository
+            arguments: [fos_user.user_manager]
      
      # enable the truncate extension in twig
      twig.extension.text:
