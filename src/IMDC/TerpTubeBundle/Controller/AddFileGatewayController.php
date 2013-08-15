@@ -123,7 +123,14 @@ class AddFileGatewayController extends Controller
 				}
 				else
 				{
-					$response = new RedirectResponse($url);
+				if ($url === null)
+					{
+						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
+					}
+					else
+					{
+						$response = new RedirectResponse($url);
+					}
 				}
 				return $response;
 			}
@@ -181,7 +188,14 @@ class AddFileGatewayController extends Controller
 				}
 				else
 				{
-					$response = new RedirectResponse($url);
+				if ($url === null)
+					{
+						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
+					}
+					else
+					{
+						$response = new RedirectResponse($url);
+					}
 				}
 				return $response;
 			}
@@ -239,7 +253,14 @@ class AddFileGatewayController extends Controller
 				}
 				else
 				{
-					$response = new RedirectResponse($url);
+				if ($url === null)
+					{
+						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
+					}
+					else
+					{
+						$response = new RedirectResponse($url);
+					}
 				}
 				return $response;
 			}
@@ -300,7 +321,14 @@ class AddFileGatewayController extends Controller
 				}
 				else
 				{
-					$response = new RedirectResponse($url);
+				if ($url === null)
+					{
+						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
+					}
+					else
+					{
+						$response = new RedirectResponse($url);
+					}
 				}
 				return $response;
 			}
@@ -358,7 +386,14 @@ class AddFileGatewayController extends Controller
 				}
 				else
 				{
-					$response = new RedirectResponse($url);
+					if ($url === null)
+					{
+						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
+					}
+					else
+					{
+						$response = new RedirectResponse($url);
+					}
 				}
 				return $response;
 			}

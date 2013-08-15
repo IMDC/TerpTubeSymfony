@@ -34,31 +34,31 @@ imdc_files_gateway:
     
 imdc_files_add_gateway: 
     pattern: /myFiles/add
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:gateway, isAjax: false, url: 'imdc_terp_tube_user_profile' }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:gateway, isAjax: false, url: null }
     
 imdc_files_gateway_audio: 
     pattern: /myFiles/add/audio
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addAudio, isAjax: false, url: 'imdc_terp_tube_user_profile' }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addAudio, isAjax: false, url: null }
     
 imdc_files_gateway_video: 
     pattern: /myFiles/add/video
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addVideo, isAjax: false, url: imdc_terp_tube_user_profile }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addVideo, isAjax: false, url: null }
     
 imdc_files_gateway_image: 
     pattern: /myFiles/add/image
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addImage, isAjax: false, url: imdc_terp_tube_user_profile }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addImage, isAjax: false, url: null }
     
 imdc_files_gateway_record: 
     pattern: /myFiles/add/record
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, isAjax: false, url: imdc_terp_tube_user_profile }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, isAjax: false, url: null }
 
 imdc_files_gateway_other: 
     pattern: /myFiles/add/other
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addOther, isAjax: false, url: imdc_terp_tube_user_profile }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addOther, isAjax: false, url: null }
 
 imdc_files_gateway_remove: 
      pattern: /myFiles/delete/{mediaId}
-     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:deleteMedia, url: imdc_files_add_gateway }
+     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:deleteMedia, url: null }
 
 imdc_message_create:
     pattern: /createMessage
