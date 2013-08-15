@@ -106,6 +106,7 @@ filesGateway:
         1: "Video"
         2: "Audio"
         9: "Other"
+    noFiles: "You have not added any files yet. Use the above buttons to add files."
 # Form field labels
 form:
     group_name: "Group name:"
@@ -179,8 +180,6 @@ form:
         cancel: "Cancel"
         submit: "Submit"
     
-myFiles:
-        noFiles: "You have not added any files yet. Use the above buttons to add files."
 profile:
     show:
         userName:   "User name"

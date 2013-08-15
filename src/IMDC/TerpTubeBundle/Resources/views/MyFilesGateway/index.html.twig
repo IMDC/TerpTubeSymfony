@@ -23,6 +23,7 @@
                 <tr><th><i class="icon-wrench"></i> Tools</th><th>Name</th><th>Type</th><th>Created</th><th>Size</th></tr>
 				{%  if resourceFiles and resourceFiles|length >0 %}
 						{% for resourceFile in resourceFiles %}
+                   	<tr>
                         <td>
                             <a href="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-remove-sign"></i>Delete</a>
                         </td>
