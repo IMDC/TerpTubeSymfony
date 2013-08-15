@@ -2,22 +2,44 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 {% block title %}My Files{% endblock title %}
 {% block herounit %}
-<h1>{{ 'myFilesGateway.title'|trans }}</h1>
+<h1>{{ 'filesGateway.title'|trans }}</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-    <div>
-        <input type="button" class="btn btn-primary" value="{{ 'addGateway.buttons.audio'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_audio') }}'" />
-        <input type="button" class="btn btn-primary" value="{{ 'addGateway.buttons.video'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_video') }}'" />
-        <input type="button" class="btn btn-primary" value="{{ 'addGateway.buttons.image'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_image') }}'" />
-        <input type="button" class="btn btn-primary" value="{{ 'addGateway.buttons.record'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_record') }}'" />
-        <input type="button" class="btn btn-primary" value="{{ 'addGateway.buttons.other'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_other') }}'" />
+    <div class="row-fluid">
+        <input type="button" class="btn btn-primary" value="{{ 'filesGateway.buttons.audio'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_audio') }}'" />
+        <input type="button" class="btn btn-primary" value="{{ 'filesGateway.buttons.video'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_video') }}'" />
+        <input type="button" class="btn btn-primary" value="{{ 'filesGateway.buttons.image'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_image') }}'" />
+        <input type="button" class="btn btn-primary" value="{{ 'filesGateway.buttons.record'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_record') }}'" />
+        <input type="button" class="btn btn-primary" value="{{ 'filesGateway.buttons.other'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_other') }}'" />
     </div>
 
 {% endblock underherounitrow1 %}
 
 {% block underherounitrow2 %}
-<div>
-	Your files will show up here!
-</div>
+<div class="row-fluid">
+	<div class="span-9">
+            <table class="table table-condensed table-hover table-striped pmtable">
+                <tr><th><i class="icon-wrench"></i> Tools</th><th>Name</th><th>Type</th><th>Created</th><th>Size</th></tr>
+				{%  if resourceFiles and resourceFiles|length >0 %}
+						{% for resourceFile in resourceFiles %}
+                        <td>
+                            <a href="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-remove-sign"></i>Delete</a>
+                        </td>
+                        <td>
+                        	{{ resourceFile.title }}
+                        </td>
+                        <td>
+                        	{{ ('filesGateway.type.'~resourceFile.type)|trans }}
+                        </td>
+                        <td>{{ resourceFile.getMetaData.getTimeUploaded|date('g:ia M j') }}</td>
+                        <td>{{ '%.2f' |format(resourceFile.getMetaData.getSize / 1024 /1024)  }}MB</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>{{  'filesGateway.noFiles'|trans }}</tr>
+                {% endif %}
+            </table>
+	
+	</div>
 {% endblock underherounitrow2 %}

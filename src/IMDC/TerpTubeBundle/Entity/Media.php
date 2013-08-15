@@ -15,6 +15,11 @@ class Media
 	const TYPE_VIDEO = 1;
 	const TYPE_AUDIO = 2;
 	const TYPE_OTHER = 9;
+	
+	const READY_NO = 0;
+	const READY_WEBM = 1;
+	const READY_MPEG = 2;
+	const READY_YES = 3;
     /**
      * @var integer
      */
@@ -169,5 +174,33 @@ class Media
     public function getTitle()
     {
         return $this->title;
+    }
+    /**
+     * @var integer
+     */
+    private $isReady = 0;
+
+
+    /**
+     * Set isReady
+     *
+     * @param integer $isReady
+     * @return Media
+     */
+    public function setIsReady($isReady)
+    {
+        $this->isReady = $isReady;
+    
+        return $this;
+    }
+
+    /**
+     * Get isReady
+     *
+     * @return integer 
+     */
+    public function getIsReady()
+    {
+        return $this->isReady;
     }
 }

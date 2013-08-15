@@ -106,6 +106,7 @@ class ProfileController extends BaseController
 		$profile = $userObject->getProfile();
 
 		$avatar = new Media();
+		$avatar->setTitle($this->container->get('translator')->trans('profile.show.avatar', array(), 'IMDCTerpTubeBundle'));
 
 		$formFactory = $this->container->get('form.factory');
 

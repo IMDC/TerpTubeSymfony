@@ -243,4 +243,60 @@ class ResourceFile
     {
         return $this->media;
     }
+    /**
+     * @var string
+     */
+    private $webmExtension;
+
+    /**
+     * @var string
+     */
+    private $mpegExtension;
+
+
+    /**
+     * Set webmExtension
+     *
+     * @param string $webmExtension
+     * @return ResourceFile
+     */
+    public function setWebmExtension($webmExtension)
+    {
+        $this->webmExtension = $webmExtension;
+    
+        return $this;
+    }
+
+    /**
+     * Get webmExtension
+     *
+     * @return string 
+     */
+    public function getWebmExtension()
+    {
+        return $this->webmExtension;
+    }
+
+    /**
+     * Set mpegExtension
+     *
+     * @param string $mpegExtension
+     * @return ResourceFile
+     */
+    public function setMpegExtension($mpegExtension)
+    {
+        $this->mpegExtension = $mpegExtension;
+    
+        return $this;
+    }
+
+    /**
+     * Get mpegExtension
+     *
+     * @return string 
+     */
+    public function getMpegExtension()
+    {
+        return $this->mpegExtension;
+    }
 }

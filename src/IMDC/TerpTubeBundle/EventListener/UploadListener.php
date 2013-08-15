@@ -35,6 +35,7 @@ class UploadListener
 		$fileSize = filesize($media->getResource()->getAbsolutePath());
 		
 		$metaData->setSize($fileSize);
+		$metaData->setTimeUploaded(new \DateTime('now'));
 		//Transcode the different types and populate the metadata for the proper type
 		if ($mediaType == Media::TYPE_AUDIO)
 		{
@@ -51,6 +52,7 @@ class UploadListener
 			$imageSize = getimagesize($media->getResource()->getAbsolutePath());
 			$metaData->setWidth($imageSize[0]);
 			$metaData->setHeight($imageSize[1]);
+			$media->setIsReady(Media::READY_YES);
 		}
 		else
 		{

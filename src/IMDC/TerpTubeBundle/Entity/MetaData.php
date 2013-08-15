@@ -136,4 +136,32 @@ class MetaData
     {
         return $this->duration;
     }
+    /**
+     * @var \DateTime
+     */
+    private $timeUploaded;
+
+
+    /**
+     * Set timeUploaded
+     *
+     * @param \DateTime $timeUploaded
+     * @return MetaData
+     */
+    public function setTimeUploaded($timeUploaded)
+    {
+        $this->timeUploaded = $timeUploaded;
+    
+        return $this;
+    }
+
+    /**
+     * Get timeUploaded
+     *
+     * @return \DateTime 
+     */
+    public function getTimeUploaded()
+    {
+        return $this->timeUploaded;
+    }
 }

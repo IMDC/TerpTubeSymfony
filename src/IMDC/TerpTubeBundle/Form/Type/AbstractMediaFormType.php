@@ -8,19 +8,17 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use IMDC\TerpTubeBundle\Entity\Media;
 
-class ImageMediaFormType extends AbstractMediaFormType
+class AbstractMediaFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		parent::buildForm($builder, $options);
-		$builder->add('resource', new ImageResourceFileFormType());
-		$builder->add('type', 'hidden', array('data'=> Media::TYPE_IMAGE));
+		$builder->add('title', null, array('label'=> 'form.media.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 	}
 	
 
 	public function getName()
 	{
-		return 'imdc_terptube_image_media';
+		return 'imdc_terptube_audio_media';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

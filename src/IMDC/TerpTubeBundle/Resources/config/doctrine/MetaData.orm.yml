@@ -18,6 +18,9 @@ IMDC\TerpTubeBundle\Entity\MetaData:
         duration:
             type: bigint
             nullable: true
+        timeUploaded:
+            type: datetime
+            
         
 
                 

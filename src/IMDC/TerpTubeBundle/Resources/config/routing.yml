@@ -55,7 +55,10 @@ imdc_files_gateway_record:
 imdc_files_gateway_other: 
     pattern: /myFiles/add/other
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addOther, isAjax: false, url: imdc_terp_tube_user_profile }
-    
+
+imdc_files_gateway_remove: 
+     pattern: /myFiles/delete/{mediaId}
+     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:deleteMedia, url: imdc_files_add_gateway }
 
 imdc_message_create:
     pattern: /createMessage

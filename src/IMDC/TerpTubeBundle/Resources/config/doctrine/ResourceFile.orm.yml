@@ -11,6 +11,14 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
                type: string
                length: 255
                nullable: true
+        webmExtension:
+               type: string
+               length: 5
+               nullable: true
+        mpegExtension:
+               type: string
+               length: 5
+               nullable: true
                
     lifecycleCallbacks:
         prePersist: [ preUpload ]

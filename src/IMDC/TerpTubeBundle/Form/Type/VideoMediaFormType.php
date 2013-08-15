@@ -8,10 +8,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use IMDC\TerpTubeBundle\Entity\Media;
 
-class VideoMediaFormType extends AbstractType
+class VideoMediaFormType extends AbstractMediaFormType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+		parent::buildForm($builder, $options);
 		$builder->add('resource', new VideoResourceFileFormType());
 		$builder->add('type', 'hidden', array('data'=> Media::TYPE_VIDEO));
 		

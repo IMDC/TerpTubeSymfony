@@ -61,9 +61,9 @@ class MyFilesGatewayController extends Controller
                     );
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
-        return $this->render('IMDCTerpTubeBundle:MyFilesGateway:index.html.twig');
-		
-		
+        $user = $this->getUser();
+        $resourceFiles = $user->getResourceFiles();
+        return $this->render('IMDCTerpTubeBundle:MyFilesGateway:index.html.twig', array('resourceFiles'=>$resourceFiles));
 	}
 	
 }

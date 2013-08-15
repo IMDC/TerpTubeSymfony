@@ -8,10 +8,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use IMDC\TerpTubeBundle\Entity\Media;
 
-class AudioMediaFormType extends AbstractType
+class AudioMediaFormType extends AbstractMediaFormType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+		parent::buildForm($builder, $options);
 		$builder->add('resource', new AudioResourceFileFormType());
 		$builder->add('type', 'hidden', array('data'=> Media::TYPE_AUDIO));
 	}
