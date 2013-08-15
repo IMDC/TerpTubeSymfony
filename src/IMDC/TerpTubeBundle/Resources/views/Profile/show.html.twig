@@ -7,6 +7,8 @@
     <link href="{{ asset('bundles/imdcterptube/css/profile.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
+{% block title %}{{ profile.firstName }}'s Profile {% endblock title %}
+
 {% block herounit %}
 <h1>This is {{ profile.firstName }} {{ profile.middleName }} {{ profile.lastName }}'s profile</h1>
 {% endblock herounit %}
@@ -59,4 +61,22 @@
         
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}
+{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+    {% if app.user == user.userName %}
+        
+    {% else %}
+        {% if app.user.isUserOnFriendsList(user) %}
+            <div class="text-info">
+                User is on your friends list  
+            </div>
+            <div class="text-warning">
+                <a href="{{ path('imdc_remove_from_friends_list', {'userid':user.id} ) }}">Remove</a>
+            </div>
+        {% else %}
+            <div>
+                <a href="{{ path('imdc_add_to_friends_list', {'userid':user.id} ) }}">Add user to friends list</a>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endif %}
 {% endblock underherounitrow2 %}

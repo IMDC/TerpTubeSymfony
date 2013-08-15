@@ -17,7 +17,7 @@ Inbox
 {% block underherounitrow1 %}
     {% if app.session.flashbag.get('inbox') is defined %}
         {% for flashMessage in app.session.flashbag.get('inbox') %}
-        <div class="flash-notice">
+        <div class="flash-notice text-info">
             <h4>{{ flashMessage }}</h4>
         </div>
         {% endfor %}
@@ -45,19 +45,25 @@ Inbox
                     {% else %}
                     <tr class="tr-message message-unread" onclick="goToPrivateMessage('{{ path('imdc_message_view_message', {'messageid': message.id}) }}');">
                     {% endif %}
+                        <!--  tools  -->
                         <td>
                             <a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove-sign"></i>Delete</a>
                             <a href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-archive"></i>Archive</a>
                         </td>
+                        <!--  read  -->
                         <td>{%  if msgread %}
                                 <img src="{{ asset('img/user_notification_icon_message.jpg') }}" />Read
                             {%  else %}
                                 <img src="{{ asset('img/user_notification_icon_message_on.jpg') }}" />Unread
                             {%  endif %}
                         </td>
+                        <!--  from  -->
                         <td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName' : message.owner}) }}">{{ message.owner }}</a></td>
+                        <!--  subject  -->
                         <td><a href="{{ path('imdc_message_view_message', {'messageid': message.id}) }}">{{ message.subject }}</a></td>
+                        <!--  content  -->
                         <td><a href="{{ path('imdc_message_view_message', {'messageid': message.id}) }}">{{ message.content|truncate(50) }}</a></td>
+                        <!--  sent  -->
                         <td>{{ message.sentDate|date('g:ia M j') }}</td>
                     </tr>
                     {% endfor %}

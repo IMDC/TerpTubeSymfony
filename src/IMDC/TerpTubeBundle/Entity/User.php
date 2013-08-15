@@ -45,6 +45,11 @@ class User extends BaseUser
 	 */
 	private $resourceFiles;
 
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $friendsList;
+	
     public function __construct()
     {
         parent::__construct();
@@ -55,6 +60,7 @@ class User extends BaseUser
         $this->deletedMessages  = new \Doctrine\Common\Collections\ArrayCollection();
         $this->userGroups       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->resourceFiles    = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->friendsList      = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -336,5 +342,43 @@ class User extends BaseUser
     public function getUserGroups()
     {
         return $this->userGroups;
+    }
+
+    /**
+     * Add friendsList
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $friendsList
+     * @return User
+     */
+    public function addFriendsList(\IMDC\TerpTubeBundle\Entity\User $friendsList)
+    {
+        $this->friendsList[] = $friendsList;
+    
+        return $this;
+    }
+
+    /**
+     * Remove friendsList
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $friendsList
+     */
+    public function removeFriendsList(\IMDC\TerpTubeBundle\Entity\User $friendsList)
+    {
+        $this->friendsList->removeElement($friendsList);
+    }
+
+    /**
+     * Get friendsList
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getFriendsList()
+    {
+        return $this->friendsList;
+    }
+    
+    public function isUserOnFriendsList(\IMDC\TerpTubeBundle\Entity\User $user)
+    {
+        return $this->friendsList->contains($user);
     }
 }

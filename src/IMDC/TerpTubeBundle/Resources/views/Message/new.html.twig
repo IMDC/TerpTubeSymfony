@@ -1,5 +1,6 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Message/new.html.twig #}
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block title %}New Private Message{% endblock title %}
 
 {% block herounit %}
 <h1>Send a private message</h1>
@@ -12,7 +13,7 @@
     {{ form_start(form) }}
         {{ form_errors(form) }}
         
-        {{ form_row(form.recips) }}
+        {{ form_row(form.to) }}
         {{ form_row(form.subject) }}
         {{ form_row(form.content) }}
         

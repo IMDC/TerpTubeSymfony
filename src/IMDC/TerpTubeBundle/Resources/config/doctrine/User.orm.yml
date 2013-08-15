@@ -77,3 +77,14 @@ IMDC\TerpTubeBundle\Entity\User:
                 inverseJoinColumns:
                     userGroup_id:
                         referencedColumnName: id
+        #many to many
+        friendsList:
+            targetEntity: User
+            joinTable:
+                name: user_friends
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    friend_user_id:
+                        referencedColumnName: id

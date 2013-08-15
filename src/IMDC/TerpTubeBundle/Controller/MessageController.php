@@ -274,7 +274,7 @@ class MessageController extends Controller
         
         $this->get('session')->getFlashBag()->add(
                 'inbox',
-                'Message id: ' .$message->getId() . ' archived'
+                'Message id:' .$message->getId() . ' successfully archived'
         );
         return $this->redirect($this->generateUrl('imdc_message_view_all'));
     }

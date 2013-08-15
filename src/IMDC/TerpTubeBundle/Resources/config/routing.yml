@@ -103,3 +103,15 @@ fos_user_group:
 imdc_initial_noreply_user_create:
     pattern: /createNoReplyOnce
     defaults: { _controller: IMDCTerpTubeBundle:Default:createNoReplyOnce }
+    
+imdc_add_to_friends_list:
+    pattern: /addToFriendsList/{userid}
+    defaults: { _controller: IMDCTerpTubeBundle:FriendsList:add }
+    requirements:
+        userid: \d+
+        
+imdc_remove_from_friends_list:
+    pattern: /removeFromFriendsList/{userid}
+    defaults: { _controller: IMDCTerpTubeBundle:FriendsList:remove }
+    requirements:
+        userid: \d+
