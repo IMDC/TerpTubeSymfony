@@ -12,9 +12,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
 
-
+use FOS\UserBundle\Model\UserManager;
 use IMDC\TerpTubeBundle\Entity\Message;
 use IMDC\TerpTubeBundle\Form\Type\PrivateMessageType;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Doctrine\Common\Collections\ArrayCollection;
 
 
 class MessageController extends Controller
@@ -33,16 +35,10 @@ class MessageController extends Controller
         }
         
         $message = new Message();
-        /*
-        $message->setSubject("A test message");
-        $message->setContent("This is some text that would go inside an email type message");
-        $message->setSentDate(new \DateTime('now')); 
-        */
         
         $form = $this->createForm(new PrivateMessageType(), $message);
         
         $form->handleRequest($request);
-        
         
         if ($form->isValid()) {
             
@@ -57,11 +53,33 @@ class MessageController extends Controller
             
             $user = $this->getUser();
             $user->addSentMessage($message);
-            foreach ($message->getRecipients() as $recp) {
+            
+            $existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
+            $userManager = $this->container->get('fos_user.user_manager');
+            
+            // split up the recipients by whitespace
+            $rawrecips = split(' ', $form->get('recips')->getData());
+            foreach ($rawrecips as $possuser) {
+            	try {
+            		$theuser = $userManager->loadUserByUsername($possuser);
+            		$existingUsers[] = $theuser;
+            		$message->addRecipient($theuser);
+            	} catch (UsernameNotFoundException $e) {
+            		// todo: create message to user about recip not found
+            	}
+            }
+            
+            foreach ($existingUsers as $euser) {
+            	$euser->addReceivedMessage($message);
+            	$em->persist($euser);
+            }
+            
+            
+            /* foreach ($message->getRecipients() as $recp) {
                 $recp->addReceivedMessage($message);
                 // request persistence of user object to database
                 $em->persist($recp);
-            }
+            } */
             
             // request to persist message object to database
             $em->persist($message);
@@ -110,7 +128,9 @@ class MessageController extends Controller
         /* $messages = $em->getRepository('IMDCTerpTubeBundle:Message')
                             ->findAllReceivedInboxMessagesForUser($user, 30); */
         
-        $messages = $user->getReceivedMessages();
+        //$messages = $user->getReceivedMessages();
+		$messages = $em->getRepository('IMDCTerpTubeBundle:User')
+							->getMostRecentMessages($user, 30);
         
         // loop through the messages and temporarily mark them as read or unread
         foreach ($messages as $msg) {

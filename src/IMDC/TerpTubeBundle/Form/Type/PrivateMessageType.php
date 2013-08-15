@@ -11,8 +11,9 @@ class PrivateMessageType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('recipients');
-        $builder->add('subject');
+        //$builder->add('recipients');
+    	$builder->add('recips', null, array('mapped' => false));
+    	$builder->add('subject');
         $builder->add('content', 'textarea');
         $builder->add('submit', 'submit');
     }

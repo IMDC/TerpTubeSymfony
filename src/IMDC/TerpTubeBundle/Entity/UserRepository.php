@@ -22,4 +22,20 @@ class UserRepository extends EntityRepository
         $stmt->execute();
         return $stmt->rowCount();
     }
+    
+    public function getMostRecentMessages($user, $limit=30) 
+    {
+    	$query = $this->getEntityManager()->createQuery('
+                    SELECT m
+                    FROM IMDCTerpTubeBundle:Message m
+                    JOIN IMDCTerpTubeBundle:User u
+                    WHERE :uid MEMBER OF m.recipients
+                    ORDER BY m.sentDate DESC
+                ')
+                ->setParameter('uid', $user->getId());
+    	$query->setMaxResults($limit);
+    	
+        return $query->getResult();
+    	
+    }
 }

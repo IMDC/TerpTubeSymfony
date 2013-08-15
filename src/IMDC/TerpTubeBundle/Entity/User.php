@@ -157,7 +157,6 @@ class User extends BaseUser
         return $this->receivedMessages;
     }
 
-
     /**
      * Add resourceFiles
      *
