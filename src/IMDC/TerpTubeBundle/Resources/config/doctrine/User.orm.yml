@@ -7,6 +7,14 @@ IMDC\TerpTubeBundle\Entity\User:
             type: integer
             generator:
                 strategy: AUTO
+    fields:
+        joinDate:
+            type: datetime
+        postCount:
+            type: integer
+            nullable: true
+    lifecycleCallbacks: 
+        prePersist: [setJoinDateToNow]
     oneToMany:
         sentMessages:
             targetEntity: Message

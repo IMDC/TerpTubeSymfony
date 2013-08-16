@@ -82,7 +82,8 @@ resetting:
             the Team.
 
 nav:
-    my_files: "My Files" 
+    my_files: "My Files"
+    my_friends: "My Friends" 
 # Global strings
 layout:
     logout: Logout

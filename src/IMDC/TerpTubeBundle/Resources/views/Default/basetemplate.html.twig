@@ -11,6 +11,9 @@
 		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
 		<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
 		
+		<!--  FontAwesome -->
+		<link rel="stylesheet" type="text/css" href="{{ asset('bundles/bmatznerfontawesome/css/font-awesome.min.css') }}" />
+		
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
 		<script src="../assets/js/html5shiv.js"></script>
@@ -32,23 +35,23 @@
 						<p class="navbar-text pull-right">
 						{% block loginarea %}
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="icon-user icon-white"></i> ' ~app.user.username~'</a>' %}
+                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="icon-user"></i> ' ~app.user.username~'</a>' %}
                                 {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    <i class="icon-envelope icon-white"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
+               					    <i class="icon-envelope"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
-                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="icon-off icon-white"></i>
+                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="icon-off"></i>
                					</a>
 				            {% else %}
-				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}"><i class="icon-share-alt icon-white"></i> {{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }} <i class="icon-plus icon-white"></i></a>
+				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}"><i class="icon-signin"></i> {{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }} <i class="icon-plus icon-white"></i></a>
 				            {% endif %}
 						{% endblock loginarea %}
 						</p>
 						<ul class="nav">
 							{% block nav_ul %}
 							<li class="active">
-								<a href="{{ path('imdc_terp_tube_user_splash') }}">Home</a>
+								<a href="{{ path('imdc_terp_tube_user_splash') }}"><i class="icon-home"></i> Home</a>
 							</li>
 							<li>
 								<a href="#about">About</a>
@@ -60,7 +63,10 @@
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 								{% block nav_ul_authenticated %}
 									<li>
-										<a href="{{ path('imdc_files_gateway') }}">{{ 'nav.my_files'|trans }}</a>
+										<a href="{{ path('imdc_files_gateway') }}"><i class="icon-file"></i> {{ 'nav.my_files'|trans }}</a>
+									</li>
+									<li>
+									    <a href="{{ path('imdc_friends_list_show_all') }}"><i class="icon-group"></i> {{ 'nav.my_friends'|trans }}</a>
 									</li>
 								{% endblock nav_ul_authenticated %}
 						 	{% endif %}
@@ -115,8 +121,16 @@
 				    <div class="row-fluid">
 				        <div class="span9">
                 		{% for key, message in messages %}
-                       		<div class="flash-{{ type }} text-info">
-                            	{{ message|trans }}
+                       		{% if type=='info' %}
+                		    <div class="flash-{{ type }} text-info">
+                            {% elseif type=='error' %}
+                            <div class="flash-{{ type }} text-error">
+                            {% elseif type=='success' %}
+                            <div class="flash-{{ type }} text-success">
+                            {% else %}
+                            <div class="flash-{{ type }} text-warning">
+                		    {% endif %}
+                   		        {{ message|trans }}
                             </div>
                       	{% endfor %}
                       	</div>
@@ -198,9 +212,9 @@
 							<p>
 								<a class="btn" href="#">View details &raquo;</a>
 							</p>
-						</div><!--/.span4-->
+						</div><!-- /.span4-->
 					{% endblock underherounitrow2 %}
-					</div><!--/.row-fluid -->
+					</div><!-- /.row-fluid -->
 				</div><!--/.span10 -->
 				{% endblock rightsidecontent %}
 			</div><!--/.row-fluid -->

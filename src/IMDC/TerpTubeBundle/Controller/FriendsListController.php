@@ -45,7 +45,7 @@ class FriendsListController extends Controller
 	    return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific', array('userName'=>$usertoadd->getUserName())));
 	}
 	
-	public function removeAction($userid) 
+	public function removeAction($userid, $redirect)
 	{
 	    // check if user logged in
 	    $securityContext = $this->container->get('security.context');
@@ -72,7 +72,36 @@ class FriendsListController extends Controller
 	    $em->persist($user);
 	    $em->flush();
 	     
-	    return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific', array('userName'=>$usertoremove->getUserName())));
+	    if ($redirect == NULL) {
+	        return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific', array('userName'=>$usertoremove->getUserName())));
+	    }
+	    
+	    return $this->redirect($this->generateUrl($redirect));
+	}
+	
+	public function showAllAction()
+	{
+	    // check if user logged in
+	    $securityContext = $this->container->get('security.context');
+	    if(! $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+	    {
+	        $this->get('session')->getFlashBag()->add(
+	                'notice',
+	                'Please log in first'
+	        );
+	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+	    }
+	    $user = new \IMDC\TerpTubeBundle\Entity\User;
+	    
+	    $user = $this->getUser();
+	    
+	    $usersFriends = $user->getFriendsList();
+	    
+	    $response = $this->render('IMDCTerpTubeBundle:FriendsList:showAll.html.twig',
+	            array('friends' => $usersFriends)
+	    );
+	    return $response;
+	    
 	}
 
 }

@@ -26,6 +26,7 @@ class AppKernel extends Kernel
         	new Knp\Bundle\GaufretteBundle\KnpGaufretteBundle(),
         	new Vich\UploaderBundle\VichUploaderBundle(),
         	new Dubture\FFmpegBundle\DubtureFFmpegBundle(),
+            new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

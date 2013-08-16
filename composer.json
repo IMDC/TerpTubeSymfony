@@ -32,7 +32,8 @@
         "knplabs/gaufrette": "0.2.*@dev",
         "php-ffmpeg/php-ffmpeg": "0.4.*@dev",
         "pulse00/ffmpeg-bundle": "dev-master",
-        "sonata-project/intl-bundle": "dev-master"
+        "sonata-project/intl-bundle": "dev-master",
+        "bmatzner/fontawesome-bundle": "*"
     },
     "scripts": {
         "post-install-cmd": [

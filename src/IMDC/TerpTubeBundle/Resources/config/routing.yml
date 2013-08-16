@@ -114,7 +114,13 @@ imdc_add_to_friends_list:
         userid: \d+
         
 imdc_remove_from_friends_list:
-    pattern: /removeFromFriendsList/{userid}
-    defaults: { _controller: IMDCTerpTubeBundle:FriendsList:remove }
+    pattern: /removeFromFriendsList/{userid}/{redirect}
+    defaults: { _controller: IMDCTerpTubeBundle:FriendsList:remove, redirect:null }
     requirements:
         userid: \d+
+        
+imdc_friends_list_show_all:
+    pattern: /friends
+    defaults: { _controller: IMDCTerpTubeBundle:FriendsList:showAll }
+    
+    

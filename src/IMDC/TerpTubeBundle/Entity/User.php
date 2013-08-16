@@ -50,6 +50,16 @@ class User extends BaseUser
 	 */
 	private $friendsList;
 	
+	/**
+	 * @var \DateTime
+	 */
+	private $joinDate;
+	
+	/**
+	 * @var integer
+	 */
+	private $postCount;
+	
     public function __construct()
     {
         parent::__construct();
@@ -380,5 +390,58 @@ class User extends BaseUser
     public function isUserOnFriendsList(\IMDC\TerpTubeBundle\Entity\User $user)
     {
         return $this->friendsList->contains($user);
+    }
+
+    /**
+     * Set joinDate
+     *
+     * @param \DateTime $joinDate
+     * @return User
+     */
+    public function setJoinDate($joinDate)
+    {
+        $this->joinDate = $joinDate;
+    
+        return $this;
+    }
+
+    public function setJoinDateToNow()
+    {
+        $this->joinDate = new \DateTime('NOW');
+        
+        return $this;
+    }
+    
+    /**
+     * Get joinDate
+     *
+     * @return \DateTime 
+     */
+    public function getJoinDate()
+    {
+        return $this->joinDate;
+    }
+
+    /**
+     * Set postCount
+     *
+     * @param integer $postCount
+     * @return User
+     */
+    public function setPostCount($postCount)
+    {
+        $this->postCount = $postCount;
+    
+        return $this;
+    }
+
+    /**
+     * Get postCount
+     *
+     * @return integer 
+     */
+    public function getPostCount()
+    {
+        return $this->postCount;
     }
 }

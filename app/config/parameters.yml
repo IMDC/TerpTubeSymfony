@@ -7,7 +7,7 @@ parameters:
     database_user: symfonyuser
     database_password: FztmbMuUREfAJdWv
     mailer_transport: gmail
-    mailer_host: ~
+    mailer_host: null
     mailer_user: terptubetest
     mailer_password: 1mdCu53R
     locale: en
