@@ -47,8 +47,8 @@ Inbox
                     {% endif %}
                         <!--  tools  -->
                         <td>
-                            <a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove-sign"></i>Delete</a>
-                            <a href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-archive"></i>Archive</a>
+                            <a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove-sign"></i> Delete</a>
+                            <a href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-archive"></i> Archive</a>
                         </td>
                         <!--  read  -->
                         <td>{%  if msgread %}
