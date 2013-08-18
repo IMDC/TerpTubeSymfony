@@ -107,6 +107,8 @@ imdc_initial_noreply_user_create:
     pattern: /createNoReplyOnce
     defaults: { _controller: IMDCTerpTubeBundle:Default:createNoReplyOnce }
     
+    
+    
 imdc_add_to_friends_list:
     pattern: /addToFriendsList/{userid}
     defaults: { _controller: IMDCTerpTubeBundle:FriendsList:add }
@@ -123,4 +125,18 @@ imdc_friends_list_show_all:
     pattern: /friends
     defaults: { _controller: IMDCTerpTubeBundle:FriendsList:showAll }
     
+    
+    
+    
+imdc_groups_show_all:
+    pattern: /usergroups
+    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:index }
+    
+imdc_group_view:
+    pattern: /usergroup/{usergroup}
+    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:viewGroup }
+    
+imdc_group_create_new:
+    pattern: /newusergroup
+    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
     

@@ -9,11 +9,54 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
                 strategy: AUTO
         dateCreated:
             type: datetime
+        visibleToPublic:
+            type: boolean
+            nullable: true
+        visibleToRegisteredUsers:
+            type: boolean
+            nullable: true
+        openForNewMembers:
+            type: boolean
+            nullable: true
+        joinByInvitationOnly:
+            type: boolean
+            nullable: true
     manyToOne:
         userFounder:
             targetEntity: User
             joinColumn:
                 name: userFounder_id
                 referencedColumnName: id
+    manyToMany:
+        members:
+            targetEntity: User
+            joinTable:
+                name: usergroup_members_users
+                joinColumns:
+                    usergroup_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        moderators:
+            targetEntity: User
+            joinTable:
+                name: usergroup_moderators_users
+                joinColumns:
+                    usergroup_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        admins:
+            targetEntity: User
+            joinTable:
+                name: usergroup_admins_users
+                joinColumns:
+                    usergroup_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
     lifecycleCallbacks: 
         prePersist: [setDateCreatedToNow]

@@ -1,0 +1,25 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block title %}TerpTube Groups{% endblock title %}
+
+{% block herounit %}Groups{% endblock herounit %}
+
+{% block underherounitrow1 %}
+<ul class="thumbnails">
+    {% for usergroup in usergroups %}
+    <li class="span3">
+        <div class="thumbnail text-center">
+            <h3>{{ usergroup.name }}</h3>
+            <p>Created: {{ usergroup.dateCreated|date('g:ia F j Y') }}</p>
+            <p>Members: {{ usergroup.getMembers|length }}</p>
+            <p>Founder: {{ usergroup.getUserFounder.getUserName }}</p>
+            <p>
+                <a class="btn btn-primary" href="{{ path('imdc_group_view', {'usergroup' : usergroup}) }}">View Group Info</a>
+            </p>
+        </a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}
