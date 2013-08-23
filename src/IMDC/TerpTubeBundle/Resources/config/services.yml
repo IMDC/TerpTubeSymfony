@@ -1,62 +1,88 @@
 parameters:
 #    imdc_terp_tube.example.class: IMDC\TerpTubeBundle\Example
-      imdc_terptube.component.authentication.handler.login_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LoginSuccessHandler
-      imdc_terptube.component.authentication.handler.logout_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LogoutSuccessHandler
-      imdc_terptube.upload_resource_listener.class: IMDC\TerpTubeBundle\EventListener\UploadListener
-      imdc_terptube.event.uploadEvent: 'imdc_terptube.event.uploadEvent'
+    imdc_terptube.component.authentication.handler.login_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LoginSuccessHandler
+    imdc_terptube.component.authentication.handler.logout_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LogoutSuccessHandler
+    imdc_terptube.upload_resource_listener.class: IMDC\TerpTubeBundle\EventListener\UploadListener
+    imdc_terptube.event.uploadEvent: 'imdc_terptube.event.uploadEvent'
 
 services:
 #    imdc_terp_tube.example:
 #        class: %imdc_terp_tube.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
 
-     imdc_terptube_user.registration.form.type:
-          class: IMDC\TerpTubeBundle\Form\Type\RegistrationFormType
-          arguments: [%fos_user.model.user.class%]
-          tags:
-              - { name: form.type, alias: imdc_terptube_user_registration }
+    upload_video_service:
+        class: IMDC\TerpTubeBundle\Consumer\UploadVideoConsumer
+        arguments: ["@logger", "@doctrine", "@transcoder"]
+        tags:
+            - { name: 'monolog.logger', channel: 'imdc' }
+
+    imdc_terptube_user.registration.form.type:
+        class: IMDC\TerpTubeBundle\Form\Type\RegistrationFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: imdc_terptube_user_registration }
               
-     imdc_terptube_user.profile.form.type:
-          class: IMDC\TerpTubeBundle\Form\Type\ProfileFormType
-          arguments: [%fos_user.model.user.class%]
-          tags:
-              - { name: form.type, alias: imdc_terptube_user_profile }
+    imdc_terptube_user.profile.form.type:
+        class: IMDC\TerpTubeBundle\Form\Type\ProfileFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: imdc_terptube_user_profile }
               
-     imdc_terptube.component.authentication.handler.login_success_handler:
-          class: %imdc_terptube.component.authentication.handler.login_success_handler.class%
-          arguments: [@router, @security.context]
-          tags:
-              - {name: 'monolog.logger', channel: 'security' }
+    imdc_terptube.component.authentication.handler.login_success_handler:
+        class: %imdc_terptube.component.authentication.handler.login_success_handler.class%
+        arguments: ["@router", "@security.context"]
+        tags:
+            - {name: 'monolog.logger', channel: 'security' }
               
-     imdc_terptube.component.authentication.handler.logout_success_handler:
-          class: %imdc_terptube.component.authentication.handler.logout_success_handler.class%
-          arguments: [@router, @security.context]
-          tags:
-              - {name: 'monolog.logger', channel: 'security' }
+    imdc_terptube.component.authentication.handler.logout_success_handler:
+        class: %imdc_terptube.component.authentication.handler.logout_success_handler.class%
+        arguments: ["@router", "@security.context"]
+        tags:
+            - {name: 'monolog.logger', channel: 'security' }
               
-     imdc_terptube.upload_resource_listener:
-            class: %imdc_terptube.upload_resource_listener.class%
-            arguments: ["@logger", @doctrine]
-            tags:
-                - { name: kernel.event_listener, event: %imdc_terptube.event.uploadEvent%, method: onUpload}
-                - { name: 'monolog.logger', channel: 'imdc' }
+    imdc_terptube.upload_resource_listener:
+        class: %imdc_terptube.upload_resource_listener.class%
+        arguments: ["@logger", "@doctrine", "@old_sound_rabbit_mq.upload_video_producer"]
+        tags:
+            - { name: kernel.event_listener, event: %imdc_terptube.event.uploadEvent%, method: onUpload}
+            - { name: 'monolog.logger', channel: 'imdc' }
      
-     imdc_terptube.new_user_intro_email_listener:
-            class: IMDC\TerpTubeBundle\EventListener\NewUserRegistrationListener
-            arguments: ["@logger", @doctrine, @fos_user.user_manager]
-            tags:
-                - { name: kernel.event_subscriber }
-                - { name: 'monolog.logger', channel: 'imdc' }
+    imdc_terptube.new_user_intro_email_listener:
+        class: IMDC\TerpTubeBundle\EventListener\NewUserRegistrationListener
+        arguments: ["@logger", "@doctrine", "@fos_user.user_manager"]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: 'monolog.logger', channel: 'imdc' }
                 
-     imdc_terptube.new_group_founder_listener:
-            class: IMDC\TerpTubeBundle\EventListener\GroupListener
-            arguments: ["@logger", @doctrine, @router, @security.context]
-            tags:
-                - { name: kernel.event_subscriber }
-                - { name: 'monolog.logger', channel: 'imdc' }
+    imdc_terptube.new_group_founder_listener:
+        class: IMDC\TerpTubeBundle\EventListener\GroupListener
+        arguments: ["@logger", "@doctrine", "@router", "@security.context"]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: 'monolog.logger', channel: 'imdc' }
+    
+    imdc_terptube.transcoder_listener:
+        class: IMDC\TerpTubeBundle\EventListener\TranscodeListener
+        arguments: ["@logger", "@doctrine", "@router", "@security.context"]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: 'monolog.logger', channel: 'imdc' }
      
      # enable the truncate extension in twig
-     twig.extension.text:
-          class: Twig_Extensions_Extension_Text
-          tags:
-              - { name: twig.extension }
+    twig.extension.text:
+        class: Twig_Extensions_Extension_Text
+        tags:
+            - { name: twig.extension }
+            
+    transcoding.preset.ffmpeg.x264_720p_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\X264Video720pPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            
+    transcoding.preset.ffmpeg.webm_720p_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideo720pPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            

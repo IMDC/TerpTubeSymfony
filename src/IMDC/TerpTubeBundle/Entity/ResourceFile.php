@@ -21,7 +21,28 @@ class ResourceFile
      */
     private $filename;
 
-
+    /**
+     * @var string
+     */
+    private $webmExtension;
+    
+    private $file;
+    
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\Media
+     */
+    private $media;
+    
+    /**
+     * @var string
+     */
+    private $path;
+    
+    /**
+     * @var string
+     */
+    private $name;
+    
     /**
      * Get id
      *
@@ -31,7 +52,7 @@ class ResourceFile
     {
         return $this->id;
     }
-
+    
     /**
      * Set filename
      *
@@ -54,11 +75,6 @@ class ResourceFile
     {
         return $this->filename;
     }
-    /**
-     * @var string
-     */
-    private $path;
-
 
     /**
      * Set path
@@ -90,7 +106,14 @@ class ResourceFile
     	: $this->getUploadDir().'/'.$this->id.'.'.$this->path;
     }
     
-    protected function getUploadRootDir()
+    public function getWebPathWebm()
+    {
+    	return null === $this->path
+    	? null
+    	: $this->getUploadDir().'/'.$this->id.'.'.$this->getWebmExtension();
+    }
+    
+    public function getUploadRootDir()
     {
     	// the absolute directory path where uploaded
     	// documents should be saved
@@ -103,8 +126,6 @@ class ResourceFile
     	// when displaying uploaded doc/image in the view.
     	return 'uploads/media';
     }
-    
-    private $file;
     
     /**
      * Sets file.
@@ -172,12 +193,17 @@ class ResourceFile
     public function storeFilenameForRemove()
     {
     	$this->temp = $this->getAbsolutePath();
+    	$this->tempWebm = $this->getAbsolutePathWebm();
+    	
     }
     
     public function removeUpload()
     {
     	if (isset($this->temp)) {
     		unlink($this->temp);
+    	}
+    	if (isset($this->tempWebm)) {
+    		unlink($this->tempWebm);
     	}
     }
     
@@ -187,10 +213,14 @@ class ResourceFile
     	? null
     	: $this->getUploadRootDir().'/'.$this->id.'.'.$this->path;
     }
-    /**
-     * @var string
-     */
-    private $name;
+    
+    public function getAbsolutePathWebm()
+    {
+    	return null === $this->path
+    	? null
+    	: $this->getUploadRootDir().'/'.$this->id.'.'.$this->getWebmExtension();
+    }
+   
 
 
     /**
@@ -215,11 +245,6 @@ class ResourceFile
     {
         return $this->name;
     }
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\Media
-     */
-    private $media;
-
 
     /**
      * Set media
@@ -244,17 +269,6 @@ class ResourceFile
         return $this->media;
     }
     /**
-     * @var string
-     */
-    private $webmExtension;
-
-    /**
-     * @var string
-     */
-    private $mpegExtension;
-
-
-    /**
      * Set webmExtension
      *
      * @param string $webmExtension
@@ -275,28 +289,5 @@ class ResourceFile
     public function getWebmExtension()
     {
         return $this->webmExtension;
-    }
-
-    /**
-     * Set mpegExtension
-     *
-     * @param string $mpegExtension
-     * @return ResourceFile
-     */
-    public function setMpegExtension($mpegExtension)
-    {
-        $this->mpegExtension = $mpegExtension;
-    
-        return $this;
-    }
-
-    /**
-     * Get mpegExtension
-     *
-     * @return string 
-     */
-    public function getMpegExtension()
-    {
-        return $this->mpegExtension;
     }
 }

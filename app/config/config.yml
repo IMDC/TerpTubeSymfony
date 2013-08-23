@@ -1,8 +1,8 @@
 imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
-    - { resource: @IMDCTerpTubeBundle/Resources/config/constants/Events.xml }
-    - { resource: @IMDCTerpTubeBundle/Resources/config/constants/Filters.xml }
+    - { resource: "@IMDCTerpTubeBundle/Resources/config/constants/Events.xml" }
+    - { resource: "@IMDCTerpTubeBundle/Resources/config/constants/Filters.xml" }
 
 framework:
     #esi:             ~
@@ -111,11 +111,11 @@ swiftmailer:
 
 #Uploader bundle configuration
 #See https://github.com/dustin10/VichUploaderBundle/blob/master/Resources/doc/index.md for configuration
-vich_uploader:
-    db_driver: orm # or mongodb
-    twig: true
-    gaufrette: false # set to true to enable gaufrette support
-    storage: vich_uploader.storage.file_system
+#vich_uploader:
+#    db_driver: orm # or mongodb
+#    twig: true
+#    gaufrette: false # set to true to enable gaufrette support
+#    storage: vich_uploader.storage.file_system
 #   mappings:
 #        product_image:
 #            uri_prefix: web # uri prefix to resource
@@ -129,6 +129,16 @@ vich_uploader:
 dubture_f_fmpeg:
     ffmpeg_binary: /usr/local/bin/ffmpeg
     ffprobe_binary: /usr/local/bin/ffprobe
+
+ac_transcoding:
+    ffmpeg: 
+        enabled: true           #if false, other keys need not be specified
+        path: /usr/local/bin/ffmpeg
+        timeout: 0
+    handbrake:
+        enabled: false
+        
+
 
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
@@ -148,3 +158,23 @@ fos_user:
     from_email:
         address: noreply@imdc.ca
         sender_name: Terptube IMDC
+
+old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
+    connections:
+        default:
+            host:      'localhost'
+            port:      5672
+            user:      'guest'
+            password:  'guest'
+            vhost:     '/'
+            lazy:      false
+    producers:
+        upload_video:
+            connection: default
+            exchange_options: {name: 'upload-video', type: direct}
+    consumers:
+        upload_video:
+            connection: default
+            exchange_options: {name: 'upload-video', type: direct}
+            queue_options:    {name: 'upload-video'}
+            callback:         upload_video_service

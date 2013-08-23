@@ -1,7 +1,6 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
-
 use Symfony\Component\Intl\Exception\NotImplementedException;
 
 use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
@@ -53,30 +52,24 @@ class AddFileGatewayController extends Controller
 	public function gatewayAction(Request $request, $isAjax, $path)
 	{
 		$securityContext = $this->container->get('security.context');
-	 	if(! $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
-        {
-            $this->get('session')->getFlashBag()->add(
-                    'notice',
-                    'Please log in first'
-                    );
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-		
-		
+		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		{
+			$this->get('session')->getFlashBag()
+					->add('notice', 'Please log in first');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		}
+
 	}
 
 	public function addAudioAction(Request $request, $url, $isAjax)
 	{
 		$securityContext = $this->container->get('security.context');
-		if(! $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
 		{
-			$this->get('session')->getFlashBag()->add(
-					'notice',
-					'Please log in first'
-			);
+			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
-		
+
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!is_object($user) || !$user instanceof UserInterface)
 		{
@@ -89,15 +82,15 @@ class AddFileGatewayController extends Controller
 			throw new NotFoundHttpException("This user does not exist");
 		}
 		$audioMedia = new Media();
-		
+
 		$formFactory = $this->container->get('form.factory');
-		
+
 		$form = $formFactory->create(new AudioMediaFormType(), $audioMedia, array());
-		
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
-		
+
 			if ($form->isValid())
 			{
 				$audioMedia->setOwner($userObject);
@@ -107,23 +100,24 @@ class AddFileGatewayController extends Controller
 				$em->persist($audioMedia);
 				// Remove old avatar from DB:
 				$userObject->addResourceFile($audioMedia);
-		
+
 				$em->flush();
-		
-				$this->container->get('session')->getFlashBag()->add('media', 'Audio file uploaded successfully successfully!');
-		
+
+				$this->container->get('session')->getFlashBag()
+						->add('media', 'Audio file uploaded successfully successfully!');
+
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($audioMedia);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-		
-// 				$uploadedEvent->getResponse();
+
+				// 				$uploadedEvent->getResponse();
 				if ($isAjax)
 				{
 					$response = $audioMedia->getId();
 				}
 				else
 				{
-				if ($url === null)
+					if ($url === null)
 					{
 						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 					}
@@ -136,10 +130,11 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		// form not valid, show the basic form
-		 return $this->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array(
-                'form' => $form->createView(),));
+		return $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
+						array('form' => $form->createView(),));
 	}
-	
+
 	public function addVideoAction(Request $request, $url, $isAjax)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
@@ -154,15 +149,15 @@ class AddFileGatewayController extends Controller
 			throw new NotFoundHttpException("This user does not exist");
 		}
 		$videoMedia = new Media();
-	
+
 		$formFactory = $this->container->get('form.factory');
-	
+
 		$form = $formFactory->create(new VideoMediaFormType(), $videoMedia, array());
-	
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
-	
+
 			if ($form->isValid())
 			{
 				$videoMedia->setOwner($userObject);
@@ -172,23 +167,24 @@ class AddFileGatewayController extends Controller
 				$em->persist($videoMedia);
 				// Remove old avatar from DB:
 				$userObject->addResourceFile($videoMedia);
-	
+
 				$em->flush();
-	
-				$this->container->get('session')->getFlashBag()->add('media', 'Video file uploaded successfully successfully!');
-	
+
+				$this->container->get('session')->getFlashBag()
+						->add('media', 'Video file uploaded successfully successfully!');
+
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($videoMedia);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-	
-// 				$uploadedEvent->getResponse();
+
+				// 				$uploadedEvent->getResponse();
 				if ($isAjax)
 				{
 					$response = $videoMedia->getId();
 				}
 				else
 				{
-				if ($url === null)
+					if ($url === null)
 					{
 						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 					}
@@ -201,10 +197,11 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array(
-				'form' => $form->createView(),));
+		return $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
+						array('form' => $form->createView(),));
 	}
-	
+
 	public function addImageAction(Request $request, $url, $isAjax)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
@@ -219,15 +216,15 @@ class AddFileGatewayController extends Controller
 			throw new NotFoundHttpException("This user does not exist");
 		}
 		$imageMedia = new Media();
-	
+
 		$formFactory = $this->container->get('form.factory');
-	
+
 		$form = $formFactory->create(new ImageMediaFormType(), $imageMedia, array());
-	
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
-	
+
 			if ($form->isValid())
 			{
 				$imageMedia->setOwner($userObject);
@@ -237,23 +234,24 @@ class AddFileGatewayController extends Controller
 				$em->persist($imageMedia);
 				// Remove old avatar from DB:
 				$userObject->addResourceFile($imageMedia);
-	
+
 				$em->flush();
-	
-				$this->container->get('session')->getFlashBag()->add('media', 'Image file uploaded successfully successfully!');
-	
+
+				$this->container->get('session')->getFlashBag()
+						->add('media', 'Image file uploaded successfully successfully!');
+
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($imageMedia);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-	
-// 				$uploadedEvent->getResponse();
+
+				// 				$uploadedEvent->getResponse();
 				if ($isAjax)
 				{
 					$response = $imageMedia->getId();
 				}
 				else
 				{
-				if ($url === null)
+					if ($url === null)
 					{
 						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 					}
@@ -266,15 +264,16 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array(
-				'form' => $form->createView(),));
+		return $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
+						array('form' => $form->createView(),));
 	}
-	
+
 	public function addRecordingAction(Request $request, $url, $isAjax)
 	{
 		//FIXME add the recording stuff here
 		throw new NotImplementedException("Not yet implemented");
-		
+
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!is_object($user) || !$user instanceof UserInterface)
 		{
@@ -287,15 +286,15 @@ class AddFileGatewayController extends Controller
 			throw new NotFoundHttpException("This user does not exist");
 		}
 		$audioMedia = new Media();
-	
+
 		$formFactory = $this->container->get('form.factory');
-	
+
 		$form = $formFactory->create(new AudioMediaFormType(), $audioMedia, array());
-	
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
-	
+
 			if ($form->isValid())
 			{
 				$audioMedia->setOwner($userObject);
@@ -305,23 +304,24 @@ class AddFileGatewayController extends Controller
 				$em->persist($audioMedia);
 				// Remove old avatar from DB:
 				$userObject->addResourceFile($audioMedia);
-	
+
 				$em->flush();
-	
-				$this->container->get('session')->getFlashBag()->add('media', 'Audio file uploaded successfully successfully!');
-	
+
+				$this->container->get('session')->getFlashBag()
+						->add('media', 'Audio file uploaded successfully successfully!');
+
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($audioMedia);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-	
-// 				$uploadedEvent->getResponse();
+
+				// 				$uploadedEvent->getResponse();
 				if ($isAjax)
 				{
 					$response = $audioMedia->getId();
 				}
 				else
 				{
-				if ($url === null)
+					if ($url === null)
 					{
 						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 					}
@@ -334,10 +334,11 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array(
-				'form' => $form->createView(),));
+		return $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
+						array('form' => $form->createView(),));
 	}
-	
+
 	public function addOtherAction(Request $request, $url, $isAjax)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
@@ -352,15 +353,15 @@ class AddFileGatewayController extends Controller
 			throw new NotFoundHttpException("This user does not exist");
 		}
 		$otherMedia = new Media();
-	
+
 		$formFactory = $this->container->get('form.factory');
-	
+
 		$form = $formFactory->create(new OtherMediaFormType(), $otherMedia, array());
-	
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
-	
+
 			if ($form->isValid())
 			{
 				$otherMedia->setOwner($userObject);
@@ -370,16 +371,17 @@ class AddFileGatewayController extends Controller
 				$em->persist($otherMedia);
 				// Remove old avatar from DB:
 				$userObject->addResourceFile($otherMedia);
-	
+
 				$em->flush();
-	
-				$this->container->get('session')->getFlashBag()->add('media', 'File uploaded successfully successfully!');
-	
+
+				$this->container->get('session')->getFlashBag()
+						->add('media', 'File uploaded successfully successfully!');
+
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($otherMedia);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-	
-// 				$uploadedEvent->getResponse();
+
+				// 				$uploadedEvent->getResponse();
 				if ($isAjax)
 				{
 					$response = $otherMedia->getId();
@@ -399,8 +401,9 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array(
-				'form' => $form->createView(),));
+		return $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
+						array('form' => $form->createView(),));
 	}
-	
+
 }

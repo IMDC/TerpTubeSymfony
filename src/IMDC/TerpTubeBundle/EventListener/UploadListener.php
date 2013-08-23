@@ -13,11 +13,13 @@ class UploadListener
 {
 	private $logger;
 	private $doctrine;
+	private $video_producer;
 	
-	public function __construct($logger, $doctrine)
+	public function __construct($logger, $doctrine, $video_producer)
 	{
 		$this->logger = $logger;
 		$this->doctrine = $doctrine;
+		$this->video_producer = $video_producer;
 	}
 	
 	/**
@@ -44,6 +46,9 @@ class UploadListener
 		else if ($mediaType == Media::TYPE_VIDEO)
 		{
 			$this->logger->info("Uploaded a video media");
+			//Send the Async Message
+			$message = array('media_id'=> $media->getId());
+			$this->video_producer->publish(serialize($message));
 		}
 		else if ($mediaType == Media::TYPE_IMAGE)
 		{

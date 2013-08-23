@@ -1,5 +1,6 @@
 <?php
 
+
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
@@ -23,10 +24,10 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
         	new Sonata\IntlBundle\SonataIntlBundle(),
             new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
-        	new Knp\Bundle\GaufretteBundle\KnpGaufretteBundle(),
-        	new Vich\UploaderBundle\VichUploaderBundle(),
-        	new Dubture\FFmpegBundle\DubtureFFmpegBundle(),
             new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
+        	new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
+        	new AC\TranscodingBundle\ACTranscodingBundle(),
+        	new Dubture\FFmpegBundle\DubtureFFmpegBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

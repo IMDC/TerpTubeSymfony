@@ -27,13 +27,13 @@
         "sonata-project/jquery-bundle": "1.9.1",
         "incenteev/composer-parameter-handler": "~2.0",
         "gregwar/captcha-bundle": "dev-master",
-        "vich/uploader-bundle": "dev-master",
-        "knplabs/knp-gaufrette-bundle" : "dev-master",
-        "knplabs/gaufrette": "0.2.*@dev",
-        "php-ffmpeg/php-ffmpeg": "0.4.*@dev",
-        "pulse00/ffmpeg-bundle": "dev-master",
         "sonata-project/intl-bundle": "dev-master",
-        "bmatzner/fontawesome-bundle": "*"
+        "bmatzner/fontawesome-bundle": "*",
+        "oldsound/rabbitmq-bundle": "dev-master",
+        "ac/transcoding-bundle": "dev-master",
+        "videlalvaro/php-amqplib": "*",
+        "php-ffmpeg/php-ffmpeg": "0.4.*@dev",
+        "pulse00/ffmpeg-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

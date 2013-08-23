@@ -15,15 +15,12 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
                type: string
                length: 5
                nullable: true
-        mpegExtension:
-               type: string
-               length: 5
-               nullable: true
                
     lifecycleCallbacks:
         prePersist: [ preUpload ]
         postPersist: [ upload ]
         preUpdate: [ preUpload ]
-        postUpdate: [ upload ] 
+        postUpdate: [ upload ]
         preRemove: [ storeFilenameForRemove ]
         postRemove: [ removeUpload ]
+        
