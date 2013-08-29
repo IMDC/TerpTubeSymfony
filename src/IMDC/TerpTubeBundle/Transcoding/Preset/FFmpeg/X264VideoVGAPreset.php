@@ -9,26 +9,26 @@ use AC\Transcoding\FileHandlerDefinition;
 /**
  * For more information on this preset please visit this link: https://trac.handbrake.fr/wiki/BuiltInPresets#classic
  */
-class X264Video720pPreset extends BasePreset
+class X264VideoVGAPreset extends BasePreset
 {
-	protected $key = "ffmpeg.x264_720p_video";
+	protected $key = "ffmpeg.x264_vga_video";
 	protected $name = "X264 Video Preset";
-	protected $description = "A ffmpeg preset that takes a video and exports it to a 720p x264 encoded video file";
+	protected $description = "A ffmpeg preset that takes a video and exports it to a VGA 854x480 x264 encoded video file";
 
 	/**
 	 * Specify the options for this specific preset
 	 */
 	public function configure()
 	{
-		$width = 1280;
-		$height = 720;
+		$width = 854;
+		$height = 480;
 		$this
 				->setOptions(
-						array('-vcodec' => 'libx264', '-preset' => 'slow', '-crf' => '22', '-vb' => '1M',
+						array('-vcodec' => 'libx264', '-preset' => 'slow', '-crf' => '22', '-b:v' => '500k',
 								// 								'-vf' => 'scale=iw*min($width/iw\,$height/ih):ih*min($width/iw\,$height/ih), pad=$width:$height:($width-iw*min($width/iw\,$height/ih))/2:($height-ih*min($width/iw\,$height/ih))/2',
 								'-vf' => "scale=iw*min($width/iw\,$height/ih):ih*min($width/iw\,$height/ih)",
-								'-strict' => 'experimental', '-acodec' => 'aac',
-								'-ab' => '128k', '-cutoff' => '15000', '-bufsize' => '2000k', '-threads' => '0',
+								'-strict' => 'experimental', '-maxrate' => '500k', '-cutoff' => '15000',
+								'-acodec' => 'aac', '-b:a' => '128k', '-bufsize' => '1000k', '-threads' => '0',
 								'-r' => '25', '-g' => '10',));
 	}
 

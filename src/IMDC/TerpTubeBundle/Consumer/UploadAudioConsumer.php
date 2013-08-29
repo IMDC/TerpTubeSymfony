@@ -19,7 +19,7 @@ use FFMpeg\FFMpeg;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
-class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
+class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 {
 	private $logger;
 	private $doctrine;
@@ -59,41 +59,37 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 		
 		//Grab the width/height first to convert to the nearest standard resolution.
 		
-		//Convert to mp4
-		$outputFileMp4 = $tempDir . '/' . $resourceFile->getId() . '.mp4';
-		$this->logger->info("Transcoding " . $resourceFile->getAbsolutePath() ." to: " . $outputFileMp4);
-		$mp4File = $this->transcoder->transcodeWithPreset($resourceFile->getAbsolutePath(), 'ffmpeg.x264_720p_video', $outputFileMp4);
+		//Convert to aac
+		$outputFileAAC = $tempDir . '/' . $resourceFile->getId() . '.m4a';
+		$this->logger->info("Transcoding " . $resourceFile->getAbsolutePath() ." to: " . $outputFileAAC);
+		$aacFile = $this->transcoder->transcodeWithPreset($resourceFile->getAbsolutePath(), 'ffmpeg.aac_audio', $outputFileAAC);
 		
-		//Convert to webm
+		//Convert to webm ogg
 		$outputFileWebm = $tempDir . '/' . $resourceFile->getId() . '.webm';
 		$this->logger->info("Transcoding " . $resourceFile->getAbsolutePath() ." to: " . $outputFileWebm);
-		$webmFile = $this->transcoder->transcodeWithPreset($resourceFile->getAbsolutePath(), 'ffmpeg.webm_720p_video', $outputFileWebm);
+		$webmFile = $this->transcoder->transcodeWithPreset($resourceFile->getAbsolutePath(), 'ffmpeg.webm_audio', $outputFileWebm);
 		
 		//Create a thumbnail
 		
 		chdir($dir);
-		if ($mp4File === null || $webmFile === null)
+		if ($aacFile === null || $webmFile === null)
 		{
 			//The message is returned back to the queue
 			return false;
 		}
 		
-		$videoWidth = $this->ffprobe->streams($outputFileMp4)->videos()->first()->get('width');
-		$videoHeight = $this->ffprobe->streams($outputFileMp4)->videos()->first()->get('height');
-		$videoDuration = $this->ffprobe->streams($outputFileMp4)->videos()->first()->get('duration');
-		$fileSize = filesize($outputFileMp4);
+		$audioDuration = $this->ffprobe->streams($outputFileAAC)->audios()->first()->get('duration');
+		$fileSize = filesize($outputFileAAC);
 		
-		$metaData->setWidth($videoWidth);
-		$metaData->setHeight($videoHeight);
-		$metaData->setDuration($videoDuration);
+		$metaData->setDuration($audioDuration);
 		$metaData->setSize($fileSize);
 		
 		unlink($resourceFile->getAbsolutePath());
-		rename($mp4File, $resourceFile->getUploadRootDir() . '/' . $resourceFile->getId() . '.mp4');
+		rename($aacFile, $resourceFile->getUploadRootDir() . '/' . $resourceFile->getId() . '.m4a');
 		rename($webmFile, $resourceFile->getUploadRootDir() . '/' . $resourceFile->getId() . '.webm');
 		Utils::delTree($tempDir);
 		
-		$resourceFile->setPath('mp4');
+		$resourceFile->setPath('m4a');
 		$resourceFile->setWebmExtension('webm');
 		$media->setIsReady(Media::READY_YES);
 		

@@ -1,6 +1,8 @@
 <?php
 NAMESPACE IMDC\TERPTUBEBUNDLE\EVENTLISTENER;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 use IMDC\TerpTubeBundle\Entity\MetaData;
 
 use FFMpeg\FFMpeg;
@@ -9,17 +11,26 @@ use IMDC\TerpTubeBundle\Entity\Media;
 
 use IMDC\TerpTubeBundle\Event\UploadEvent;
 
-class UploadListener
+class UploadListener implements EventSubscriberInterface
 {
 	private $logger;
 	private $doctrine;
 	private $video_producer;
+	private $audio_producer;
 	
-	public function __construct($logger, $doctrine, $video_producer)
+	public function __construct($logger, $doctrine, $video_producer, $audio_producer)
 	{
 		$this->logger = $logger;
 		$this->doctrine = $doctrine;
 		$this->video_producer = $video_producer;
+		$this->audio_producer = $audio_producer;
+	}
+	
+	public static function getSubscribedEvents()
+	{
+		return array(
+				UploadEvent::EVENT_UPLOAD => 'onUpload',
+		);
 	}
 	
 	/**
@@ -36,12 +47,15 @@ class UploadListener
 		$metaData = new MetaData();
 		$fileSize = filesize($media->getResource()->getAbsolutePath());
 		
-		$metaData->setSize($fileSize);
+		
 		$metaData->setTimeUploaded(new \DateTime('now'));
 		//Transcode the different types and populate the metadata for the proper type
 		if ($mediaType == Media::TYPE_AUDIO)
 		{
 			$this->logger->info("Uploaded an audio media");
+			$message = array('media_id'=> $media->getId());
+			$this->audio_producer->publish(serialize($message));
+			$metaData->setSize(-1);
 		}
 		else if ($mediaType == Media::TYPE_VIDEO)
 		{
@@ -49,6 +63,7 @@ class UploadListener
 			//Send the Async Message
 			$message = array('media_id'=> $media->getId());
 			$this->video_producer->publish(serialize($message));
+			$metaData->setSize(-1);
 		}
 		else if ($mediaType == Media::TYPE_IMAGE)
 		{
@@ -58,10 +73,12 @@ class UploadListener
 			$metaData->setWidth($imageSize[0]);
 			$metaData->setHeight($imageSize[1]);
 			$media->setIsReady(Media::READY_YES);
+			$metaData->setSize($fileSize);
 		}
 		else
 		{
 			$this->logger->info("Uploaded something");
+			$metaData->setSize($fileSize);
 		}
 		
 		$em = $this->doctrine->getManager();

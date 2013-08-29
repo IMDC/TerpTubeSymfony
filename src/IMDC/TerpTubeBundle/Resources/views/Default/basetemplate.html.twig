@@ -14,7 +14,11 @@
 		
 		<!--  FontAwesome -->
 		<link rel="stylesheet" type="text/css" href="{{ asset('bundles/bmatznerfontawesome/css/font-awesome.min.css') }}" />
-		
+
+		<!-- JQuery UI -->
+		<link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}">
+		<!-- The video player -->
+		<link rel="stylesheet" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}">
 		<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
 		<script src="../assets/js/html5shiv.js"></script>
@@ -232,9 +236,11 @@
 		</div><!--/.container-fluid -->
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
 		<script>
 			window.jQuery || document.write('<script src="{{ asset('js/jquery.js') }}"><\/script>')
 		</script>
+		<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
 		{% block javascripts %}
 		    <script src="{{ asset('bundles/imdcterptube/js/main.js') }}"></script>
 		{% endblock javascripts %}

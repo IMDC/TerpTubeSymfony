@@ -108,6 +108,10 @@ filesGateway:
         2: "Audio"
         9: "Other"
     noFiles: "You have not added any files yet. Use the above buttons to add files."
+    converting: "Processing..."
+    deleteLink: "Delete"
+    deleteConfirmMessage: "Are you sure you want to delete this file?"
+    previewLink: "Preview"
 # Form field labels
 form:
     group_name: "Group name:"

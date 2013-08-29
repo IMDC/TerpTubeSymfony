@@ -28,7 +28,12 @@
 						{% for resourceFile in resourceFiles %}
                    	<tr>
                         <td>
-                            <a href="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-remove-sign"></i>Delete</a>
+                            <a class="delete-button" href='#' data-url="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-remove-sign"></i>{{ 'filesGateway.deleteLink'|trans }}</a>
+                            {% if resourceFile.getMetaData.getSize == -1 %}
+                            <a class="preview-button disabled" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-play-sign"></i>{{ 'filesGateway.previewLink'|trans }}</a>
+                            {% else %}
+                            <a class="preview-button" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-play-sign"></i>{{ 'filesGateway.previewLink'|trans }}</a>
+                            {% endif %}
                         </td>
                         <td>
                         	{{ resourceFile.title }}
@@ -37,7 +42,11 @@
                         	{{ ('filesGateway.type.'~resourceFile.type)|trans }}
                         </td>
                         <td>{{ resourceFile.getMetaData.getTimeUploaded|date('g:ia M j') }}</td>
+                        {% if resourceFile.getMetaData.getSize == -1 %}
+                        <td>{{ 'filesGateway.converting'|trans }}</td>
+                        {% else %}
                         <td>{{ '%.2f' |format(resourceFile.getMetaData.getSize / 1024 /1024)  }}MB</td>
+                        {% endif %}
                     </tr>
                     {% endfor %}
                 {% else %}
@@ -46,4 +55,27 @@
             </table>
 	
 	</div>
+	<div id="preview">
+	</div>
 {% endblock underherounitrow2 %}
+
+{% block javascripts %}
+ {{ parent() }}
+ <script type='text/javascript'>
+  $(document).ready(function() {
+        $('.preview-button').click(function(e) {
+            if ($(this).hasClass('disabled'))
+                return false;
+            $('#preview').html('');
+        	previewFileLink($(this), $('#preview'), true);
+        	return false;
+        });
+        $('.delete-button').click(function(e) {
+        	deleteFile($(this), "{{ 'filesGateway.deleteConfirmMessage'|trans }}");
+        	return false;
+        });
+    });
+  </script>
+  
+  <script src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>
+{% endblock javascripts %}

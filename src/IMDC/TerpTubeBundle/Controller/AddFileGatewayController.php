@@ -42,26 +42,24 @@ class AddFileGatewayController extends Controller
 	 * A gateway form for uploading/recording or selecting existing files
 	 * 
 	 * @param String $filter
-	 * @param boolean $isAjax
 	 * @param String $path
 	 * @throws AccessDeniedException
 	 * @throws NotFoundHttpException
 	 * @throws BadRequestHttpException
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-	public function gatewayAction(Request $request, $isAjax, $path)
+	public function gatewayAction(Request $request, $path)
 	{
 		$securityContext = $this->container->get('security.context');
 		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
 		{
-			$this->get('session')->getFlashBag()
-					->add('notice', 'Please log in first');
+			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
 	}
 
-	public function addAudioAction(Request $request, $url, $isAjax)
+	public function addAudioAction(Request $request, $url)
 	{
 		$securityContext = $this->container->get('security.context');
 		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
@@ -111,31 +109,23 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($isAjax)
+				if ($url === null)
 				{
-					$response = $audioMedia->getId();
+					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
 				else
 				{
-					if ($url === null)
-					{
-						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
-					}
-					else
-					{
-						$response = new RedirectResponse($url);
-					}
+					$response = new RedirectResponse($url);
 				}
 				return $response;
 			}
 		}
 		// form not valid, show the basic form
 		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
-						array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
 	}
 
-	public function addVideoAction(Request $request, $url, $isAjax)
+	public function addVideoAction(Request $request, $url)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!is_object($user) || !$user instanceof UserInterface)
@@ -178,31 +168,23 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($isAjax)
+				if ($url === null)
 				{
-					$response = $videoMedia->getId();
+					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
 				else
 				{
-					if ($url === null)
-					{
-						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
-					}
-					else
-					{
-						$response = new RedirectResponse($url);
-					}
+					$response = new RedirectResponse($url);
 				}
 				return $response;
 			}
 		}
 		// form not valid, show the basic form
 		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
-						array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
 	}
 
-	public function addImageAction(Request $request, $url, $isAjax)
+	public function addImageAction(Request $request, $url)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!is_object($user) || !$user instanceof UserInterface)
@@ -245,31 +227,23 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($isAjax)
+				if ($url === null)
 				{
-					$response = $imageMedia->getId();
+					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
 				else
 				{
-					if ($url === null)
-					{
-						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
-					}
-					else
-					{
-						$response = new RedirectResponse($url);
-					}
+					$response = new RedirectResponse($url);
 				}
 				return $response;
 			}
 		}
 		// form not valid, show the basic form
 		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
-						array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
 	}
 
-	public function addRecordingAction(Request $request, $url, $isAjax)
+	public function addRecordingAction(Request $request, $url)
 	{
 		//FIXME add the recording stuff here
 		throw new NotImplementedException("Not yet implemented");
@@ -315,31 +289,23 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($isAjax)
+				if ($url === null)
 				{
-					$response = $audioMedia->getId();
+					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
 				else
 				{
-					if ($url === null)
-					{
-						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
-					}
-					else
-					{
-						$response = new RedirectResponse($url);
-					}
+					$response = new RedirectResponse($url);
 				}
 				return $response;
 			}
 		}
 		// form not valid, show the basic form
 		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
-						array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
 	}
 
-	public function addOtherAction(Request $request, $url, $isAjax)
+	public function addOtherAction(Request $request, $url)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!is_object($user) || !$user instanceof UserInterface)
@@ -382,28 +348,20 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($isAjax)
+				if ($url === null)
 				{
-					$response = $otherMedia->getId();
+					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
 				else
 				{
-					if ($url === null)
-					{
-						$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
-					}
-					else
-					{
-						$response = new RedirectResponse($url);
-					}
+					$response = new RedirectResponse($url);
 				}
 				return $response;
 			}
 		}
 		// form not valid, show the basic form
 		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig',
-						array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
 	}
 
 }

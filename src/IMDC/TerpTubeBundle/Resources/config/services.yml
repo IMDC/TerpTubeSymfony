@@ -2,8 +2,6 @@ parameters:
 #    imdc_terp_tube.example.class: IMDC\TerpTubeBundle\Example
     imdc_terptube.component.authentication.handler.login_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LoginSuccessHandler
     imdc_terptube.component.authentication.handler.logout_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LogoutSuccessHandler
-    imdc_terptube.upload_resource_listener.class: IMDC\TerpTubeBundle\EventListener\UploadListener
-    imdc_terptube.event.uploadEvent: 'imdc_terptube.event.uploadEvent'
 
 services:
 #    imdc_terp_tube.example:
@@ -12,6 +10,12 @@ services:
 
     upload_video_service:
         class: IMDC\TerpTubeBundle\Consumer\UploadVideoConsumer
+        arguments: ["@logger", "@doctrine", "@transcoder"]
+        tags:
+            - { name: 'monolog.logger', channel: 'imdc' }
+            
+    upload_audio_service:
+        class: IMDC\TerpTubeBundle\Consumer\UploadAudioConsumer
         arguments: ["@logger", "@doctrine", "@transcoder"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
@@ -41,10 +45,10 @@ services:
             - {name: 'monolog.logger', channel: 'security' }
               
     imdc_terptube.upload_resource_listener:
-        class: %imdc_terptube.upload_resource_listener.class%
-        arguments: ["@logger", "@doctrine", "@old_sound_rabbit_mq.upload_video_producer"]
+        class: IMDC\TerpTubeBundle\EventListener\UploadListener
+        arguments: ["@logger", "@doctrine", "@old_sound_rabbit_mq.upload_video_producer", "@old_sound_rabbit_mq.upload_audio_producer"]
         tags:
-            - { name: kernel.event_listener, event: %imdc_terptube.event.uploadEvent%, method: onUpload}
+            - { name: kernel.event_subscriber}
             - { name: 'monolog.logger', channel: 'imdc' }
      
     imdc_terptube.new_user_intro_email_listener:
@@ -82,6 +86,30 @@ services:
             
     transcoding.preset.ffmpeg.webm_720p_video:
         class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideo720pPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            
+    transcoding.preset.ffmpeg.x264_vga_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\X264VideoVGAPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            
+    transcoding.preset.ffmpeg.webm_vga_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideoVGAPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            
+    transcoding.preset.ffmpeg.aac_audio:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\AACAudioPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            
+    transcoding.preset.ffmpeg.webm_audio:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMAudioPreset
         scope: prototype
         tags:
             - {name: transcoding.preset}

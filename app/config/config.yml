@@ -172,9 +172,17 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
         upload_video:
             connection: default
             exchange_options: {name: 'upload-video', type: direct}
+        upload_audio:
+            connection: default
+            exchange_options: {name: 'upload-audio', type: direct}
     consumers:
         upload_video:
             connection: default
             exchange_options: {name: 'upload-video', type: direct}
             queue_options:    {name: 'upload-video'}
             callback:         upload_video_service
+        upload_audio:
+            connection: default
+            exchange_options: {name: 'upload-audio', type: direct}
+            queue_options:    {name: 'upload-audio'}
+            callback:         upload_audio_service

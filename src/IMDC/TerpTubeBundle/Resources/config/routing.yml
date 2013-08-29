@@ -34,31 +34,41 @@ imdc_files_gateway:
     
 imdc_files_add_gateway: 
     pattern: /myFiles/add
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:gateway, isAjax: false, url: null }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:gateway, url: null }
     
 imdc_files_gateway_audio: 
     pattern: /myFiles/add/audio
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addAudio, isAjax: false, url: null }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addAudio, url: null }
     
 imdc_files_gateway_video: 
     pattern: /myFiles/add/video
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addVideo, isAjax: false, url: null }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addVideo, url: null }
     
 imdc_files_gateway_image: 
     pattern: /myFiles/add/image
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addImage, isAjax: false, url: null }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addImage, url: null }
     
 imdc_files_gateway_record: 
     pattern: /myFiles/add/record
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, isAjax: false, url: null }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, url: null }
 
 imdc_files_gateway_other: 
     pattern: /myFiles/add/other
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addOther, isAjax: false, url: null }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addOther, url: null }
 
 imdc_files_gateway_remove: 
      pattern: /myFiles/delete/{mediaId}
-     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:deleteMedia, url: null }
+     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia }
+     requirements:
+        _method:  POST
+        mediaId: \d+
+        
+imdc_files_gateway_preview:
+    pattern: /myFiles/preview/{mediaId}
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewMedia }
+    requirements:
+        _method:  POST
+        mediaId: \d+
 
 imdc_message_create:
     pattern: /createMessage
@@ -124,7 +134,6 @@ imdc_remove_from_friends_list:
 imdc_friends_list_show_all:
     pattern: /friends
     defaults: { _controller: IMDCTerpTubeBundle:FriendsList:showAll }
-    
     
     
     
