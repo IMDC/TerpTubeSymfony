@@ -7,7 +7,7 @@
 	<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
 </audio>
 <script type='text/javascript'> 
- var player = new Player($("#{{ mediaFile.getID }}").parent() , $("#{{ mediaFile.getID }}"));
+ var player = new Player($("#{{ mediaFile.getID }}"));
  player.options.areaSelectionEnabled = true;
  player.options.updateTimeType = player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
  //player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};

@@ -43,7 +43,7 @@
                         </td>
                         <td>{{ resourceFile.getMetaData.getTimeUploaded|date('g:ia M j') }}</td>
                         {% if resourceFile.getMetaData.getSize == -1 %}
-                        <td>{{ 'filesGateway.converting'|trans }}</td>
+                        <td><i class="icon-spinner icon-spin icon-large"></i></td>
                         {% else %}
                         <td>{{ '%.2f' |format(resourceFile.getMetaData.getSize / 1024 /1024)  }}MB</td>
                         {% endif %}

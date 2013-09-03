@@ -2,14 +2,16 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block motionMedia %}
-<video	class="preview" id="{{ mediaFile.getID }}" preload="auto">
+<video	class="preview" width="640" id="{{ mediaFile.getID }}" preload="auto">
 	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
 	<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
 </video>
 <script type='text/javascript'> 
- var player = new Player($("#{{ mediaFile.getID }}").parent() , $("#{{ mediaFile.getID }}"));
+ var player = new Player($("#{{ mediaFile.getID }}"));
  player.options.areaSelectionEnabled = true;
- player.options.updateTimeType = player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
+ player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
+ player.options.backButton = false;
+ player.options.forwardButton = false;
  //player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
  //player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
  

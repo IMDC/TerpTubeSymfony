@@ -17,14 +17,8 @@ button.videoControlsContainer
 .preview-media .video 
 {
 	text-align:center;	
-	width:640px;
 	margin:auto;
 	padding: 0px;
-}
-
-.preview-media .video video
-{
-	width: inherit;
 }
 
 .fullScreen
@@ -177,6 +171,11 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-image: url(../../img/player/play_small.png);
 	background-repeat: no-repeat;
 }
+.videoControlsContainer.controlsBar.videoControls.playButton.pause
+{
+	background-image: url(../../img/player/pause_small.png);
+	background-repeat: no-repeat;
+}
 
 .videoControlsContainer.track.fullScreenButton
 {
@@ -234,6 +233,12 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-image: url(../../img/player/rec1_small.gif); 
 	background-repeat: no-repeat;	
 }
+
+.videoControlsContainer.controlsBar.videoControls.recordButton.record
+{
+	background-image: url(../../img/player/rec2_small.gif); 
+	background-repeat: no-repeat;	
+}
 /*
  * Recording buttons end
  */
@@ -248,13 +253,32 @@ div.videoControlsContainer.controlsBar.backButtons
 	text-align: center;
 	background-color: white;
 }
+
 .videoControlsContainer.track.volumeControl img
 {
 	width: 80%;
 	height: 80%;
 	vertical-align: -50%;
 	line-height:40px;
+	content: url(../../img/player/audioOn.png);
 }
+
+.videoControlsContainer.controlsBar.audioButtonsBar label.audioOn img
+{
+	content: url(../../img/player/audioOn.png);
+}
+
+.videoControlsContainer.controlsBar.audioButtonsBar label.audioOff img
+{
+	content: url(../../img/player/audioOff.png);
+}
+
+.videoControlsContainer.track.volumeControl img.mute
+{
+	content: url(../../img/player/audioOff.png);
+}
+
+
 .videoControlsContainer.track.volumeControl.volumeSlider
 {
 	display:none;
