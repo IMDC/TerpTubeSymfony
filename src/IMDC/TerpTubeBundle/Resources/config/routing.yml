@@ -48,9 +48,9 @@ imdc_files_gateway_image:
     pattern: /myFiles/add/image
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addImage, url: null }
     
-imdc_files_gateway_record: 
-    pattern: /myFiles/add/record
-    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, url: null }
+imdc_files_gateway_record_media: 
+    pattern: /myFiles/recordMedia
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:recordMedia, url: null }
 
 imdc_files_gateway_other: 
     pattern: /myFiles/add/other
@@ -62,6 +62,12 @@ imdc_files_gateway_remove:
      requirements:
         _method:  POST
         mediaId: \d+
+        
+imdc_files_gateway_record: 
+     pattern: /myFiles/record
+     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, url: null }
+     requirements:
+        _method:  POST
         
 imdc_files_gateway_preview:
     pattern: /myFiles/preview/{mediaId}

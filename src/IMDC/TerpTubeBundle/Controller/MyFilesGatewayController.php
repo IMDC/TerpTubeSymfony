@@ -156,5 +156,24 @@ class MyFilesGatewayController extends Controller
 		}
 		return $this->render($responseURL, array('mediaFile' => $media));
 	}
+	
+	public function recordMediaAction(Request $request, $url)
+	{
+		//FIXME add the recording stuff here
+		// 		throw new NotImplementedException("Not yet implemented");
+	
+		$user = $this->container->get('security.context')->getToken()->getUser();
+		if (!is_object($user) || !$user instanceof UserInterface)
+		{
+			throw new AccessDeniedException('This user does not have access to this section.');
+		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($user->getUsername());
+		if ($userObject == null)
+		{
+			throw new NotFoundHttpException("This user does not exist");
+		}
+		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
+	}
 
 }

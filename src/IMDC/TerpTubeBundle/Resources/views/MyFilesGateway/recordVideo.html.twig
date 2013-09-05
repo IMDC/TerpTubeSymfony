@@ -1,0 +1,42 @@
+{% extends "IMDCTerpTubeBundle:MyFilesGateway:previewMotionMedia.html.twig" %}
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% block motionMedia %}
+<video	class="preview"  id="record" preload="auto" autoplay muted>
+</video>
+<script type='text/javascript'>
+ $(document).ready(function() {
+	 var videoElement = $("#record");
+	 var player = new Player(videoElement);
+	 player.options.areaSelectionEnabled = false;
+	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
+	 player.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
+	 player.options.backButton = false;
+	 player.options.forwardButton = false;
+	 player.options.audioBar = false;
+	 player.options.volumeControl = false;
+	 player.options.recordingErrorFunction = function(e)
+	 {
+		 console.log('Reeeejected!', e);
+	 }
+	 player.options.recordingSuccessFunction = function(data)
+	 {
+		 console.log('Success!', data);
+	 }
+	 player.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
+	 //player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType ?>');}};
+	 //player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename(
+		//	$outputVideoFile)
+			//																						 ?>', <?php echo $keepVideoFile ?>, controls);};
+	 
+	 // player.options.playHeadImage = "images/feedback_icons/round_plus.png";
+	 // player.options.playHeadImageOnClick = function(){ alert("plus");};
+
+	 player.createControls();
+ });
+
+  </script>
+
+{% endblock motionMedia %}
+
+ 

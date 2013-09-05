@@ -16,8 +16,6 @@ function deleteFile(currentElement, message)
 		},
 		success : function(data)
 		{
-			// the response is in the data variable
-
 			if (data.responseCode == 200)
 			{
 				$(currentElement).parent().parent().remove();
@@ -40,6 +38,26 @@ function deleteFile(currentElement, message)
 	return false;
 }
 
+function recordVideo(destinationDivElement, address)
+{
+	$.ajax(
+	{
+		url : address,
+		type : "POST",
+		contentType : "application/x-www-form-urlencoded",
+		success : function(data)
+		{
+			destinationDivElement.html(data);
+		},
+		error : function(request)
+		{
+			console.log(request);
+			alert(request.statusText);
+		}
+	});
+	return false;
+}
+
 function previewFileLink(currentElement, destinationDivElement, isPopUp)
 {
 	var mediaId = $(currentElement).attr('data-val');
@@ -48,41 +66,47 @@ function previewFileLink(currentElement, destinationDivElement, isPopUp)
 	previewMediaFile(mediaId, mediaURL, destinationDivElement, isPopUp);
 }
 
+function popUp(destinationDivElement, functionName, title)
+{
+	destinationDivElement.dialog(
+	{
+
+		autoOpen : false,
+		resizable : false,
+		modal : true,
+		draggable : false,
+		closeOnEscape : true,
+		closeText : "X",
+		dialogClass : "player-dialog",
+		open : function(event, ui)
+		{
+			// $(".ui-dialog-titlebar-close", this.parentNode).hide();
+			functionName;
+		},
+		create : function(event, ui)
+		{
+			$(event.target).parent().css('position', 'relative'); // Dumb comment at this line!
+		},
+		position :
+		{
+			my : "center top",
+			// at : "center top",
+			of : $("body")
+		},
+		show : "blind",
+		hide : "blind",
+		minWidth : 740,
+		title : title
+	});
+
+	destinationDivElement.dialog("open");
+}
+
 function previewMediaFile(mediaId, mediaURL, destinationDivElement, isPopUp)
 {
 	if (isPopUp)
 	{
-		destinationDivElement.dialog(
-		{
-			autoOpen : false,
-			resizable : false,
-			modal : true,
-			draggable : false,
-			closeOnEscape : true,
-			closeText : "X",
-			dialogClass : "player-dialog",
-			open : function(event, ui)
-			{
-				// $(".ui-dialog-titlebar-close", this.parentNode).hide();
-				loadMediaPage(mediaId, mediaURL, destinationDivElement);
-			},
-			create : function(event, ui)
-			{
-				$(event.target).parent().css('position', 'relative'); // Dumb comment at this line!
-			},
-			position :
-			{
-				my : "center top",
-				// at : "center top",
-				of : $("body")
-			},
-			show : "blind",
-			hide : "blind",
-			minWidth : 740,
-			title : "Preview"
-		});
-
-		destinationDivElement.dialog("open");
+		popUp(destinationDivElement, loadMediaPage(mediaId, mediaURL, destinationDivElement), "Preview");
 	}
 	else
 	{

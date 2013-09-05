@@ -228,6 +228,7 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-repeat: no-repeat;	
 }
 
+
 .videoControlsContainer.controlsBar.videoControls.recordButton
 {
 	background-image: url(../../img/player/rec1_small.gif); 
@@ -238,6 +239,13 @@ div.videoControlsContainer.controlsBar.backButtons
 {
 	background-image: url(../../img/player/rec2_small.gif); 
 	background-repeat: no-repeat;	
+}
+
+.videoControlsContainer.track.selectCameraButton
+{
+	background-image: url(../../img/player/choose_mic_cam.png);
+	background-repeat: no-repeat;
+	float: right;
 }
 /*
  * Recording buttons end

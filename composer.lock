@@ -1892,16 +1892,16 @@
         },
         {
             "name": "swiftmailer/swiftmailer",
-            "version": "v5.0.1",
+            "version": "v5.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swiftmailer/swiftmailer.git",
-                "reference": "v5.0.1"
+                "reference": "f3917ecef35a4e4d98b303eb9fee463bc983f379"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/v5.0.1",
-                "reference": "v5.0.1",
+                "url": "https://api.github.com/repos/swiftmailer/swiftmailer/zipball/f3917ecef35a4e4d98b303eb9fee463bc983f379",
+                "reference": "f3917ecef35a4e4d98b303eb9fee463bc983f379",
                 "shasum": ""
             },
             "require": {
@@ -1937,7 +1937,7 @@
                 "mail",
                 "mailer"
             ],
-            "time": "2013-06-17 13:32:32"
+            "time": "2013-08-30 12:35:21"
         },
         {
             "name": "symfony/assetic-bundle",
@@ -2373,12 +2373,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "0ce3d67f359d2385dd375ae35ee2462c26d6f012"
+                "reference": "c6d51be2d8ae25f4a78902ca3391b1bc800116ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/0ce3d67f359d2385dd375ae35ee2462c26d6f012",
-                "reference": "0ce3d67f359d2385dd375ae35ee2462c26d6f012",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/c6d51be2d8ae25f4a78902ca3391b1bc800116ae",
+                "reference": "c6d51be2d8ae25f4a78902ca3391b1bc800116ae",
                 "shasum": ""
             },
             "type": "library",
@@ -2402,7 +2402,7 @@
                 "bootstrap",
                 "css"
             ],
-            "time": "2013-08-29 15:30:17"
+            "time": "2013-09-02 17:32:45"
         },
         {
             "name": "videlalvaro/php-amqplib",

@@ -403,6 +403,7 @@ function Player(videoID, options)
 	{
 		volumeControl : true,
 		type : Player.DENSITY_BAR_TYPE_PLAYER,
+		recordingStream : null,
 		updateTimeType : Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
 		backButton : false,
 		backFunction : function()
@@ -413,6 +414,14 @@ function Player(videoID, options)
 		forwardFunction : function()
 		{
 			alert("Forward");
+		},
+		recordingErrorFunction : function(e)
+		{
+			alert("Error:" + e);
+		},
+		recordingSuccessFunction : function(e)
+		{
+			alert('Success!', e);
 		},
 		audioBar : true,
 		densityBarHeight : 40,
@@ -559,7 +568,10 @@ Player.prototype.getRelativeMouseCoordinates = function(event)
 		y = event.layerY;
 	}
 
-	return {x : x, y : y};
+	return	{
+		x : x,
+		y : y
+	};
 };
 
 Player.prototype.jumpTo = function(jumpPoint)
@@ -956,12 +968,12 @@ Player.prototype.fullScreenChange = function(setFullScreen)
 	var densityBarSelectedRegionElement = $(this.elementID).find(".videoControlsContainer.track.selectedRegion").eq(0);
 	var densityBarElement = $(this.elementID).find(".videoControlsContainer.track.densitybar").eq(0);
 	var controlsBarElement = $(this.elementID).find(".videoControlsContainer.controlsBar").eq(0);
-	
+
 	var fullScreenElement = document.fullscreenElement || document.mozFullScreenElement
-	|| document.webkitFullscreenElement;
+			|| document.webkitFullscreenElement;
 	if (setFullScreen === true)
 	{
-		
+
 		if ($(this.videoID).parents().filter(fullScreenElement).length == 0)
 		{
 			return;
@@ -1122,6 +1134,38 @@ Player.prototype.setupVideoRecording = function()
 	this.recording_startTime = 0;
 	this.paintThumb(0);
 	this.repaint();
+
+	window.URL = window.URL || window.webkitURL;
+	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
+			|| navigator.msGetUserMedia;
+	if (navigator.getUserMedia)
+	{ // TODO should expose the constraints in the options object.
+		videoConstraints =
+		{
+			video :
+			{
+				mandatory :
+				{
+					minHeight : 480,
+					minWidth : 640,
+					maxWidth : 1024,
+					maxHeight : 640
+				}
+			},
+			audio : true
+		};
+		navigator.getUserMedia(videoConstraints, function(stream)
+		{
+			instance.stream = stream;
+			$(instance.videoID).attr('src', window.URL.createObjectURL(stream));
+			instance.recording_cameraReady(true);
+			instance.recording_microphoneReady(true);
+		}, instance.options.recordingErrorFunction);
+	}
+	else
+	{
+		videoElement.html('Problem with recording'); // fallback.
+	}
 };
 
 Player.prototype.setInputEnabled = function(element, enabled)
@@ -1187,7 +1231,21 @@ Player.prototype.recording_startRecording = function()
 	// this.currentMaxSelected);
 	this.isRecording = true;
 	this.hasRecorded = -1;
-	$(this.videoID)[0].startRecording();
+	this.recordAudio = RecordRTC(this.stream,
+	{
+	// bufferSize: 16384,
+	// sampleRate: 45000
+	});
+
+	this.recordVideo = RecordRTC(this.stream,
+	{
+		type : 'video'
+	});
+	this.recordAudio.startRecording();
+	this.recordVideo.startRecording();
+	
+	this.recording_recordingStarted();
+	// $(this.videoID)[0].startRecording();
 };
 
 // Called by Flash when recording actually started
@@ -1206,7 +1264,7 @@ Player.prototype.recording_recordingStarted = function()
 
 Player.prototype.recording_stopRecording = function()
 {
-	setBlur(true, "");
+//	setBlur(true, "");
 	var recordButton = $(this.elementID).find(".videoControlsContainer.controlsBar.videoControls.recordButton").eq(0);
 	var backButton = $(this.elementID).find(".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
 	var forwardButton = $(this.elementID).find(".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
@@ -1220,12 +1278,47 @@ Player.prototype.recording_stopRecording = function()
 	this.hasRecorded = this.getCurrentTime();
 	this.isRecording = false;
 	this.isPastMinimumRecording = false;
-	$(this.videoID)[0].stopRecording();
+	
+	this.recordAudio.stopRecording();
+	this.recordVideo.stopRecording();
+    this.postRecordings(this.options.recordingPostURL);
+
+     
+//	$(this.videoID)[0].stopRecording();
+};
+
+Player.prototype.postRecordings = function(address) 
+{
+    // FormData
+    var formData = new FormData();
+    formData.append('audio-blob', this.recordAudio.getBlob());
+    formData.append('video-blob', this.recordVideo.getBlob());
+    var instance = this;
+    // POST the Blobs
+    $.ajax(
+	{
+		url : address,
+		type : "POST",
+		contentType : false,
+		data: formData,
+		processData: false,
+		success : function(data)
+		{
+			instance.recording_recordingStopped(true);
+			instance.options.recordingSuccessFunction;
+		},
+		error : function(request)
+		{
+			instance.options.recordingErrorFunction;
+			console.log(request);
+			alert(request.statusText);
+		}
+	});
 };
 
 Player.prototype.recording_recordingStopped = function(success)
 {
-	setBlur(false, "");
+//	setBlur(false, "");
 	var recordButton = $(this.elementID).find(".videoControlsContainer.controlsBar.videoControls.recordButton").eq(0);
 	var backButton = $(this.elementID).find(".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
 	var forwardButton = $(this.elementID).find(".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
@@ -1435,54 +1528,54 @@ Player.prototype.toggleMute = function()
 
 function getTimeCodeFromSeconds(time, duration, separator)
 {
-	time = Math.floor(time*1000);
-	time/=1000;
+	time = Math.floor(time * 1000);
+	time /= 1000;
 	var sec = "" + Math.floor(time % 60);
 	var min = "" + Math.floor((time / 60) % 60);
 	var hrs = "" + Math.floor((time / 60) / 60) % 60;
-	
+
 	while (sec.length < 2)
 		sec = "0" + sec;
-	if ( typeof(duration) == 'undefined')
+	if (typeof (duration) == 'undefined')
 	{
 		while (min.length < 2)
 			min = "0" + min;
 		if (hrs == 0)
-			return  min + ":" + sec;
+			return min + ":" + sec;
 		else
 			return hrs + ":" + min + ":" + sec;
 	}
-	
-	duration = Math.floor(duration*1000);
-	duration/=1000;
-	var durationSec = ""+Math.floor(duration % 60);
+
+	duration = Math.floor(duration * 1000);
+	duration /= 1000;
+	var durationSec = "" + Math.floor(duration % 60);
 	var durationMin = Math.floor((duration / 60) % 60);
 	var durationHrs = Math.floor((duration / 60) / 60) % 60;
-	
+
 	while (durationSec.length < 2)
 		durationSec = "0" + durationSec;
-		
-	var resultDuration = ""+durationSec;
-	var result = ""+sec;
-	
+
+	var resultDuration = "" + durationSec;
+	var result = "" + sec;
+
 	if (durationHrs == 0)
 	{
 		if (durationMin == 0)
 		{
-			
+
 		}
-		else 
+		else
 		{
-			if (durationMin>9)
+			if (durationMin > 9)
 			{
 				while (min.length < 2)
-					min = "0" + min;	
+					min = "0" + min;
 			}
-			resultDuration = durationMin+":"+durationSec;
-			result = min+":"+sec;
+			resultDuration = durationMin + ":" + durationSec;
+			result = min + ":" + sec;
 		}
-		resultDuration = durationMin+":"+durationSec;
-		result = min+":"+sec;
+		resultDuration = durationMin + ":" + durationSec;
+		result = min + ":" + sec;
 	}
 	else
 	{
@@ -1492,11 +1585,11 @@ function getTimeCodeFromSeconds(time, duration, separator)
 			min = "0" + min;
 		while (hrs.length < 2)
 			hrs = "0" + hrs;
-		
+
 		result = hrs + ":" + min + ":" + sec;
 	}
-	
-	if ( typeof(separator) == 'undefined')
+
+	if (typeof (separator) == 'undefined')
 		return result;
 	else
 		return result + separator + resultDuration;
