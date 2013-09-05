@@ -273,10 +273,10 @@ class AddFileGatewayController extends Controller
 		$media->setTitle("Recording-". $currentTime->format('Y-m-d-H:i'));
 		
 		$audioFile = $request->files->get("audio-blob", null);
-		$videoFile = $request->files->get("video-blob", null);//$_FILES["video-blob"]["tmp_name"];
+		$videoFile = $request->files->get("video-blob", null);
 		
-		//FIXME merge the audio and video uploaded files
-		$transcoder = new Transcoder($this->get('logger'));
+		//FIXME Need to sync the audio/videos
+		$transcoder = $this->container->get('imdc_terptube.transcoder');//($this->get('logger'));
 		$mergedFile = $transcoder->mergeAudioVideo($audioFile, $videoFile);
 		$resourceFile = new ResourceFile();
 		$resourceFile->setMedia($media);

@@ -1,5 +1,7 @@
 <?php
 namespace IMDC\TerpTubeBundle\Consumer;
+use Symfony\Component\HttpFoundation\File\File;
+
 use IMDC\TerpTubeBundle\Utils\Utils;
 
 use IMDC\TerpTubeBundle\Entity\Media;
@@ -44,57 +46,50 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 		/** @var $media IMDC\TerpTubeBundle\Entity\Media */
 		$media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
 		$metaData = $media->getMetaData();
-		$resourceFile = $media->getResource();
+		$resource = $media->getResource();
+		$resourceFile = new File($resource->getAbsolutePath());
 						
-		$tempDir = $resourceFile->getUploadRootDir() . '/temp/' . $resourceFile->getId();
-		$umask = umask();
-		umask(0000);
-		if (file_exists($tempDir))
-			Utils::delTree($tempDir);
-		mkdir($tempDir);
-		umask($umask);
-		$dir = getcwd();
-		chdir($tempDir);
-		$this->logger->info(getcwd());
-		
 		//Grab the width/height first to convert to the nearest standard resolution.
 		
-		//Convert to mp4
-		$outputFileMp4 = $tempDir . '/' . $resourceFile->getId() . '.mp4';
-		$this->logger->info("Transcoding " . $resourceFile->getAbsolutePath() ." to: " . $outputFileMp4);
-		$mp4File = $this->transcoder->transcodeWithPreset($resourceFile->getAbsolutePath(), 'ffmpeg.x264_720p_video', $outputFileMp4);
-		
-		//Convert to webm
-		$outputFileWebm = $tempDir . '/' . $resourceFile->getId() . '.webm';
-		$this->logger->info("Transcoding " . $resourceFile->getAbsolutePath() ." to: " . $outputFileWebm);
-		$webmFile = $this->transcoder->transcodeWithPreset($resourceFile->getAbsolutePath(), 'ffmpeg.webm_720p_video', $outputFileWebm);
-		
+		$transcodingType = $media->getIsReady();
+		if ($transcodingType == Media::READY_NO)
+		{
+			$this->logger->info("Transcoding " . $resourceFile->getRealPath());
+			$mp4File = $this->transcoder->transcodeToX264($resourceFile, 'ffmpeg.x264_720p_video');
+			$webmFile = $this->transcoder->transcodeToWebM($resourceFile, 'ffmpeg.webm_720p_video');
+		}
+		else if ($transcodingType == Media::READY_MPEG)
+		{
+			$this->logger->info("Transcoding " . $resourceFile->getRealPath());
+			$webmFile = $this->transcoder->transcodeToWebM($resourceFile, 'ffmpeg.webm_720p_video');
+			$mp4File = $resourceFile;
+		}
+		else if ($transcodingType == Media::READY_WEBM)
+		{
+			$this->logger->info("Transcoding " . $resourceFile->getRealPath());
+			$mp4File = $this->transcoder->transcodeToX264($resourceFile, 'ffmpeg.x264_720p_video');
+			$webmFile = $resourceFile;
+		}
 		//Create a thumbnail
 		
-		chdir($dir);
-		if ($mp4File === null || $webmFile === null)
-		{
-			//The message is returned back to the queue
-			return false;
-		}
-		
-		$videoWidth = $this->ffprobe->streams($outputFileMp4)->videos()->first()->get('width');
-		$videoHeight = $this->ffprobe->streams($outputFileMp4)->videos()->first()->get('height');
-		$videoDuration = $this->ffprobe->streams($outputFileMp4)->videos()->first()->get('duration');
-		$fileSize = filesize($outputFileMp4);
+		$videoWidth = $this->ffprobe->streams($mp4File->getRealPath())->videos()->first()->get('width');
+		$videoHeight = $this->ffprobe->streams($mp4File->getRealPath())->videos()->first()->get('height');
+		$videoDuration = $this->ffprobe->streams($mp4File->getRealPath())->videos()->first()->get('duration');
+		$fileSize = filesize($mp4File->getRealPath());
 		
 		$metaData->setWidth($videoWidth);
 		$metaData->setHeight($videoHeight);
 		$metaData->setDuration($videoDuration);
 		$metaData->setSize($fileSize);
 		
-		unlink($resourceFile->getAbsolutePath());
-		rename($mp4File, $resourceFile->getUploadRootDir() . '/' . $resourceFile->getId() . '.mp4');
-		rename($webmFile, $resourceFile->getUploadRootDir() . '/' . $resourceFile->getId() . '.webm');
-		Utils::delTree($tempDir);
+		if ($resourceFile->getRealPath() != $mp4File->getRealPath() && $resourceFile->getRealPath() != $webmFile->getRealPath())
+			unlink($resourceFile->getRealPath());
+		rename($webmFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
+		rename($mp4File, $resource->getUploadRootDir() . '/' . $resource->getId() . '.mp4');
 		
-		$resourceFile->setPath('mp4');
-		$resourceFile->setWebmExtension('webm');
+		
+		$resource->setPath('mp4');
+		$resource->setWebmExtension('webm');
 		$media->setIsReady(Media::READY_YES);
 		
 		$em->flush();
