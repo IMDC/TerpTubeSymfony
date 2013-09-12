@@ -35,7 +35,8 @@ class Transcoder
 	public function mergeAudioVideo(File $audioFile, File $videoFile)
 	{
 		//Process video merging.
-		
+		try
+		{
 		$audioFilePath = $audioFile->getRealPath();
 		$videoFilePath = $videoFile->getRealPath();
 		
@@ -66,6 +67,11 @@ class Transcoder
 		else
 			$this->logger->info("Uploaded file invalid " );
 		//$uploadedFile->move('/tmp','test.webm');
+		}
+		catch (Exception $e)
+		{
+			$this->logger->error($e->getTraceAsString());	
+		}
 		return $videoFile;
 	}
 	

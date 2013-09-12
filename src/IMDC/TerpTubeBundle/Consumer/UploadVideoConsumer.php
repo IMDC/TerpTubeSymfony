@@ -40,6 +40,8 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 	{
 		//Process video upload.
 		//$msg will be an instance of `PhpAmqpLib\Message\AMQPMessage` with the $msg->body being the data sent over RabbitMQ.
+		try
+		{
 		$message = unserialize($msg->body);
 		$mediaId = $message['media_id'];
 		$em = $this->doctrine->getManager();
@@ -95,6 +97,12 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 		$em->flush();
 		
 		$this->logger->info("Transcoding complete!");
+		}
+		catch (Exception $e)
+		{
+			$this->logger->error($e->getTraceAsString());
+			return false;
+		}
 		return true;
 	}
 }
