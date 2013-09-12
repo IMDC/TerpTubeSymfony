@@ -115,6 +115,12 @@ imdc_message_mark_as_read:
         _method:  POST
         messageid: \d+
 
+imdc_message_reply:
+    pattern: /reply/{messageid}
+    defaults: { _controller: IMDCTerpTubeBundle:Message:replyToMessage }
+    requirements:
+        messageid: \d+
+
 fos_user_group:
     resource: "@FOSUserBundle/Resources/config/routing/group.xml"
     prefix: /group

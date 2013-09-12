@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use FOS\UserBundle\Model\UserManager;
 use IMDC\TerpTubeBundle\Entity\Message;
 use IMDC\TerpTubeBundle\Form\Type\PrivateMessageType;
+use IMDC\TerpTubeBundle\Form\Type\PrivateMessageReplyType;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -42,7 +43,7 @@ class MessageController extends Controller
         
         if ($form->isValid()) {
             
-            // set sentDate of message to be when form request recieved
+            // set sentDate of message to be when form request received
             // this is automatically set again when the object is inserted into the database anyway
             $message->setSentDate(new \DateTime('now'));
             
@@ -58,7 +59,7 @@ class MessageController extends Controller
             $userManager = $this->container->get('fos_user.user_manager');
             
             // split up the recipients by whitespace
-            $rawrecips = split(' ', $form->get('recips')->getData());
+            $rawrecips = split(' ', $form->get('to')->getData());
             foreach ($rawrecips as $possuser) {
             	try {
             		$theuser = $userManager->loadUserByUsername($possuser);
@@ -405,6 +406,106 @@ class MessageController extends Controller
         $return = json_encode($return); // json encode the array
         return new Response($return, 200, array('Content-Type'=>'application/json')); //make sure it has the correct content type
         
+    }
+    
+    public function replyToMessageAction($messageid, Request $request)
+    {
+        // check if user logged in
+        $securityContext = $this->container->get('security.context');
+        if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        {
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Please log in first'
+            );
+            return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+        }
+        
+        $user = $this->getUser();
+        
+        $message = $this->getDoctrine()->getRepository('IMDCTerpTubeBundle:Message')->findOneBy(array('id' => $messageid));
+        
+        // todo: make sure the user is a recipient of the message?
+        
+        $form = $this->createForm(new PrivateMessageReplyType(), $message);
+        $form->setData($message);
+        
+        $form->handleRequest($request);
+        
+        
+        if ($form->isValid()) {  // if the form is successfully submitted
+        
+            $messagereply = new Message();
+            // set sentDate of message to be when form request received
+            // this is automatically set again when the object is inserted into the database anyway
+            $messagereply->setSentDate(new \DateTime('now'));
+        
+            $messagereply->setSubject($message->getSubject());
+            $messagereply->setContent($message->getContent());
+            $messagereply->setOwner($this->getUser());
+            
+            // set owner/author of the message to be the currently logged in user
+            $messagereply->setOwner($this->getUser());
+        
+            $em = $this->getDoctrine()->getManager();
+        
+            $user = $this->getUser();
+            $user->addSentMessage($messagereply);
+        
+            $existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
+            $userManager = $this->container->get('fos_user.user_manager');
+        
+            // split up the recipients by whitespace
+            $rawrecips = split(' ', $form->get('to')->getData());
+            foreach ($rawrecips as $possuser) {
+                try {
+                    $theuser = $userManager->loadUserByUsername($possuser);
+                    $existingUsers[] = $theuser;
+                    $messagereply->addRecipient($theuser);
+                } catch (UsernameNotFoundException $e) {
+                    // todo: create message to user about recip not found
+                }
+            }
+        
+            foreach ($existingUsers as $euser) {
+                $euser->addReceivedMessage($messagereply);
+                $em->persist($euser);
+            }
+        
+        
+            /* foreach ($message->getRecipients() as $recp) {
+             $recp->addReceivedMessage($message);
+            // request persistence of user object to database
+            $em->persist($recp);
+            } */
+        
+            // request to persist message object to database
+            $em->persist($messagereply);
+        
+            // persist all objects to database
+            $em->flush();
+             
+            $this->get('session')->getFlashBag()->add(
+                    'inbox',
+                    'Message sent successfully!'
+            );
+            return $this->redirect($this->generateUrl('imdc_message_view_all'));
+        
+            //return new Response('Created message id '.$message->getId());
+        }
+        
+        // form not valid, show the basic form
+        return $this->render('IMDCTerpTubeBundle:Message:replytoprivatemessage.html.twig', array(
+                'form' => $form->createView(),
+                'message' => $message,
+        ));
+        
+        /*
+        $response = $this->render('IMDCTerpTubeBundle:Message:replytoprivatemessage.html.twig',
+                array('message' => $message)
+        );
+        return $response;
+        */
     }
     
     public function recentMessagesAction($max = 30)

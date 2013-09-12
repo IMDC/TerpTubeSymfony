@@ -28,9 +28,16 @@ Inbox
     <h2>Private Messages</h2>
     <div class="row-fluid">
         <div class="span3">
-            <a href="{{ path('imdc_message_create') }}">Create new message</a>
+            <a class="btn btn-primary" href="{{ path('imdc_message_create') }}">
+                <span class="icon-stack">
+                    <i class="icon-circle icon-stack-base icon-light"></i>
+                    <i class="icon-envelope icon-dark"></i>
+                </span>
+                Create new message
+            </a>
         </div>
     </div>
+    <br />
     <div class="row-fluid">
         <div class="span-9">
             <table class="table table-condensed table-hover table-striped messagetable pmtable">

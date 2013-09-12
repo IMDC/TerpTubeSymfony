@@ -1,5 +1,5 @@
 /* content field for composing a new private message */
-#PrivateMessageForm_content {
+#PrivateMessageForm_content, #PrivateMessageReplyForm_content {
 	width: 100%;
 	height: 100%;
 	min-height: 20em;

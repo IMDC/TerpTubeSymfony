@@ -1,0 +1,33 @@
+{# src/IMDC/TerpTubeBundle/Resources/views/Message/replytoprivatemessage.html.twig #}
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block title %}Re: {{ message.subject }}{% endblock title %}
+
+{% block herounit %}
+<h1>Send a reply</h1>
+{% endblock herounit %}
+
+{% block underherounitrow1 %}
+<div class="span9">
+    
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        
+        {{ form_row(form.to, {'value' : message.getOwner() }) }}
+        {{ form_row(form.subject, {'value' : 'Re: ' ~ form.vars.value.subject }) }}
+
+        {{ form_row(form.content, 
+            {'value' : "\n\n\n\n" ~ 
+                       '>From: ' ~ message.getOwner() ~ "\n" ~
+                       '>To: ' ~ message.getRecipients()|join(', ') ~ "\n" ~ 
+                       '>Subject: ' ~ message.getSubject() ~ "\n" ~
+                       '>Sent: ' ~ message.getSentDate()|date('g:ia M j') ~ "\n" ~
+                       "----Original Message below----\n\n" ~ form.vars.value.content }) 
+        }}
+
+        
+    {{ form_end(form) }}
+</div>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}
+
