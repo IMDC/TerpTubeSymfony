@@ -133,7 +133,7 @@ dubture_f_fmpeg:
 ac_transcoding:
     ffmpeg: 
         enabled: true           #if false, other keys need not be specified
-        path: /usr/local/bin/ffmpeg
+        path: /usr/bin/ffmpeg
         timeout: 0
     handbrake:
         enabled: false
