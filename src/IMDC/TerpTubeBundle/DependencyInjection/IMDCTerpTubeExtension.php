@@ -24,5 +24,11 @@ class IMDCTerpTubeExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+        
+        $container->setParameter('imdc_ffmpeg.binary', $config['transcoding']['ffmpeg_binary']);
+        $container->setParameter('imdc_ffprobe.binary', $config['transcoding']['ffprobe_binary']);
+        $container->setParameter('imdc_ffmpeg.timeout', $config['transcoding']['timeout']);
+        
+        $container->setParameter('imdc_ffmpeg.config', array('ffmpeg.binaries'=>$config['transcoding']['ffmpeg_binary'],  'ffprobe.binaries' => $config['transcoding']['ffprobe_binary'], 'timeout' => $config['transcoding']['timeout']));
     }
 }

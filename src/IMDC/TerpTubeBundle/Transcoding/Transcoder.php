@@ -16,12 +16,14 @@ class Transcoder
 {
 	private $logger;
 	private $ffmpeg;
+	private $ffprobe;
 	private $transcoder;
 
-	public function __construct($logger, $transcoder)
+	public function __construct($logger, $transcoder, $ffmpegConfiguration)
 	{
 		$this->logger = $logger;
-		$this->ffmpeg = FFMpeg::create();
+		$this->ffmpeg = FFMpeg::create($ffmpegConfiguration, $logger);
+		$this->ffprobe = $this->ffmpeg->getFFProbe();
 		$this->transcoder = $transcoder;
 	}
 
@@ -47,12 +49,12 @@ class Transcoder
 			mkdir($tempDir);
 		$tempFileName = tempnam($tempDir, "MergedVideo");
 		
-		//Will this fix the problem on the server with executing the command?
-		$audioFile->move($tempDir, $audioFile->getFilename());
-		$videoFile->move($tempDir, $videoFile->getFilename());
+// 		//Will this fix the problem on the server with executing the command?
+// 		$audioFile->move($tempDir, $audioFile->getFilename());
+// 		$videoFile->move($tempDir, $videoFile->getFilename());
 		
-		$audioFilePath = $audioFile->getRealPath();
-		$videoFilePath = $videoFile->getRealPath();
+// 		$audioFilePath = $tempDir . '/' . $audioFile->getFilename();
+// 		$videoFilePath = $tempDir . '/' . $videoFile->getFilename();
 		
 		umask($umask);
 		$dir = getcwd();
@@ -156,5 +158,15 @@ class Transcoder
 		$this->logger->info("Transcoding complete!");
 	
 		return new File($outputFileWebm);
+	}
+	
+	public function getFFmpeg()
+	{
+		return $this->ffmpeg;
+	}
+	
+	public function getFFprobe()
+	{
+		return $this->ffprobe;
 	}
 }

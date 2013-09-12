@@ -32,8 +32,7 @@
         "oldsound/rabbitmq-bundle": "dev-master",
         "ac/transcoding-bundle": "dev-master",
         "videlalvaro/php-amqplib": "*",
-        "php-ffmpeg/php-ffmpeg": "0.4.*@dev",
-        "pulse00/ffmpeg-bundle": "dev-master"
+        "php-ffmpeg/php-ffmpeg": "0.4.*@dev"
     },
     "scripts": {
         "post-install-cmd": [

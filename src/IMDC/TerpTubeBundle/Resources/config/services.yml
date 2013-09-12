@@ -74,7 +74,7 @@ services:
      
     imdc_terptube.transcoder:
         class: IMDC\TerpTubeBundle\Transcoding\Transcoder
-        arguments: ["@logger", "@transcoder"]
+        arguments: ["@logger", "@transcoder", "%imdc_ffmpeg.config%"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
      # enable the truncate extension in twig

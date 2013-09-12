@@ -126,9 +126,11 @@ swiftmailer:
 #            inject_on_load: true # determines whether to inject a File instance upon load
         # ... more mappings
       
-dubture_f_fmpeg:
-    ffmpeg_binary: /usr/local/bin/ffmpeg
-    ffprobe_binary: /usr/local/bin/ffprobe
+imdc_terp_tube:
+    transcoding:
+        ffmpeg_binary: /usr/local/bin/ffmpeg
+        ffprobe_binary: /usr/local/bin/ffprobe
+        timeout: 3600
 
 ac_transcoding:
     ffmpeg: 

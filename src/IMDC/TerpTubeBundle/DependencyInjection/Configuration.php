@@ -1,7 +1,6 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\DependencyInjection;
-
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -12,18 +11,24 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function getConfigTreeBuilder()
-    {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('imdc_terp_tube');
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getConfigTreeBuilder()
+	{
+		$treeBuilder = new TreeBuilder();
+		$rootNode = $treeBuilder->root('imdc_terp_tube');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+		// Here you should define the parameters that are allowed to
+		// configure your bundle. See the documentation linked above for
+		// more information on that topic.
+		$rootNode->children()
+			->arrayNode('transcoding')->isRequired()->children()
+				->scalarNode('ffmpeg_binary')->isRequired()->end()
+				->scalarNode('ffprobe_binary')->isRequired()->end()
+				->scalarNode('timeout')->defaultValue(60)->end()
+				->end()->end()->end();
 
-        return $treeBuilder;
-    }
+		return $treeBuilder;
+	}
 }
