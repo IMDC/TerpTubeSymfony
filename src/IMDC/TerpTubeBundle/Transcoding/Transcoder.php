@@ -115,7 +115,7 @@ class Transcoder
 		$this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $preset, $outputFileWebm);
 		
 		chdir($dir);
-		delTree($workingDir);
+		Utils::delTree($workingDir);
 		unlink($tempFileName);
 		$this->logger->info("Transcoding complete!");
 		

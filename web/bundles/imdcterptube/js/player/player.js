@@ -1305,7 +1305,7 @@ Player.prototype.postRecordings = function(address)
 		success : function(data)
 		{
 			instance.recording_recordingStopped(true);
-			instance.options.recordingSuccessFunction;
+			instance.options.recordingSuccessFunction(data);
 		},
 		error : function(request)
 		{

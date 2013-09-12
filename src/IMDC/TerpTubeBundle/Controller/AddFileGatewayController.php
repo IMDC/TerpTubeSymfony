@@ -1,6 +1,8 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use IMDC\TerpTubeBundle\Model\JSEntities;
+
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 
 use IMDC\TerpTubeBundle\Entity\MetaData;
@@ -299,8 +301,10 @@ class AddFileGatewayController extends Controller
 		$eventDispatcher = $this->container->get('event_dispatcher');
 		$uploadedEvent = new UploadEvent($media);
 		$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-
-		$return = array('responseCode' => 200, 'feedback' => 'media added', 'mediaID' => $media->getId());
+		
+		$mediaObjectArray = JSEntities::getMediaObject($media);
+		
+		$return = array('responseCode' => 200, 'feedback' => 'media added', 'media' => $mediaObjectArray);
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
 		
