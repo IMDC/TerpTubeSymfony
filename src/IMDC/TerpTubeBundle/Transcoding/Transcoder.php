@@ -47,6 +47,13 @@ class Transcoder
 			mkdir($tempDir);
 		$tempFileName = tempnam($tempDir, "MergedVideo");
 		
+		//Will this fix the problem on the server with executing the command?
+		$audioFile->move($tempDir, $audioFile->getFilename());
+		$videoFile->move($tempDir, $videoFile->getFilename());
+		
+		$audioFilePath = $audioFile->getRealPath();
+		$videoFilePath = $videoFile->getRealPath();
+		
 		umask($umask);
 		$dir = getcwd();
 		chdir($tempDir);
