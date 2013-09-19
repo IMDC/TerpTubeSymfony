@@ -1,0 +1,50 @@
+IMDC\TerpTubeBundle\Entity\Thread:
+    type: entity
+    table: null
+    repositoryClass: IMDC\TerpTubeBundle\Entity\ThreadRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        creationDate:
+            type: datetime
+        locked:
+            type: boolean
+        sticky:
+            type: boolean
+        content:
+            type: text
+        lastPostID:
+            type: integer
+        lastPostAt:
+            type: datetime
+        title:
+            type: text
+        type:
+            type: smallint
+        tags:
+            type: array
+    manyToOne:
+        creator:
+            targetEntity: User
+            inversedBy: createdThreads
+    manyToMany:
+        usersFollowing:
+            targetEntity: User
+            joinTable:
+                name: users_following_threads
+                joinColumns:
+                    thread_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+    oneToMany:
+        posts:
+            targetEntity: Post
+            mappedBy: parentThread
+            
+        
+    lifecycleCallbacks: {  }

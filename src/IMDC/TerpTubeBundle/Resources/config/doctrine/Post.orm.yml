@@ -1,0 +1,28 @@
+IMDC\TerpTubeBundle\Entity\Post:
+    type: entity
+    table: null
+    repositoryClass: IMDC\TerpTubeBundle\Entity\PostRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        content:
+            type: text
+        isDeleted:
+            type: boolean
+        created:
+            type: datetime
+        editedAt:
+            type: datetime
+        startTime:
+            type: decimal
+        endTime:
+            type: decimal
+    manyToOne:
+        author:
+            targetEntity: User
+            inversedBy: posts
+        
+    lifecycleCallbacks: {  }

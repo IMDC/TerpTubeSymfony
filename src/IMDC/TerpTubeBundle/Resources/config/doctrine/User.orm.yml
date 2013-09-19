@@ -22,6 +22,12 @@ IMDC\TerpTubeBundle\Entity\User:
         resourceFiles:
             targetEntity: Media
             mappedBy: owner
+        createdThreads:
+            targetEntity: Thread
+            mappedBy: creator
+        posts:
+            targetEntity: Post
+            mappedBy: author
     oneToOne:
         profile:
             targetEntity: UserProfile

@@ -60,6 +60,16 @@ class User extends BaseUser
 	 */
 	private $postCount;
 	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $createdThreads;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $posts;
+	
     public function __construct()
     {
         parent::__construct();
@@ -71,6 +81,8 @@ class User extends BaseUser
         $this->userGroups       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->resourceFiles    = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendsList      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->createdThreads   = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -443,5 +455,71 @@ class User extends BaseUser
     public function getPostCount()
     {
         return $this->postCount;
+    }
+
+    /**
+     * Add createdThreads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $createdThreads
+     * @return User
+     */
+    public function addCreatedThread(\IMDC\TerpTubeBundle\Entity\Thread $createdThreads)
+    {
+        $this->createdThreads[] = $createdThreads;
+    
+        return $this;
+    }
+
+    /**
+     * Remove createdThreads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $createdThreads
+     */
+    public function removeCreatedThread(\IMDC\TerpTubeBundle\Entity\Thread $createdThreads)
+    {
+        $this->createdThreads->removeElement($createdThreads);
+    }
+
+    /**
+     * Get createdThreads
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCreatedThreads()
+    {
+        return $this->createdThreads;
+    }
+
+    /**
+     * Add posts
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $posts
+     * @return User
+     */
+    public function addPost(\IMDC\TerpTubeBundle\Entity\Post $posts)
+    {
+        $this->posts[] = $posts;
+    
+        return $this;
+    }
+
+    /**
+     * Remove posts
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $posts
+     */
+    public function removePost(\IMDC\TerpTubeBundle\Entity\Post $posts)
+    {
+        $this->posts->removeElement($posts);
+    }
+
+    /**
+     * Get posts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPosts()
+    {
+        return $this->posts;
     }
 }
