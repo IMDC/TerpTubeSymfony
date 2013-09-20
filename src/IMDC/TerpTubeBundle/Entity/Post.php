@@ -48,7 +48,11 @@ class Post
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $author;
-
+    
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\Thread
+     */
+    private $parentThread;
 
     /**
      * Get id
@@ -219,5 +223,28 @@ class Post
     public function getIsDeleted()
     {
         return $this->isDeleted;
+    }
+
+    /**
+     * Set parentThread
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $parentThread
+     * @return Post
+     */
+    public function setParentThread(\IMDC\TerpTubeBundle\Entity\Thread $parentThread = null)
+    {
+        $this->parentThread = $parentThread;
+    
+        return $this;
+    }
+
+    /**
+     * Get parentThread
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Thread 
+     */
+    public function getParentThread()
+    {
+        return $this->parentThread;
     }
 }

@@ -161,3 +161,11 @@ imdc_group_create_new:
     pattern: /newusergroup
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
     
+    
+imdc_post_create_new:
+    pattern: /post/new
+    defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
+    
+imdc_post_show_all:
+    pattern: /post/all
+    defaults: { _controller: IMDCTerpTubeBundle:Post:index }

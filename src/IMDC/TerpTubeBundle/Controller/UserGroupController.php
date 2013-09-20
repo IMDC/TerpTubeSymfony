@@ -84,18 +84,12 @@ class UserGroupController extends Controller
             );
             return $this->redirect($this->generateUrl('imdc_groups_show_all'));
             
-            }
+		}
             
-            // form not valid, show the basic form
-            return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array(
-                    'form' => $form->createView(),
-            ));
-        
-       
-        
-        
-        
-        
+        // form not valid, show the basic form
+        return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array(
+                'form' => $form->createView(),
+        ));
         
     }
 }

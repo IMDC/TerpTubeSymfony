@@ -1,6 +1,6 @@
 IMDC\TerpTubeBundle\Entity\Thread:
     type: entity
-    table: null
+    table: thread
     repositoryClass: IMDC\TerpTubeBundle\Entity\ThreadRepository
     fields:
         id:
@@ -45,6 +45,4 @@ IMDC\TerpTubeBundle\Entity\Thread:
         posts:
             targetEntity: Post
             mappedBy: parentThread
-            
-        
     lifecycleCallbacks: {  }

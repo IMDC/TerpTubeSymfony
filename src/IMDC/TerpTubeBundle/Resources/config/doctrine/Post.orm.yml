@@ -1,6 +1,6 @@
 IMDC\TerpTubeBundle\Entity\Post:
     type: entity
-    table: null
+    table: post
     repositoryClass: IMDC\TerpTubeBundle\Entity\PostRepository
     fields:
         id:
@@ -16,13 +16,18 @@ IMDC\TerpTubeBundle\Entity\Post:
             type: datetime
         editedAt:
             type: datetime
+            nullable: true
         startTime:
             type: decimal
+            nullable: true
         endTime:
             type: decimal
+            nullable: true
     manyToOne:
         author:
             targetEntity: User
             inversedBy: posts
-        
+        parentThread:
+            targetEntity: Thread
+            inversedBy: posts
     lifecycleCallbacks: {  }

@@ -1,0 +1,21 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block title %}Posts{% endblock title %}
+
+{% block herounit %}Posts{% endblock herounit %}
+
+{% block underherounitrow1 %}
+<ul class="thumbnails">
+    {% for post in posts %}
+    <li class="span3">
+        <div class="thumbnail text-center">
+            <h3>{{ post.author }}</h3>
+            <p>Created: {{ post.created|date('g:ia F j Y') }}</p>
+            <p>Content: {{ post.content }}</p>
+        </a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}
