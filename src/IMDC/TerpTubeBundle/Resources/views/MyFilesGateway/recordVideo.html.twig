@@ -7,12 +7,15 @@
 <script type='text/javascript'>
  $(document).ready(function() {
 	 var videoElement = $("#record");
-	 var player = new Player(videoElement);
+	 var recorderConfiguration = {{ recorderConfiguration |json_encode()|raw}};
+	 console.log(recorderConfiguration);
+	 var player = new Player(videoElement,recorderConfiguration);
+	 
 	 player.options.areaSelectionEnabled = false;
 	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
 	 player.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
 	 player.options.backButton = false;
-	 player.options.forwardButton = false;
+	 //player.options.forwardButton = false;
 	 player.options.audioBar = false;
 	 player.options.volumeControl = false;
 	 player.options.recordingErrorFunction = function(e)
@@ -21,6 +24,17 @@
 	 }
 	 player.options.recordingSuccessFunction = function(data)
 	 {
+		 console.log(recorderConfiguration);
+		 var fn = window[recorderConfiguration.recordingSuccessFunction];
+		 fn(data);
+		 console.log('Success!', data);
+	 }
+	 player.options.forwardFunction = function(data)
+	 {
+		 player.destroyRecorder();
+		 console.log(recorderConfiguration);
+		 var fn = window[recorderConfiguration.forwardFunction]||null;
+		 fn(data);
 		 console.log('Success!', data);
 	 }
 	 player.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
@@ -33,6 +47,11 @@
 	 // player.options.playHeadImageOnClick = function(){ alert("plus");};
 
 	 player.createControls();
+	 videoElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
+		 {
+		 if (player !=null)
+		 	player.destroyRecorder();
+		 });
  });
 
   </script>

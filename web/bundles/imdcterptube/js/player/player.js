@@ -1387,6 +1387,12 @@ Player.prototype.recording_goToPreviewing = function()
 	$(this.videoID)[0].startTranscoding();
 };
 
+Player.prototype.destroyRecorder = function()
+{
+	$(this.videoID)[0].src = "";
+	this.stream.stop();
+};
+
 Player.prototype.recording_recordingTranscodingFinished = function(fileName)
 {
 	clearInterval(this.transcodeTimer);

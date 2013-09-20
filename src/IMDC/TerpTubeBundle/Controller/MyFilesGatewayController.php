@@ -161,7 +161,7 @@ class MyFilesGatewayController extends Controller
 	{
 		//FIXME add the recording stuff here
 		// 		throw new NotImplementedException("Not yet implemented");
-	
+		$recorderConfiguration = $request->get("recorderConfiguration");
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!is_object($user) || !$user instanceof UserInterface)
 		{
@@ -173,7 +173,7 @@ class MyFilesGatewayController extends Controller
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
-		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
+		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig', array("recorderConfiguration"=> $recorderConfiguration));
 	}
 
 }

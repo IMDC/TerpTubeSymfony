@@ -74,7 +74,7 @@ imdc_files_gateway_preview:
     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewMedia }
     requirements:
         _method:  POST
-        mediaId: \d+
+#        mediaId: \d+
 
 imdc_message_create:
     pattern: /createMessage

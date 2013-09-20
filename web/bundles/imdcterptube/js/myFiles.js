@@ -38,13 +38,14 @@ function deleteFile(currentElement, message)
 	return false;
 }
 
-function recordVideo(destinationDivElement, address)
+function recordVideo(destinationDivElement, address, recorderConfiguration)
 {
 	$.ajax(
 	{
 		url : address,
 		type : "POST",
-		contentType : "application/x-www-form-urlencoded",
+	//	contentType : "application/x-www-form-urlencoded",
+		data: {recorderConfiguration: recorderConfiguration},
 		success : function(data)
 		{
 			destinationDivElement.html(data);
@@ -76,7 +77,6 @@ function popUp(destinationDivElement, functionName, title)
 		modal : true,
 		draggable : false,
 		closeOnEscape : true,
-		closeText : "X",
 		dialogClass : "player-dialog",
 		open : function(event, ui)
 		{

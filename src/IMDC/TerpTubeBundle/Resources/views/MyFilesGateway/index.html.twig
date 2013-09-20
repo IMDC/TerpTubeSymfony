@@ -22,7 +22,7 @@
 {% block underherounitrow2 %}
 <div class="row-fluid">
 	<div class="span-9">
-            <table class="table table-condensed table-hover table-striped pmtable">
+            <table id="files-table" class="table table-condensed table-hover table-striped pmtable">
                 <tr><th><i class="icon-wrench"></i> Tools</th><th>Name</th><th>Type</th><th>Created</th><th>Size</th></tr>
 				{%  if resourceFiles and resourceFiles|length >0 %}
 						{% for resourceFile in resourceFiles %}
@@ -62,6 +62,79 @@
 {% block javascripts %}
  {{ parent() }}
  <script type='text/javascript'>
+
+	var recordedMedia;
+ 	function callBack(data)
+	 {
+		 	var media = data['media'];
+		 	recordedMedia=media; 
+		 	addMediaRow(recordedMedia);
+			console.log("Great success!!! Media id is: " +media['id']);
+	 }
+
+	 function forwardFunction()
+	 {
+			var mediaId = recordedMedia['id'];
+			console.log(mediaId);
+			var mediaURL = "{{ path('imdc_files_gateway_preview', {'mediaId': '-1'}) }}";
+			mediaURL = mediaURL.replace('-1',mediaId);
+			previewMediaFile(mediaId, mediaURL, $('#preview'), true);
+	 }
+
+	 function addMediaRow(media)
+	 {
+		 //FIXME should add a prototype row and then move this function to the js file.
+		 var mediaTypes ={ 0 : "{{ 'filesGateway.type.0'|trans }}",
+		 1: "{{ 'filesGateway.type.1'|trans }}",
+		 2: "{{ 'filesGateway.type.2'|trans }}",
+		 9: "{{ 'filesGateway.type.9'|trans }}"};
+		 var mediaType = mediaTypes[media.type];
+		 var row = $(document.createElement('tr'));
+		 row.append($(document.createElement('td'))
+				 .append($(document.createElement('a'))
+						 .addClass("delete-button")
+						 .attr('href',"#")
+						 .attr('data-url', "{{ path('imdc_files_gateway_remove', {'mediaId': 0}) }}".replace('0',media.id))
+						 .attr('data-val',media.id)
+						 .html('<i class="icon-remove-sign"></i>{{ "filesGateway.deleteLink"|trans }} '))
+				 .append($(document.createElement('a'))
+						 .addClass("preview-button")
+						 .addClass("disabled")
+						 .attr('href',"#")
+						 .attr('data-type', media.type)
+						 .attr('data-url', "{{ path('imdc_files_gateway_preview', {'mediaId': 0}) }}".replace('0',media.id))
+						 .attr('data-val',media.id)
+						 .html('<i class="icon-play-sign"></i>{{ "filesGateway.previewLink"|trans }}')));
+		 row.append($(document.createElement('td'))
+				 .html(media.title));
+		 row.append($(document.createElement('td'))
+				 .html(mediaType));
+
+		 var timeUploaded = new Date(media.metaData.timeUploaded.date);
+		 var ampm = timeUploaded.getHours()>=12?"pm":"am";
+		 var hours = (timeUploaded.getHours()>12?timeUploaded.getHours()-12:timeUploaded.getHours());
+		 hours = hours<10?"0"+hours:hours;
+		 var time = hours+":"+(timeUploaded.getMinutes()<10?"0"+timeUploaded.getMinutes():timeUploaded.getMinutes())+ampm ;
+		 var timeDateString = time+" "+$.datepicker.formatDate('M d', timeUploaded);
+		 
+		 row.append($(document.createElement('td'))
+				 .html(timeDateString));
+		 row.append($(document.createElement('td'))
+				 .html('<i class="icon-spinner icon-spin icon-large"></i>'));
+		 $("#files-table").append(row);
+		 $('.preview-button').click(function(e) {
+	            if ($(this).hasClass('disabled'))
+	                return false;
+	            $('#preview').html('');
+	        	previewFileLink($(this), $('#preview'), true);
+	        	return false;
+		 });
+         $('.delete-button').click(function(e) {
+	            	deleteFile($(this), "{{ 'filesGateway.deleteConfirmMessage'|trans }}");
+	            	return false;
+         });
+	 }
+	 
   $(document).ready(function() {
         $('.preview-button').click(function(e) {
             if ($(this).hasClass('disabled'))
@@ -75,10 +148,12 @@
         	return false;
         });
         $('#record-link').click(function(e) {
-        	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href')), "Record");
+            var recorderConfiguration = {forwardButton: true, forwardFunction: "forwardFunction", recordingSuccessFunction: "callBack"};
+        	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href'), recorderConfiguration), "Record");
         	return false;
         });
     });
+
   </script>
   
   <script src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>
