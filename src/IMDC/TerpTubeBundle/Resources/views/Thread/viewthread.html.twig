@@ -1,0 +1,78 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/thread.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+
+{% block title %}{{ thread.title }}{% endblock title %}
+
+{% block herounit %} {{thread.title|truncate(30) }} {% endblock herounit %}
+
+{% block underherounitrow1 %}
+
+<div class="row-fluid">
+    <div class="span6" id="leftsidecontent">
+    <!-- left side content -->
+       <div class="row-fluid">
+           <div class="span12" id="maincontent">
+               {{ thread.content }}
+           </div>
+        </div>
+        <div class="row-fluid" id="user-deets">
+            <div class="span12">
+               <div class="row-fluid">
+                   <div class="span3">
+                       <img class="avatar" alt="avatar" title="" src="{{ thread.creator.getProfile().avatar ? asset(thread.creator.getProfile().avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+                   </div>
+                   <div class="span9">
+                       <p>{{ thread.creator.getUserName() }}</p>
+                       <p>Joined: {{ thread.creator.getJoinDate()|date('M j Y') }}</p>
+                       <p>Posts: {{ thread.creator.getPostCount() }}</p>
+                   </div>
+               </div>
+           </div>
+       </div> <!-- end of user-deets -->
+       <div class="row-fluid" id="reply-container">
+           <div class="span12">
+               <p>
+                   <a href="{{ path('imdc_thread_create_reply_post', {'threadid':thread.id}) }}"><i class="icon-plus"></i> Reply</a>
+               </p>
+           </div>
+       </div> <!-- end of reply-container -->
+   </div> <!-- end of leftsidecontent -->
+    <div class="span6" id="rightsidecontent">
+    <!-- right side content -->
+  
+        {% if threadposts|length > 0 %}
+            {% for post in threadposts %}
+            <div class="row-fluid">
+                <div class="span1">
+                    <img class="avatar" alt="avatar" title="" src="{{ post.author.getProfile.avatar ? asset(post.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+                </div>
+                <div class="span10">
+                    {{ post.content }}
+                </div>
+                <div class="span1">
+                    
+                </div>       
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="span12">
+                No posts yet!
+            </div>
+        {% endif %}
+
+   </div>
+</div>
+
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    
+{% endblock javascripts %}

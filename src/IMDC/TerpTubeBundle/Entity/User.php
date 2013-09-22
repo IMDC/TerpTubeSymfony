@@ -58,7 +58,7 @@ class User extends BaseUser
 	/**
 	 * @var integer
 	 */
-	private $postCount;
+	private $postCount = 0;
 	
 	/**
 	 * @var \Doctrine\Common\Collections\Collection
@@ -69,6 +69,11 @@ class User extends BaseUser
 	 * @var \Doctrine\Common\Collections\Collection
 	 */
 	private $posts;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $threads;
 	
     public function __construct()
     {
@@ -83,6 +88,7 @@ class User extends BaseUser
         $this->friendsList      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->createdThreads   = new \Doctrine\Common\Collections\ArrayCollection();
         $this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -454,8 +460,10 @@ class User extends BaseUser
      */
     public function getPostCount()
     {
-        return $this->postCount;
+        //return $this->postCount;
+        return count($this->getPosts());
     }
+
 
     /**
      * Add createdThreads
@@ -521,5 +529,38 @@ class User extends BaseUser
     public function getPosts()
     {
         return $this->posts;
+    }
+
+    /**
+     * Add threads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $threads
+     * @return User
+     */
+    public function addThread(\IMDC\TerpTubeBundle\Entity\Thread $threads)
+    {
+        $this->threads[] = $threads;
+    
+        return $this;
+    }
+
+    /**
+     * Remove threads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $threads
+     */
+    public function removeThread(\IMDC\TerpTubeBundle\Entity\Thread $threads)
+    {
+        $this->threads->removeElement($threads);
+    }
+
+    /**
+     * Get threads
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getThreads()
+    {
+        return $this->threads;
     }
 }

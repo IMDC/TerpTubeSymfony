@@ -28,6 +28,9 @@ IMDC\TerpTubeBundle\Entity\User:
         posts:
             targetEntity: Post
             mappedBy: author
+        threads:
+            targetEntity: Thread
+            mappedBy: creator
     oneToOne:
         profile:
             targetEntity: UserProfile

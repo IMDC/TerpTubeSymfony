@@ -53,7 +53,25 @@ class Post
      * @var \IMDC\TerpTubeBundle\Entity\Thread
      */
     private $parentThread;
+    
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\User
+     */
+    private $editedBy;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $attachedFile;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->attachedFile = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Get id
      *
@@ -246,5 +264,61 @@ class Post
     public function getParentThread()
     {
         return $this->parentThread;
+    }
+
+    /**
+     * Set editedBy
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $editedBy
+     * @return Post
+     */
+    public function setEditedBy(\IMDC\TerpTubeBundle\Entity\User $editedBy = null)
+    {
+        $this->editedBy = $editedBy;
+    
+        return $this;
+    }
+
+    /**
+     * Get editedBy
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\User 
+     */
+    public function getEditedBy()
+    {
+        return $this->editedBy;
+    }
+
+    /**
+     * Add attachedFile
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedFile
+     * @return Post
+     */
+    public function addAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
+    {
+        $this->attachedFile[] = $attachedFile;
+    
+        return $this;
+    }
+
+    /**
+     * Remove attachedFile
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedFile
+     */
+    public function removeAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
+    {
+        $this->attachedFile->removeElement($attachedFile);
+    }
+
+    /**
+     * Get attachedFile
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAttachedFile()
+    {
+        return $this->attachedFile;
     }
 }

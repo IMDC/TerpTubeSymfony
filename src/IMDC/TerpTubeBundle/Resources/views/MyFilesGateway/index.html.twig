@@ -16,6 +16,7 @@
         <a id="record-link" class="btn btn-primary" href="{{ path('imdc_files_gateway_record_media') }}"><i class="icon-facetime-video"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
         <a class="btn btn-primary" href="{{ path('imdc_files_gateway_other') }}"><i class="icon-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a>
     </div>
+    <p></p>
 
 {% endblock underherounitrow1 %}
 
@@ -28,12 +29,13 @@
 						{% for resourceFile in resourceFiles %}
                    	<tr>
                         <td>
-                            <a class="delete-button" href='#' data-url="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-remove-sign"></i>{{ 'filesGateway.deleteLink'|trans }}</a>
+                            <a class="delete-button" href='#' data-url="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-remove-sign"></i> {{ 'filesGateway.deleteLink'|trans }}</a>
                             {% if resourceFile.getMetaData.getSize == -1 %}
-                            <a class="preview-button disabled" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-play-sign"></i>{{ 'filesGateway.previewLink'|trans }}</a>
+                            <a class="preview-button disabled" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-play-sign"></i> {{ 'filesGateway.previewLink'|trans }}</a>
                             {% else %}
-                            <a class="preview-button" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-play-sign"></i>{{ 'filesGateway.previewLink'|trans }}</a>
+                            <a class="preview-button" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-play-sign"></i> {{ 'filesGateway.previewLink'|trans }}</a>
                             {% endif %}
+                            <a class="share-button" href="{{ path('imdc_post_create_new_from_media', {'resourceid': resourceFile.id} ) }}" data-type-"{{ resourceFile.type }}" data-val="{{ resourceFile.id }}"><i class="icon-share-alt"></i> {{ 'filesGateway.shareLink'|trans }}</a>
                         </td>
                         <td>
                         	{{ resourceFile.title }}

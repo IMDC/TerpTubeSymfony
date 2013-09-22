@@ -1,0 +1,22 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block title %}Threads{% endblock title %}
+
+{% block herounit %}Threads{% endblock herounit %}
+
+{% block underherounitrow1 %}
+<ul class="thumbnails">
+    {% for thread in threads %}
+    <li class="span3">
+        <a href="{{ path('imdc_thread_view_specific', {'threadid': thread.id} ) }}">
+        <div class="thumbnail text-center">
+            <h3>{{ thread.title }}</h3>
+            <p>Content: {{ thread.content|truncate(50) }}
+            <p>Created: {{ thread.creationDate|date('g:ia F j Y') }}</p>
+        </a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}

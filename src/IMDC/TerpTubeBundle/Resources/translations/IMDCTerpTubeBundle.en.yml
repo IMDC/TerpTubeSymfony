@@ -112,6 +112,7 @@ filesGateway:
     deleteLink: "Delete"
     deleteConfirmMessage: "Are you sure you want to delete this file?"
     previewLink: "Preview"
+    shareLink: "Post this"
 # Form field labels
 form:
     group_name: "Group name:"

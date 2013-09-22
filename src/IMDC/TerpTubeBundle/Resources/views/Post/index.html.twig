@@ -12,6 +12,7 @@
             <h3>{{ post.author }}</h3>
             <p>Created: {{ post.created|date('g:ia F j Y') }}</p>
             <p>Content: {{ post.content }}</p>
+            <p>Parent Thread ID: {{ post.parentThread ? post.parentThread.id:'none' }}</p>
         </a>
     </li>
 {% endfor %}

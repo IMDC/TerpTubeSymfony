@@ -18,14 +18,17 @@ IMDC\TerpTubeBundle\Entity\Thread:
             type: text
         lastPostID:
             type: integer
+            nullable: true
         lastPostAt:
             type: datetime
         title:
             type: text
         type:
             type: smallint
+            nullable: true
         tags:
             type: array
+            nullable: true
     manyToOne:
         creator:
             targetEntity: User

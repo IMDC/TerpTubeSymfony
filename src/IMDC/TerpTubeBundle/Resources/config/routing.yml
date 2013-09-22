@@ -160,12 +160,42 @@ imdc_group_view:
 imdc_group_create_new:
     pattern: /newusergroup
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
+
+
+imdc_thread_create_new:
+    pattern: /thread/new
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
+    
+imdc_thread_show_recent:
+    pattern: /threads
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:index }
+    
+imdc_thread_view_specific:
+    pattern: /thread/view/{threadid}
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:viewThread }
+    requirements:
+        threadid: \d+
+        
+imdc_thread_create_reply_post:
+    pattern: /thread/reply/{threadid}
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:createReplyPost }
+    requirements:
+        threadid: \d+
+    
     
     
 imdc_post_create_new:
     pattern: /post/new
     defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
     
+imdc_post_create_new_from_media:
+    pattern: /post/new/{resourceid}
+    defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPostFromMedia }
+    requirements:
+        resourceid: \d+
+    
 imdc_post_show_all:
     pattern: /post/all
     defaults: { _controller: IMDCTerpTubeBundle:Post:index }
+    
+    

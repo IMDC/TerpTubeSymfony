@@ -16,6 +16,7 @@ use FOS\UserBundle\Model\UserManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostFormType;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
 
 
 class PostController extends Controller
@@ -30,6 +31,28 @@ class PostController extends Controller
 				array('posts' => $posts)
 		);
 		return $response;
+	}
+	
+	public function createNewPostFromMediaAction($resourceid)
+	{
+	    // check if user logged in
+	    $securityContext = $this->container->get('security.context');
+	    if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+	    {
+	        $this->get('session')->getFlashBag()->add(
+	                'notice',
+	                'Please log in first'
+	        );
+	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+	    }
+	    
+	    $user = $this->getUser();
+	    
+	    $this->get('session')->getFlashBag()->add(
+					'notice',
+					'Not implemented yet'
+			);
+			return $this->redirect($this->generateUrl('imdc_post_show_all'));
 	}
 	
 	public function createNewPostAction(Request $request) 
@@ -48,7 +71,6 @@ class PostController extends Controller
 		$user = $this->getUser();
 		
 		$newpost = new Post();
-		
 		$form = $this->createForm(new PostFormType(), $newpost);
 		
 		$form->handleRequest($request);
@@ -63,6 +85,7 @@ class PostController extends Controller
 			$newpost->setParentThread(NULL);
 			
 			$user->addPost($newpost);
+			$user->increasePostCount(1);
 			
 			// request to persist message object to database
 			$em->persist($newpost);

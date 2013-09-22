@@ -12,4 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class ThreadRepository extends EntityRepository
 {
+    public function getMostRecentThreads($limit=30)
+    {
+        $query = $this->getEntityManager()
+                      ->createQuery
+                      ('SELECT t
+                        FROM IMDCTerpTubeBundle:Thread t
+                        ORDER BY t.creationDate DESC
+                       ');
+        $query->setMaxResults($limit);
+         
+        return $query->getResult();
+    }
 }
