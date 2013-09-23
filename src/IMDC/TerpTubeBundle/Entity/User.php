@@ -63,7 +63,7 @@ class User extends BaseUser
 	/**
 	 * @var \Doctrine\Common\Collections\Collection
 	 */
-	private $createdThreads;
+	//private $createdThreads;
 	
 	/**
 	 * @var \Doctrine\Common\Collections\Collection
@@ -86,7 +86,7 @@ class User extends BaseUser
         $this->userGroups       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->resourceFiles    = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendsList      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->createdThreads   = new \Doctrine\Common\Collections\ArrayCollection();
+        //$this->createdThreads   = new \Doctrine\Common\Collections\ArrayCollection();
         $this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
         $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
     }

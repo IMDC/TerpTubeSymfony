@@ -25,9 +25,11 @@ class UserGroupController extends Controller
         $em = $this->getDoctrine()->getManager();
         
         $usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')
-                          ->findAll();
+        				  ->getPublicallyVisibleGroups();
+        				  //->findAll();
+        
         $response = $this->render('IMDCTerpTubeBundle:UserGroup:index.html.twig',
-                array('usergroups' => $usergroups)
+                					array('usergroups' => $usergroups)
         );
         return $response;
     }
