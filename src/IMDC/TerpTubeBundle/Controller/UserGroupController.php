@@ -32,11 +32,11 @@ class UserGroupController extends Controller
         return $response;
     }
     
-    public function viewGroupAction($groupname)
+    public function viewGroupAction($usergroupid)
     {
         $em = $this->getDoctrine()->getManager();
         
-        $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('name' => $groupname));
+        $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
         
         $response = $this->render('IMDCTerpTubeBundle:UserGroup:viewgroup.html.twig', 
                                 array('usergroup' => $usergroup));

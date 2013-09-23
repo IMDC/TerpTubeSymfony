@@ -1,13 +1,13 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
 
-{% block title %}{{group.name}}{% endblock title %}
+{% block title %}{{usergroup.name}}{% endblock title %}
 
-{% block herounit %}{{ group.name }}{% endblock %}
+{% block herounit %}<h1>{{ usergroup.name }}</h1>{% endblock %}
 
 {% block underherounitrow1 %}
 <div class="span10">
-    <p>Name: {{ group.name }}</p>
-    <p>Members: {{ group.members|length }}</p>
+    <p>Name: {{ usergroup.name }}</p>
+    <p>Members: {{ usergroup.members|length }}</p>
 </div>
 {% endblock underherounitrow1 %}
 

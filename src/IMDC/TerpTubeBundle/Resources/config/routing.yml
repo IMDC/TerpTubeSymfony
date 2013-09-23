@@ -154,7 +154,7 @@ imdc_groups_show_all:
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:index }
     
 imdc_group_view:
-    pattern: /usergroup/{usergroup}
+    pattern: /usergroup/{usergroupid}
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:viewGroup }
     
 imdc_group_create_new:

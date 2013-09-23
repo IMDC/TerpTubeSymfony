@@ -2,12 +2,14 @@
 
 {% block title %}TerpTube Groups{% endblock title %}
 
-{% block herounit %}Groups{% endblock herounit %}
+{% block herounit %}<h1>Groups</h1>{% endblock herounit %}
 
 {% block underherounitrow1 %}
+{{  include ('IMDCTerpTubeBundle:UserGroup:groupcreaterow.html.twig') }}
 <ul class="thumbnails">
     {% for usergroup in usergroups %}
     <li class="span3">
+    	<a href="{{ path('imdc_group_view', {'usergroup':usergroup.id} ) }}">
         <div class="thumbnail text-center">
             <h3>{{ usergroup.name }}</h3>
             <p>Created: {{ usergroup.dateCreated|date('g:ia F j Y') }}</p>
@@ -16,7 +18,7 @@
             <p>
                 <a class="btn btn-primary" href="{{ path('imdc_group_view', {'usergroup' : usergroup}) }}">View Group Info</a>
             </p>
-        </a>
+    	</a>
     </li>
 {% endfor %}
 </ul>
