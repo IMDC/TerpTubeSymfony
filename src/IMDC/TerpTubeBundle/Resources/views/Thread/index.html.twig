@@ -1,10 +1,19 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
 
+{% block sidebarlinks_pages %}<li class="active">{% endblock %}
+
 {% block title %}Threads{% endblock title %}
 
-{% block herounit %}Threads{% endblock herounit %}
+{% block herounit %}<h1>Threads</h1>{% endblock herounit %}
 
 {% block underherounitrow1 %}
+<div class="fluid-row">
+    <div class="span12">
+        <p>
+            <a class="btn btn-primary" href="{{ path('imdc_thread_create_new') }}"><i class="icon-plus"></i> Create New</a>
+        </p>    
+    </div>
+</div>
 <ul class="thumbnails">
     {% for thread in threads %}
     <li class="span3">

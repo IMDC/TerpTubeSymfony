@@ -75,12 +75,18 @@ class Thread
     private $posts;
     
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $mediaIncluded;
+    
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->usersFollowing = new \Doctrine\Common\Collections\ArrayCollection();
         $this->posts          = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->mediaIncluded  = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -389,5 +395,38 @@ class Thread
     public function getPosts()
     {
         return $this->posts;
+    }
+
+    /**
+     * Add mediaIncluded
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $mediaIncluded
+     * @return Thread
+     */
+    public function addMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
+    {
+        $this->mediaIncluded[] = $mediaIncluded;
+    
+        return $this;
+    }
+
+    /**
+     * Remove mediaIncluded
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $mediaIncluded
+     */
+    public function removeMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
+    {
+        $this->mediaIncluded->removeElement($mediaIncluded);
+    }
+
+    /**
+     * Get mediaIncluded
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMediaIncluded()
+    {
+        return $this->mediaIncluded;
     }
 }

@@ -97,22 +97,22 @@
 							<li class="nav-header">
 								TerpTube
 							</li>
-							<li class="active">
+							{% block sidebarlinks_home %}<li>{% endblock %}
 								<a href="{{ path('imdc_terp_tube_user_splash') }}"><img src="{{ asset('img/global_nav_icon_home.png') }}" /><br />Home</a>
 							</li>
-							<li>
+							{% block sidebarlinks_vlogs %}<li>{% endblock %}
 								<a href="#"><img src="{{ asset('img/global_nav_icon_vlogs.png') }}" /><br />Video Logs</a>
 							</li>
-							<li>
+							{% block sidebarlinks_pages %}<li>{% endblock %}
 								<a href="{{ path('imdc_thread_show_recent') }}#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Forums</a>
 							</li>
-							<li>
+							{% block sidebarlinks_groups %}<li>{% endblock %}
 								<a href="{{ path('imdc_groups_show_all') }}"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Groups</a>
 							</li>
-							<li>
+							{% block sidebarlinks_members %}<li>{% endblock %}
 								<a href="#"><img src="{{ asset('img/global_nav_icon_member.png') }}" /><br />Members</a>
 							</li>
-							<li>
+							{% block sidebarlinks_help %}<li>{% endblock %}
 								<a href="#"><img src="{{ asset('img/global_nav_icon_help.png') }}" /><br />Help</a>
 							</li>
 							{% endblock sidebarlinks %}
@@ -142,6 +142,7 @@
                   	</div>
                    	{% endfor %}
     				{% endblock flashmessages %}
+    				{% block herounit_wrap %}
 					<div class="hero-unit">
 						{% block herounit %}
 						<h1>Hello, world!</h1>
@@ -153,6 +154,7 @@
 						</p>
 						{% endblock herounit %}
 					</div>
+					{% endblock herounit_wrap %}
 					<div class="row-fluid">
 					{% block custommessage %}
 					{% endblock custommessage %}

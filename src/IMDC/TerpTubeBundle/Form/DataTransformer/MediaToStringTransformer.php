@@ -4,9 +4,9 @@ namespace IMDC\TerpTubeBundle\Form\DataTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Doctrine\Common\Persistence\ObjectManager;
-use IMDC\TerpTubeBundle\Entity\Thread;
+use IMDC\TerpTubeBundle\Entity\Media;
 
-class ThreadToNumberTransformer implements DataTransformerInterface
+class MediaToStringTransformer implements DataTransformerInterface
 {
     
     private $om;
@@ -16,21 +16,21 @@ class ThreadToNumberTransformer implements DataTransformerInterface
         $this->om = $om;
     }
     
-    public function transform($thread)
+    public function transform($media)
     {
-        if (null === $thread) {
+        if (null === $media) {
             return "";
         }
         
-        return $thread->getId();
+        return $media->getId();
     }
     
     /**
-     * Transforms a string (number) to an object (thread)
+     * Transforms a string (number) to an object (media)
      * 
      * @param string $number
      * @throws TransformationFailedException
-     * @return NULL|Thread
+     * @return NULL|Media
      */
     public function reverseTransform($number)
     {
@@ -38,15 +38,15 @@ class ThreadToNumberTransformer implements DataTransformerInterface
             return null;
         }
         
-        $thread = $this->om->getRepository('IMDCTerpTubeBundle:Thread')
-                        ->findOneBy(array('id' => $number));
+        $media = $this->om->getRepository('IMDCTerpTubeBundle:Media')
+                            ->findOneBy(array('id' => $number));
         
-        if (null === $thread) {
+        if (null === $media) {
             throw new TransformationFailedException(sprintf(
-                    'A Thread with id "%s" does not exist!',
+                    'A Media object with id "%s" does not exist!',
                     $number));
         }
         
-        return $thread;
+        return $media;
     }
 }

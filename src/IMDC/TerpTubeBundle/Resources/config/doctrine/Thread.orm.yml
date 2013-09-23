@@ -32,7 +32,7 @@ IMDC\TerpTubeBundle\Entity\Thread:
     manyToOne:
         creator:
             targetEntity: User
-            inversedBy: createdThreads
+            inversedBy: threads
     manyToMany:
         usersFollowing:
             targetEntity: User
@@ -43,6 +43,16 @@ IMDC\TerpTubeBundle\Entity\Thread:
                         referencedColumnName: id
                 inverseJoinColumns:
                     user_id:
+                        referencedColumnName: id
+        mediaIncluded:
+            targetEntity: Media
+            joinTable:
+                name: threads_included_media
+                joinColumns:
+                    thread_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    media_id:
                         referencedColumnName: id
     oneToMany:
         posts:

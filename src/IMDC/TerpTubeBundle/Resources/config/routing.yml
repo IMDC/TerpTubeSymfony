@@ -76,10 +76,15 @@ imdc_files_gateway_preview:
         _method:  POST
 #        mediaId: \d+
 
+
 imdc_message_create:
     pattern: /createMessage
     defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage } 
-    
+        
+imdc_message_create_to:
+    pattern: /createMessage/{userid}
+    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage, userid:null }
+
 imdc_message_view_all:
     pattern: /inbox
     defaults: { _controller: IMDCTerpTubeBundle:Message:viewAllPrivateMessages }
@@ -178,7 +183,7 @@ imdc_thread_view_specific:
         
 imdc_thread_create_reply_post:
     pattern: /thread/reply/{threadid}
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:createReplyPost }
+    defaults: { _controller: IMDCTerpTubeBundle:Post:createReplyPost }
     requirements:
         threadid: \d+
     

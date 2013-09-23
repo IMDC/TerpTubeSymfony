@@ -461,41 +461,7 @@ class User extends BaseUser
     public function getPostCount()
     {
         //return $this->postCount;
-        return count($this->getPosts());
-    }
-
-
-    /**
-     * Add createdThreads
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Thread $createdThreads
-     * @return User
-     */
-    public function addCreatedThread(\IMDC\TerpTubeBundle\Entity\Thread $createdThreads)
-    {
-        $this->createdThreads[] = $createdThreads;
-    
-        return $this;
-    }
-
-    /**
-     * Remove createdThreads
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Thread $createdThreads
-     */
-    public function removeCreatedThread(\IMDC\TerpTubeBundle\Entity\Thread $createdThreads)
-    {
-        $this->createdThreads->removeElement($createdThreads);
-    }
-
-    /**
-     * Get createdThreads
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getCreatedThreads()
-    {
-        return $this->createdThreads;
+        return count($this->getPosts() + $this->getThreads());
     }
 
     /**
