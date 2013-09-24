@@ -24,7 +24,11 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
     	//Redirect users according to roles
-            $response = new RedirectResponse($this->router->generate('imdc_terp_tube_user_splash'));            
+    		if ($request->getSession()->has('redirectUrl'))
+    			$redirectURL = $request->getSession()->remove('redirectUrl');
+    		else 
+    			$redirectURL = $this->router->generate('imdc_terp_tube_user_splash');
+            $response = new RedirectResponse($redirectURL);            
        
             
         return $response;

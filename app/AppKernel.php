@@ -26,7 +26,8 @@ class AppKernel extends Kernel
             new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
             new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
         	new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
-        	new AC\TranscodingBundle\ACTranscodingBundle()
+        	new AC\TranscodingBundle\ACTranscodingBundle(),
+        	new FOS\JsRoutingBundle\FOSJsRoutingBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

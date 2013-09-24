@@ -5,12 +5,12 @@
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-    <div>
-        <input type="button" value="{{ 'filesGateway.buttons.audio'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_audio') }}'" />
-        <input type="button" value="{{ 'filesGateway.buttons.video'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_video') }}'" />
-        <input type="button" value="{{ 'filesGateway.buttons.image'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_image') }}'" />
-        <input type="button" value="{{ 'filesGateway.buttons.record'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_record') }}'" />
-        <input type="button" value="{{ 'filesGateway.buttons.other'|trans }}" onClick="parent.location='{{ path('imdc_files_gateway_other') }}'" />
+    <div class="row-fluid">
+   	 	<a id="record-link" class="btn btn-primary" href="{{ path('imdc_files_gateway_record_media') }}"><i class="icon-facetime-video"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_audio') }}"><i class="icon-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_video') }}"><i class="icon-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_image') }}"><i class=" icon-picture"></i> {{ 'filesGateway.buttons.image'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_other') }}"><i class="icon-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a>
     </div>
 
 {% endblock underherounitrow1 %}

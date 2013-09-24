@@ -56,7 +56,7 @@ class AddFileGatewayController extends Controller
 	 * @throws BadRequestHttpException
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-	public function gatewayAction(Request $request, $path)
+	public function gatewayAction(Request $request)
 	{
 		$securityContext = $this->container->get('security.context');
 		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
@@ -64,7 +64,15 @@ class AddFileGatewayController extends Controller
 			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
-
+		$user = $this->getUser();
+		$resourceFiles = $user->getResourceFiles();
+		
+		$prefix = "";
+		if ($request->isXmlHttpRequest())
+		{
+			$prefix = "ajax.";
+		}
+		return $this->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'index.html.twig', array('resourceFiles' => $resourceFiles));
 	}
 
 	public function addAudioAction(Request $request, $url)
@@ -251,6 +259,43 @@ class AddFileGatewayController extends Controller
 				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
 	}
 
+	public function addVideoRecordingAction(Request $request, $url)
+	{
+		//FIXME add the recording stuff here
+		// 		throw new NotImplementedException("Not yet implemented");
+		$user = $this->container->get('security.context')->getToken()->getUser();
+		if (!is_object($user) || !$user instanceof UserInterface)
+		{
+			throw new AccessDeniedException('This user does not have access to this section.');
+		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($user->getUsername());
+		if ($userObject == null)
+		{
+			throw new NotFoundHttpException("This user does not exist");
+		}
+		return $this->render('IMDCTerpTubeBundle:AddFilesGateway:addVideoRecording.html.twig');
+	}
+
+	public function addAudioRecordingAction(Request $request, $url)
+	{
+		//FIXME add the recording stuff here
+		throw new NotImplementedException("Not yet implemented");
+
+		$user = $this->container->get('security.context')->getToken()->getUser();
+		if (!is_object($user) || !$user instanceof UserInterface)
+		{
+			throw new AccessDeniedException('This user does not have access to this section.');
+		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($user->getUsername());
+		if ($userObject == null)
+		{
+			throw new NotFoundHttpException("This user does not exist");
+		}
+		return $this->render('IMDCTerpTubeBundle:AddFilesGateway:addAudioRecording.html.twig');
+	}
+
 	public function addRecordingAction(Request $request, $url)
 	{
 		//FIXME add the recording stuff here
@@ -272,11 +317,11 @@ class AddFileGatewayController extends Controller
 		$media->setOwner($userObject);
 		$media->setType(Media::TYPE_VIDEO);
 		$currentTime = new \DateTime('now');
-		$media->setTitle("Recording-". $currentTime->format('Y-m-d-H:i'));
-		
+		$media->setTitle("Recording-" . $currentTime->format('Y-m-d-H:i'));
+
 		$audioFile = $request->files->get("audio-blob", null);
 		$videoFile = $request->files->get("video-blob", null);
-		
+
 		//FIXME Need to sync the audio/videos
 		$transcoder = $this->container->get('imdc_terptube.transcoder');//($this->get('logger'));
 		$mergedFile = $transcoder->mergeAudioVideo($audioFile, $videoFile);
@@ -285,30 +330,29 @@ class AddFileGatewayController extends Controller
 		$resourceFile->setWebmExtension("webm");
 		$media->setIsReady(Media::READY_WEBM);
 		$resourceFile->setFile($mergedFile);
-		
+
 		$media->setResource($resourceFile);
-		
-		
+
 		$userObject->addResourceFile($media);
-		
+
 		$em = $this->container->get('doctrine')->getManager();
-		
+
 		$em->persist($resourceFile);
 		$em->persist($media);
-		
+
 		$em->flush();
-		
+
 		$eventDispatcher = $this->container->get('event_dispatcher');
 		$uploadedEvent = new UploadEvent($media);
 		$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-		
+
 		$mediaObjectArray = JSEntities::getMediaObject($media);
-		
+
 		$return = array('responseCode' => 200, 'feedback' => 'media added', 'media' => $mediaObjectArray);
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
-		
-// 		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
+
+		// 		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
 	}
 
 	public function addOtherAction(Request $request, $url)
