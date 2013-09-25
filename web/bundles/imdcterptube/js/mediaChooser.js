@@ -68,7 +68,7 @@ MediaChooser.prototype.loadChooserPage = function()
 				},
 				success : function(data)
 				{
-					console.log("Load Chooser Page");
+					console.log("Loaded Chooser Page");
 					instance.element.html(data.page);
 				},
 				error : function(request)
@@ -79,6 +79,49 @@ MediaChooser.prototype.loadChooserPage = function()
 			});
 };
 
+MediaChooser.prototype.loadNextPage = function(url,data, method)
+{
+	var instance = this;
+	if (typeof method === 'undefined')
+		method = "GET";
+	
+	var contentType = "application/x-www-form-urlencoded";
+	var processData = true;
+	if (method!="GET")
+	{
+		 contentType = false;
+		 processData = false;
+	}
+	console.log("Load Next Page");
+	$.ajax(
+			{
+				url :url,
+				type : method,
+				contentType : contentType,
+				data : data,
+				processData: processData,
+				success : function(data)
+				{
+					if (data.finished !== 'undefined' && data.finished===true)
+					{
+						
+						console.log("Data finished: "+data.finished);
+						instance.terminatingFunction(data.mediaID);
+					}
+					else
+					{
+						console.log("Next Page loaded");
+						instance.element.html(data.page);	
+					}
+					
+				},
+				error : function(request)
+				{
+					console.log(request);
+					alert(request.statusText);
+				}
+			});
+};
 MediaChooser.prototype.popUp = function (onOpenFunction, onCloseFunction, title)
 {
 	this.element.dialog(

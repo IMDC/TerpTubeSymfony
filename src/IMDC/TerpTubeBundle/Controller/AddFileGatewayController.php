@@ -101,6 +101,12 @@ class AddFileGatewayController extends Controller
 
 		$form = $formFactory->create(new AudioMediaFormType(), $audioMedia, array());
 
+		$prefix = "";
+		if ($request->isXmlHttpRequest())
+		{
+			$prefix = "ajax.";
+		}
+		
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
@@ -125,7 +131,13 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($url === null)
+				if ($request->isXmlHttpRequest())
+				{
+					$response = array('page'=>null, 'finished'=>true, 'mediaID'=>$audioMedia->getId());
+					$response = json_encode($response); // json encode the array
+					return new Response($response, 200, array('Content-Type' => 'application/json'));
+				}
+				else if ($url === null)
 				{
 					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
@@ -136,9 +148,16 @@ class AddFileGatewayController extends Controller
 				return $response;
 			}
 		}
+		$response = $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'addFile.html.twig', array('form' => $form->createView(),));
 		// form not valid, show the basic form
-		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
+		if ($request->isXmlHttpRequest())
+		{
+			$return = array('page'=>$response->getContent(), 'finished'=>false);
+			$return = json_encode($return); // json encode the array
+			$response =  new Response($return, 200, array('Content-Type' => 'application/json'));
+		}
+		return $response;
 	}
 
 	public function addVideoAction(Request $request, $url)
@@ -160,6 +179,12 @@ class AddFileGatewayController extends Controller
 
 		$form = $formFactory->create(new VideoMediaFormType(), $videoMedia, array());
 
+		$prefix = "";
+		if ($request->isXmlHttpRequest())
+		{
+			$prefix = "ajax.";
+		}
+		
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
@@ -184,7 +209,13 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($url === null)
+				if ($request->isXmlHttpRequest())
+				{
+					$response = array('page'=>null, 'finished'=>true, 'mediaID'=>$videoMedia->getId());
+					$response = json_encode($response); // json encode the array
+					return new Response($response, 200, array('Content-Type' => 'application/json'));
+				}
+				else if ($url === null)
 				{
 					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
@@ -195,9 +226,16 @@ class AddFileGatewayController extends Controller
 				return $response;
 			}
 		}
+		$response = $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'addFile.html.twig', array('form' => $form->createView(),));
 		// form not valid, show the basic form
-		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
+		if ($request->isXmlHttpRequest())
+		{
+			$return = array('page'=>$response->getContent(), 'finished'=>false);
+			$return = json_encode($return); // json encode the array
+			$response =  new Response($return, 200, array('Content-Type' => 'application/json'));
+		}
+		return $response;
 	}
 
 	public function addImageAction(Request $request, $url)
@@ -218,7 +256,13 @@ class AddFileGatewayController extends Controller
 		$formFactory = $this->container->get('form.factory');
 
 		$form = $formFactory->create(new ImageMediaFormType(), $imageMedia, array());
-
+		
+		$prefix = "";
+		if ($request->isXmlHttpRequest())
+		{
+			$prefix = "ajax.";
+		}
+		
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
@@ -243,7 +287,13 @@ class AddFileGatewayController extends Controller
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
 				// 				$uploadedEvent->getResponse();
-				if ($url === null)
+				if ($request->isXmlHttpRequest())
+				{
+					$response = array('page'=>null, 'finished'=>true, 'mediaID'=>$imageMedia->getId());
+					$response = json_encode($response); // json encode the array
+					return new Response($response, 200, array('Content-Type' => 'application/json'));
+				}
+				else if ($url === null)
 				{
 					$response = new RedirectResponse($this->generateUrl('imdc_files_gateway'));
 				}
@@ -254,9 +304,16 @@ class AddFileGatewayController extends Controller
 				return $response;
 			}
 		}
+		$response = $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'addFile.html.twig', array('form' => $form->createView(),));
 		// form not valid, show the basic form
-		return $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array('form' => $form->createView(),));
+		if ($request->isXmlHttpRequest())
+		{
+			$return = array('page'=>$response->getContent(), 'finished'=>false);
+			$return = json_encode($return); // json encode the array
+			$response =  new Response($return, 200, array('Content-Type' => 'application/json'));
+		}
+		return $response;
 	}
 
 	public function addVideoRecordingAction(Request $request, $url)
