@@ -22,7 +22,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class MessageController extends Controller
 {
-    public function createMessageAction(Request $request, $userid=null)
+    public function createMessageAction(Request $request, $userName=null)
     {
         // check if user logged in
         $securityContext = $this->container->get('security.context');

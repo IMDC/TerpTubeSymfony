@@ -89,9 +89,9 @@ imdc_message_create:
     pattern: /createMessage
     defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage } 
         
-imdc_message_create_to:
-    pattern: /createMessage/{userid}
-    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage, userid:null }
+imdc_message_user_specific:
+    pattern: /createMessage/{userName}
+    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage, userName:null }
 
 imdc_message_view_all:
     pattern: /inbox

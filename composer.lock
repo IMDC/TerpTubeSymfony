@@ -456,7 +456,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -1261,7 +1261,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1368,7 +1368,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1523,7 +1523,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1615,12 +1615,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafo/lessphp.git",
-                "reference": "85bd4557920d5f4fcbf41beb621e91b842e3621b"
+                "reference": "e2d39fc6ceb23ae06282bad9d65c6de5a9c8aa15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/lessphp/zipball/85bd4557920d5f4fcbf41beb621e91b842e3621b",
-                "reference": "85bd4557920d5f4fcbf41beb621e91b842e3621b",
+                "url": "https://api.github.com/repos/leafo/lessphp/zipball/e2d39fc6ceb23ae06282bad9d65c6de5a9c8aa15",
+                "reference": "e2d39fc6ceb23ae06282bad9d65c6de5a9c8aa15",
                 "shasum": ""
             },
             "type": "library",
@@ -1648,7 +1648,7 @@
             ],
             "description": "lessphp is a compiler for LESS written in PHP.",
             "homepage": "http://leafo.net/lessphp/",
-            "time": "2013-09-24 19:29:14"
+            "time": "2013-09-25 15:07:34"
         },
         {
             "name": "monolog/monolog",
@@ -2652,12 +2652,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "b80f58b336cd7a4b59d704ff4c311cbf8edf5e51"
+                "reference": "1a476b623ebea6b5f95161b865fb38ddd766fa84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/b80f58b336cd7a4b59d704ff4c311cbf8edf5e51",
-                "reference": "b80f58b336cd7a4b59d704ff4c311cbf8edf5e51",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/1a476b623ebea6b5f95161b865fb38ddd766fa84",
+                "reference": "1a476b623ebea6b5f95161b865fb38ddd766fa84",
                 "shasum": ""
             },
             "type": "library",
@@ -2667,12 +2667,12 @@
             ],
             "authors": [
                 {
-                    "name": "Mark Otto",
-                    "email": "markdotto@gmail.com"
-                },
-                {
                     "name": "Jacob Thornton",
                     "email": "jacobthornton@gmail.com"
+                },
+                {
+                    "name": "Mark Otto",
+                    "email": "markdotto@gmail.com"
                 }
             ],
             "description": "Sleek, intuitive, and powerful mobile first front-end framework for faster and easier web development.",
@@ -2681,7 +2681,7 @@
                 "bootstrap",
                 "css"
             ],
-            "time": "2013-09-24 05:34:36"
+            "time": "2013-09-25 02:27:49"
         },
         {
             "name": "videlalvaro/php-amqplib",
@@ -2689,12 +2689,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/php-amqplib.git",
-                "reference": "v2.1.0"
+                "reference": "adc2a425ab214517a5e76557a9370bdc6f212576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/v2.1.0",
-                "reference": "v2.1.0",
+                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/adc2a425ab214517a5e76557a9370bdc6f212576",
+                "reference": "adc2a425ab214517a5e76557a9370bdc6f212576",
                 "shasum": ""
             },
             "require": {

@@ -26,6 +26,7 @@ class ThreadFormType extends AbstractType
 	            $builder->create('mediaIncluded', 'text')
 	            ->addModelTransformer($transformer)
 	    );*/
+	    $builder->add('mediaID', null, array('label' => 'Media ID', 'mapped' => false, 'required'=> false));
 		$builder->add('content');
 		$builder->add('submit', 'submit');
 	}	

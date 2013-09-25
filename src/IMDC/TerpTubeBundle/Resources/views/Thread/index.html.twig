@@ -1,4 +1,8 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
 
 {% block sidebarlinks_pages %}<li class="active">{% endblock %}
 
@@ -15,16 +19,49 @@
     </div>
 </div>
 <ul class="thumbnails">
+    {% set counter=1 %}
+    <div class="row-fluid">
     {% for thread in threads %}
-    <li class="span3">
-        <a href="{{ path('imdc_thread_view_specific', {'threadid': thread.id} ) }}">
-        <div class="thumbnail text-center">
-            <h3>{{ thread.title }}</h3>
-            <p>Content: {{ thread.content|truncate(50) }}
-            <p>Created: {{ thread.creationDate|date('g:ia F j Y') }}</p>
-        </a>
-    </li>
+    {% if counter != 1 or counter % 4 == 1 %}
+        <div class="row-fluid">
+    {% endif %}
+            <li class="span3">
+                <a href="{{ path('imdc_thread_view_specific', {'threadid': thread.id} ) }}">
+                <div class="thumbnail text-center">
+                <p>
+                    {% if thread.mediaIncluded|length != 0 %}
+                        {% set mediaFile = thread.mediaIncluded[0] %}
+                    {% endif %}
+                    {% if mediaFile is defined %}
+                        {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
+                        {% if mediaFile.type == 0 %}
+                            <img class="forum-img-thumbnail" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+                        {% elseif mediaFile.type == 1 %}
+                            <video controls class="forum-video-thumbnail" preload="auto">
+                            	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}" />
+                            	<source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+                            </video>
+                        {% elseif mediaFile.type == 2 %}
+                            <audio controls>
+                                <source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+                            </audio>
+                        {% else %}
+                        
+                        {% endif %}
+                    {% endif %}
+                    </p>
+                    <h3>{{ thread.title | truncate(20) }}</h3>
+                    <p>Content: {{ thread.content|truncate(30) }}
+                    <p>Created: {{ thread.creationDate|date('F j Y g:ia') }}</p>
+                </a>
+            </li>
+    {% if counter != 0 and counter % 4 == 0 %}
+        </div><!-- end row-fluid -->
+    {% endif %}
+    <p></p>
+    {% set counter = counter + 1 %}
 {% endfor %}
+</div>
 </ul>
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}

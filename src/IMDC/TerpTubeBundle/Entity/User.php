@@ -461,7 +461,7 @@ class User extends BaseUser
     public function getPostCount()
     {
         //return $this->postCount;
-        return count($this->getPosts() + $this->getThreads());
+        return count($this->getPosts()) + count($this->getThreads());
     }
 
     /**

@@ -2,10 +2,28 @@
 
 #maincontent {
     min-height: 4em;
-    border: 1px solid gray;
+    border: 1px solid #bbb;
+    border-radius: 5px;
     margin-bottom: 15px;
+    padding: 3px;
+}
+
+div#mediaFileWrap, div#mediaFileWrap img {
+    max-height: 720px;
 }
 
 #rightsidecontent {
-    border: 1px dotted #cdcdcd;
+/*     border: 1px dotted #cdcdcd;
+ */
+ max-height: 90%;
+ }
+
+div.post-reply-wrap {
+    border: 1px solid #ddd;
+    border-collapse: collapse;
+}
+
+div.post-reply-date {
+    font-size: 11px;
+    color: #aaa;
 }

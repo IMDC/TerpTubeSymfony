@@ -93,6 +93,19 @@ class ThreadController extends Controller
             	
             $em = $this->getDoctrine()->getManager();
             	
+            $threadrepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+            // split up the media id by whitespace
+            $rawmediaids = split(' ', $form->get('mediaID')->getData());
+            foreach ($rawmediaids as $possmedia) {
+                try {
+                    $mediaFile = $threadrepo->findOneBy(array('id' => $possmedia));
+                    $newthread->addMediaIncluded($mediaFile);
+                } catch (\PDOException $e) {
+                    // todo: create message to user about media file not found
+                }
+            }
+            
+            
             $newthread->setCreator($user);
             $newthread->setCreationDate(new \DateTime('now'));
             $newthread->setLocked(FALSE);

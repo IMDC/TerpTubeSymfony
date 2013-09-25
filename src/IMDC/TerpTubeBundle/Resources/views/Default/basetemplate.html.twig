@@ -23,6 +23,17 @@
 		<!--[if lt IE 9]>
 		<script src="../assets/js/html5shiv.js"></script>
 		<![endif]-->
+		
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+		<script>
+			window.jQuery || document.write('<script src="{{ asset('js/jquery.js') }}"><\/script>')
+		</script>
+		<!--  javascript for video player -->
+		<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
+		<!-- Recorder for web-rtc -->
+		<script src="https://www.webrtc-experiment.com/RecordRTC.js"> </script>
+		
 		</head>
 		{% block navbar_top %}
 		<div class="navbar navbar-inverse navbar-fixed-top">
@@ -90,7 +101,7 @@
 			</div><!-- /.row-fluid -->
 			{% block content %}
 			<div class="row-fluid">
-				<div class="span2">
+				<div class="span1">
 					<div class="well sidebar-nav">
 						<ul class="nav nav-list text-center">
 							{% block sidebarlinks %}
@@ -120,7 +131,7 @@
 					</div><!--/.well /.sidebar-nav -->
 				</div><!--/.span2 -->
 				{% block rightsidecontent %}
-				<div class="span10">
+				<div class="span11">
 				    {% block flashmessages %}
 				    {% for type, messages in app.session.flashbag.all() %}
 				    <div class="row-fluid">
@@ -237,17 +248,7 @@
 			{% endblock content %}
 		</div><!--/.container-fluid -->
 
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-		<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
-		<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
-		<script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
-		<script>
-			window.jQuery || document.write('<script src="{{ asset('js/jquery.js') }}"><\/script>')
-		</script>
-		<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
-		<script src="{{ asset('bundles/imdcterptube/js/mediaChooser.js') }}"></script>
-		<!-- Recorder for web-rtc -->
-		<script src="https://www.webrtc-experiment.com/RecordRTC.js"> </script>
+
 		{% block javascripts %}
 		    <script src="{{ asset('bundles/imdcterptube/js/main.js') }}"></script>
 		{% endblock javascripts %}
