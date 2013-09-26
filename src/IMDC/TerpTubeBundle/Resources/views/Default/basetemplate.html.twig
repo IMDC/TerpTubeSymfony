@@ -26,11 +26,13 @@
 		
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+		<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+		<script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 		<script>
 			window.jQuery || document.write('<script src="{{ asset('js/jquery.js') }}"><\/script>')
 		</script>
-		<!--  javascript for video player -->
 		<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
+		<script src="{{ asset('bundles/imdcterptube/js/mediaChooser.js') }}"></script>
 		<!-- Recorder for web-rtc -->
 		<script src="https://www.webrtc-experiment.com/RecordRTC.js"> </script>
 		
