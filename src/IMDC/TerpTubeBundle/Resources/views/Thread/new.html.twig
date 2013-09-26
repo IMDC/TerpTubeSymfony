@@ -1,15 +1,57 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Thread/new.html.twig #}
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
-{% block title %}New Thread{% endblock title %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block title %}Create a new Topic{% endblock title %}
 
 {% block herounit %}
-<h1>Create a new Thread</h1>
+<h1>Create a new Topic</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
 <div class="span9">
-    {{ form(form) }}
+  {# {{ form(form) }} #}
+  
+
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
+        {{ form(form.mediatextarea) }}
+        <div id="files"></div>
+{#         <input type="textarea" disabled="true" id="file-textarea" />#}
+{#         {{ form_row(form.mediaID) }}#}
+        {{ form_row(form.title) }}
+        {{ form_row(form.content) }}
+    
+    {{ form_end(form) }}
+  
+
 </div>
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
+
+{% block javascripts %}
+ {{ parent() }}
+ <script type='text/javascript'>
+ var mediaChooser;
+ $("#selectFiles").click(function(e) {
+ 	mediaChooser = new MediaChooser($("#files"), function(mediaID)
+ 		 	{
+		 		//alert(mediaID);
+ 	            setMediaID(mediaID);
+	 		}, true);
+ 	mediaChooser.chooseMedia();
+ });
+
+ function setMediaID(mid) {
+	    $("#ThreadForm_mediaID").attr('data-mid', mid);
+	    $("#ThreadForm_mediatextarea").val(mid);
+	    
+	    //alert(mid);
+	 }
+</script>
+{% endblock javascripts %}

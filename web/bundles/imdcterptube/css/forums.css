@@ -1,10 +1,23 @@
 @CHARSET "UTF-8";
 
 img.forum-img-thumbnail {
-    max-height: 250px;
+    max-height: 200px;
 }
 
 video.forum-video-thumbnail {
     width: 100%;
-    max-height: 250px;
+    max-height: 200px;
+}
+
+vido
+
+/* new thread file box */
+textarea#ThreadForm_mediatextarea {
+    vertical-align: top;
+}
+
+div.thumbnail {
+    min-height: 250px;
+    max-height: 350px;
+    height: 350px;
 }

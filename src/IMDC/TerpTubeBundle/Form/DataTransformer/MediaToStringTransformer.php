@@ -8,14 +8,25 @@ use IMDC\TerpTubeBundle\Entity\Media;
 
 class MediaToStringTransformer implements DataTransformerInterface
 {
-    
+    /**
+     * 
+     * @var ObjectManager
+     */
     private $om;
     
+    /**
+     * @param ObjectManager $om
+     */
     public function __construct(ObjectManager $om)
     {
         $this->om = $om;
     }
     
+    /**
+     * Transforms an object (media) to a string (number)
+     * @param Issue|null $issue
+     * @return string
+     */
     public function transform($media)
     {
         if (null === $media) {
@@ -29,8 +40,8 @@ class MediaToStringTransformer implements DataTransformerInterface
      * Transforms a string (number) to an object (media)
      * 
      * @param string $number
-     * @throws TransformationFailedException
-     * @return NULL|Media
+     * @return Media|null
+     * @throws TransformationFailedException if object (media) is not found
      */
     public function reverseTransform($number)
     {
@@ -44,7 +55,8 @@ class MediaToStringTransformer implements DataTransformerInterface
         if (null === $media) {
             throw new TransformationFailedException(sprintf(
                     'A Media object with id "%s" does not exist!',
-                    $number));
+                    $number
+                    ));
         }
         
         return $media;

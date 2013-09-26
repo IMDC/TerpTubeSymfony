@@ -80,10 +80,10 @@ class ThreadController extends Controller
         
         $newthread = new Thread();
         $form = $this->createForm(new ThreadFormType(), $newthread);
-        
+        $em = $this->getDoctrine()->getManager();
         /*
         $form = $this->createForm(new ThreadFormType(), $newthread, array(
-                'em' => $this->getDoctrine()->getManager(),
+                'em' => $em,
         ));
         */
         
@@ -91,21 +91,50 @@ class ThreadController extends Controller
         
         if ($form->isValid()) {
             	
-            $em = $this->getDoctrine()->getManager();
-            	
+            //$em = $this->getDoctrine()->getManager();
+        	
             $threadrepo = $em->getRepository('IMDCTerpTubeBundle:Media');
-            // split up the media id by whitespace
-            $rawmediaids = split(' ', $form->get('mediaID')->getData());
-            foreach ($rawmediaids as $possmedia) {
-                try {
-                    $mediaFile = $threadrepo->findOneBy(array('id' => $possmedia));
+            if (!$form->get('mediatextarea')->isEmpty()) {
+                
+                $rawmediaID = $form->get('mediatextarea')->getData();
+                $logger = $this->container->get('logger');
+                $logger->info('*************media id is ' . $rawmediaID);
+                $mediaFile = $threadrepo->findOneBy(array('id' => $rawmediaID));
+                
+                if ($user->getResourceFiles()->contains($mediaFile)) {
+                    $logger = $this->get('logger');
+                    $logger->info('User owns this media file');
                     $newthread->addMediaIncluded($mediaFile);
-                } catch (\PDOException $e) {
-                    // todo: create message to user about media file not found
                 }
+                
             }
             
-            
+            /*
+            // split up the media id by whitespace
+            $rawmediaID = trim($form->get('mediaID')->getData());
+            try {
+                $mediaFile = $threadrepo->findOneBy(array('id' => $rawmediaID));
+                $newthread->addMediaIncluded($mediaFile);
+            } catch (\PDOException $e) {
+                // todo: create message to user about media file not found
+                $logger = $this->get('logger');
+                $logger->err('Couldnt find media id ' . $rawmediaID);
+            }
+            */
+            /*
+            $rawmediaids = explode(' ', $form->get('mediaID')->getData());
+            if ($rawmediaids) {
+                foreach ($rawmediaids as $possmedia) {
+                    try {
+                        $mediaFile = $threadrepo->findOneBy(array('id' => $possmedia));
+                        $newthread->addMediaIncluded($mediaFile);
+                    } catch (\PDOException $e) {
+                        // todo: create message to user about media file not found
+                    }
+                }
+            }
+            */
+           
             $newthread->setCreator($user);
             $newthread->setCreationDate(new \DateTime('now'));
             $newthread->setLocked(FALSE);
@@ -129,8 +158,8 @@ class ThreadController extends Controller
         }
         
         // form not valid, show the basic form
-        return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
-                'form' => $form->createView(),
+        return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig',
+                array('form' => $form->createView(),
         ));
     }
     

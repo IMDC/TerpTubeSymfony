@@ -59,7 +59,7 @@ class MessageController extends Controller
             $userManager = $this->container->get('fos_user.user_manager');
             
             // split up the recipients by whitespace
-            $rawrecips = split(' ', $form->get('to')->getData());
+            $rawrecips = explode(' ', $form->get('to')->getData());
             foreach ($rawrecips as $possuser) {
             	try {
             		$theuser = $userManager->loadUserByUsername($possuser);
