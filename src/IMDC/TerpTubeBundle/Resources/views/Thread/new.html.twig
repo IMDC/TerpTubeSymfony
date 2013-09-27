@@ -19,7 +19,7 @@
     {{ form_start(form) }}
         {{ form_errors(form) }}
         <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
-        {{ form(form.mediatextarea) }}
+        {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
         <div id="files"></div>
 {#         <input type="textarea" disabled="true" id="file-textarea" />#}
 {#         {{ form_row(form.mediaID) }}#}

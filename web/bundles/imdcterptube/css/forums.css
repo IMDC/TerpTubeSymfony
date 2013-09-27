@@ -21,3 +21,11 @@ div.thumbnail {
     max-height: 350px;
     height: 350px;
 }
+
+div.thumbnail audio {
+    width: 100%;
+}
+
+a#selectFiles {
+    vertical-align: top;
+}

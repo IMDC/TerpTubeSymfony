@@ -13,7 +13,12 @@
     {{ form_start(form) }}
         {{ form_errors(form) }}
         
+        {% if app.request.get('userid') %}
+        {{ form_row(form.to, { 'value' : app.request.get('userid') }) }}
+        {% else %}
         {{ form_row(form.to) }}
+        {% endif %}
+{#         {{ form_row(form.recipients) }}#}
         {{ form_row(form.subject) }}
         {{ form_row(form.content) }}
         

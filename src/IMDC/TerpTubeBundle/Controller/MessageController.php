@@ -20,9 +20,10 @@ use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Doctrine\Common\Collections\ArrayCollection;
 
 
+
 class MessageController extends Controller
 {
-    public function createMessageAction(Request $request, $userName=null)
+    public function createMessageAction(Request $request, $userid=null)
     {
         // check if user logged in
         $securityContext = $this->container->get('security.context');
@@ -36,8 +37,13 @@ class MessageController extends Controller
         }
         
         $message = new Message();
-        
         $form = $this->createForm(new PrivateMessageType(), $message);
+        
+        /*
+        $form = $this->createForm(new PrivateMessageType(), $message, array(
+                'em' => $this->getDoctrine()->getManager(),
+        ));
+        */
         
         $form->handleRequest($request);
         
@@ -141,7 +147,7 @@ class MessageController extends Controller
             $userManager = $this->container->get('fos_user.user_manager');
         
             // split up the recipients by whitespace
-            $rawrecips = split(' ', $form->get('to')->getData());
+            $rawrecips = explode(' ', $form->get('to')->getData());
             foreach ($rawrecips as $possuser) {
                 try {
                     $theuser = $userManager->loadUserByUsername($possuser);
