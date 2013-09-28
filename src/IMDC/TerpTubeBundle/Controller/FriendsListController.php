@@ -42,7 +42,8 @@ class FriendsListController extends Controller
 	    $em->persist($user);
 	    $em->flush();
 	    
-	    return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific', array('userName'=>$usertoadd->getUserName())));
+	    return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific', 
+    						array('userName'=>$usertoadd->getUserName())));
 	}
 	
 	public function removeAction($userid, $redirect)

@@ -12,4 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class PostRepository extends EntityRepository
 {
+	public function getRecentPosts($limit=30)
+	{
+		$query = $this->getEntityManager()
+		->createQuery
+			('SELECT p
+			FROM IMDCTerpTubeBundle:Post p
+            ORDER BY p.created DESC
+            ');
+		$query->setMaxResults($limit);
+		 
+		return $query->getResult();
+	}
 }

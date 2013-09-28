@@ -25,3 +25,20 @@
 <h1>Welcome to TerpTube</h1>
 {% endblock herounit %}
 
+
+{% block underherounitrow1 %}
+{% if posts|length > 0 %}
+	<div class="row-fluid">
+	<h3>Recent Posts</h3>
+	{% include 'IMDCTerpTubeBundle:Post:postthumbnail.html.twig' %}
+	</div>
+{% endif %}
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% if threads|length > 0 %}
+	<div class="row-fluid">
+	<h3>Recent Forum Posts</h3>
+	{% include 'IMDCTerpTubeBundle:Thread:threadthumbnail.html.twig' %}
+	</div>
+{% endif %}
+{% endblock underherounitrow2 %}

@@ -6,35 +6,7 @@
 {% block herounit %}Posts{% endblock herounit %}
 
 {% block underherounitrow1 %}
-<ul class="thumbnails">
-    {% set counter = 1 %}
-    <div class="row-fluid">
-    {% for post in posts %}
-    {% if counter != 1 and counter % 4 == 1 %}
-        <div class="row-fluid" data-rowid="{{ counter }}">
-    {% endif %}
-            <li class="span3">
-                <div class="thumbnail text-center">
-                {% if post.getParentThread.getId is defined %}
-                <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}">
-                {% endif %}
-                    <h3>{{ post.author }}</h3>
-                    <p>Created: {{ post.created|date('g:ia F j Y') }}</p>
-                    <p>Content: {{ post.content|truncate(30) }}</p>
-                    <p>Parent Thread ID: {{ post.parentThread ? post.parentThread.id:'none' }}</p>
-                {% if post.getParentThread is defined %}
-                </a>
-                {% endif %}
-                </div>
-            </li>
-    {% if counter != 0 and counter % 4 == 0 %}
-        </div>
-        <p></p>
-    {% endif %}
-    {% set counter = counter + 1 %}
-{% endfor %}
-    </div>
-</ul>
+{% include 'IMDCTerpTubeBundle:Post:postthumbnail.html.twig' %}
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

@@ -15,21 +15,31 @@ class HomeController extends Controller
 {
     public function indexAction()
     {
+    	// check if user logged in
     	$securityContext = $this->container->get('security.context');
-		if( $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
-		{
-			return $this->render('IMDCTerpTubeBundle:Home:index.html.twig');
-//			return new Response('<html><body>Hello!</body></html>');
-		}
-		else 
-		{
-			$response = new RedirectResponse($this->generateUrl('imdc_terp_tube_homepage')); 
-			return $response;
-			//return new Response('<html><body>Bye!</body></html>');
-		}
-
-        // return $this->render('<html><body>Hello world</body></html>');
-        //return new Response('<html><body>Hello!</body></html>');
-        // return array();
+    	if(! $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+    	{
+    		$this->get('session')->getFlashBag()->add(
+    				'notice',
+    				'Please log in first'
+    		);
+    		return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+    	}
+        
+		$em = $this->getDoctrine()->getManager();
+		 
+		$recentPosts = $em->getRepository('IMDCTerpTubeBundle:Post')
+		->getRecentPosts(3);
+		 
+		$recentThreads = $em->getRepository('IMDCTerpTubeBundle:Thread')
+		->getMostRecentThreads(3);
+		 
+		return $this->render('IMDCTerpTubeBundle:Default:recentactivity.html.twig',
+				array('posts' => $recentPosts,
+						'threads' => $recentThreads)
+		);
+		
+		//return $this->render('IMDCTerpTubeBundle:Home:index.html.twig');
+		
     }
 }
