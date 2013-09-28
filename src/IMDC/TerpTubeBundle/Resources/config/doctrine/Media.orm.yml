@@ -1,6 +1,7 @@
 IMDC\TerpTubeBundle\Entity\Media:
     type:  entity
     table: media
+    repositoryClass: IMDC\TerpTubeBundle\Entity\MediaRepository
     id:
         id:
             type: integer

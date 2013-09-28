@@ -33,27 +33,7 @@ class PostController extends Controller
 		return $response;
 	}
 	
-	public function createNewPostFromMediaAction($resourceid)
-	{
-	    // check if user logged in
-	    $securityContext = $this->container->get('security.context');
-	    if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
-	    {
-	        $this->get('session')->getFlashBag()->add(
-	                'notice',
-	                'Please log in first'
-	        );
-	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
-	    }
-	    
-	    $user = $this->getUser();
-	    
-	    $this->get('session')->getFlashBag()->add(
-					'notice',
-					'Not implemented yet'
-			);
-			return $this->redirect($this->generateUrl('imdc_post_show_all'));
-	}
+	
 	
 	public function createNewPostAction(Request $request) 
 	{

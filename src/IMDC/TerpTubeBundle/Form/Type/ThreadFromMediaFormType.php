@@ -6,87 +6,68 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
-class ThreadFormType extends AbstractType
+class ThreadFromMediaFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 	    
-	    $builder->add('title', null, array('label' => 'Text Title'));
-	    //$builder->add('mediaIncluded');
-	    
 	    // User type
 	    $user = $options['user'];
-	    
 	    $userid = $user->getId();
 	    
-	    // this assumes that the entity manager was passed in as an option
+	    $mediafile   = $options['resource'];
+	    $mediafileid = $mediafile->getId();
 	    /*
-	    $entityManager = $options['em'];
-	    $transformer = new MediaToStringTransformer($entityManager);
-	    */
-	    //add a normal text field, but add your transformer to it
-	    /*
-	    $builder->add(
-	            $builder->create('mediaIncluded', 'text')
-	            ->addModelTransformer($transformer), array('required'=>false)
-	    );
-	    */
-	    /*
-	    $builder->add('mediaID', 'hidden', array('label' => 'Media ID', 'mapped' => false, 
-	                                                'required'=> false, 
-	                                                'attr' => array('data-mid' => 0)));
-	                                                */
 	    $builder->add('mediatextarea', 'textarea', array('required' => false, 
 	                                                'mapped' => false,
 	                                                'read_only' => true,
-	                                                'label' => 'File',
+	                                                'label' => 'Attached File',
                                                     'attr' => array('cols' => 1,
                                                                     'rows' => 1)));
+	    
+	    */
+	    
 	    $builder->add('mediaIncluded', 'entity', array(
 	            'class' => 'IMDCTerpTubeBundle:Media',
 	            'property' => 'title',
-	            'empty_value' => 'Choose an option',
-	            'required' => false,
-	            'label' => 'Your media files',
-	            'query_builder' => function(EntityRepository $er) use ($userid) {
+	            //'empty_value' => 'Choose an option',
+	            'required' => true,
+	            'label' => 'File',
+	            'query_builder' => function(EntityRepository $er) use ($userid, $mediafileid) {
 	                return $er->createQueryBuilder('m')
 	                            ->where('m.owner = :id')
-	                            ->setParameter('id', $userid);
+	                            ->andWhere('m.id = :rid')
+	                            ->setParameter('id', $userid)
+	                            ->setParameter('rid', $mediafileid);
 	            },
 	    ));
+	    $builder->add('title');
+	    
 	    $builder->add('content', null, array('label' => 'Supplementary Content',
 	    ));
+	    
 		$builder->add('submit', 'submit');
 	}	
 
 	public function getName()
 	{
-		return 'ThreadForm';
+		return 'ThreadFromMediaForm';
 	}
 	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\Thread',));
 		
-		/*
-		$resolver->setRequired(array(
-		        'em',
-		));
-		*/
 		$resolver->setRequired(array(
 		        'user',
+		        'resource'
         ));
 		$resolver->setAllowedTypes(array(
 		        'user' => 'IMDC\TerpTubeBundle\Entity\User',
+		        'resource' => 'IMDC\TerpTubeBundle\Entity\Media',
 		));
-		
-		
-		/*
-		$resolver->setAllowedTypes(array(
-		        'em' => 'Doctrine\Common\Persistence\ObjectManager',
-		));
-		*/
-		
 	}
 }

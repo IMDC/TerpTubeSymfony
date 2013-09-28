@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormType;
+use IMDC\TerpTubeBundle\Form\Type\ThreadFromMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormType;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 
@@ -79,7 +80,9 @@ class ThreadController extends Controller
         $user = $this->getUser();
         
         $newthread = new Thread();
-        $form = $this->createForm(new ThreadFormType(), $newthread);
+        $form = $this->createForm(new ThreadFormType(), $newthread, array(
+                'user' => $this->getUser(),
+        ));
         $em = $this->getDoctrine()->getManager();
         /*
         $form = $this->createForm(new ThreadFormType(), $newthread, array(
@@ -108,6 +111,8 @@ class ThreadController extends Controller
                 }
                 
             }
+            
+            
             
             /*
             // split up the media id by whitespace
@@ -161,6 +166,66 @@ class ThreadController extends Controller
         return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig',
                 array('form' => $form->createView(),
         ));
+    }
+    
+    public function createNewThreadFromMediaAction(Request $request, $resourceid)
+    {
+        
+        // check if user logged in
+        $securityContext = $this->container->get('security.context');
+        if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+        {
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Please log in first'
+            );
+            return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+        }
+         
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $newthread = new Thread();
+         
+        $chosenmedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($resourceid);
+        
+        //$newthread->setMediaIncluded($chosenmedia);
+         
+        $form = $this->createForm(new ThreadFromMediaFormType(), $newthread, array(
+                'user' => $this->getUser(),
+                'resource' => $chosenmedia,
+        ));
+         
+        $form->handleRequest($request);
+         
+        if ($form->isValid()) {
+        
+            $newthread->setCreator($user);
+            $newthread->setCreationDate(new \DateTime('now'));
+            $newthread->setLocked(FALSE);
+            $newthread->setSticky(FALSE);
+            $newthread->setLastPostAt(new \DateTime('now'));
+        
+            $user->addThread($newthread);
+        
+            // request to persist message object to database
+            $em->persist($newthread);
+            $em->persist($user);
+        
+            // persist all objects to database
+            $em->flush();
+             
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Thread created successfully!'
+            );
+            return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+        }
+         
+        // form not valid, show the basic form
+        return $this->render('IMDCTerpTubeBundle:Thread:newfrommedia.html.twig',
+                array('form' => $form->createView(),
+                        'mediaFile' => $chosenmedia,
+                ));
     }
     
 }

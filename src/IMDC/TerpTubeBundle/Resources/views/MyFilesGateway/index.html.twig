@@ -34,7 +34,7 @@
                             {% else %}
                             <a class="preview-button" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="icon-play-sign"></i> {{ 'filesGateway.previewLink'|trans }}</a>
                             {% endif %}
-                            <a class="share-button" href="{{ path('imdc_post_create_new_from_media', {'resourceid': resourceFile.id} ) }}" data-type-"{{ resourceFile.type }}" data-val="{{ resourceFile.id }}"><i class="icon-share-alt"></i> {{ 'filesGateway.shareLink'|trans }}</a>
+                            <a class="share-button" href="{{ path('imdc_thread_create_new_from_media', {'resourceid': resourceFile.id} ) }}" data-type-"{{ resourceFile.type }}" data-val="{{ resourceFile.id }}"><i class="icon-share-alt"></i> {{ 'filesGateway.shareLink'|trans }}</a>
                         </td>
                         <td>
                         	{{ resourceFile.title }}

@@ -103,6 +103,7 @@ button.videoControlsContainer
 {
 	width: 40px;
 	height: 40px;
+	border: none;
 }
 .videoControlsContainer.timeBox
 {
@@ -111,11 +112,11 @@ button.videoControlsContainer
 	height: 40px;
 	/*width: 80px;*/
 	/*width: 18%;*/
-	font-size:0.6em;
+	font-size:1.6em;
 	line-height: 40px;
 	display: inline-block;
 	position: absolute;
-	left: 75%;
+	left: 77%;
 	outline: none;
 }
 

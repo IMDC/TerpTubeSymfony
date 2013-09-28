@@ -21,6 +21,7 @@ div#mediaFileWrap, div#mediaFileWrap img {
 div.post-reply-wrap {
     border: 1px solid #ddd;
     border-collapse: collapse;
+    padding-top: 5px;
 }
 
 div.post-reply-date {

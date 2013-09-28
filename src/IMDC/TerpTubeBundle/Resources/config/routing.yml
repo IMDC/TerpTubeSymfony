@@ -179,6 +179,13 @@ imdc_thread_create_new:
     pattern: /thread/new
     defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
     
+imdc_thread_create_new_from_media:
+    pattern: /thread/new/{resourceid}
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThreadFromMedia }
+    requirements:
+        resourceid: \d+
+    
+    
 imdc_thread_show_recent:
     pattern: /threads
     defaults: { _controller: IMDCTerpTubeBundle:Thread:index }
@@ -200,12 +207,6 @@ imdc_thread_create_reply_post:
 imdc_post_create_new:
     pattern: /post/new
     defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
-    
-imdc_post_create_new_from_media:
-    pattern: /post/new/{resourceid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPostFromMedia }
-    requirements:
-        resourceid: \d+
     
 imdc_post_show_all:
     pattern: /post/all

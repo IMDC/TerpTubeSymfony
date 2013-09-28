@@ -429,4 +429,11 @@ class Thread
     {
         return $this->mediaIncluded;
     }
+    
+    public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
+    {
+        $this->mediaIncluded[] = $mediaIncluded;
+        
+        return $this;
+    }
 }
