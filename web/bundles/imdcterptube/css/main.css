@@ -12,3 +12,7 @@ ul.nav-list img {
     margin-top: 5px;
     width: 48px;
 }
+
+span.content-created-datetime-span {
+    font-size: 0.7em;
+}

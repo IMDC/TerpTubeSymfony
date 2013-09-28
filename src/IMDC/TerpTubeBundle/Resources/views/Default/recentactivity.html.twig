@@ -28,17 +28,19 @@
 
 {% block underherounitrow1 %}
 {% if posts|length > 0 %}
-	<div class="row-fluid">
+{# 	<div class="row-fluid">#}
 	<h3>Recent Posts</h3>
 	{% include 'IMDCTerpTubeBundle:Post:postthumbnail.html.twig' %}
-	</div>
+{# 	</div>#}
 {% endif %}
+<div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% if threads|length > 0 %}
-	<div class="row-fluid">
-	<h3>Recent Forum Posts</h3>
-	{% include 'IMDCTerpTubeBundle:Thread:threadthumbnail.html.twig' %}
-	</div>
+{#  	<div class="row-fluid">#}
+    	<h3>Recent Forum Posts</h3>
+    	{% include 'IMDCTerpTubeBundle:Thread:threadthumbnail.html.twig' %}
+{#  	</div>#}
 {% endif %}
 {% endblock underherounitrow2 %}

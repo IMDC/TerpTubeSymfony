@@ -29,10 +29,10 @@ class HomeController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		 
 		$recentPosts = $em->getRepository('IMDCTerpTubeBundle:Post')
-		->getRecentPosts(3);
+		->getRecentPosts(4);
 		 
 		$recentThreads = $em->getRepository('IMDCTerpTubeBundle:Thread')
-		->getMostRecentThreads(3);
+		->getMostRecentThreads(4);
 		 
 		return $this->render('IMDCTerpTubeBundle:Default:recentactivity.html.twig',
 				array('posts' => $recentPosts,
