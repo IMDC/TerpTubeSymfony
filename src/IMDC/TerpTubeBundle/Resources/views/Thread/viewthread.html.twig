@@ -46,7 +46,8 @@
      
      //player.options.playHeadImage = "images/feedback_icons/round_plus.png";
      player.options.playHeadImage = "{{ asset('bundles/imdcterptube/img/player/add.png') }}";
-     // player.options.playHeadImageOnClick = function(){ alert("plus");};
+     player.options.playHeadImageOnClick = function(){ $("#post-comment-button").click();};
+     
     
      player.createControls();
      </script>
@@ -79,7 +80,10 @@
       <div class="row-fluid" id="reply-container">
            <div class="span12">
                <p>
-                   <a class="btn btn-info" href="{{ path('imdc_thread_create_reply_post', {'threadid':thread.id}) }}"><i class="icon-plus"></i> Reply</a>
+                   <a class="btn btn-info" id="post-comment-button" href="#"><i class="icon-plus"></i> Reply</a>
+                   <div id="comment-form-wrap" style="display:none;" class="row-fluid">
+                   {{ form(form) }}
+                   </div>
                </p>
            </div>
        </div> <!-- end of reply-container -->
@@ -154,5 +158,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    
+    <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/thread.js') }}"></script>
 {% endblock javascripts %}

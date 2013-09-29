@@ -19,6 +19,7 @@ use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormType;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFromMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormType;
+use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 
 
@@ -37,7 +38,7 @@ class ThreadController extends Controller
 
     }
     
-    public function viewThreadAction($threadid) 
+    public function viewThreadAction(Request $request, $threadid) 
     {
         // check if user logged in
         $securityContext = $this->container->get('security.context');
@@ -57,8 +58,84 @@ class ThreadController extends Controller
         $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadid);
         $threadposts = $thread->getPosts();
         
+        $newpost = new Post();
+        $postform = $this->createForm(new PostFormFromThreadType(), $newpost, array(
+        		'user' => $user,
+        		'em' => $em,
+        ));
+        $em = $this->getDoctrine()->getManager();
+        
+        $postform->handleRequest($request);
+        
+        if ($postform->isValid()) {
+        	 
+        	//$em = $this->getDoctrine()->getManager();
+        	 
+        	/*
+        	$threadrepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+        	if (!$postform->get('mediatextarea')->isEmpty()) {
+        
+        		$rawmediaID = $postform->get('mediatextarea')->getData();
+        		$logger = $this->container->get('logger');
+        		$logger->info('*************media id is ' . $rawmediaID);
+        		$mediaFile = $threadrepo->findOneBy(array('id' => $rawmediaID));
+        
+        		if ($user->getResourceFiles()->contains($mediaFile)) {
+        			$logger = $this->get('logger');
+        			$logger->info('User owns this media file');
+        			$newthread->addMediaIncluded($mediaFile);
+        		}
+        
+        	}
+        	*/
+        	 
+        	$newpost->setAuthor($user);
+        	$newpost->setCreated(new \DateTime('now'));
+        	$newpost->setIsDeleted(FALSE);
+        	$newpost->setParentThread($thread);
+        	 
+        	$thread->setLastPostAt(new \DateTime('now'));
+        	$user->addPost($newpost);
+        	 
+        	// request to persist user object to database
+        	 
+        	// persist all objects to database
+        	$em->persist($user);
+        	$em->persist($thread);
+        	$em->persist($newpost);
+        	$em->flush();
+        	
+        	$thread->setLastPostID($newpost->getId());
+        	$em->persist($thread);
+        	$em->flush();
+        	
+        	$this->get('session')->getFlashBag()->add(
+        			'notice',
+        			'Post created successfully!'
+        	);
+        	
+        	// retrieve all posts for this thread
+        	$thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadid);
+        	$threadposts = $thread->getPosts();
+        	
+        	// create a new form
+        	$post = new Post();
+        	$form = $this->createForm(new PostFormFromThreadType(), $post, array(
+        			'user' => $user,
+        			'em' => $em,
+        	));
+        	
+        	return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
+        			'form' => $form->createView(),
+        			'thread' => $thread,
+        			'threadposts' => $threadposts,
+        	));
+        }
+        
+        // form not valid, show the thread
         return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
-                'thread' => $thread,
+                'form' => $postform->createView(),
+        		'thread' => $thread,
                 'threadposts' => $threadposts,
         ));
     }
