@@ -71,23 +71,22 @@ class ThreadController extends Controller
         	 
         	//$em = $this->getDoctrine()->getManager();
         	 
-        	/*
-        	$threadrepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+        	
+        	$mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
         	if (!$postform->get('mediatextarea')->isEmpty()) {
         
         		$rawmediaID = $postform->get('mediatextarea')->getData();
         		$logger = $this->container->get('logger');
         		$logger->info('*************media id is ' . $rawmediaID);
-        		$mediaFile = $threadrepo->findOneBy(array('id' => $rawmediaID));
+        		$mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
         
         		if ($user->getResourceFiles()->contains($mediaFile)) {
         			$logger = $this->get('logger');
         			$logger->info('User owns this media file');
-        			$newthread->addMediaIncluded($mediaFile);
+        			$newpost->addAttachedFile($mediaFile);
         		}
         
         	}
-        	*/
         	 
         	$newpost->setAuthor($user);
         	$newpost->setCreated(new \DateTime('now'));
