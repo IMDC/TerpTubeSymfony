@@ -1,4 +1,10 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/recentActivity.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+
 {% block flashmessages %}
 	{% for type, messages in app.session.flashbag.all() %}
 	<div class="row-fluid">
@@ -30,7 +36,7 @@
 {% if posts|length > 0 %}
 {# 	<div class="row-fluid">#}
 	<h3>Recent Posts</h3>
-	{% include 'IMDCTerpTubeBundle:Post:postthumbnail.html.twig' %}
+	{% include 'IMDCTerpTubeBundle:Post:postthumbnailprototype.html.twig' %}
 {# 	</div>#}
 {% endif %}
 <div>

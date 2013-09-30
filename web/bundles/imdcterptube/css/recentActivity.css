@@ -20,10 +20,12 @@ div.threadthumbnail {
     height: 350px;
 }
 
-div.thumbnail audio {
-    width: 100%;
+div.postthumbnail {
+	min-height: 200px;
+	max-height: 200px;
+	height: 200px;
 }
 
-a#selectFiles {
-    vertical-align: top;
+div.thumbnail audio {
+    width: 100%;
 }

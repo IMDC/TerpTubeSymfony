@@ -8,7 +8,7 @@
     {% endif %}
             <li class="span3">
                 <a href="{{ path('imdc_thread_view_specific', {'threadid': thread.id} ) }}">
-                <div class="thumbnail text-center" style="min-height:380px;">
+                <div class="thumbnail threadthumbnail text-center" style="min-height:380px;">
                 <p style="margin-top:10px;">
                 {% if thread.mediaIncluded|length != 0 %}
                     {% set mediaFile = thread.mediaIncluded[0] %}
@@ -32,7 +32,7 @@
                         
                     {% endif %}
                 {% else %}
-                        <div style="height:50px;"></div>
+                        <div id="spacer" style="height:50px;"></div>
                 {% endif %}
                     </p>
                     
