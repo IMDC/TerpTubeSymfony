@@ -225,3 +225,10 @@ imdc_post_delete_specific_ajax:
         pid: \d+
     options:
         expose: true
+        
+imdc_post_edit_specific:
+    pattern: /post/edit/{pid}
+    defaults: { _controller: IMDCTerpTubeBundle:Post:editPost }
+    requirements:
+        pid: \d+
+        

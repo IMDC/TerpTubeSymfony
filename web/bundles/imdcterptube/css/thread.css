@@ -48,7 +48,8 @@ a#selectFiles {
 
 div#thread-reply-container {
 	max-height: 900px;
-	overflow-y: scroll;
+	overflow-y: auto;
+	overflow-x: visible;
 }
 
 .videoControlsContainer.timeBox {

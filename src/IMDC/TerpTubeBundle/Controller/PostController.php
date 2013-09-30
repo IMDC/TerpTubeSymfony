@@ -18,6 +18,7 @@ use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostFormType;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
 
 
 class PostController extends Controller
@@ -239,5 +240,59 @@ class PostController extends Controller
 		}
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
+	}
+	
+	public function editPostAction(Request $request, $pid)
+	{
+	    // check if user logged in
+	    $securityContext = $this->container->get('security.context');
+	    if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+	    {
+	        $this->get('session')->getFlashBag()->add(
+	                'notice',
+	                'Please log in first'
+	        );
+	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+	    }
+	    
+	    $user = $this->getUser();
+	    $em = $this->getDoctrine()->getManager();
+	    
+	    $postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+	    
+	    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, 
+                	            array('user' => $user,
+	    ));
+	    
+	    $posteditform->handleRequest($request);
+	    
+	    if ($posteditform->isValid()) {
+	    
+	        //$postToEdit->setAuthor($user);
+	        //$postToEdit->setCreated(new \DateTime('now'));
+	        //$postToEdit->setIsDeleted(FALSE);
+	        //$postToEdit->setParentThread($thread);
+	        $postToEdit->setEditedAt(new \DateTime('now'));
+	        $postToEdit->setEditedBy($user);
+	    
+	        //$user->addPost($newpost);
+	    
+	        // request to persist objects to database
+	        //$em->persist($user);
+	        $em->persist($postToEdit);
+	        $em->flush();
+	    
+	        $this->get('session')->getFlashBag()->add(
+	                'notice',
+	                'Post edited successfully!'
+	        );
+	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid))) . '#' . $postToEdit.getId();
+	    }
+	    
+	    // form not valid, show the basic form
+	    return $this->render('IMDCTerpTubeBundle:Post:editPost.html.twig', array(
+	            'form' => $posteditform->createView(),
+	    ));
+	    
 	}
 }
