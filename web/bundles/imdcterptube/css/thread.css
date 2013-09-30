@@ -28,3 +28,20 @@ div.post-reply-date {
     font-size: 11px;
     color: #aaa;
 }
+
+a#selectFiles {
+	vertical-align: top;
+}
+
+#PostFormFromThread_content {
+    width: 90%;	
+}
+
+#PostFormFromThread_submit {
+	display: none;
+}
+
+div#thread-reply-container {
+	max-height: 900px;
+	overflow-y: scroll;
+}

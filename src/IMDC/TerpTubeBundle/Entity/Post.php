@@ -45,6 +45,11 @@ class Post
     private $endTime;
     
     /**
+     * @var boolean
+     */
+    private $isTemporal;
+    
+    /**
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $author;
@@ -320,5 +325,28 @@ class Post
     public function getAttachedFile()
     {
         return $this->attachedFile;
+    }
+
+    /**
+     * Set isTemporal
+     *
+     * @param boolean $isTemporal
+     * @return Post
+     */
+    public function setIsTemporal($isTemporal)
+    {
+        $this->isTemporal = $isTemporal;
+    
+        return $this;
+    }
+
+    /**
+     * Get isTemporal
+     *
+     * @return boolean 
+     */
+    public function getIsTemporal()
+    {
+        return $this->isTemporal;
     }
 }

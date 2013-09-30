@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use IMDC\TerpTubeBundle\Form\DataTransformer\ThreadToNumberTransformer;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotEqualTo;
 
 class PostFormFromThreadType extends AbstractType
 {
@@ -30,6 +32,15 @@ class PostFormFromThreadType extends AbstractType
 		$builder->add(
             $builder->create('parentthread', 'hidden')
 	            ->addModelTransformer($transformer));
+		
+		$builder->add('startTime', 'text', array(
+							'required' => false,
+		));
+		
+		$builder->add('endTime', 'text', array(
+				'required' => false,
+		));
+		
 		$builder->add('submit', 'submit');
 	}	
 

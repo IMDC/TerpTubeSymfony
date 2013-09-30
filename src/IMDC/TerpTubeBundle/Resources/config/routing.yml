@@ -185,7 +185,6 @@ imdc_thread_create_new_from_media:
     requirements:
         resourceid: \d+
     
-    
 imdc_thread_show_recent:
     pattern: /threads
     defaults: { _controller: IMDCTerpTubeBundle:Thread:index }
@@ -212,4 +211,17 @@ imdc_post_show_all:
     pattern: /post/all
     defaults: { _controller: IMDCTerpTubeBundle:Post:index }
     
+imdc_post_delete_specific:
+    pattern: /post/delete/{postid}/{threadid}
+    defaults: { _controller: IMDCTerpTubeBundle:Post:deletePost }
+    requirements:
+        threadid: \d+
     
+imdc_post_delete_specific_ajax:
+    pattern: /post/deleteajax/{pid}
+    defaults: { _controller: IMDCTerpTubeBundle:Post:deletePostAjax }
+    requirements:
+        _method: POST
+        pid: \d+
+    options:
+        expose: true

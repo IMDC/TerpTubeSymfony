@@ -23,6 +23,9 @@ IMDC\TerpTubeBundle\Entity\Post:
         endTime:
             type: decimal
             nullable: true
+        isTemporal:
+            type: boolean
+            nullable: true
     oneToOne:
         editedBy:
             targetEntity: User
@@ -30,7 +33,7 @@ IMDC\TerpTubeBundle\Entity\Post:
                 name: user_editedBy
                 referencedColumnName: id
     manyToMany: 
-        attachedFile:  #many-to-one relationship
+        attachedFile:  #many-to-many relationship
             targetEntity: Media
             joinTable:
                 name: posts_attached_files
@@ -39,8 +42,7 @@ IMDC\TerpTubeBundle\Entity\Post:
                         referencedColumnName: id
                 inverseJoinColumns:
                     media_id:
-                        referencedColumnName: id
-                        unique: true
+                        referencedColumnName: id  
             nullable: true;
     manyToOne:
         author:

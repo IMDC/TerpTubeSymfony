@@ -17,6 +17,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostFormType;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 
 class PostController extends Controller
@@ -32,8 +33,6 @@ class PostController extends Controller
 		);
 		return $response;
 	}
-	
-	
 	
 	public function createNewPostAction(Request $request) 
 	{
@@ -154,5 +153,91 @@ class PostController extends Controller
 	    return $this->render('IMDCTerpTubeBundle:Post:new.html.twig', array(
 	            'form' => $form->createView(),
 	    ));
+	}
+	
+	public function deletePostAction($postid, $threadid)
+	{
+		// check if user logged in
+		$securityContext = $this->container->get('security.context');
+		if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		{
+			$this->get('session')->getFlashBag()->add(
+					'notice',
+					'Please log in first'
+			);
+			return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+		}
+		
+		$user = $this->getUser();
+		$em   = $this->getDoctrine()->getManager();
+		
+		$postToDelete = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postid);
+		
+		// if post is not owned by the currently logged in user, redirect
+		if (!$postToDelete->getAuthor()->getId() == $user->getId()) {
+			$this->get('session')->getFlashBag()->add(
+					'error',
+					'You do not have permission to delete this post'
+			);
+			return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+		}
+		
+		// post is owned by the user
+		$em->remove($postToDelete);
+		$em->flush();
+		
+		return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+		
+	}
+	
+	public function deletePostAjaxAction(Request $request, $pid)
+	{
+		// check if user logged in
+		$securityContext = $this->container->get('security.context');
+		if( !$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		{
+			$this->get('session')->getFlashBag()->add(
+					'notice',
+					'Please log in first'
+			);
+			return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+		}
+		
+		//$request = $this->get('request');
+		//$postid = $request->request->get('pid');
+		
+		
+		// if not ajax, throw an error
+		if (!$request->isXmlHttpRequest()) {
+			throw new BadRequestHttpException('Only Ajax POST calls accepted');
+		}
+		
+		$user = $this->getUser();
+		$em   = $this->getDoctrine()->getManager();
+		
+		$postToDelete = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+		
+		$logger = $this->get('logger');
+		$logger->info('******OMG IM HERE******');
+		// if post is not owned by the currently logged in user, redirect
+		if (!$postToDelete->getAuthor()->getId() == $user->getId()) {
+			$this->get('session')->getFlashBag()->add(
+					'error',
+					'You do not have permission to delete this post'
+			);
+			//return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+			// return an ajax fail here
+			$return = array('responseCode' => 400, 'feedback' => 'You do not have permission to delete this post');
+		}
+		else {
+			// post is owned by the user
+			$em->remove($postToDelete);
+			$em->flush();
+			
+			$return = array('responseCode' => 200, 'feedback' => 'Post deleted!');
+				
+		}
+		$return = json_encode($return); // json encode the array
+		return new Response($return, 200, array('Content-Type' => 'application/json'));
 	}
 }
