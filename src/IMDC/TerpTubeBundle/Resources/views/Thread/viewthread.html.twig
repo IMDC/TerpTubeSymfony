@@ -25,7 +25,7 @@
     </div> <!-- /mediaFileWrap -->
 {% elseif mediaFile.type == 0 %}
 {# -----------   if type of media is an IMAGE   -------- #}
-    <img src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+    <img class="thread-content-image" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
     </div> <!-- /mediaFileWrap div -->
 {# -----------   if type of media is a VIDEO   -------- #}
 {% elseif mediaFile.type == 1 %}
@@ -44,13 +44,19 @@
 	        // player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
 	
 	        player.options.playHeadImage = "{{ asset('bundles/imdcterptube/img/player/add.png') }}";
-	        player.options.playHeadImageOnClick = function(){ $("#post-comment-button").click();};
+	        player.options.playHeadImageOnClick = function() { 
+		        $("#post-comment-button").click();
+	        };
 	
 	        player.createControls();
-	
-	        player.controls.options.onAreaSelectionChanged = function(){
-	        	startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
-	            endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+
+	    	//form inputs
+	        var startTimeInput = $("#PostFormFromThread_startTime");
+	        var endTimeInput   = $("#PostFormFromThread_endTime");
+	    	
+	        player.options.onAreaSelectionChanged = function(){
+	        	startTimeInput.val( roundNumber(player.options.currentMinTimeSelected, 2));
+	            endTimeInput.val( roundNumber(player.options.currentMaxTimeSelected, 2));
 	        };
         </script>
     </div> <!-- /mediaFileWrap div -->
@@ -177,7 +183,7 @@
 						{% elseif postMediaFile.type == 0 %}
 						{# -----------   if type of media is an IMAGE   -------- #}
 						    <div class="row-fluid">
-						    <img src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
+						    <img class="post-reply-image" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
 						    </div>
 						{# -----------   if type of media is a VIDEO   -------- #}
 						{% elseif postMediaFile.type == 1 %}
@@ -197,7 +203,7 @@
 					        </div>
 						{% endif %}
                     	<div class="row-fluid">
-                        {{ post.content }}
+                        {{ post.content|nl2br }}
                         </div>
                     </div>
                 </div> <!-- /post-reply-avatar-content-wrap div -->

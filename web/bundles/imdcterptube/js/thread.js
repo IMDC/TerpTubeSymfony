@@ -2,7 +2,7 @@ $(document).ready(function() {
 
 	$("#post-comment-button").click(function() {
 		$("#comment-form-wrap").toggle();
-		$(this).hide();
+		$(this).toggle();
 	});
 	
 	$("a#post-comment-submit-button").click(function() {
@@ -13,10 +13,6 @@ $(document).ready(function() {
 		$("#comment-form-wrap").toggle();
 		$("#post-comment-button").show();
 	});
-	
-	//form inputs
-    var startTimeInput = $("#PostFormFromThread_startTime");
-    var endTimeInput   = $("#PostFormFromThread_endTime");
 	
     $("a#post-comment-delete").click(function(event) {
     	
@@ -31,7 +27,7 @@ $(document).ready(function() {
     	// fade out the comment in question        
         $(this).parents("[data-pid='" + p_id + "']").eq(0).fadeTo('medium', 0.5);
 		
-     // show a dialog box asking for confirmation of delete
+        // show a dialog box asking for confirmation of delete
         $( "#dialog-confirm" ).dialog({
             resizeable: false,
             height: 275,
@@ -70,11 +66,21 @@ $(document).ready(function() {
                 }
             }
         });
-        
-        
-        
-        
     });
+    
+    /**
+     * This snippet of code looks for a post id named anchor in the url and scrolls
+     * the list of posts on the right of the page to the comment BEFORE the one in
+     * question (otherwise the post you're looking for is cut off vertically)
+     */
+    var $anchorname = window.location.hash.substring(1);
+    if ($anchorname) {
+    	$newanchor = parseInt($anchorname) - 1;
+    	$("div#thread-reply-container").animate({
+    		scrollTop: $(this).find("div#post-" + $newanchor).offset().top
+    	}, 200);
+    }
+    
     
 });
 

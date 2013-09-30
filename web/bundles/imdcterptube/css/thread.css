@@ -29,6 +29,11 @@ div.post-reply-date {
     color: #aaa;
 }
 
+div.post-reply-content {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
 a#selectFiles {
 	vertical-align: top;
 }
@@ -44,4 +49,12 @@ a#selectFiles {
 div#thread-reply-container {
 	max-height: 900px;
 	overflow-y: scroll;
+}
+
+.videoControlsContainer.timeBox {
+    font-size: 1.6em !important;
+}
+
+img.post-reply-image {
+    max-height: 350px;
 }

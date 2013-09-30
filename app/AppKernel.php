@@ -27,7 +27,8 @@ class AppKernel extends Kernel
             new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
         	new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
         	new AC\TranscodingBundle\ACTranscodingBundle(),
-        	new FOS\JsRoutingBundle\FOSJsRoutingBundle()
+        	new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
+            new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

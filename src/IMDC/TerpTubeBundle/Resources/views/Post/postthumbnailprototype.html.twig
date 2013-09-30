@@ -6,9 +6,7 @@
         <div class="row-fluid" data-rowid="{{ counter }}">
     {% endif %}
             <li class="span3">
-            	{% if post.getParentThread.getId is defined %}
-{#             	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}">#}
-                {% endif %}
+            	
                 <div class="thumbnail postthumbnail text-center">
                 	<div class="row-fluid">
                 		<div class="span3 post-reply-user-info-wrap">
@@ -19,6 +17,9 @@
 		                        <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ post.author }}</a>
 		                    </div>
 		                </div>
+		                {% if post.getParentThread.getId is defined %}
+                    	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
+                        {% endif %}
 		                {% if post.attachedFile is defined and post.attachedFile|length > 0 %}
 						    {% set postMediaFile = post.attachedFile[0] %}
 					    {% else %}
@@ -28,7 +29,7 @@
 		                {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
 						{% if postMediaFile is not defined or postMediaFile is null %}
 						    <div class="span9">
-			                	{{ post.content|truncate(60) }}
+			                	{{ post.content|truncate(250) }}
 			                </div>
 		                {% else %}
 		                	<div class="span9">
@@ -59,16 +60,16 @@
 		                		{{ post.content|truncate(60) }}
 		                		</div>
 		                {% endif %}
-		                
+		                 {% if post.getParentThread is defined %}
+                        </a>
+                        {% endif %}
                 	</div>
 {#                 	<div class="row-fluid">#}
 {#                     <p><span class="content-created-datetime-span">Created: {{ post.created|date('g:ia M j Y') }}</span></p>#}
 {#                     </div>#}
                 
                 </div> <!-- /.thumbnail text-center -->
-                {% if post.getParentThread is defined %}
-{#                 </a>#}
-                {% endif %}
+               
             </li> <!-- /.span3 -->
     {% if counter != 0 and counter % 4 == 0 %}
         </div> <!--  /.row-fluid  data-rowid {{ counter }} -->
