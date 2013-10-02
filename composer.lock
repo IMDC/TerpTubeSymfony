@@ -456,7 +456,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes Schmitt",
+                    "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -1261,7 +1261,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1368,7 +1368,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1523,7 +1523,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -2772,12 +2772,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "df5aa7c0f1f00b394ec9d322191e28acd581b754"
+                "reference": "a32b626f5cce692be2cec6fe9b8cb630ec47634c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/df5aa7c0f1f00b394ec9d322191e28acd581b754",
-                "reference": "df5aa7c0f1f00b394ec9d322191e28acd581b754",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/a32b626f5cce692be2cec6fe9b8cb630ec47634c",
+                "reference": "a32b626f5cce692be2cec6fe9b8cb630ec47634c",
                 "shasum": ""
             },
             "type": "library",
@@ -2801,7 +2801,7 @@
                 "bootstrap",
                 "css"
             ],
-            "time": "2013-09-30 08:09:30"
+            "time": "2013-10-01 18:01:08"
         },
         {
             "name": "videlalvaro/php-amqplib",
@@ -2809,12 +2809,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/php-amqplib.git",
-                "reference": "adc2a425ab214517a5e76557a9370bdc6f212576"
+                "reference": "v2.1.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/adc2a425ab214517a5e76557a9370bdc6f212576",
-                "reference": "adc2a425ab214517a5e76557a9370bdc6f212576",
+                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/v2.1.0",
+                "reference": "v2.1.0",
                 "shasum": ""
             },
             "require": {

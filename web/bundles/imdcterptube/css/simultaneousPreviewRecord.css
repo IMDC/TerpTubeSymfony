@@ -1,0 +1,12 @@
+@CHARSET "UTF-8";
+
+
+.simultaneousVideoRecording
+{
+	text-align: center;
+}
+.video
+{
+	width: 50%;
+	display: inline;
+}

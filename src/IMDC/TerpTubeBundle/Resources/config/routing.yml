@@ -36,6 +36,12 @@ imdc_media_chooser_by_type:
     options:
         expose: true
         
+imdc_media_simultaneous_record: 
+    pattern: /media/record/simultaneous/{mediaID}
+    defaults: { _controller: IMDCTerpTubeBundle:Media:simultaneousPreviewAndRecord, url: null }
+    options:
+        expose: true
+        
 imdc_files_gateway: 
     pattern: /myFiles
     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:gateway }

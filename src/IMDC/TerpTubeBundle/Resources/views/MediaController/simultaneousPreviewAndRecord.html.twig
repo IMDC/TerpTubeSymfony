@@ -1,0 +1,136 @@
+{% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+{% block title %}My Files{% endblock title %}
+
+{% block nav_ul_authenticated_my_files %}<li class="active">{% endblock %}
+
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/simultaneousPreviewRecord.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block herounit %}
+<h1>{{ 'filesGateway.title'|trans }}</h1>
+{% endblock herounit %}
+
+{% block underherounitrow1 %}
+    <div class="row-fluid">
+	    <div class="simultaneousVideoRecording">
+	   		<video	class="preview" width="640" id="{{ mediaFile.getID }}" preload="auto">
+				<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
+				<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
+			</video>
+			
+			<video	class="preview"  id="record" preload="auto" autoplay muted>
+			</video>
+			
+			<div class="simultaneousVideoControls">
+			</div>
+		</div>
+    </div>
+
+{% endblock underherounitrow1 %}
+
+{% block underherounitrow2 %}
+
+{% endblock underherounitrow2 %}
+
+{% block javascripts %}
+ {{ parent() }}
+ <script type='text/javascript'>
+ $(document).ready(function() {
+	 var playerElement = $("#{{ mediaFile.getID }}");
+	 var player1 = new Player(playerElement);
+	 var recordingElement = $("#record");
+	 var player2 = new Player(recordingElement);
+	 
+	 player1.options.areaSelectionEnabled = false;
+	 player1.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
+	 player1.options.backButton = false;
+	 player1.options.forwardButton = false;
+	 player1.options.audioBar = false;
+	 player1.options.controlBarElement = $('.simultaneousVideoControls');
+
+	 
+	 player2.options.areaSelectionEnabled = false;
+	 player2.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
+	 player2.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
+	 player2.options.backButton = false;
+	 //player.options.forwardButton = false;
+	 player2.options.audioBar = false;
+	 player2.options.volumeControl = false;
+	 player2.options.recordingErrorFunction = function(e)
+	 {
+		 console.log('Reeeejected!', e);
+	 };
+	 player2.options.recordingSuccessFunction = function(data)
+	 {
+		// console.log(recorderConfiguration);
+		// var fn = window[recorderConfiguration.recordingSuccessFunction];
+		// fn(data);
+		 console.log('Success!', data);
+	 };
+	 player2.options.forwardFunction = function(data)
+	 {
+		 player.destroyRecorder();
+		// console.log(recorderConfiguration);
+		// var fn = window[recorderConfiguration.forwardFunction]||null;
+		// fn(data);
+		 console.log('Forward!', data);
+	 };
+	 player2.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
+	 player2.options.controlBarElement = $('.simultaneousVideoControls');
+
+
+	 player1.createControls();
+	 player2.createControls();
+
+	 
+	 recordingElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
+		 {
+		 if (player !=null)
+		 	player.destroyRecorder();
+		 });
+
+	 $(player1).on(Player.EVENT_PLAYBACK_STARTED, function() {
+			console.log("Playback Started");
+		 });
+	 $(player1).on(Player.EVENT_PLAYBACK_STOPPED, function() {
+			console.log("Playback Stopped");
+		 });
+	 $(player1).on(Player.EVENT_PLAYBACK_FINISHED, function() {
+			console.log("Playback Finished");
+		 });
+	 $(player1).on(Player.EVENT_SEEK, function(event, seekTime) {
+			console.log("Playback Seeked to:"+seekTime);
+			player2.options.maxRecordingTime = player1.getDuration()-seekTime;
+			player2.repaint();
+		 });
+
+	 $(player1).on(Player.EVENT_INITIALIZED, function() {
+			console.log("Player Initialized");
+			player2.options.maxRecordingTime = player1.getDuration();
+			player2.repaint();
+		 });
+	 
+	 $(player2).on(Player.EVENT_RECORDING_STARTED, function() {
+			player1.setControlsEnabled(false);
+			player1.play();
+			console.log("Recording Started");
+		 });
+
+	 $(player2).on(Player.EVENT_RECORDING_STOPPED, function() {
+			player1.pause();
+			player1.setControlsEnabled(true);
+			console.log("Recording Finished");
+		 });
+
+	 $(player1).on(Player.EVENT_INITIALIZED, function() {
+			console.log("Recorder Initialized");
+		 });
+		
+});
+  </script>
+  
+  <script src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>
+{% endblock javascripts %}
