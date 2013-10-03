@@ -26,12 +26,6 @@ IMDC\TerpTubeBundle\Entity\Post:
         isTemporal:
             type: boolean
             nullable: true
-    oneToOne:
-        editedBy:
-            targetEntity: User
-            joinColumn:
-                name: user_editedBy
-                referencedColumnName: id
     manyToMany: 
         attachedFile:  #many-to-many relationship
             targetEntity: Media
@@ -51,4 +45,8 @@ IMDC\TerpTubeBundle\Entity\Post:
         parentThread:
             targetEntity: Thread
             inversedBy: posts
+        editedBy:
+            targetEntity: User
+            inversedBy: editedPosts
+            nullable: true;
     lifecycleCallbacks: {  }

@@ -8,7 +8,7 @@
 
 {% block title %}{{ thread.title|truncate(50) }}{% endblock title %}
 
-{% block herounit_wrap %}<h1>{{thread.title|truncate(30) }}</h1>{% endblock herounit_wrap %}
+{% block herounit_wrap %}<h1>{{thread.title|truncate(30) }} Kelsey is awesome</h1>{% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
 
@@ -169,6 +169,9 @@
                 <div class="span9 post-reply-avatar-content-wrap" data-pid="{{ post.id }}">
                     <div class="row-fluid post-reply-date">
                         {{ post.created|date('o-m-N H:i') }}
+                        {% if post.editedBy is not null %}
+                            (edited at {{ post.editedAt|date('o-m-N H:i') }} by {{ post.editedBy.getUsername }})
+                        {% endif %}
                     </div>
                     <div class="row-fluid post-reply-content">
                     	{% if post.attachedFile is defined and post.attachedFile|length > 0 %}

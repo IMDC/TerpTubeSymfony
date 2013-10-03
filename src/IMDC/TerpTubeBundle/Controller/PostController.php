@@ -259,6 +259,17 @@ class PostController extends Controller
 	    $em = $this->getDoctrine()->getManager();
 	    
 	    $postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+	    $postID = $postToEdit->getId();
+	    $threadid = $postToEdit->getParentThread()->getId();
+	    
+	    // does the user own this post?
+	    if (!$user->getPosts()->contains($postToEdit)) {
+	        $this->get('session')->getFlashBag()->add(
+	                'notice',
+	                'You do not have permission to edit this post'
+	        );
+	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+	    }
 	    
 	    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, 
                 	            array('user' => $user,
@@ -277,6 +288,23 @@ class PostController extends Controller
 	    
 	        //$user->addPost($newpost);
 	    
+	        $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+	        if (!$posteditform->get('mediatextarea')->isEmpty()) {
+	        
+	            $rawmediaID = $posteditform->get('mediatextarea')->getData();
+	            $logger = $this->container->get('logger');
+	            $logger->info('*************media id is ' . $rawmediaID);
+	            $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
+	        
+	            if ($user->getResourceFiles()->contains($mediaFile)) {
+	                $logger = $this->get('logger');
+	                $logger->info('User owns this media file');
+	                $postToEdit->addAttachedFile($mediaFile);
+	            }
+	        
+	        }
+	        
+	        
 	        // request to persist objects to database
 	        //$em->persist($user);
 	        $em->persist($postToEdit);
@@ -286,12 +314,14 @@ class PostController extends Controller
 	                'notice',
 	                'Post edited successfully!'
 	        );
-	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid))) . '#' . $postToEdit.getId();
+	        
+	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)) . '#' . $postID);
 	    }
 	    
 	    // form not valid, show the basic form
 	    return $this->render('IMDCTerpTubeBundle:Post:editPost.html.twig', array(
 	            'form' => $posteditform->createView(),
+	            'post' => $postToEdit,
 	    ));
 	    
 	}

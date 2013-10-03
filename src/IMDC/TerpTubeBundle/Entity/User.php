@@ -75,6 +75,11 @@ class User extends BaseUser
 	 */
 	private $threads;
 	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $editedPosts;
+	
     public function __construct()
     {
         parent::__construct();
@@ -86,7 +91,6 @@ class User extends BaseUser
         $this->userGroups       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->resourceFiles    = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendsList      = new \Doctrine\Common\Collections\ArrayCollection();
-        //$this->createdThreads   = new \Doctrine\Common\Collections\ArrayCollection();
         $this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
         $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -528,5 +532,39 @@ class User extends BaseUser
     public function getThreads()
     {
         return $this->threads;
+    }
+
+
+    /**
+     * Add editedPosts
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $editedPosts
+     * @return User
+     */
+    public function addEditedPost(\IMDC\TerpTubeBundle\Entity\Post $editedPosts)
+    {
+        $this->editedPosts[] = $editedPosts;
+    
+        return $this;
+    }
+
+    /**
+     * Remove editedPosts
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $editedPosts
+     */
+    public function removeEditedPost(\IMDC\TerpTubeBundle\Entity\Post $editedPosts)
+    {
+        $this->editedPosts->removeElement($editedPosts);
+    }
+
+    /**
+     * Get editedPosts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEditedPosts()
+    {
+        return $this->editedPosts;
     }
 }

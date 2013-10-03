@@ -18,6 +18,7 @@ class PostEditFormType extends AbstractType
 	    $user = $options['user'];
 	    $userid = $user->getId();
 	    
+	    /*
 	    $builder->add('attachedFile', 'entity', array(
 	            'class' => 'IMDCTerpTubeBundle:Media',
 	            'property' => 'title',
@@ -30,6 +31,14 @@ class PostEditFormType extends AbstractType
 	                            ->setParameter('id', $userid);
 	            },
 	    ));
+	    */
+	    
+	    $builder->add('mediatextarea', 'textarea', array('required' => false, 
+	                                                'mapped' => false,
+	                                                'read_only' => true,
+	                                                'label' => 'File',
+                                                    'attr' => array('cols' => 1,
+                                                                    'rows' => 1)));
 	    
 	    $builder->add('content', null, array('label' => 'Content',
 	    ));
