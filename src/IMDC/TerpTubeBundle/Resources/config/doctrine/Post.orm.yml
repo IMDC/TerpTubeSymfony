@@ -19,9 +19,13 @@ IMDC\TerpTubeBundle\Entity\Post:
             nullable: true
         startTime:
             type: decimal
+            precision: 12
+            scale: 2
             nullable: true
         endTime:
             type: decimal
+            precision: 12
+            scale: 2
             nullable: true
         isTemporal:
             type: boolean

@@ -34,15 +34,7 @@ class Post
      */
     private $editedAt;
 
-    /**
-     * @var float
-     */
-    private $startTime;
 
-    /**
-     * @var float
-     */
-    private $endTime;
     
     /**
      * @var boolean
@@ -179,52 +171,7 @@ class Post
         return $this->author;
     }
 
-    /**
-     * Set startTime
-     *
-     * @param float $startTime
-     * @return Post
-     */
-    public function setStartTime($startTime)
-    {
-        $this->startTime = $startTime;
     
-        return $this;
-    }
-
-    /**
-     * Get startTime
-     *
-     * @return float 
-     */
-    public function getStartTime()
-    {
-        return $this->startTime;
-    }
-
-    /**
-     * Set endTime
-     *
-     * @param float $endTime
-     * @return Post
-     */
-    public function setEndTime($endTime)
-    {
-        $this->endTime = $endTime;
-    
-        return $this;
-    }
-
-    /**
-     * Get endTime
-     *
-     * @return float 
-     */
-    public function getEndTime()
-    {
-        return $this->endTime;
-    }
-
     /**
      * Set isDeleted
      *
@@ -348,5 +295,61 @@ class Post
     public function getIsTemporal()
     {
         return $this->isTemporal;
+    }
+    /**
+     * @var float
+     */
+    private $startTime;
+
+    /**
+     * @var float
+     */
+    private $endTime;
+
+
+    /**
+     * Set startTime
+     *
+     * @param float $startTime
+     * @return Post
+     */
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get startTime
+     *
+     * @return float 
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Set endTime
+     *
+     * @param float $endTime
+     * @return Post
+     */
+    public function setEndTime($endTime)
+    {
+        $this->endTime = $endTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get endTime
+     *
+     * @return float 
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
     }
 }

@@ -33,12 +33,14 @@ class PostFormFromThreadType extends AbstractType
             $builder->create('parentthread', 'hidden')
 	            ->addModelTransformer($transformer));
 		
-		$builder->add('startTime', 'text', array(
+		$builder->add('startTime', 'number', array(
 							'required' => false,
+		                    'precision' => 4,
 		));
 		
-		$builder->add('endTime', 'text', array(
+		$builder->add('endTime', 'number', array(
 				'required' => false,
+		        'precision' => 4,
 		));
 		
 		$builder->add('submit', 'submit');

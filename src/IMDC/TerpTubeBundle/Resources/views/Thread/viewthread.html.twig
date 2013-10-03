@@ -34,30 +34,13 @@
         	<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
         </video>
         <script type="text/javascript">
-	        var player = new Player($("#{{ mediaFile.getID }}"));
-	        player.options.areaSelectionEnabled = false;
-	        player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
-	        player.options.backButton = false;
-	        player.options.forwardButton = false;
-	        player.options.audioBar = false;
-	        // player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
-	        // player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
-	
-	        player.options.playHeadImage = "{{ asset('bundles/imdcterptube/img/player/add.png') }}";
-	        player.options.playHeadImageOnClick = function() { 
-		        $("#post-comment-button").click();
-	        };
-	
-	        player.createControls();
-
-	    	//form inputs
-	        var startTimeInput = $("#PostFormFromThread_startTime");
-	        var endTimeInput   = $("#PostFormFromThread_endTime");
-	    	
-	        player.options.onAreaSelectionChanged = function(){
-	        	startTimeInput.val( roundNumber(player.options.currentMinTimeSelected, 2));
-	            endTimeInput.val( roundNumber(player.options.currentMaxTimeSelected, 2));
-	        };
+        // this is required to pass twig stuff to js file //
+        $(document).ready(function() {
+             var Player = createPlayer('#{{ mediaFile.getID }}', 
+                	                      '{{ asset('bundles/imdcterptube/img/player/add.png') }}',
+                	                      '#PostFormFromThread_startTime',
+                	                      '#PostFormFromThread_endTime');
+        });
         </script>
     </div> <!-- /mediaFileWrap div -->
 
