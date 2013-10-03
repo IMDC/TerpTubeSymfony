@@ -33,12 +33,11 @@ class PostEditFormType extends AbstractType
 	    ));
 	    */
 	    
-	    $builder->add('mediatextarea', 'textarea', array('required' => false, 
+	    $builder->add('mediatextarea', 'text', array('required' => false, 
 	                                                'mapped' => false,
 	                                                'read_only' => true,
-	                                                'label' => 'File',
-                                                    'attr' => array('cols' => 1,
-                                                                    'rows' => 1)));
+	                                                'label' => 'Media ID',
+                                                    ));
 	    
 	    $builder->add('content', null, array('label' => 'Content',
 	    ));

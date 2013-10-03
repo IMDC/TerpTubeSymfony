@@ -1,5 +1,10 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Post/new.html.twig #}
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/post.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
 {% block title %}Edit Post{% endblock title %}
 
 {% block herounit %}
@@ -37,11 +42,17 @@
         {% endif %}
         </div> <!-- /span4 -->
         </div> <!-- /row-fluid -->
-        <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
-        {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
+        <div class="controls controls-row">
+            <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
+            {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
+        </div>
         <div id="files"></div>
+
         {{ form_row(form.content) }}
-        {{ form_row(form.submit) }}
+        <div class="controls controls-row">
+            {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
+            <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}" class="btn btn-danger"><i class="icon-remove"></i> Cancel</a>
+        </div>
     
     {{ form_end(form) }}
 </div>
