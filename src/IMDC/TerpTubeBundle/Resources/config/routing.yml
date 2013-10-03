@@ -83,6 +83,14 @@ imdc_files_gateway_record:
      requirements:
         _method:  POST
         
+imdc_files_gateway_add_simultaneous_recording: 
+     pattern: /myFiles/add/simultaneous_recording/{sourceMediaID}/{startTime}
+     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addSimultaneousRecording, url: null }
+     requirements:
+        _method:  POST
+     options:
+        expose: true
+        
 imdc_files_gateway_preview:
     pattern: /myFiles/preview/{mediaId}
     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewMedia }

@@ -1,0 +1,27 @@
+IMDC\TerpTubeBundle\Entity\CompoundMedia:
+    type:  entity
+    table: compound_media
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        type: #0-simultaneous Recording, 1-consecutiveRecording
+            type: smallint
+        targetStartTime:
+            type: decimal
+            precision: 12
+            scale: 2
+        
+    manyToOne:
+        sourceID: #media object to hold the source for the interpretation
+            targetEntity: Media
+            joinColumn:
+                name: source_id
+                referencedColumnName: id
+        targetID: #media object to hold the actual interpretation
+            targetEntity: Media
+            joinColumn:
+                name: target_id
+                referencedColumnName: id       

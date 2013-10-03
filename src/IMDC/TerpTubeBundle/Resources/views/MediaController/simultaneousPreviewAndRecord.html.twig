@@ -43,6 +43,9 @@
 	 var player1 = new Player(playerElement);
 	 var recordingElement = $("#record");
 	 var player2 = new Player(recordingElement);
+
+	 var startTime = 0; //used to hold the start time of the recording relative to the source video
+	 var recordedMediaID = -1;
 	 
 	 player1.options.areaSelectionEnabled = false;
 	 player1.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
@@ -78,7 +81,6 @@
 		// fn(data);
 		 console.log('Forward!', data);
 	 };
-	 player2.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
 	 player2.options.controlBarElement = $('.simultaneousVideoControls');
 
 
@@ -103,26 +105,49 @@
 		 });
 	 $(player1).on(Player.EVENT_SEEK, function(event, seekTime) {
 			console.log("Playback Seeked to:"+seekTime);
-			player2.options.maxRecordingTime = player1.getDuration()-seekTime;
-			player2.repaint();
+			//player2.options.maxRecordingTime = player1.getDuration()-seekTime;
+			//player2.repaint();
 		 });
 
 	 $(player1).on(Player.EVENT_INITIALIZED, function() {
 			console.log("Player Initialized");
-			player2.options.maxRecordingTime = player1.getDuration();
-			player2.repaint();
+			//player2.options.maxRecordingTime = player1.getDuration();
+			//player2.repaint();
 		 });
 	 
 	 $(player2).on(Player.EVENT_RECORDING_STARTED, function() {
 			player1.setControlsEnabled(false);
+			startTime = player1.getCurrentTime();
+			player2.options.additionalDataToPost = {'startTime' : startTime, 'sourceMediaID' : '{{ mediaFile.getID }}'};
+			player2.options.recordingPostURL = Routing.generate('imdc_files_gateway_add_simultaneous_recording', player2.options.additionalDataToPost);
 			player1.play();
 			console.log("Recording Started");
+			if (recordedMediaID != -1)
+			{
+				//TODO AJAX to Delete the recording
+				var mediaManager = new MediaManager();
+				$(mediaManager).on(MediaManager.EVENT_DELETE_SUCCESS, function(){
+					console.log("Temporary media deleted");
+					});
+				$(mediaManager).on(MediaManager.EVENT_DELETE_ERROR, function(event, response){
+					console.log("Error deleting media");
+					console.log(response);
+					});
+				mediaManager.deleteMedia(recordedMediaID);
+				recordedMediaID = -1;
+			}
 		 });
 
 	 $(player2).on(Player.EVENT_RECORDING_STOPPED, function() {
 			player1.pause();
 			player1.setControlsEnabled(true);
 			console.log("Recording Finished");
+		 });
+
+	 $(player2).on(Player.EVENT_RECORDING_UPLOADED, function(event, data) {
+			console.log("Recording Uploaded");
+			recordedMediaID = data.media.id;
+			console.log(data);
 		 });
 
 	 $(player1).on(Player.EVENT_INITIALIZED, function() {

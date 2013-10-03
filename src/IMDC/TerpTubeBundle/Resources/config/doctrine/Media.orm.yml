@@ -38,6 +38,3 @@ IMDC\TerpTubeBundle\Entity\Media:
                 name: resource_id
                 referencedColumnName: id
             cascade: ["all"]
-
-    
-                

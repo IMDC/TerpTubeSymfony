@@ -1,6 +1,8 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use IMDC\TerpTubeBundle\Entity\CompoundMedia;
+
 use IMDC\TerpTubeBundle\Model\JSEntities;
 
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
@@ -409,6 +411,73 @@ class AddFileGatewayController extends Controller
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
 
+		// 		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
+	}
+	
+	public function addSimultaneousRecordingAction(Request $request, $sourceMediaID, $startTime, $url)
+	{
+		//FIXME add the recording stuff here
+		// 		throw new NotImplementedException("Not yet implemented");
+	
+		$user = $this->container->get('security.context')->getToken()->getUser();
+		if (!is_object($user) || !$user instanceof UserInterface)
+		{
+			throw new AccessDeniedException('This user does not have access to this section.');
+		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($user->getUsername());
+		if ($userObject == null)
+		{
+			throw new NotFoundHttpException("This user does not exist");
+		}
+		$media = new Media();
+		$fileName = $media->getId();
+		$media->setOwner($userObject);
+		$media->setType(Media::TYPE_VIDEO);
+		$currentTime = new \DateTime('now');
+		$media->setTitle("Recording-from-source" . $currentTime->format('Y-m-d-H:i'));
+	
+		$audioFile = $request->files->get("audio-blob", null);
+		$videoFile = $request->files->get("video-blob", null);
+	
+		//FIXME Need to sync the audio/videos
+		$transcoder = $this->container->get('imdc_terptube.transcoder');//($this->get('logger'));
+		$mergedFile = $transcoder->mergeAudioVideo($audioFile, $videoFile);
+		$resourceFile = new ResourceFile();
+		$resourceFile->setMedia($media);
+		$resourceFile->setWebmExtension("webm");
+		$media->setIsReady(Media::READY_WEBM);
+		$resourceFile->setFile($mergedFile);
+	
+		$media->setResource($resourceFile);
+	
+		$userObject->addResourceFile($media);
+
+		$em = $this->container->get('doctrine')->getManager();
+		
+		$sourceMedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($sourceMediaID);
+		$compoundMedia = new CompoundMedia();
+		$compoundMedia->setSourceID($sourceMedia);
+		$compoundMedia->setTargetID($media);
+		$compoundMedia->setTargetStartTime($startTime);
+		$compoundMedia->setType(0); //Simultaneous Recording
+		
+		$em->persist($resourceFile);
+		$em->persist($media);
+		$em->persist($compoundMedia);
+	
+		$em->flush();
+	
+		$eventDispatcher = $this->container->get('event_dispatcher');
+		$uploadedEvent = new UploadEvent($media);
+		$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
+	
+		$mediaObjectArray = JSEntities::getMediaObject($media);
+	
+		$return = array('responseCode' => 200, 'feedback' => 'media added', 'media' => $mediaObjectArray);
+		$return = json_encode($return); // json encode the array
+		return new Response($return, 200, array('Content-Type' => 'application/json'));
+	
 		// 		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
 	}
 
