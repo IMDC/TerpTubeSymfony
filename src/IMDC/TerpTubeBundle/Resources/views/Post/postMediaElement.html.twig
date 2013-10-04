@@ -1,0 +1,19 @@
+{% extends "IMDCTerpTubeBundle:Media:mediaElement.html.twig" %}
+
+{% block mediaimagetype %}
+<div class="row-fluid">
+    <img class="forum-img-thumbnail" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+</div>
+{% endblock mediaimagetype %}
+
+{% block mediavideotype %}
+<div class="row-fluid">
+    {{ parent() }}
+</div>
+{% endblock mediavideotype %}
+
+{% block mediaaudiotype %}
+<div class="row-fluid">
+    {{ parent() }}
+</div>
+{% endblock mediaaudiotype %}

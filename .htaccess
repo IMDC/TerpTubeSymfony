@@ -1,2 +1,2 @@
-AddType application/font-woff
-AddType application/x-font-woff
+AddType application/font-woff woff
+AddType application/x-font-woff woff

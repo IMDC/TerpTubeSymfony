@@ -1,17 +1,25 @@
-var mediaChooser;
-
-$("#selectFiles").click(function(e) {
-	mediaChooser = new MediaChooser($("div#files"), function(mediaID)
+ var mediaChooser;
+ 
+ $("#selectFiles").click(function(e) {
+	mediaChooser = new MediaChooser($("#files"), function(mediaID)
 		 	{
-//		 		alert(mediaID);
+		 		//alert(mediaID);
 	            setMediaID(mediaID);
 	 		}, true);
 	mediaChooser.chooseMedia();
-});
+ });
 
-function setMediaID(mid) {
-    //$("#PostFormFromThread_mediaID").attr('data-mid', mid);
-    $("#PostFormFromThread_mediatextarea").val(mid);
-    
-//    alert(mid);
+ function setMediaID(mid) 
+ {
+	//$("#ThreadForm_mediaID").attr('data-mid', mid);
+	$("#PostEditForm_mediatextarea").val(mid);
+	
+	//alert(mid);
  }
+
+ /**
+  * Adjust the size of a text area
+  */
+ $(document).ready(function() {
+	$('#PostEditForm_content').autosize(); 
+ });

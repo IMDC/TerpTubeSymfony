@@ -173,6 +173,8 @@ class ThreadController extends Controller
             //$em = $this->getDoctrine()->getManager();
         	
             $threadrepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+            // if the media text area isn't empty, the user has selected a media
+            // file to create a new thread with
             if (!$form->get('mediatextarea')->isEmpty()) {
                 
                 $rawmediaID = $form->get('mediatextarea')->getData();
@@ -180,6 +182,7 @@ class ThreadController extends Controller
                 $logger->info('*************media id is ' . $rawmediaID);
                 $mediaFile = $threadrepo->findOneBy(array('id' => $rawmediaID));
                 
+                // check to make sure the user owns this media file
                 if ($user->getResourceFiles()->contains($mediaFile)) {
                     $logger = $this->get('logger');
                     $logger->info('User owns this media file');

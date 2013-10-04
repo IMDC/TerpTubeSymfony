@@ -37,12 +37,13 @@ class ThreadFormType extends AbstractType
 	                                                'required'=> false, 
 	                                                'attr' => array('data-mid' => 0)));
 	                                                */
-	    $builder->add('mediatextarea', 'textarea', array('required' => false, 
+	    $builder->add('mediatextarea', 'text', array('required' => false, 
 	                                                'mapped' => false,
 	                                                'read_only' => true,
 	                                                'label' => 'File',
                                                     'attr' => array('cols' => 1,
                                                                     'rows' => 1)));
+	    /*
 	    $builder->add('mediaIncluded', 'entity', array(
 	            'class' => 'IMDCTerpTubeBundle:Media',
 	            'property' => 'title',
@@ -55,6 +56,7 @@ class ThreadFormType extends AbstractType
 	                            ->setParameter('id', $userid);
 	            },
 	    ));
+	    */
 	    $builder->add('content', null, array('label' => 'Supplementary Content',
 	    ));
 		$builder->add('submit', 'submit');

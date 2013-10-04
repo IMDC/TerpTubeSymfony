@@ -19,14 +19,18 @@
     {{ form_start(form) }}
         {{ form_errors(form) }}
         <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
-        {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
+        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
         <div id="files"></div>
 {#         <input type="textarea" disabled="true" id="file-textarea" />#}
 {#         {{ form_row(form.mediaID) }}#}
-        {{ form_row(form.mediaIncluded) }}
-        {{ form_row(form.title) }}
-        {{ form_row(form.content) }}
-    
+{#         {{ form_row(form.mediaIncluded) }}#}
+        {{ form_row(form.title, {'attr':{'class':'input-xxlarge'}}) }}
+        {{ form_row(form.content, {'attr':{'class':'input-xxlarge'}}) }}
+        <div class="row-fluid">
+            {{ form_widget(form.submit) }}
+            <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="icon-check"></i> Submit</a>
+            <a id="thread-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="icon-remove"></i> Cancel</a>
+        </div>
     {{ form_end(form) }}
   
 
@@ -53,6 +57,21 @@
 	    $("#ThreadForm_mediatextarea").val(mid);
 	    
 	    //alert(mid);
-	 }
+};
+
+$(document).ready(function() {
+    $("#ThreadForm_content").autosize();
+
+    // since I hid the real 'submit' button to provide a nicely stylized button
+    // I have to click the real button when you click on the fancy one
+    $("#thread-form-submit-button").click(function(e) {
+        e.preventDefault();
+    	$("button#ThreadForm_submit").click();
+    	
+    });
+});
+
 </script>
+ 
+
 {% endblock javascripts %}

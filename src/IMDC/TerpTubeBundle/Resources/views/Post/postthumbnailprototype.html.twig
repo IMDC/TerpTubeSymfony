@@ -1,3 +1,4 @@
+{% block postgrid %}
 <ul class="thumbnails">
     {% set counter = 1 %}
     <div class="row-fluid">
@@ -6,7 +7,7 @@
         <div class="row-fluid" data-rowid="{{ counter }}">
     {% endif %}
             <li class="span3">
-            	
+                
                 <div class="thumbnail postthumbnail text-center">
                 	<div class="row-fluid">
                 		<div class="span3 post-reply-user-info-wrap">
@@ -17,59 +18,39 @@
 		                        <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ post.author }}</a>
 		                    </div>
 		                </div>
-		                {% if post.getParentThread.getId is defined %}
-                    	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
-                        {% endif %}
-		                {% if post.attachedFile is defined and post.attachedFile|length > 0 %}
+
+{# 		                {% if post.attachedFile is defined and post.attachedFile|length > 0 %}#}
+		                {% if post.attachedFile|length != 0 %}
 						    {% set postMediaFile = post.attachedFile[0] %}
 					    {% else %}
-					    	{% set postMediaFile = none  %}
+					    	{% set postMediaFile = null  %}
 						{% endif %}
-		                {# if has media span 5 #}
 		                {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
-						{% if postMediaFile is not defined or postMediaFile is null %}
+{# 						{% if postMediaFile is not defined or postMediaFile is null %}#}
+						{% if postMediaFile == null %}
 						    <div class="span9">
+						    <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
 			                	{{ post.content|truncate(250) }}
+		                	</a>
 			                </div>
 		                {% else %}
 		                	<div class="span9">
-		                	
-			                	{% if postMediaFile.type == 0 %}
-								{# -----------   if type of media is an IMAGE   -------- #}
-							    <div class="row-fluid">
-							    <img class="forum-img-thumbnail" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
-							    </div>
-								{# -----------   if type of media is a VIDEO   -------- #}
-								{% elseif postMediaFile.type == 1 %}
-						        <div class="row-fluid">
-							        <video controls width="100%" id="{{ postMediaFile.getID }}" preload="auto">
-							        	<source src="{{ asset(postMediaFile.getResource.getWebPathWebm) }}"/>
-							        	<source src="{{ asset(postMediaFile.getResource.getWebPath) }}"/>
-							        </video>
-						        </div>
-								{% elseif postMediaFile.type == 2 %}
-								{# -----------   if type of media is AUDIO   -------- #}
-						        <div class="row-fluid">
-							        <audio controls style="width: 100%">
-							            <source src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
-							            Your browser does not support the audio element, please upgrade to Google Chrome
-							        </audio>
-						        </div>
-								{% endif %}
+		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
+		                	{{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: postMediaFile}, with_context = false) }}
 		                		<div class="row-fluid">
 		                		{{ post.content|truncate(60) }}
 		                		</div>
+	                		</a>
+	                		</div> <!-- ./span9 -->
 		                {% endif %}
-		                 {% if post.getParentThread is defined %}
-                        </a>
-                        {% endif %}
-                	</div>
+		                    
+		                 
+                	</div> <!-- /.row-fluid -->
 {#                 	<div class="row-fluid">#}
 {#                     <p><span class="content-created-datetime-span">Created: {{ post.created|date('g:ia M j Y') }}</span></p>#}
 {#                     </div>#}
                 
                 </div> <!-- /.thumbnail text-center -->
-               
             </li> <!-- /.span3 -->
     {% if counter != 0 and counter % 4 == 0 %}
         </div> <!--  /.row-fluid  data-rowid {{ counter }} -->
@@ -79,3 +60,4 @@
 {% endfor %}
     </div> <!-- /.row-fluid -->
 </ul> <!-- /.thumbnails -->
+{% endblock postgrid %}

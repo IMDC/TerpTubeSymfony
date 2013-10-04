@@ -1,0 +1,30 @@
+{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
+{% if mediaFile is not defined or mediaFile is null %}
+    <!-- do nothing -->
+    {% block medianotdefined %}
+    {% endblock medianotdefined %}
+    
+{% elseif mediaFile.type == 0 %}
+    {# -----------   if type of media is an IMAGE   -------- #}
+    {% block mediaimagetype %}
+    <img src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+    {% endblock mediaimagetype %}
+    
+{% elseif mediaFile.type == 1 %}
+    {# -----------   if type of media is a VIDEO   -------- #}
+    {% block mediavideotype %}
+    <video controls width="100%" id="{{ mediaFile.getID }}" preload="auto">
+    	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
+    	<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
+    </video>
+    {% endblock mediavideotype %}
+    
+{% elseif mediaFile.type == 2 %}
+    {# -----------   if type of media is AUDIO   -------- #}
+    {% block mediaaudiotype %}
+    <audio controls style="width: 100%">
+        <source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+        Your browser does not support the audio element, please upgrade to Google Chrome
+    </audio>
+    {% endblock mediaaudiotype %}
+{% endif %}
