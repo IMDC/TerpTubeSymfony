@@ -1,3 +1,8 @@
+var globalPlayer;
+var globalPlayHeadImage;
+var globalStartTimeInput;
+var globalEndTimeInput;
+
 $(document).ready(function() {
 
 	$("#post-comment-button").click(function() {
@@ -10,102 +15,33 @@ $(document).ready(function() {
 	});
 	
 	$("#cancelButton").click(function() {
-		$("#comment-form-wrap").toggle();
+		$("#comment-form-wrap").hide();
 		$("#post-comment-button").show();
+		enableTemporalComment(globalPlayer, false, globalStartTimeInput, globalEndTimeInput);
+
 	});
 	
-
-
     
     /**
      * This snippet of code looks for a post id named anchor in the url and scrolls
-     * the list of posts on the right of the page to the comment BEFORE the one in
-     * question (otherwise the post you're looking for is cut off vertically)
+     * the list of posts on the right of the page to the comment in
+     * question adjusted with a vertical offset otherwise the comment is cut off
      */
     var $anchorname = window.location.hash.substring(1);
     if ($anchorname) {
     	$newanchor = parseInt($anchorname) - 1;
-    	$targetElement = "div#post-" + $anchorname;
-    	$elementBeforeTarget = "div#post-" + $newanchor;
+    	$targetElement = "div#post-" + $anchorname + "-wrap";
+    	var topofelement = $(this).find($targetElement).offset().top;
+    	var adjustedTop = topofelement - 150;
     	$("div#thread-reply-container").animate({
-    		scrollTop: $(this).find($elementBeforeTarget).offset().top
+			scrollTop: adjustedTop
     	}, 200);
-//    	$(this).find($targetElement).css("background-color", "blanchedalmond");
-    	$(this).find($targetElement).css("background-color", "#cc7777").animate({ backgroundColor: "#FFFFFF"}, 1500);
+
     }
     
     
 });
 
-//round number, num is number you want to round and dec is the number of decimal places
-function roundNumber(num, dec) {
-    var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
-    return result;
-}
-
-/**
- * 
- * @param mediaId string name element for the player
- * @param playheadimage twig asset path to an image
- * @param startinput string name of element for the start input
- * @param endinput string name of element for the end input
- * @returns {___player0} the player object reference
- */
-function createPlayer(mediaId, playheadimage, startinput, endinput) {
-	
-//	var player = new Player($("#{{ mediaFile.getID }}"));
-	var player = new Player($(mediaId));
-	
-	//form inputs
-//	var startTimeInput = $("#PostFormFromThread_startTime");
-	var startTimeInput = $(startinput);
-//	var endTimeInput   = $("#PostFormFromThread_endTime");
-	var endTimeInput   = $(endinput);
-	
-	player.options.areaSelectionEnabled = false;
-	player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
-	player.options.backButton = false;
-	player.options.forwardButton = false;
-	player.options.audioBar = false;
-	// player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
-	// player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
-	
-//	player.options.playHeadImage = "{{ asset('bundles/imdcterptube/img/player/add.png') }}";
-	player.options.playHeadImage = playheadimage;
-	player.options.playHeadImageOnClick = function() { 
-	    $("#post-comment-button").click();
-	    enableTemporalComment(player, true, startTimeInput, endTimeInput);
-	};
-	
-	player.createControls();
-	
-	player.options.onAreaSelectionChanged = function(){
-		startTimeInput.val( roundNumber(player.currentMinTimeSelected, 2));
-	    endTimeInput.val( roundNumber(player.currentMaxTimeSelected, 2));
-	};
-	
-	return player;
-
-}
-
-
-var mediaChooser;
-
-$("#selectFiles").click(function(e) {
-	mediaChooser = new MediaChooser($("div#files"), function(mediaID)
-		 	{
-//		 		alert(mediaID);
-	            setMediaID(mediaID);
-	 		}, true);
-	mediaChooser.chooseMedia();
-});
-
-function setMediaID(mid) {
-    //$("#PostFormFromThread_mediaID").attr('data-mid', mid);
-    $("#PostFormFromThread_mediatextarea").val(mid);
-    
-//    alert(mid);
- }
 
 /**
  * When you click on the trash icon to delete a post, you have to confirm via
@@ -166,6 +102,91 @@ $("a#post-comment-delete").click(function(event) {
 });
 
 
+
+/**
+ * 
+ * @param player a Player object
+ * @param playheadimage the path to the image to use on the player's playhead
+ * @param startinput a jquery reference to the start time input element
+ * @param endinput a jquery reference to the end time input element
+ */
+function initVars(player, playheadimage, startinput, endinput) {
+	globalPlayer = player;
+	globalPlayHeadImage = playheadimage;
+	globalStartTimeInput = startinput;
+	globalEndTimeInput = endinput;
+}
+
+//round number, num is number you want to round and dec is the number of decimal places
+function roundNumber(num, dec) {
+    var result = Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
+    return result;
+}
+
+/**
+ * 
+ * @param mediaId string name element for the player
+ * @param playheadimage twig asset path to an image
+ * @param startinput string name of element for the start input
+ * @param endinput string name of element for the end input
+ * @returns {___player0} the player object reference
+ */
+function createPlayer(mediaId, playheadimage, startinput, endinput) {
+	
+//	var player = new Player($("#{{ mediaFile.getID }}"));
+	var player = new Player($(mediaId));
+	
+	//form inputs
+//	var startTimeInput = $("#PostFormFromThread_startTime");
+	var startTimeInput = $(startinput);
+//	var endTimeInput   = $("#PostFormFromThread_endTime");
+	var endTimeInput   = $(endinput);
+	
+	initVars(player, playheadimage, startTimeInput, endTimeInput);
+	
+	player.options.areaSelectionEnabled = false;
+	player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
+	player.options.backButton = false;
+	player.options.forwardButton = false;
+	player.options.audioBar = false;
+	// player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
+	// player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
+	
+	player.options.playHeadImage = playheadimage;
+	player.options.playHeadImageOnClick = function() { 
+	    $("#post-comment-button").click();
+	    enableTemporalComment(player, true, startTimeInput, endTimeInput);
+	};
+	
+	player.createControls();
+	
+	player.options.onAreaSelectionChanged = function(){
+		startTimeInput.val( roundNumber(player.currentMinTimeSelected, 2));
+	    endTimeInput.val( roundNumber(player.currentMaxTimeSelected, 2));
+	};
+	
+	return player;
+
+}
+
+
+var mediaChooser;
+
+$("#selectFiles").click(function(e) {
+	mediaChooser = new MediaChooser($("div#files"), function(mediaID)
+		 	{
+//		 		alert(mediaID);
+	            setMediaID(mediaID);
+	 		}, true);
+	mediaChooser.chooseMedia();
+});
+
+function setMediaID(mid) {
+    $("#PostFormFromThread_mediatextarea").val(mid);
+ }
+
+
+
 /**
  * 
  * @param player reference to the Player object
@@ -181,92 +202,94 @@ function enableTemporalComment(player, status, startinput, endinput) {
   // save time 
   startTimeInput = startinput;
   endTimeInput = endinput;
+
   
-  
-//  $(this).parents('#new-comment-form').find("#new-comment-time-div").show();
-//  $("#new-comment-time-div").show(); // show the start and end time input boxes
-//  $(this).hide();
-  
-//  video_dom.pause();
   player.pause();
+
+  controls.oldPlayHeadImage = player.options.playHeadImage;
   
-//  var htmlvideoelement = $(player.video_id)[0];
-  
-//  playing = false;
-//  creatingTimedComment = true;
-  
-  // change plus icon on play head to nothing
-  controls.oldPlayHeadImage = controls.playHeadImage;
-  
-  if (status)
+  if (status) {
+	  // change plus icon on play head to nothing
 	  controls.playHeadImage = undefined;
-  else
-  	  controls.playHeadImage = controls.oldPlayHeadImage;
-  
-  // $(".comment-details").show();
-  //  $commentformcontainer.show();
-  if (Number(controls.getCurrentTime())+controls.options.minLinkTime>controls.getDuration())
-  {
-      controls.currentMinTimeSelected = controls.getDuration() - controls.options.minLinkTime;
-  }
-  else
-  {
-  	controls.currentMinTimeSelected = controls.getCurrentTime();
-  }
-  controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-  controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected)+controls.options.minLinkTime;
-  controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-  
-	controls.setAreaSelectionEnabled(true);
-  startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
-  startTimeInput.on("change",function(){
-		if (startTimeInput.val() >= controls.currentMaxTimeSelected - controls.options.minLinkTime)
-		{
-			if (startTimeInput.val() >= controls.getDuration()-controls.options.minLinkTime)
+	  if (Number(controls.getCurrentTime())+controls.options.minLinkTime>controls.getDuration())
+	  {
+	      controls.currentMinTimeSelected = controls.getDuration() - controls.options.minLinkTime;
+	  }
+	  else
+	  {
+	  	controls.currentMinTimeSelected = controls.getCurrentTime();
+	  }
+	  controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+	  controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected)+controls.options.minLinkTime;
+	  controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+	  
+	  controls.setAreaSelectionEnabled(true);
+	  
+	  startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+	  startTimeInput.on("change",function(){
+			if (startTimeInput.val() >= controls.currentMaxTimeSelected - controls.options.minLinkTime)
 			{
-				controls.currentMaxTimeSelected = controls.getDuration();
-				controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-				controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-				controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-				endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-				startTimeInput.val(roundNumber(controls.currentMinTimeSelected, 2));
-			}
-			else
-			{
-				controls.currentMinTimeSelected = startTimeInput.val();
-				controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-				controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
-				controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-				endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-		//		controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-		//		controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-		//		startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
-			}
-		}
-		else if (startTimeInput.val()<=0)
-		{
-			controls.currentMinTimeSelected = 0;
-			controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-			startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
-		}
-		else
-		{
-			controls.currentMinTimeSelected = startTimeInput.val();
-			controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-		}
-		controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
-		controls.setVideoTime(controls.currentMinTimeSelected);
-  });
-  endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-  endTimeInput.on("change",function(){
-		if (endTimeInput.val() <= Number(controls.currentMinTimeSelected) + controls.options.minLinkTime)
-			{
-				if (endTimeInput.val()<controls.options.minLinkTime)
+				if (startTimeInput.val() >= controls.getDuration()-controls.options.minLinkTime)
 				{
-					controls.currentMinTimeSelected = 0;
+					controls.currentMaxTimeSelected = controls.getDuration();
+					controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
 					controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-					startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+					startTimeInput.val(roundNumber(controls.currentMinTimeSelected, 2));
+				}
+				else
+				{
+					controls.currentMinTimeSelected = startTimeInput.val();
+					controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
 					controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
+					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+			//		controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
+			//		controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+			//		startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+						}
+					}
+					else if (startTimeInput.val()<=0)
+					{
+						controls.currentMinTimeSelected = 0;
+						controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+						startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+					}
+					else
+					{
+						controls.currentMinTimeSelected = startTimeInput.val();
+						controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+					}
+					controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
+					controls.setVideoTime(controls.currentMinTimeSelected);
+	   });
+	  endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+	  endTimeInput.on("change",function(){
+			if (endTimeInput.val() <= Number(controls.currentMinTimeSelected) + controls.options.minLinkTime)
+				{
+					if (endTimeInput.val()<controls.options.minLinkTime)
+					{
+						controls.currentMinTimeSelected = 0;
+						controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+						startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+						controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
+						controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+						endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+					}
+					else
+					{
+						controls.currentMaxTimeSelected = endTimeInput.val();
+						controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+						endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+						controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
+						controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+						startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+					}
+				}
+				else if (endTimeInput.val()>=controls.getDuration())
+				{
+					controls.currentMaxTimeSelected = controls.getDuration();
 					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
 					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
 				}
@@ -274,41 +297,32 @@ function enableTemporalComment(player, status, startinput, endinput) {
 				{
 					controls.currentMaxTimeSelected = endTimeInput.val();
 					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-					controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-					controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-					startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
 				}
-			}
-			else if (endTimeInput.val()>=controls.getDuration())
-			{
-				controls.currentMaxTimeSelected = controls.getDuration();
-				controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-				endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-			}
-			else
-			{
-				controls.currentMaxTimeSelected = endTimeInput.val();
-				controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-			}
-			controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
-			controls.setVideoTime(controls.currentMaxTimeSelected);
-  });
-  controls.repaint();
-  
-  
-  //if ( (".comment-details").find("formAction").attr("value") == 'edit' ) {
-  if ( $commentformcontainer.find("formAction").attr("value") == 'edit' ) {    
-      // TODO: finish this
-      // get comment start and end time
-      // var $commID = $(".comment-details").parent(".feedback-container").data('cid');
-      var $commID = $commentformcontainer.parent(".feedback-container").data('cid');
-      
+				controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
+				controls.setVideoTime(controls.currentMaxTimeSelected);
+	  });
+	  controls.repaint();
   }
   else {
-//      startTimeInput.val( roundNumber(video_dom.currentTime, 2));
- //     endTimeInput.val( roundNumber(video_dom.currentTime + 2, 2));
+	player.options.playHeadImage = globalPlayHeadImage;
+	//controls.options.playHeadImage = globalPlayHeadImage;
+	alert(globalPlayHeadImage);
+	//controls.playHeadImage = globalPlayHeadImage;
+	controls.setAreaSelectionEnabled(false);
+	controls.currentMinSelected = controls.minSelected;
+	controls.currentMinTimeSelected = controls.getTimeForX(controls.currentMinSelected);
+	controls.currentMaxSelected = controls.maxSelected;
+	controls.currentMaxTimeSelected = controls.getTimeForX(controls.currentMaxSelected);
+	controls.clearDensityBar();
+	controls.drawComments();
+	controls.drawSignLinks();
+	controls.repaint();
+  	  
   }
+  
+
+  
+  
 }
 
 /*
