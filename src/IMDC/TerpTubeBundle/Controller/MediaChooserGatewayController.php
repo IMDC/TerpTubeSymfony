@@ -49,16 +49,13 @@ class MediaChooserGatewayController extends Controller
 
 	public function chooseMediaByTypeAction(Request $request, $type)
 	{
-		$securityContext = $this->container->get('security.context');
-		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
-			$this->get('session')->set('redirectUrl', $request->getUri());
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		return MediaChooserGatewayController::chooseMedia($request, $type);
 	}
-	
+
 	private function chooseMedia(Request $request, $type)
 	{
 		$response = $this->redirect($this->generateUrl('imdc_terp_tube_user_splash')); //Go home if bad type
@@ -67,32 +64,32 @@ class MediaChooserGatewayController extends Controller
 			$prefix = "ajax.";
 		switch ($type)
 		{
-			case MediaChooserGatewayController::TYPE_ALL:
-				$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:gateway');
-				break;
-			case MediaChooserGatewayController::TYPE_UPLOAD_VIDEO:
-				$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideo');
-				break;
-			case MediaChooserGatewayController::TYPE_UPLOAD_AUDIO:
-				$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudio');
-				break;
-			case MediaChooserGatewayController::TYPE_UPLOAD_IMAGE:
-				$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addImage');
-				break;
-			case MediaChooserGatewayController::TYPE_UPLOAD_OTHER:
-				$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addOther');
-				break;
-			case MediaChooserGatewayController::TYPE_RECORD_AUDIO:
-				$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudioRecording');
-				break;
-			case MediaChooserGatewayController::TYPE_RECORD_VIDEO:
-				$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideoRecording');
-				break;
+		case MediaChooserGatewayController::TYPE_ALL:
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:gateway');
+			break;
+		case MediaChooserGatewayController::TYPE_UPLOAD_VIDEO:
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideo');
+			break;
+		case MediaChooserGatewayController::TYPE_UPLOAD_AUDIO:
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudio');
+			break;
+		case MediaChooserGatewayController::TYPE_UPLOAD_IMAGE:
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addImage');
+			break;
+		case MediaChooserGatewayController::TYPE_UPLOAD_OTHER:
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addOther');
+			break;
+		case MediaChooserGatewayController::TYPE_RECORD_AUDIO:
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudioRecording');
+			break;
+		case MediaChooserGatewayController::TYPE_RECORD_VIDEO:
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideoRecording');
+			break;
 		}
 		if ($request->isXmlHttpRequest())
 		{
 			$content = $response->getContent();
-			$return = array('page'=>$content, 'finished'=>false);
+			$return = array('page' => $content, 'finished' => false);
 			$return = json_encode($return); // json encode the array
 			return new Response($return, 200, array('Content-Type' => 'application/json'));
 		}
@@ -190,7 +187,7 @@ class MediaChooserGatewayController extends Controller
 		}
 		return $this->render($responseURL, array('mediaFile' => $media));
 	}
-	
+
 	public function recordMediaAction(Request $request, $url)
 	{
 		//FIXME add the recording stuff here
@@ -207,7 +204,9 @@ class MediaChooserGatewayController extends Controller
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
-		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig', array("recorderConfiguration"=> $recorderConfiguration));
+		return $this
+				->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig',
+						array("recorderConfiguration" => $recorderConfiguration));
 	}
 
 }

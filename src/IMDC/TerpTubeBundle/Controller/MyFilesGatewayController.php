@@ -53,10 +53,8 @@ class MyFilesGatewayController extends Controller
 	 */
 	public function gatewayAction(Request $request)
 	{
-		$securityContext = $this->container->get('security.context');
-		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$user = $this->getUser();
@@ -72,10 +70,8 @@ class MyFilesGatewayController extends Controller
 	 */
 	public function deleteMediaAction(Request $request, $mediaId)
 	{
-		$securityContext = $this->container->get('security.context');
-		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		if (!$request->isXmlHttpRequest())
@@ -114,10 +110,8 @@ class MyFilesGatewayController extends Controller
 	 */
 	public function previewMediaAction(Request $request, $mediaId)
 	{
-		$securityContext = $this->container->get('security.context');
-		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		if (!$request->isXmlHttpRequest())
@@ -156,16 +150,16 @@ class MyFilesGatewayController extends Controller
 		}
 		return $this->render($responseURL, array('mediaFile' => $media));
 	}
-	
+
 	public function recordMediaAction(Request $request, $url)
 	{
 		//FIXME add the recording stuff here
 		// 		throw new NotImplementedException("Not yet implemented");
 		$recorderConfiguration = $request->get("recorderConfiguration");
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -173,7 +167,9 @@ class MyFilesGatewayController extends Controller
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
-		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig', array("recorderConfiguration"=> $recorderConfiguration));
+		return $this
+				->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig',
+						array("recorderConfiguration" => $recorderConfiguration));
 	}
 
 }

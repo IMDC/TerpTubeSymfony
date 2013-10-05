@@ -60,37 +60,31 @@ class AddFileGatewayController extends Controller
 	 */
 	public function gatewayAction(Request $request)
 	{
-		$securityContext = $this->container->get('security.context');
-		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$user = $this->getUser();
 		$resourceFiles = $user->getResourceFiles();
-		
+
 		$prefix = "";
 		if ($request->isXmlHttpRequest())
 		{
 			$prefix = "ajax.";
 		}
-		return $this->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'index.html.twig', array('resourceFiles' => $resourceFiles));
+		return $this
+				->render('IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'index.html.twig',
+						array('resourceFiles' => $resourceFiles));
 	}
 
 	public function addAudioAction(Request $request, $url)
 	{
-		$securityContext = $this->container->get('security.context');
-		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
-		{
-			throw new AccessDeniedException('This user does not have access to this section.');
-		}
+		$user = this . getUser();
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
 		if ($userObject == null)
@@ -108,7 +102,7 @@ class AddFileGatewayController extends Controller
 		{
 			$prefix = "ajax.";
 		}
-		
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
@@ -135,7 +129,7 @@ class AddFileGatewayController extends Controller
 				// 				$uploadedEvent->getResponse();
 				if ($request->isXmlHttpRequest())
 				{
-					$response = array('page'=>null, 'finished'=>true, 'mediaID'=>$audioMedia->getId());
+					$response = array('page' => null, 'finished' => true, 'mediaID' => $audioMedia->getId());
 					$response = json_encode($response); // json encode the array
 					return new Response($response, 200, array('Content-Type' => 'application/json'));
 				}
@@ -151,23 +145,24 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		$response = $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'addFile.html.twig', array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig',
+						array('form' => $form->createView(),));
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest())
 		{
-			$return = array('page'=>$response->getContent(), 'finished'=>false);
+			$return = array('page' => $response->getContent(), 'finished' => false);
 			$return = json_encode($return); // json encode the array
-			$response =  new Response($return, 200, array('Content-Type' => 'application/json'));
+			$response = new Response($return, 200, array('Content-Type' => 'application/json'));
 		}
 		return $response;
 	}
 
 	public function addVideoAction(Request $request, $url)
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -186,7 +181,7 @@ class AddFileGatewayController extends Controller
 		{
 			$prefix = "ajax.";
 		}
-		
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
@@ -213,7 +208,7 @@ class AddFileGatewayController extends Controller
 				// 				$uploadedEvent->getResponse();
 				if ($request->isXmlHttpRequest())
 				{
-					$response = array('page'=>null, 'finished'=>true, 'mediaID'=>$videoMedia->getId());
+					$response = array('page' => null, 'finished' => true, 'mediaID' => $videoMedia->getId());
 					$response = json_encode($response); // json encode the array
 					return new Response($response, 200, array('Content-Type' => 'application/json'));
 				}
@@ -229,23 +224,24 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		$response = $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'addFile.html.twig', array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig',
+						array('form' => $form->createView(),));
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest())
 		{
-			$return = array('page'=>$response->getContent(), 'finished'=>false);
+			$return = array('page' => $response->getContent(), 'finished' => false);
 			$return = json_encode($return); // json encode the array
-			$response =  new Response($return, 200, array('Content-Type' => 'application/json'));
+			$response = new Response($return, 200, array('Content-Type' => 'application/json'));
 		}
 		return $response;
 	}
 
 	public function addImageAction(Request $request, $url)
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -258,13 +254,13 @@ class AddFileGatewayController extends Controller
 		$formFactory = $this->container->get('form.factory');
 
 		$form = $formFactory->create(new ImageMediaFormType(), $imageMedia, array());
-		
+
 		$prefix = "";
 		if ($request->isXmlHttpRequest())
 		{
 			$prefix = "ajax.";
 		}
-		
+
 		if ('POST' === $request->getMethod())
 		{
 			$form->bind($request);
@@ -291,7 +287,7 @@ class AddFileGatewayController extends Controller
 				// 				$uploadedEvent->getResponse();
 				if ($request->isXmlHttpRequest())
 				{
-					$response = array('page'=>null, 'finished'=>true, 'mediaID'=>$imageMedia->getId());
+					$response = array('page' => null, 'finished' => true, 'mediaID' => $imageMedia->getId());
 					$response = json_encode($response); // json encode the array
 					return new Response($response, 200, array('Content-Type' => 'application/json'));
 				}
@@ -307,13 +303,14 @@ class AddFileGatewayController extends Controller
 			}
 		}
 		$response = $this
-				->render('IMDCTerpTubeBundle:AddFileGateway:'.$prefix.'addFile.html.twig', array('form' => $form->createView(),));
+				->render('IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig',
+						array('form' => $form->createView(),));
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest())
 		{
-			$return = array('page'=>$response->getContent(), 'finished'=>false);
+			$return = array('page' => $response->getContent(), 'finished' => false);
 			$return = json_encode($return); // json encode the array
-			$response =  new Response($return, 200, array('Content-Type' => 'application/json'));
+			$response = new Response($return, 200, array('Content-Type' => 'application/json'));
 		}
 		return $response;
 	}
@@ -322,10 +319,10 @@ class AddFileGatewayController extends Controller
 	{
 		//FIXME add the recording stuff here
 		// 		throw new NotImplementedException("Not yet implemented");
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -342,9 +339,9 @@ class AddFileGatewayController extends Controller
 		throw new NotImplementedException("Not yet implemented");
 
 		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		if (!$this->container->get('imdc_terptube.authentication_manager:')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -360,10 +357,10 @@ class AddFileGatewayController extends Controller
 		//FIXME add the recording stuff here
 		// 		throw new NotImplementedException("Not yet implemented");
 
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -413,16 +410,16 @@ class AddFileGatewayController extends Controller
 
 		// 		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
 	}
-	
+
 	public function addSimultaneousRecordingAction(Request $request, $sourceMediaID, $startTime, $url)
 	{
 		//FIXME add the recording stuff here
 		// 		throw new NotImplementedException("Not yet implemented");
-	
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
@@ -436,10 +433,10 @@ class AddFileGatewayController extends Controller
 		$media->setType(Media::TYPE_VIDEO);
 		$currentTime = new \DateTime('now');
 		$media->setTitle("Recording-from-source" . $currentTime->format('Y-m-d-H:i'));
-	
+
 		$audioFile = $request->files->get("audio-blob", null);
 		$videoFile = $request->files->get("video-blob", null);
-	
+
 		//FIXME Need to sync the audio/videos
 		$transcoder = $this->container->get('imdc_terptube.transcoder');//($this->get('logger'));
 		$mergedFile = $transcoder->mergeAudioVideo($audioFile, $videoFile);
@@ -448,45 +445,45 @@ class AddFileGatewayController extends Controller
 		$resourceFile->setWebmExtension("webm");
 		$media->setIsReady(Media::READY_WEBM);
 		$resourceFile->setFile($mergedFile);
-	
+
 		$media->setResource($resourceFile);
-	
+
 		$userObject->addResourceFile($media);
 
 		$em = $this->container->get('doctrine')->getManager();
-		
+
 		$sourceMedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($sourceMediaID);
 		$compoundMedia = new CompoundMedia();
 		$compoundMedia->setSourceID($sourceMedia);
 		$compoundMedia->setTargetID($media);
 		$compoundMedia->setTargetStartTime($startTime);
 		$compoundMedia->setType(0); //Simultaneous Recording
-		
+
 		$em->persist($resourceFile);
 		$em->persist($media);
 		$em->persist($compoundMedia);
-	
+
 		$em->flush();
-	
+
 		$eventDispatcher = $this->container->get('event_dispatcher');
 		$uploadedEvent = new UploadEvent($media);
 		$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-	
+
 		$mediaObjectArray = JSEntities::getMediaObject($media);
-	
+
 		$return = array('responseCode' => 200, 'feedback' => 'media added', 'media' => $mediaObjectArray);
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
-	
+
 		// 		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
 	}
 
 	public function addOtherAction(Request $request, $url)
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());

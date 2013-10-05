@@ -1,7 +1,6 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
-
 use Doctrine\ORM\EntityNotFoundException;
 
 use Symfony\Component\Intl\Exception\NotImplementedException;
@@ -43,21 +42,23 @@ class MediaController extends Controller
 	public function simultaneousPreviewAndRecordAction(Request $request, $mediaID, $url)
 	{
 		$recorderConfiguration = $request->get("recorderConfiguration");
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
-		
+
 		$em = $this->container->get('doctrine')->getManager();
 		$mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaID);
 		if ($userObject == null)
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
-		return $this->render('IMDCTerpTubeBundle:MediaController:simultaneousPreviewAndRecord.html.twig', array("mediaFile"=>$mediaFile));
+		return $this
+				->render('IMDCTerpTubeBundle:MediaController:simultaneousPreviewAndRecord.html.twig',
+						array("mediaFile" => $mediaFile));
 	}
 
 }

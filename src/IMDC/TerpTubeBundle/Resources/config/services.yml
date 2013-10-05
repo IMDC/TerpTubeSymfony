@@ -20,6 +20,10 @@ services:
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 
+    imdc_terptube.authentication_manager:
+        class: IMDC\TerpTubeBundle\Utils\AuthenticationManager
+        arguments: ["@security.context"]
+            
     imdc_terptube_user.registration.form.type:
         class: IMDC\TerpTubeBundle\Form\Type\RegistrationFormType
         arguments: [%fos_user.model.user.class%]

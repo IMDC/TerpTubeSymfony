@@ -46,10 +46,10 @@ class ProfileController extends BaseController
 	 */
 	public function showAction()
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$response = new RedirectResponse(
 				$this->container->get('router')
@@ -66,10 +66,10 @@ class ProfileController extends BaseController
 	 */
 	public function showSpecificAction($userName)
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($userName);
@@ -85,13 +85,13 @@ class ProfileController extends BaseController
 						array('user' => $userObject, 'profile' => $profile));
 
 	}
-	
+
 	public function updateAvatarAction(Request $request, $userName)
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		if ($user->getUsername() != $userName)
 		{
@@ -106,7 +106,10 @@ class ProfileController extends BaseController
 		$profile = $userObject->getProfile();
 
 		$avatar = new Media();
-		$avatar->setTitle($this->container->get('translator')->trans('profile.show.avatar', array(), 'IMDCTerpTubeBundle'));
+		$avatar
+				->setTitle(
+						$this->container->get('translator')
+								->trans('profile.show.avatar', array(), 'IMDCTerpTubeBundle'));
 
 		$formFactory = $this->container->get('form.factory');
 
@@ -124,7 +127,7 @@ class ProfileController extends BaseController
 				$em = $this->container->get('doctrine')->getManager();
 				$em->persist($avatar);
 				// Remove old avatar from DB:
-				if (($oldAvatar = $profile->getAvatar())!== null )
+				if (($oldAvatar = $profile->getAvatar()) !== null)
 					$em->remove($profile->getAvatar());
 				$profile->setAvatar($avatar);
 
@@ -135,7 +138,7 @@ class ProfileController extends BaseController
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($avatar);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-				
+
 				$url = $this->container->get('router')->generate('imdc_terp_tube_user_profile');
 				$response = new RedirectResponse($url);
 				return $response;
@@ -155,10 +158,10 @@ class ProfileController extends BaseController
 	 */
 	public function editAction(Request $request, $userName)
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!is_object($user) || !$user instanceof UserInterface)
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			throw new AccessDeniedException('This user does not have access to this section.');
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		if ($user->getUsername() != $userName)
 		{
