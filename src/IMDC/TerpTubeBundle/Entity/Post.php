@@ -34,7 +34,15 @@ class Post
      */
     private $editedAt;
 
-
+    /**
+     * @var float
+     */
+    private $startTime;
+    
+    /**
+     * @var float
+     */
+    private $endTime;
     
     /**
      * @var boolean
@@ -296,16 +304,6 @@ class Post
     {
         return $this->isTemporal;
     }
-    /**
-     * @var float
-     */
-    private $startTime;
-
-    /**
-     * @var float
-     */
-    private $endTime;
-
 
     /**
      * Set startTime

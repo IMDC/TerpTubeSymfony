@@ -24,6 +24,7 @@
 		<script src="../assets/js/html5shiv.js"></script>
 		<![endif]-->
 		
+		{% block headerjavascripts %}
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
 		<script src="{{ asset('bundles/imdcterptube/js/autosize/jquery.autosize.min.js') }}"></script>
@@ -36,7 +37,7 @@
 		<script src="{{ asset('bundles/imdcterptube/js/mediaChooser.js') }}"></script>
 		<!-- Recorder for web-rtc -->
 		<script src="https://www.webrtc-experiment.com/RecordRTC.js"> </script>
-		
+		{% endblock headerjavascripts %}
 		</head>
 		{% block navbar_top %}
 		<div class="navbar navbar-inverse navbar-fixed-top">
@@ -104,7 +105,7 @@
 			</div><!-- /.row-fluid -->
 			{% block content %}
 			<div class="row-fluid">
-				<div class="span1">
+				<div class="span1 mainsidebarnav">
 					<div class="well sidebar-nav">
 						<ul class="nav nav-list text-center">
 							{% block sidebarlinks %}

@@ -18,14 +18,12 @@ class PostFormFromThreadType extends AbstractType
 	    $transformer = new ThreadToNumberTransformer($entityManager);
 	    
 	    $builder->add('mediatextarea', 
-	    				'textarea', 
+	    				'text', 
 	    				array('required' => false,
 	    						'mapped' => false,
 					    		'read_only' => true,
 					    		'label' => 'Attached File',
-					    		'attr' => array('cols' => 1,
-			    				'rows' => 1
-			    		))
+			    		)
     	);
 	    
 		$builder->add('content');

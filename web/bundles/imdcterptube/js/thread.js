@@ -2,6 +2,12 @@ var globalPlayer;
 var globalPlayHeadImage;
 var globalStartTimeInput;
 var globalEndTimeInput;
+var mediaChooser;
+var speedSlowNormalImagePath;
+var speedSlowFastImagePath;
+var speedSlowSlowImagePath;
+var speedSlow;
+var global_video_dom;
 
 $(document).ready(function() {
 
@@ -18,8 +24,59 @@ $(document).ready(function() {
 		$("#comment-form-wrap").hide();
 		$("#post-comment-button").show();
 		enableTemporalComment(globalPlayer, false, globalStartTimeInput, globalEndTimeInput);
-
+		
 	});
+	
+	// make the content section grow automatically when necessary
+	$("#PostFormFromThread_content").autosize();
+	
+	
+	//Change the video speed when the slowdown button is clicked
+    $("#video-speed").click(function(event) {
+    	event.preventDefault();
+    	speedSlow = (speedSlow+1)%3;
+    	switch (speedSlow) {
+		case 0:
+			setVideoDomPlaybackSpeed(1.0);
+	        $("#video-speed img").attr("src", speedSlowNormalImagePath);
+			break;
+		case 1:
+			setVideoDomPlaybackSpeed(2.0);
+			$("#video-speed img").attr("src", speedSlowFastImagePath);
+			break;
+		case 2:
+			setVideoDomPlaybackSpeed(0.5);
+		    $("#video-speed img").attr("src", speedSlowSlowImagePath);
+			break;
+		default:
+			setVideoDomPlaybackSpeed(1.0);
+        	$("#video-speed img").attr("src", speedSlowNormalImagePath);
+			break;
+		}
+    	
+    	if (speedSlow==0) {
+    		
+    	}
+    	else {
+    		
+    	}
+    });
+
+    // change the captioning display when you click the captioning button
+    $("#closed-caption-button").click(function() {
+        // alert(video_dom.tracks[0].mode);
+        if(video_dom.tracks[0].mode == 2){
+            $("#closed-caption-button img").attr("src", 'images/closedCaptioning.jpg');
+            video_dom.tracks[0].mode = CAPTION_HIDDEN;
+        }
+        else
+        {
+            $("#closed-caption-button img").attr("src", 'images/closedCaptioningDown.jpg');
+            video_dom.tracks[0].mode = CAPTION_SHOW;
+
+        }
+
+    });
 	
     
     /**
@@ -36,12 +93,29 @@ $(document).ready(function() {
     	$("div#thread-reply-container").animate({
 			scrollTop: adjustedTop
     	}, 200);
+    	$($targetElement).css("background", "#56ef96").animate({
+    		backgroundColor: "#ffffff"}, 1500
+    	);
 
     }
     
     
 });
+function setVideoDomPlaybackSpeed(speed)
+{
+	global_video_dom.playbackRate = speed;
+}
 
+
+
+function initVideoSpeedFunction(videodomelement, normalimgpath, fastimgpath, slowimgpath)
+{
+	global_video_dom = videodomelement;
+	speedSlowNormalImagePath = normalimgpath;
+	speedSlowFastImagePath = fastimgpath;
+	speedSlowSlowImagePath = slowimgpath;
+	speedSlow = 0;
+}
 
 /**
  * When you click on the trash icon to delete a post, you have to confirm via
@@ -82,7 +156,7 @@ $("a#post-comment-delete").click(function(event) {
         				$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeTo('slow', 0.0).remove();
                         //delete timeline region
         				// FIXME: get correct delete function from Martin
-                        removeComment(commentID);
+                        removeComment(p_id);
         			},
         			error : function(request)
         			{
@@ -95,7 +169,7 @@ $("a#post-comment-delete").click(function(event) {
             },
             Cancel: function() {
                 $( this ).dialog( "close" );
-                $theDeleteLink.parents("[data-cid='" + commentID + "']").eq(0).fadeTo('slow', 1.0);
+                $theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeTo('slow', 1.0);
             }
         }
     });
@@ -154,7 +228,9 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	
 	player.options.playHeadImage = playheadimage;
 	player.options.playHeadImageOnClick = function() { 
-	    $("#post-comment-button").click();
+//	    $("#post-comment-button").click();
+	    $("#comment-form-wrap").show();
+		$("#post-comment-button").hide();
 	    enableTemporalComment(player, true, startTimeInput, endTimeInput);
 	};
 	
@@ -165,12 +241,15 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	    endTimeInput.val( roundNumber(player.currentMaxTimeSelected, 2));
 	};
 	
+	player.setComments(postArray);
+	player.drawComments();
+	player.repaint();
+	
+	
 	return player;
 
 }
 
-
-var mediaChooser;
 
 $("#selectFiles").click(function(e) {
 	mediaChooser = new MediaChooser($("div#files"), function(mediaID)
@@ -208,6 +287,7 @@ function enableTemporalComment(player, status, startinput, endinput) {
 
   controls.oldPlayHeadImage = player.options.playHeadImage;
   
+  // if we are enabling the temporal comment
   if (status) {
 	  // change plus icon on play head to nothing
 	  controls.playHeadImage = undefined;
@@ -303,24 +383,21 @@ function enableTemporalComment(player, status, startinput, endinput) {
 	  });
 	  controls.repaint();
   }
+  // else we are disabling the temporal comment
   else {
-	player.options.playHeadImage = globalPlayHeadImage;
-	//controls.options.playHeadImage = globalPlayHeadImage;
-	alert(globalPlayHeadImage);
-	//controls.playHeadImage = globalPlayHeadImage;
+	controls.setPlayHeadImage(globalPlayHeadImage);
 	controls.setAreaSelectionEnabled(false);
 	controls.currentMinSelected = controls.minSelected;
 	controls.currentMinTimeSelected = controls.getTimeForX(controls.currentMinSelected);
 	controls.currentMaxSelected = controls.maxSelected;
 	controls.currentMaxTimeSelected = controls.getTimeForX(controls.currentMaxSelected);
-	controls.clearDensityBar();
+	controls.clearPlayer();
 	controls.drawComments();
-	controls.drawSignLinks();
+//	controls.drawSignLinks();
 	controls.repaint();
   	  
   }
   
-
   
   
 }

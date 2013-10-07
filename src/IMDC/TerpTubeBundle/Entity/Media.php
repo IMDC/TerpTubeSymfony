@@ -49,6 +49,11 @@ class Media
      * @var string
      */
     private $title;
+    
+    /**
+     * @var integer
+     */
+    private $isReady = 0;
 
     /**
      * Get id
@@ -175,10 +180,7 @@ class Media
     {
         return $this->title;
     }
-    /**
-     * @var integer
-     */
-    private $isReady = 0;
+
 
 
     /**
