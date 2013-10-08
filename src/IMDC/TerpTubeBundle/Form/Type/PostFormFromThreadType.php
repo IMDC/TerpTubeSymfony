@@ -15,6 +15,7 @@ class PostFormFromThreadType extends AbstractType
 	{
 	    $entityManager = $options['em'];
 	    $user = $options['user'];
+	    $thread = $options['thread'];
 	    $transformer = new ThreadToNumberTransformer($entityManager);
 	    
 	    $builder->add('mediatextarea', 
@@ -31,15 +32,17 @@ class PostFormFromThreadType extends AbstractType
             $builder->create('parentthread', 'hidden')
 	            ->addModelTransformer($transformer));
 		
-		$builder->add('startTime', 'number', array(
-							'required' => false,
-		                    'precision' => 4,
-		));
-		
-		$builder->add('endTime', 'number', array(
-				'required' => false,
-		        'precision' => 4,
-		));
+		if ($thread->getType() == 1) {
+    		$builder->add('startTime', 'number', array(
+					'required' => false,
+                    'precision' => 4,
+    		));
+    		
+    		$builder->add('endTime', 'number', array(
+    				'required' => false,
+    		        'precision' => 4,
+    		));
+		}
 		
 		$builder->add('submit', 'submit');
 	}	
@@ -53,11 +56,12 @@ class PostFormFromThreadType extends AbstractType
 	{
 		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\Post',));
 		
-		$resolver->setRequired(array('em', 'user'));
+		$resolver->setRequired(array('em', 'user', 'thread'));
 		
 		$resolver->setAllowedTypes(array(
 				'em' => 'Doctrine\Common\Persistence\ObjectManager',
 				'user' => 'IMDC\TerpTubeBundle\Entity\User',
+		        'thread' => 'IMDC\TerpTubeBundle\Entity\Thread',
 		));
 	}
 }

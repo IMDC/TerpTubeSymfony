@@ -78,6 +78,28 @@ $(document).ready(function() {
 
     });
 	
+    // clicking the clock icon will move the density bar to the comments time
+    // and highlight the comment on the density bar
+    $(".temporal-post-start-link").click(function(event) {
+    	event.preventDefault();
+    	
+    	global_video_dom.currentTime = $(this).data('stime');
+    	var post = getPostById($(this).data('pid'));
+    	post.paintHighlighted = true;
+    	globalPlayer.clearPlayer();
+//    	globalPlayer.drawSignlinks();
+    	globalPlayer.drawComments();
+    	
+    	// clear the highlighted comment after 3 seconds
+    	setTimeout(function(){
+    		post.paintHighlighted = undefined;
+        	globalPlayer.clearPlayer();
+//        	globalPlayer.drawSignlinks();
+        	globalPlayer.drawComments();
+    	}, 3000);
+    	
+    });
+    
     
     /**
      * This snippet of code looks for a post id named anchor in the url and scrolls
@@ -263,6 +285,36 @@ $("#selectFiles").click(function(e) {
 function setMediaID(mid) {
     $("#PostFormFromThread_mediatextarea").val(mid);
  }
+
+
+function removePost(postId)
+{
+	for (var i=0; i< postArray.length; i++)
+	{
+		if (postArray[i].id == postId)
+		{
+			postArray.splice(i,1);
+			globalPlayer.clearDensityBar();
+			globalPlayer.drawSignLinks();
+			globalPlayer.drawComments();
+			
+			return;
+		}
+	}
+}
+
+function getPostById(postId)
+{
+	for (var i=0; i< postArray.length; i++)
+	{
+		if (postArray[i].id == postId)
+		{
+			return postArray[i];
+		}
+	}
+}
+
+
 
 
 

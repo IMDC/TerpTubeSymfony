@@ -34,7 +34,6 @@ class ThreadController extends Controller
                 array('threads' => $threads)
         );
         return $response;
-
     }
     
     public function viewThreadAction(Request $request, $threadid) 
@@ -56,6 +55,7 @@ class ThreadController extends Controller
         $postform = $this->createForm(new PostFormFromThreadType(), $newpost, array(
         		'user' => $user,
         		'em' => $em,
+                'thread' => $thread,
         ));
         $em = $this->getDoctrine()->getManager();
         

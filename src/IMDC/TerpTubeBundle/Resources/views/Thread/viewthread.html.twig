@@ -19,7 +19,6 @@
 
 <script type="text/javascript">
 var postArray = new Array();
-
 </script>
 
 <div class="row-fluid" id="thread-container">
@@ -51,7 +50,7 @@ var postArray = new Array();
                 </video>
             </div>
             <script type="text/javascript">
-            // this is required to pass twig stuff to js file //
+            {# this is required to pass twig stuff to js file #}
             $(document).ready(function() {
                  var Player = createPlayer('#{{ mediaFile.getID }}', 
                     	                      '{{ asset('bundles/imdcterptube/img/player/add.png') }}',
@@ -109,6 +108,7 @@ var postArray = new Array();
 					        {{ form_row(form.content) }}
 					        </div>
 				        </div>
+				        {% if form.startTime is defined %}
 				        <div class="row-fluid">
 					        <div class="span6">
 					        {{ form_label(form.startTime) }}{{ form_widget(form.startTime) }}{{ form_errors(form.startTime) }}
@@ -117,6 +117,7 @@ var postArray = new Array();
 					        {{ form_label(form.endTime) }}{{ form_widget(form.endTime) }}{{ form_errors(form.endTime) }}
 					        </div>
 				        </div>
+				        {% endif %}
 				        <div class="row-fluid">
 {# 				        {{ form_widget(form.submit, {'attr' : {'class': 'btn btn-success',} }) }} <a class="btn btn-danger" href="#" id="cancelButton"><i class="icon-remove"></i> Cancel</a>#}
 				        <a id="post-comment-submit-button" class="btn btn-success"><i class="icon-check"></i> Submit</a> <a class="btn btn-danger" href="#" id="cancelButton"><i class="icon-remove"></i> Cancel</a>
@@ -146,10 +147,6 @@ var postArray = new Array();
                 		               {{ post.isTemporal ? 'true' : 'false' }}             		               
                 		               );
                 postArray.push(newpost);
-
-                console.log(newpost.color);
-                
-
             </script>
             
             
@@ -232,7 +229,7 @@ var postArray = new Array();
                     <div class="row-fluid">
                         <ul class="unstyled">
                         	{% if post.isTemporal %}
-                            <li><i class="icon-time icon-large"></i></li>
+                            <li><a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="icon-time"></i></a></li>
                             {% endif %}
                             {% if post.author.getId == app.user.getId %}
 {#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="icon-trash"></i></a></li>#}
