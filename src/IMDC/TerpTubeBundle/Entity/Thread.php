@@ -45,6 +45,16 @@ class Thread
     private $lastPostAt;
     
     /**
+     * @var \DateTime
+     */
+    private $editedAt;
+    
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\User
+     */
+    private $editedBy;
+    
+    /**
      * @var string
      */
     private $title;
@@ -435,5 +445,51 @@ class Thread
         $this->mediaIncluded[] = $mediaIncluded;
         
         return $this;
+    }
+
+    /**
+     * Set editedAt
+     *
+     * @param \DateTime $editedAt
+     * @return Thread
+     */
+    public function setEditedAt($editedAt)
+    {
+        $this->editedAt = $editedAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get editedAt
+     *
+     * @return \DateTime 
+     */
+    public function getEditedAt()
+    {
+        return $this->editedAt;
+    }
+
+    /**
+     * Set editedBy
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $editedBy
+     * @return Thread
+     */
+    public function setEditedBy(\IMDC\TerpTubeBundle\Entity\User $editedBy = null)
+    {
+        $this->editedBy = $editedBy;
+    
+        return $this;
+    }
+
+    /**
+     * Get editedBy
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\User 
+     */
+    public function getEditedBy()
+    {
+        return $this->editedBy;
     }
 }

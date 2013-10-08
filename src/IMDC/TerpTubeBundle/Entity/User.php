@@ -80,6 +80,12 @@ class User extends BaseUser
 	 */
 	private $editedPosts;
 	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $editedThreads;
+	
+	
     public function __construct()
     {
         parent::__construct();
@@ -93,6 +99,8 @@ class User extends BaseUser
         $this->friendsList      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
         $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->editedPosts      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->editedThreads    = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -566,5 +574,38 @@ class User extends BaseUser
     public function getEditedPosts()
     {
         return $this->editedPosts;
+    }
+
+    /**
+     * Add editedThreads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $editedThreads
+     * @return User
+     */
+    public function addEditedThread(\IMDC\TerpTubeBundle\Entity\Thread $editedThreads)
+    {
+        $this->editedThreads[] = $editedThreads;
+    
+        return $this;
+    }
+
+    /**
+     * Remove editedThreads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $editedThreads
+     */
+    public function removeEditedThread(\IMDC\TerpTubeBundle\Entity\Thread $editedThreads)
+    {
+        $this->editedThreads->removeElement($editedThreads);
+    }
+
+    /**
+     * Get editedThreads
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getEditedThreads()
+    {
+        return $this->editedThreads;
     }
 }

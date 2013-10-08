@@ -7,6 +7,8 @@ var speedSlowNormalImagePath;
 var speedSlowFastImagePath;
 var speedSlowSlowImagePath;
 var speedSlow;
+var ccNormalImagePath;
+var ccPressedImagePath;
 var global_video_dom;
 
 $(document).ready(function() {
@@ -65,14 +67,14 @@ $(document).ready(function() {
     // change the captioning display when you click the captioning button
     $("#closed-caption-button").click(function() {
         // alert(video_dom.tracks[0].mode);
-        if(video_dom.tracks[0].mode == 2){
-            $("#closed-caption-button img").attr("src", 'images/closedCaptioning.jpg');
-            video_dom.tracks[0].mode = CAPTION_HIDDEN;
+        if(global_video_dom.tracks[0].mode == 2){
+            $("#closed-caption-button img").attr("src", ccNormalImagePath);
+            global_video_dom.tracks[0].mode = CAPTION_HIDDEN;
         }
         else
         {
-            $("#closed-caption-button img").attr("src", 'images/closedCaptioningDown.jpg');
-            video_dom.tracks[0].mode = CAPTION_SHOW;
+            $("#closed-caption-button img").attr("src", ccPressedImagePath);
+            global_video_dom.tracks[0].mode = CAPTION_SHOW;
 
         }
 
@@ -137,6 +139,14 @@ function initVideoSpeedFunction(videodomelement, normalimgpath, fastimgpath, slo
 	speedSlowFastImagePath = fastimgpath;
 	speedSlowSlowImagePath = slowimgpath;
 	speedSlow = 0;
+}
+
+
+function initVideoCaptioningFunction(videodomelement, ccnormalimgpath, ccpressedimgpath)
+{
+	global_video_dom = videodomelement;
+	ccNormalImagePath = ccnormalimgpath;
+	ccPressedImagePath = ccpressedimgpath;
 }
 
 /**

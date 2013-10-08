@@ -13,7 +13,7 @@
 
 {% block title %}{{ thread.title|truncate(50) }}{% endblock title %}
 
-{% block herounit_wrap %}<h1>{{thread.title|truncate(30) }}</h1>{% endblock herounit_wrap %}
+{% block herounit_wrap %}<h1>{{thread.title }}</h1>{% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
 
@@ -24,6 +24,18 @@ var postArray = new Array();
 <div class="row-fluid" id="thread-container">
     <div class="span6" id="leftsidecontent">
     <!-- left side content -->
+    
+    {% if app.user == thread.creator %}
+    <div class="row-fluid">
+        <div class="span2 offset10" id="thread-creator-toolbox">
+            <ul class="unstyled inline">
+                <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class="">Edit</a></li>
+                <li><a href="#" class="">Delete</a></li>
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+     
         <div class="row-fluid text-center" id="mediaFileWrap">
     {% if thread.mediaIncluded|length != 0 %}
         {% set mediaFile = thread.mediaIncluded[0] %}
@@ -35,6 +47,7 @@ var postArray = new Array();
     {% elseif mediaFile.type == 0 %}
     {# -----------   if type of media is an IMAGE   -------- #}
             <img class="thread-content-image" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+            <p></p>
         </div> <!-- /mediaFileWrap div -->
     {# -----------   if type of media is a VIDEO   -------- #}
     {% elseif mediaFile.type == 1 %}
@@ -62,6 +75,10 @@ var postArray = new Array();
                 		                '{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}',
                 		                '{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}'
                  );
+                 initVideoCaptioningFunction(document.getElementById("{{ mediaFile.getID }}"),
+                		                '{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}',
+                		                '{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}'
+                 );
             });
             </script>
         </div> <!-- /mediaFileWrap div -->
@@ -79,6 +96,11 @@ var postArray = new Array();
                {{ thread.content }}
            </div>
         </div>
+        {% if thread.editedBy is defined %}
+        <div class="row-fluid">
+            <span class="pull-right">Edited by {{ thread.editedBy }} on {{ thread.editedAt|date('o-m-N H:i') }}</span>
+        </div>
+        {% endif %}
         <div class="row-fluid" id="thread-creator-details">
             <div class="span12">
                 {% include('IMDCTerpTubeBundle:Thread:smalluserinfo.html.twig') %}

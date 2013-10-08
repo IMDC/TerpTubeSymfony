@@ -1,0 +1,56 @@
+{# src/IMDC/TerpTubeBundle/Resources/views/Thread/editThread.html.twig #}
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/thread.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block title %}Edit Forum Post{% endblock title %}
+
+{% block herounit %}
+<h1>Edit forum post</h1>
+{% endblock herounit %}
+{% if thread.mediaIncluded[0] is defined %}
+    {% set mediaFile = thread.mediaIncluded[0] %}
+{% else %}
+    {% set mediaFile = none %}
+{% endif %}
+{% block underherounitrow1 %}
+<div class="span9">
+{{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="controls controls-row">
+            <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
+            {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
+        </div>
+        <div id="files"></div>
+        {% if mediaFile != null %}
+        <p>
+        <div class="row-fluid">
+            <div class="span4">
+            {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
+            </div> <!-- /span4 -->
+        </div> <!-- /row-fluid -->
+        </p>
+        {% else %}
+        {% endif %}
+        {{ form_row(form.title) }}
+        {{ form_row(form.content) }} 
+        <div class="controls controls-row">
+            {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
+            <a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}" class="btn btn-danger"><i class="icon-remove"></i> Cancel</a>
+        </div>
+    
+    {{ form_end(form) }}
+</div>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}
+
+{% block javascripts %}
+{{ parent() }}
+
+<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/editThread.js') }}"></script>
+
+{% endblock javascripts %}
+

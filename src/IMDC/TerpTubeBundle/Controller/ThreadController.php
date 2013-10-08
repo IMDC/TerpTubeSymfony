@@ -16,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormType;
+use IMDC\TerpTubeBundle\Form\Type\ThreadEditFormType;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFromMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
@@ -171,6 +172,7 @@ class ThreadController extends Controller
                 $logger = $this->container->get('logger');
                 $logger->info('*************media id is ' . $rawmediaID);
                 /** @var $mediaFile IMDC\TerpTubeBundle\Entity\Media */
+                $mediaFile = new Media();
                 $mediaFile = $threadrepo->findOneBy(array('id' => $rawmediaID));
                 
                 // check to make sure the user owns this media file
@@ -270,10 +272,11 @@ class ThreadController extends Controller
             $newthread->setLocked(FALSE);
             $newthread->setSticky(FALSE);
             $newthread->setLastPostAt(new \DateTime('now'));
+            $newthread->setType($chosenmedia->getType());
         
             $user->addThread($newthread);
         
-            // request to persist message object to database
+            // request to persist object to database
             $em->persist($newthread);
             $em->persist($user);
         
@@ -292,6 +295,79 @@ class ThreadController extends Controller
                 ->render('IMDCTerpTubeBundle:Thread:newfrommedia.html.twig',
                 	array('form' => $form->createView(),
                         	'mediaFile' => $chosenmedia,));
+    }
+    
+    public function editThreadAction(Request $request, $threadid)
+    {
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+        {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+         
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+         
+        $threadToEdit = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
+         
+        // does the user own this thread?
+        if (!$user->getThreads()->contains($threadToEdit)) {
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'You do not have permission to edit this thread'
+            );
+            return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+        }
+         
+        $threadeditform = $this->createForm(new ThreadEditFormType(), $threadToEdit,
+                array('user' => $user,
+                        'thread' => $threadToEdit,
+                ));
+         
+        $threadeditform->handleRequest($request);
+         
+        if ($threadeditform->isValid()) {
+             
+            $threadToEdit->setEditedAt(new \DateTime('now'));
+            $threadToEdit->setEditedBy($user);
+             
+            $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+            if (!$threadeditform->get('mediatextarea')->isEmpty()) {
+                 
+                $rawmediaID = $threadeditform->get('mediatextarea')->getData();
+                $logger = $this->container->get('logger');
+                $logger->info('*************media id is ' . $rawmediaID);
+                /** @var $mediaFile \IMDCTerpTubeBundle:Media */
+                $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
+                 
+                if ($user->getResourceFiles()->contains($mediaFile)) {
+                    $logger = $this->get('logger');
+                    $logger->info('User owns this media file');
+                    // FIXME: setMediaIncluded replaces ALL media when editing a thread
+                    $threadToEdit->setMediaIncluded($mediaFile);
+                }
+                 
+            }
+             
+            // request to persist objects to database
+            //$em->persist($user);
+            $em->persist($threadToEdit);
+            $em->flush();
+             
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'Forum post edited successfully!'
+            );
+             
+            return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+        }
+         
+        // form not valid, show the basic form
+        return $this
+        ->render('IMDCTerpTubeBundle:Thread:editThread.html.twig',
+                array('form' => $threadeditform->createView(),
+                        'thread' => $threadToEdit,
+                ));
     }
     
 }

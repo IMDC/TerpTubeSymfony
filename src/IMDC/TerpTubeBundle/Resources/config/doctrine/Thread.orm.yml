@@ -21,6 +21,9 @@ IMDC\TerpTubeBundle\Entity\Thread:
             nullable: true
         lastPostAt:
             type: datetime
+        editedAt:
+            type: datetime
+            nullable: true
         title:
             type: text
         type:
@@ -33,6 +36,10 @@ IMDC\TerpTubeBundle\Entity\Thread:
         creator:
             targetEntity: User
             inversedBy: threads
+        editedBy:
+            targetEntity: User
+            inversedBy: editedThreads
+            nullable: true;
     manyToMany:
         usersFollowing:
             targetEntity: User

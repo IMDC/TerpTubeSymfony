@@ -214,7 +214,13 @@ imdc_thread_create_reply_post:
     defaults: { _controller: IMDCTerpTubeBundle:Post:createReplyPost }
     requirements:
         threadid: \d+
-    
+
+imdc_thread_edit_specific:
+    pattern: /thread/edit/{threadid}
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:editThread }
+    requirements:
+        threadid: \d+
+
     
     
 imdc_post_create_new:

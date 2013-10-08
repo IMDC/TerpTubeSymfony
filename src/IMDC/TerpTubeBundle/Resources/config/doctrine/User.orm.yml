@@ -31,6 +31,9 @@ IMDC\TerpTubeBundle\Entity\User:
         editedPosts:
             targetEntity: Post
             mappedBy: editedBy
+        editedThreads:
+            targetEntity: Thread
+            mappedBy: editedBy
     oneToOne:
         profile:
             targetEntity: UserProfile
