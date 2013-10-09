@@ -179,7 +179,7 @@ class MessageController extends Controller
 
 	}
 
-	public function viewAllPrivateMessagesAction($feedbackmsg = NULL)
+	public function viewAllPrivateMessagesAction(Request $request, $feedbackmsg = NULL)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))

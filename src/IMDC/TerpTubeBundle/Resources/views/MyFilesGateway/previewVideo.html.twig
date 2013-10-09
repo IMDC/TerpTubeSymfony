@@ -2,7 +2,7 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block motionMedia %}
-<video	class="preview" width="640" id="{{ mediaFile.getID }}" preload="auto">
+<video	class="preview" width="100%" id="{{ mediaFile.getID }}" preload="auto">
 	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
 	<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
 </video>

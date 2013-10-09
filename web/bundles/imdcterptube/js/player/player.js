@@ -38,43 +38,46 @@ Player.prototype.createControls = function()
 		this.setupVideo = this.setupVideoRecording;
 	}
 
-	$(this.elementID).append('<div class="videoControlsContainer track"></div>');
-	$(this.elementID).find(".videoControlsContainer.track").append(
-			'<canvas class="videoControlsContainer track densitybar"></canvas>').append(
-			'<canvas class="videoControlsContainer track selectedRegion"></canvas>').append(
-			'<canvas class="videoControlsContainer track thumb"></canvas>');
-	$(this.elementID).find(".videoControlsContainer.track").eq(0).append(
+	var trackElement = $('<div class="videoControlsContainer track"></div>');
+	var canvasElement =$('<div class="videoControlsContainer track canvas"></div>');
+	$(this.elementID).append(trackElement);
+	trackElement.append(canvasElement);
+	canvasElement.append(
+			'<canvas class="videoControlsContainer track canvas densitybar"></canvas>').append(
+			'<canvas class="videoControlsContainer track canvas selectedRegion"></canvas>').append(
+			'<canvas class="videoControlsContainer track canvas thumb"></canvas>');
+	trackElement.append(
 			'<div class="videoControlsContainer track timeBox">0:00/0:00</div>');
-	$(this.elementID).find(".videoControlsContainer.track").eq(0).append(
+	trackElement.append(
 			'<button type="button" class="videoControlsContainer track fullScreenButton"></button>');
 	if (this.options.type == Player.DENSITY_BAR_TYPE_RECORDER)
 	{
-		$(this.elementID).find(".videoControlsContainer.track").eq(0).append(
+		trackElement.append(
 				'<button type="button" class="videoControlsContainer track selectCameraButton"></button>');
 	}
 	if (this.options.volumeControl)
 	{
-		$(this.elementID).find(".videoControlsContainer.track.thumb").eq(0).mouseover(function()
+		trackElement.find(".videoControlsContainer.track.thumb").eq(0).mouseover(function()
 		{
 			instance.setVolumeBarVisible(false);
 		});
-		$(this.elementID).find(".videoControlsContainer.track").eq(0).append(
+		trackElement.append(
 				'<div class="videoControlsContainer track volumeControl"></div>');
-		$(this.elementID).find(".videoControlsContainer.track.volumeControl").eq(0).mouseover(function()
+		trackElement.find(".videoControlsContainer.volumeControl").eq(0).mouseover(function()
 		{
 			instance.setVolumeBarVisible(true);
 		});
-		$(this.elementID).find(".videoControlsContainer.track.volumeControl").eq(0).append(
+		trackElement.find(".videoControlsContainer.volumeControl").eq(0).append(
 				'<img alt="volume control" />').append(
 				'<div class="videoControlsContainer track volumeControl volumeSlider"></div>');
-		$(this.elementID).find(".videoControlsContainer.track.volumeControl img").eq(0).click(function()
+		$(this.elementID).find(".videoControlsContainer.volumeControl img").eq(0).click(function()
 		{
 			instance.toggleMute();
 		});
 
 		$(function()
 		{
-			$(instance.elementID).find(".videoControlsContainer.track.volumeControl.volumeSlider").eq(0).slider(
+			$(instance.elementID).find(".videoControlsContainer.volumeControl.volumeSlider").eq(0).slider(
 					{
 						orientation : "horizontal",
 						range : "min",
@@ -86,12 +89,12 @@ Player.prototype.createControls = function()
 							$(instance.videoID)[0].volume = ui.value / 100;
 							if ($(instance.videoID)[0].volume > 0)
 							{
-								$(instance.elementID).find(".videoControlsContainer.track.volumeControl img").eq(0)
+								$(instance.elementID).find(".videoControlsContainer.volumeControl img").eq(0)
 										.removeClass("mute");
 							}
 							else
 							{
-								$(instance.elementID).find(".videoControlsContainer.track.volumeControl img").eq(0)
+								$(instance.elementID).find(".videoControlsContainer.volumeControl img").eq(0)
 										.addClass("mute");
 							}
 						}
@@ -210,11 +213,11 @@ Player.prototype.createControls = function()
 								+ '<input type="radio" name="audioEnabled" value="true" class="preview-media" id="audioOn" checked="checked" />');
 	}
 
-	$(this.elementID).find(".videoControlsContainer.track.fullScreenButton").eq(0).click(function()
+	$(this.elementID).find(".videoControlsContainer.fullScreenButton").eq(0).click(function()
 	{
 		instance.toggleFullScreen();
 	});
-	$(this.elementID).find(".videoControlsContainer.track.selectCameraButton").eq(0).click(function()
+	$(this.elementID).find(".videoControlsContainer.selectCameraButton").eq(0).click(function()
 	{
 		instance.selectCamera();
 	});
@@ -1332,7 +1335,7 @@ Player.prototype.postRecordings = function(address, additionalDataObject)
 {
 	// FormData
 	var formData = new FormData();
-	if (typeof additionalDataObject !== undefined)
+	if (typeof additionalDataObject != "undefined" && additionalDataObject !== null)
 	{
 		Object.keys(additionalDataObject).forEach(function(key) //If AdditionalData is a JS object with key/value pairs
 		{

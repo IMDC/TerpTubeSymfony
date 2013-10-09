@@ -62,13 +62,24 @@ button.videoControlsContainer
 	display: inline;
 }
 
-.videoControlsContainer.track canvas
+.videoControlsContainer.track.canvas canvas
 {
 	position:absolute;
 	left:0px;
     top:0px;
     /*width: 480px;*/
-    width: 75%;
+    width: 100%; 
+    height: 40px;
+    background-color: transparent;
+}
+
+.videoControlsContainer.track.canvas 
+{
+	position:absolute;
+	left:0px;
+    top:0px;
+    /*width: 480px;*/
+    width: 75%; 
     height: 40px;
     background-color: transparent;
 }
@@ -140,7 +151,8 @@ div.videoControlsContainer.controlsBar.forwardButtons
 	float: right;	
 /*	width: 10%; */
 	text-align:right;
-	margin-right: -40px;
+	/* margin-right: -40px; */
+	margin-top:0px;
 }
 
 
@@ -152,7 +164,7 @@ div.videoControlsContainer.controlsBar.backButtons
 	float:left;
 /*	width: 10%; */
 	text-align:left;	
-	margin-left: -40px;
+	/* margin-left: -40px; */
 }
 
 .videoControlsContainer.controlsBar.videoControls.beginButton
@@ -178,7 +190,7 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-repeat: no-repeat;
 }
 
-.videoControlsContainer.track.fullScreenButton
+.videoControlsContainer.fullScreenButton
 {
 	background-image: url(../../img/player/fullscreen.png);
 	background-repeat: no-repeat;
@@ -207,6 +219,7 @@ div.videoControlsContainer.controlsBar.backButtons
 {
 	background-image: url(../../img/player/submit_small.png); 
 	background-repeat: no-repeat;	
+	margin-top:0px;
 }
 
 /*
@@ -242,7 +255,7 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-repeat: no-repeat;	
 }
 
-.videoControlsContainer.track.selectCameraButton
+.videoControlsContainer.selectCameraButton
 {
 	background-image: url(../../img/player/choose_mic_cam.png);
 	background-repeat: no-repeat;
@@ -253,7 +266,7 @@ div.videoControlsContainer.controlsBar.backButtons
  */
 
 
-.videoControlsContainer.track.volumeControl
+.videoControlsContainer.volumeControl
 {
 
 	width: 40px;
@@ -263,7 +276,7 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-color: white;
 }
 
-.videoControlsContainer.track.volumeControl img
+.videoControlsContainer.volumeControl img
 {
 	width: 80%;
 	height: 80%;
@@ -282,13 +295,13 @@ div.videoControlsContainer.controlsBar.backButtons
 	content: url(../../img/player/audioOff.png);
 }
 
-.videoControlsContainer.track.volumeControl img.mute
+.videoControlsContainer.volumeControl img.mute
 {
 	content: url(../../img/player/audioOff.png);
 }
 
 
-.videoControlsContainer.track.volumeControl.volumeSlider
+.videoControlsContainer.volumeControl.volumeSlider
 {
 	display:none;
 	position: relative;
@@ -300,17 +313,17 @@ div.videoControlsContainer.controlsBar.backButtons
 	border: 1px solid black;
 	text-align: center;
 }
-.videoControlsContainer.track.volumeControl.volumeSlider.ui-slider
+.videoControlsContainer.volumeControl.volumeSlider.ui-slider
 {
 	text-align: center;
 	margin: 0px;
 }
-.videoControlsContainer.track.volumeControl.volumeSlider .ui-slider-range
+.videoControlsContainer.volumeControl.volumeSlider .ui-slider-range
 {
 	background: green;
 	margin: 0px;
 }
-.videoControlsContainer.track.volumeControl.volumeSlider .ui-slider-handle
+.videoControlsContainer.volumeControl.volumeSlider .ui-slider-handle
 {
 	left: 0px;
 	top: -2px;
