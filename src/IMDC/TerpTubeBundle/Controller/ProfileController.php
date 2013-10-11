@@ -44,12 +44,12 @@ class ProfileController extends BaseController
 	 * Show your own profile
 	 * @throws AccessDeniedException - occurs if you are not logged in
 	 */
-	public function showAction()
+	public function showAction(Request $request)
 	{
-		$user = $this->getUser();
+		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
+			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
 		}
 		$response = new RedirectResponse(
 				$this->container->get('router')
@@ -64,12 +64,12 @@ class ProfileController extends BaseController
 	 * @throws AccessDeniedException - occurs if you are not logged in
 	 * @throws NotFoundHttpException - occurs if the user does not exist
 	 */
-	public function showSpecificAction($userName)
+	public function showSpecificAction(Request $request, $userName)
 	{
-		$user = $this->getUser();
+		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
+			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($userName);
@@ -88,10 +88,10 @@ class ProfileController extends BaseController
 
 	public function updateAvatarAction(Request $request, $userName)
 	{
-		$user = $this->getUser();
+		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
+			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
 		}
 		if ($user->getUsername() != $userName)
 		{
@@ -158,10 +158,10 @@ class ProfileController extends BaseController
 	 */
 	public function editAction(Request $request, $userName)
 	{
-		$user = $this->getUser();
+		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
+			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
 		}
 		if ($user->getUsername() != $userName)
 		{

@@ -91,6 +91,14 @@ imdc_files_gateway_add_simultaneous_recording:
      options:
         expose: true
         
+imdc_files_gateway_preview_compound_media: 
+     pattern: /myFiles/preview/compound_media/{compoundMediaID}
+     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:compoundMediaPreview, url: null }
+#     requirements:
+#        _method:  POST
+     options:
+        expose: true
+        
 imdc_files_gateway_preview:
     pattern: /myFiles/preview/{mediaId}
     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewMedia }

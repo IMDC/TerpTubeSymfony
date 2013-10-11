@@ -469,9 +469,10 @@ class AddFileGatewayController extends Controller
 		$uploadedEvent = new UploadEvent($media);
 		$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
-		$mediaObjectArray = JSEntities::getMediaObject($media);
+		//$mediaObjectArray = JSEntities::getMediaObject($media);
+		$compoundMediaObjectArray = JSEntities::getCompoundMediaObject($compoundMedia);
 
-		$return = array('responseCode' => 200, 'feedback' => 'media added', 'media' => $mediaObjectArray);
+		$return = array('responseCode' => 200, 'feedback' => 'media added', 'compoundMedia' => $compoundMediaObjectArray);
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
 

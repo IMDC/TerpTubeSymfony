@@ -16,12 +16,14 @@
 {% block underherounitrow1 %}
     <div class="row-fluid">
 	    <div class="simultaneousVideoRecording">
-	   		<video	class="preview" width="640" id="{{ mediaFile.getID }}" preload="auto">
-				<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
-				<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
+	   		<video	class="preview" id="{{ compoundMedia.getSourceID.getId }}" preload="auto">
+				<source src="{{ asset(compoundMedia.getSourceID.getResource.getWebPathWebm) }}"/>
+				<source src="{{ asset(compoundMedia.getSourceID.getResource.getWebPath) }}"/>
 			</video>
 			
-			<video	class="preview"  id="record" preload="auto" autoplay muted>
+			<video	class="preview"  id="{{ compoundMedia.getTargetID.getId }}" preload="auto" preload="auto" >
+				<source src="{{ asset(compoundMedia.getTargetID.getResource.getWebPathWebm) }}"/>
+				<source src="{{ asset(compoundMedia.getTargetID.getResource.getWebPath) }}"/>
 			</video>
 			
 			<div class="simultaneousVideoControls">
@@ -38,16 +40,13 @@
 {% block javascripts %}
  {{ parent() }}
  <script type='text/javascript'>
- var compoundMediaID = -1;
  $(document).ready(function() {
-	 var playerElement = $("#{{ mediaFile.getID }}");
+	 var playerElement = $("#{{ compoundMedia.getSourceID.getID }}");
 	 var player1 = new Player(playerElement);
-	 var recordingElement = $("#record");
-	 var player2 = new Player(recordingElement);
+	 var player2 = new Player("#{{ compoundMedia.getTargetID.getId}}");
 
-	 var startTime = 0; //used to hold the start time of the recording relative to the source video
-	 var recordedMediaID = -1;
-	 
+	 var startTime = {{ compoundMedia.getTargetStartTime }}; //used to hold the start time of the recording relative to the source video
+	 var totalTime = 0;
 	 
 	 player1.options.areaSelectionEnabled = false;
 	 player1.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
@@ -60,9 +59,8 @@
 	 
 	 player2.options.areaSelectionEnabled = false;
 	 player2.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	 player2.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
 	 player2.options.backButton = false;
-	 player2.options.forwardButton = true;
+	 //player.options.forwardButton = false;
 	 player2.options.audioBar = false;
 	 player2.options.volumeControl = false;
 	 player2.options.recordingErrorFunction = function(e)
@@ -78,28 +76,24 @@
 	 };
 	 player2.options.forwardFunction = function(data)
 	 {
-		 player2.destroyRecorder();
+		 player.destroyRecorder();
 		// console.log(recorderConfiguration);
 		// var fn = window[recorderConfiguration.forwardFunction]||null;
 		// fn(data);
 		 console.log('Forward!', data);
-		 goForward();
 	 };
-	
 	 player2.options.controlBarElement = $('.simultaneousVideoControls');
+
 
 	 player1.createControls();
 	 player2.createControls();
 
-	 
-	 recordingElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
-		 {
-		 if (player !=null)
-		 	player.destroyRecorder();
-		 });
-
 	 $(player1).on(Player.EVENT_PLAYBACK_STARTED, function() {
 			console.log("Playback Started");
+			if (!player2.playing)
+			{
+				player2.setVideoTime(player1.getCurrentTime()+startTime);
+			}
 		 });
 	 $(player1).on(Player.EVENT_PLAYBACK_STOPPED, function() {
 			console.log("Playback Stopped");
@@ -109,62 +103,41 @@
 		 });
 	 $(player1).on(Player.EVENT_SEEK, function(event, seekTime) {
 			console.log("Playback Seeked to:"+seekTime);
+			player2.setVideoTime(seekTime+startTime);
 			//player2.options.maxRecordingTime = player1.getDuration()-seekTime;
 			//player2.repaint();
 		 });
-
 	 $(player1).on(Player.EVENT_INITIALIZED, function() {
 			console.log("Player Initialized");
 			//player2.options.maxRecordingTime = player1.getDuration();
 			//player2.repaint();
 		 });
-	 
-	 $(player2).on(Player.EVENT_RECORDING_STARTED, function() {
-			player1.setControlsEnabled(false);
-			startTime = player1.getCurrentTime();
-			player2.options.additionalDataToPost = {'startTime' : startTime, 'sourceMediaID' : '{{ mediaFile.getID }}'};
-			player2.options.recordingPostURL = Routing.generate('imdc_files_gateway_add_simultaneous_recording', player2.options.additionalDataToPost);
-			player1.play();
-			console.log("Recording Started");
-			if (recordedMediaID != -1)
+
+	 $(player2).on(Player.EVENT_PLAYBACK_STARTED, function() {
+			console.log("Playback Started");
+			if (!player1.playing)
 			{
-				//TODO AJAX to Delete the recording
-				var mediaManager = new MediaManager();
-				$(mediaManager).on(MediaManager.EVENT_DELETE_SUCCESS, function(){
-					console.log("Temporary media deleted");
-					});
-				$(mediaManager).on(MediaManager.EVENT_DELETE_ERROR, function(event, response){
-					console.log("Error deleting media");
-					console.log(response);
-					});
-				mediaManager.deleteMedia(recordedMediaID);
-				recordedMediaID = -1;
+				player1.setVideoTime(player1.getCurrentTime()-startTime);
 			}
 		 });
-
-	 $(player2).on(Player.EVENT_RECORDING_STOPPED, function() {
-			player1.pause();
-			player1.setControlsEnabled(true);
-			console.log("Recording Finished");
+	 $(player2).on(Player.EVENT_PLAYBACK_STOPPED, function() {
+			console.log("Playback Stopped");
 		 });
-
-	 $(player2).on(Player.EVENT_RECORDING_UPLOADED, function(event, data) {
-			console.log("Recording Uploaded");
-			compoundMediaID = data.compoundMedia.id;
-			recordedMediaID = data.compoundMedia.sourceMedia.id;
-			console.log(data);
+	 $(player2).on(Player.EVENT_PLAYBACK_FINISHED, function() {
+			console.log("Playback Finished");
 		 });
-
-	 $(player1).on(Player.EVENT_INITIALIZED, function() {
-			console.log("Recorder Initialized");
+	 $(player2).on(Player.EVENT_SEEK, function(event, seekTime) {
+			console.log("Playback Seeked to:"+seekTime);
+			player1.setVideoTime(seekTime-startTime);
+			//player2.options.maxRecordingTime = player1.getDuration()-seekTime;
+			//player2.repaint();
+		 });
+	 $(player2).on(Player.EVENT_INITIALIZED, function() {
+			console.log("Player2 Initialized");
+			totalTime = player2.getDuration()+startTime;
 		 });
 		
 });
-
- function goForward()
- {
-	 window.location = Routing.generate('imdc_files_gateway_preview_compound_media', compoundMediaID);
- }
   </script>
   
   <script src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>

@@ -635,7 +635,9 @@ Player.prototype.play = function()
 	{
 		$(this.videoID)[0].play();
 		$(this).trigger(Player.EVENT_PLAYBACK_STARTED);
+		this.playing = true;
 	}
+	
 	// preview = false;
 	// timer = setInterval("checkStop()", 100);
 };
@@ -646,6 +648,7 @@ Player.prototype.pause = function()
 	{
 		$(this.videoID)[0].pause();
 		$(this).trigger(Player.EVENT_PLAYBACK_STOPPED);
+		this.playing = false;
 	}
 	// clearInterval(timer);
 	this.preview = false;
@@ -1141,6 +1144,7 @@ Player.prototype.setupVideoPlayback = function()
 	{
 		instance.checkForPlayHeadClick(e);
 	});
+	this.duration = $(this.videoID)[0].duration;
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
 
@@ -1209,6 +1213,8 @@ Player.prototype.setupVideoRecording = function()
 		videoElement.html('Problem with recording'); // fallback.
 	}
 
+	this.duration = this.options.maxRecordingTime;
+	
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
 
@@ -1508,10 +1514,7 @@ Player.prototype.getCurrentTime = function()
 
 Player.prototype.getDuration = function()
 {
-	if (this.options.type == Player.DENSITY_BAR_TYPE_RECORDER)
-		return this.options.maxRecordingTime;
-	else if (this.options.type == Player.DENSITY_BAR_TYPE_PLAYER)
-		return $(this.videoID)[0].duration;
+	return this.duration;
 };
 
 Player.prototype.getTimeForX = function(x)
@@ -1540,7 +1543,10 @@ Player.prototype.setVideoTimeFromCoordinate = function(position)
 Player.prototype.setVideoTime = function(time)
 {
 	if (time != $(this.videoID)[0].currentTime)
+	{
 		$(this.videoID)[0].currentTime = time;
+		(this).trigger(Player.EVENT_SEEK, [ time ]);
+	}
 	// this.repaint();
 };
 
