@@ -117,6 +117,7 @@ class ThreadController extends Controller
         	$form = $this->createForm(new PostFormFromThreadType(), $post, array(
         			'user' => $user,
         			'em' => $em,
+        	        'thread' => $thread,
         	));
         	
         	return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(

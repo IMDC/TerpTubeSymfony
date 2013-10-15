@@ -104,26 +104,30 @@ class PostController extends Controller
 	    $newpost->setParentThread($thread);
 	    // have to add the em as an option to the form builder
 	    //$form = $this->createForm(new PostFormType(), $newpost);
-	    $form = $this->createForm(new PostFormType(), $newpost, array('em' => $this->getDoctrine()->getManager()));
-	
+	    $form = $this->createForm(new PostFormFromThreadType(), $newpost, 
+	            array('em' => $this->getDoctrine()->getManager(),
+	                    'user' => $user,
+	                    'thread' => $thread,
+	    ));
+	    
 	    $form->handleRequest($request);
+	    
+	    $validator = $this->get('validator');
+	    $formerrors = $validator->validate($newpost);
 	
 	    if ($form->isValid()) {
 	         
 	        $newpost->setAuthor($user);
 	        $newpost->setCreated(new \DateTime('now'));
-	        $newpost->setIsDeleted(FALSE);
-	        //$newpost->setParentThread($thread);
 	         
-	        $newpost->setIsTemporal(FALSE);
-	        /*
-	        if (null != $newpost->getStartTime() && null != $newpost->getEndTime()) {
+	        $formstarttime = $form->get('startTime')->getData();
+	        $formendtime   = $form->get('endTime')->getData();
+	        if ( NULL != $formstarttime && NULL != $formendtime ) {
 	            $newpost->setIsTemporal(TRUE);
 	        }
 	        else {
 	            $newpost->setIsTemporal(FALSE);
 	        }
-	        */
 	        
 	        $user->addPost($newpost);
 	         
@@ -156,9 +160,11 @@ class PostController extends Controller
 	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)).'#'.$newpostid);
 	    }
 	
-	    // form not valid, show the basic form
-	    return $this->render('IMDCTerpTubeBundle:Post:new.html.twig', array(
+	    // form is not valid, show the basic form
+	    return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
 	            'form' => $form->createView(),
+	            'thread' => $thread,
+	            'formerrors' => $formerrors,
 	    ));
 	}
 	

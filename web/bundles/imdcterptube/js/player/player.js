@@ -1545,7 +1545,7 @@ Player.prototype.setVideoTime = function(time)
 	if (time != $(this.videoID)[0].currentTime)
 	{
 		$(this.videoID)[0].currentTime = time;
-		(this).trigger(Player.EVENT_SEEK, [ time ]);
+		$(this).trigger(Player.EVENT_SEEK, [ time ]);
 	}
 	// this.repaint();
 };

@@ -65,7 +65,7 @@ var postArray = new Array();
             <script type="text/javascript">
             {# this is required to pass twig stuff to js file #}
             $(document).ready(function() {
-                 var Player = createPlayer('#{{ mediaFile.getID }}', 
+                 var globalPlayer = createPlayer('#{{ mediaFile.getID }}', 
                     	                      '{{ asset('bundles/imdcterptube/img/player/add.png') }}',
                     	                      '#PostFormFromThread_startTime',
                     	                      '#PostFormFromThread_endTime'
@@ -98,7 +98,7 @@ var postArray = new Array();
         </div>
         {% if thread.editedBy is defined %}
         <div class="row-fluid">
-            <span class="pull-right">Edited by {{ thread.editedBy }} on {{ thread.editedAt|date('o-m-N H:i') }}</span>
+            <span class="pull-right edited-text-span">Edited by {{ thread.editedBy }} on {{ thread.editedAt|date('o-m-N H:i') }}</span>
         </div>
         {% endif %}
         <div class="row-fluid" id="thread-creator-details">
@@ -110,7 +110,18 @@ var postArray = new Array();
     <div class="span6" id="rightsidecontent">
     <!-- right side content -->
     {# ------------------------------------------------ post reply form -------------------------------------------- #}
-    
+    {% if formerrors is defined %}
+        <div class="row-fluid" id="reply-error-container">
+            <div class="span12">
+            <h4>The following errors are preventing you from making a comment</h4>
+            <ul class="unstyled">
+                {% for formerror in formerrors %}
+                    <li>{{ formerror.message }}</li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+    {% endif %}
       <div class="row-fluid" id="reply-container">
            <div class="span12">
                <p>
@@ -166,9 +177,10 @@ var postArray = new Array();
                 var newpost = new post('{{ post.id }}',
                 		               '{{ post.startTime }}',
                 		               '{{ post.endTime }}',
-                		               {{ post.isTemporal ? 'true' : 'false' }}             		               
+                		               {{ post.isTemporal ? 'true' : 'false' }}          		               
                 		               );
                 postArray.push(newpost);
+                console.log(newpost.color);
             </script>
             
             

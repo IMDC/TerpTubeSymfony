@@ -35,12 +35,12 @@ class PostFormFromThreadType extends AbstractType
 		if ($thread->getType() == 1) {
     		$builder->add('startTime', 'number', array(
 					'required' => false,
-                    'precision' => 4,
+                    'precision' => 2,
     		));
     		
     		$builder->add('endTime', 'number', array(
     				'required' => false,
-    		        'precision' => 4,
+    		        'precision' => 2,
     		));
 		}
 		

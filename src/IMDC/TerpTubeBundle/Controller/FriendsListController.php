@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 // these import the "@Route" and "@Template" annotations
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -12,7 +13,7 @@ use IMDC\TerpTubeBundle\Entity;
 
 class FriendsListController extends Controller
 {
-	public function addAction($userid)
+	public function addAction(Request $request, $userid)
 	{
 
 		// check if user logged in
@@ -35,14 +36,11 @@ class FriendsListController extends Controller
 		$em->persist($user);
 		$em->flush();
 
-		return $this
-				->redirect(
-						$this
-								->generateUrl('imdc_terp_tube_user_profile_specific',
-										array('userName' => $usertoadd->getUserName())));
+		return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific',
+								        array('userName' => $usertoadd->getUserName())));
 	}
 
-	public function removeAction($userid, $redirect)
+	public function removeAction(Request $request, $userid, $redirect)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -76,7 +74,7 @@ class FriendsListController extends Controller
 		return $this->redirect($this->generateUrl($redirect));
 	}
 
-	public function showAllAction()
+	public function showAllAction(Request $request)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))

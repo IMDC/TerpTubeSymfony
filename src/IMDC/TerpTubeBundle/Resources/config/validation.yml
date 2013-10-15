@@ -4,3 +4,15 @@ IMDC\TerpTubeBundle\Entity\Message:
     properties:
         recipients:
             - NotBlank: ~
+            
+            
+IMDC\TerpTubeBundle\Entity\Post:
+    properties:
+        startTime:
+            - Type:
+                type: float
+                message: The value {{ value }} is not a valid {{ type }}.
+        endTime:
+            - Type:
+                type: float
+                message: The value {{ value }} is not a valid {{ type }}.

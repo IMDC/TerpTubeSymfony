@@ -76,3 +76,20 @@ img.post-reply-image {
     margin-top: 5px;
     margin-left: 5px;
 }
+
+span.edited-text-span {
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+#ThreadEditForm_title {
+    width: 60%;
+}
+
+#ThreadEditForm_content {
+    width: 70%;
+}
+
+.postBorderHighlight {
+    border: 3px solid red !important;
+}

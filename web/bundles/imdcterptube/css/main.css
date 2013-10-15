@@ -10,9 +10,13 @@ body {
 
 ul.nav-list img {
     margin-top: 5px;
-    width: 48px;
+    width: 36px;
 }
 
 span.content-created-datetime-span {
     font-size: 0.7em;
+}
+
+div.mainsidebarnav {
+  /*   min-width: 100px; */
 }

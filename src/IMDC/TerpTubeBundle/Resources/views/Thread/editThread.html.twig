@@ -34,8 +34,8 @@
         </p>
         {% else %}
         {% endif %}
-        {{ form_row(form.title) }}
-        {{ form_row(form.content) }} 
+        {{ form_row(form.title, {'attr': {'class':'autosize'}}) }}
+        {{ form_row(form.content, {'attr': {'class':'autosize'}}) }} 
         <div class="controls controls-row">
             {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
             <a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}" class="btn btn-danger"><i class="icon-remove"></i> Cancel</a>

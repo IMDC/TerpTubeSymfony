@@ -75,6 +75,8 @@ class Post
     public function __construct()
     {
         $this->attachedFile = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->isDeleted    = FALSE; // set to false as default
+        $this->isTemporal   = FALSE; // set to false as default
     }
     
     /**

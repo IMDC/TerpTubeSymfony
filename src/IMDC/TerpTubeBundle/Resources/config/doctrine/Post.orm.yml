@@ -29,7 +29,6 @@ IMDC\TerpTubeBundle\Entity\Post:
             nullable: true
         isTemporal:
             type: boolean
-            nullable: true
     manyToMany: 
         attachedFile:  #many-to-many relationship
             targetEntity: Media
