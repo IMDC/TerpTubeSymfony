@@ -15,6 +15,10 @@ Player.EVENT_PLAYBACK_FINISHED = "playback_finished";
 Player.EVENT_INITIALIZED = "player_initialized";
 Player.EVENT_SEEK = "player_seek";
 
+Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
+Player.EVENT_COMMENT_MOUSE_OVER = "player_comment_mouse_over";
+Player.EVENT_COMMENT_MOUSE_OUT = "player_comment_mouse_out";
+
 // FIXME Add events for every action that the player does - e.g. onPlay, onStop, onRecordingStarted, onRecordingStopped
 Player.prototype.createControls = function()
 {
@@ -39,21 +43,17 @@ Player.prototype.createControls = function()
 	}
 
 	var trackElement = $('<div class="videoControlsContainer track"></div>');
-	var canvasElement =$('<div class="videoControlsContainer track canvas"></div>');
+	var canvasElement = $('<div class="videoControlsContainer track canvas"></div>');
 	$(this.elementID).append(trackElement);
 	trackElement.append(canvasElement);
-	canvasElement.append(
-			'<canvas class="videoControlsContainer track canvas densitybar"></canvas>').append(
+	canvasElement.append('<canvas class="videoControlsContainer track canvas densitybar"></canvas>').append(
 			'<canvas class="videoControlsContainer track canvas selectedRegion"></canvas>').append(
 			'<canvas class="videoControlsContainer track canvas thumb"></canvas>');
-	trackElement.append(
-			'<div class="videoControlsContainer track timeBox">0:00/0:00</div>');
-	trackElement.append(
-			'<button type="button" class="videoControlsContainer track fullScreenButton"></button>');
+	trackElement.append('<div class="videoControlsContainer track timeBox">0:00/0:00</div>');
+	trackElement.append('<button type="button" class="videoControlsContainer track fullScreenButton"></button>');
 	if (this.options.type == Player.DENSITY_BAR_TYPE_RECORDER)
 	{
-		trackElement.append(
-				'<button type="button" class="videoControlsContainer track selectCameraButton"></button>');
+		trackElement.append('<button type="button" class="videoControlsContainer track selectCameraButton"></button>');
 	}
 	if (this.options.volumeControl)
 	{
@@ -61,14 +61,12 @@ Player.prototype.createControls = function()
 		{
 			instance.setVolumeBarVisible(false);
 		});
-		trackElement.append(
-				'<div class="videoControlsContainer track volumeControl"></div>');
+		trackElement.append('<div class="videoControlsContainer track volumeControl"></div>');
 		trackElement.find(".videoControlsContainer.volumeControl").eq(0).mouseover(function()
 		{
 			instance.setVolumeBarVisible(true);
 		});
-		trackElement.find(".videoControlsContainer.volumeControl").eq(0).append(
-				'<img alt="volume control" />').append(
+		trackElement.find(".videoControlsContainer.volumeControl").eq(0).append('<img alt="volume control" />').append(
 				'<div class="videoControlsContainer track volumeControl volumeSlider"></div>');
 		$(this.elementID).find(".videoControlsContainer.volumeControl img").eq(0).click(function()
 		{
@@ -94,8 +92,8 @@ Player.prototype.createControls = function()
 							}
 							else
 							{
-								$(instance.elementID).find(".videoControlsContainer.volumeControl img").eq(0)
-										.addClass("mute");
+								$(instance.elementID).find(".videoControlsContainer.volumeControl img").eq(0).addClass(
+										"mute");
 							}
 						}
 					});
@@ -347,6 +345,7 @@ Player.prototype.drawComments = function()
 		if (this.comments[i].paintHighlighted == true)
 			this.drawComment(this.comments[i]);
 	}
+	this.redrawcomments = false;
 };
 
 Player.prototype.drawComment = function(comment)
@@ -383,6 +382,7 @@ Player.prototype.drawSignLinks = function()
 	{
 		this.drawSignLink(this.signLinks[i], this.options.signLinkColor);
 	}
+	this.redrawSignlinks = false;
 };
 
 Player.prototype.drawSignLink = function(signlink, color)
@@ -637,7 +637,7 @@ Player.prototype.play = function()
 		$(this).trigger(Player.EVENT_PLAYBACK_STARTED);
 		this.playing = true;
 	}
-	
+
 	// preview = false;
 	// timer = setInterval("checkStop()", 100);
 };
@@ -702,6 +702,14 @@ Player.prototype.repaint = function()
 		 * if (this.preview && this.getCurrentTime() >= this.currentMaxTimeSelected) { this.preview = false;
 		 * this.pause(); this.setVideoTime(this.currentMaxTimeSelected); }
 		 */
+		if (this.redrawcomments == true)
+		{
+			this.drawComments();
+		}
+		if (this.redrawSignlinks == true)
+		{
+			this.drawSignLinks();
+		}
 	}
 	if (this.options.type == Player.DENSITY_BAR_TYPE_RECORDER)
 	{
@@ -785,7 +793,7 @@ Player.prototype.onCommentMouseOver = function(event)
 			if (comment.highlighted == true)
 			{
 				comment.highlighted = undefined;
-				this.options.onCommentMouseOut(comment);
+				$(this).trigger(Player.EVENT_COMMENT_MOUSE_OUT, comment);
 			}
 			continue;
 
@@ -794,7 +802,7 @@ Player.prototype.onCommentMouseOver = function(event)
 			continue;
 		comment.highlighted = true;
 		// console.log(this.comments[i]);
-		this.options.onCommentMouseOver(comment);
+		$(this).trigger(Player.EVENT_COMMENT_MOUSE_OVER, comment);
 
 	}
 };
@@ -899,8 +907,7 @@ Player.prototype.setMouseDownThumb = function(event)
 
 				instance.setHighlightedRegion(instance.currentMinSelected, instance.currentMaxSelected);
 				instance.setVideoTime(instance.currentMinTimeSelected);
-				if (instance.options.onAreaSelectionChanged)
-					instance.options.onAreaSelectionChanged();
+				$(instance).trigger(Player.EVENT_AREA_SELECTION_CHANGED);
 			});
 
 		}
@@ -925,8 +932,7 @@ Player.prototype.setMouseDownThumb = function(event)
 				instance.currentMaxTimeSelected = instance.getTimeForX(instance.currentMaxSelected);
 				instance.setHighlightedRegion(instance.currentMinSelected, instance.currentMaxSelected);
 				instance.setVideoTime(instance.currentMaxTimeSelected);
-				if (instance.options.onAreaSelectionChanged)
-					instance.options.onAreaSelectionChanged();
+				$(instance).trigger(Player.EVENT_AREA_SELECTION_CHANGED);
 			});
 		}
 	}
@@ -1109,6 +1115,8 @@ Player.prototype.setupVideoPlayback = function()
 	this.currentMaxSelected = this.maxSelected;
 	this.currentMaxTimeSelected = this.getTimeForX(this.currentMaxSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+	this.duration = $(this.videoID)[0].duration;
+	console.log(this.duration);
 	this.drawComments();
 	this.drawSignLinks();
 	this.repaint();
@@ -1144,7 +1152,7 @@ Player.prototype.setupVideoPlayback = function()
 	{
 		instance.checkForPlayHeadClick(e);
 	});
-	this.duration = $(this.videoID)[0].duration;
+
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
 
@@ -1214,7 +1222,7 @@ Player.prototype.setupVideoRecording = function()
 	}
 
 	this.duration = this.options.maxRecordingTime;
-	
+
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
 
@@ -1343,7 +1351,7 @@ Player.prototype.postRecordings = function(address, additionalDataObject)
 	var formData = new FormData();
 	if (typeof additionalDataObject != "undefined" && additionalDataObject !== null)
 	{
-		Object.keys(additionalDataObject).forEach(function(key) //If AdditionalData is a JS object with key/value pairs
+		Object.keys(additionalDataObject).forEach(function(key) // If AdditionalData is a JS object with key/value pairs
 		{
 			formData.append(key, additionalDataObject[key]);
 		});
