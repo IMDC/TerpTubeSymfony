@@ -57,13 +57,6 @@ class PostController extends Controller
 			$newpost->setIsDeleted(FALSE);
 			$newpost->setParentThread(NULL);
 			
-			if ('' != $newpost->getStartTime() && '' != $newpost->getEndTime()) {
-			    $newpost->setIsTemporal(TRUE);
-			}
-			else {
-			    $newpost->setIsTemporal(FALSE);
-			}
-			
 			$user->addPost($newpost);
 			//$user->increasePostCount(1);
 			
@@ -120,13 +113,9 @@ class PostController extends Controller
 	        $newpost->setAuthor($user);
 	        $newpost->setCreated(new \DateTime('now'));
 	         
-	        $formstarttime = $form->get('startTime')->getData();
-	        $formendtime   = $form->get('endTime')->getData();
-	        if ( NULL != $formstarttime && NULL != $formendtime ) {
+	        // set post temporality
+	        if ( NULL != $newpost->getStartTime() && NULL != $newpost->getEndTime() ) {
 	            $newpost->setIsTemporal(TRUE);
-	        }
-	        else {
-	            $newpost->setIsTemporal(FALSE);
 	        }
 	        
 	        $user->addPost($newpost);
@@ -220,8 +209,6 @@ class PostController extends Controller
 		
 		$postToDelete = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
 		
-		$logger = $this->get('logger');
-		$logger->info('******OMG IM HERE******');
 		// if post is not owned by the currently logged in user, redirect
 		if (!$postToDelete->getAuthor()->getId() == $user->getId()) {
 			$this->get('session')->getFlashBag()->add(
@@ -238,7 +225,6 @@ class PostController extends Controller
 			$em->flush();
 			
 			$return = array('responseCode' => 200, 'feedback' => 'Post deleted!');
-				
 		}
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));

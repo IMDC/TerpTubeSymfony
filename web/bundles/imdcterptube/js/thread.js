@@ -16,6 +16,7 @@ $(document).ready(function() {
 	$("#post-comment-button").click(function() {
 		$("#comment-form-wrap").toggle();
 		$(this).toggle();
+		$("#PostFormFromThread_content").focus();
 	});
 	
 	/**
@@ -151,8 +152,11 @@ $(document).ready(function() {
 //    	$("#comment-form-wrap").show();
 //    }
     
-    
+	
     refreshPlayer();
+    
+    
+    
 });
 
 function refreshPlayer()
@@ -220,10 +224,21 @@ $("a#post-comment-delete").click(function(event) {
         			{
         				console.log("success");
         				console.log(data);
-        				$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeTo('slow', 0.0).remove();
+        				$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeOut('slow', function(){$(this).remove();});
                         //delete timeline region
         				// FIXME: get correct delete function from Martin
-                        removeComment(p_id);
+                        //globalPlayer.removeComment(p_id);
+        				
+        				// Add a notice to the user that the comment is deleted
+                        $("#reply-container").prepend('<p id="postDeleteSuccess" class="text-success"><i class="icon-check"></i> ' + data.feedback + '</p>');
+                        
+                        // scroll to the top of the page to see the feedback
+                        $("html, body").animate({ scrollTop: 0 }, "slow");
+                        
+                        // wipe out the feedback message after 8 seconds
+                        setTimeout(function(){
+                    		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
+                    	}, 8000);
         			},
         			error : function(request)
         			{
@@ -300,36 +315,20 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	
 	player.setComments(postArray);
 	player.createControls();
-		
-	player.options.onAreaSelectionChanged = function(){
+
+	$(player).on(Player.EVENT_AREA_SELECTION_CHANGED, function() {
 		startTimeInput.val( roundNumber(player.currentMinTimeSelected, 2));
 	    endTimeInput.val( roundNumber(player.currentMaxTimeSelected, 2));
-	};
-	player.options.onCommentMouseOver = function(comment) {
-		highlightPostBorder(comment);
-		scrollPostIntoView(comment.id);
-	};
-	
-	/* FOR FUTURE WORK
- 	$(player).on('EVENT_COMMENT_MOUSE_OVER', function(post) {
-		
 	});
-	*/
 	
-	
-	player.options.onCommentMouseOut = function(comment) {
-		dehighlightPostBorder(comment);
-	};
-	
-	
-//	player.clearPlayer();
-//	player.drawComments();
-//	player.repaint();
-	
-//	globalPlayer.clearPlayer();
-//	globalPlayer.drawComments();
-//	controls.drawSignLinks();
-//	globalPlayer.repaint();
+ 	$(player).on(Player.EVENT_COMMENT_MOUSE_OVER, function(event, post) {
+		highlightPostBorder(post);
+		scrollPostIntoView(post.id);
+	});
+ 	
+ 	$(player).on(Player.EVENT_COMMENT_MOUSE_OUT, function(event, post) {
+ 		dehighlightPostBorder(post);
+	});
 	
 	return player;
 
@@ -362,7 +361,7 @@ function dehighlightPostBorder(post) {
  */
 function scrollPostIntoView(postid) {
 	var $postContainer = $("div#thread-reply-container");
-	$targetElement = "div#post-" + postid + "-wrap";
+	var $targetElement = "div#post-" + postid + "-wrap";
 	var topofelement = $postContainer.find($targetElement).offset().top;
 	var adjustedTop = topofelement - 150; // offset
 	$postContainer.animate({

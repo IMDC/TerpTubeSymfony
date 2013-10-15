@@ -37,6 +37,17 @@ class ThreadController extends Controller
         return $response;
     }
     
+    /**
+     * This is a unique action as much of the work involves creating a post object
+     * 
+     * This action creates a new PostFromThread form and embeds it into the page so that
+     * users can create new posts as reply comments to the thread. Upon successful submission of the form
+     * a new Post is created with the parent thread as this thread
+     * 
+     * @param Request $request
+     * @param unknown $threadid
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function viewThreadAction(Request $request, $threadid) 
     {
         // check if user logged in
@@ -63,10 +74,7 @@ class ThreadController extends Controller
         $postform->handleRequest($request);
         
         if ($postform->isValid()) {
-        	 
-        	//$em = $this->getDoctrine()->getManager();
-        	 
-        	
+
         	$mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
         	if (!$postform->get('mediatextarea')->isEmpty()) {
         
@@ -83,9 +91,13 @@ class ThreadController extends Controller
         
         	}
         	 
+        	// set post temporal-ness
+        	if (NULL != $newpost->getStartTime() && NULL != $newpost->getEndTime()) {
+        	    $newpost->setIsTemporal(TRUE);
+        	}
+        	
         	$newpost->setAuthor($user);
         	$newpost->setCreated(new \DateTime('now'));
-        	$newpost->setIsDeleted(FALSE);
         	$newpost->setParentThread($thread);
         	 
         	$thread->setLastPostAt(new \DateTime('now'));
@@ -104,7 +116,7 @@ class ThreadController extends Controller
         	$em->flush();
         	
         	$this->get('session')->getFlashBag()->add(
-        			'notice',
+        			'success',
         			'Post created successfully!'
         	);
         	
