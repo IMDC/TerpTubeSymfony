@@ -86,16 +86,22 @@ $(document).ready(function() {
     	global_video_dom.currentTime = $(this).data('stime');
     	var post = getPostById($(this).data('pid'));
     	post.paintHighlighted = true;
-    	globalPlayer.clearPlayer();
+    	globalPlayer.redrawComments = true;
+//    	globalPlayer.clearPlayer();
 //    	globalPlayer.drawSignlinks();
-    	globalPlayer.drawComments();
+//    	globalPlayer.drawComments();
+    	globalPlayer.repaint();
+    	post.paintHighlighedTimeout = true;
     	
     	// clear the highlighted comment after 3 seconds
     	setTimeout(function(){
+    		post.paintHighlighedTimeout = false;
     		post.paintHighlighted = undefined;
-        	globalPlayer.clearPlayer();
+//        	globalPlayer.clearPlayer();
 //        	globalPlayer.drawSignlinks();
-        	globalPlayer.drawComments();
+//        	globalPlayer.drawComments();
+    		globalPlayer.redrawComments = true;
+    		globalPlayer.repaint();
     	}, 3000);
     	
     });
@@ -108,18 +114,25 @@ $(document).ready(function() {
             var comment = getPostById($(this).data('pid'));
             comment.paintHighlighted = true;
             
-            globalPlayer.clearPlayer();
+//            globalPlayer.clearPlayer();
             //controls.drawSignLinks();
-            globalPlayer.drawComments();
+//            globalPlayer.drawComments();
+            globalPlayer.redrawComments = true;
+    		globalPlayer.repaint();
         },
         // mouse out
         function() {
+        	
             var comment = getPostById($(this).data('pid'));
+            if (comment.paintHighlighedTimeout == true)
+        		return;
             comment.paintHighlighted = undefined;
             
-            globalPlayer.clearPlayer();
+//            globalPlayer.clearPlayer();
             //controls.drawSignLinks();
-            globalPlayer.drawComments();
+//            globalPlayer.drawComments();
+            globalPlayer.redrawComments = true;
+    		globalPlayer.repaint();
         }
     );
     
@@ -153,7 +166,7 @@ $(document).ready(function() {
 //    }
     
 	
-    refreshPlayer();
+//    refreshPlayer();
     
     
     
@@ -161,8 +174,11 @@ $(document).ready(function() {
 
 function refreshPlayer()
 {
-	globalPlayer.clearPlayer();
-	globalPlayer.drawComments();
+//	globalPlayer.clearPlayer();
+//	globalPlayer.drawComments();
+//	globalPlayer.repaint();
+	console.log("RefreshPlayer called");
+	globalPlayer.redrawComments = true;
 	globalPlayer.repaint();
 }
 
@@ -385,9 +401,11 @@ function removePost(postId)
 		if (postArray[i].id == postId)
 		{
 			postArray.splice(i,1);
-			globalPlayer.clearPlayer();
+//			globalPlayer.clearPlayer();
 //			globalPlayer.drawSignLinks();
-			globalPlayer.drawComments();
+//			globalPlayer.drawComments();
+			globalPlayer.redrawComments = true;
+    		globalPlayer.repaint();
 			
 			return;
 		}
@@ -518,9 +536,10 @@ function enableTemporalComment(player, status, startinput, endinput) {
 	controls.currentMinTimeSelected = controls.getTimeForX(controls.currentMinSelected);
 	controls.currentMaxSelected = controls.maxSelected;
 	controls.currentMaxTimeSelected = controls.getTimeForX(controls.currentMaxSelected);
-	controls.clearPlayer();
-	controls.drawComments();
+//	controls.clearPlayer();
+//	controls.drawComments();
 //	controls.drawSignLinks();
+//	controls.repaint();
 	controls.repaint();
   	  
   }

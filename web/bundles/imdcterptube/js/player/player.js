@@ -29,6 +29,9 @@ Player.prototype.createControls = function()
 
 	this.elementID = this.options.controlBarElement;
 
+	this.redrawComments = true;
+	this.redrawSignlinks = true;
+
 	var el = $('<div class="videoControlsContainer"></div>');
 	$(this.elementID).append(el);
 	this.elementID = el;
@@ -277,7 +280,7 @@ Player.prototype.createControls = function()
 	{
 		this.setupVideo();
 	}
-	if (this.options.type == Player.DENSITY_BAR_TYPE_PLAYER)
+	else if (this.options.type == Player.DENSITY_BAR_TYPE_PLAYER)
 	{
 		// console.log($(this.videoID)[0].duration);
 
@@ -305,7 +308,8 @@ Player.prototype.setPlayHeadImage = function(image)
 	this.playHeadImage = new Image();
 	this.playHeadImage.onload = function()
 	{
-		instance.repaint();
+//		console.log("Playhead image loaded");
+	//	instance.repaint();
 	};
 	this.playHeadImage.src = image;
 	this.playHeadImageHighlighted = false;
@@ -326,13 +330,34 @@ Player.prototype.setComments = function(commentsArray)
 Player.prototype.addComment = function(comment)
 {
 	this.comments.push(comment);
-	this.drawComments();
+	this.redrawComments = true;
+	this.repaint();
+	// this.drawComments();
+};
+
+Player.prototype.removeComment = function(commentID)
+{
+	for ( var i = 0; i < this.comments.length; i++)
+	{
+		if (this.comments[i].id == commentID)
+		{
+			this.comments.splice(i, 1);
+			this.redrawComments = true;
+			this.repaint();
+			return;
+		}
+	}
 };
 
 Player.prototype.drawComments = function()
 {
+	this.redrawComments = false;
+//	console.log("DrawComments called");
 	if (!this.comments)
+	{
 		return;
+	}
+
 	// Draw comments that are not highlighted first
 	for ( var i = 0; i < this.comments.length; i++)
 	{
@@ -345,7 +370,7 @@ Player.prototype.drawComments = function()
 		if (this.comments[i].paintHighlighted == true)
 			this.drawComment(this.comments[i]);
 	}
-	this.redrawcomments = false;
+
 };
 
 Player.prototype.drawComment = function(comment)
@@ -376,13 +401,16 @@ Player.prototype.drawComment = function(comment)
 
 Player.prototype.drawSignLinks = function()
 {
+	this.redrawSignlinks = false;
 	if (!this.signLinks)
+	{
 		return;
+	}
 	for ( var i = 0; i < this.signLinks.length; i++)
 	{
 		this.drawSignLink(this.signLinks[i], this.options.signLinkColor);
 	}
-	this.redrawSignlinks = false;
+
 };
 
 Player.prototype.drawSignLink = function(signlink, color)
@@ -582,7 +610,16 @@ Player.prototype.drawRightTriangle = function(position, context)
 Player.prototype.setAreaSelectionEnabled = function(flag)
 {
 	this.options.areaSelectionEnabled = flag;
+
+	if (!flag)
+	{
+		this.redrawSignlinks = true;
+		this.redrawComments = true;
+	}
+
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+//	console.log("SetAreaSelectionEnabled called");
+	this.repaint();
 };
 
 Player.prototype.getRelativeMouseCoordinates = function(event)
@@ -681,6 +718,7 @@ Player.prototype.setPlayButtonIconSelected = function(isPlayIcon)
 
 Player.prototype.repaint = function()
 {
+//	console.log("Repaint Called");
 	time = this.getCurrentTime();
 	if (time > this.getDuration())
 		time = this.getDuration();
@@ -698,17 +736,16 @@ Player.prototype.repaint = function()
 		{
 			this.updateTimeBox(time, this.getDuration());
 		}
-		/*
-		 * if (this.preview && this.getCurrentTime() >= this.currentMaxTimeSelected) { this.preview = false;
-		 * this.pause(); this.setVideoTime(this.currentMaxTimeSelected); }
-		 */
-		if (this.redrawcomments == true)
+		if (!this.areaSelectionEnabled)
 		{
-			this.drawComments();
-		}
-		if (this.redrawSignlinks == true)
-		{
-			this.drawSignLinks();
+			if (this.redrawComments == true)
+			{
+				this.drawComments();
+			}
+			if (this.redrawSignlinks == true)
+			{
+				this.drawSignLinks();
+			}
 		}
 	}
 	if (this.options.type == Player.DENSITY_BAR_TYPE_RECORDER)
@@ -894,6 +931,7 @@ Player.prototype.setMouseDownThumb = function(event)
 			{
 				var coords = instance.getRelativeMouseCoordinates(event);
 				instance.currentMinSelected = coords.x + offset;
+				//console.log("CurrentMinSelected:"+instance.currentMinSelected+", minSelected:"+instance.minSelected+", currentMaxSelected:"+instance.currentMaxSelected+", minTimeCoordinate:"+instance.minTimeCoordinate);
 				if (instance.currentMinSelected < instance.minSelected)
 				{
 					instance.currentMinSelected = instance.minSelected;
@@ -1072,8 +1110,6 @@ Player.prototype.fullScreenChange = function(setFullScreen)
 	this.repaint();
 	if (this.options.areaSelectionEnabled)
 		this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
-	else
-		this.drawComments();
 };
 
 Player.prototype.setupVideoPlayback = function()
@@ -1108,6 +1144,7 @@ Player.prototype.setupVideoPlayback = function()
 		instance.fullScreenChange(document.webkitIsFullScreen);
 	});
 
+	this.duration = $(this.videoID)[0].duration;
 	// this.minTimeCoordinate = this.getXForTime(this.minTime);
 	this.minTimeCoordinate = this.getXForTime(this.minTime) - this.trackPadding;
 	this.currentMinSelected = this.minSelected;
@@ -1115,12 +1152,11 @@ Player.prototype.setupVideoPlayback = function()
 	this.currentMaxSelected = this.maxSelected;
 	this.currentMaxTimeSelected = this.getTimeForX(this.currentMaxSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
-	this.duration = $(this.videoID)[0].duration;
-	console.log(this.duration);
-	this.drawComments();
-	this.drawSignLinks();
+	
+	// this.drawComments();
+	// this.drawSignLinks();
 	this.repaint();
-	// this.paintThumb(0);
+
 	$(this.elementID).find(".videoControlsContainer.track").eq(0).on('mouseleave', function()
 	{
 		instance.setVolumeBarVisible(false);
@@ -1522,6 +1558,7 @@ Player.prototype.getCurrentTime = function()
 
 Player.prototype.getDuration = function()
 {
+	console.log(this.duration);
 	return this.duration;
 };
 
