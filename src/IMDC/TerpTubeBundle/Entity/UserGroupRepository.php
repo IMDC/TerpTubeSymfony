@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use IMDC\TerpTubeBundle\Entity\User;
 
 /**
  * UserGroupRepository
@@ -25,4 +26,18 @@ class UserGroupRepository extends EntityRepository
 		 
 		return $query->getResult();
 	}
+	
+	public function getGroupsForUser(User $user)
+    {
+        return $this->getEntityManager()
+                ->createQuery
+                ('
+                    SELECT g
+                    FROM IMDCTerpTubeBundle:UserGroup g
+                    JOIN IMDCTerpTubeBundle:User u
+                    WHERE u.id = :uid
+                ')
+                ->setParameter('uid', $user->getId())
+        ->getResult();
+    }
 }

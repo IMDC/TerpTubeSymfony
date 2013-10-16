@@ -1,0 +1,29 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block title %}{{ app.user }}'s Groups{% endblock title %}
+
+{% block nav_ul_authenticated_my_groups %}<li class="active">{% endblock %}
+
+{% block herounit %}<h1>{{ app.user }}'s Groups</h1>{% endblock herounit %}
+
+{% block underherounitrow1 %}
+{{  include ('IMDCTerpTubeBundle:UserGroup:groupcreaterow.html.twig') }}
+<ul class="thumbnails">
+    {% for usergroup in usergroups %}
+    <li class="span3">
+    	<a href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id} ) }}">
+        <div class="thumbnail text-center">
+            <h3>{{ usergroup.name }}</h3>
+            <p>Created: {{ usergroup.dateCreated|date('g:ia F j Y') }}</p>
+            <p>Members: {{ usergroup.getMembers|length }}</p>
+            <p>Founder: {{ usergroup.getUserFounder.getUserName }}</p>
+            <p>
+                <a class="btn btn-primary" href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id}) }}">View Group Info</a>
+            </p>
+    	</a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}

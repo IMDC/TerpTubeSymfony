@@ -25,16 +25,35 @@ var postArray = new Array();
     <div class="span6" id="leftsidecontent">
     <!-- left side content -->
     
+             {# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% following stuff %%%%%%%%%%%%%%%%%%% #}
+    
+     <div class="row-fluid">
+         <div class="pull-right" id="thread-toolbox">
+             <ul class="unstyled inline">
+                 <li><a id="thread-report-link" href="#"><i class="icon-flag"></i> Report</a></li>
+                 <li><a id="thread-follow-link" href="#"><i class="icon-paper-clip"></i> Follow</a>
+             </ul>
+         </div>
+     </div>
+     
+         {# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% end of following stuff %%%%%%%%%%%%%%%%%%% #}
+         
+         
+         {# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%     thread owner stuff %%%%%%%%%%%%%%%%%%%%%%%%%% #}
+         
     {% if app.user == thread.creator %}
     <div class="row-fluid">
-        <div class="span2 offset10" id="thread-creator-toolbox">
+        <div class="pull-left" id="thread-creator-toolbox">
             <ul class="unstyled inline">
-                <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class="">Edit</a></li>
-                <li><a href="#" class="">Delete</a></li>
+                <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class=""><i class="icon-cut"></i> Edit</a></li>
+                <li><a href="#" class=""><i class="icon-remove"></i> Delete</a></li>
             </ul>
         </div>
     </div>
     {% endif %}
+    
+             {# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%  end thread owner stuff %%%%%%%%%%%%%%%%%%%%%%%%%% #}
+
      
         <div class="row-fluid text-center" id="mediaFileWrap">
     {% if thread.mediaIncluded|length != 0 %}
@@ -45,11 +64,11 @@ var postArray = new Array();
     {% if mediaFile is not defined %}
         </div> <!-- /mediaFileWrap -->
     {% elseif mediaFile.type == 0 %}
-    {# -----------   if type of media is an IMAGE   -------- #}
+    {# -------------------------   if type of media is an IMAGE   ------------------- #}
             <img class="thread-content-image" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
             <p></p>
         </div> <!-- /mediaFileWrap div -->
-    {# -----------   if type of media is a VIDEO   -------- #}
+    {# -------------------------   if type of media is a VIDEO   ---------------- #}
     {% elseif mediaFile.type == 1 %}
             <div class="thread-video-supplemental-controls-wrap">
                 <ul class="unstyled supp-video-controls">
@@ -84,7 +103,7 @@ var postArray = new Array();
         </div> <!-- /mediaFileWrap div -->
     
     {% elseif mediaFile.type == 2 %}
-    {# -----------   if type of media is AUDIO   -------- #}
+    {# -----------------------------   if type of media is AUDIO   --------------------- #}
             <audio controls style="width: 100%">
                 <source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
                 Your browser does not support the audio element, please upgrade to Google Chrome
@@ -213,14 +232,25 @@ var postArray = new Array();
                                 {% endif %}
                             </li>
                        </ul>
-                    </div> <!-- /thread-creator-tools-wrap -->
+                    </div> <!-- ./post-reply-user-tools -->
+                    
+{#                     {% if post.isTemporal %}#}
+{#                     <div class="row-fluid temporal-post-wrap">#}
+{#                         <div class="pull-right">#}
+{#                             <a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="icon-arrow-left icon-2x"></i><i class="icon-time icon-2x"></i></a>#}
+{#                         </div>#}
+{#                     </div>#}
+{#                     {% endif %}#}
+                    
                 </div> <!-- /post-reply-user-info-wrap div -->
                 <div class="span9 post-reply-avatar-content-wrap" data-pid="{{ post.id }}">
-                    <div class="row-fluid post-reply-date">
+                    <div class="row-fluid">
+                        <div class="pull-right post-reply-date">
                         {{ post.created|date('o-m-N H:i') }}
                         {% if post.editedBy is not null %}
                             (edited at {{ post.editedAt|date('o-m-N H:i') }} by {{ post.editedBy.getUsername }})
                         {% endif %}
+                        </div>
                     </div>
                     <div class="row-fluid post-reply-content">
                     	{% if post.attachedFile is defined and post.attachedFile|length > 0 %}
@@ -269,8 +299,7 @@ var postArray = new Array();
 {#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="icon-trash"></i></a></li>#}
                             <li><a id="post-comment-edit" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit_specific', {'pid':post.getId} ) }}"><i class="icon-edit"></i></a></li>
 {#                             <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>#}
-                            <li><a id="post-comment-delete-modaltest" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>
-                            
+                            <li><a id="post-comment-delete-modal" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>                            
                             {% endif %}
                         </ul>
                     </div>
@@ -294,14 +323,14 @@ var postArray = new Array();
 {% endblock underherounitrow2 %}
 
 {% block postfooteroutsidebody %}
-<div id="dialog-confirm" title="Delete this comment?" style="display:none;">
-	<p style="line-height:150%;"><span class="ui-icon ui-icon-alert" style="float:left;margin:0 30px 50px 0;"></span>This will delete this comment permanently. Are you sure?</p>
-</div>
+{# <div id="dialog-confirm" title="Delete this comment?" style="display:none;">#}
+{# 	<p style="line-height:150%;"><span class="ui-icon ui-icon-alert" style="float:left;margin:0 30px 50px 0;"></span>This will delete this comment permanently. Are you sure?</p>#}
+{# </div>#}
 
-<div id="modaltest" class="modal hide fade">
+<div id="modaldiv" class="modal hide fade">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3><i class="icon-exclamation-sign icon-2x"></i> Delete Post</h3>
+    <h3><i class="icon-warning-sign icon-2x"></i> Delete Post</h3>
   </div>
   <div class="modal-body">
     <p>This will delete this comment permanently.</p>
@@ -309,8 +338,8 @@ var postArray = new Array();
     <p>Are you sure?</p>
   </div>
   <div class="modal-footer">
-    <a href="#" data-dismiss="modal" class="btn"><i class="icon-remove"></i> Cancel</a>
-    <a id="modaltestDeleteButton" class="btn btn-danger" onclick="return confirmPostDelete()" href="#"><i class="icon-trash"></i> Delete</a>
+    <a id="modalCancelButton" href="#" data-dismiss="modal" class="btn"><i class="icon-remove"></i> Cancel</a>
+    <a id="modalDeleteButton" class="btn btn-danger" onclick="return confirmPostDelete()" href="#"><i class="icon-trash"></i> Delete</a>
   </div>
 </div>
 {% endblock postfooteroutsidebody %}

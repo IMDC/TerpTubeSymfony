@@ -79,4 +79,22 @@ class UserGroupController extends Controller
 		return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array('form' => $form->createView(),));
 
 	}
+	
+	public function myGroupShowAction(Request $request)
+	{
+	    // check if user logged in
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+	    {
+	        return $this->redirect($this->generateUrl('fos_user_security_login'));
+	    }
+	    
+	    $user = $this->getUser();
+	    
+	    $em = $this->getDoctrine()->getManager(); 
+	    $usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($user);
+	    //->findAll();
+	    
+	    $response = $this->render('IMDCTerpTubeBundle:UserGroup:myGroups.html.twig', array('usergroups' => $usergroups));
+	    return $response;
+	}
 }

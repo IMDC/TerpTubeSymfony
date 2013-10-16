@@ -88,6 +88,9 @@
 									{% block nav_ul_authenticated_my_friends %}<li>{% endblock %}
 									    <a href="{{ path('imdc_friends_list_show_all') }}"><i class="icon-group"></i> {{ 'nav.my_friends'|trans }}</a>
 									</li>
+									{% block nav_ul_authenticated_my_groups %}<li>{% endblock %}
+									    <a href="{{ path('imdc_group_mygroups') }}"><i class="icon-group"></i> {{ 'nav.my_groups'|trans }}</a>
+								    </li>
 								{% endblock nav_ul_authenticated %}
 						 	{% endif %}
 						</ul>

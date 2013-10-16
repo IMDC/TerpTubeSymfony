@@ -22,6 +22,7 @@ div.post-reply-wrap {
     border: 1px solid #ddd;
     border-collapse: collapse;
     padding-top: 5px;
+    padding-bottom: 15px;
 }
 
 div.post-reply-date {
@@ -92,4 +93,12 @@ span.edited-text-span {
 
 .postBorderHighlight {
     border: 2px solid red !important;
+}
+
+img.avatar {
+    max-height: 150px;
+}
+
+div.temporal-post-wrap {
+
 }

@@ -22,10 +22,13 @@ $(document).ready(function() {
 	/**
 	 * launch the modal dialog to delete a comment when you click the trash icon
 	 */
-	$("a#post-comment-delete-modaltest").click(function(e) {
+	$("a#post-comment-delete-modal").click(function(e) {
 		e.preventDefault();
-		$("#modaltestDeleteButton").attr('data-pid', $(this).data('pid'));
-		$("#modaltest").modal('toggle');
+		var p_id = $(this).data('pid');
+		
+		$("#modalDeleteButton").attr('data-pid', p_id);
+		$("#modalCancelButton").attr('data-pid', p_id);
+		$("#modaldiv").modal('toggle');
 	});
 	
 	
@@ -272,14 +275,20 @@ $("a#post-comment-delete").click(function(event) {
 
 
 
-
+/**
+ * 
+ * @returns {Boolean}
+ */
 function confirmPostDelete() {
 	
-	var $theDeleteLink = $("#modaltestDeleteButton");
+	var $theDeleteLink = $("#modalDeleteButton");
 	var p_id = $theDeleteLink.data('pid');
 	
 	var $theWholeComment = getPostWrapJQueryObject(p_id);
 	
+	/**
+	 * Ajax request to delete a comment
+	 */
 	$.ajax({
 		url : Routing.generate('imdc_post_delete_specific_ajax', {pid: p_id}),
 		type : "POST",
@@ -292,7 +301,7 @@ function confirmPostDelete() {
 		{
 			console.log("success");
 			console.log(data);
-			$("#modaltest").modal('hide');
+			$("#modaldiv").modal('hide');
             $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="icon-check"></i> ' + data.feedback + '</p></div></div>');
 			$theWholeComment.fadeOut('slow', function(){$(this).remove();});
             
@@ -311,10 +320,11 @@ function confirmPostDelete() {
 		{
 			console.log(request);
 			alert(request.statusText);
-			$("#modaltest").modal('hide');
+			$("#modaldiv").modal('hide');
 		}
 	});
 	
+	// return false to prevent the click from scolling around the page
 	return false;
 }
 

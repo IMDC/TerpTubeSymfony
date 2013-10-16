@@ -196,6 +196,11 @@ imdc_group_create_new:
     pattern: /newusergroup
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
 
+imdc_group_mygroups:
+    pattern: /mygroups
+    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:myGroupShow }
+
+
 
 imdc_thread_create_new:
     pattern: /thread/new
