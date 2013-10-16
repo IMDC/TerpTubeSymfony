@@ -20,10 +20,22 @@ $(document).ready(function() {
 	});
 	
 	/**
+	 * launch the modal dialog to delete a comment when you click the trash icon
+	 */
+	$("a#post-comment-delete-modaltest").click(function(e) {
+		e.preventDefault();
+		$("#modaltestDeleteButton").attr('data-pid', $(this).data('pid'));
+		$("#modaltest").modal('toggle');
+	});
+	
+	
+	/**
 	 * Necessary to use this as I'm hiding the original form submit button as it is a button
 	 * element and I can't style it with a font-awesome glyph
 	 */
 	$("a#post-comment-submit-button").click(function() {
+		$(this).after('<span><i class="icon-spinner icon-spin"></i> Sending...</span>');
+		$(this).remove();
 		$("#PostFormFromThread_submit").click();
 	});
 	
@@ -87,9 +99,6 @@ $(document).ready(function() {
     	var post = getPostById($(this).data('pid'));
     	post.paintHighlighted = true;
     	globalPlayer.redrawComments = true;
-//    	globalPlayer.clearPlayer();
-//    	globalPlayer.drawSignlinks();
-//    	globalPlayer.drawComments();
     	globalPlayer.repaint();
     	post.paintHighlighedTimeout = true;
     	
@@ -97,9 +106,6 @@ $(document).ready(function() {
     	setTimeout(function(){
     		post.paintHighlighedTimeout = false;
     		post.paintHighlighted = undefined;
-//        	globalPlayer.clearPlayer();
-//        	globalPlayer.drawSignlinks();
-//        	globalPlayer.drawComments();
     		globalPlayer.redrawComments = true;
     		globalPlayer.repaint();
     	}, 3000);
@@ -114,9 +120,6 @@ $(document).ready(function() {
             var comment = getPostById($(this).data('pid'));
             comment.paintHighlighted = true;
             
-//            globalPlayer.clearPlayer();
-            //controls.drawSignLinks();
-//            globalPlayer.drawComments();
             globalPlayer.redrawComments = true;
     		globalPlayer.repaint();
         },
@@ -128,9 +131,6 @@ $(document).ready(function() {
         		return;
             comment.paintHighlighted = undefined;
             
-//            globalPlayer.clearPlayer();
-            //controls.drawSignLinks();
-//            globalPlayer.drawComments();
             globalPlayer.redrawComments = true;
     		globalPlayer.repaint();
         }
@@ -166,17 +166,15 @@ $(document).ready(function() {
 //    }
     
 	
-//    refreshPlayer();
-    
-    
-    
 });
+
+function getPostWrapJQueryObject(postid) {
+	targetElement = "div#post-" + postid + "-wrap";
+	return $(targetElement);
+}
 
 function refreshPlayer()
 {
-//	globalPlayer.clearPlayer();
-//	globalPlayer.drawComments();
-//	globalPlayer.repaint();
 	console.log("RefreshPlayer called");
 	globalPlayer.redrawComments = true;
 	globalPlayer.repaint();
@@ -216,10 +214,9 @@ $("a#post-comment-delete").click(function(event) {
 	// prevent the click from scrolling the page
 	event.preventDefault();
 	
-	//alert('hi');
-	
-	// fade out the comment in question        
-    $(this).parents("[data-pid='" + p_id + "']").eq(0).fadeTo('medium', 0.5);
+	// fade out the comment in question    
+	var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
+    $theWholeComment.fadeTo('medium', 0.5);
 	
     // show a dialog box asking for confirmation of delete
     $( "#dialog-confirm" ).dialog({
@@ -240,16 +237,16 @@ $("a#post-comment-delete").click(function(event) {
         			{
         				console.log("success");
         				console.log(data);
-        				$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeOut('slow', function(){$(this).remove();});
-                        //delete timeline region
-        				// FIXME: get correct delete function from Martin
-                        //globalPlayer.removeComment(p_id);
         				
-        				// Add a notice to the user that the comment is deleted
-                        $("#reply-container").prepend('<p id="postDeleteSuccess" class="text-success"><i class="icon-check"></i> ' + data.feedback + '</p>');
+        				//$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeOut('slow', function(){$(this).remove();});
+                        $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="icon-check"></i> ' + data.feedback + '</p></div></div>');
+        				$theWholeComment.fadeOut('slow', function(){$(this).remove();});
                         
+        				//delete timeline region
+                        globalPlayer.removeComment(p_id);
+
                         // scroll to the top of the page to see the feedback
-                        $("html, body").animate({ scrollTop: 0 }, "slow");
+                        //$("html, body").animate({ scrollTop: 0 }, "slow");
                         
                         // wipe out the feedback message after 8 seconds
                         setTimeout(function(){
@@ -274,6 +271,52 @@ $("a#post-comment-delete").click(function(event) {
 });
 
 
+
+
+function confirmPostDelete() {
+	
+	var $theDeleteLink = $("#modaltestDeleteButton");
+	var p_id = $theDeleteLink.data('pid');
+	
+	var $theWholeComment = getPostWrapJQueryObject(p_id);
+	
+	$.ajax({
+		url : Routing.generate('imdc_post_delete_specific_ajax', {pid: p_id}),
+		type : "POST",
+		contentType : "application/x-www-form-urlencoded",
+		data :
+		{
+			pid : p_id
+		},
+		success : function(data)
+		{
+			console.log("success");
+			console.log(data);
+			$("#modaltest").modal('hide');
+            $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="icon-check"></i> ' + data.feedback + '</p></div></div>');
+			$theWholeComment.fadeOut('slow', function(){$(this).remove();});
+            
+			//delete timeline region
+            globalPlayer.removeComment(p_id);
+
+            // scroll to the top of the page to see the feedback
+            //$("html, body").animate({ scrollTop: 0 }, "slow");
+            
+            // wipe out the feedback message after 8 seconds
+            setTimeout(function(){
+        		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
+        	}, 8000);
+		},
+		error : function(request)
+		{
+			console.log(request);
+			alert(request.statusText);
+			$("#modaltest").modal('hide');
+		}
+	});
+	
+	return false;
+}
 
 /**
  * 
@@ -401,9 +444,6 @@ function removePost(postId)
 		if (postArray[i].id == postId)
 		{
 			postArray.splice(i,1);
-//			globalPlayer.clearPlayer();
-//			globalPlayer.drawSignLinks();
-//			globalPlayer.drawComments();
 			globalPlayer.redrawComments = true;
     		globalPlayer.repaint();
 			
@@ -454,77 +494,85 @@ function enableTemporalComment(player, status, startinput, endinput) {
 	  else {
 	  	controls.currentMinTimeSelected = controls.getCurrentTime();
 	  }
-	  controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+	  controls.currentMinSelected 	  = controls.getXForTime(controls.currentMinTimeSelected);
 	  controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected)+controls.options.minLinkTime;
-	  controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+	  controls.currentMaxSelected 	  = controls.getXForTime(controls.currentMaxTimeSelected);
 	  
 	  controls.setAreaSelectionEnabled(true);
 	  
 	  startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
 	  startTimeInput.on("change",function(){
-			if (startTimeInput.val() >= controls.currentMaxTimeSelected - controls.options.minLinkTime) {
-				if (startTimeInput.val() >= controls.getDuration()-controls.options.minLinkTime) {
-					controls.currentMaxTimeSelected = controls.getDuration();
-					controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-					controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-					startTimeInput.val(roundNumber(controls.currentMinTimeSelected, 2));
-				}
-				else {
-					controls.currentMinTimeSelected = startTimeInput.val();
-					controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-					controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
-					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-			//		controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-			//		controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-			//		startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
-				}
-			}
-			else if (startTimeInput.val()<=0) {
-				controls.currentMinTimeSelected = 0;
+		if (startTimeInput.val() >= controls.currentMaxTimeSelected - controls.options.minLinkTime)
+		{
+			if (startTimeInput.val() >= controls.getDuration()-controls.options.minLinkTime)
+			{
+				controls.currentMaxTimeSelected = controls.getDuration();
+				controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
 				controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-				startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+				controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+				endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+				startTimeInput.val(roundNumber(controls.currentMinTimeSelected, 2));
 			}
-			else {
+			else
+			{
 				controls.currentMinTimeSelected = startTimeInput.val();
 				controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-			}
-			controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
-			controls.setVideoTime(controls.currentMinTimeSelected);
-	   });
-	  endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-	  endTimeInput.on("change",function(){
-			if (endTimeInput.val() <= Number(controls.currentMinTimeSelected) + controls.options.minLinkTime) {
-				if (endTimeInput.val()<controls.options.minLinkTime) {
-					controls.currentMinTimeSelected = 0;
-					controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-					startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
-					controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
-					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-				}
-				else {
-					controls.currentMaxTimeSelected = endTimeInput.val();
-					controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-					endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
-					controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-					controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-					startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
-				}
-			}
-			else if (endTimeInput.val()>=controls.getDuration()) {
-				controls.currentMaxTimeSelected = controls.getDuration();
+				controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
 				controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
 				endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
 			}
-			else {
-				controls.currentMaxTimeSelected = endTimeInput.val();
-				controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-			}
-			controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
-			controls.setVideoTime(controls.currentMaxTimeSelected);
+		}
+		else if (startTimeInput.val()<=0)
+		{
+			controls.currentMinTimeSelected = 0;
+			controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+			startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+		}
+		else
+		{
+			controls.currentMinTimeSelected = startTimeInput.val();
+			controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+		}
+		controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
+		controls.setVideoTime(controls.currentMinTimeSelected);
+	  });
+	  
+	  endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+	  endTimeInput.on("change", function(){
+	  	if (endTimeInput.val() <= Number(controls.currentMinTimeSelected) + controls.options.minLinkTime)
+	  	{
+	  		if (endTimeInput.val()<controls.options.minLinkTime)
+	  		{
+	  			controls.currentMinTimeSelected = 0;
+	  			controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+	  			startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+	  			controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
+	  			controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+	  			endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+	  		}
+	  		else
+	  		{
+	  			controls.currentMaxTimeSelected = endTimeInput.val();
+	  			controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+	  			endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+	  			controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
+	  			controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
+	  			startTimeInput.val( roundNumber(controls.currentMinTimeSelected, 2));
+	  		}
+	  	}
+	  	else if (endTimeInput.val()>=controls.getDuration())
+	  	{
+	  		controls.currentMaxTimeSelected = controls.getDuration();
+	  		controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+	  		endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));
+	  	}
+	  	else
+	  	{
+	  		controls.currentMaxTimeSelected = endTimeInput.val();
+	  		controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
+	  	}
+	  	controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
+	  	controls.setVideoTime(controls.currentMaxTimeSelected);
 	  });
 	  controls.repaint();
   }
@@ -536,10 +584,6 @@ function enableTemporalComment(player, status, startinput, endinput) {
 	controls.currentMinTimeSelected = controls.getTimeForX(controls.currentMinSelected);
 	controls.currentMaxSelected = controls.maxSelected;
 	controls.currentMaxTimeSelected = controls.getTimeForX(controls.currentMaxSelected);
-//	controls.clearPlayer();
-//	controls.drawComments();
-//	controls.drawSignLinks();
-//	controls.repaint();
 	controls.repaint();
   	  
   }
@@ -581,6 +625,7 @@ $("a#post-comment-edit").click(function(event) {
 			alert(request.statusText);
 		}
 	});
-	
+
 });
 */
+

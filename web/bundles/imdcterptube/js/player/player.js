@@ -1558,7 +1558,7 @@ Player.prototype.getCurrentTime = function()
 
 Player.prototype.getDuration = function()
 {
-	console.log(this.duration);
+//	console.log(this.duration);
 	return this.duration;
 };
 

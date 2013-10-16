@@ -200,7 +200,7 @@ var postArray = new Array();
                                 {% set thisistheuser = true %}
                                 <i class="icon-envelope" style="color:gray"></i>
                                 {% else %}
-                                <a href="{{ path('imdc_message_user_specific', {'userid':post.author.getUserName()}) }}"><i class="icon-envelope"></i></a>
+                                <a href="{{ path('imdc_message_user_specific', {'userid':post.author.getUserName()}) }}" title="Send a message to {{ post.author.getUserName }}"><i class="icon-envelope"></i></a>
                                 {% endif %}
                             </li>
                             <li>
@@ -209,7 +209,7 @@ var postArray = new Array();
                                 {% elseif app.user.isUserOnFriendsList(post.author) %}
                                 <i class="icon-heart" style="color:green" title="Already friends"></i>
                                 {% else %}
-                                <a href="{{ path('imdc_add_to_friends_list', {'userid':post.author.getId} ) }}"><i class="icon-heart"></i></a>
+                                <a href="{{ path('imdc_add_to_friends_list', {'userid':post.author.getId} ) }}" title="Click to add {{ post.author.getUserName }} to your friends list"><i class="icon-heart"></i></a>
                                 {% endif %}
                             </li>
                        </ul>
@@ -268,7 +268,8 @@ var postArray = new Array();
                             {% if post.author.getId == app.user.getId %}
 {#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="icon-trash"></i></a></li>#}
                             <li><a id="post-comment-edit" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit_specific', {'pid':post.getId} ) }}"><i class="icon-edit"></i></a></li>
-                            <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>
+{#                             <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>#}
+                            <li><a id="post-comment-delete-modaltest" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>
                             
                             {% endif %}
                         </ul>
@@ -292,6 +293,27 @@ var postArray = new Array();
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
+{% block postfooteroutsidebody %}
+<div id="dialog-confirm" title="Delete this comment?" style="display:none;">
+	<p style="line-height:150%;"><span class="ui-icon ui-icon-alert" style="float:left;margin:0 30px 50px 0;"></span>This will delete this comment permanently. Are you sure?</p>
+</div>
+
+<div id="modaltest" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3><i class="icon-exclamation-sign icon-2x"></i> Delete Post</h3>
+  </div>
+  <div class="modal-body">
+    <p>This will delete this comment permanently.</p>
+    <p>This action cannot be undone.</p>
+    <p>Are you sure?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn"><i class="icon-remove"></i> Cancel</a>
+    <a id="modaltestDeleteButton" class="btn btn-danger" onclick="return confirmPostDelete()" href="#"><i class="icon-trash"></i> Delete</a>
+  </div>
+</div>
+{% endblock postfooteroutsidebody %}
 
 {% block javascripts %}
     {{ parent() }}

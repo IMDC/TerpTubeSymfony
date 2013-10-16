@@ -58,7 +58,7 @@
                                 {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="icon-user"></i> ' ~app.user.username~'</a>' %}
                                 {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    <i class="icon-inbox"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} ({{ app.user.getNumUnreadPMs }})
+               					    <i class="icon-inbox"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} <span class="badge badge-inverse">{{ app.user.getNumUnreadPMs }}</span>
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
                    					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="icon-off"></i>
@@ -259,8 +259,5 @@
 		<script src="{{ asset('js/bootstrap.js') }}"></script>
 	</body>
 	{% block postfooteroutsidebody %}
-	<div id="dialog-confirm" title="Delete this comment?" style="display:none;">
-		<p style="line-height:150%;"><span class="ui-icon ui-icon-alert" style="float:left;margin:0 30px 50px 0;"></span>This will delete this comment permanently. Are you sure?</p>
-	</div>
 	{% endblock postfooteroutsidebody %}
 </html>
