@@ -544,7 +544,7 @@ function enableTemporalComment(player, status, startinput, endinput) {
 			controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
 		}
 		controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
-		controls.setVideoTime(controls.currentMinTimeSelected);
+		controls.seek(controls.currentMinTimeSelected);
 	  });
 	  
 	  endTimeInput.val( roundNumber(controls.currentMaxTimeSelected, 2));

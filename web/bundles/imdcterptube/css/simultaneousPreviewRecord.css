@@ -1,12 +1,31 @@
 @CHARSET "UTF-8";
 
+video {
+	max-width: 640px;
+}
 
-.simultaneousVideoRecording
-{
+.simultaneousVideoRecording {
 	text-align: center;
 }
-.video
-{
+
+div .video {
+	display: inline;
+}
+
+.video video {
 	width: 50%;
 	display: inline;
+}
+
+.sourceVolumeControl {
+	display: inline-block;
+	float: right;
+	border: 1px solid;
+}
+
+.sourceVolumeControl p {
+	float: left;
+	margin: 0px;
+	word-wrap: break-word;
+	height: 40px;
 }

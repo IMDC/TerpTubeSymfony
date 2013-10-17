@@ -308,8 +308,8 @@ Player.prototype.setPlayHeadImage = function(image)
 	this.playHeadImage = new Image();
 	this.playHeadImage.onload = function()
 	{
-//		console.log("Playhead image loaded");
-	//	instance.repaint();
+		// console.log("Playhead image loaded");
+		// instance.repaint();
 	};
 	this.playHeadImage.src = image;
 	this.playHeadImageHighlighted = false;
@@ -352,7 +352,7 @@ Player.prototype.removeComment = function(commentID)
 Player.prototype.drawComments = function()
 {
 	this.redrawComments = false;
-//	console.log("DrawComments called");
+	// console.log("DrawComments called");
 	if (!this.comments)
 	{
 		return;
@@ -618,7 +618,7 @@ Player.prototype.setAreaSelectionEnabled = function(flag)
 	}
 
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
-//	console.log("SetAreaSelectionEnabled called");
+	// console.log("SetAreaSelectionEnabled called");
 	this.repaint();
 };
 
@@ -685,9 +685,10 @@ Player.prototype.pause = function()
 	{
 		$(this.videoID)[0].pause();
 		$(this).trigger(Player.EVENT_PLAYBACK_STOPPED);
-		this.playing = false;
+		
 	}
 	// clearInterval(timer);
+	this.playing = false;
 	this.preview = false;
 };
 
@@ -718,7 +719,7 @@ Player.prototype.setPlayButtonIconSelected = function(isPlayIcon)
 
 Player.prototype.repaint = function()
 {
-//	console.log("Repaint Called");
+	// console.log("Repaint Called");
 	time = this.getCurrentTime();
 	if (time > this.getDuration())
 		time = this.getDuration();
@@ -931,7 +932,9 @@ Player.prototype.setMouseDownThumb = function(event)
 			{
 				var coords = instance.getRelativeMouseCoordinates(event);
 				instance.currentMinSelected = coords.x + offset;
-				//console.log("CurrentMinSelected:"+instance.currentMinSelected+", minSelected:"+instance.minSelected+", currentMaxSelected:"+instance.currentMaxSelected+", minTimeCoordinate:"+instance.minTimeCoordinate);
+				// console.log("CurrentMinSelected:"+instance.currentMinSelected+",
+				// minSelected:"+instance.minSelected+", currentMaxSelected:"+instance.currentMaxSelected+",
+				// minTimeCoordinate:"+instance.minTimeCoordinate);
 				if (instance.currentMinSelected < instance.minSelected)
 				{
 					instance.currentMinSelected = instance.minSelected;
@@ -1152,7 +1155,7 @@ Player.prototype.setupVideoPlayback = function()
 	this.currentMaxSelected = this.maxSelected;
 	this.currentMaxTimeSelected = this.getTimeForX(this.currentMaxSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
-	
+
 	// this.drawComments();
 	// this.drawSignLinks();
 	this.repaint();
@@ -1558,7 +1561,7 @@ Player.prototype.getCurrentTime = function()
 
 Player.prototype.getDuration = function()
 {
-//	console.log(this.duration);
+	// console.log(this.duration);
 	return this.duration;
 };
 
@@ -1582,7 +1585,7 @@ Player.prototype.setVideoTimeFromCoordinate = function(position)
 		$(this.videoID)[0].currentTime = time;
 		$(this).trigger(Player.EVENT_SEEK, [ time ]);
 	}
-	// this.repaint();
+	this.repaint();
 };
 
 Player.prototype.setVideoTime = function(time)
@@ -1590,9 +1593,18 @@ Player.prototype.setVideoTime = function(time)
 	if (time != $(this.videoID)[0].currentTime)
 	{
 		$(this.videoID)[0].currentTime = time;
+	}
+	this.repaint();
+};
+
+Player.prototype.seek = function(time)
+{
+	if (time != $(this.videoID)[0].currentTime)
+	{
+		$(this.videoID)[0].currentTime = time;
 		$(this).trigger(Player.EVENT_SEEK, [ time ]);
 	}
-	// this.repaint();
+	this.repaint();
 };
 
 /*
