@@ -55,7 +55,7 @@ class MessageController extends Controller
 			$user->addSentMessage($message);
 
 			$existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
-			$userManager = $this->container->get('fos_user.user_manager');
+			$userProvider = $this->container->get('fos_user.user_provider.username');
 
 			// split up the recipients by whitespace
 			$rawrecips = explode(' ', $form->get('to')->getData());
@@ -63,7 +63,7 @@ class MessageController extends Controller
 			{
 				try
 				{
-					$theuser = $userManager->loadUserByUsername($possuser);
+					$theuser = $userProvider->loadUserByUsername($possuser);
 					$existingUsers[] = $theuser;
 					$message->addRecipient($theuser);
 				}
@@ -91,7 +91,7 @@ class MessageController extends Controller
 			// persist all objects to database
 			$em->flush();
 
-			$this->get('session')->getFlashBag()->add('inbox', 'Message sent successfully!');
+			$this->get('session')->getFlashBag()->add('success', 'Message sent successfully!');
 			return $this->redirect($this->generateUrl('imdc_message_view_all'));
 
 			//return new Response('Created message id '.$message->getId());

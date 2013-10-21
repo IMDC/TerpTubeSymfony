@@ -456,7 +456,7 @@
                     "email": "kontakt@beberlei.de"
                 },
                 {
-                    "name": "Johannes M. Schmitt",
+                    "name": "Johannes Schmitt",
                     "email": "schmittjoh@gmail.com",
                     "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
@@ -905,17 +905,17 @@
         },
         {
             "name": "friendsofsymfony/jsrouting-bundle",
-            "version": "dev-master",
+            "version": "1.1.5",
             "target-dir": "FOS/JsRoutingBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSJsRoutingBundle.git",
-                "reference": "052ab23e7233493494b26c4eca3c13a14df7e08a"
+                "reference": "d38e992f2b04ed58898a978b6a672fecc36eed25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/052ab23e7233493494b26c4eca3c13a14df7e08a",
-                "reference": "052ab23e7233493494b26c4eca3c13a14df7e08a",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSJsRoutingBundle/zipball/d38e992f2b04ed58898a978b6a672fecc36eed25",
+                "reference": "d38e992f2b04ed58898a978b6a672fecc36eed25",
                 "shasum": ""
             },
             "require": {
@@ -955,7 +955,7 @@
             "keywords": [
                 "Js Routing"
             ],
-            "time": "2013-10-04 08:52:27"
+            "time": "2013-04-05 20:13:12"
         },
         {
             "name": "friendsofsymfony/user-bundle",
@@ -964,12 +964,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "f9ea1de0698e3055c9916e88c19f42e28844ef61"
+                "reference": "4025c4113bc000cef331ea833a52123080d2faa4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/f9ea1de0698e3055c9916e88c19f42e28844ef61",
-                "reference": "f9ea1de0698e3055c9916e88c19f42e28844ef61",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/4025c4113bc000cef331ea833a52123080d2faa4",
+                "reference": "4025c4113bc000cef331ea833a52123080d2faa4",
                 "shasum": ""
             },
             "require": {
@@ -1024,7 +1024,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2013-10-09 22:58:46"
+            "time": "2013-10-21 09:54:07"
         },
         {
             "name": "gregwar/captcha",
@@ -1261,7 +1261,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1368,7 +1368,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1523,7 +1523,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "https://github.com/schmittjoh",
+                    "homepage": "http://jmsyst.com",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -1735,12 +1735,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/leafo/lessphp.git",
-                "reference": "c6cd043c94ba2a94ae3eeedc7a4c925302b61252"
+                "reference": "bc4f33b4bfc889018ebe53611050729641b82dc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/leafo/lessphp/zipball/c6cd043c94ba2a94ae3eeedc7a4c925302b61252",
-                "reference": "c6cd043c94ba2a94ae3eeedc7a4c925302b61252",
+                "url": "https://api.github.com/repos/leafo/lessphp/zipball/bc4f33b4bfc889018ebe53611050729641b82dc6",
+                "reference": "bc4f33b4bfc889018ebe53611050729641b82dc6",
                 "shasum": ""
             },
             "type": "library",
@@ -1768,7 +1768,7 @@
             ],
             "description": "lessphp is a compiler for LESS written in PHP.",
             "homepage": "http://leafo.net/lessphp/",
-            "time": "2013-10-04 15:40:57"
+            "time": "2013-10-17 16:23:00"
         },
         {
             "name": "monolog/monolog",
@@ -1879,12 +1879,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/RabbitMqBundle.git",
-                "reference": "eb44f0e588da9f38562d91fa319b713b2c570741"
+                "reference": "a6fb132e0152706da7ada799286d231af3d0c728"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/eb44f0e588da9f38562d91fa319b713b2c570741",
-                "reference": "eb44f0e588da9f38562d91fa319b713b2c570741",
+                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/a6fb132e0152706da7ada799286d231af3d0c728",
+                "reference": "a6fb132e0152706da7ada799286d231af3d0c728",
                 "shasum": ""
             },
             "require": {
@@ -1923,7 +1923,7 @@
                 "queue",
                 "rabbitmq"
             ],
-            "time": "2013-10-04 18:43:55"
+            "time": "2013-10-15 17:16:50"
         },
         {
             "name": "php-ffmpeg/php-ffmpeg",
@@ -1931,12 +1931,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/alchemy-fr/PHP-FFmpeg.git",
-                "reference": "b3f4f6ccb90647cb25ac41604884ef1924a8a462"
+                "reference": "0d82e5ad3cb50fd78882b5e15aaf57b39a274103"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alchemy-fr/PHP-FFmpeg/zipball/b3f4f6ccb90647cb25ac41604884ef1924a8a462",
-                "reference": "b3f4f6ccb90647cb25ac41604884ef1924a8a462",
+                "url": "https://api.github.com/repos/alchemy-fr/PHP-FFmpeg/zipball/0d82e5ad3cb50fd78882b5e15aaf57b39a274103",
+                "reference": "0d82e5ad3cb50fd78882b5e15aaf57b39a274103",
                 "shasum": ""
             },
             "require": {
@@ -1992,7 +1992,7 @@
                 "video",
                 "video processing"
             ],
-            "time": "2013-10-10 17:12:57"
+            "time": "2013-10-21 12:16:28"
         },
         {
             "name": "phpoption/phpoption",
@@ -2760,16 +2760,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.14.0",
+            "version": "v1.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "224fc55635d544a2ec8edb3592be18db5a093f59"
+                "reference": "8873d7593ad7c120004f177c0fd01459b383c9cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/224fc55635d544a2ec8edb3592be18db5a093f59",
-                "reference": "224fc55635d544a2ec8edb3592be18db5a093f59",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/8873d7593ad7c120004f177c0fd01459b383c9cb",
+                "reference": "8873d7593ad7c120004f177c0fd01459b383c9cb",
                 "shasum": ""
             },
             "require": {
@@ -2805,7 +2805,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2013-10-03 06:41:20"
+            "time": "2013-10-15 19:17:38"
         },
         {
             "name": "twitter/bootstrap",
@@ -2813,12 +2813,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "a96aff1e564227cc03f10aa757ff5c2b80c482b1"
+                "reference": "9673c25e2cf8701e4fe0d255d38f1a9f6b193e9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/a96aff1e564227cc03f10aa757ff5c2b80c482b1",
-                "reference": "a96aff1e564227cc03f10aa757ff5c2b80c482b1",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/9673c25e2cf8701e4fe0d255d38f1a9f6b193e9f",
+                "reference": "9673c25e2cf8701e4fe0d255d38f1a9f6b193e9f",
                 "shasum": ""
             },
             "type": "library",
@@ -2842,7 +2842,7 @@
                 "bootstrap",
                 "css"
             ],
-            "time": "2013-10-10 09:27:26"
+            "time": "2013-10-21 15:58:38"
         },
         {
             "name": "videlalvaro/php-amqplib",
@@ -2850,12 +2850,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/php-amqplib.git",
-                "reference": "v2.1.0"
+                "reference": "adc2a425ab214517a5e76557a9370bdc6f212576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/v2.1.0",
-                "reference": "v2.1.0",
+                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/adc2a425ab214517a5e76557a9370bdc6f212576",
+                "reference": "adc2a425ab214517a5e76557a9370bdc6f212576",
                 "shasum": ""
             },
             "require": {
