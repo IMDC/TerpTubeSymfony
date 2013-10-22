@@ -7,7 +7,6 @@
         <div class="row-fluid" data-rowid="{{ counter }}">
     {% endif %}
             <li class="span3">
-                
                 <div class="thumbnail postthumbnail text-center">
                 	<div class="row-fluid">
                 		<div class="span3 post-reply-user-info-wrap">
@@ -28,23 +27,22 @@
 		                {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
 {# 						{% if postMediaFile is not defined or postMediaFile is null %}#}
 						{% if postMediaFile == null %}
-						    <div class="span9">
+					    <div class="span9 post-thumb-content">
 						    <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
 			                	{{ post.content|truncate(250) }}
 		                	</a>
-			                </div>
+		                </div>
 		                {% else %}
-		                	<div class="span9">
+	                	<div class="span9">
 		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
 		                	{{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: postMediaFile}, with_context = false) }}
 		                		<div class="row-fluid">
 		                		{{ post.content|truncate(60) }}
 		                		</div>
 	                		</a>
-	                		</div> <!-- ./span9 -->
+                		</div> <!-- ./span9 -->
 		                {% endif %}
 		                    
-		                 
                 	</div> <!-- /.row-fluid -->
 {#                 	<div class="row-fluid">#}
 {#                     <p><span class="content-created-datetime-span">Created: {{ post.created|date('g:ia M j Y') }}</span></p>#}

@@ -15,17 +15,25 @@ textarea#ThreadForm_mediatextarea {
 }
 
 div.threadthumbnail {
-    min-height: 250px;
-    max-height: 350px;
-    height: 350px;
+    min-height: 310px;
 }
 
 div.postthumbnail {
-	min-height: 250px;
-	max-height: 250px;
-	height: 250px;
+	min-height: 220px;
+}
+
+div.post-thumb-content {
+    overflow-y: auto;
 }
 
 div.thumbnail audio {
     width: 100%;
+}
+
+.threadthumbnail video {
+    max-width: 85%;
+}
+
+div.thread-title-wrap {
+    min-height: 7em;
 }
