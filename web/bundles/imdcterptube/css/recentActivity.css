@@ -37,3 +37,12 @@ div.thumbnail audio {
 div.thread-title-wrap {
     min-height: 7em;
 }
+
+.post-reply-user-avatar-wrap {
+    padding-top:30px;
+}
+
+span.thread-date-span {
+    color: #aaa;
+    font-size: 0.8em;
+}

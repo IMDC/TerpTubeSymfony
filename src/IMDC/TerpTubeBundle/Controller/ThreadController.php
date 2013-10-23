@@ -30,10 +30,27 @@ class ThreadController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
     
-        $threads = $em->getRepository('IMDCTerpTubeBundle:Thread')->getMostRecentThreads(30);
+        //$threads = $em->getRepository('IMDCTerpTubeBundle:Thread')->getMostRecentThreads(30);
+        
+        $dql = "SELECT t FROM IMDCTerpTubeBundle:Thread t ORDER BY t.creationDate DESC";
+        $query = $em->createQuery($dql);
+        
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,
+            $this->get('request')->query->get('page', 1), /*page number*/
+            8 /*limit per page*/
+        );
+        
+        /*
         $response = $this->render('IMDCTerpTubeBundle:Thread:index.html.twig',
                 array('threads' => $threads)
         );
+        */
+        
+        $response = $this->render('IMDCTerpTubeBundle:Thread:indexpagination.html.twig',
+                array('pagination' => $pagination));
+        
         return $response;
     }
     

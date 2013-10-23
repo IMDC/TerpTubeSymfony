@@ -16,8 +16,8 @@ textarea#ThreadForm_mediatextarea {
 
 div.threadthumbnail {
     min-height: 250px;
-    max-height: 350px;
-    height: 350px;
+    max-height: 375px;
+    height: 375px;
 }
 
 div.thumbnail audio {
@@ -30,4 +30,13 @@ a#selectFiles {
 
 #ThreadForm_submit {
     display: none;
+}
+
+span.thread-date-span {
+    color: #aaa;
+    font-size: 0.8em;
+}
+
+.post-reply-user-avatar-wrap {
+    padding-top: 30px;
 }

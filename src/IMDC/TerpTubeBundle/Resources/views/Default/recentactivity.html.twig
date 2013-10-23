@@ -31,22 +31,21 @@
 <h1>Welcome to TerpTube</h1>
 {% endblock herounit %}
 
-
 {% block underherounitrow1 %}
-{% if posts|length > 0 %}
-{# 	<div class="row-fluid">#}
-	<h3>Recent Posts</h3>
-	{% include 'IMDCTerpTubeBundle:Post:postthumbnailprototype.html.twig' %}
-{# 	</div>#}
+{% if threads|length > 0 %}
+
+	<h3>Recently Created Forums</h3>
+	{% include 'IMDCTerpTubeBundle:Thread:threadthumbnailprototype.html.twig' %}
+
 {% endif %}
 <div>
 {% endblock underherounitrow1 %}
 
+
 {% block underherounitrow2 %}
-{% if threads|length > 0 %}
-{#  	<div class="row-fluid">#}
-    	<h3>Recently Created Forums</h3>
-    	{% include 'IMDCTerpTubeBundle:Thread:threadthumbnailprototype.html.twig' %}
-{#  	</div>#}
+{% if posts|length > 0 %}
+	<h3>Recent Posts</h3>
+	{% include 'IMDCTerpTubeBundle:Post:postthumbnailprototype.html.twig' %}
+
 {% endif %}
 {% endblock underherounitrow2 %}
