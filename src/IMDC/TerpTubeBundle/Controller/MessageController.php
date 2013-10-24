@@ -79,12 +79,6 @@ class MessageController extends Controller
 				$em->persist($euser);
 			}
 
-			/* foreach ($message->getRecipients() as $recp) {
-			    $recp->addReceivedMessage($message);
-			    // request persistence of user object to database
-			    $em->persist($recp);
-			} */
-
 			// request to persist message object to database
 			$em->persist($message);
 
@@ -94,7 +88,6 @@ class MessageController extends Controller
 			$this->get('session')->getFlashBag()->add('success', 'Message sent successfully!');
 			return $this->redirect($this->generateUrl('imdc_message_view_all'));
 
-			//return new Response('Created message id '.$message->getId());
 		}
 
 		// form not valid, show the basic form
@@ -156,12 +149,6 @@ class MessageController extends Controller
 				$em->persist($euser);
 			}
 
-			/* foreach ($message->getRecipients() as $recp) {
-			 $recp->addReceivedMessage($message);
-			// request persistence of user object to database
-			$em->persist($recp);
-			} */
-
 			// request to persist message object to database
 			$em->persist($message);
 
@@ -170,8 +157,6 @@ class MessageController extends Controller
 
 			$this->get('session')->getFlashBag()->add('inbox', 'Message sent successfully!');
 			return $this->redirect($this->generateUrl('imdc_message_view_all'));
-
-			//return new Response('Created message id '.$message->getId());
 		}
 
 		// form not valid, show the basic form
@@ -188,32 +173,10 @@ class MessageController extends Controller
 		}
 
 		$user = $this->getUser();
-		/**
-		$messages = $this->getDoctrine()
-		                ->getRepository('IMDCTerpTubeBundle:Message')
-		                ->findBy(array('owner' => $user->getId()));
-		 **/
 
 		$em = $this->getDoctrine()->getManager();
 
-		/* $messages = $em->getRepository('IMDCTerpTubeBundle:Message')
-		                    ->findAllReceivedInboxMessagesForUser($user, 30); */
-
-		//$messages = $user->getReceivedMessages();
 		$messages = $em->getRepository('IMDCTerpTubeBundle:User')->getMostRecentMessages($user, 30);
-
-		// loop through the messages and temporarily mark them as read or unread
-		foreach ($messages as $msg)
-		{
-			if ($msg->isMessageRead($user))
-			{
-				$msg->setTempRead(TRUE);
-			}
-			else
-			{
-				$msg->setTempRead(FALSE);
-			}
-		}
 
 		// if no feedback message, just show all messages
 		if (is_null($feedbackmsg))
@@ -231,7 +194,7 @@ class MessageController extends Controller
 		}
 	}
 
-	public function messageSuccessAction()
+	public function messageSuccessAction(Request $request)
 	{
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
@@ -244,7 +207,7 @@ class MessageController extends Controller
 		}
 	}
 
-	public function deleteMessageAction($messageid)
+	public function deleteMessageAction(Request $request, $messageid)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -271,9 +234,6 @@ class MessageController extends Controller
 					->createNotFoundException('User is not found in the recipients for this message id: ' . $messageid);
 		}
 
-		/*         $em->getRepository('IMDCTerpTubeBundle:Message')
-		            ->deleteMessageFromInbox($messageid, $this->getUser()->getId()); */
-
 		// remove message from users received messages
 		$user->removeReceivedMessage($message);
 
@@ -288,7 +248,7 @@ class MessageController extends Controller
 
 	}
 
-	public function archiveMessageAction($messageid)
+	public function archiveMessageAction(Request $request, $messageid)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -324,7 +284,7 @@ class MessageController extends Controller
 		return $this->redirect($this->generateUrl('imdc_message_view_all'));
 	}
 
-	public function viewSentMessagesAction()
+	public function viewSentMessagesAction(Request $request)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -333,20 +293,11 @@ class MessageController extends Controller
 		}
 
 		$user = $this->getUser();
-		/**
-		 $messages = $this->getDoctrine()
-		 ->getRepository('IMDCTerpTubeBundle:Message')
-		 ->findBy(array('owner' => $user->getId()));
-		 **/
-
-		//$em = $this->getDoctrine()->getManager();
-		/* $messages = $em->getRepository('IMDCTerpTubeBundle:Message')
-		                ->findAllSentMessagesForUser($user); */
 
 		$messages = $user->getSentMessages();
 
 		// if no feedback message, just show all messages
-		if (is_null($feedbackmsg))
+		if (@is_null($feedbackmsg))
 		{
 			$response = $this
 					->render('IMDCTerpTubeBundle:Message:sentmessages.html.twig', array('messages' => $messages));
@@ -362,7 +313,7 @@ class MessageController extends Controller
 		}
 	}
 
-	public function viewArchivedMessagesAction()
+	public function viewArchivedMessagesAction(Request $request)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -380,7 +331,7 @@ class MessageController extends Controller
 		return $response;
 	}
 
-	public function viewMessageAction($messageid)
+	public function viewMessageAction(Request $request, $messageid)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -393,27 +344,39 @@ class MessageController extends Controller
 		$message = $this->getDoctrine()->getRepository('IMDCTerpTubeBundle:Message')
 				->findOneBy(array('id' => $messageid));
 
-		//TODO: fix this?!
-		$alreadyRead = $message->isMessageRead($user);
-
-		// if the message is already read, don't try to insert it again as this causes SQL errors
-		if ($alreadyRead)
-		{
-			// skip
+		// does the user have access to read this message?
+		if ($message->getRecipients()->contains($user) 
+		        || $message->getOwner() == $user) {
+		    
+		    $alreadyRead = $user->getReadMessages()->contains($message);
+		    
+		    // if the message is already read, don't try to insert it again as this causes SQL errors
+		    if ($alreadyRead)
+		    {
+		        // skip
+		    }
+		    else
+		    {
+		        $user->addReadMessage($message);
+		        // flush object to database
+		        $em = $this->getDoctrine()->getManager();
+		        $em->persist($user);
+		        $em->flush();
+		    }
+		    
+		    $response = $this
+		    ->render('IMDCTerpTubeBundle:Message:viewprivatemessage.html.twig', array('message' => $message));
+		    return $response;
 		}
-		else
-		{
-			$user->addReadMessage($message);
-			//$message->addUsersRead($user);
-			// flush object to database
-			$em = $this->getDoctrine()->getManager();
-			$em->persist($user);
-			$em->flush();
+		else {
+		    $this->get('session')->getFlashBag()->add(
+		            'error',
+		            'You do not have permission to view this message'
+		    );
+		    return $this->redirect($this->generateUrl('imdc_message_view_all'));
 		}
-
-		$response = $this
-				->render('IMDCTerpTubeBundle:Message:viewprivatemessage.html.twig', array('message' => $message));
-		return $response;
+		
+		
 
 	}
 

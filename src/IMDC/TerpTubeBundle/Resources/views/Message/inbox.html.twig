@@ -10,10 +10,10 @@
 Inbox
 {% endblock title %}
 
-{% block herounit %}
+{% block herounit_wrap %}
     <h1>Inbox</h1>
     <h2>Your messages appear below:</h2>
-{% endblock herounit %}
+{% endblock herounit_wrap %}
 {% block underherounitrow1 %}
     {% if app.session.flashbag.get('inbox') is defined %}
         {% for flashMessage in app.session.flashbag.get('inbox') %}
@@ -45,8 +45,8 @@ Inbox
                 {% if messages %}
                     {% for message in messages %}
                     {% set msgread = false %}
-                    {% if message.getTempRead() %}{% endif %}
-                    {% if message.isMessageRead(app.user) %}
+{#                     {% if message.isMessageRead(app.user) %}#}
+                    {% if app.user.getReadMessages.contains(message) %}
                         {% set msgread = true %}
                     <tr class="tr-message message-read" onclick="goToPrivateMessage('{{ path('imdc_message_view_message', {'messageid': message.id}) }}');">
                     {% else %}

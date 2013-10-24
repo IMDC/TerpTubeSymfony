@@ -38,26 +38,11 @@ class Message
      * @var \Doctrine\Common\Collections\Collection
      */
     private $recipients;
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $usersRead;
 
     /**
-     * @var boolean
-     */
-    private $tempRead;
-    
-    /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $usersArchived;
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $usersDeleted;
+    private $attachedMedia;
     
     /**
      * Constructor
@@ -65,9 +50,7 @@ class Message
     public function __construct()
     {
         $this->recipients    = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->usersRead     = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->usersArchived = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->usersDeleted  = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->attachedMedia = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -213,170 +196,51 @@ class Message
         $this->sentDate = new \DateTime('NOW');
         return $this;
     }
-
-    /**
-     * Add usersRead
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersRead
-     * @return Message
-     */
-    public function addUsersRead(\IMDC\TerpTubeBundle\Entity\User $usersRead)
-    {
-        $this->usersRead[] = $usersRead;
-    
-        return $this;
-    }
-
-    /**
-     * Remove usersRead
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersRead
-     */
-    public function removeUsersRead(\IMDC\TerpTubeBundle\Entity\User $usersRead)
-    {
-        $this->usersRead->removeElement($usersRead);
-    }
-
-    /**
-     * Get usersRead
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getUsersRead()
-    {
-        return $this->usersRead;
-    }
     
     /**
-     * Function to check if the given user has read this message
      * 
      * @param User $user
      * @return boolean
      */
-    public function isMessageRead(User $user)
+    public function isMessageRead(User $user) 
     {
-        if ( $user->getReadMessages()->contains($this) ) {
+        if ($user->getReadMessages()->contains($this)) {
             return TRUE;
         }
+        
         return FALSE;
     }
     
-
     /**
-     * Set tempRead
+     * Add attachedMedia
      *
-     * @param boolean $tempRead
+     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedMedia
      * @return Message
      */
-    public function setTempRead($tempRead)
+    public function addAttachedMedia(\IMDC\TerpTubeBundle\Entity\Media $attachedMedia)
     {
-        $this->tempRead = $tempRead;
+        $this->attachedMedia[] = $attachedMedia;
     
         return $this;
     }
 
     /**
-     * Get tempRead
+     * Remove attachedMedia
      *
-     * @return boolean 
+     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedMedia
      */
-    public function getTempRead()
+    public function removeAttachedMedia(\IMDC\TerpTubeBundle\Entity\Media $attachedMedia)
     {
-        return $this->tempRead;
-    }
-    
-    /**
-     * Function to check if the given user has archived this message
-     * 
-     * @param User $user
-     * @return boolean
-     */
-    public function isMessageArchived(User $user) 
-    {
-        if ( $user->getArchivedMessages()->contains($this) ) {
-            return TRUE;
-        }
-        return FALSE;
-    }
-    
-    /**
-     * Add usersArchived
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersArchived
-     * @return Message
-     */
-    public function addUsersArchived(\IMDC\TerpTubeBundle\Entity\User $usersArchived)
-    {
-        $this->usersArchived[] = $usersArchived;
-    
-        return $this;
+        $this->attachedMedia->removeElement($attachedMedia);
     }
 
     /**
-     * Remove usersArchived
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersArchived
-     */
-    public function removeUsersArchived(\IMDC\TerpTubeBundle\Entity\User $usersArchived)
-    {
-        $this->usersArchived->removeElement($usersArchived);
-    }
-
-    /**
-     * Get usersArchived
+     * Get attachedMedia
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getUsersArchived()
+    public function getAttachedMedia()
     {
-        return $this->usersArchived;
-    }
-
-
-    /**
-     * Function to check if the given user has deleted this message
-     *
-     * @param User $user
-     * @return boolean
-     */
-    public function isMessageDeleted(User $user)
-    {
-        if ( $user->getDeletedMessages()->contains($this)) {
-            return TRUE;
-        }
-        return FALSE;
-    }
-    
-    /**
-     * Add usersDeleted
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersDeleted
-     * @return Message
-     */
-    public function addUsersDeleted(\IMDC\TerpTubeBundle\Entity\User $usersDeleted)
-    {
-        $this->usersDeleted[] = $usersDeleted;
-    
-        return $this;
-    }
-
-    /**
-     * Remove usersDeleted
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersDeleted
-     */
-    public function removeUsersDeleted(\IMDC\TerpTubeBundle\Entity\User $usersDeleted)
-    {
-        $this->usersDeleted->removeElement($usersDeleted);
-    }
-
-    /**
-     * Get usersDeleted
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getUsersDeleted()
-    {
-        return $this->usersDeleted;
+        return $this->attachedMedia;
     }
 }

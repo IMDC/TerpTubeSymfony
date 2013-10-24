@@ -2,10 +2,10 @@
 {% block title %}
 Sent Messages
 {% endblock title %}
-{% block herounit %}
+{% block herounit_wrap %}
     <h1>Sent Messages</h1>
     <h2>Your previously sent messages appear below:</h2>
-{% endblock herounit %}
+{% endblock herounit_wrap %}
 {% block underherounitrow1 %}
     {% if app.session.flashbag.get('inbox') is defined %}
         {% for flashMessage in app.session.flashbag.get('inbox') %}
@@ -18,9 +18,16 @@ Sent Messages
     <h2>Sent Messages</h2>
     <div class="row-fluid">
         <div class="span3">
-            <a href="{{ path('imdc_message_create') }}">Create new message</a>
+            <a class="btn btn-primary" href="{{ path('imdc_message_create') }}">
+                <span class="icon-stack">
+                    <i class="icon-circle icon-stack-base icon-light"></i>
+                    <i class="icon-plus icon-dark" style="color:green;font-size:1.2em;"></i>
+                </span>
+                Create new message
+            </a>
         </div>
     </div>
+    <br />
     <div class="row-fluid">
         <div class="span-9">
             <table class="table table-condensed table-hover table-striped messagetable sentmessagestable">

@@ -15,9 +15,6 @@ IMDC\TerpTubeBundle\Entity\Message:
             type: text
         sentDate:
             type: datetime
-        tempRead:
-            type: boolean
-            nullable: true
     manyToOne:
         owner:
             targetEntity: User
@@ -33,5 +30,16 @@ IMDC\TerpTubeBundle\Entity\Message:
                 inverseJoinColumns:
                     user_id:
                         referencedColumnName: id
+        attachedMedia:  #many-to-many relationship
+            targetEntity: Media
+            joinTable:
+                name: messages_attached_media
+                joinColumns:
+                    message_id: 
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    media_id:
+                        referencedColumnName: id  
+            nullable: true;
     lifecycleCallbacks: 
         prePersist: [setSentValueToNow]

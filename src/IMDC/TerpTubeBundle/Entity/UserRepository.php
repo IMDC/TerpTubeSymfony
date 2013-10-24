@@ -30,9 +30,12 @@ class UserRepository extends EntityRepository
                     FROM IMDCTerpTubeBundle:Message m
                     JOIN IMDCTerpTubeBundle:User u
                     WHERE :uid MEMBER OF m.recipients
-                    ORDER BY m.sentDate DESC
+    	            and m.id not in (select g.id from IMDCTerpTubeBundle:User r join r.archivedMessages g)
+    	            and m.id not in (select d.id from IMDCTerpTubeBundle:User e join e.deletedMessages d)
+    	            ORDER BY m.sentDate DESC
                 ')
                 ->setParameter('uid', $user->getId());
+
     	$query->setMaxResults($limit);
     	
         return $query->getResult();

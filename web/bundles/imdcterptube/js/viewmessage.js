@@ -8,7 +8,7 @@ $(document).ready(function() {
 		
 		if (data.responseCode == 200) {
 			$('#readOutput').html(data.feedback);
-			$('#readOutput').css('color', 'red');
+			$('#readOutput').css('color', '#D38585');
 		}
 		else if (data.responseCode == 400) { // bad request
 			$('#readOutput').html(data.feedback);
