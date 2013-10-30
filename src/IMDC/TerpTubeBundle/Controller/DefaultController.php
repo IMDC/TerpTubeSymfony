@@ -10,10 +10,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FOS\UserBundle\Doctrine\UserManager;
 use Doctrine\DBAL\DBALException;
+use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
-	public function indexAction()
+	public function indexAction(Request $request)
 	{
 		//return $this->render('IMDCTerpTubeBundle:Default:index.html.twig', array('name' => $name));
 
@@ -26,7 +27,7 @@ class DefaultController extends Controller
 	 * 
 	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
 	 */
-	public function createNoReplyOnceAction()
+	public function createNoReplyOnceAction(Request $request)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
