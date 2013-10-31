@@ -6,7 +6,7 @@
 
 {% block stylesheets %}
     {{  parent() }}
-    <link href="{{ asset('bundles/imdcterptube/css/simultaneousPreviewRecord.css') }}" rel="stylesheet" />
+    <link href="{{ asset('bundles/imdcterptube/css/compoundMediaPreview.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block herounit %}
@@ -23,7 +23,7 @@
 						<source src="{{ asset(compoundMedia.getSourceID.getResource.getWebPathWebm) }}"/>
 						<source src="{{ asset(compoundMedia.getSourceID.getResource.getWebPath) }}"/>
 					</video>
-					<i class="xclosepip icon-remove-sign icon-large" ></i>
+					<i class="xclosepip fa fa-times-circle fa-large" ></i>
 					
 				</div>
 				<div id="sourcewrap" class="sourcestyle">
@@ -31,7 +31,7 @@
 						<source src="{{ asset(compoundMedia.getTargetID.getResource.getWebPathWebm) }}"/>
 						<source src="{{ asset(compoundMedia.getTargetID.getResource.getWebPath) }}"/>
 					</video>
-					<i class="xclosepip icon-remove-sign icon-large" style="display:none;"></i>
+					<i class="xclosepip fa fa-times-circle fa-large" style="display:none;"></i>
 					
 				</div>
 			</div>
@@ -163,7 +163,7 @@
 		 });
      console.log($(player1.elementID).find('.volumeControl').eq(0));
 
-     var player2VideoControlsElement = $(player2.elementID).find('.videoControls').eq(0)
+     var player2VideoControlsElement = $(player2.elementID).find('.videoControls').eq(0);
      var sourceVolumeControl = $('<div class="sourceVolumeControl"></div>');
 
      var hidePIPButton = $('<button id="hidePIP">Hide PIP</button>');

@@ -1229,7 +1229,7 @@ Player.prototype.setupVideoRecording = function()
 	this.hasRecorded = -1;
 	this.recording_startTime = 0;
 	this.paintThumb(0);
-	this.repaint();
+	
 
 	window.URL = window.URL || window.webkitURL;
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia
@@ -1261,7 +1261,7 @@ Player.prototype.setupVideoRecording = function()
 	}
 
 	this.duration = this.options.maxRecordingTime;
-
+	this.repaint();
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
 
@@ -1298,7 +1298,6 @@ Player.prototype.recording_checkStop = function()
 	if (time >= this.getDuration())
 	{
 		this.recording_stopRecording();
-		this.set
 	}
 
 };

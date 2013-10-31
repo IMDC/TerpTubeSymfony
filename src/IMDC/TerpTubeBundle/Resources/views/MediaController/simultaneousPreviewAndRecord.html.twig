@@ -15,16 +15,20 @@
 
 {% block underherounitrow1 %}
     <div class="row-fluid">
-	    <div class="simultaneousVideoRecording">
-	   		<video	class="preview" width="640" id="{{ mediaFile.getID }}" preload="auto">
-				<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
-				<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
-			</video>
-			
-			<video	class="preview"  id="record" preload="auto" autoplay muted>
-			</video>
-			
-			<div class="simultaneousVideoControls">
+	    <div class="simultaneousVideoRecording row-fluid">
+		    <div id="videoContainer">
+			    <div id="pipwrap" class="pipstyle" >
+			   		<video	class="preview" id="{{ mediaFile.getID }}" preload="auto">
+						<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
+						<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
+					</video>
+				</div>
+				<div id="sourcewrap" class="sourcestyle">
+					<video	class="preview"  id="record" preload="auto" autoplay muted>
+					</video>
+				</div>
+			</div>
+				<div class="simultaneousVideoControls">
 			</div>
 		</div>
     </div>
@@ -40,10 +44,10 @@
  <script type='text/javascript'>
  var compoundMediaID = -1;
  $(document).ready(function() {
-	 var playerElement = $("#{{ mediaFile.getID }}");
-	 var player1 = new Player(playerElement);
-	 var recordingElement = $("#record");
-	 var player2 = new Player(recordingElement);
+	 var player1Element = $("#{{ mediaFile.getID }}");
+	 var player2Element = $("#record");
+	 var player1 = new Player(player1Element);
+	 var player2 = new Player(player2Element);
 
 	 var startTime = 0; //used to hold the start time of the recording relative to the source video
 	 var recordedMediaID = -1;
@@ -88,11 +92,12 @@
 	
 	 player2.options.controlBarElement = $('.simultaneousVideoControls');
 
-	 player1.createControls();
 	 player2.createControls();
+	 player1.createControls();
+	 
 
 	 
-	 recordingElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
+	 player2Element.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
 		 {
 		 if (player !=null)
 		 	player.destroyRecorder();
@@ -158,6 +163,132 @@
 	 $(player1).on(Player.EVENT_INITIALIZED, function() {
 			console.log("Recorder Initialized");
 		 });
+
+	 var hidePIPButton = $('<button id="hidePIP">Hide PIP</button>');
+     var swapPIPButton = $('<button id="swapPIP">Swap PIP</button>');
+     
+     var player1VideoControlsElement = $(player1.elementID).find('.videoControls').eq(0);
+
+     hidePIPButton.on("click", function(event){
+   		var clip = $("div.pipstyle");
+    	  
+ 		if (this.value == "show") 
+ 		{
+    		clip.show();
+    	 	var selectedAudio = $("input[type='radio']:checked").prop('value');
+    	    if ( (selectedAudio == "both") || (selectedAudio == "clip1") ) 
+    	    {
+    	    	clip[0].volume = 1;
+    	   	}
+    	    $(this).prop('value', 'hide').html("Hide PiP");
+   		}           
+    	else 
+    	{
+    		clip.hide();
+    	    $(this).prop('value', 'show').html("Show PiP");
+    	}
+    			
+   	 });
+
+     swapPIPButton.on("click", function(event){
+    	 var clip1 = $("div#pipwrap");
+         var clip2 = $("div#sourcewrap");
+         
+         var piprole;
+         var sourcerole;
+
+         if ( (clip1.draggable("option", "disabled"))) 
+         {
+            // clip 1 is acting as the source
+            piprole    = clip2;
+            sourcerole = clip1;
+         }
+         else {
+            piprole    = clip1;
+            sourcerole = clip2;
+         }
+
+         // get position, size, z-index of pip 
+         var piproleheight   = piprole.height();
+         var piprolewidth    = piprole.width();
+         var piprolezindex   = piprole.css("z-index");
+         var piproleposition = piprole.position(); // returns object accessible with var.left or var.top
+         var piprolepositionleft = piprole.css("left"); // need these explicit css calls as .position
+         var piprolepositiontop  = piprole.css("top");  // doesn't return correct values if elements are hidden
+         var piprolevisible = piprole.is(":visible");
+         
+         // get position, size, z-index of source 
+         var sourceroleheight   = sourcerole.height();
+         var sourcerolewidth    = sourcerole.width();
+         var sourcerolezindex   = sourcerole.css("z-index");
+         var sourceroleposition = sourcerole.position(); // returns object accessible with var.left or var.top
+         var sourcerolepositionleft = sourcerole.css("left");
+         var sourcerolepositiontop  = sourcerole.css("top");
+         
+         // disable draggable and resizeable on pip
+         piprole.draggable("option", "disabled", true);
+         
+         // switch css classes
+         piprole.removeClass("pipstyle");
+         piprole.addClass("sourcestyle");
+         
+         sourcerole.removeClass("sourcestyle");
+         sourcerole.addClass("pipstyle");
+
+         /**************** PIP now acting as SOURCE from here *********/
+         /**************** PIP now acting as SOURCE from here *********/
+
+         // swap positions
+         // get position of container div element
+         var vidcontainer = $("div#videoContainer");
+         var vidcontainerpos = vidcontainer.offset();
+         var vidcontainerpadding = vidcontainer.css("padding");
+
+         var vcont = parseInt(vidcontainerpos.top,10) + parseInt(vidcontainerpadding,10);
+         var vconl = parseInt(vidcontainerpos.left,10) + parseInt(vidcontainerpadding,10);
+         
+         // copy old pip's size and position attributes to 'new' pip
+         // check if pip is hidden
+         if (!piprolevisible) {
+            // previous PIP video was hidden before swap started
+            sourcerole.show();
+            piprole.show();
+
+            // reset show/hide pip button
+            hidePIPButton.prop('value', 'hide').html("Hide PIP");
+         }
+         // fix for absolute position as resizable messes it up
+         /*sourcerole.css({"height" : piproleheight, "width" : piprolewidth, "position" : "absolute",
+                         "left" : piprolepositionleft, "top" : piprolepositiontop});
+
+         // reset acting source movie dimensions, fix for absolute position
+         piprole.css({ "position" : "absolute", "left" : vconl,
+                       "top" : vcont});
+         */
+
+         sourcerole.css({"left" : piprolepositionleft, "top" : piprolepositiontop});
+
+		// reset acting source movie dimensions, fix for absolute position
+		piprole.css({ "left" : 0,"top" : 0});
+           
+         // make sourcerole (now acting as pip) draggable and resizeable
+         sourcerole.draggable("option", "disabled", false);
+
+         // reveal close button element on new pip
+         sourcerole.find('i').show();
+
+         // hide close button element on old pip
+         piprole.find('i').hide(); 
+      
+     });
+     
+	 hidePIPButton.appendTo(player1VideoControlsElement);
+	 swapPIPButton.appendTo(player1VideoControlsElement);
+
+     $("div#pipwrap").draggable({containment: "#videoContainer"});
+
+     // set draggable and disabled on the source wrap 
+     $("div#sourcewrap").draggable({disabled: true, containment: "#videoContainer"});
 		
 });
 
