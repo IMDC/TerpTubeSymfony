@@ -30,8 +30,8 @@ var postArray = new Array();
      <div class="row-fluid">
          <div class="pull-right" id="thread-toolbox">
              <ul class="unstyled inline">
-                 <li><a id="thread-report-link" href="#"><i class="icon-flag"></i> Report</a></li>
-                 <li><a id="thread-follow-link" href="#"><i class="icon-paper-clip"></i> Follow</a>
+                 <li><a id="thread-report-link" href="#"><i class="fa fa-flag"></i> Report</a></li>
+                 <li><a id="thread-follow-link" href="#"><i class="fa fa-paperclip"></i> Follow</a>
              </ul>
          </div>
      </div>
@@ -45,8 +45,8 @@ var postArray = new Array();
     <div class="row-fluid">
         <div class="pull-left" id="thread-creator-toolbox">
             <ul class="unstyled inline">
-                <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class=""><i class="icon-cut"></i> Edit</a></li>
-                <li><a href="#" class=""><i class="icon-remove"></i> Delete</a></li>
+                <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class=""><i class="fa fa-scissors"></i> Edit</a></li>
+                <li><a href="#" class=""><i class="fa fa-minus-circle"></i> Delete</a></li>
             </ul>
         </div>
     </div>
@@ -144,13 +144,13 @@ var postArray = new Array();
       <div class="row-fluid" id="reply-container">
            <div class="span12">
                <p>
-                   <a class="btn btn-info" id="post-comment-button" href="#"><i class="icon-plus"></i> Reply</a>
+                   <a class="btn btn-info" id="post-comment-button" href="#"><i class="fa fa-plus"></i> Reply</a>
                    <div id="comment-form-wrap" style="display:none;" class="row-fluid">
 {#                    TWIG FORM START #}
     				
 				    {{ form_start(form, { 'attr' : {'id' : 'postCommentForm'} }) }}
 				        {{ form_errors(form) }}
-				        <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
+				        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
 				        {{ form_widget(form.mediatextarea, {'attr':{'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
 				        <div id="files"></div>
 				{#         <input type="textarea" disabled="true" id="file-textarea" />#}
@@ -171,8 +171,8 @@ var postArray = new Array();
 				        </div>
 				        {% endif %}
 				        <div class="row-fluid">
-{# 				        {{ form_widget(form.submit, {'attr' : {'class': 'btn btn-success',} }) }} <a class="btn btn-danger" href="#" id="cancelButton"><i class="icon-remove"></i> Cancel</a>#}
-				        <a id="post-comment-submit-button" class="btn btn-success"><i class="icon-check"></i> Submit</a> <a class="btn btn-danger" href="#" id="cancelButton"><i class="icon-remove"></i> Cancel</a>
+{# 				        {{ form_widget(form.submit, {'attr' : {'class': 'btn btn-success',} }) }} <a class="btn btn-danger" href="#" id="cancelButton"><i class="fa fa-times"></i> Cancel</a>#}
+				        <a id="post-comment-submit-button" class="btn btn-success"><i class="fa fa-check"></i> Submit</a> <a class="btn btn-danger" href="#" id="cancelButton"><i class="fa fa-times"></i> Cancel</a>
 				        {{ form_widget(form.submit, {'attr' : {'class': 'btn btn-success',} }) }}
 				        </div>
 				    
@@ -217,18 +217,18 @@ var postArray = new Array();
                             <li>
                                 {% if app.user.getId == post.author.getId %}
                                 {% set thisistheuser = true %}
-                                <i class="icon-envelope" style="color:gray"></i>
+                                <i class="fa fa-envelope" style="color:gray"></i>
                                 {% else %}
-                                <a href="{{ path('imdc_message_user_specific', {'userid':post.author.getUserName()}) }}" title="Send a message to {{ post.author.getUserName }}"><i class="icon-envelope"></i></a>
+                                <a href="{{ path('imdc_message_user_specific', {'userid':post.author.getUserName()}) }}" title="Send a message to {{ post.author.getUserName }}"><i class="fa fa-envelope"></i></a>
                                 {% endif %}
                             </li>
                             <li>
                                 {% if thisistheuser is defined %}
-                                <i class="icon-heart" style="color:gray"></i>
+                                <i class="fa fa-heart" style="color:gray"></i>
                                 {% elseif app.user.isUserOnFriendsList(post.author) %}
-                                <i class="icon-heart" style="color:green" title="Already friends"></i>
+                                <i class="fa fa-heart" style="color:green" title="Already friends"></i>
                                 {% else %}
-                                <a href="{{ path('imdc_add_to_friends_list', {'userid':post.author.getId} ) }}" title="Click to add {{ post.author.getUserName }} to your friends list"><i class="icon-heart"></i></a>
+                                <a href="{{ path('imdc_add_to_friends_list', {'userid':post.author.getId} ) }}" title="Click to add {{ post.author.getUserName }} to your friends list"><i class="fa fa-heart"></i></a>
                                 {% endif %}
                             </li>
                        </ul>
@@ -237,7 +237,7 @@ var postArray = new Array();
 {#                     {% if post.isTemporal %}#}
 {#                     <div class="row-fluid temporal-post-wrap">#}
 {#                         <div class="pull-right">#}
-{#                             <a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="icon-arrow-left icon-2x"></i><i class="icon-time icon-2x"></i></a>#}
+{#                             <a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="fa fa-arrow-left icon-2x"></i><i class="fa fa-clock fa-2x"></i></a>#}
 {#                         </div>#}
 {#                     </div>#}
 {#                     {% endif %}#}
@@ -293,13 +293,13 @@ var postArray = new Array();
                     <div class="row-fluid">
                         <ul class="unstyled">
                         	{% if post.isTemporal %}
-                            <li><a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="icon-time"></i></a></li>
+                            <li><a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="fa fa-clock-o"></i></a></li>
                             {% endif %}
                             {% if post.author.getId == app.user.getId %}
-{#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="icon-trash"></i></a></li>#}
-                            <li><a id="post-comment-edit" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit_specific', {'pid':post.getId} ) }}"><i class="icon-edit"></i></a></li>
-{#                             <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>#}
-                            <li><a id="post-comment-delete-modal" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="icon-trash"></i></a></li>                            
+{#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li>#}
+                            <li><a id="post-comment-edit" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit_specific', {'pid':post.getId} ) }}"><i class="fa fa-pencil"></i></a></li>
+{#                             <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li>#}
+                            <li><a id="post-comment-delete-modal" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li>                            
                             {% endif %}
                         </ul>
                     </div>
@@ -330,7 +330,7 @@ var postArray = new Array();
 <div id="modaldiv" class="modal hide fade">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3><i class="icon-warning-sign icon-2x"></i> Delete Post</h3>
+    <h3><i class="fa fa-exclamation-triangle fa-2x"></i> Delete Post</h3>
   </div>
   <div class="modal-body">
     <p>This will delete this comment permanently.</p>
@@ -338,8 +338,8 @@ var postArray = new Array();
     <p>Are you sure?</p>
   </div>
   <div class="modal-footer">
-    <a id="modalCancelButton" href="#" data-dismiss="modal" class="btn"><i class="icon-remove"></i> Cancel</a>
-    <a id="modalDeleteButton" class="btn btn-danger" onclick="return confirmPostDelete()" href="#"><i class="icon-trash"></i> Delete</a>
+    <a id="modalCancelButton" href="#" data-dismiss="modal" class="btn"><i class="fa fa-times"></i> Cancel</a>
+    <a id="modalDeleteButton" class="btn btn-danger" onclick="return confirmPostDelete()" href="#"><i class="fa fa-trash"></i> Delete</a>
   </div>
 </div>
 {% endblock postfooteroutsidebody %}

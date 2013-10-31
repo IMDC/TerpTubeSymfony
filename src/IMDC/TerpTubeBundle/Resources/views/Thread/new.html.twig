@@ -18,7 +18,7 @@
 
     {{ form_start(form) }}
         {{ form_errors(form) }}
-        <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
+        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
         {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
         <div id="files"></div>
 {#         <input type="textarea" disabled="true" id="file-textarea" />#}
@@ -28,8 +28,8 @@
         {{ form_row(form.content, {'attr':{'class':'input-xxlarge'}}) }}
         <div class="row-fluid">
             {{ form_widget(form.submit) }}
-            <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="icon-check"></i> Submit</a>
-            <a id="thread-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="icon-remove"></i> Cancel</a>
+            <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
+            <a id="thread-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
         </div>
     {{ form_end(form) }}
   

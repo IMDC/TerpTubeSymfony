@@ -5,12 +5,12 @@
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-    <div class="row-fluid">
-   	 	<a id="record-link" class="btn btn-primary" href="{{ path('imdc_files_gateway_record_media') }}"><i class="icon-facetime-video"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
-        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_audio') }}"><i class="icon-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a>
-        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_video') }}"><i class="icon-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a>
-        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_image') }}"><i class=" icon-picture"></i> {{ 'filesGateway.buttons.image'|trans }}</a>
-        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_other') }}"><i class="icon-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a>
+  <div class="row-fluid">
+   		<a id="record-link" class="btn btn-primary" href="{{ path('imdc_files_gateway_record_media') }}"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_audio') }}"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_video') }}"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_image') }}"><i class=" fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a>
+        <a class="btn btn-primary" href="{{ path('imdc_files_gateway_other') }}"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a>
     </div>
 
 {% endblock underherounitrow1 %}

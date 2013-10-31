@@ -37,7 +37,7 @@ $(document).ready(function() {
 	 * element and I can't style it with a font-awesome glyph
 	 */
 	$("a#post-comment-submit-button").click(function() {
-		$(this).after('<span><i class="icon-spinner icon-spin"></i> Sending...</span>');
+		$(this).after('<span><i class="fa fa-spinner fa-spin"></i> Sending...</span>');
 		$(this).remove();
 		$("#PostFormFromThread_submit").click();
 	});
@@ -242,7 +242,7 @@ $("a#post-comment-delete").click(function(event) {
         				console.log(data);
         				
         				//$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeOut('slow', function(){$(this).remove();});
-                        $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="icon-check"></i> ' + data.feedback + '</p></div></div>');
+                        $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
         				$theWholeComment.fadeOut('slow', function(){$(this).remove();});
                         
         				//delete timeline region
@@ -302,7 +302,7 @@ function confirmPostDelete() {
 			console.log("success");
 			console.log(data);
 			$("#modaldiv").modal('hide');
-            $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="icon-check"></i> ' + data.feedback + '</p></div></div>');
+            $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
 			$theWholeComment.fadeOut('slow', function(){$(this).remove();});
             
 			//delete timeline region

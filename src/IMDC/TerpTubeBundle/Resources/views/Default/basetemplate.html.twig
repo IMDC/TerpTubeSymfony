@@ -55,23 +55,23 @@
 						<p class="navbar-text pull-right">
 						{% block loginarea %}
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="icon-user"></i> ' ~app.user.username~'</a>' %}
+                                {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="fa fa-user"></i> ' ~app.user.username~'</a>' %}
                                 {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
                					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    <i class="icon-inbox"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} <span class="badge badge-inverse">{{ app.user.getNumUnreadPMs }}</span>
+               					    <i class="fa fa-inbox"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} <span class="badge badge-inverse">{{ app.user.getNumUnreadPMs }}</span>
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
-                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="icon-off"></i>
+                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="fa fa-power-off"></i>
                					</a>
 				            {% else %}
-				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}"><i class="icon-signin"></i> {{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }} <i class="icon-plus icon-white"></i></a>
+				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in"></i> {{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }} <i class="fa fa-plus fa-white"></i></a>
 				            {% endif %}
 						{% endblock loginarea %}
 						</p>
 						<ul class="nav">
 							{% block nav_ul %}
 							{% block nav_ul_home %}<li>{% endblock %}
-{# 								<a href="{{ path('imdc_terp_tube_user_splash') }}"><i class="icon-home"></i> Home</a>#}
+{# 								<a href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-home"></i> Home</a>#}
 							</li>
 							{% block nav_ul_about %}<li>{% endblock %}
 {# 								<a href="#about">About</a>#}
@@ -83,13 +83,13 @@
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 								{% block nav_ul_authenticated %}
 									{% block nav_ul_authenticated_my_files %}<li>{% endblock %}
-										<a href="{{ path('imdc_files_gateway') }}"><i class="icon-folder-close-alt"></i> {{ 'nav.my_files'|trans }}</a>
+										<a href="{{ path('imdc_files_gateway') }}"><i class="fa fa-folder-o"></i> {{ 'nav.my_files'|trans }}</a>
 									</li>
 									{% block nav_ul_authenticated_my_friends %}<li>{% endblock %}
-									    <a href="{{ path('imdc_friends_list_show_all') }}"><i class="icon-group"></i> {{ 'nav.my_friends'|trans }}</a>
+									    <a href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> {{ 'nav.my_friends'|trans }}</a>
 									</li>
 									{% block nav_ul_authenticated_my_groups %}<li>{% endblock %}
-									    <a href="{{ path('imdc_group_mygroups') }}"><i class="icon-globe"></i> {{ 'nav.my_groups'|trans }}</a>
+									    <a href="{{ path('imdc_group_mygroups') }}"><i class="fa fa-globe"></i> {{ 'nav.my_groups'|trans }}</a>
 								    </li>
 								{% endblock nav_ul_authenticated %}
 						 	{% endif %}

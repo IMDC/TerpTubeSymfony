@@ -9,18 +9,18 @@
                 <li>
                     {% if app.user.getId == thread.creator.getId %}
                     {% set thisistheuser = true %}
-                    <i class="icon-envelope" style="color:gray"></i>
+                    <i class="fa fa-envelope" style="color:gray"></i>
                     {% else %}
-                    <a href="{{ path('imdc_message_user_specific', {'userid':thread.creator.getUserName()}) }}"><i class="icon-envelope"></i></a>
+                    <a href="{{ path('imdc_message_user_specific', {'userid':thread.creator.getUserName()}) }}"><i class="fa fa-envelope"></i></a>
                     {% endif %}
                 </li>
                 <li>
                     {% if thisistheuser is defined %}
-                    <i class="icon-heart" style="color:gray"></i>
+                    <i class="fa fa-heart" style="color:gray"></i>
                     {% elseif app.user.isUserOnFriendsList(thread.creator) %}
-                    <i class="icon-heart" style="color:green" title="Already friends"></i>
+                    <i class="fa fa-heart" style="color:green" title="Already friends"></i>
                     {% else %}
-                    <a href="{{ path('imdc_add_to_friends_list', {'userid':thread.creator.getId} ) }}"><i class="icon-heart"></i></a>
+                    <a href="{{ path('imdc_add_to_friends_list', {'userid':thread.creator.getId} ) }}"><i class="fa fa-heart"></i></a>
                     {% endif %}
                 </li>
            </ul>

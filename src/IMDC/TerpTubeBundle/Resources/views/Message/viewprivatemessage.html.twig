@@ -16,12 +16,12 @@
     <br />
     <a id="messageRead" data-mid="{{ message.id }}" href="{{  path('imdc_message_mark_as_read',{'messageid': message.id}) }}" style="display:none;"></a>
     <div id="readOutput"></div>
-    <a class="btn" href="{{ path('imdc_message_view_all') }}"><i class="icon-arrow-left"></i> Back to inbox</a>
-    <a class="btn" href="{{ path('imdc_message_reply', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-reply"></i> Reply</a>
+    <a class="btn" href="{{ path('imdc_message_view_all') }}"><i class="fa fa-arrow-left"></i> Back to inbox</a>
+    <a class="btn" href="{{ path('imdc_message_reply', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-reply"></i> Reply</a>
     <div class="pull-right">
         <ul class="unstyled inline">
-            <li><a class="btn" href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove-sign"></i> Delete</a></li>
-            <li><a class="btn" href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-time"></i> Archive</a></li>
+            <li><a class="btn" href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-minus-circle"></i> Delete</a></li>
+            <li><a class="btn" href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-archive"></i> Archive</a></li>
         </ul>
     </div>
     <p></p>

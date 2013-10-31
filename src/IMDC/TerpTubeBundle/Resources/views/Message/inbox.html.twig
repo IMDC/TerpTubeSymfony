@@ -29,11 +29,11 @@ Inbox
     <div class="row-fluid">
         <div class="span3">
             <a class="btn btn-primary" href="{{ path('imdc_message_create') }}">
-                <span class="icon-stack">
-                    <i class="icon-circle icon-stack-base icon-light"></i>
-                    <i class="icon-plus icon-dark" style="color:green;font-size:1.2em;"></i>
+                <span class="fa-stack">
+                    <i class="fa fa-circle fa-stack-2x fa-light"></i>
+                    <i class="fa fa-plus fa-stack-1x fa-dark" style="color:green;font-size:1.2em;"></i>
                 </span>
-                Create new message
+                  		Create new message
             </a>
         </div>
     </div>
@@ -41,7 +41,7 @@ Inbox
     <div class="row-fluid">
         <div class="span-9">
             <table class="table table-condensed table-hover table-striped messagetable pmtable">
-                <tr><th><i class="icon-wrench"></i> Tools</th><th>Read</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
+                <tr><th><i class="fa fa-wrench"></i> Tools</th><th>Read</th><th>From</th><th>Subject</th><th>Content</th><th>Sent</th></tr>
                 {% if messages %}
                     {% for message in messages %}
                     {% set msgread = false %}
@@ -54,8 +54,8 @@ Inbox
                     {% endif %}
                         <!--  tools  -->
                         <td>
-                            <a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-remove-sign"></i> Delete</a>
-                            <a href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="icon-archive"></i> Archive</a>
+                            <a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-minus-circle"></i> Delete</a>
+                            <a href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-archive"></i> Archive</a>
                         </td>
                         <!--  read  -->
                         <td>{%  if msgread %}

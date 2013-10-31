@@ -20,7 +20,7 @@
 {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="controls controls-row">
-            <a class="btn btn-primary" id="selectFiles" href="#"><i class="icon-cloud-upload"></i> Select Files</a>
+            <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
             {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
         </div>
         <div id="files"></div>
@@ -37,7 +37,7 @@
         {{ form_row(form.content) }} 
         <div class="controls controls-row">
             {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
-            <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}" class="btn btn-danger"><i class="icon-remove"></i> Cancel</a>
+            <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
         </div>
     
     {{ form_end(form) }}
