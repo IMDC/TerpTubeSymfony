@@ -22,10 +22,12 @@
 						<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
 						<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
 					</video>
+					<i class="xclosepip fa fa-times-circle fa-large" ></i>
 				</div>
 				<div id="sourcewrap" class="sourcestyle">
 					<video	class="preview"  id="record" preload="auto" autoplay muted>
 					</video>
+					<i class="xclosepip fa fa-times-circle fa-large" style="display:none;"></i>
 				</div>
 			</div>
 				<div class="simultaneousVideoControls">
@@ -281,7 +283,9 @@
          piprole.find('i').hide(); 
       
      });
-     
+     $('.xclosepip').on("click", function(event){
+    	 hidePIPButton.click();
+     });
 	 hidePIPButton.appendTo(player1VideoControlsElement);
 	 swapPIPButton.appendTo(player1VideoControlsElement);
 

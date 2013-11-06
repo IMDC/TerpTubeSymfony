@@ -34,8 +34,8 @@ div .video {
 
 .pipstyle {
 	width: 160px;
-	height: 90px;
-	z-index: 1500;
+	height: 120px;
+	z-index: 2;
 	position: absolute;
 	/*border: 1px solid lightgray;*/
 }
@@ -52,8 +52,7 @@ div .video {
 	position: absolute;
 	top: -5px;
 	right: -5px;
-	z-index: 14004;
-	width: 20px;
+	z-index: 3;
 	cursor: pointer;
 }
 

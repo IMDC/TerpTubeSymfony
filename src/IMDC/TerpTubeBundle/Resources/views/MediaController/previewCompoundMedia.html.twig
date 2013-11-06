@@ -281,6 +281,9 @@
          piprole.find('i').hide(); 
       
      });
+     $('.xclosepip').on("click", function(event){
+    	 hidePIPButton.click();
+     });
      
      sourceVolumeControl.append('<div>Source Volume</div>');
      $(player1.elementID).find('.volumeControl').eq(0).detach().appendTo(sourceVolumeControl);
