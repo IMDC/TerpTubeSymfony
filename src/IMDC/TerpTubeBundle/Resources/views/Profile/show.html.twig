@@ -35,7 +35,7 @@
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.birthDate'|trans }}:</span><span class="field_value"> {{ profile.birthDate? profile.birthDate|date('Y-m-d'): 'form.profile.birthDate.empty'|trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.gender.title'|trans }}:</span><span class="field_value"> {{ gender |trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.city'|trans }}:</span><span class="field_value"> {{ profile.city}}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.country'|trans }}:</span><span class="field_value"> {{ profile.country | country }}</span></div>
+		<div class="profile_field"><span class="field_title">{{ 'profile.show.country'|trans }}:</span><span class="field_value"> {{ profile.country | trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.skypeName'|trans }}:</span><span class="field_value"> {{ profile.skypeName }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.textBio'|trans }}:</span><span class="field_value"> {{ profile.textBio |trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoredByMentor.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoredByMentor is null?'form.generic.empty'|trans: profile.interestedInMentoredByMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</span></div>

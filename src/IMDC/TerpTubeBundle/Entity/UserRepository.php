@@ -23,7 +23,7 @@ class UserRepository extends EntityRepository
         return $stmt->rowCount();
     }
     
-    public function getMostRecentMessages($user, $limit=30) 
+    public function getMostRecentInboxMessages($user, $limit=30) 
     {
     	$query = $this->getEntityManager()->createQuery('
                     SELECT m
@@ -40,5 +40,37 @@ class UserRepository extends EntityRepository
     	
         return $query->getResult();
     	
+    }
+    
+    public function getMostRecentSentMessages($user, $limit=30)
+    {
+        $query = $this->getEntityManager()->createQuery('
+                    SELECT m
+                    FROM IMDCTerpTubeBundle:Message m
+                    JOIN IMDCTerpTubeBundle:User u
+                    WHERE :uid = m.owner
+    	            and m.id not in (select d.id from IMDCTerpTubeBundle:User e join e.deletedMessages d)
+    	            ORDER BY m.sentDate DESC
+                ')
+                ->setParameter('uid', $user->getId());
+        
+        $query->setMaxResults($limit);
+         
+        return $query->getResult();
+    }
+    
+    public function getSentMessagesCount($user) 
+    {
+        $query = $this->getEntityManager()->createQuery('
+                SELECT count(m)
+                FROM IMDCTerpTubeBundle:Message m
+                JOIN IMDCTerpTubeBundle:User u
+                WHERE m.owner = u.id 
+                AND m.owner = :uid
+                and m.id not in (select d.id from IMDCTerpTubeBundle:User r join r.deletedMessages d)
+                ')
+                ->setParameter('uid', $user->getId());
+        
+        return $query->getResult();
     }
 }

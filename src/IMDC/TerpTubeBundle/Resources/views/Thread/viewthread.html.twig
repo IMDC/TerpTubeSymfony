@@ -223,8 +223,8 @@ var postArray = new Array();
                                 {% endif %}
                             </li>
                             <li>
-                                {% if thisistheuser is defined %}
-                                <i class="fa fa-heart" style="color:gray"></i>
+                                {% if app.user.getId == post.author.getId %}
+                                <i class="fa fa-heart" style="color:gray" title="This is you"></i>
                                 {% elseif app.user.isUserOnFriendsList(post.author) %}
                                 <i class="fa fa-heart" style="color:green" title="Already friends"></i>
                                 {% else %}

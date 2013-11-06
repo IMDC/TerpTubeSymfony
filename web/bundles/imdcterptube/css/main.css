@@ -20,3 +20,8 @@ span.content-created-datetime-span {
 div.mainsidebarnav {
   /*   min-width: 100px; */
 }
+
+div.sidebar-nav {
+    background-color: transparent !important;
+    border: none !important;
+}

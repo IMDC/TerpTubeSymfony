@@ -176,7 +176,7 @@ class MessageController extends Controller
 
 		$em = $this->getDoctrine()->getManager();
 
-		$messages = $em->getRepository('IMDCTerpTubeBundle:User')->getMostRecentMessages($user, 30);
+		$messages = $em->getRepository('IMDCTerpTubeBundle:User')->getMostRecentInboxMessages($user, 30);
 
 		// if no feedback message, just show all messages
 		if (is_null($feedbackmsg))

@@ -19,11 +19,7 @@ Message Archive
     <div class="row-fluid">
         <div class="span3">
             <a class="btn btn-primary" href="{{ path('imdc_message_create') }}">
-                <span class="fa-stack">
-                    <i class="fa fa-circle fa-stack-2x fa-light"></i>
-                    <i class="fa-plus fa-stack-1x fa-dark" style="color:green;font-size:1.2em;"></i>
-                </span>
-                Create new message
+                <i class="fa fa-plus-circle fa-lg"></i> Create new message
             </a>
         </div>
     </div>
@@ -31,10 +27,13 @@ Message Archive
     <div class="row-fluid">
         <div class="span-9">
             <table class="table table-condensed table-hover table-striped messagetable archivedmessagetable">
-                <tr><th>To</th><th>Subject</th><th>Content</th><th>Date Sent</th></tr>
+                <tr><th>Tools</th><th>To</th><th>Subject</th><th>Content</th><th>Date Sent</th></tr>
                 {% if messages %}
                     {% for message in messages %}
                     <tr>
+                        <td>
+                            <a href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-trash-o"></i> Delete</a>
+                        </td>
                         <td>
                             <div class="message-recipient-wrap">
                                 <ul class="unstyled inline">
