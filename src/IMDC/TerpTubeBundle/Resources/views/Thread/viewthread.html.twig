@@ -217,20 +217,22 @@ var postArray = new Array();
                             <li>
                                 {% if app.user.getId == post.author.getId %}
                                 {% set thisistheuser = true %}
-                                <i class="fa fa-envelope" style="color:gray"></i>
+                                <i class="fa fa-envelope-o" style="color:lightgray"></i>
                                 {% else %}
-                                <a href="{{ path('imdc_message_user_specific', {'userid':post.author.getUserName()}) }}" title="Send a message to {{ post.author.getUserName }}"><i class="fa fa-envelope"></i></a>
+                                <a href="{{ path('imdc_message_user_specific', {'userid':post.author.getUserName()}) }}" title="Send a message to {{ post.author.getUserName }}"><i class="fa fa-envelope-o"></i></a>
                                 {% endif %}
                             </li>
+                            {#  ---------- friend section ---------------------- #}
                             <li>
                                 {% if app.user.getId == post.author.getId %}
-                                <i class="fa fa-heart" style="color:gray" title="This is you"></i>
+                                <i class="fa fa-user" style="color:lightgray" title="This is you"></i>
                                 {% elseif app.user.isUserOnFriendsList(post.author) %}
-                                <i class="fa fa-heart" style="color:green" title="Already friends"></i>
+                                <i class="fa fa-dot-circle-o" style="color:green" title="Already friends"></i>
                                 {% else %}
-                                <a href="{{ path('imdc_add_to_friends_list', {'userid':post.author.getId} ) }}" title="Click to add {{ post.author.getUserName }} to your friends list"><i class="fa fa-heart"></i></a>
+                                <a href="{{ path('imdc_add_to_friends_list', {'userid':post.author.getId} ) }}" title="Click to add {{ post.author.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
                                 {% endif %}
                             </li>
+                            {#  ---------------- end friend section ---------------- #}
                        </ul>
                     </div> <!-- ./post-reply-user-tools -->
                     

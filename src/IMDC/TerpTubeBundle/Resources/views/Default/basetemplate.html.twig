@@ -61,7 +61,7 @@
                					    <i class="fa fa-inbox"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} <span class="badge badge-inverse">{{ app.user.getNumUnreadPMs }}</span>
                					</a> | 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
-                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="fa fa-power-off"></i>
+                   					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="fa fa-sign-out"></i>
                					</a>
 				            {% else %}
 				               	<a  class="navbar-link" href="{{ path('fos_user_security_login') }}"><i class="fa fa-sign-in"></i> {{ 'layout.login'|trans({}, 'IMDCTerpTubeBundle') }} <i class="fa fa-plus fa-white"></i></a>
@@ -110,7 +110,7 @@
 			<div class="row-fluid">
 				<div class="span1 mainsidebarnav">
 					<div class="well sidebar-nav">
-						<ul class="nav nav-list text-center">
+						<ul class="nav nav-list text-center sidebar-nav-ul">
 							{% block sidebarlinks %}
 							<li class="nav-header">
 								TerpTube
@@ -128,7 +128,7 @@
 								<a href="{{ path('imdc_groups_show_all') }}"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Groups</a>
 							</li>
 							{% block sidebarlinks_members %}<li>{% endblock %}
-								<a href="#"><img src="{{ asset('img/global_nav_icon_member.png') }}" /><br />Members</a>
+								<a href="{{ path('imdc_member_list_public') }}"><img src="{{ asset('img/global_nav_icon_member.png') }}" /><br />Members</a>
 							</li>
 							{% block sidebarlinks_help %}<li>{% endblock %}
 								<a href="#"><img src="{{ asset('img/global_nav_icon_help.png') }}" /><br />Help</a>

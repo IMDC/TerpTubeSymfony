@@ -1,0 +1,56 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+{% block title %}Public Member Listing{% endblock title %}
+
+{% block herounit_wrap %}
+<h1>Public Member Directory</h1>
+{% endblock herounit_wrap %}
+
+{% block underherounitrow1 %}
+{#
+<div class="row-fluid">
+    <div class="span12">
+        {{ pagination.getTotalItemCount }}
+    </div>
+</div>
+
+<table>
+<tr>
+    <th>{{ knp_pagination_sortable(pagination, 'Id', 'u.id') }}</th>
+    <th>{% if pagination.isSorted('u.userName') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Username', 'u.userName') }}</th>
+</tr>
+
+{% for user in pagination %}
+<tr {% if loop.index is odd %}class="color"{% endif %}></tr>
+    <td>{{ user.id }}</td>
+    <td>{{ user.userName }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<div class="row-fluid">
+    {{ knp_pagination_render(pagination) }}
+</div>
+#}
+
+<ul class="thumbnails">
+    {% for member in members %}
+    {% set profile = member.getProfile %}
+    <li class="span3">
+        <div class="thumbnail text-center">
+            <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
+            <h3>{{ member.username }}</h3>
+            <p>Joined: {{ member.joinDate|date('g:ia F j Y') }}</p>
+            <p>
+                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
+                <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : member.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}">Remove from Friend's list</a>
+            </p>
+        </a>
+    </li>
+{% endfor %}
+</ul>
+
+
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}

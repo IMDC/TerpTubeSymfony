@@ -29,7 +29,6 @@ class UserProfile
      */
     private $middleName;
 
-
     /**
      * @var string
      */
@@ -80,6 +79,31 @@ class UserProfile
      */
     private $languages;
 
+    /**
+     * @var string
+     */
+    private $textBio;
+    
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoringSignLanguage;
+    
+    /**
+     * @var string
+     */
+    private $birthDate;
+    
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoringInterpreter;
+    
+    /**
+     * @var boolean
+     */
+    private $profileVisibleToPublic;
+    
     /**
      * Constructor
      */
@@ -407,10 +431,7 @@ class UserProfile
     {
         return $this->languages;
     }
-    /**
-     * @var string
-     */
-    private $textBio;
+
 
 
     /**
@@ -435,11 +456,6 @@ class UserProfile
     {
         return $this->textBio;
     }
-    /**
-     * @var boolean
-     */
-    private $interestedInMentoringSignLanguage;
-
 
     /**
      * Set interestedInMentoringSignLanguage
@@ -463,11 +479,6 @@ class UserProfile
     {
         return $this->interestedInMentoringSignLanguage;
     }
-    /**
-     * @var string
-     */
-    private $birthDate;
-
 
     /**
      * Set birthDate
@@ -491,11 +502,6 @@ class UserProfile
     {
         return $this->birthDate;
     }
-    /**
-     * @var boolean
-     */
-    private $interestedInMentoringInterpreter;
-
 
     /**
      * Set interestedInMentoringInterpreter
@@ -518,5 +524,29 @@ class UserProfile
     public function getInterestedInMentoringInterpreter()
     {
         return $this->interestedInMentoringInterpreter;
+    }
+
+
+    /**
+     * Set profileVisibleToPublic
+     *
+     * @param boolean $profileVisibleToPublic
+     * @return UserProfile
+     */
+    public function setProfileVisibleToPublic($profileVisibleToPublic)
+    {
+        $this->profileVisibleToPublic = $profileVisibleToPublic;
+    
+        return $this;
+    }
+
+    /**
+     * Get profileVisibleToPublic
+     *
+     * @return boolean 
+     */
+    public function getProfileVisibleToPublic()
+    {
+        return $this->profileVisibleToPublic;
     }
 }

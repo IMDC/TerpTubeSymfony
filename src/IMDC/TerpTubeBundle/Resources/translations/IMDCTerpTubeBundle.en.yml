@@ -175,6 +175,8 @@ form:
             title: "Are you interested in being a Sign language mentor?"
         interestedInMentoredingInterpreter:
             title: "Are you interested in being Sign language interpreter mentor?"
+        profileVisibleToPublic:
+            title: "Would you like your profile to appear in the public directory?"
             
     generic:
         allFieldsRequired: 'All fields are required!'
@@ -212,6 +214,8 @@ profile:
             title: "Interested in being a Sign language mentor"
         interestedInMentoringInterpreter:
             title: "Interested in being a Sign language interpreter mentor"
+        profileVisibleToPublic:
+            title: "Profile is shown on the public directory"
         textBio: "Bio"
         languages:
             title: "Languages"

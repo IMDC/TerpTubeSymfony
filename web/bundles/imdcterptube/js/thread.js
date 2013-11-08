@@ -31,6 +31,48 @@ $(document).ready(function() {
 		$("#modaldiv").modal('toggle');
 	});
 	
+	$("a#post-comment-edit").click(function(e) {
+		
+		var p_id = $(this).data("pid");
+		var $theEditLink = $(this);
+		
+		// prevent the click from scrolling the page
+		event.preventDefault();
+		
+		// the comment wrap in question    
+		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
+		
+		// fade out the original comment
+		//$theWholeComment.fadeOut('slow');
+		
+		// ajax call to get the edit comment form
+		$.ajax({
+			url : Routing.generate('imdc_post_edit_ajax_specific', {pid: p_id}),
+			type : "POST",
+			contentType : "application/x-www-form-urlencoded",
+			data :
+			{
+				pid : p_id
+			},
+			success : function(data)
+			{
+				console.log("success");
+				console.log(data);
+				
+				$oldcomment = $theWholeComment.clone();
+				
+				$theWholeComment.find("div.post-reply-content").html(data.form);
+				//$theWholeComment.hide();
+
+			},
+			error : function(request)
+			{
+				console.log(request);
+				$theWholeComment.fadeIn('slow');
+				alert(request.statusText);
+			}
+		});
+	});
 	
 	/**
 	 * Necessary to use this as I'm hiding the original form submit button as it is a button
@@ -50,6 +92,7 @@ $(document).ready(function() {
 	});
 	
 	// make the content section grow automatically when necessary
+	// todo: is this necessary anymore?
 	$("#PostFormFromThread_content").autosize();
 	
 	

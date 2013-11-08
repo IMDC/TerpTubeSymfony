@@ -32,6 +32,7 @@
 		<div class="profile_field"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></div>
 		{% endif %}
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.userName'|trans }}:</span><span class="field_value"> {{ user.username }}</span></div>
+		<div class="profile_field"><span class="field_title">{{ 'profile.show.profileVisibleToPublic.title'|trans }}:</span><span class="field_value"> {{ profile.getProfileVisibleToPublic is null?'form.generic.empty'|trans: profile.getProfileVisibleToPublic? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.birthDate'|trans }}:</span><span class="field_value"> {{ profile.birthDate? profile.birthDate|date('Y-m-d'): 'form.profile.birthDate.empty'|trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.gender.title'|trans }}:</span><span class="field_value"> {{ gender |trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.city'|trans }}:</span><span class="field_value"> {{ profile.city}}</span></div>

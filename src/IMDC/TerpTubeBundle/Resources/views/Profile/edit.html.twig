@@ -6,12 +6,12 @@
 
 {% block underherounitrow1 %}
 {% for type, messages in app.session.flashbag.all() %}
-		{% for key, message in messages %}
-       		<div class="flash-{{ type }}">
-            	{{ message|trans({}, 'FOSUserBundle') }}
-            </div>
-      	{% endfor %}
-   	{% endfor %}
+	{% for key, message in messages %}
+   		<div class="flash-{{ type }}">
+        	{{ message|trans({}, 'FOSUserBundle') }}
+        </div>
+  	{% endfor %}
+{% endfor %}
    	
 <a href="{{ path('imdc_terp_tube_user_profile_change-password', {'userName': app.user.username}) }}" />{{ 'profile.edit.changePassword'|trans }}</a>
 
@@ -48,6 +48,7 @@
     {{ form_row(form.interestedInMentoredByInterpreter) }}
     {{ form_row(form.interestedInMentoringSignLanguage) }}
     {{ form_row(form.interestedInMentoringInterpreter) }}
+    {{ form_row(form.profileVisibleToPublic) }}
     {{ form_row (form._token) }}
     <input type="submit" value="{{ 'profile.edit.submit'|trans }}" />
     <input type="button" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile') }}'" />
@@ -57,8 +58,8 @@
 {% block javascripts %}
     {{ parent() }}
     <script type='text/javascript'>
- // keep track of how many language fields have been rendered and set up the text for the links
-   $(document).ready(function() {
+    // keep track of how many language fields have been rendered and set up the text for the links
+    $(document).ready(function() {
         $('#add-another-language').click(function(e) {
         	return addLanguage($(this));
         });

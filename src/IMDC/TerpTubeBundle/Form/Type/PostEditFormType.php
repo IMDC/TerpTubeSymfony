@@ -9,6 +9,8 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
+use IMDC\TerpTubeBundle\Form\EventListener\AddStartEndTimeSubscriber;
+
 class PostEditFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -38,6 +40,8 @@ class PostEditFormType extends AbstractType
 	                                                'read_only' => true,
 	                                                'label' => 'Media ID',
                                                     ));
+	    
+	    $builder->addEventSubscriber(new AddStartEndTimeSubscriber());
 	    
 	    $builder->add('content', null, array('label' => 'Content',
 	    ));

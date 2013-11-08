@@ -73,4 +73,21 @@ class UserRepository extends EntityRepository
         
         return $query->getResult();
     }
+    
+    public function findAllPublicListedMembers($firstresult, $lastresult) 
+    {
+        $query = $this->getEntityManager()->createQuery('
+                SELECT u
+                FROM IMDCTerpTubeBundle:User u
+                JOIN IMDCTerpTubeBundle:UserProfile p
+                WHERE p.profileVisibleToPublic = true
+                AND u.username <> :uname
+                ORDER BY u.joinDate DESC
+        ')
+        ->setParameter('uname' , 'noreply');
+        $query->setFirstResult($firstresult);
+        $query->setMaxResults($lastresult);
+        
+        return $query->getResult();
+    }
 }

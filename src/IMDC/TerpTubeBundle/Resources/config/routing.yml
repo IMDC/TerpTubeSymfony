@@ -235,7 +235,6 @@ imdc_thread_edit_specific:
         threadid: \d+
 
     
-    
 imdc_post_create_new:
     pattern: /post/new
     defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
@@ -264,4 +263,25 @@ imdc_post_edit_specific:
     defaults: { _controller: IMDCTerpTubeBundle:Post:editPost }
     requirements:
         pid: \d+
+        
+imdc_post_edit_ajax_specific:
+    pattern: /post/editajax/{pid}
+    defaults: { _controller: IMDCTerpTubeBundle:Post:editPostAjax }
+    requirements:
+        pid: \d+
+    options:
+        expose: true
+        
+
+imdc_member_list_public_more:
+    pattern: /members/{pagenumber}
+    defaults: { _controller: IMDCTerpTubeBundle:User:index }
+    requirements:
+        pagenumber: \d+
+        
+imdc_member_list_public:
+    pattern: /members
+    defaults: { _controller: IMDCTerpTubeBundle:User:index, pagenumber:NULL }
+    
+
         

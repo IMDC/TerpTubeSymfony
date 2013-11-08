@@ -316,4 +316,55 @@ class PostController extends Controller
 	    ));
 	    
 	}
+	
+	public function editPostAjaxAction(Request $request, $pid) 
+	{
+	    // check if user logged in
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+		{
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		}
+		
+		//$request = $this->get('request');
+		//$postid = $request->request->get('pid');
+		
+		
+		// if not ajax, throw an error
+		if (!$request->isXmlHttpRequest()) {
+			throw new BadRequestHttpException('Only Ajax POST calls accepted');
+		}
+		
+		$user = $this->getUser();
+		$em   = $this->getDoctrine()->getManager();
+		
+		$postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+		
+		// if post is not owned by the currently logged in user, redirect
+		if (!$postToEdit->getAuthor()->getId() == $user->getId()) {
+			$this->get('session')->getFlashBag()->add(
+					'error',
+					'You do not have permission to edit this post'
+			);
+			//return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+			// return an ajax fail here
+			$return = array('responseCode' => 400, 'feedback' => 'You do not have permission to edit this post');
+		}
+		else {
+			// post is owned by the user
+		    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit,
+		                      array('user' => $user,
+	                      ));
+		    
+		    $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:editPostAjax.html.twig',
+		                          array('form' => $posteditform->createView(),
+		                              'post' => $postToEdit,
+		                  ));
+		    
+			
+			$return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
+		}
+		$return = json_encode($return); // json encode the array
+		return new Response($return, 200, array('Content-Type' => 'application/json'));
+	     
+	}
 }
