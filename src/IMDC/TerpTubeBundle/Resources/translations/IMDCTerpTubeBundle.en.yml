@@ -174,7 +174,9 @@ form:
         interestedInMentoringSignLanguage:
             title: "Are you interested in being a Sign language mentor?"
         interestedInMentoredingInterpreter:
-            title: "Are you interested in being Sign language interpreter mentor?"
+            title: "Are you interested in being a Sign language interpreter mentor?"
+        interestedInMentoringMentor:
+            title: "Are you interested in mentoring other mentors?"
         profileVisibleToPublic:
             title: "Would you like your profile to appear in the public directory?"
             
@@ -214,6 +216,8 @@ profile:
             title: "Interested in being a Sign language mentor"
         interestedInMentoringInterpreter:
             title: "Interested in being a Sign language interpreter mentor"
+        interestedInMentoringMentor:
+            title: "Interested in mentoring other mentors"
         profileVisibleToPublic:
             title: "Profile is shown on the public directory"
         textBio: "Bio"

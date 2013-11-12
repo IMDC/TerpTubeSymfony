@@ -272,16 +272,10 @@ imdc_post_edit_ajax_specific:
     options:
         expose: true
         
-
-imdc_member_list_public_more:
-    pattern: /members/{pagenumber}
-    defaults: { _controller: IMDCTerpTubeBundle:User:index }
-    requirements:
-        pagenumber: \d+
         
 imdc_member_list_public:
     pattern: /members
-    defaults: { _controller: IMDCTerpTubeBundle:User:index, pagenumber:NULL }
+    defaults: { _controller: IMDCTerpTubeBundle:User:index }
     
 
         

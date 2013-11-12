@@ -43,6 +43,7 @@
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoredByInterpreter.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoredByInterpreter is null?'form.generic.empty'|trans: profile.interestedInMentoredByInterpreter? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringSignLanguage.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringSignLanguage is null?'form.generic.empty'|trans: profile.interestedInMentoringSignLanguage? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringInterpreter.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringInterpreter  is null?'form.generic.empty'|trans: profile.interestedInMentoringInterpreter? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
+		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringMentor.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringMentor is null?'form.generic.empty'|trans: profile.interestedInMentoringMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</span></div>
 		<div class="profile_field"><span class="field_title">{{ 'profile.show.languages.title'|trans }}:</span>
 		{% if profile.languages and profile.languages|length >0 %}
 			<ul>

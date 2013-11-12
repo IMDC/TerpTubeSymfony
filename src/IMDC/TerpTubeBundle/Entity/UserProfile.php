@@ -67,8 +67,13 @@ class UserProfile
     /**
      * @var boolean
      */
-    private $interestedInMentoredingInterpreter;
-
+    private $interestedInMentoringSignLanguage;
+    
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoringInterpreter;
+    
     /**
      * @var \IMDC\TerpTubeBundle\Entity\Media
      */
@@ -85,19 +90,9 @@ class UserProfile
     private $textBio;
     
     /**
-     * @var boolean
-     */
-    private $interestedInMentoringSignLanguage;
-    
-    /**
      * @var string
      */
     private $birthDate;
-    
-    /**
-     * @var boolean
-     */
-    private $interestedInMentoringInterpreter;
     
     /**
      * @var boolean
@@ -351,29 +346,6 @@ class UserProfile
     public function getInterestedInMentoringMentor()
     {
         return $this->interestedInMentoringMentor;
-    }
-
-    /**
-     * Set interestedInMentoredingInterpreter
-     *
-     * @param boolean $interestedInMentoredingInterpreter
-     * @return UserProfile
-     */
-    public function setInterestedInMentoredingInterpreter($interestedInMentoredingInterpreter)
-    {
-        $this->interestedInMentoredingInterpreter = $interestedInMentoredingInterpreter;
-    
-        return $this;
-    }
-
-    /**
-     * Get interestedInMentoredingInterpreter
-     *
-     * @return boolean 
-     */
-    public function getInterestedInMentoredingInterpreter()
-    {
-        return $this->interestedInMentoredingInterpreter;
     }
 
     /**
