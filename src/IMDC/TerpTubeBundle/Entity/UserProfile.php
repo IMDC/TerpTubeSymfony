@@ -62,17 +62,17 @@ class UserProfile
     /**
      * @var boolean
      */
-    private $interestedInMentoringMentor;
-
-    /**
-     * @var boolean
-     */
     private $interestedInMentoringSignLanguage;
     
     /**
      * @var boolean
      */
     private $interestedInMentoringInterpreter;
+    
+    /**
+     * @var boolean
+     */
+    private $interestedInMentoringMentor;
     
     /**
      * @var \IMDC\TerpTubeBundle\Entity\Media

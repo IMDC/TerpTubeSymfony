@@ -1,5 +1,11 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/memberDirectory.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
 {% block title %}Public Member Listing{% endblock title %}
 
 {% block herounit_wrap %}
@@ -13,17 +19,20 @@
 </div>
 
 <div class="row-fluid">
-    <span{% if pagination.isSorted('u.username') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Username', 'u.username') }}</span>
-    <span{% if pagination.isSorted('u.interestedInMentoredByMentor') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoredByMentor.title'|trans }", 'u.interestedInMentoredByMentor') }}</span>
-    <span{% if pagination.isSorted('u.interestedInMentoredByInterpreter') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoredByInterpreter.title'|trans }", 'u.interestedInMentoredByInterpreter') }}</span>
-    <span{% if pagination.isSorted('u.interestedInMentoringMentor') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringMentor.title'|trans }", 'u.interestedInMentoringMentor') }}</span>
-    <span{% if pagination.isSorted('u.interestedInMentoringInterpreter') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringInterpreter.title'|trans }", 'u.interestedInMentoringInterpreter') }}</span>
-    <span{% if pagination.isSorted('u.interestedInMentoringSignLanguage') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringSignLanguage.title'|trans }", 'u.interestedInMentoringSignLanguage') }}</span>
+    <ul class="unstyled">
+        <li{% if pagination.isSorted('u.username') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Username', 'u.username') }}</span></li>
+        <li{% if pagination.isSorted('p.interestedInMentoredByMentor') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoredByMentor.title'|trans }", 'p.interestedInMentoredByMentor') }}</li>
+        <li{% if pagination.isSorted('p.interestedInMentoredByInterpreter') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoredByInterpreter.title'|trans }", 'p.interestedInMentoredByInterpreter') }}</li>
+        <li{% if pagination.isSorted('p.interestedInMentoringSignLanguage') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringSignLanguage.title'|trans }", 'p.interestedInMentoringSignLanguage') }}</li>
+        <li{% if pagination.isSorted('p.interestedInMentoringInterpreter') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringInterpreter.title'|trans }", 'p.interestedInMentoringInterpreter') }}</li>
+        <li{% if pagination.isSorted('p.interestedInMentoringMentor') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringMentor.title'|trans }", 'p.interestedInMentoringMentor') }}</li>
+    </ul>
 </div>
 
 <ul class="thumbnails">
-{% for member in pagination if member.getProfile %}
-{% set profile = member.getProfile %}   
+{% set members = pagination %}
+{% for member in members if member.getProfile %}
+    {% set profile = member.getProfile %}
     <li class="span3">
         <div class="thumbnail text-center">
             <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>

@@ -73,6 +73,9 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
         interestedInMentoringInterpreter:
             type: boolean
             nullable: true
+        interestedInMentoringMentor:
+            type: boolean
+            nullable: true
         profileVisibleToPublic:
             type: boolean
             nullable: true
