@@ -37,15 +37,22 @@
         <div class="thumbnail text-center">
             <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
             <h3>{{ member.userName }}</h3>
-            <p>Joined: {{ member.joinDate|date('g:ia F j Y') }}</p>
+            <p>Joined: {{ member.joinDate|date('F j, Y') }}</p>
             <p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null?'form.generic.empty'|trans: profile.interestedInMentoredByMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</p>
             <p>{{'profile.show.interestedInMentoredByInterpreter.title'|trans}} : {{ profile.interestedInMentoredByInterpreter is null?'form.generic.empty'|trans: profile.interestedInMentoredByInterpreter? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</p>
             <p>{{'profile.show.interestedInMentoringSignLanguage.title'|trans}} : {{ profile.interestedInMentoringSignLanguage is null?'form.generic.empty'|trans: profile.interestedInMentoringSignLanguage? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</p>
             <p>{{'profile.show.interestedInMentoringInterpreter.title'|trans}} : {{ profile.interestedInMentoringInterpreter is null?'form.generic.empty'|trans: profile.interestedInMentoringInterpreter? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</p>
             <p>{{'profile.show.interestedInMentoringMentor.title'|trans}} : {{ profile.interestedInMentoringMentor is null?'form.generic.empty'|trans: profile.interestedInMentoringMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</p>
             <p>
+                {% if app.user == member %}
+                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Your Profile</a>
+                {% else %}
                 <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
+                {% endif %}
+                {% if app.user == member %}
+                {% else %}
                 <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : member.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}">Remove from Friend's list</a>
+                {% endif %}
             </p>
         </a>
     </li>

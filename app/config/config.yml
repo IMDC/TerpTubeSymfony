@@ -158,7 +158,7 @@ fos_user:
                 type: imdc_terptube_user_profile
                 
     from_email:
-        address: noreply@imdc.ca
+        address: noreply@terptube
         sender_name: Terptube IMDC
 
 old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle

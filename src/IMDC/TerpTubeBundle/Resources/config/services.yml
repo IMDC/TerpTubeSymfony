@@ -123,3 +123,7 @@ services:
         tags:
             - {name: transcoding.preset}
             
+    imdc.utils.user_manipulator:
+        class: IMDC\TerpTubeBundle\Utils\UserManipulator
+        arguments: [@fos_user.user_manager]
+        

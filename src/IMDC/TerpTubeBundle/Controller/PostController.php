@@ -58,7 +58,7 @@ class PostController extends Controller
 			$newpost->setParentThread(NULL);
 			
 			$user->addPost($newpost);
-			//$user->increasePostCount(1);
+			$user->increasePostCount(1);
 			
 			// request to persist message object to database
 			$em->persist($newpost);
@@ -119,6 +119,7 @@ class PostController extends Controller
 	        }
 	        
 	        $user->addPost($newpost);
+	        $user->increasePostCount(1);
 	         
 	        // request to persist objects to database
 	        $em->persist($user);
@@ -180,6 +181,9 @@ class PostController extends Controller
 		}
 		
 		// post is owned by the user
+		$user->removePost($postToDelete);
+		$user->decreasePostCount(1);
+		$em->persist($user);
 		$em->remove($postToDelete);
 		$em->flush();
 		
@@ -221,6 +225,9 @@ class PostController extends Controller
 		}
 		else {
 			// post is owned by the user
+			$user->removePost($postToDelete);
+			$user->decreasePostCount(1);
+			$em->persist($user);
 			$em->remove($postToDelete);
 			$em->flush();
 			

@@ -250,6 +250,7 @@ class ThreadController extends Controller
             $newthread->setLastPostAt(new \DateTime('now'));
             	
             $user->addThread($newthread);
+            $user->increasePostCount(1);
             	
             // request to persist message object to database
             $em->persist($newthread);

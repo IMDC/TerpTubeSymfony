@@ -477,6 +477,26 @@ class User extends BaseUser
     }
 
     /**
+     * @param int $amount
+     * @return \IMDC\TerpTubeBundle\Entity\User
+     */
+    public function increasePostCount($amount)
+    {
+        $this->postCount = $this->postCount + $amount;
+        return $this;
+    }
+    
+    /**
+     * @param int $amount
+     * @return \IMDC\TerpTubeBundle\Entity\User
+     */
+    public function decreasePostCount($amount)
+    {
+        $this->postCount = max(0, $this->postCount - $amount);
+        return $this;
+    }
+    
+    /**
      * Add posts
      *
      * @param \IMDC\TerpTubeBundle\Entity\Post $posts
