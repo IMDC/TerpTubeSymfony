@@ -3,3 +3,7 @@
 .sorted {
     font-weight: bold;
 }
+
+.member-row {
+    margin-bottom: 10px;
+}

@@ -33,6 +33,9 @@
 {% set members = pagination %}
 {% for member in members if member.getProfile %}
     {% set profile = member.getProfile %}
+    {% if loop.index % 4 == 1 %}
+    <div class="row-fluid member-row">
+    {% endif %}
     <li class="span3">
         <div class="thumbnail text-center">
             <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
@@ -56,6 +59,9 @@
             </p>
         </a>
     </li>
+    {% if loop.index % 4 == 0 %}
+    </div>
+    {% endif %}
 {% endfor %}
 </ul>
 
