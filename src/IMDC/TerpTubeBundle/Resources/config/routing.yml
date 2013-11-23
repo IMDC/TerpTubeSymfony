@@ -278,4 +278,18 @@ imdc_member_list_public:
     defaults: { _controller: IMDCTerpTubeBundle:User:index }
     
 
+imdc_forum_list:
+    pattern: /forums
+    defaults: { _controller: IMDCTerpTubeBundle:Forum:index }
+    
+imdc_forum_create_new:
+    pattern: /forums/new
+    defaults: { _controller: IMDCTerpTubeBundle:Forum:new }
+        
+imdc_forum_view_specific:
+    pattern: /forums/{forumid}
+    defaults: { _controller: IMDCTerpTubeBundle:Forum:view }
+    requirements:
+        pid: \d+
+        
         

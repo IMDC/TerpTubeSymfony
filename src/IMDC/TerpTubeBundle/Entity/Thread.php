@@ -75,6 +75,11 @@ class Thread
     private $tags;
     
     /**
+     * @var \IMDC\TerpTubeBundle\Entity\Forum
+     */
+    private $parentForum;
+    
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $usersFollowing;
@@ -491,5 +496,28 @@ class Thread
     public function getEditedBy()
     {
         return $this->editedBy;
+    }
+
+    /**
+     * Set parentForum
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Forum $parentForum
+     * @return Thread
+     */
+    public function setParentForum(\IMDC\TerpTubeBundle\Entity\Forum $parentForum = null)
+    {
+        $this->parentForum = $parentForum;
+    
+        return $this;
+    }
+
+    /**
+     * Get parentForum
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Forum 
+     */
+    public function getParentForum()
+    {
+        return $this->parentForum;
     }
 }

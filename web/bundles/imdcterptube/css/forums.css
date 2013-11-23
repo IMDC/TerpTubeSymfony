@@ -28,7 +28,7 @@ a#selectFiles {
     vertical-align: top;
 }
 
-#ThreadForm_submit {
+#ThreadForm_submit, #ForumForm_submit {
     display: none;
 }
 

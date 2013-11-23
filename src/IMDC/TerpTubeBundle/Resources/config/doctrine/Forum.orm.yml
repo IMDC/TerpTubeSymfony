@@ -1,0 +1,40 @@
+IMDC\TerpTubeBundle\Entity\Forum:
+    type: entity
+    table: null
+    repositoryClass: IMDC\TerpTubeBundle\Entity\ForumRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        titleText:
+            type: string
+            length: '255'
+        lastActivity:
+            type: datetime
+        creationDate:
+            type: datetime
+    manyToOne:
+        creator:
+            targetEntity: User
+            inversedBy: forums
+            joinColumn: 
+                name: user_id
+                referencedColumnName: id
+    oneToMany:
+        threads:
+            targetEntity: Thread
+            mappedBy: parentForum
+    manyToMany:
+        titleMedia:
+            targetEntity: Media
+            joinTable:
+                name: forum_media
+                joinColumns:
+                    forum_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    media_id:
+                        referencedColumnName: id
+    lifecycleCallbacks: {  }

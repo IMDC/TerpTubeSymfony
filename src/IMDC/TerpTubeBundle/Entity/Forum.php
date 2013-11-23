@@ -1,0 +1,225 @@
+<?php
+
+namespace IMDC\TerpTubeBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Forum
+ */
+class Forum
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $titleText;
+
+    /**
+     * @var \DateTime
+     */
+    private $lastActivity;
+    
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\User
+     */
+    private $creator;
+    
+    /**
+     * @var \DateTime
+     */
+    private $creationDate;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $titleMedia;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $threads;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->threads      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->titleMedia   = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+        
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set titleText
+     *
+     * @param string $titleText
+     * @return Forum
+     */
+    public function setTitleText($titleText)
+    {
+        $this->titleText = $titleText;
+    
+        return $this;
+    }
+
+    /**
+     * Get titleText
+     *
+     * @return string 
+     */
+    public function getTitleText()
+    {
+        return $this->titleText;
+    }
+
+    /**
+     * Set lastActivity
+     *
+     * @param \DateTime $lastActivity
+     * @return Forum
+     */
+    public function setLastActivity($lastActivity)
+    {
+        $this->lastActivity = $lastActivity;
+    
+        return $this;
+    }
+
+    /**
+     * Get lastActivity
+     *
+     * @return \DateTime 
+     */
+    public function getLastActivity()
+    {
+        return $this->lastActivity;
+    }
+
+
+    
+    /**
+     * Add threads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $threads
+     * @return Forum
+     */
+    public function addThread(\IMDC\TerpTubeBundle\Entity\Thread $threads)
+    {
+        $this->threads[] = $threads;
+    
+        return $this;
+    }
+
+    /**
+     * Remove threads
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Thread $threads
+     */
+    public function removeThread(\IMDC\TerpTubeBundle\Entity\Thread $threads)
+    {
+        $this->threads->removeElement($threads);
+    }
+
+    /**
+     * Get threads
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getThreads()
+    {
+        return $this->threads;
+    }
+
+    /**
+     * Set creator
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $creator
+     * @return Forum
+     */
+    public function setCreator(\IMDC\TerpTubeBundle\Entity\User $creator = null)
+    {
+        $this->creator = $creator;
+    
+        return $this;
+    }
+
+    /**
+     * Get creator
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\User 
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    /**
+     * Add titleMedia
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $titleMedia
+     * @return Forum
+     */
+    public function addTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
+    {
+        $this->titleMedia[] = $titleMedia;
+    
+        return $this;
+    }
+
+    /**
+     * Remove titleMedia
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $titleMedia
+     */
+    public function removeTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
+    {
+        $this->titleMedia->removeElement($titleMedia);
+    }
+
+    /**
+     * Get titleMedia
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTitleMedia()
+    {
+        return $this->titleMedia;
+    }
+
+    /**
+     * Set creationDate
+     *
+     * @param \DateTime $creationDate
+     * @return Forum
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+    
+        return $this;
+    }
+
+    /**
+     * Get creationDate
+     *
+     * @return \DateTime 
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+}

@@ -1,0 +1,53 @@
+{% block threadgrid %}
+<ul class="thumbnails">
+    {% set counter = 1 %}
+    <div class="row-fluid">
+    {% for forum in forums %}
+    {% if counter != 1 and counter % 4 == 1 %}
+        <div class="row-fluid">
+    {% endif %}
+            <li class="span3">
+                <a href="{{ path('imdc_forum_view_specific', {'forumid': forum.id} ) }}">
+                <div class="thumbnail threadthumbnail text-center" style="min-height:380px;">
+                <p style="margin-top:10px;">
+                {% if forum.titleMedia|length != 0 %}
+                    {% set mediaFile = forum.titleMedia[0] %}
+                {% else %}
+                    {% set mediaFile = null %}
+                {% endif %}
+                {% if mediaFile != null %}
+                    {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
+                    {% if mediaFile.type == 0 %}
+                        <img class="forum-img-thumbnail" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+                    {% elseif mediaFile.type == 1 %}
+                        <video controls class="forum-video-thumbnail" preload="auto" style="width:100%">
+                        	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}" />
+                        	<source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+                        </video>
+                    {% elseif mediaFile.type == 2 %}
+                        <audio controls>
+                            <source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+                        </audio>
+                    {% else %}
+                        
+                    {% endif %}
+                {% else %}
+                        <div id="spacer" style="height:50px;"></div>
+                {% endif %}
+                    </p>
+                    
+                    <h3>{{ forum.titleText | truncate(20) }}</h3>
+                    <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p>
+                    <p><span class="content-created-datetime-span">Created: {{ forum.creationDate|date('g:ia M j, Y') }}</span></p>
+                    
+                </a>
+            </li>
+    {% if counter != 0 and counter % 4 == 0 %}
+        </div><!-- end row-fluid -->
+        <p></p>
+    {% endif %}
+    {% set counter = counter + 1 %}
+{% endfor %}
+    </div>
+</ul>
+{% endblock threadgrid %}

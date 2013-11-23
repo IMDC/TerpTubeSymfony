@@ -39,7 +39,11 @@ IMDC\TerpTubeBundle\Entity\Thread:
         editedBy:
             targetEntity: User
             inversedBy: editedThreads
-            nullable: true;
+            nullable: true
+        parentForum:
+            targetEntity: Forum
+            inversedBy: threads
+            nullable: true
     manyToMany:
         usersFollowing:
             targetEntity: User

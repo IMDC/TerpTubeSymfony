@@ -28,6 +28,9 @@ IMDC\TerpTubeBundle\Entity\User:
         threads:
             targetEntity: Thread
             mappedBy: creator
+        forums:
+            targetEntity: Forum
+            mappedBy: creator
         editedPosts:
             targetEntity: Post
             mappedBy: editedBy

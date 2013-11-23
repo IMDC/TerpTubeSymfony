@@ -85,6 +85,11 @@ class User extends BaseUser
 	 */
 	private $editedThreads;
 	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $forums;
+	
 	
     public function __construct()
     {
@@ -101,6 +106,7 @@ class User extends BaseUser
         $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
         $this->editedPosts      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->editedThreads    = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forums           = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -627,5 +633,38 @@ class User extends BaseUser
     public function getEditedThreads()
     {
         return $this->editedThreads;
+    }
+
+    /**
+     * Add forums
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Forum $forums
+     * @return User
+     */
+    public function addForum(\IMDC\TerpTubeBundle\Entity\Forum $forums)
+    {
+        $this->forums[] = $forums;
+    
+        return $this;
+    }
+
+    /**
+     * Remove forums
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Forum $forums
+     */
+    public function removeForum(\IMDC\TerpTubeBundle\Entity\Forum $forums)
+    {
+        $this->forums->removeElement($forums);
+    }
+
+    /**
+     * Get forums
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getForums()
+    {
+        return $this->forums;
     }
 }
