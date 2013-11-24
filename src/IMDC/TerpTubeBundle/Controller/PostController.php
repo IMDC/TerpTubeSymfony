@@ -147,6 +147,21 @@ class PostController extends Controller
 	                'notice',
 	                'Post created successfully!'
 	        );
+	        
+	        // creating the ACL
+	        $aclProvider = $this->get('security.acl.provider');
+	        $objectIdentity = ObjectIdentity::fromDomainObject($newforum);
+	        $acl = $aclProvider->createAcl($objectIdentity);
+	        
+	        // retrieving the security identity of the currently logged-in user
+	        $securityContext = $this->get('security.context');
+	        $user = $securityContext->getToken()->getUser();
+	        $securityIdentity = UserSecurityIdentity::fromAccount($user);
+	        
+	        // grant owner access
+	        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+	        $aclProvider->updateAcl($acl);
+
 	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)).'#'.$newpostid);
 	    }
 	
@@ -347,7 +362,7 @@ class PostController extends Controller
 		$postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
 		
 		// if post is not owned by the currently logged in user, redirect
-		if (!$postToEdit->getAuthor()->getId() == $user->getId()) {
+		if (!$postToEdit->getAuthor() == $user) {
 			$this->get('session')->getFlashBag()->add(
 					'error',
 					'You do not have permission to edit this post'

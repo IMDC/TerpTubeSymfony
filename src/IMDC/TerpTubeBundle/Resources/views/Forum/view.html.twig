@@ -1,0 +1,61 @@
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block sidebarlinks_pages %}<li class="active">{% endblock %}
+
+{% block title %}{{forum.titleText}}{% endblock title %}
+
+{% block herounit_wrap %}
+
+<div class="row-fluid forum-title-wrap">
+    <div class="span6">
+        {% if forum.getTitleMedia[0] is defined %}
+        <div class="row-fluid">
+            {% set mediaFile = forum.getTitleMedia[0] %}
+                {% include('IMDCTerpTubeBundle:Forum:ForumMediaElement.html.twig') %}
+        </div>
+        {% endif %}
+        <div class="row-fluid">
+            <h1>{{ forum.titleText }}</h1>
+            <h4>Created: {{ forum.getCreationDate|date('g:ia F j Y') }}</h4>
+            <h5>Topics: {{ forum.getThreads|length }}</h5>
+        </div>
+    </div>
+    <div class="span6">
+        <div class="row-fluid">
+            <div class="span6 text-right">
+                <h4>Created by:</h4>
+            </div>
+            <div class="span6">
+                {% set member = forum.getCreator %}
+                {{ include('IMDCTerpTubeBundle:Member:infoBlock.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock herounit_wrap %}
+
+{% block underherounitrow1 %}
+
+<div class="fluid-row">
+    <div class="span12">
+        <p>
+            <a class="btn btn-primary" href="{{ path('imdc_thread_create_new_under_forum', {'forumid' : forum.id}) }}"><i class="fa fa-plus"></i> Create New Post</a>
+        </p>    
+    </div>
+</div>
+
+
+
+{% set threads = forum.getThreads() %}
+{% include 'IMDCTerpTubeBundle:Thread:threadthumbnailprototype.html.twig' %}
+
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}

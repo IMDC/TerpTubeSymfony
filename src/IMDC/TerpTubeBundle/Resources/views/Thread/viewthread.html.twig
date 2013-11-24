@@ -13,9 +13,21 @@
 
 {% block title %}{{ thread.title|truncate(50) }}{% endblock title %}
 
-{% block herounit_wrap %}<h1>{{thread.title }}</h1>{% endblock herounit_wrap %}
+{% block herounit_wrap %}
+{% if thread.getParentForum %}
+<div class="row-fluid breadcrumb-wrap">
+    <ul class="breadcrumb">
+        <li><a href="{{ path('imdc_forum_list') }}">Forums</a> <span class="divider">/</span></li>
+        <li><a href="{{ path('imdc_forum_view_specific', {'forumid' : thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a> <span class="divider">/</span></li>
+        <li class="active">{{ thread.title|truncate(30) }}</li>
+    </ul>
+</div>
+{% endif %}
+<h1>{{thread.title }}</h1>
+{% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
+
 
 <script type="text/javascript">
 var postArray = new Array();
@@ -122,7 +134,9 @@ var postArray = new Array();
         {% endif %}
         <div class="row-fluid" id="thread-creator-details">
             <div class="span12">
-                {% include('IMDCTerpTubeBundle:Thread:smalluserinfo.html.twig') %}
+                {# include('IMDCTerpTubeBundle:Thread:smalluserinfo.html.twig') #}
+                {% set member = thread.creator %}
+                {% include('IMDCTerpTubeBundle:Member:infoBlock.html.twig') %}
            </div> <!-- /span12 -->
         </div> <!-- end of user-deets -->
    </div> <!-- end of leftsidecontent -->

@@ -118,12 +118,13 @@
 							{% block sidebarlinks_home %}<li>{% endblock %}
 								<a href="{{ path('imdc_terp_tube_user_splash') }}"><img src="{{ asset('img/global_nav_icon_home.png') }}" /><br />Home</a>
 							</li>
+							{% block sidebarlinks_pages %}<li>{% endblock %}
+								<a href="{{ path('imdc_forum_list') }}#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Forums</a>
+							</li>
 							{% block sidebarlinks_vlogs %}<li>{% endblock %}
 								<a href="#"><img src="{{ asset('img/global_nav_icon_vlogs.png') }}" /><br />Video Logs</a>
 							</li>
-							{% block sidebarlinks_pages %}<li>{% endblock %}
-								<a href="{{ path('imdc_thread_show_recent') }}#"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Forums</a>
-							</li>
+							
 							{% block sidebarlinks_groups %}<li>{% endblock %}
 								<a href="{{ path('imdc_groups_show_all') }}"><img src="{{ asset('img/global_nav_icon_pages.png') }}" /><br />Groups</a>
 							</li>

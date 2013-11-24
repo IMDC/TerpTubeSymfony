@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
+use IMDC\TerpTubeBundle\Form\EventListener\AddParentForumSubscriber;
 
 class ThreadFormType extends AbstractType
 {
@@ -57,8 +58,13 @@ class ThreadFormType extends AbstractType
 	            },
 	    ));
 	    */
+	    
 	    $builder->add('content', null, array('label' => 'Supplementary Content',
 	    ));
+	    
+	    // this was used to test if you could choose a different parentForum from a selection drop down
+	    //$builder->addEventSubscriber(new AddParentForumSubscriber());
+	    
 		$builder->add('submit', 'submit');
 	}	
 

@@ -17,6 +17,7 @@ use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
+use IMDC\TerpTubeBundle\Entity\Media;
 
 class ForumController extends Controller
 {
@@ -71,8 +72,7 @@ class ForumController extends Controller
                 if ($user->getResourceFiles()->contains($mediaFile)) {
                     $logger = $this->get('logger');
                     $logger->info('User owns this media file');
-                    $newthread->addMediaIncluded($mediaFile);
-                    $newthread->setType($mediaFile->getType());
+                    $newforum->addTitleMedia($mediaFile);
                 }
                 
             }
@@ -97,6 +97,7 @@ class ForumController extends Controller
                     'notice',
                     'Forum created successfully!'
             );
+            
             return $this->redirect($this->generateUrl('imdc_forum_list'));
         }
         
@@ -105,6 +106,23 @@ class ForumController extends Controller
                 array('form' => $form->createView(),
         ));
 	    
+	}
+	
+	public function viewAction(Request $request, $forumid)
+	{
+	    // check if user logged in
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+	    {
+	        return $this->redirect($this->generateUrl('fos_user_security_login'));
+	    }
+	    $em = $this->getDoctrine()->getManager();
+	    $user = $this->getUser();
+	    
+	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid));
+	    $response = $this->render('IMDCTerpTubeBundle:Forum:view.html.twig',
+	        array('forum' => $forum)
+	    );
+	    return $response;
 	}
 	
 }

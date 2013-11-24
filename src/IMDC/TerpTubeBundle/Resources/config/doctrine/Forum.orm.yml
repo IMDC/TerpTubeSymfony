@@ -37,4 +37,24 @@ IMDC\TerpTubeBundle\Entity\Forum:
                 inverseJoinColumns:
                     media_id:
                         referencedColumnName: id
+        forumAdmins:
+            targetEntity: User
+            joinTable: 
+                name: forum_user_admins
+                joinColumns:
+                    forum_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        forumModerators:
+            targetEntity: User
+            joinTable:
+                name: forum_user_moderators
+                joinColumns:
+                    forum_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
     lifecycleCallbacks: {  }

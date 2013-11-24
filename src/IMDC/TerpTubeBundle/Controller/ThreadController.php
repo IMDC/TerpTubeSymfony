@@ -166,7 +166,7 @@ class ThreadController extends Controller
     }
     
     
-    public function createNewThreadAction(Request $request)
+    public function createNewThreadAction(Request $request, $forumid=null)
     {
     	// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -175,12 +175,19 @@ class ThreadController extends Controller
 		}
         
         $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
         
         $newthread = new Thread();
+        if ($forumid) {
+            $forumrepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
+            $forum = $forumrepo->findOneBy(array('id' => $forumid));
+            $newthread->setParentForum($forum);
+        }
+
         $form = $this->createForm(new ThreadFormType(), $newthread, array(
                 'user' => $this->getUser(),
         ));
-        $em = $this->getDoctrine()->getManager();
+
         /*
         $form = $this->createForm(new ThreadFormType(), $newthread, array(
                 'em' => $em,

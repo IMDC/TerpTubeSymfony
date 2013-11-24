@@ -34,7 +34,7 @@
 {% block underherounitrow1 %}
 {% if threads|length > 0 %}
 
-	<h3>Recently Created Forums</h3>
+	<h3>Recently Created Topics</h3>
 	{% include 'IMDCTerpTubeBundle:Thread:threadthumbnailprototype.html.twig' %}
 
 {% endif %}
@@ -47,5 +47,11 @@
 	<h3>Recent Posts</h3>
 	{% include 'IMDCTerpTubeBundle:Post:postthumbnailprototype.html.twig' %}
 
+{% endif %}
+{% if forums|length > 0 %}
+<div class="row-fluid">
+    <h3>Most Active Forums</h3>
+    {% include 'IMDCTerpTubeBundle:Forum:ForumThumbnail.html.twig' %}
+</div>
 {% endif %}
 {% endblock underherounitrow2 %}

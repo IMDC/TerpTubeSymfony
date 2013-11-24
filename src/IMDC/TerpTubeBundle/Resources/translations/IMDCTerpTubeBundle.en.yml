@@ -237,4 +237,8 @@ profile:
                 submit: "Add language"  
         generic:
             cancel: "Cancel"
-        
+
+member:
+    infoBlock:
+        joined: "Joined"
+        postCount: "Posts"        

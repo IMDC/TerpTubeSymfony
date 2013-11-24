@@ -27,9 +27,11 @@ class HomeController extends Controller
 
 		$recentThreads = $em->getRepository('IMDCTerpTubeBundle:Thread')->getMostRecentThreads(4);
 
+		$recentForums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getMostRecentForums(4);
+		
 		return $this
 				->render('IMDCTerpTubeBundle:Default:recentactivity.html.twig',
-						array('posts' => $recentPosts, 'threads' => $recentThreads));
+						array('forums' => $recentForums, 'posts' => $recentPosts, 'threads' => $recentThreads));
 
 		//return $this->render('IMDCTerpTubeBundle:Home:index.html.twig');
 

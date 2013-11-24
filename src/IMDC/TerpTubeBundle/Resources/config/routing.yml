@@ -212,6 +212,12 @@ imdc_thread_create_new_from_media:
     requirements:
         resourceid: \d+
     
+imdc_thread_create_new_under_forum:
+    pattern: /thread/new/forum/{forumid}
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
+    requirements:
+        forumid: \d+
+    
 imdc_thread_show_recent:
     pattern: /threads
     defaults: { _controller: IMDCTerpTubeBundle:Thread:index }

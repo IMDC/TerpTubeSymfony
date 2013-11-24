@@ -12,4 +12,27 @@ use Doctrine\ORM\EntityRepository;
  */
 class ForumRepository extends EntityRepository
 {
+    public function getMostRecentForums($limit=30)
+    {
+        $query = $this->getEntityManager()->createQuery(
+                            'SELECT f
+                            FROM IMDCTerpTubeBundle:Forum f
+                            ORDER BY f.lastActivity DESC'
+        );
+        $query->setMaxResults($limit);
+         
+        return $query->getResult();
+    }
+    
+    public function getRecentlyCreatedForums($limit=30)
+    {
+        $query = $this->getEntityManager()->createQuery(
+                    'SELECT f
+                     FROM IMDCTerpTubeBundle:Forum f
+                     ORDER BY f.creationDate DESC'
+        );
+        $query->setMaxResults($limit);
+        
+        return $query->getResult();
+    }
 }

@@ -43,14 +43,26 @@ class Forum
      * @var \Doctrine\Common\Collections\Collection
      */
     private $threads;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $forumAdmins;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $forumModerators;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->threads      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->titleMedia   = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->titleMedia       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forumAdmins      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forumModerators  = new \Doctrine\Common\Collections\ArrayCollection();
     }
         
     /**
@@ -221,5 +233,71 @@ class Forum
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * Add forumAdmins
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $forumAdmins
+     * @return Forum
+     */
+    public function addForumAdmin(\IMDC\TerpTubeBundle\Entity\User $forumAdmins)
+    {
+        $this->forumAdmins[] = $forumAdmins;
+    
+        return $this;
+    }
+
+    /**
+     * Remove forumAdmins
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $forumAdmins
+     */
+    public function removeForumAdmin(\IMDC\TerpTubeBundle\Entity\User $forumAdmins)
+    {
+        $this->forumAdmins->removeElement($forumAdmins);
+    }
+
+    /**
+     * Get forumAdmins
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getForumAdmins()
+    {
+        return $this->forumAdmins;
+    }
+
+    /**
+     * Add forumModerators
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $forumModerators
+     * @return Forum
+     */
+    public function addForumModerator(\IMDC\TerpTubeBundle\Entity\User $forumModerators)
+    {
+        $this->forumModerators[] = $forumModerators;
+    
+        return $this;
+    }
+
+    /**
+     * Remove forumModerators
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $forumModerators
+     */
+    public function removeForumModerator(\IMDC\TerpTubeBundle\Entity\User $forumModerators)
+    {
+        $this->forumModerators->removeElement($forumModerators);
+    }
+
+    /**
+     * Get forumModerators
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getForumModerators()
+    {
+        return $this->forumModerators;
     }
 }
