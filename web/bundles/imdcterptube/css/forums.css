@@ -16,8 +16,8 @@ textarea#ThreadForm_mediatextarea {
 
 div.threadthumbnail {
     min-height: 250px;
-    max-height: 375px;
-    height: 375px;
+    max-height: 450px;
+    height: 435px;
 }
 
 div.thumbnail audio {

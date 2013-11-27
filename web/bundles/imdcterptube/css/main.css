@@ -29,3 +29,8 @@ div.sidebar-nav {
 ul.mainMenu-nav-ul {
     min-width: 35px;
 }
+
+div.thread-vertical-user-info {
+    font-size: 85%;
+    margin-top: 20px;
+}

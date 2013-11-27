@@ -38,15 +38,19 @@
         			                	{{ thread.content|truncate(250) }}
         		                	</a>
         		                	<div class="row-fluid" id="thread-post-count-wrap">
-        		                	    <span class="badge" title="Posts">{{ thread.getPosts|length }}</span>
+        		                	    <p>
+        		                	        <span class="badge" title="Posts">{{ thread.getPosts|length }} Replies</span>
+    		                	        </p>
     		                	    </div>
     		                	</div>
     		                	{% else %}
     		                	<div class="row-fluid">
-        		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
-        		                	    {{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: threadMediaFile}, with_context = false) }}
-        		                		
-        	                		</a>
+    		                	    <div class="text-center">
+            		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+            		                	    {{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: threadMediaFile}, with_context = false) }}
+            		                		
+            	                		</a>
+        	                		</div>
     	                		</div>
                                 <div class="row-fluid thread-title-wrap">
     						        <a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
@@ -55,7 +59,10 @@
         		                		{{ thread.content|truncate(50) }}
         		                		</p>
         		                		<p>
-        		                		    <span class="badge">{{ thread.getPosts|length }}</span>{% if thread.getLastPostAt is defined %}Last post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% endif %}
+        		                		    <span class="badge">{{ thread.getPosts|length }} Replies</span>
+    		                		    </p>
+    		                		    <p>
+        		                		    {% if thread.getLastPostAt is defined %}Last post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% endif %}
         		                		</p>
     						        </a>
     						    </div>
