@@ -25,11 +25,28 @@ class ForumController extends Controller
 	{
 		$em = $this->getDoctrine()->getManager();
 		
-		$forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->findAll();
-		$response = $this->render('IMDCTerpTubeBundle:Forum:index.html.twig',
-				array('forums' => $forums)
+// 		$forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->findAll();
+// 		$forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getMostRecentForums(4);
+// 		$response = $this->render('IMDCTerpTubeBundle:Forum:index.html.twig',
+// 				array('forums' => $forums)
+// 		);
+// 		return $response;
+		
+		$dql = "SELECT f FROM IMDCTerpTubeBundle:Forum f ORDER BY f.lastActivity DESC";
+		$query = $em->createQuery($dql);
+		
+		$paginator = $this->get('knp_paginator');
+		$pagination = $paginator->paginate(
+		    $query,
+		    $this->get('request')->query->get('page', 1), /*page number*/
+		    8 /*limit per page*/
 		);
+		
+		$response = $this->render('IMDCTerpTubeBundle:Forum:index.html.twig',
+		    array('pagination' => $pagination));
+		
 		return $response;
+		
 	}
 	
 	
@@ -74,7 +91,6 @@ class ForumController extends Controller
                     $logger->info('User owns this media file');
                     $newforum->addTitleMedia($mediaFile);
                 }
-                
             }
            
             $newforum->setCreator($user);
@@ -98,7 +114,9 @@ class ForumController extends Controller
                     'Forum created successfully!'
             );
             
-            return $this->redirect($this->generateUrl('imdc_forum_list'));
+            $newforumid = $newforum->getId();
+//             return $this->redirect($this->generateUrl('imdc_forum_list'));
+            return $this->redirect($this->generateUrl('imdc_forum_view_specific', array('forumid' => $newforumid)));
         }
         
         // form not valid, show the basic form
@@ -119,10 +137,34 @@ class ForumController extends Controller
 	    $user = $this->getUser();
 	    
 	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid));
-	    $response = $this->render('IMDCTerpTubeBundle:Forum:view.html.twig',
-	        array('forum' => $forum)
+	    
+// 	    $forumthreads = $em->getRepository('IMDCTerpTubeBundle:Thread')->findRecentPostsForForum(4);
+// 	    $response = $this->render('IMDCTerpTubeBundle:Forum:view.html.twig',
+// 	        array('forum' => $forum,
+// 	              'threads' => $forumthreads)
+// 	    );
+// 	    return $response;
+	      
+	    $dql = "SELECT t
+	            FROM IMDCTerpTubeBundle:Thread t
+	            WHERE t.parentForum IS NOT NULL
+	            AND t.parentForum = :fid";
+	    
+	    $query = $em->createQuery($dql)->setParameter('fid', $forum->getId());
+	    
+	    $paginator = $this->get('knp_paginator');
+	    $pagination = $paginator->paginate(
+	        $query,
+	        $this->get('request')->query->get('page', 1) /* page number */,
+	        8, /* limit per page */
+	        array('distinct' => false)
 	    );
-	    return $response;
+	    
+	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', 
+	        array('forum' => $forum,
+	            'threads' => $pagination)
+	    );
+	    
 	}
 	
 }

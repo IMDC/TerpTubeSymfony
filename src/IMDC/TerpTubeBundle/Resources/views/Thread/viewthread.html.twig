@@ -17,13 +17,13 @@
 {% if thread.getParentForum %}
 <div class="row-fluid breadcrumb-wrap">
     <ul class="breadcrumb">
-        <li><a href="{{ path('imdc_forum_list') }}">Forums</a> <span class="divider">/</span></li>
-        <li><a href="{{ path('imdc_forum_view_specific', {'forumid' : thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a> <span class="divider">/</span></li>
+        <li><a href="{{ path('imdc_forum_list') }}">Forums</a> <span class="divider"><i class="fa fa-chevron-left"></i></span></li>
+        <li><a href="{{ path('imdc_forum_view_specific', {'forumid' : thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a> <span class="divider"><i class="fa fa-chevron-left"></i></span></li>
         <li class="active">{{ thread.title|truncate(30) }}</li>
     </ul>
 </div>
 {% endif %}
-<h1>{{thread.title }}</h1>
+<h1>{{ thread.title }}</h1>
 {% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
@@ -124,7 +124,7 @@ var postArray = new Array();
     {% endif %}
        <div class="row-fluid">
            <div class="span12" id="maincontent">
-               {{ thread.content }}
+               {{ thread.content|nl2br }}
            </div>
         </div>
         {% if thread.editedBy is defined %}

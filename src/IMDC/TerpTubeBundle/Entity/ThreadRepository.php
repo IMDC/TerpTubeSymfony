@@ -24,4 +24,19 @@ class ThreadRepository extends EntityRepository
          
         return $query->getResult();
     }
+    
+    public function findRecentPostsForForum($limit=4)
+    {
+        $query = $this->getEntityManager()
+                        ->createQuery('
+                            SELECT t
+                            FROM IMDCTerpTubeBundle:Thread t
+                            JOIN IMDCTerpTubeBundle:Forum f
+                            WHERE t.parentForum = f.id
+                            ORDER BY t.creationDate DESC
+        ');
+        $query->setMaxResults($limit);
+        
+        return $query->getResult();
+    }
 }

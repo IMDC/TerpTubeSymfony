@@ -20,7 +20,37 @@
     </div>
 </div>
 {% endif %}
+
+<div class="row-fluid">
+    <div class="span12">
+        <div class="count">
+            Total number of Forums: {{ pagination.getTotalItemCount }}
+        </div>
+    </div>
+</div>
+
+<div class="row-fluid">
+    <div class="span12">
+        <ul class="unstyled inline">
+            {% set pagParams = pagination.getParams %}
+            <li{% if pagination.isSorted('f.lastActivity') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Last Activity', 'f.lastActivity') }}{% if pagination.isSorted('f.lastActivity') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.lastActivity') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
+            <li{% if pagination.isSorted('f.titleText') %}    class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Title', 'f.titleText') }}{% if pagination.isSorted('f.titleText') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.titleText') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
+            <li{% if pagination.isSorted('f.creationDate') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Date Created', 'f.creationDate') }}{% if pagination.isSorted('f.creationDate') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.creationDate') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>            
+        </ul>
+    </div>
+</div>
+
+{% set forums = pagination %}
 {% include 'IMDCTerpTubeBundle:Forum:ForumThumbnail.html.twig' %}
+
+
+<div class="row-fluid">
+    <div class="span12">
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
+    </div>
+</div>
 
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}

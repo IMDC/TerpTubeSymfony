@@ -254,7 +254,7 @@ class ThreadController extends Controller
             $newthread->setCreationDate(new \DateTime('now'));
             $newthread->setLocked(FALSE);
             $newthread->setSticky(FALSE);
-            $newthread->setLastPostAt(new \DateTime('now'));
+//             $newthread->setLastPostAt(new \DateTime('now'));
             	
             $user->addThread($newthread);
             $user->increasePostCount(1);
@@ -270,7 +270,11 @@ class ThreadController extends Controller
                     'notice',
                     'Thread created successfully!'
             );
-            return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+            
+            $threadInsertedID = $newthread->getId();
+            
+            return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid' => $threadInsertedID)));
+            //return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
         }
         
         // form not valid, show the basic form

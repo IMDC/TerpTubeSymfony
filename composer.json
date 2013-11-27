@@ -37,7 +37,7 @@
 		"videlalvaro/php-amqplib" : "*",
 		"php-ffmpeg/php-ffmpeg" : "0.4.*@dev",
 		"knplabs/knp-paginator-bundle" : "dev-master",
-		"doctrine/doctrine-fixtures-bundle": "dev-master"
+		"doctrine/doctrine-fixtures-bundle" : "dev-master"
 	},
 	"scripts" : {
 		"post-install-cmd" : [

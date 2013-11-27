@@ -21,6 +21,7 @@ IMDC\TerpTubeBundle\Entity\Thread:
             nullable: true
         lastPostAt:
             type: datetime
+            nullable: true
         editedAt:
             type: datetime
             nullable: true

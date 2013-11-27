@@ -15,18 +15,12 @@
 {% block underherounitrow1 %}
 
 <div class="row-fluid">
-    <ul class="unstyled">
-        <li{% if pagination.isSorted('u.username') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, 'Username', 'u.username') }}</span></li>
-        <li{% if pagination.isSorted('p.interestedInMentoredByMentor') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoredByMentor.title'|trans }", 'p.interestedInMentoredByMentor') }}</li>
-        <li{% if pagination.isSorted('p.interestedInMentoredByInterpreter') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoredByInterpreter.title'|trans }", 'p.interestedInMentoredByInterpreter') }}</li>
-        <li{% if pagination.isSorted('p.interestedInMentoringSignLanguage') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringSignLanguage.title'|trans }", 'p.interestedInMentoringSignLanguage') }}</li>
-        <li{% if pagination.isSorted('p.interestedInMentoringInterpreter') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringInterpreter.title'|trans }", 'p.interestedInMentoringInterpreter') }}</li>
-        <li{% if pagination.isSorted('p.interestedInMentoringMentor') %} class="sorted"{% endif %}>{{ knp_pagination_sortable(pagination, "#{'profile.show.interestedInMentoringMentor.title'|trans }", 'p.interestedInMentoringMentor') }}</li>
-    </ul>
-</div>
-
-<div class="row-fluid">
-    {{ knp_pagination_render(pagination) }}
+    <div class="span2">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    <div class="span2" style="margin:20px 0;">
+        {% include('IMDCTerpTubeBundle:Member:sortDropdown.html.twig') %}
+    </div>
 </div>
 
 <ul class="thumbnails">
@@ -54,7 +48,7 @@
                 {% endif %}
                 {% if app.user == member %}
                 <a class="btn" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> View your Friend's list</a>
-                {% elseif app.user.isUserOnFriendsList(member) %}
+                {% elseif app.user is not null and app.user.isUserOnFriendsList(member) %}
                 <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : member.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}"><i class="fa fa-minus-circle"></i> Remove from Friend's list</a>
                 {% else %}
                 <a class="btn btn-success" href="{{ path('imdc_add_to_friends_list', {'userid' : member.id, 'redirect' : 'imdc_member_list_public'} ) }}"><i class="fa fa-plus-circle"></i> Add to Friend's list</a>
