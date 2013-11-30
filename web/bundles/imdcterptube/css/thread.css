@@ -105,3 +105,19 @@ img.avatar {
 div.temporal-post-wrap {
 
 }
+
+.div-video-timeline {
+    height: 30px;
+}
+
+#back-timeline {
+    background: #ddd;
+    border: 1px solid #bbb;
+    height: 5px;
+    width: 99%;
+}
+
+.front-comment-div {
+    height: 5px;
+    position: relative;
+}

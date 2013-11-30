@@ -285,6 +285,7 @@ var postArray = new Array();
 						    </div>
 						{# -----------   if type of media is a VIDEO   -------- #}
 						{% elseif postMediaFile.type == 1 %}
+						    {% set displayTestPostDensityBar = TRUE %}
 					        <div class="row-fluid">
 						        <video controls width="100%" id="{{ mediaFile.getID }}" preload="auto">
 						        	<source src="{{ asset(postMediaFile.getResource.getWebPathWebm) }}"/>
@@ -299,6 +300,41 @@ var postArray = new Array();
 						            Your browser does not support the audio element, please upgrade to Google Chrome
 						        </audio>
 					        </div>
+						{% endif %}
+						{# testing ---------------------------------- #}
+						{% if post.startTime %}
+						<div class="row-fluid div-video-timeline">
+						    <div id="back-timeline">
+						        <div class="front-comment-div" id="time-comment-{{ post.getId }}">
+						            <script type="text/javascript">
+						               $videoElement = $('video#{{ mediaFile.getId }}');
+						               $timeComment = $("#time-comment-{{ post.getId }}");
+							            
+						               $videoElement[0].addEventListener('loadedmetadata', function(event) {
+							               $duration = $videoElement[0].duration;
+							               $timeComment = $("#time-comment-{{ post.getId }}");
+// 						                   alert($duration);
+							               startTimePercentage = ((100*{{ post.startTime }})/$duration).toFixed(2);
+							               endTimePercentage = ((100*{{ post.endTime }})/$duration).toFixed(2);
+							               widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
+							               
+// 							               alert(startTimePercentage + ', ' + endTimePercentage);
+							               
+							               $timeComment.css('left', startTimePercentage + '%');
+							               $timeComment.css('width', widthPercentage + '%');
+							               $timeComment.css('background', 'red');
+						               });
+
+						               $timeComment.on('mouseover', function() {
+							               $videoElement[0].currentTime = {{ post.startTime }};
+						               });
+						               
+						            </script>
+						        </div>
+					        </div>
+					        
+						</div>
+						{# end of testing --------------------------- #}
 						{% endif %}
                     	<div class="row-fluid">
                         {{ post.content|nl2br }}
