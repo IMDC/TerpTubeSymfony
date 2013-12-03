@@ -307,27 +307,13 @@ var postArray = new Array();
 						    <div id="back-timeline">
 						        <div class="front-comment-div" id="time-comment-{{ post.getId }}">
 						            <script type="text/javascript">
-						               $videoElement = $('video#{{ mediaFile.getId }}');
-						               $timeComment = $("#time-comment-{{ post.getId }}");
-							            
-						               $videoElement[0].addEventListener('loadedmetadata', function(event) {
-							               $duration = $videoElement[0].duration;
-							               $timeComment = $("#time-comment-{{ post.getId }}");
-// 						                   alert($duration);
-							               startTimePercentage = ((100*{{ post.startTime }})/$duration).toFixed(2);
-							               endTimePercentage = ((100*{{ post.endTime }})/$duration).toFixed(2);
-							               widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
-							               
-// 							               alert(startTimePercentage + ', ' + endTimePercentage);
-							               
-							               $timeComment.css('left', startTimePercentage + '%');
-							               $timeComment.css('width', widthPercentage + '%');
-							               $timeComment.css('background', 'red');
-						               });
-
-						               $timeComment.on('mouseover', function() {
-							               $videoElement[0].currentTime = {{ post.startTime }};
-						               });
+						            $(document).ready(function() {
+						               initMiniVideoTimeline({{ mediaFile.getId }}, 
+						                                       {{ post.getId }}, 
+						                                       {{ post.startTime }}, 
+						                                       {{ post.endTime }}
+                                       );
+					                });
 						               
 						            </script>
 						        </div>

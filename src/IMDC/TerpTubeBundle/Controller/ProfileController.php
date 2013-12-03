@@ -1,30 +1,20 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+
 use IMDC\TerpTubeBundle\Form\Type\LanguageFormType;
-
 use IMDC\TerpTubeBundle\Entity\Language;
-
 use IMDC\TerpTubeBundle\Event\UploadEvent;
-
 use Symfony\Component\Form\FormFactory;
-
 use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
-
 use IMDC\TerpTubeBundle\Entity\Media;
-
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
-
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
@@ -44,8 +34,9 @@ class ProfileController extends BaseController
 	 * Show your own profile
 	 * @throws AccessDeniedException - occurs if you are not logged in
 	 */
-	public function showAction(Request $request)
+	public function showAction() // edit to match fosuserbundle declaration
 	{
+	    $request = $this->container->get('request'); //edited to match fosuserbundle declaration
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
@@ -156,13 +147,16 @@ class ProfileController extends BaseController
 	 * Edit the user
 	 * If you try to edit a different user, not your own, you are redirected to only show their profile
 	 */
-	public function editAction(Request $request, $userName)
+	public function editAction(Request $request) //edit to match fosuserbundle declaration
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
 		}
+		
+		/*
+		$userName = $request->query->get('userName');
 		if ($user->getUsername() != $userName)
 		{
 			$response = new RedirectResponse(
@@ -170,6 +164,8 @@ class ProfileController extends BaseController
 							->generate('imdc_terp_tube_user_profile_specific', array('userName' => $userName)));
 			return $response;
 		}
+		*/
+		
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
 		/** @var $profile \IMDC\TerpTubeBundle\Entity\UserProfile */

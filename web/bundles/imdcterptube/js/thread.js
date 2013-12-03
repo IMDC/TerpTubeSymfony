@@ -641,8 +641,42 @@ function enableTemporalComment(player, status, startinput, endinput) {
   	  
   }
   
-  
-  
+}
+  /**
+   * 
+   * @param post the post object
+   */
+function createPopover(post, event) {
+	 alert(event);
+	 $("#popOverDiv").popover(
+	 {
+		 trigger: 'focus',
+		 placement: 'bottom',
+		 title: 'Twitter Bootstrap Popover', 
+		 content: "It's so simple to create a tooltop for my website!"
+	 });
+}
+
+function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) {
+	$videoElement = $('video#'+mediaFileId);
+    $timeComment = $('#time-comment-'+postId);
+     
+    $videoElement[0].addEventListener('loadedmetadata', function(event) {
+        $duration = $videoElement[0].duration;
+        $timeComment = $('#time-comment-'+postId);
+
+        startTimePercentage = ((100*postStartTime)/$duration).toFixed(2);
+        endTimePercentage = ((100*postEndTime)/$duration).toFixed(2);
+        widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
+        
+        $timeComment.css('left', startTimePercentage + '%');
+        $timeComment.css('width', widthPercentage + '%');
+        $timeComment.css('background', 'red');
+    });
+
+    $timeComment.on('mouseover', function() {
+        $videoElement[0].currentTime = postStartTime;
+    });
 }
 
 /*

@@ -13,7 +13,7 @@ use IMDC\TerpTubeBundle\Entity;
 
 class FriendsListController extends Controller
 {
-	public function addAction(Request $request, $userid)
+	public function addAction(Request $request, $userid)    
 	{
 
 		// check if user logged in
@@ -28,7 +28,7 @@ class FriendsListController extends Controller
 		$userManager = $this->container->get('fos_user.user_manager');
 
 		$usertoadd = $userManager->findUserBy(array('id' => $userid));
-
+		
 		$user->addFriendsList($usertoadd);
 
 		// flush object to database
@@ -36,7 +36,7 @@ class FriendsListController extends Controller
 		$em->persist($user);
 		$em->flush();
 
-		return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific',
+	    return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific',
 								        array('userName' => $usertoadd->getUserName())));
 	}
 

@@ -8,6 +8,8 @@
 
 {% block title %}Public Member Listing{% endblock title %}
 
+{% block sidebarlinks_members %}<li class="active">{% endblock sidebarlinks_members %}
+
 {% block herounit_wrap %}
 <h1>Public Member Directory</h1>
 {% endblock herounit_wrap %}
@@ -15,9 +17,11 @@
 {% block underherounitrow1 %}
 
 <div class="row-fluid">
+    {% if pagination is defined %}
     <div class="span2">
         {{ knp_pagination_render(pagination) }}
     </div>
+    {% endif %}
     <div class="span2" style="margin:20px 0;">
         {% include('IMDCTerpTubeBundle:Member:sortDropdown.html.twig') %}
     </div>
