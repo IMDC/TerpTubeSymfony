@@ -61,11 +61,13 @@ class UserGroupController extends Controller
 			$newusergroup->setUserFounder($user);
 			$newusergroup->addAdmin($user);
 			$newusergroup->addMember($user);
+			$user->addUserGroup($newusergroup);
 
 			$em = $this->getDoctrine()->getManager();
 
-			// request to persist message object to database
+			// request to persist objects to database
 			$em->persist($newusergroup);
+			$em->persist($user);
 
 			// persist all objects to database
 			$em->flush();
@@ -80,6 +82,30 @@ class UserGroupController extends Controller
 
 	}
 	
+	public function joinUserGroupAction(Request $request, $usergroupid) 
+	{
+	    // check if user logged in
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+	    {
+	        return $this->redirect($this->generateUrl('fos_user_security_login'));
+	    }
+	    
+	    $user = $this->getUser();
+	    $em = $this->getDoctrine()->getManager();
+	    $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
+	     
+	    $usergroup->addMember($user);
+	    $user->addUserGroup($usergroup);
+	    
+	    $em->persist($usergroup);
+	    $em->persist($user);
+	    
+	    $em->flush();
+	    
+	    $response = $this->render('IMDCTerpTubeBundle:UserGroup:viewgroup.html.twig', array('usergroup' => $usergroup));
+		return $response;
+	}
+	
 	public function myGroupShowAction(Request $request)
 	{
 	    // check if user logged in
@@ -90,8 +116,9 @@ class UserGroupController extends Controller
 	    
 	    $user = $this->getUser();
 	    
-	    $em = $this->getDoctrine()->getManager(); 
-	    $usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($user);
+	    $em = $this->getDoctrine()->getManager();
+	    //$usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($user);
+	    $usergroups = $user->getUserGroups();
 	    //->findAll();
 	    
 	    $response = $this->render('IMDCTerpTubeBundle:UserGroup:myGroups.html.twig', array('usergroups' => $usergroups));

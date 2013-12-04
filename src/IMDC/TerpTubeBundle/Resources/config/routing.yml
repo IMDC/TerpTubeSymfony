@@ -200,6 +200,11 @@ imdc_group_mygroups:
     pattern: /mygroups
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:myGroupShow }
 
+imdc_group_join:
+    pattern: /usergroup/join/{usergroupid}
+    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:joinUserGroup }
+    requirements:
+        usergroupid: \d+
 
 
 imdc_thread_create_new:

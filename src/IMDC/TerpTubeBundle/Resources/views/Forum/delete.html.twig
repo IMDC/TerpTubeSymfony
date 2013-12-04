@@ -17,6 +17,7 @@
 <div class="span9">
   {# {{ form(form) }} #}
       
+    {# count the posts all the threads in this forum #}  
     {% set postCount = 0 %}
     {% for thread in forum.getThreads %}
         {% set postCount = postCount + thread.getPosts|length %}
@@ -37,7 +38,7 @@
         {% set mediaFile = forum.titleMedia[0] %}
         <p>
         <div class="row-fluid">
-            <div class="span4">
+            <div class="span4">`                    
             {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
             </div> <!-- /span4 -->
         </div> <!-- /row-fluid -->
