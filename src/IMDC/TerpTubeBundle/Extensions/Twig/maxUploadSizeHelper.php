@@ -18,7 +18,7 @@ class maxUploadSizeHelper extends \Twig_Extension
         $postmax   = ini_get('post_max_size');
         $uploadmax = ini_get('upload_max_filesize');
         
-        return max($postmax, $uploadmax);
+        return min($postmax, $uploadmax);
         
     }
 
