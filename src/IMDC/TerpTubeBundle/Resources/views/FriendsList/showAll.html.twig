@@ -10,21 +10,34 @@
 
 {% block underherounitrow1 %}
 <ul class="thumbnails">
+{% set counter = 1 %}
+    <div class="row-fluid">
     {% for friend in friends %}
-    {% set profile = friend.getProfile %}
-    <li class="span3">
-        <div class="thumbnail text-center">
-            <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : friend.userName}) }}"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
-            <h3>{{ friend.username }}</h3>
-            <p>Joined: {{ friend.joinDate|date('g:ia F j Y') }}</p>
-            <p>
-                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : friend.userName}) }}">View Profile</a>
-                <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : friend.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}">Remove from Friend's list</a>
-            </p>
-        </a>
-    </li>
-{% endfor %}
-</ul>
+    {% if counter != 1 and counter % 4 == 1 %}
+        <div class="row-fluid">
+    {% endif %}
+        {% set profile = friend.getProfile %}
+            <li class="span3">
+                <div class="thumbnail text-center">
+                    <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : friend.userName}) }}"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
+                    <h3>{{ friend.username }}</h3>
+                    <p>Joined: {{ friend.joinDate|date('g:ia F j Y') }}</p>
+                    <p>
+                        <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : friend.userName}) }}"><i class="fa fa-bars"></i> View Profile</a>
+                        <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : friend.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}"><i class="fa fa-minus-circle"></i> Remove from Friend's list</a>
+                    </p>
+                </a>
+            </li> <!-- ./span3 -->
+        {% if counter != 0 and counter % 4 == 0 %}
+        </div><!-- end row-fluid -->
+        <p></p>
+        {% endif %}
+    
+        {% set counter = counter + 1 %}
+        
+    {% endfor %}
+    </div> <!-- ./row-fluid -->
+</ul> <!-- ./thumbnails -->
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

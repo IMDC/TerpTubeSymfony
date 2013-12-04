@@ -36,12 +36,16 @@
     						    <div class="row-fluid">
         						    <a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
         			                	{{ thread.content|truncate(250) }}
-        		                	</a>
+        		                	
         		                	<div class="row-fluid" id="thread-post-count-wrap">
         		                	    <p>
-        		                	        <span class="badge" title="Posts">{{ thread.getPosts|length }} Replies</span>
+        		                	        <span class="badge" title="Posts">{{ thread.getPosts|length }} {{ thread.getPosts|length > 1 ? 'Replies' : 'Reply'}}</span>
     		                	        </p>
+    		                	        <p>
+        		                		    {% if thread.getLastPostAt is defined %}Last post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% endif %}
+        		                		</p>
     		                	    </div>
+    		                	    </a>
     		                	</div>
     		                	{% else %}
     		                	<div class="row-fluid">
@@ -59,7 +63,7 @@
         		                		{{ thread.content|truncate(50) }}
         		                		</p>
         		                		<p>
-        		                		    <span class="badge">{{ thread.getPosts|length }} Replies</span>
+        		                		    <span class="badge">{{ thread.getPosts|length }} {{ thread.getPosts|length > 1 ? 'Replies' : 'Reply'}}</span>
     		                		    </p>
     		                		    <p>
         		                		    {% if thread.getLastPostAt is defined %}Last post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% endif %}
