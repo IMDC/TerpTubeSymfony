@@ -8,7 +8,7 @@
 
 {% block title %}Forums{% endblock title %}
 
-{% block herounit %}<h1>Forums</h1>{% endblock herounit %}
+{% block herounit_wrap %}<h1>Forums</h1>{% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
 {% if is_granted('ROLE_CREATE_FORUMS') %}
@@ -29,6 +29,7 @@
     </div>
 </div>
 
+{% if pagination.getTotalItemCount > 0 %}
 <div class="row-fluid">
     <div class="span12">
         <ul class="unstyled inline">
@@ -39,6 +40,7 @@
         </ul>
     </div>
 </div>
+{% endif %}
 
 {% set forums = pagination %}
 {% include 'IMDCTerpTubeBundle:Forum:ForumThumbnail.html.twig' %}

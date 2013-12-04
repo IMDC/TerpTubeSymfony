@@ -6,6 +6,8 @@
 
 {% block underherounitrow1 %}
 {{ form_start(form) }}
+    {# goes here #}
+    Max upload size is: {{ getPHPMaxUploadSize() }}
     {{ form_widget(form) }}
     <div>
         <input type="submit" value="{{ 'form.media.upload'|trans }}" />

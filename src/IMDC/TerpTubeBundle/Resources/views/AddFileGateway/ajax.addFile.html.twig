@@ -1,6 +1,7 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {{ form_start(form, { 'attr':{ 'id': 'mediaUploadForm'} }) }}
+    Max upload size is: {{ getPHPMaxUploadSize() }}
     {{ form_widget(form) }}
     <div>
         <input type="button" value="{{ 'form.media.upload'|trans }}" onClick="submitForm()"/>
