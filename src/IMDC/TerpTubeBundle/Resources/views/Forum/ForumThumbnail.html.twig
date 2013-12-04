@@ -8,7 +8,7 @@
     {% endif %}
             <li class="span3">
                 <a href="{{ path('imdc_forum_view_specific', {'forumid': forum.id} ) }}">
-                <div class="thumbnail threadthumbnail text-center" style="min-height:380px;">
+                <div class="thumbnail forumthumbnail text-center" style="min-height:380px;">
                 <p style="margin-top:10px;">
                 {% if forum.titleMedia|length != 0 %}
                     {% set mediaFile = forum.titleMedia[0] %}
@@ -37,9 +37,9 @@
                     </p>
                     
                     <h3>{{ forum.titleText | truncate(20) }}</h3>
-                    <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p>
+{#                     <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p>#}
                     <p><span class="content-created-datetime-span">Created: {{ forum.creationDate|date('g:ia M j, Y') }}</span></p>
-                    <p>Topics: {{ forum.getThreads()|length }}</p>
+                    <p><span class="badge">Topics: {{ forum.getThreads()|length }}</span></p>
                     <p>Last post: {{ forum.getLastActivity|date('g:ia M j, Y') }}</p>
                     
                 </a>

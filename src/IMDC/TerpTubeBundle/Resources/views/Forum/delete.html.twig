@@ -1,0 +1,76 @@
+{# src/IMDC/TerpTubeBundle/Resources/views/Forum/new.html.twig #}
+{% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+
+{% block title %}Confirm forum delete?{% endblock title %}
+
+{% block sidebarlinks_pages %}<li class="active">{% endblock %}
+
+{% block herounit_wrap %}
+<h1>Delete forum: {{ forum.titleText }}</h1>
+{% endblock herounit_wrap %}
+
+{% block underherounitrow1 %}
+<div class="span9">
+  {# {{ form(form) }} #}
+      
+    {% set postCount = 0 %}
+    {% for thread in forum.getThreads %}
+        {% set postCount = postCount + thread.getPosts|length %}
+    {% endfor %}
+      
+    <h2 style="color: red;">Are you sure you want to delete this forum?</h2>
+    <p>
+        This forum contains <span class="label">{{ forum.getThreads|length }}</span> topics with a total of <span class="label">{{ postCount }}</span> posts.
+    </p>
+    <h3>Deleting this forum will delete ALL topics and ALL posts!</h3>
+    <p>
+        <span style="font-size:150%;" class="label label-important">This action <strong>CANNOT</strong> be undone!</span>
+    </p>
+
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {% if forum.titleMedia[0] is defined %}
+        {% set mediaFile = forum.titleMedia[0] %}
+        <p>
+        <div class="row-fluid">
+            <div class="span4">
+            {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
+            </div> <!-- /span4 -->
+        </div> <!-- /row-fluid -->
+        </p>
+        {% endif %}
+
+        {{ form_row(form.titleText, {'attr':{'class':'input-xxlarge'}}) }}
+        <div class="row-fluid">
+            {{ form_widget(form.submit, {'attr' : {'style':'display:none'}}) }}
+            <a id="forum-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
+            <a id="forum-form-cancel-button" class="btn btn-danger" href="javascript: history.go(-1)"><i class="fa fa-times"></i> Cancel</a>
+        </div>
+    {{ form_end(form) }}
+  
+
+</div>
+{% endblock underherounitrow1 %}
+{% block underherounitrow2 %}
+{% endblock underherounitrow2 %}
+
+{% block javascripts %}
+ {{ parent() }}
+<script>
+$(document).ready(function() {
+    // since I hid the real 'submit' button to provide a nicely stylized button
+    // I have to click the real button when you click on the fancy one
+    $("#forum-form-submit-button").click(function(e) {
+        e.preventDefault();
+    	$("button#ForumFormDelete_submit").click();
+    	
+    });
+});
+
+</script>
+ 
+{% endblock javascripts %}

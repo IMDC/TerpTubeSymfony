@@ -19,6 +19,14 @@
 
 <div class="row-fluid forum-title-wrap">
     <div class="span6">
+        {% if forum in app.user.getForums %}
+        <div class="row-fluid">
+            <ul class="unstyled inline">
+            <li><a href="{{ path('imdc_forum_edit', {'forumid' : forum.id}) }}"><i class="fa fa-edit"></i> Edit</a></li>
+            <li><a href="{{ path('imdc_forum_delete', {'forumid' : forum.id}) }}"><i class="fa fa-times"></i> Delete</a></li>
+            </ul>
+        </div>
+        {% endif %}
         {% if forum.getTitleMedia[0] is defined %}
         <div class="row-fluid">
             {% set mediaFile = forum.getTitleMedia[0] %}
