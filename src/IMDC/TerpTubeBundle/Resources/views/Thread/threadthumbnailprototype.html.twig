@@ -9,7 +9,7 @@
             <li class="span3">
                 <div class="thumbnail threadthumbnail text-center">
                     <div class="row-fluid">
-                        <span class="thread-date-span">{% if pagination is defined and pagination.isSorted('t.lastPostAt') %}Last Post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% else %}Created: {{ thread.creationDate|date('g:ia M j Y') }}{% endif %}</span>
+                        <span class="thread-date-span" title="{{ thread.creationDate|date('g:ia M j Y') }}">Created: {{ time_diff(thread.creationDate) }}</span>
                     </div>
                 	<div class="row-fluid">
                 		<div class="span3 post-reply-user-info-wrap">
