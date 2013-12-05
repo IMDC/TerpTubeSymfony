@@ -10,7 +10,9 @@
 {% block sidebarlinks_pages %}<li class="active">{% endblock %}
 
 {% block herounit_wrap %}
-<h1>Editing: {{ forum.titleText }}</h1>
+<div class="page-header">
+    <h1>Editing: {{ forum.titleText }}</h1>
+</div>
 {% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
@@ -20,7 +22,7 @@
 
     {{ form_start(form) }}
         {{ form_errors(form) }}
-        {% if forum.titleMedia is defined %}
+        {% if forum.titleMedia[0] is defined %}
         {% set mediaFile = forum.titleMedia[0] %}
         <p>
         <div class="row-fluid">

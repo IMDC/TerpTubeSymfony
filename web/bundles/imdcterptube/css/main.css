@@ -34,3 +34,8 @@ div.thread-vertical-user-info {
     font-size: 85%;
     margin-top: 20px;
 }
+
+span.contentTimeStampSpan {
+    font-size: 85%;
+    color: #ccc;
+}

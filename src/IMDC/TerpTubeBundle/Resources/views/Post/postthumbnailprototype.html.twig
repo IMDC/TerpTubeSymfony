@@ -42,6 +42,13 @@
 	                		</a>
                 		</div> <!-- ./span9 -->
 		                {% endif %}
+		                <div class="row-fluid">
+		                    <div class="span9 offset3">
+                                <p>
+                        		    <span class="contentTimeStampSpan" title="{{ post.created|date('g:ia M j Y') }}">{{ time_diff(post.created) }}</span>
+                        		</p>
+		                    </div>
+		                </div>
 		                    
                 	</div> <!-- /.row-fluid -->
 {#                 	<div class="row-fluid">#}

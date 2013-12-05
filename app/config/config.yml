@@ -188,3 +188,5 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
             exchange_options: {name: 'upload-audio', type: direct}
             queue_options:    {name: 'upload-audio'}
             callback:         upload_audio_service
+
+knp_time: ~ # Enable the helper for use in templates

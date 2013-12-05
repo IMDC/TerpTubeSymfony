@@ -38,7 +38,7 @@
 		"php-ffmpeg/php-ffmpeg" : "0.4.*@dev",
 		"knplabs/knp-paginator-bundle" : "dev-master",
 		"doctrine/doctrine-fixtures-bundle" : "dev-master",
-		"incenteev/composer-parameter-handler": "~2.0"
+		"knplabs/knp-time-bundle" : "1.1.*@dev"
 	},
 	"scripts" : {
 		"post-install-cmd" : [

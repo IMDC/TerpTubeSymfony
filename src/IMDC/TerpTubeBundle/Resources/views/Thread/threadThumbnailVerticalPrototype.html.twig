@@ -56,7 +56,7 @@
                         		    <span class="badge">{{ thread.getPosts|length }} Replies</span>
                     		    </p>
                     		    <p>
-                        		    {% if thread.getLastPostAt is defined %}Last post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% endif %}
+                        		    {% if thread.getLastPostAt is defined %}Last post: <span title="{{ thread.lastPostAt|date('g:ia M j Y') }}">{{ time_diff(thread.lastPostAt) }}</span>{% endif %}
                         		</p>
                                 <span class="thread-date-span">{% if pagination is defined and pagination.isSorted('t.lastPostAt') %}Last Post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% else %}Created: {{ thread.creationDate|date('g:ia M j Y') }}{% endif %}</span>
                             </div>

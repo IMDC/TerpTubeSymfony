@@ -89,17 +89,19 @@ class UserGroupController extends Controller
 	    {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
+	    $em = $this->getDoctrine()->getManager();
 	    
 	    $user = $this->getUser();
-	    $em = $this->getDoctrine()->getManager();
 	    $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
 	     
-	    $usergroup->addMember($user);
 	    $user->addUserGroup($usergroup);
+	    $usergroup->addMember($user);
 	    
+	    // request to persist objects to database
 	    $em->persist($usergroup);
 	    $em->persist($user);
 	    
+	    // flush objects to database
 	    $em->flush();
 	    
 	    $response = $this->render('IMDCTerpTubeBundle:UserGroup:viewgroup.html.twig', array('usergroup' => $usergroup));

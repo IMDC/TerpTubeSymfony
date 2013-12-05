@@ -38,9 +38,10 @@
                     
                     <h3>{{ forum.titleText | truncate(20) }}</h3>
 {#                     <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p>#}
-                    <p><span class="content-created-datetime-span">Created: {{ forum.creationDate|date('g:ia M j, Y') }}</span></p>
                     <p><span class="badge">Topics: {{ forum.getThreads()|length }}</span></p>
-                    <p>Last post: {{ forum.getLastActivity|date('g:ia M j, Y') }}</p>
+{#                     <p>Last post: {{ forum.getLastActivity|date('g:ia M j, Y') }}</p>#}
+                    <p>Last post: <span title="{{ forum.getLastActivity|date('g:ia M j, Y') }}">{{ time_diff(forum.getLastActivity) }}</span></p>
+                    <p><span class="content-created-datetime-span">Created: {{ forum.creationDate|date('g:ia M j, Y') }}</span></p>
                     
                 </a>
             </li>

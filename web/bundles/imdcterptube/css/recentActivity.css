@@ -24,6 +24,7 @@ div.postthumbnail {
 
 div.post-thumb-content {
     overflow-y: auto;
+    margin-top: 15px;
 }
 
 div.thumbnail audio {
