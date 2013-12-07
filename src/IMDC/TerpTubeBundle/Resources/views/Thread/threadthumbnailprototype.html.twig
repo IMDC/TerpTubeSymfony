@@ -39,7 +39,7 @@
         		                	
         		                	<div class="row-fluid" id="thread-post-count-wrap">
         		                	    <p>
-        		                	        <span class="badge" title="Posts">{{ thread.getPosts|length }} {{ thread.getPosts|length > 1 ? 'Replies' : 'Reply'}}</span>
+        		                	        <span class="badge" title="Posts">{{ thread.getPosts|length }} {{ thread.getPosts|length == 1 ? 'Reply' : 'Replies'}}</span>
     		                	        </p>
     		                	        <p>
         		                		    {% if thread.getLastPostAt is defined %}Last post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% endif %}
@@ -63,7 +63,7 @@
         		                		{{ thread.content|truncate(50) }}
         		                		</p>
         		                		<p>
-        		                		    <span class="badge">{{ thread.getPosts|length }} {{ thread.getPosts|length > 1 ? 'Replies' : 'Reply'}}</span>
+        		                		    <span class="badge">{{ thread.getPosts|length }} {{ thread.getPosts|length == 1 ? 'Reply' : 'Replies'}}</span>
     		                		    </p>
     		                		    <p>
         		                		    {% if thread.getLastPostAt is defined %}Last post: {{ thread.lastPostAt|date('g:ia M j Y') }}{% endif %}

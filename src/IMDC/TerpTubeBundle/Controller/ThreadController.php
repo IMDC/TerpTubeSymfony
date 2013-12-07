@@ -128,8 +128,15 @@ class ThreadController extends Controller
         	$em->persist($newpost);
         	$em->flush();
         	
+        	// update thread last post
         	$thread->setLastPostID($newpost->getId());
+        	
+        	// update forum's last activity
+        	$forum = $thread->getParentForum();
+        	$forum->setLastActivity(new \DateTime('now'));
+        	
         	$em->persist($thread);
+        	$em->persist($forum);
         	$em->flush();
         	
         	$this->get('session')->getFlashBag()->add(

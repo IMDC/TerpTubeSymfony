@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use FOS\UserBundle\Model\UserManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\Post;
+use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\PostFormType;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -92,6 +93,7 @@ class PostController extends Controller
 	    $em = $this->getDoctrine()->getManager();
 	
 	    $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->findOneBy(array('id' => $threadid));
+	    $forum = $thread->getParentForum();
 	
 	    $newpost = new Post();
 	    $newpost->setParentThread($thread);
@@ -126,26 +128,30 @@ class PostController extends Controller
 	        $em->persist($newpost);
 	         
 	        // persist all objects to database
-	        try {
-	            $em->flush();
-	            $newpostid = $newpost->getId();
-	            $thread->addPost($newpost);
-	            $thread->setLastPostID($newpost->getId());
-	            $thread->setLastPostAt(new \DateTime('now'));
-	            $em->persist($thread);
-	            $em->flush();
-	        } catch (\PDOException $e) {
-	
-	        }
-	
+            $em->flush();
+            
+            $newpostid = $newpost->getId();
+            
+            $thread->addPost($newpost);
+            $thread->setLastPostID($newpost->getId());
+            $thread->setLastPostAt(new \DateTime('now'));
+            
+            $logger = $this->container->get('logger');
+            $logger->info("\n\n\n*************Forum id is " . $forum->getId() . "******************\n\n\n");
+            $forum->setLastActivity(new \DateTime('now'));
+            
+            $em->persist($forum);            
+            $em->persist($thread);
+
+            $em->flush();
+
 	        // doctrine will populate the identity fields whenever one is generated
 	        // so accessing the id field after flush will contain the id of newly persisted entity
-	        // hopefully
-	
+	        // hopefully	
 	
 	        $this->get('session')->getFlashBag()->add(
 	                'notice',
-	                'Post created successfully!'
+	                'Post created successfully'
 	        );
 	        
 	        // creating the ACL

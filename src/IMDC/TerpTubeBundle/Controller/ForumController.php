@@ -174,7 +174,8 @@ class ForumController extends Controller
 	    $dql = "SELECT t
 	            FROM IMDCTerpTubeBundle:Thread t
 	            WHERE t.parentForum IS NOT NULL
-	            AND t.parentForum = :fid";
+	            AND t.parentForum = :fid
+	            ORDER BY t.lastPostAt DESC";
 	    
 	    $query = $em->createQuery($dql)->setParameter('fid', $forum->getId());
 	    
