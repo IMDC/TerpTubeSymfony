@@ -127,11 +127,14 @@ var postArray = new Array();
                {{ thread.content|nl2br }}
            </div>
         </div>
-        {% if thread.editedBy is defined %}
         <div class="row-fluid">
-            <span class="pull-right edited-text-span">Edited by {{ thread.editedBy }} on {{ thread.editedAt|date('o-m-N H:i') }}</span>
-        </div>
+            <ul class="unstyled inline">
+                <li><span class="edited-text-span">Created {{ thread.creationDate|date('o-m-N H:i') }}</span></li>
+        {% if thread.editedBy is not null %}
+                <li><span class="edited-text-span">Edited by {{ thread.editedBy }} on {{ thread.editedAt|date('o-m-N H:i') }}</span></li>
         {% endif %}
+            </ul>
+        </div>
         <div class="row-fluid" id="thread-creator-details">
             <div class="span12">
                 {# include('IMDCTerpTubeBundle:Thread:smalluserinfo.html.twig') #}
