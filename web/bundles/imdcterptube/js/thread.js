@@ -75,13 +75,22 @@ $(document).ready(function() {
 	});
 	
 	/**
-	 * Necessary to use this as I'm hiding the original form submit button as it is a button
+	 * When you are creating a new reply to a thread and you click the submit button,
+	 * it is necessary to use js to 'click' the original hidden form submit button 
+	 * as I'm hiding the original form submit button (because it is a button element)
 	 * element and I can't style it with a font-awesome glyph
 	 */
 	$("a#post-comment-submit-button").click(function() {
-		$(this).after('<span><i class="fa fa-spinner fa-spin"></i> Sending...</span>');
-		$(this).remove();
-		$("#PostFormFromThread_submit").click();
+		if ($("textarea#PostFormFromThread_content").val()) {
+			$(this).after('<span><i class="fa fa-spinner fa-spin"></i> Sending...</span>');
+			$(this).remove();
+			$("#PostFormFromThread_submit").click();
+		}
+		else {
+			// by clicking the form's original submit button, we trigger the html5 validation
+			// on the empty textarea field
+			$("#PostFormFromThread_submit").click();
+		}
 	});
 	
 	$("#cancelButton").click(function() {

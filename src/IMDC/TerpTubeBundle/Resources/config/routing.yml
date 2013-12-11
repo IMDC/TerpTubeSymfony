@@ -306,8 +306,6 @@ imdc_forum_view_specific:
 imdc_forum_edit:
     pattern: /forums/edit/{forumid}
     defaults: { _controller: IMDCTerpTubeBundle:Forum:edit }
-    requirements:
-        forumid: \d+
         
 imdc_forum_delete:
     pattern: /forums/delete/{forumid}

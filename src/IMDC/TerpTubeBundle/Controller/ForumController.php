@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
@@ -194,17 +195,25 @@ class ForumController extends Controller
 	    
 	}
 	
-	public function editAction(Request $request, $forumid)
+	public function editAction(Request $request, Forum $forumid)
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 	    {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
+	    
+	    $securityContext = $this->get('security.context');
+	    
+	    // check for edit access using ACL
+	    if (false === $securityContext->isGranted('EDIT', $forumid)) {
+	        throw new AccessDeniedException();
+	    }
+	    
 	    $em = $this->getDoctrine()->getManager();
 	    $user = $this->getUser();
 	     
-	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid));
+	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid->getId()));
 	    
 	    $form = $this->createForm(new ForumFormType(), $forum, array(
 	        'user' => $this->getUser(),

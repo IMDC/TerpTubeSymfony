@@ -29,8 +29,14 @@ class UserGroupController extends Controller
 		return $response;
 	}
 
-	public function viewGroupAction($usergroupid)
+	public function viewGroupAction(Request $request, $usergroupid)
 	{
+	    // check if user logged in
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+	    {
+	        return $this->redirect($this->generateUrl('fos_user_security_login'));
+	    }
+	    
 		$em = $this->getDoctrine()->getManager();
 
 		$usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
