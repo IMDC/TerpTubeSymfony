@@ -29,13 +29,13 @@ class MessageController extends Controller
 		}
 
 		$message = new Message();
-		$form = $this->createForm(new PrivateMessageType(), $message);
+		//$form = $this->createForm(new PrivateMessageType(), $message);
 
-		/*
+		
 		$form = $this->createForm(new PrivateMessageType(), $message, array(
 		        'em' => $this->getDoctrine()->getManager(),
 		));
-		 */
+		
 
 		$form->handleRequest($request);
 
@@ -54,6 +54,7 @@ class MessageController extends Controller
 			$user = $this->getUser();
 			$user->addSentMessage($message);
 
+			/*
 			$existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
 			$userProvider = $this->container->get('fos_user.user_provider.username');
 
@@ -73,10 +74,17 @@ class MessageController extends Controller
 				}
 			}
 
+		    
 			foreach ($existingUsers as $euser)
 			{
 				$euser->addReceivedMessage($message);
 				$em->persist($euser);
+			}
+			*/
+			
+			foreach ($message->getRecipients() as $recipient) {
+			    $recipient->addReceivedMessage($message);
+			    $em->persist($recipient);
 			}
 
 			// request to persist message object to database
@@ -403,7 +411,7 @@ class MessageController extends Controller
 
 	}
 
-	public function replyToMessageAction($messageid, Request $request)
+	public function replyToMessageAction(Request $request, $messageid)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -418,7 +426,10 @@ class MessageController extends Controller
 
 		// todo: make sure the user is a recipient of the message?
 
-		$form = $this->createForm(new PrivateMessageReplyType(), $message);
+		$form = $this->createForm(new PrivateMessageReplyType(), $message, array(
+		    'em' => $this->getDoctrine()->getManager(),
+		));
+		
 		$form->setData($message);
 
 		$form->handleRequest($request);
@@ -442,7 +453,8 @@ class MessageController extends Controller
 
 			$user = $this->getUser();
 			$user->addSentMessage($messagereply);
-
+			
+		    /*
 			$existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
 			$userManager = $this->container->get('fos_user.user_manager');
 
@@ -467,12 +479,13 @@ class MessageController extends Controller
 				$euser->addReceivedMessage($messagereply);
 				$em->persist($euser);
 			}
+			*/
 
-			/* foreach ($message->getRecipients() as $recp) {
-			 $recp->addReceivedMessage($message);
-			// request persistence of user object to database
-			$em->persist($recp);
-			} */
+			foreach ($message->getRecipients() as $recp) {
+			    $recp->addReceivedMessage($message);
+			    // request persistence of user object to database
+			    $em->persist($recp);
+			}
 
 			// request to persist message object to database
 			$em->persist($messagereply);

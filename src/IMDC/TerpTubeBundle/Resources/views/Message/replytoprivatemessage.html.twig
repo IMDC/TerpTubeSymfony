@@ -12,7 +12,8 @@
     {{ form_start(form) }}
         {{ form_errors(form) }}
         
-        {{ form_row(form.to, {'value' : message.getOwner() }) }}
+{#         {{ form_row(form.to, {'value' : message.getOwner() }) }}#}
+        {{ form_row(form.recipients) }}
         {{ form_row(form.subject, {'value' : 'Re: ' ~ form.vars.value.subject }) }}
 
         {{ form_row(form.content, 
@@ -31,3 +32,11 @@
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(document).ready(function() {
+    $("textarea#PrivateMessageReplyForm_content").focus();
+});
+</script>
+{% endblock javascripts %}

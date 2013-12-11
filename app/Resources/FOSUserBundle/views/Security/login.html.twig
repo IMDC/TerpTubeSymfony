@@ -35,3 +35,14 @@
 	</p>
 </form>
 {% endblock fos_user_content %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(document).ready(function() {
+    $("input#username").focus();
+});
+
+</script>
+
+{% endblock javascripts %}

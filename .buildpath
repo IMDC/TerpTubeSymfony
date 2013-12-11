@@ -49,6 +49,7 @@
 	<buildpathentry kind="src" path="vendor/ac/transcoding-bundle"/>
 	<buildpathentry kind="src" path="vendor/incenteev/composer-parameter-handler"/>
 	<buildpathentry kind="src" path="vendor/doctrine/doctrine-fixtures-bundle"/>
+	<buildpathentry kind="src" path="vendor/knplabs/knp-time-bundle"/>
 	<buildpathentry kind="src" path="vendor/jms/security-extra-bundle"/>
 	<buildpathentry kind="src" path="vendor/doctrine/doctrine-bundle"/>
 	<buildpathentry kind="src" path="vendor/jms/cg/src"/>
