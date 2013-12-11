@@ -13,13 +13,12 @@ class PrivateMessageReplyType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $entityManager = $options['em'];
-        //$builder->add('recipients');
         $transformer = new UsersToStringsTransformer($entityManager);
+        
         $builder->add(
-            $builder->create('recipients', 'text', array('required' => true))
-            ->addModelTransformer($transformer)
+            $builder->create('recipients', 'text', array('required' => true, 'label' => 'Recipients (use a comma to separate multiple people)'))
+                    ->addModelTransformer($transformer)
         );
-//     	$builder->add('to', null, array('label' => 'To (separate people with a space)', 'mapped' => false));
     	$builder->add('subject');
         $builder->add('content', 'textarea');
         $builder->add('submit', 'submit');

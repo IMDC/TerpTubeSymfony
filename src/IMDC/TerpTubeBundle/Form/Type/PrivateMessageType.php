@@ -12,23 +12,13 @@ class PrivateMessageType extends AbstractType
 {   
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	// this assumes that the entity manager was passed in as an option
     	$entityManager = $options['em'];
-    	//$transformer = new UserToStringTransformer($entityManager);
-    	
-        //$builder->addEventSubscriber(new AddToFieldSubscriber());
-        
-        //$builder->add('recipients');
-    	//$builder->add('to', null, array('label' => 'To (separate people with a space)', 'mapped' => false));
-    	/*
-    	$builder->add($builder->create('recipients', 'text')
-    				->addModelTransformer($transformer));
-    	*/
     	$transformer = new UsersToStringsTransformer($entityManager);
-    	$builder->add(
-	        $builder->create('recipients', 'text', array('required' => true))
-    	            ->addModelTransformer($transformer)
-    	);
+    	
+        $builder->add(
+            $builder->create('recipients', 'text', array('required' => true, 'label' => 'Recipients (use a comma to separate multiple people)'))
+                    ->addModelTransformer($transformer)
+        );
     	$builder->add('subject');
         $builder->add('content', 'textarea');
         $builder->add('submit', 'submit');

@@ -6,6 +6,15 @@
 
 {% block underherounitrow1 %}
 <div class="span10">
+    {% if app.user == usergroup.userFounder %}
+    <div class="row-fluid">
+        <ul class="unstyled inline">
+            <li><a href="#" class="btn">Edit</a></li>
+            <li><a href="#" class="btn">Delete</a></li>
+        </ul>
+    </div>
+    {% endif %}
+
     {% if app.user is not null and usergroup in app.user.getUserGroups %}
     <p><span class="label label-info">You are currently a member of this group</span></p>
     {% endif %}

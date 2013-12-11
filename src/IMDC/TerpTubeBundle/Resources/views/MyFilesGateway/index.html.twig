@@ -9,6 +9,7 @@
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
+<p>
     <div class="row-fluid">
    		<a id="record-link" class="btn btn-primary" href="{{ path('imdc_files_gateway_record_media') }}"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
         <a class="btn btn-primary" href="{{ path('imdc_files_gateway_audio') }}"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a>
@@ -16,7 +17,7 @@
         <a class="btn btn-primary" href="{{ path('imdc_files_gateway_image') }}"><i class=" fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a>
         <a class="btn btn-primary" href="{{ path('imdc_files_gateway_other') }}"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a>
     </div>
-
+</p>
 {% endblock underherounitrow1 %}
 
 {% block underherounitrow2 %}
@@ -28,15 +29,15 @@
 						{% for resourceFile in resourceFiles %}
                    	<tr>
                         <td>
-                            <a class="delete-button" href='#' data-url="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="fa fa-minus-circle"></i> {{ 'filesGateway.deleteLink'|trans }}</a>
+                            <a class="btn btn-small delete-button" href='#' data-url="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="fa fa-minus-circle"></i> {{ 'filesGateway.deleteLink'|trans }}</a>
                             {% if resourceFile.getMetaData.getSize == -1 %}
-                            <a class="preview-button disabled" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>
+                            <a class="btn btn-small preview-button disabled" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>
                             {% else %}
-                            <a class="preview-button" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>
+                            <a class="btn btn-small preview-button" href='#' data-type="{{ resourceFile.type }}" data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}" data-val="{{ resourceFile.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>
                             {% endif %}
-                            <a class="share-button" href="{{ path('imdc_thread_create_new_from_media', {'resourceid': resourceFile.id} ) }}" data-type-"{{ resourceFile.type }}" data-val="{{ resourceFile.id }}"><i class="fa fa-share"></i> {{ 'filesGateway.shareLink'|trans }}</a>
+                            <a class="btn btn-small share-button" href="{{ path('imdc_thread_create_new_from_media', {'resourceid': resourceFile.id} ) }}" data-type-"{{ resourceFile.type }}" data-val="{{ resourceFile.id }}"><i class="fa fa-share-square-o"></i> {{ 'filesGateway.shareLink'|trans }}</a>
                             {% if resourceFile.type == 1 or resourceFile.type == 2 %}
-                            <a class="interpret-button" href="{{ path('imdc_media_simultaneous_record', {'mediaID': resourceFile.id} ) }}"><i class="fa fa-film"></i> Create Interpretation</a>
+                            <a class="btn btn-small interpret-button" href="{{ path('imdc_media_simultaneous_record', {'mediaID': resourceFile.id} ) }}"><i class="fa fa-film"></i> Create Interpretation</a>
                             {% endif %}
                         </td>
                         <td>

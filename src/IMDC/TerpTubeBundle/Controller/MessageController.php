@@ -453,36 +453,9 @@ class MessageController extends Controller
 
 			$user = $this->getUser();
 			$user->addSentMessage($messagereply);
-			
-		    /*
-			$existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
-			$userManager = $this->container->get('fos_user.user_manager');
-
-			// split up the recipients by whitespace
-			$rawrecips = split(' ', $form->get('to')->getData());
-			foreach ($rawrecips as $possuser)
-			{
-				try
-				{
-					$theuser = $userManager->loadUserByUsername($possuser);
-					$existingUsers[] = $theuser;
-					$messagereply->addRecipient($theuser);
-				}
-				catch (UsernameNotFoundException $e)
-				{
-					// todo: create message to user about recip not found
-				}
-			}
-
-			foreach ($existingUsers as $euser)
-			{
-				$euser->addReceivedMessage($messagereply);
-				$em->persist($euser);
-			}
-			*/
 
 			foreach ($message->getRecipients() as $recp) {
-			    $recp->addReceivedMessage($message);
+			    $recp->addReceivedMessage($messagereply);
 			    // request persistence of user object to database
 			    $em->persist($recp);
 			}
@@ -494,9 +467,8 @@ class MessageController extends Controller
 			$em->flush();
 
 			$this->get('session')->getFlashBag()->add('inbox', 'Message sent successfully!');
+			
 			return $this->redirect($this->generateUrl('imdc_message_view_all'));
-
-			//return new Response('Created message id '.$message->getId());
 		}
 
 		// form not valid, show the basic form

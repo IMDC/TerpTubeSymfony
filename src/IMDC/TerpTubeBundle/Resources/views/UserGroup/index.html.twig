@@ -18,7 +18,13 @@
             <p>Members: {{ usergroup.getMembers|length }}</p>
             <p>Founder: {{ usergroup.getUserFounder.getUserName }}</p>
             <p>
-                <a class="btn btn-primary" href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id}) }}">View Group Info</a>
+                <ul class="unstyled inline">
+                <li><a class="btn btn-primary" href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id}) }}">View Group Info</a></li>
+                {% if app.user == usergroup.getUserFounder %}
+                <li><a class="btn btn-primary" href="{{ path('imdc_group_edit', {'usergroupid' : usergroup.id}) }}">Edit Group</a></li>
+                {% endif %}
+                </ul>
+                
             </p>
     	</a>
     </li>

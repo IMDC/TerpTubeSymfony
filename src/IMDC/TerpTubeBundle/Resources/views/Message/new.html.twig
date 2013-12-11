@@ -1,5 +1,12 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Message/new.html.twig #}
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block headerjavascripts %}
+{{ parent() }}
+<script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript" charset="utf-8"></script>
+<link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
+{% endblock headerjavascripts %}
+
 {% block title %}New Private Message{% endblock title %}
 
 {% block herounit %}
@@ -29,4 +36,14 @@
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
+
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#PrivateMessageForm_recipients").tagit();
+
+});
+</script>
+{% endblock javascripts %}
 

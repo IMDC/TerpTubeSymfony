@@ -196,6 +196,18 @@ imdc_group_create_new:
     pattern: /newusergroup
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
 
+imdc_group_edit:
+    pattern: /usergroup/edit/{usergroupid}
+    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:editUserGroup }
+    requirements:
+        usergroupid: \d+
+
+imdc_group_delete:
+    pattern: /usergroup/delete/{usergroupid}
+    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:deleteUserGroup }
+    requirements:
+        usergroupid: \d+
+        
 imdc_group_mygroups:
     pattern: /mygroups
     defaults: { _controller: IMDCTerpTubeBundle:UserGroup:myGroupShow }
@@ -312,4 +324,3 @@ imdc_forum_delete:
     defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
     requirements:
         forumid: \d+
-        

@@ -667,4 +667,13 @@ class User extends BaseUser
     {
         return $this->forums;
     }
+    
+    public function getFriendsListAsUsernames()
+    {
+        $usernames = array();
+        foreach ($this->getFriendsList() as $friend) {
+            $usernames[] = $friend->getUsername(); 
+        }
+        return $usernames;
+    }
 }

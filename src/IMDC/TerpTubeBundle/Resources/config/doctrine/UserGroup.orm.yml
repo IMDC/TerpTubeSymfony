@@ -8,6 +8,9 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
             id: true
             generator:
                 strategy: AUTO
+        name:
+            type: string
+            length: '255'
         dateCreated:
             type: datetime
         visibleToPublic:

@@ -11,9 +11,9 @@ class UserGroupType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$builder->add('name');
-    	$builder->add('visibleToPublic');
-    	$builder->add('visibleToRegisteredUsers');
-    	$builder->add('openForNewMembers');
+    	$builder->add('visibleToPublic', 'checkbox', array('data' => TRUE));
+    	$builder->add('visibleToRegisteredUsers', 'checkbox', array('data' => TRUE));
+    	$builder->add('openForNewMembers', 'checkbox', array('data' => TRUE));
     	$builder->add('joinByInvitationOnly');
         $builder->add('submit', 'submit');
     }

@@ -1,5 +1,12 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Message/replytoprivatemessage.html.twig #}
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block headerjavascripts %}
+{{ parent() }}
+<script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript" charset="utf-8"></script>
+<link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
+{% endblock headerjavascripts %}
+
 {% block title %}Re: {{ message.subject }}{% endblock title %}
 
 {% block herounit %}
@@ -36,6 +43,7 @@
 {{ parent() }}
 <script>
 $(document).ready(function() {
+	$("#PrivateMessageReplyForm_recipients").tagit();
     $("textarea#PrivateMessageReplyForm_content").focus();
 });
 </script>

@@ -32,19 +32,15 @@ class UsersToStringsTransformer implements DataTransformerInterface
      */
     public function transform($users)
     {
-        if (null === $users) {
+        if (NULL === $users) {
             return "";
-        }
-
-        if (!$users instanceof PersistentCollection) {
-            throw new UnexpectedTypeException($users, '\PersistentCollection');
         }
         
         $namesArray = array();
         foreach ($users as $user) {
             $namesArray[] = $user->getUsername();
         }
-        $names = implode(" ", $namesArray);
+        $names = implode(",", $namesArray);
         
         return $names;
     }
@@ -71,7 +67,7 @@ class UsersToStringsTransformer implements DataTransformerInterface
             throw new UnexpectedTypeException($usernames, 'string');
         }
         
-        $usernamesArray = explode(" ", $usernames);
+        $usernamesArray = explode(",", $usernames);
         foreach($usernamesArray as $username) {
             $user = $this->om->getRepository('IMDCTerpTubeBundle:User')
                         ->findOneBy(array('username' => $username));
