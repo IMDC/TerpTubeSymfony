@@ -83,13 +83,16 @@
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 								{% block nav_ul_authenticated %}
 									{% block nav_ul_authenticated_my_files %}<li>{% endblock %}
-										<a href="{{ path('imdc_files_gateway') }}"><i class="fa fa-folder-o"></i> {{ 'nav.my_files'|trans }}</a>
+										<a href="{{ path('imdc_files_gateway') }}"><i class="fa fa-folder-open"></i> {{ 'nav.my_files'|trans }}</a>
 									</li>
 									{% block nav_ul_authenticated_my_friends %}<li>{% endblock %}
 									    <a href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> {{ 'nav.my_friends'|trans }}</a>
 									</li>
 									{% block nav_ul_authenticated_my_groups %}<li>{% endblock %}
 									    <a href="{{ path('imdc_group_mygroups') }}"><i class="fa fa-globe"></i> {{ 'nav.my_groups'|trans }}</a>
+								    </li>
+								    {% block nav_ul_authenticated_my_interpretations %}<li>{% endblock %}
+								        <a href="#"><i class="fa fa-film"></i> {{ 'nav.my_interpretations'|trans }}</a>
 								    </li>
 								{% endblock nav_ul_authenticated %}
 						 	{% endif %}

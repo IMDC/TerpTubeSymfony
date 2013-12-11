@@ -85,6 +85,7 @@ nav:
     my_files: "My Files"
     my_friends: "My Friends" 
     my_groups: "My Groups"
+    my_interpretations: "My Interpretations"
 # Global strings
 layout:
     logout: Logout
