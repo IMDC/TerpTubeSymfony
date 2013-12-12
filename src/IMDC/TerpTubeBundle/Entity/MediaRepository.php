@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use IMDC\TerpTubeBundle\Entity\User;
 use IMDC\TerptubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\IMDCTerpTubeBundle;
 
 /**
  * MediaRepository
@@ -24,4 +25,5 @@ class MediaRepository extends EntityRepository
                 ->setParameter('uid', $user->getId())
         ->getResult();
     }
+    
 }

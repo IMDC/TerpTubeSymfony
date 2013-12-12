@@ -19,17 +19,17 @@
 	    <div class="simultaneousVideoRecording">
 	    	<div id="videoContainer">
 		    	<div id="pipwrap" class="pipstyle" >
-			   		<video	class="preview" id="{{ compoundMedia.getSourceID.getId }}" preload="auto" >
-						<source src="{{ asset(compoundMedia.getSourceID.getResource.getWebPathWebm) }}"/>
-						<source src="{{ asset(compoundMedia.getSourceID.getResource.getWebPath) }}"/>
+			   		<video	class="preview" id="{{ compoundMedia.getSource.getId }}" preload="auto" >
+						<source src="{{ asset(compoundMedia.getSource.getResource.getWebPathWebm) }}"/>
+						<source src="{{ asset(compoundMedia.getSource.getResource.getWebPath) }}"/>
 					</video>
 					<i class="xclosepip fa fa-times-circle fa-large" ></i>
 					
 				</div>
 				<div id="sourcewrap" class="sourcestyle">
-					<video	class="preview"  id="{{ compoundMedia.getTargetID.getId }}" preload="auto">
-						<source src="{{ asset(compoundMedia.getTargetID.getResource.getWebPathWebm) }}"/>
-						<source src="{{ asset(compoundMedia.getTargetID.getResource.getWebPath) }}"/>
+					<video	class="preview"  id="{{ compoundMedia.getTarget.getId }}" preload="auto">
+						<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPathWebm) }}"/>
+						<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPath) }}"/>
 					</video>
 					<i class="xclosepip fa fa-times-circle fa-large" style="display:none;"></i>
 					
@@ -50,8 +50,8 @@
  {{ parent() }}
  <script type='text/javascript'>
  $(document).ready(function() {
-	 var player1Element = $("#{{ compoundMedia.getSourceID.getID }}");
-	 var player2Element = $("#{{ compoundMedia.getTargetID.getID }}");
+	 var player1Element = $("#{{ compoundMedia.getSource.getID }}");
+	 var player2Element = $("#{{ compoundMedia.getTarget.getID }}");
 	 var player1 = new Player(player1Element);
 	 var player2 = new Player(player2Element);
 

@@ -23,12 +23,12 @@ class CompoundMedia
     /**
      * @var \IMDC\TerpTubeBundle\Entity\Media
      */
-    private $sourceID;
+    private $source;
 
     /**
      * @var \IMDC\TerpTubeBundle\Entity\Media
      */
-    private $targetID;
+    private $target;
 
 
     /**
@@ -68,12 +68,12 @@ class CompoundMedia
     /**
      * Set sourceID
      *
-     * @param \IMDC\TerpTubeBundle\Entity\Media $sourceID
+     * @param \IMDC\TerpTubeBundle\Entity\Media $source
      * @return CompoundMedia
      */
-    public function setSourceID(\IMDC\TerpTubeBundle\Entity\Media $sourceID = null)
+    public function setSource(\IMDC\TerpTubeBundle\Entity\Media $source = null)
     {
-        $this->sourceID = $sourceID;
+        $this->source = $source;
     
         return $this;
     }
@@ -83,9 +83,9 @@ class CompoundMedia
      *
      * @return \IMDC\TerpTubeBundle\Entity\Media 
      */
-    public function getSourceID()
+    public function getSource()
     {
-        return $this->sourceID;
+        return $this->source;
     }
 
     /**
@@ -94,9 +94,9 @@ class CompoundMedia
      * @param \IMDC\TerpTubeBundle\Entity\Media $targetID
      * @return CompoundMedia
      */
-    public function setTargetID(\IMDC\TerpTubeBundle\Entity\Media $targetID = null)
+    public function setTarget(\IMDC\TerpTubeBundle\Entity\Media $target = null)
     {
-        $this->targetID = $targetID;
+        $this->target = $target;
     
         return $this;
     }
@@ -106,9 +106,9 @@ class CompoundMedia
      *
      * @return \IMDC\TerpTubeBundle\Entity\Media 
      */
-    public function getTargetID()
+    public function getTarget()
     {
-        return $this->targetID;
+        return $this->target;
     }
     /**
      * @var integer

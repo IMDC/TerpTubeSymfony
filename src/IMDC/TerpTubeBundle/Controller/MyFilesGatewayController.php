@@ -36,6 +36,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
+use IMDC\TerpTubeBundle\Entity\Post;
 
 class MyFilesGatewayController extends Controller
 {
@@ -61,6 +62,54 @@ class MyFilesGatewayController extends Controller
 		$resourceFiles = $user->getResourceFiles();
 		return $this
 				->render('IMDCTerpTubeBundle:MyFilesGateway:index.html.twig', array('resourceFiles' => $resourceFiles));
+	}
+	
+	/**
+	 * A gateway form for uploading/recording or selecting existing files
+	 *
+	 * @param String $filter
+	 * @param boolean $isAjax
+	 * @param String $path
+	 * @throws AccessDeniedException
+	 * @throws NotFoundHttpException
+	 * @throws BadRequestHttpException
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
+	public function gatewayInterpretationsAction(Request $request)
+	{
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+		{
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		}
+		$user = $this->getUser();
+		$em = $this->getDoctrine()->getManager();
+		//CompoundMedia interpretations
+		$repo = $em->getRepository('IMDCTerpTubeBundle:CompoundMedia');
+		$interpretations = $repo->findAllInterpretationsCreatedByUser($user);
+		return $this
+		->render('IMDCTerpTubeBundle:MyFilesGateway:interpretations.html.twig', array('interpretations' => $interpretations));
+	}
+	
+	public function previewCompoundMediaAction(Request $request, $compoundMediaId, $url)
+	{
+		$recorderConfiguration = $request->get("recorderConfiguration");
+		$user = $this->getUser();
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+		{
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		}
+		$userManager = $this->container->get('fos_user.user_manager');
+		$userObject = $userManager->findUserByUsername($user->getUsername());
+	
+		$em = $this->container->get('doctrine')->getManager();
+		$mediaFile = $em->getRepository('IMDCTerpTubeBundle:CompoundMedia')->find($compoundMediaId);
+		if ($userObject == null)
+		{
+			throw new NotFoundHttpException("This user does not exist");
+		}
+		return $this
+		->render('IMDCTerpTubeBundle:MyFilesGateway:previewCompoundMedia.html.twig',
+				array("compoundMedia" => $mediaFile));
 	}
 
 	/**

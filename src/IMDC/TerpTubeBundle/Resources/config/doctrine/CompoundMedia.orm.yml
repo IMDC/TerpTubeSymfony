@@ -1,6 +1,7 @@
 IMDC\TerpTubeBundle\Entity\CompoundMedia:
     type:  entity
     table: compound_media
+    repositoryClass: IMDC\TerpTubeBundle\Entity\CompoundMediaRepository
     id:
         id:
             type: integer
@@ -15,12 +16,12 @@ IMDC\TerpTubeBundle\Entity\CompoundMedia:
             scale: 2
         
     manyToOne:
-        sourceID: #media object to hold the source for the interpretation
+        source: #media object to hold the source for the interpretation
             targetEntity: Media
             joinColumn:
                 name: source_id
                 referencedColumnName: id
-        targetID: #media object to hold the actual interpretation
+        target: #media object to hold the actual interpretation
             targetEntity: Media
             joinColumn:
                 name: target_id

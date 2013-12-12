@@ -213,12 +213,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/braincrafted/bootstrap-bundle.git",
-                "reference": "c086ff70f6746ae4290ba50a68b6ab159925ceaa"
+                "reference": "cefb3754f552686c1c37438937155fc9f5732dc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/c086ff70f6746ae4290ba50a68b6ab159925ceaa",
-                "reference": "c086ff70f6746ae4290ba50a68b6ab159925ceaa",
+                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/cefb3754f552686c1c37438937155fc9f5732dc4",
+                "reference": "cefb3754f552686c1c37438937155fc9f5732dc4",
                 "shasum": ""
             },
             "require": {
@@ -262,7 +262,7 @@
             "keywords": [
                 "bootstrap"
             ],
-            "time": "2013-07-28 21:51:00"
+            "time": "2013-12-10 17:29:12"
         },
         {
             "name": "doctrine/annotations",
@@ -1082,12 +1082,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "7a5e29a56418fc409d1475149710239d17ad4135"
+                "reference": "945eebb625073c51072b721ec528f12199b34915"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/7a5e29a56418fc409d1475149710239d17ad4135",
-                "reference": "7a5e29a56418fc409d1475149710239d17ad4135",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/945eebb625073c51072b721ec528f12199b34915",
+                "reference": "945eebb625073c51072b721ec528f12199b34915",
                 "shasum": ""
             },
             "require": {
@@ -1142,7 +1142,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2013-12-09 02:46:36"
+            "time": "2013-12-10 16:13:14"
         },
         {
             "name": "gregwar/captcha",
@@ -1785,12 +1785,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpTimeBundle.git",
-                "reference": "1e7225b17b3fd3815a7ec3c6f57753b90f7a4458"
+                "reference": "abf7c17ab817d9b991445f56297c44b2217f6a5d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/1e7225b17b3fd3815a7ec3c6f57753b90f7a4458",
-                "reference": "1e7225b17b3fd3815a7ec3c6f57753b90f7a4458",
+                "url": "https://api.github.com/repos/KnpLabs/KnpTimeBundle/zipball/abf7c17ab817d9b991445f56297c44b2217f6a5d",
+                "reference": "abf7c17ab817d9b991445f56297c44b2217f6a5d",
                 "shasum": ""
             },
             "require": {
@@ -1835,7 +1835,7 @@
                 "knplabs",
                 "time"
             ],
-            "time": "2013-12-04 21:47:12"
+            "time": "2013-12-12 12:04:14"
         },
         {
             "name": "kriswallsmith/assetic",
@@ -2063,12 +2063,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/RabbitMqBundle.git",
-                "reference": "3b66fdb2828de0991e34d2b45bb56e7e6c1d4dc4"
+                "reference": "c810c4214e90accfe6403dcb8cc306aed7741d85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/3b66fdb2828de0991e34d2b45bb56e7e6c1d4dc4",
-                "reference": "3b66fdb2828de0991e34d2b45bb56e7e6c1d4dc4",
+                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/c810c4214e90accfe6403dcb8cc306aed7741d85",
+                "reference": "c810c4214e90accfe6403dcb8cc306aed7741d85",
                 "shasum": ""
             },
             "require": {
@@ -2107,7 +2107,7 @@
                 "queue",
                 "rabbitmq"
             ],
-            "time": "2013-11-29 00:47:23"
+            "time": "2013-12-11 14:02:49"
         },
         {
             "name": "php-ffmpeg/php-ffmpeg",

@@ -46,6 +46,14 @@ imdc_files_gateway:
     pattern: /myFiles
     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:gateway }
     
+#imdc_files_gateway_source: 
+#    pattern: /myFiles/source/
+#    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:gatewaySource }
+
+imdc_files_gateway_interpretations: 
+    pattern: /myFiles/interpretations/
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:gatewayInterpretations }
+    
 imdc_files_add_gateway: 
     pattern: /myFiles/add
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:gateway}
@@ -92,8 +100,8 @@ imdc_files_gateway_add_simultaneous_recording:
         expose: true
         
 imdc_files_gateway_preview_compound_media: 
-     pattern: /myFiles/preview/compound_media/{compoundMediaID}
-     defaults: { _controller: IMDCTerpTubeBundle:Media:compoundMediaPreview, url: null }
+     pattern: /myFiles/preview/compound_media/{compoundMediaId}
+     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewCompoundMedia, url: null }
 #     requirements:
 #        _method:  POST
      options:

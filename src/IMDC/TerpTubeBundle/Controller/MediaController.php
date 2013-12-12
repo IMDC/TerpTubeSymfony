@@ -61,25 +61,4 @@ class MediaController extends Controller
 						array("mediaFile" => $mediaFile));
 	}
 
-	public function compoundMediaPreviewAction(Request $request, $compoundMediaID, $url)
-	{
-		$recorderConfiguration = $request->get("recorderConfiguration");
-		$user = $this->getUser();
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-		$userManager = $this->container->get('fos_user.user_manager');
-		$userObject = $userManager->findUserByUsername($user->getUsername());
-	
-		$em = $this->container->get('doctrine')->getManager();
-		$mediaFile = $em->getRepository('IMDCTerpTubeBundle:CompoundMedia')->find($compoundMediaID);
-		if ($userObject == null)
-		{
-			throw new NotFoundHttpException("This user does not exist");
-		}
-		return $this
-		->render('IMDCTerpTubeBundle:MediaController:previewCompoundMedia.html.twig',
-				array("compoundMedia" => $mediaFile));
-	}
 }
