@@ -100,6 +100,16 @@ IMDC\TerpTubeBundle\Entity\User:
                 inverseJoinColumns:
                     userGroup_id:
                         referencedColumnName: id
+        roleGroups:
+            targetEntity: RoleGroup
+            joinTable:
+                name: fos_user_rolegroup
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    rolegroup_id:
+                        referencedColumnName: id
         #many to many
         friendsList:
             targetEntity: User

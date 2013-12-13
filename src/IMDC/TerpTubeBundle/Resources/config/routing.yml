@@ -166,7 +166,7 @@ imdc_message_reply:
 
 fos_user_group:
     resource: "@FOSUserBundle/Resources/config/routing/group.xml"
-    prefix: /group
+    prefix: /rolegroup
     
 imdc_initial_noreply_user_create:
     pattern: /createNoReplyOnce

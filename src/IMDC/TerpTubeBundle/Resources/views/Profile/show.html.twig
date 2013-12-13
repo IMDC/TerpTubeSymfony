@@ -69,14 +69,20 @@
     {% else %}
         {% if app.user.isUserOnFriendsList(user) %}
             <div class="text-info">
-                User is on your friends list  
+                <p>
+                    User is on your friends list
+                </p>  
             </div>
             <div class="text-warning">
-                <a href="{{ path('imdc_remove_from_friends_list', {'userid':user.id} ) }}">Remove</a>
+                <p>
+                    <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid':user.id} ) }}">Remove from friends list</a>
+                </p>
             </div>
         {% else %}
             <div>
-                <a href="{{ path('imdc_add_to_friends_list', {'userid':user.id} ) }}">Add user to friends list</a>
+                <p>
+                    <a class="btn" href="{{ path('imdc_add_to_friends_list', {'userid':user.id} ) }}">Add user to friends list</a>
+                </p>
             </div>
         {% endif %}
     {% endif %}
