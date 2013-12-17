@@ -18,6 +18,26 @@ class MetaData
      * @var integer
      */
     private $size;
+    
+    /**
+     * @var integer
+     */
+    private $width;
+    
+    /**
+     * @var integer
+     */
+    private $height;
+    
+    /**
+     * @var integer
+     */
+    private $duration;
+    
+    /**
+     * @var \DateTime
+     */
+    private $timeUploaded;
 
 
     /**
@@ -52,20 +72,7 @@ class MetaData
     {
         return $this->size;
     }
-    /**
-     * @var integer
-     */
-    private $width;
-
-    /**
-     * @var integer
-     */
-    private $height;
-
-    /**
-     * @var integer
-     */
-    private $duration;
+    
 
 
     /**
@@ -136,11 +143,6 @@ class MetaData
     {
         return $this->duration;
     }
-    /**
-     * @var \DateTime
-     */
-    private $timeUploaded;
-
 
     /**
      * Set timeUploaded

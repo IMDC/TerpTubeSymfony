@@ -17,8 +17,9 @@ class PostAdmin extends Admin
             ->add('author', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
             ->add('content', 'text', array('label' => 'Post Content'))
             ->add('created', 'date', array('label' => 'Created At'))
-            ->add('startTime', 'number')
-            ->add('endTime', 'number')
+            ->add('startTime')
+            ->add('endTime')
+            ->add('attachedFile', 'sonata_type_collection', array('property' => 'title'))
             ->add('parentThread', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\Thread', 'property' => 'title'))
         ;
     }
@@ -40,6 +41,8 @@ class PostAdmin extends Admin
             ->addIdentifier('author')
             ->add('content')
             ->add('created')
+            ->add('startTime')
+            ->add('endTime')
         ;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-// src/IMDC/TerpTubeBundle/Admin/UserAdmin.php
+// src/IMDC/TerpTubeBundle/Admin/UserGroupAdmin.php
 
 namespace IMDC\TerpTubeBundle\Admin;
 
@@ -8,18 +8,20 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
-class UserAdmin extends Admin
+class UserGroupAdmin extends Admin
 {
     // Fields to be shown on create/edit forms
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-        ->with('General')
-            ->add('userName', 'text')
-            ->add('email')
-            ->add('plainPassword', 'text')
-        ->end()
-        ->with('Groups')
+            ->add('name')
+            ->add('dateCreated')
+            ->add('userFounder')
+            ->add('members')
+            ->add('joinByInvitationOnly')
+            ->add('openForNewMembers')
+            ->add('visibleToPublic')
+            ->add('visibleToRegisteredUsers')
         /*
             ->add('userGroups', 'entity', array('class' => 'IMDCTerpTubeBundle:UserGroup',
                                                 'property' => 'name',
@@ -27,7 +29,7 @@ class UserAdmin extends Admin
                                                 'required' => false,
                                                 'label' => 'User groups'
             ))
-            */
+            
             ->add('userGroups', 'sonata_type_collection', array('required' => false))
             ->add('roleGroups', 'entity', array('class' => 'IMDCTerpTubeBundle:RoleGroup', 
                                                 'property' => 'name',
@@ -35,17 +37,13 @@ class UserAdmin extends Admin
                                                 'required' => false,
                                                 'label' => 'Role groups'
             ))
-        ->end()
-        ->with('Friends')
             ->add('friendsList', 'sonata_type_collection', array('required' => false))
-        ->end()
-        ->with('Management')
             ->add('roles')  
             ->add('locked', null, array('required' => false))
             ->add('expired', null, array('required' => false))
             ->add('enabled', null, array('required' => false))
             ->add('credentialsExpired', null, array('required' => false))
-        ->end()
+            */
             
         ;
     }
@@ -54,8 +52,8 @@ class UserAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('id')
-            ->add('roles')
+            ->add('name')
+            ->add('dateCreated')
         ;
     }
 
@@ -64,13 +62,15 @@ class UserAdmin extends Admin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('userName')
-            ->add('profile.firstName')
-            ->ADD('profile.lastName')
-            ->add('joinDate')
-            ->add('roles')
-            ->add('userGroups')
-            ->add('roleGroups')
+            ->add('name')
+            ->add('dateCreated')
+            ->ADD('members')
+            ->add('moderators')
+            ->add('admins')
+            ->add('joinByInvitationOnly')
+            ->add('openForNewMembers')
+            ->add('visibleToPublic')
+            ->add('visibleToRegisteredUsers')
         ;
     }
 }

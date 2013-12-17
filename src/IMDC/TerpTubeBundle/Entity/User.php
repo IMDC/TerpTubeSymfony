@@ -38,7 +38,7 @@ class User extends BaseUser
 	/**
 	 * @var \Doctrine\Common\Collections\Collection
 	 */
-	private $userGroups;
+	protected $userGroups;
 	
 	/**
 	 * @var \Doctrine\Common\Collections\Collection

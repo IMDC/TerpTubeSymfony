@@ -4,7 +4,7 @@ services:
     sonata.admin.post:
         class: IMDC\TerpTubeBundle\Admin\PostAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, group: "Content", label: "Post" }
+            - { name: sonata.admin, manager_type: orm, group: "Posts", label: "Post" }
         arguments:
             - ~
             - IMDC\TerpTubeBundle\Entity\Post
@@ -14,7 +14,7 @@ services:
     sonata.admin.user:
         class: IMDC\TerpTubeBundle\Admin\UserAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, group: "Id", label: "User" }
+            - { name: sonata.admin, manager_type: orm, group: "Users", label: "User" }
         arguments:
             - ~
             - IMDC\TerpTubeBundle\Entity\User
@@ -22,3 +22,35 @@ services:
         calls:
             - [ setTranslationDomain, [IMDCTerpTubeBundle]]
             
+    sonata.admin.message:
+        class: IMDC\TerpTubeBundle\Admin\MessageAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Messages", label: "Messages" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Message
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+    
+    sonata.admin.media:
+        class: IMDC\TerpTubeBundle\Admin\MediaAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Media", label: "Media" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Media
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.usergroup:
+        class: IMDC\TerpTubeBundle\Admin\UserGroupAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "UserGroup", label: "UserGroup" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\UserGroup
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
