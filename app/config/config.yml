@@ -3,6 +3,7 @@ imports:
     - { resource: security.yml }
     - { resource: "@IMDCTerpTubeBundle/Resources/config/constants/Events.xml" }
     - { resource: "@IMDCTerpTubeBundle/Resources/config/constants/Filters.xml" }
+    - { resource: "@IMDCTerpTubeBundle/Resources/config/admin.yml" }
 
 framework:
     #esi:             ~
@@ -31,7 +32,7 @@ twig:
 bc_bootstrap:
     less_filter: lessphp
     assets_dir:  %kernel.root_dir%/../vendor/twitter/bootstrap
-    jquery_path: %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-1.9.1.js
+    jquery_path: %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-1.8.3.js
     
 
 # Assetic Configuration
@@ -76,11 +77,11 @@ assetic:
             output: js/bootstrap.js
         jquery:
             inputs:
-                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-1.9.1.js
+                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-1.8.3.js
             output: js/jquery.js
         jqueryui:
             inputs:
-                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-ui-1.10.1.js
+                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-ui-1.8.23.js
             output: js/jquery-ui.js
     
 # Doctrine Configuration
@@ -190,3 +191,15 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
             callback:         upload_audio_service
 
 knp_time: ~ # Enable the helper for use in templates
+
+sonata_admin:
+    security:
+        handler: sonata.admin.security.handler.role
+
+sonata_block:
+    default_contexts: [cms]
+    blocks:
+        # Enable the SonataAdminBundle block
+        sonata.admin.block.admin_list:
+            contexts:   [admin]
+        # Your other blocks

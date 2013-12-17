@@ -27,7 +27,8 @@
 		"braincrafted/bootstrap-bundle" : "dev-master",
 		"twitter/bootstrap" : "<3.0.0",
 		"leafo/lessphp" : "dev-master",
-		"sonata-project/jquery-bundle" : "1.9.1",
+		"sonata-project/admin-bundle" : "dev-master",
+		"sonata-project/doctrine-orm-admin-bundle" : "dev-master",
 		"incenteev/composer-parameter-handler" : "~2.0",
 		"gregwar/captcha-bundle" : "dev-master",
 		"sonata-project/intl-bundle" : "dev-master",
@@ -38,7 +39,10 @@
 		"php-ffmpeg/php-ffmpeg" : "0.4.*@dev",
 		"knplabs/knp-paginator-bundle" : "dev-master",
 		"doctrine/doctrine-fixtures-bundle" : "dev-master",
-		"knplabs/knp-time-bundle" : "1.1.*@dev"
+		"knplabs/knp-time-bundle" : "1.1.*@dev",
+		"pimple/pimple" : "dev-master",
+		"sonata-project/cache-bundle" : "~2.1",
+		"ext-curl" : "*"
 	},
 	"scripts" : {
 		"post-install-cmd" : [
@@ -57,7 +61,8 @@
 		]
 	},
 	"config" : {
-		"bin-dir" : "bin"
+		"bin-dir" : "bin",
+		"component-dir" : "web/components"
 	},
 	"minimum-stability" : "stable",
 	"extra" : {
