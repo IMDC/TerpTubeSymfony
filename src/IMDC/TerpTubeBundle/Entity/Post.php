@@ -65,9 +65,21 @@ class Post
     private $editedBy;
 
     /**
+     * This is a collection to support inclusion of multiple files per post
+     * at a later date
      * @var \Doctrine\Common\Collections\Collection
      */
     private $attachedFile;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $replies;
+    
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\Post
+     */
+    private $parentPost;
     
     /**
      * Constructor
@@ -75,6 +87,7 @@ class Post
     public function __construct()
     {
         $this->attachedFile = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->replies      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->isDeleted    = FALSE; // set to false as default
         $this->isTemporal   = FALSE; // set to false as default
     }
@@ -351,5 +364,61 @@ class Post
     public function getEndTime()
     {
         return $this->endTime;
+    }
+
+    /**
+     * Add replies
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
+     * @return Post
+     */
+    public function addReplie(\IMDC\TerpTubeBundle\Entity\Post $replies)
+    {
+        $this->replies[] = $replies;
+    
+        return $this;
+    }
+
+    /**
+     * Remove replies
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
+     */
+    public function removeReplie(\IMDC\TerpTubeBundle\Entity\Post $replies)
+    {
+        $this->replies->removeElement($replies);
+    }
+
+    /**
+     * Get replies
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getReplies()
+    {
+        return $this->replies;
+    }
+
+    /**
+     * Set parentPost
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $parentPost
+     * @return Post
+     */
+    public function setParentPost(\IMDC\TerpTubeBundle\Entity\Post $parentPost = null)
+    {
+        $this->parentPost = $parentPost;
+    
+        return $this;
+    }
+
+    /**
+     * Get parentPost
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Post 
+     */
+    public function getParentPost()
+    {
+        return $this->parentPost;
     }
 }

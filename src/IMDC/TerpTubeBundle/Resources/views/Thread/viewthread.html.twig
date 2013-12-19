@@ -84,8 +84,16 @@ var postArray = new Array();
     {% elseif mediaFile.type == 1 %}
             <div class="thread-video-supplemental-controls-wrap">
                 <ul class="unstyled supp-video-controls">
-                    <li><a href="#" id="video-speed"><img src="{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}" /></a></li>
-                    <li><a href="#" id="closed-caption-button"><img src="{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}" /></a></li>
+                    <li>
+                        <a href="#" id="video-speed" title="Click to change video playback speed">
+                            <img src="{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" id="closed-caption-button" title="Click to show/hide captions">
+                            <img src="{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}" />
+                        </a>
+                    </li>
                 </ul>
             
                 <video class="preview" width="100%" id="{{ mediaFile.getID }}" preload="auto">
@@ -336,14 +344,15 @@ var postArray = new Array();
                     <div class="row-fluid">
                         <ul class="unstyled">
                         	{% if post.isTemporal %}
-                            <li><a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="fa fa-clock-o"></i></a></li>
+                            <li><a href="#" class="temporal-post-start-link" title="Jump to selected timeline region" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="fa fa-clock-o"></i></a></li>
                             {% endif %}
                             {% if post.author.getId == app.user.getId %}
 {#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li>#}
-                            <li><a id="post-comment-edit" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit_specific', {'pid':post.getId} ) }}"><i class="fa fa-pencil"></i></a></li>
+                            <li><a id="post-comment-edit" title="Edit this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit_specific', {'pid':post.getId} ) }}"><i class="fa fa-pencil"></i></a></li>
 {#                             <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li>#}
-                            <li><a id="post-comment-delete-modal" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li>                            
+                            <li><a id="post-comment-delete-modal" title="Delete this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            
                             {% endif %}
+                            <li><a id="post-commment-reply" title="Reply to this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-reply"></i></a></li>
                         </ul>
                     </div>
                 </div> <!-- /post-reply-tools -->

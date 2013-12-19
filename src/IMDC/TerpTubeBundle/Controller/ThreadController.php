@@ -156,7 +156,7 @@ class ThreadController extends Controller
         	        'thread' => $thread,
         	));
         	
-        	return $this->render('IMDCTerpTubeBundle:Thread:viewthreadPrototype.html.twig', array(
+        	return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
         			'form' => $form->createView(),
         			'thread' => $thread,
         			'threadposts' => $threadposts,
@@ -165,7 +165,7 @@ class ThreadController extends Controller
         }
         
         // form not valid, show the thread
-        return $this->render('IMDCTerpTubeBundle:Thread:viewthreadPrototype.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
                 'form' => $postform->createView(),
         		'thread' => $thread,
                 'threadposts' => $threadposts,

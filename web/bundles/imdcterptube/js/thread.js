@@ -13,6 +13,14 @@ var global_video_dom;
 
 $(document).ready(function() {
 
+//	$("#video-speed").popover(
+//	 {
+//		 trigger: 'hover',
+//		 placement: 'right',
+//		 title: 'Video Playback Speed',
+//		 content: "Click to toggle between 0.5x, 1x, and 1.5x video speed"
+//	 });
+	
 	$("#post-comment-button").click(function() {
 		$("#comment-form-wrap").toggle();
 		$(this).toggle();
@@ -73,6 +81,51 @@ $(document).ready(function() {
 			}
 		});
 	});
+	
+	
+$("a#post-comment-reply").click(function(e) {
+		
+		var p_id = $(this).data("pid");
+		var $theReplyLink = $(this);
+		
+		// prevent the click from scrolling the page
+		event.preventDefault();
+		
+		// the comment wrap in question    
+		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
+		
+		// fade out the original comment
+		//$theWholeComment.fadeOut('slow');
+		
+		// ajax call to get the edit comment form
+		$.ajax({
+			url : Routing.generate('imdc_post_reply_ajax_specific', {pid: p_id}),
+			type : "POST",
+			contentType : "application/x-www-form-urlencoded",
+			data :
+			{
+				pid : p_id
+			},
+			success : function(data)
+			{
+				console.log("success");
+				console.log(data);
+				
+				$oldcomment = $theWholeComment.clone();
+				
+				$theWholeComment.find("div.post-" + p_id + "-wrap").append(data.form);
+				//$theWholeComment.hide();
+
+			},
+			error : function(request)
+			{
+				console.log(request);
+				$theWholeComment.fadeIn('slow');
+				alert(request.statusText);
+			}
+		});
+	});
+	
 	
 	/**
 	 * When you are creating a new reply to a thread and you click the submit button,
@@ -429,7 +482,7 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	player.options.playHeadImage = playheadimage;
 	player.options.playHeadImageOnClick = function() { 
 //	    $("#post-comment-button").click();
-	    $("#comment-form-wrap").show();
+	    $("#comment-form-wrap").show('medium').animate({backgroundColor:'rgba(103, 196, 103, 0.39)'}, 200).animate({backgroundColor:'#ffffff'}, 300);
 		$("#post-comment-button").hide();
 	    enableTemporalComment(player, true, startTimeInput, endTimeInput);
 	};
@@ -657,11 +710,11 @@ function enableTemporalComment(player, status, startinput, endinput) {
    */
 function createPopover(post, event) {
 	 alert(event);
-	 $("#popOverDiv").popover(
+	 $("#video-speed").popover(
 	 {
 		 trigger: 'focus',
 		 placement: 'bottom',
-		 title: 'Twitter Bootstrap Popover', 
+		 title: 'Twitter Bootstrap Popover',
 		 content: "It's so simple to create a tooltop for my website!"
 	 });
 }
@@ -685,6 +738,19 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
 
     $timeComment.on('mouseover', function() {
         $videoElement[0].currentTime = postStartTime;
+        var comment = getPostById(postId);
+        comment.paintHighlighted = true;
+        
+        globalPlayer.redrawComments = true;
+		globalPlayer.repaint();
+    });
+    
+    $timeComment.on('mouseout', function() {
+        var comment = getPostById(postId);
+        comment.paintHighlighted = false;
+        
+        globalPlayer.redrawComments = true;
+		globalPlayer.repaint();
     });
 }
 

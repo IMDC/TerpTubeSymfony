@@ -303,6 +303,14 @@ imdc_post_edit_ajax_specific:
     options:
         expose: true
         
+imdc_post_reply_ajax_specific:
+    pattern: /post/replyajax/{pid}
+    defaults: { _controller: IMDCTerpTubeBundle:Post:replyPostAjax }
+    requirements:
+        pid: \d+
+    options:
+        expose: true    
+        
         
 imdc_member_list_public:
     pattern: /members

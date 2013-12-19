@@ -41,15 +41,24 @@ IMDC\TerpTubeBundle\Entity\Post:
                     media_id:
                         referencedColumnName: id  
             nullable: true;
+    oneToMany:
+        replies: #child posts
+            targetEntity: Post
+            mappedBy: parentPost
     manyToOne:
+        parentPost: #parent posts to reply child posts
+            targetEntity: Post
+            inversedBy: replies
+            nullable: true
         author:
             targetEntity: User
             inversedBy: posts
         parentThread:
             targetEntity: Thread
             inversedBy: posts
+            nullable: true
         editedBy:
             targetEntity: User
             inversedBy: editedPosts
-            nullable: true;
+            nullable: true
     lifecycleCallbacks: {  }

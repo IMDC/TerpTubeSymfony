@@ -395,4 +395,33 @@ class PostController extends Controller
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
 	     
 	}
+	
+	public function replyPostAjaxAction(Request $request, $pid)
+	{
+	    // check if user logged in
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+	    {
+	        return $this->redirect($this->generateUrl('fos_user_security_login'));
+	    }
+	    
+	    //$request = $this->get('request');
+	    //$postid = $request->request->get('pid');
+	    
+	    
+	    // if not ajax, throw an error
+	    if (!$request->isXmlHttpRequest()) {
+	        throw new BadRequestHttpException('Only Ajax POST calls accepted');
+	    }
+	    
+	    $user = $this->getUser();
+	    $em   = $this->getDoctrine()->getManager();
+	    
+	    $postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+	    
+        $posteditform = $this->createForm(new PostReplytoPostFormType(), $postToEdit,
+            array('user' => $user,
+        ));
+    
+        
+	}
 }
