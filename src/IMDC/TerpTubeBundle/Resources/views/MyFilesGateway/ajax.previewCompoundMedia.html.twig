@@ -1,22 +1,10 @@
-{% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
+{% extends "IMDCTerpTubeBundle:MyFilesGateway:previewMotionMedia.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
-{% block title %}My Files{% endblock title %}
-
-{% block nav_ul_authenticated_my_files %}<li class="active">{% endblock %}
-
 {% block stylesheets %}
     {{  parent() }}
     <link href="{{ asset('bundles/imdcterptube/css/compoundMediaPreview.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
-
-{% block herounit %}
-<h1>{{ 'filesGateway.title'|trans }}</h1>
-{% endblock herounit %}
-
-{% block underherounitrow1 %}
-    <div class="row-fluid">
-    	
-	    <div class="preview-visual">
+{% block motionMedia %}
 	    	<div id="videoContainer">
 		    	<div id="pipwrap" class="pipstyle" >
 			   		<video	class="preview" id="{{ compoundMedia.getSource.getId }}" preload="auto" >
@@ -35,17 +23,14 @@
 					
 				</div>
 			</div>
-			<div class="preview-controls">
-			</div>
+{% endblock motionMedia %}
+{% block motionControls %}
+
+{% endblock motionControls %}			
 		</div>
     </div>
 
-{% endblock underherounitrow1 %}
-
-{% block underherounitrow2 %}
-
-{% endblock underherounitrow2 %}
-
+{% endblock motionMedia %}
 {% block javascripts %}
  {{ parent() }}
  <script type='text/javascript'>
@@ -73,7 +58,7 @@
 	 //player.options.forwardButton = false;
 	 player2.options.audioBar = false;
 	 player2.options.volumeControl = true;
-	 player2.options.controlBarElement = $('.simultaneousVideoControls');
+	 player2.options.controlBarElement = $('.preview-controls');
 
 	 player2.options.recordingErrorFunction = function(e)
 	 {
@@ -297,9 +282,6 @@
      // set draggable and disabled on the source wrap 
      $("div#sourcewrap").draggable({disabled: true, containment: "#videoContainer"});
  
-	
-		
 });
-  </script>
-  
+  </script> 
 {% endblock javascripts %}
