@@ -220,10 +220,13 @@ var postArray = new Array();
             {% for post in threadposts %}
             
             <script type="text/javascript">
-                var newpost = new post('{{ post.id }}',
+            	var options = new Array();
+            	options.drawOnTimeLine = {{ post.isTemporal ? true : false }};
+                var newpost = new KeyPoint('{{ post.id }}',
                 		               '{{ post.startTime }}',
                 		               '{{ post.endTime }}',
-                		               {{ post.isTemporal ? 'true' : 'false' }}          		               
+                		               'comment',
+                		               options          		               
                 		               );
                 postArray.push(newpost);
                 console.log(newpost.color);

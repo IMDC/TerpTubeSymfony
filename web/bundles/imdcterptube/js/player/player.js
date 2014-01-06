@@ -16,8 +16,12 @@ Player.EVENT_INITIALIZED = "player_initialized";
 Player.EVENT_SEEK = "player_seek";
 
 Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
-Player.EVENT_COMMENT_MOUSE_OVER = "player_comment_mouse_over";
-Player.EVENT_COMMENT_MOUSE_OUT = "player_comment_mouse_out";
+// Player.EVENT_COMMENT_MOUSE_OVER = "player_comment_mouse_over";
+// Player.EVENT_COMMENT_MOUSE_OUT = "player_comment_mouse_out";
+Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over";
+Player.EVENT_KEYPOINT_MOUSE_OUT = "player_keypoint_mouse_out";
+Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click";
+Player.EVENT_PLAYHEAD_HIGHLIGHTED = "player_playhead_highlighted";
 
 // TODO make the player more modular. Don't tie it in comments/signlinks but
 // make generic timeline elements and add types for them. Later We can generate
@@ -339,67 +343,101 @@ Player.prototype.setPlayHeadImage = function(image) {
  * Comments is an object array that contains - startTime:number, endTime:number,
  * commentID:number, [
  */
-Player.prototype.setComments = function(commentsArray) {
-	this.comments = commentsArray;
+// Player.prototype.setComments = function(commentsArray) {
+// this.comments = commentsArray;
+// };
+Player.prototype.setKeyPoints = function(keyPointsArray) {
+	this.keyPoints = keyPointsArray;
+	this.redrawKeyPoints = true;
+//	this.repaint();
 };
 
-Player.prototype.addComment = function(comment) {
-	this.comments.push(comment);
-	this.redrawComments = true;
+Player.prototype.addKeyPoint = function(keyPoint) {
+	this.keyPoints.push(keyPoint);
+	this.redrawKeyPoints = true;
 	this.repaint();
-	// this.drawComments();
 };
 
-Player.prototype.removeComment = function(commentID) {
-	for (var i = 0; i < this.comments.length; i++) {
-		if (this.comments[i].id == commentID) {
-			this.comments.splice(i, 1);
-			this.redrawComments = true;
-			this.repaint();
-			return;
+Player.prototype.removeKeyPoint = function(type, keyPointID) {
+	for (var i = 0; i < this.keyPoints.length; i++) {
+		if (this.keyPoints[i].type == type) {
+			if (this.keyPoints[i].id == keyPointID) {
+				this.keyPoints.splice(i, 1);
+				this.redrawKeyPoints = true;
+				this.repaint();
+				return;
+			}
 		}
+
 	}
 };
 
-Player.prototype.drawComments = function() {
-	this.redrawComments = false;
+Player.prototype.removeKeyPoint = function(keyPoint) {
+	var index = this.keyPoints.indexOf(keyPoint);
+	if (index > -1) {
+		this.keyPoints.splice(index, 1);
+		this.redrawKeyPoints = true;
+		this.repaint();
+	}
+};
+
+// Player.prototype.addComment = function(comment) {
+// this.comments.push(comment);
+// this.redrawComments = true;
+// this.repaint();
+// // this.drawComments();
+// };
+
+// Player.prototype.removeComment = function(commentID) {
+// for (var i = 0; i < this.comments.length; i++) {
+// if (this.comments[i].id == commentID) {
+// this.comments.splice(i, 1);
+// this.redrawComments = true;
+// this.repaint();
+// return;
+// }
+// }
+// };
+
+Player.prototype.drawKeyPoints = function() {
+	this.redrawKeyPoints = false;
 	// console.log("DrawComments called");
-	if (!this.comments) {
+	if (!this.keyPoints) {
 		return;
 	}
 
 	// Draw comments that are not highlighted first
-	for (var i = 0; i < this.comments.length; i++) {
-		if (!this.comments[i].paintHighlighted)
-			this.drawComment(this.comments[i]);
+	for (var i = 0; i < this.keyPoints.length; i++) {
+		if (!this.keyPoints[i].paintHighlighted)
+			this.drawkeyPoint(this.keyPoints[i]);
 	}
 	// Draw comments that are highlighted last so that they go on top of others
-	for (var i = 0; i < this.comments.length; i++) {
-		if (this.comments[i].paintHighlighted == true)
-			this.drawComment(this.comments[i]);
+	for (var i = 0; i < this.keyPoints.length; i++) {
+		if (this.keyPoints[i].paintHighlighted == true)
+			this.drawkeyPoint(this.keyPoints[i]);
 	}
 
 };
 
-Player.prototype.drawComment = function(comment) {
-	if (comment.isTemporal == 0)
+Player.prototype.drawKeyPoint = function(keyPoint) {
+	if (keyPoint.options.drawOnTimeLine == false)
 		return;
 	var densityBarElement = $(this.elementID).find(
 			".videoControlsContainer.track.densitybar").eq(0);
 	var context = $(this.elementID).find(
 			".videoControlsContainer.track.selectedRegion").eq(0)[0]
 			.getContext("2d");
-	if (comment.paintHighlighted == true) {
+	if (keyPoint.paintHighlighted == true) {
 		context.globalAlpha = 1;
-		context.fillStyle = this.options.commentHighlightedColor;
+		context.fillStyle = keyPoint.options.highlightedColor;
 	} else {
 		context.globalAlpha = 0.4;
-		context.fillStyle = comment.color;
+		context.fillStyle = keyPoint.options.color;
 	}
-	var startX = this.getXForTime(comment.startTime);
+	var startX = this.getXForTime(keyPoint.startTime);
 	if (startX < this.trackPadding)
 		startX = this.trackPadding;
-	var endX = this.getXForTime(comment.endTime);
+	var endX = this.getXForTime(keyPoint.endTime);
 	if (endX > this.trackPadding + this.trackWidth)
 		endX = this.trackPadding + this.trackWidth;
 	context.fillRect(startX, this.trackPadding, endX - startX,
@@ -407,41 +445,88 @@ Player.prototype.drawComment = function(comment) {
 	context.globalAlpha = 1;
 };
 
-Player.prototype.drawSignLinks = function() {
-	this.redrawSignlinks = false;
-	if (!this.signLinks) {
-		return;
-	}
-	for (var i = 0; i < this.signLinks.length; i++) {
-		this.drawSignLink(this.signLinks[i], this.options.signLinkColor);
-	}
+//
+// Player.prototype.drawComments = function() {
+// this.redrawComments = false;
+// // console.log("DrawComments called");
+// if (!this.comments) {
+// return;
+// }
+//
+// // Draw comments that are not highlighted first
+// for (var i = 0; i < this.comments.length; i++) {
+// if (!this.comments[i].paintHighlighted)
+// this.drawComment(this.comments[i]);
+// }
+// // Draw comments that are highlighted last so that they go on top of others
+// for (var i = 0; i < this.comments.length; i++) {
+// if (this.comments[i].paintHighlighted == true)
+// this.drawComment(this.comments[i]);
+// }
+//
+// };
 
-};
-
-Player.prototype.drawSignLink = function(signlink, color) {
-	var densityBarElement = $(this.elementID).find(
-			".videoControlsContainer.track.densitybar").eq(0);
-	var context = $(this.elementID).find(
-			".videoControlsContainer.track.selectedRegion").eq(0)[0]
-			.getContext("2d");
-	context.globalAlpha = 0.4;
-
-	context.fillStyle = color;
-	var startX = this.getXForTime(signlink.startTime);
-	if (startX < this.trackPadding)
-		startX = this.trackPadding;
-	var endX = this.getXForTime(signlink.endTime);
-	if (endX > this.trackPadding + this.trackWidth)
-		endX = this.trackPadding + this.trackWidth;
-	context.fillRect(startX, this.trackPadding, endX - startX,
-			densityBarElement.height() - 2 * this.trackPadding);
-	context.globalAlpha = 1;
-};
-
-Player.prototype.setSignLinks = function(signLinksArray) {
-	this.signLinks = signLinksArray;
-
-};
+// Player.prototype.drawComment = function(comment) {
+// if (comment.isTemporal == 0)
+// return;
+// var densityBarElement = $(this.elementID).find(
+// ".videoControlsContainer.track.densitybar").eq(0);
+// var context = $(this.elementID).find(
+// ".videoControlsContainer.track.selectedRegion").eq(0)[0]
+// .getContext("2d");
+// if (comment.paintHighlighted == true) {
+// context.globalAlpha = 1;
+// context.fillStyle = this.options.commentHighlightedColor;
+// } else {
+// context.globalAlpha = 0.4;
+// context.fillStyle = comment.color;
+// }
+// var startX = this.getXForTime(comment.startTime);
+// if (startX < this.trackPadding)
+// startX = this.trackPadding;
+// var endX = this.getXForTime(comment.endTime);
+// if (endX > this.trackPadding + this.trackWidth)
+// endX = this.trackPadding + this.trackWidth;
+// context.fillRect(startX, this.trackPadding, endX - startX,
+// densityBarElement.height() - 2 * this.trackPadding);
+// context.globalAlpha = 1;
+// };
+//
+// Player.prototype.drawSignLinks = function() {
+// this.redrawSignlinks = false;
+// if (!this.signLinks) {
+// return;
+// }
+// for (var i = 0; i < this.signLinks.length; i++) {
+// this.drawSignLink(this.signLinks[i], this.options.signLinkColor);
+// }
+//
+// };
+//
+// Player.prototype.drawSignLink = function(signlink, color) {
+// var densityBarElement = $(this.elementID).find(
+// ".videoControlsContainer.track.densitybar").eq(0);
+// var context = $(this.elementID).find(
+// ".videoControlsContainer.track.selectedRegion").eq(0)[0]
+// .getContext("2d");
+// context.globalAlpha = 0.4;
+//
+// context.fillStyle = color;
+// var startX = this.getXForTime(signlink.startTime);
+// if (startX < this.trackPadding)
+// startX = this.trackPadding;
+// var endX = this.getXForTime(signlink.endTime);
+// if (endX > this.trackPadding + this.trackWidth)
+// endX = this.trackPadding + this.trackWidth;
+// context.fillRect(startX, this.trackPadding, endX - startX,
+// densityBarElement.height() - 2 * this.trackPadding);
+// context.globalAlpha = 1;
+// };
+//
+// Player.prototype.setSignLinks = function(signLinksArray) {
+// this.signLinks = signLinksArray;
+//
+// };
 Player.prototype.clearPlayer = function() {
 	var densityBarElement = $(this.elementID).find(
 			".videoControlsContainer.track.densitybar").eq(0);
@@ -456,7 +541,8 @@ function Player(videoID, options) {
 	this.videoID = videoID;
 	$(this.videoID).wrap('<div class="video" />');
 	this.elementID = $(this.videoID).parent();
-	this.comments = new Array();
+	// this.comments = new Array();
+	this.keyPoints = new Array();
 	// type can be player, recorder
 	// playHeadImage - url of image to use as top of playhead
 	// playHeadImageOnClick - function Player.prototype.to call on
@@ -495,9 +581,9 @@ function Player(videoID, options) {
 		controlBarElement : $(this.elementID),
 		minRecordingTime : 3,
 		maxRecordingTime : 60,
-		minLinkTime : 1,
-		signLinkColor : "#0000FF",
-		commentHighlightedColor : "#FF0000"
+		minLinkTime : 1
+	// signLinkColor : "#0000FF",
+	// commentHighlightedColor : "#FF0000"
 	};
 	if (typeof options != 'undefined') {
 		for (key in options) {
@@ -506,15 +592,15 @@ function Player(videoID, options) {
 	}
 }
 
-Player.prototype.checkFeatures = function(format) {
-	if (format == "mp4")
-		format = "h264";
-	else if (format == "ogv")
-		format = "ogg";
-	if (!Modernizr.canvas || !Modernizr.video || !Modernizr.video[format])
-		return false;
-	return true;
-};
+// Player.prototype.checkFeatures = function(format) {
+// if (format == "mp4")
+// format = "h264";
+// else if (format == "ogv")
+// format = "ogg";
+// if (!Modernizr.canvas || !Modernizr.video || !Modernizr.video[format])
+// return false;
+// return true;
+// };
 
 Player.prototype.drawTrack = function() {
 
@@ -543,6 +629,7 @@ Player.prototype.setPlayHeadHighlighted = function(flag) {
 	if (!this.playHeadImage)
 		return;
 	this.playHeadImageHighlighted = flag;
+	$(this).trigger(Player.EVENT_PLAYHEAD_HIGHLIGHTED, flag);
 	this.repaint();
 };
 
@@ -616,8 +703,9 @@ Player.prototype.setAreaSelectionEnabled = function(flag) {
 	this.options.areaSelectionEnabled = flag;
 
 	if (!flag) {
-		this.redrawSignlinks = true;
-		this.redrawComments = true;
+		// this.redrawSignlinks = true;
+		// this.redrawComments = true;
+		this.redrawKeyPoints = true;
 	}
 
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
@@ -725,11 +813,14 @@ Player.prototype.repaint = function() {
 			this.updateTimeBox(time, this.getDuration());
 		}
 		if (!this.areaSelectionEnabled) {
-			if (this.redrawComments == true) {
-				this.drawComments();
-			}
-			if (this.redrawSignlinks == true) {
-				this.drawSignLinks();
+			// if (this.redrawComments == true) {
+			// this.drawComments();
+			// }
+			// if (this.redrawSignlinks == true) {
+			// this.drawSignLinks();
+			// }
+			if (this.redrawKeyPoints == true) {
+				this.drawKeyPoints();
 			}
 		}
 	}
@@ -789,35 +880,81 @@ Player.prototype.setMouseOutThumb = function(event) {
 Player.prototype.checkMouseOverFunctions = function(e) {
 	this.setMouseOverThumb(e);
 	if (!this.options.areaSelectionEnabled)
-		this.onCommentMouseOver(e);
+		this.checkKeyPointHover(e);
+	// this.onCommentMouseOver(e);
 };
 
-Player.prototype.onCommentMouseOver = function(event) {
+Player.prototype.checkKeyPointHover = function(event) {
 	var coords = this.getRelativeMouseCoordinates(event);
-	for (var i = 0; i < this.comments.length; i++) {
-		var comment = this.comments[i];
-		if (comment.isDeleted == true || comment.isTemporal == 0)
+	for (var i = 0; i < this.keyPoints.length; i++) {
+		var keyPoint = this.keyPoints[i];
+		if (keyPoint.options.drawOnTimeLine !== true)
 			continue;
-		var startX = this.getXForTime(comment.startTime);
-		var endX = this.getXForTime(comment.endTime);
+		var startX = this.getXForTime(keyPoint.startTime);
+		var endX = this.getXForTime(keyPoint.endTime);
 		if (startX > coords.x || endX < coords.x
 				|| coords.y < this.trackPadding
 				|| coords.y > this.trackPadding + this.trackHeight) {
-			if (comment.highlighted == true) {
-				comment.highlighted = undefined;
-				$(this).trigger(Player.EVENT_COMMENT_MOUSE_OUT, comment);
+			if (keyPoint.highlighted == true) {
+				keyPoint.highlighted = undefined;
+				$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 			}
 			continue;
 
 		}
-		if (comment.highlighted == true)
+		if (keyPoint.highlighted == true)
 			continue;
-		comment.highlighted = true;
-		// console.log(this.comments[i]);
-		$(this).trigger(Player.EVENT_COMMENT_MOUSE_OVER, comment);
+		keyPoint.highlighted = true;
+		$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OVER, keyPoint, coords);
 
 	}
 };
+
+Player.prototype.checkKeyPointClick = function(event) {
+	var coords = this.getRelativeMouseCoordinates(event);
+	for (var i = 0; i < this.keyPoints.length; i++) {
+		var keyPoint = this.keyPoints[i];
+		if (keyPoint.options.drawOnTimeLine !== true)
+			continue;
+		var startX = this.getXForTime(keyPoint.startTime);
+		var endX = this.getXForTime(keyPoint.endTime);
+		if (startX > coords.x || endX < coords.x
+				|| coords.y < this.trackPadding
+				|| coords.y > this.trackPadding + this.trackHeight) {
+			continue;
+
+		}
+		$(this).trigger(Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
+
+	}
+};
+
+// Player.prototype.onCommentMouseOver = function(event) {
+// var coords = this.getRelativeMouseCoordinates(event);
+// for (var i = 0; i < this.comments.length; i++) {
+// var comment = this.comments[i];
+// if (comment.isDeleted == true || comment.isTemporal == 0)
+// continue;
+// var startX = this.getXForTime(comment.startTime);
+// var endX = this.getXForTime(comment.endTime);
+// if (startX > coords.x || endX < coords.x
+// || coords.y < this.trackPadding
+// || coords.y > this.trackPadding + this.trackHeight) {
+// if (comment.highlighted == true) {
+// comment.highlighted = undefined;
+// $(this).trigger(Player.EVENT_COMMENT_MOUSE_OUT, comment);
+// }
+// continue;
+//
+// }
+// if (comment.highlighted == true)
+// continue;
+// comment.highlighted = true;
+// // console.log(this.comments[i]);
+// $(this).trigger(Player.EVENT_COMMENT_MOUSE_OVER, comment);
+//
+// }
+// };
 
 Player.prototype.setMouseOverThumb = function(event) {
 	// need to set the mousemove event to figure out if I am over the thumb to
@@ -838,6 +975,11 @@ Player.prototype.setMouseOverThumb = function(event) {
 			instance.setPlayHeadHighlighted(false);
 	}
 };
+
+/**
+ * Only used when areaSelectionEnabled == true
+ * @param event
+ */
 Player.prototype.setMouseDownThumb = function(event) {
 	event.preventDefault();
 	var instance = this;
@@ -847,7 +989,7 @@ Player.prototype.setMouseDownThumb = function(event) {
 	this.preview = false;
 	var currentTimeCoordinate = this.getXForTime(this.getCurrentTime());
 	// this.mouseDownCoords = coords;
-
+	console.log("mouseDownThumb");
 	if (this.playHeadImage
 			&& coords.y < this.playHeadImage.heightHighlighted
 			&& coords.x > currentTimeCoordinate
@@ -860,14 +1002,9 @@ Player.prototype.setMouseDownThumb = function(event) {
 	} else {
 		this.previousTime = undefined;
 	}
-	if (coords.y < instance.trackPadding + instance.trackHeight) { // Restrict
-		// the
-		// playhead
-		// to only
-		// within
-		// the
-		// selected
-		// region
+	if (coords.y < instance.trackPadding + instance.trackHeight) {
+		// Restrict the playhead to only within the selected region
+
 		// if (instance.playHeadImage && coords.y <
 		// instance.playHeadImage.heightHighlighted)
 		// {
@@ -1152,6 +1289,7 @@ Player.prototype.setupVideoPlayback = function() {
 	});
 	densityBarThumbElement.on('click', function(e) {
 		instance.checkForPlayHeadClick(e);
+		instance.checkKeyPointClick(e);
 	});
 
 	$(this).trigger(Player.EVENT_INITIALIZED);
@@ -1570,7 +1708,7 @@ Player.prototype.setControlsEnabled = function(flag) {
 	if (flag) {
 
 		elements.each(function(index) {
-			instance.setInputEnabled($(this), flag)
+			instance.setInputEnabled($(this), flag);
 		});
 
 		// elements.prop('disabled', false);
@@ -1580,7 +1718,7 @@ Player.prototype.setControlsEnabled = function(flag) {
 				});
 	} else {
 		elements.each(function(index) {
-			instance.setInputEnabled($(this), flag)
+			instance.setInputEnabled($(this), flag);
 		});
 		// elements.prop('disabled', true);
 		$(this.elementID).find(".videoControlsContainer.track.thumb").eq(0)
@@ -1684,4 +1822,43 @@ function getTimeCodeFromSeconds(time, duration, separator) {
 		return result;
 	else
 		return result + separator + resultDuration;
+}
+
+function get_random_color() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+
+    return color;
+}
+
+/**
+ * Required arguments: startTime - the starting time for the keypoint (Number)
+ * endTime - the ending time for the keypoint (Number) type - type of keypoint
+ * (String), (e.g. "comment", "caption", etc.) id - the id for the keypoint
+ * 
+ * The options parameter contains the following variables: drawOnTimeLine =
+ * true; - Whether to draw the keypoint on the timeline color = get_random_color(); - the
+ * default color to draw the keypoint with highlightedColor = "#FF0000"; - the
+ * default color when the keypoint is highlighted (e.g. onHover, onClick, etc.)
+ * 
+ */
+function KeyPoint(id, startTime, endTime, type, options) {
+	this.startTime = startTime;
+	this.endTime = endTime;
+	this.type = type;
+	this.id = id;
+
+	this.options = {
+		drawOnTimeLine : true,
+		color : get_random_color(),
+		highlightedColor : "#FF0000"
+	};
+	if (typeof options !== 'undefined') {
+		for (key in options) {
+			this.options[key] = options[key];
+		}
+	}
 }

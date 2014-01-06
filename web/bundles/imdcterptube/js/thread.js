@@ -206,7 +206,7 @@ $("a#post-comment-reply").click(function(e) {
     	global_video_dom.currentTime = $(this).data('stime');
     	var post = getPostById($(this).data('pid'));
     	post.paintHighlighted = true;
-    	globalPlayer.redrawComments = true;
+    	globalPlayer.redrawKeyPoints = true;
     	globalPlayer.repaint();
     	post.paintHighlighedTimeout = true;
     	
@@ -214,7 +214,7 @@ $("a#post-comment-reply").click(function(e) {
     	setTimeout(function(){
     		post.paintHighlighedTimeout = false;
     		post.paintHighlighted = undefined;
-    		globalPlayer.redrawComments = true;
+    		globalPlayer.redrawKeyPoints = true;
     		globalPlayer.repaint();
     	}, 3000);
     	
@@ -228,7 +228,7 @@ $("a#post-comment-reply").click(function(e) {
             var comment = getPostById($(this).data('pid'));
             comment.paintHighlighted = true;
             
-            globalPlayer.redrawComments = true;
+            globalPlayer.redrawKeyPoints = true;
     		globalPlayer.repaint();
         },
         // mouse out
@@ -239,7 +239,7 @@ $("a#post-comment-reply").click(function(e) {
         		return;
             comment.paintHighlighted = undefined;
             
-            globalPlayer.redrawComments = true;
+            globalPlayer.redrawKeyPoints = true;
     		globalPlayer.repaint();
         }
     );
@@ -284,7 +284,7 @@ function getPostWrapJQueryObject(postid) {
 function refreshPlayer()
 {
 	console.log("RefreshPlayer called");
-	globalPlayer.redrawComments = true;
+	globalPlayer.redrawKeyPoints = true;
 	globalPlayer.repaint();
 }
 
@@ -487,7 +487,8 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	    enableTemporalComment(player, true, startTimeInput, endTimeInput);
 	};
 	
-	player.setComments(postArray);
+//	player.setComments(postArray);
+	player.setKeyPoints(postArray);
 	player.createControls();
 
 	$(player).on(Player.EVENT_AREA_SELECTION_CHANGED, function() {
@@ -559,7 +560,8 @@ function removePost(postId)
 		if (postArray[i].id == postId)
 		{
 			postArray.splice(i,1);
-			globalPlayer.redrawComments = true;
+//			globalPlayer.redrawComments = true;
+			globalPlayer.redrawKeyPoints = true;
     		globalPlayer.repaint();
 			
 			return;
@@ -741,7 +743,7 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
         var comment = getPostById(postId);
         comment.paintHighlighted = true;
         
-        globalPlayer.redrawComments = true;
+        globalPlayer.redrawKeyPoints = true;
 		globalPlayer.repaint();
     });
     
@@ -749,7 +751,7 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
         var comment = getPostById(postId);
         comment.paintHighlighted = false;
         
-        globalPlayer.redrawComments = true;
+        globalPlayer.redrawKeyPoints = true;
 		globalPlayer.repaint();
     });
 }
