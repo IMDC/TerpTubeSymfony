@@ -496,12 +496,12 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	    endTimeInput.val( roundNumber(player.currentMaxTimeSelected, 2));
 	});
 	
- 	$(player).on(Player.EVENT_COMMENT_MOUSE_OVER, function(event, post) {
+ 	$(player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, function(event, post) {
 		highlightPostBorder(post);
 		scrollPostIntoView(post.id);
 	});
  	
- 	$(player).on(Player.EVENT_COMMENT_MOUSE_OUT, function(event, post) {
+ 	$(player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, function(event, post) {
  		dehighlightPostBorder(post);
 	});
 	

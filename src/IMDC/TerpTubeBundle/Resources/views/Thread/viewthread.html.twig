@@ -221,17 +221,16 @@ var postArray = new Array();
             
             <script type="text/javascript">
             	var options = new Array();
-            	options.drawOnTimeLine = {{ post.isTemporal ? true : false }};
+            	options.drawOnTimeLine = {{ post.isTemporal ? 'true' : 'false' }};
                 var newpost = new KeyPoint('{{ post.id }}',
                 		               '{{ post.startTime }}',
                 		               '{{ post.endTime }}',
                 		               'comment',
-                		               options          		               
+                		               options
                 		               );
                 postArray.push(newpost);
                 console.log(newpost.color);
             </script>
-            
             
             <p>
             <div class="row-fluid post-reply-wrap" id="post-{{ post.id }}-wrap" data-pid="{{ post.id }}">
