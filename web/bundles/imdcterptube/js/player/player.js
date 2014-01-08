@@ -409,12 +409,12 @@ Player.prototype.drawKeyPoints = function() {
 	// Draw comments that are not highlighted first
 	for (var i = 0; i < this.keyPoints.length; i++) {
 		if (!this.keyPoints[i].paintHighlighted)
-			this.drawkeyPoint(this.keyPoints[i]);
+			this.drawKeyPoint(this.keyPoints[i]);
 	}
 	// Draw comments that are highlighted last so that they go on top of others
 	for (var i = 0; i < this.keyPoints.length; i++) {
 		if (this.keyPoints[i].paintHighlighted == true)
-			this.drawkeyPoint(this.keyPoints[i]);
+			this.drawKeyPoint(this.keyPoints[i]);
 	}
 
 };
