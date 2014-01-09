@@ -84,7 +84,7 @@ class AddFileGatewayController extends Controller
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
-		$user = this . getUser();
+		$user = $this->getUser();
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
 		if ($userObject == null)

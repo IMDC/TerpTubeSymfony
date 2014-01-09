@@ -18,6 +18,7 @@ class UserGroupAdmin extends Admin
             ->add('dateCreated')
             ->add('userFounder')
             ->add('members')
+            ->add('moderators')
             ->add('joinByInvitationOnly')
             ->add('openForNewMembers')
             ->add('visibleToPublic')

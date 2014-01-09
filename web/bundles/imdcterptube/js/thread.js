@@ -538,10 +538,20 @@ function scrollPostIntoView(postid) {
 	var $postContainer = $("div#thread-reply-container");
 	var $targetElement = "div#post-" + postid + "-wrap";
 	var topofelement = $postContainer.find($targetElement).offset().top;
-	var adjustedTop = topofelement - 150; // offset
+	console.log(topofelement);
+	var adjustedTop = topofelement - 250; // offset
+	
+//	$postContainer.animate({
+//		scrollTop: adjustedTop
+//	}, 200);
+	
 	$postContainer.animate({
-		scrollTop: adjustedTop
+		scrollTop: $postContainer.scrollTop() + $($targetElement).position().top 
+						- $postContainer.height()/2 + $($targetElement).height()/2
 	}, 200);
+	
+//	$postContainer.scrollTop($postContainer.scrollTop() + $($targetElement).position().top 
+//								- $postContainer.height()/2 + $($targetElement).height()/2);
 }
 
 function setMediaID(mid) {
