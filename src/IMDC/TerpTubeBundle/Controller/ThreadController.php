@@ -305,6 +305,16 @@ class ThreadController extends Controller
          
         $chosenmedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($resourceid);
         
+        // does the user own the resource?
+        // todo: turn this into an access check instead of an ownership check
+        if ($chosenmedia->getOwner() !== $user) {
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                'You do not have access to this resource'
+            );
+            return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+        }
+        
         //$newthread->setMediaIncluded($chosenmedia);
          
         $form = $this->createForm(new ThreadFromMediaFormType(), $newthread, array(

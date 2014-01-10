@@ -30,6 +30,13 @@ class ThreadFromMediaFormType extends AbstractType
 	    
 	    */
 	    
+	    $builder->add('parentForum', 'entity', array(
+	            'class' => 'IMDCTerpTubeBundle:Forum',
+	            'property' => 'titleText',
+	            'required' => true,
+	            'label' => 'Which forum would you like to post this under?'
+	    ));
+	    
 	    $builder->add('mediaIncluded', 'entity', array(
 	            'class' => 'IMDCTerpTubeBundle:Media',
 	            'property' => 'title',

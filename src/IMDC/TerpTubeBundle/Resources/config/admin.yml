@@ -47,10 +47,21 @@ services:
     sonata.admin.usergroup:
         class: IMDC\TerpTubeBundle\Admin\UserGroupAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, group: "UserGroup", label: "UserGroup" }
+            - { name: sonata.admin, manager_type: orm, group: "UserGroups", label: "UserGroup" }
         arguments:
             - ~
             - IMDC\TerpTubeBundle\Entity\UserGroup
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.forum:
+        class: IMDC\TerpTubeBundle\Admin\ForumAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Forums", label: "Forums" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Forum
             - ~
         calls:
             - [ setTranslationDomain, [IMDCTerpTubeBundle]]
