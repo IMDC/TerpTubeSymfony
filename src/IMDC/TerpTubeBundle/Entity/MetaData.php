@@ -166,4 +166,9 @@ class MetaData
     {
         return $this->timeUploaded;
     }
+    
+    public function __toString() 
+    {
+        return 'id: ' . $this->id . ', uploaded: ' . $this->getTimeUploaded()->format('Y-m-d H:i:s');
+    }
 }

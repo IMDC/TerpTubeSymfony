@@ -16,10 +16,9 @@ class MediaAdmin extends Admin
         $formMapper
             ->add('owner', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
             ->add('title')
-            ->add('type')
-            ->add('resource', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\ResourceFile',
-                                                'property' => 'name',
-            ))
+            ->add('type', 'choice', array('choices' => array('0' => 'Image', '1' => 'Video', '2' => 'Audio', '3' => 'Other')))
+            ->add('resource', 'sonata_type_admin')
+            ->add('metaData', 'sonata_type_admin')
         ;
     }
 
@@ -39,10 +38,11 @@ class MediaAdmin extends Admin
     {
         $listMapper
             ->addIdentifier('owner')
-            ->add('title')
+            ->addIdentifier('title')
             ->add('type')
-            ->add('metaData.size')
-            ->add('metaData.timeUploaded')
+            ->add('resource.path')
+            ->add('metaData.size', null, array('label' => 'Size (bytes)'))
+            ->add('metaData.timeUploaded', null, array('label' => 'Time Uploaded'))
         ;
     }
 }

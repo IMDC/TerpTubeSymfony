@@ -14,11 +14,11 @@ class MessageAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('owner', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
-            ->add('recipients', 'sonata_type_collection', array('property' => 'username'))
+            ->add('owner', 'sonata_type_model_list', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
+            ->add('recipients', 'sonata_type_collection', array('property_path' => 'recipients'))
             ->add('subject')
             ->add('content', 'text', array('label' => 'Message Content'))
-            ->add('attachedMedia', 'sonata_type_collection', array('property' => 'title'))
+            ->add('attachedMedia', 'sonata_type_collection', array('property_path' => 'attachedMedia'))
         ;
     }
 

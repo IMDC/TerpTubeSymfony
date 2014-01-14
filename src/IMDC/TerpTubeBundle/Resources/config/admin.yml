@@ -1,16 +1,6 @@
 # IMDC/TerpTubeBundle/Resources/config/admin.yml
 
 services:
-    sonata.admin.post:
-        class: IMDC\TerpTubeBundle\Admin\PostAdmin
-        tags:
-            - { name: sonata.admin, manager_type: orm, group: "Posts", label: "Post" }
-        arguments:
-            - ~
-            - IMDC\TerpTubeBundle\Entity\Post
-            - ~
-        calls:
-            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
     sonata.admin.user:
         class: IMDC\TerpTubeBundle\Admin\UserAdmin
         tags:
@@ -18,6 +8,17 @@ services:
         arguments:
             - ~
             - IMDC\TerpTubeBundle\Entity\User
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.post:
+        class: IMDC\TerpTubeBundle\Admin\PostAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Posts", label: "Post" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Post
             - ~
         calls:
             - [ setTranslationDomain, [IMDCTerpTubeBundle]]
@@ -36,7 +37,7 @@ services:
     sonata.admin.media:
         class: IMDC\TerpTubeBundle\Admin\MediaAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, group: "Media", label: "Media" }
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Media" }
         arguments:
             - ~
             - IMDC\TerpTubeBundle\Entity\Media
@@ -65,3 +66,36 @@ services:
             - ~
         calls:
             - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.resource:
+        class: IMDC\TerpTubeBundle\Admin\ResourceFileAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Resource Files" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\ResourceFile
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.metadata:
+        class: IMDC\TerpTubeBundle\Admin\MetaDataAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Metadata"}
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\MetaData
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]            
+            
+    sonata.admin.userprofile:
+        class: IMDC\TerpTubeBundle\Admin\UserProfileAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "User Profiles", label: "User Profiles", show_in_dashboard: false }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\UserProfile
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]    

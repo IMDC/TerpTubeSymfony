@@ -26,6 +26,9 @@ class ResourceFile
      */
     private $webmExtension;
     
+    /**
+     * Unmapped property to handle file uploads
+     */
     private $file;
     
     /**
@@ -42,6 +45,11 @@ class ResourceFile
      * @var string
      */
     private $name;
+    
+    /**
+     * @var \DateTime
+     */
+    private $updated;
     
     /**
      * Get id
@@ -128,7 +136,7 @@ class ResourceFile
     }
     
     /**
-     * Sets file.
+     * Sets file. **From cookbook**
      *
      * @param UploadedFile $file
      */
@@ -166,6 +174,7 @@ class ResourceFile
      */
     public function upload()
     {
+        // the file property can be empty if the field is not required
     	if (null === $this->getFile()) {
     		return;
     	}
@@ -289,5 +298,43 @@ class ResourceFile
     public function getWebmExtension()
     {
         return $this->webmExtension;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return ResourceFile
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+    
+    /**
+     * Updates the hash value to force the preUpdate and postUpdate events to fire
+     */
+    public function refreshUpdated() {
+        $this->setUpdated(new \DateTime('NOW'));
+    }
+    
+    /**
+     * String description of a resource file
+     */
+    public function __toString() 
+    {
+        return $this->getAbsolutePath();
     }
 }

@@ -205,4 +205,27 @@ class Media
     {
         return $this->isReady;
     }
+    
+    public function __toString()
+    {
+        return $this->getTitle();
+        
+//         switch ($this->type) {
+//             case 0: // image
+//                 return $this->resource->getWebPath();
+//             break;
+            
+//             case 1: // video
+//                 return $this->resource->getWebPathWebm();
+//             break;
+
+//             case 2: // audio
+//                 return $this->resource->getWebPath();
+//             break;
+            
+//             default:
+//                 return $this->resource->getWebPath();
+//             break;
+//         }
+    }
 }

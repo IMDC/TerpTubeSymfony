@@ -14,12 +14,17 @@ class PostAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('author', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
+//             ->add('author', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
+            ->add('author', 'sonata_type_model_list', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
             ->add('content', 'text', array('label' => 'Post Content'))
             ->add('created', 'date', array('label' => 'Created At'))
             ->add('startTime')
             ->add('endTime')
-            ->add('attachedFile', 'sonata_type_collection', array('property' => 'title'))
+            ->add('attachedFile', 'sonata_type_collection', array(), array(
+                'edit' => 'inline',
+                'inline' => 'table',
+                'sortable' => 'position'
+            ))
             ->add('parentThread', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\Thread', 'property' => 'title'))
         ;
     }

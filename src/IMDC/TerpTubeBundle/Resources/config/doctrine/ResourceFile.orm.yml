@@ -8,13 +8,16 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
                 strategy: AUTO
     fields:
         path:
-               type: string
-               length: 255
-               nullable: true
+            type: string
+            length: 255
+            nullable: true
         webmExtension:
-               type: string
-               length: 5
-               nullable: true
+            type: string
+            length: 5
+            nullable: true
+        updated:
+            type: datetime
+            nullable: true
                
     lifecycleCallbacks:
         prePersist: [ preUpload ]

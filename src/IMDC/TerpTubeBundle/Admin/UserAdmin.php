@@ -18,6 +18,9 @@ class UserAdmin extends Admin
             ->add('userName', 'text')
             ->add('email')
             ->add('plainPassword', 'text')
+        ->end()        
+        ->with('Profile')
+            ->add('profile', 'sonata_type_admin')
         ->end()
         ->with('Groups')
         /*
@@ -28,19 +31,15 @@ class UserAdmin extends Admin
                                                 'label' => 'User groups'
             ))
             */
-            ->add('userGroups', 'sonata_type_collection', array('required' => false))
-            ->add('roleGroups', 'entity', array('class' => 'IMDCTerpTubeBundle:RoleGroup', 
-                                                'property' => 'name',
-                                                'empty_value' => 'Select role group',
-                                                'required' => false,
-                                                'label' => 'Role groups'
-            ))
+            ->add('userGroups', null, array('required' => false))
+//             ->add('roleGroups', 'sonata_type_collection')
         ->end()
         ->with('Friends')
-            ->add('friendsList', 'sonata_type_collection', array('required' => false))
+            ->add('friendsList', null, array('required' => false))
         ->end()
+
         ->with('Management')
-            ->add('roles')  
+            ->add('roles')
             ->add('locked', null, array('required' => false))
             ->add('expired', null, array('required' => false))
             ->add('enabled', null, array('required' => false))
@@ -64,7 +63,7 @@ class UserAdmin extends Admin
     {
         $listMapper
             ->addIdentifier('id')
-            ->add('userName')
+            ->addIdentifier('userName')
             ->add('profile.firstName')
             ->ADD('profile.lastName')
             ->add('joinDate')

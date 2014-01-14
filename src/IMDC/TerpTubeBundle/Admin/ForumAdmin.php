@@ -18,8 +18,8 @@ class ForumAdmin extends Admin
             ->add('titleMedia', 'sonata_type_collection', array('required' => false))
             ->add('creator', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
             ->add('creationDate')
-            ->add('forumAdmins', 'sonata_type_collection', array('required' => false))
-            ->add('forumModerators', 'sonata_type_collection', array('required' => false))
+            ->add('forumAdmins', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User', 'required' => false, 'multiple' => true))
+            ->add('forumModerators', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User', 'required' => false, 'multiple' => true))
             ->add('lastActivity')
         ;
     }
@@ -41,6 +41,7 @@ class ForumAdmin extends Admin
         $listMapper
             ->addIdentifier('id')
             ->add('titleText')
+            ->add('titleMedia')
             ->add('creator.username')
             ->add('creationDate')
             ->add('forumAdmins')
