@@ -62,20 +62,21 @@ class ResourceFileAdmin extends Admin
         ;
     }
     
-    public function prePersist($image) 
+    public function prePersist($resourceFile) 
     {
-        $this->manageFileUpload($image);
+        $this->manageFileUpload($resourceFile);
     }
     
-    public function preUpdate($image) 
+    public function preUpdate($resourceFile) 
     {
-        $this->manageFileUpload($image);
+        $this->manageFileUpload($resourceFile);
     }
     
-    private function manageFileUpload($image) 
+    private function manageFileUpload($resourceFile) 
     {
-        if ($image->getFile()) {
-            $image->refreshUpdated();
+        if ($resourceFile->getFile()) {
+
+            $resourceFile->refreshUpdated();
         }
     }
 

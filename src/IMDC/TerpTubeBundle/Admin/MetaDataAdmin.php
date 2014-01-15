@@ -14,6 +14,7 @@ class MetaDataAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
+            ->add('id', null, array('disabled' => true))
             ->add('duration')
             ->add('height')
             ->add('size')

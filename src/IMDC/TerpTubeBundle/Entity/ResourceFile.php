@@ -3,9 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
-
 use Doctrine\Common\EventManager;
-
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 

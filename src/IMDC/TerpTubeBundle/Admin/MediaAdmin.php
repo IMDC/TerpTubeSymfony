@@ -8,6 +8,9 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
+use IMDC\TerpTubeBundle\Event\UploadEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
 class MediaAdmin extends Admin
 {
     // Fields to be shown on create/edit forms
@@ -22,6 +25,27 @@ class MediaAdmin extends Admin
         ;
     }
 
+    public function prePersist($media)
+    {
+        $this->triggerEvent($media);
+    }
+    
+    public function preUpdate($media)
+    {
+        $this->triggerEvent($media);
+    }
+    
+    private function triggerEvent($media)
+    {
+        if ($media->getResource()->getFile()) {
+            // trigger uploaded event?
+            $dispatcher = new EventDispatcher();
+            $event = new UploadEvent($media);
+            $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD);
+//             $media->refreshUpdated();
+        }
+    }
+    
     // Fields to be shown on filter forms
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
