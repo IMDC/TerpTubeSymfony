@@ -96,7 +96,7 @@
 								    </li>
 								    {% if is_granted('ROLE_SUPER_ADMIN') %}
 								    {% block nav_ul_authenticated_admin %}<li>{% endblock %}
-								        <a href="{{ path('sonata_admin_dashboard') }}"><i class="fa fa-dashboard"></i> {{ 'nav.admin'|trans }}</a>
+								        <a href="{{ path('sonata_admin_dashboard') }}"><i class="fa fa-cogs"></i> {{ 'nav.admin'|trans }}</a>
 								    </li>
 								    {% endif %}
 								{% endblock nav_ul_authenticated %}

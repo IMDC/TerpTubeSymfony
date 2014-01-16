@@ -58,7 +58,7 @@ class ResourceFileAdmin extends Admin
         
         $formMapper
             ->add('file', 'file', array('required' => false), $fileFieldOptions)
-            ->add('webmExtension', 'choice', array('choices' => array('webm' => 'WebM'), 'required' => false))
+//             ->add('webmExtension', 'choice', array('choices' => array('webm' => 'WebM'), 'required' => false))
         ;
     }
     

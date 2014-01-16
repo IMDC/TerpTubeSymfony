@@ -70,7 +70,7 @@ services:
     sonata.admin.resource:
         class: IMDC\TerpTubeBundle\Admin\ResourceFileAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Resource Files" }
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Resource Files", show_in_dashboard: false }
         arguments:
             - ~
             - IMDC\TerpTubeBundle\Entity\ResourceFile
@@ -81,7 +81,7 @@ services:
     sonata.admin.metadata:
         class: IMDC\TerpTubeBundle\Admin\MetaDataAdmin
         tags:
-            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Metadata"}
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Metadata", show_in_dashboard: false}
         arguments:
             - ~
             - IMDC\TerpTubeBundle\Entity\MetaData
