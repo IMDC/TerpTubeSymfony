@@ -81,7 +81,8 @@ services:
         arguments: ["@logger", "@transcoder", "%imdc_ffmpeg.config%"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
-     # enable the truncate extension in twig
+    
+    # enable the truncate extension in twig
     twig.extension.text:
         class: Twig_Extensions_Extension_Text
         tags:

@@ -31,7 +31,7 @@ IMDC\TerpTubeBundle\Entity\Media:
             joinColumn:
                 name: meta_data
                 referencedColumnName: id
-            cascade: ["persist"]
+            cascade: ["all"]
                 
         resource: #resource object to hold the data
             targetEntity: ResourceFile

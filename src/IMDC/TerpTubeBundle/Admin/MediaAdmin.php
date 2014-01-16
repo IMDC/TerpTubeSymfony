@@ -9,7 +9,8 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
 use IMDC\TerpTubeBundle\Event\UploadEvent;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Monolog\Logger;
+use IMDC\TerpTubeBundle\Entity\Media;
 
 class MediaAdmin extends Admin
 {
@@ -19,31 +20,22 @@ class MediaAdmin extends Admin
         $formMapper
             ->add('owner', 'entity', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
             ->add('title')
-            ->add('type', 'choice', array('choices' => array('0' => 'Image', '1' => 'Video', '2' => 'Audio', '3' => 'Other')))
+            ->add('type', 'choice', array('choices' => array(Media::TYPE_IMAGE => 'Image', Media::TYPE_VIDEO => 'Video', Media::TYPE_AUDIO => 'Audio', Media::TYPE_OTHER => 'Other')))
             ->add('resource', 'sonata_type_admin')
-            ->add('metaData', 'sonata_type_admin')
+//             ->add('metaData', 'sonata_type_admin')
         ;
     }
 
-    public function prePersist($media)
-    {
-        $this->triggerEvent($media);
-    }
-    
-    public function preUpdate($media)
+    public function postPersist($media)
     {
         $this->triggerEvent($media);
     }
     
     private function triggerEvent($media)
     {
-        if ($media->getResource()->getFile()) {
-            // trigger uploaded event?
-            $dispatcher = new EventDispatcher();
-            $event = new UploadEvent($media);
-            $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD);
-//             $media->refreshUpdated();
-        }
+        $ed = $this->getConfigurationPool()->getContainer()->get('event_dispatcher');
+        $event = new UploadEvent($media);
+        $ed->dispatch(UploadEvent::EVENT_UPLOAD, $event);
     }
     
     // Fields to be shown on filter forms
@@ -53,7 +45,7 @@ class MediaAdmin extends Admin
             ->add('owner')
             ->add('title')
             ->add('type')
-            ->add('isReady')    
+            ->add('isReady')
         ;
     }
 

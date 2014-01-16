@@ -86,6 +86,7 @@ nav:
     my_friends: "My Friends" 
     my_groups: "My Groups"
     my_interpretations: "My Interpretations"
+    admin: "Admin Dashboard"
 # Global strings
 layout:
     logout: Logout
