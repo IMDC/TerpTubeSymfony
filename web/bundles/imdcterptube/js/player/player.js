@@ -898,12 +898,14 @@ Player.prototype.checkKeyPointsTime = function() {
 			// Should be activated
 			if (keyPoint.highlighted !== true) {
 				keyPoint.highlighted = true;
-				keyPoint.highlightedTime = true;
-				$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
+				if (keyPoint.highlightedTime !== true) {
+					keyPoint.highlightedTime = true;
+					$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
+				}
 			}
 		} else  {
 			if (keyPoint.highlightedTime == true) {
-				keyPoint.highlighted = false;
+				keyPoint.highlighted = undefined;
 				keyPoint.highlightedTime = undefined;
 				$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
 			}
