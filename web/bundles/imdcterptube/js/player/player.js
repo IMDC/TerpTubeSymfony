@@ -21,6 +21,8 @@ Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
 Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over";
 Player.EVENT_KEYPOINT_MOUSE_OUT = "player_keypoint_mouse_out";
 Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click";
+Player.EVENT_KEYPOINT_BEGIN = "player_keypoint_begin";
+Player.EVENT_KEYPOINT_END = "player_keypoint_end";
 Player.EVENT_PLAYHEAD_HIGHLIGHTED = "player_playhead_highlighted";
 
 // TODO make the player more modular. Don't tie it in comments/signlinks but
@@ -37,8 +39,8 @@ Player.prototype.createControls = function() {
 
 	this.elementID = this.options.controlBarElement;
 
-	this.redrawComments = true;
-	this.redrawSignlinks = true;
+	// this.redrawComments = true;
+	// this.redrawSignlinks = true;
 
 	var el = $('<div class="videoControlsContainer"></div>');
 	$(this.elementID).append(el);
@@ -329,7 +331,8 @@ Player.prototype.setPlayHeadImage = function(image) {
 	this.playHeadImage = new Image();
 	this.playHeadImage.onload = function() {
 		// console.log("Playhead image loaded");
-		// instance.repaint();
+		if (instance.initialized == true)
+			instance.repaint();
 	};
 	this.playHeadImage.src = image;
 	this.playHeadImageHighlighted = false;
@@ -349,7 +352,7 @@ Player.prototype.setPlayHeadImage = function(image) {
 Player.prototype.setKeyPoints = function(keyPointsArray) {
 	this.keyPoints = keyPointsArray;
 	this.redrawKeyPoints = true;
-//	this.repaint();
+	// this.repaint();
 };
 
 Player.prototype.addKeyPoint = function(keyPoint) {
@@ -747,6 +750,7 @@ Player.prototype.checkStop = function() {
 		$(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
 		$(this).trigger(Player.EVENT_PLAYBACK_FINISHED);
 	}
+	this.checkKeyPointsTime();
 	this.repaint();
 };
 
@@ -884,6 +888,30 @@ Player.prototype.checkMouseOverFunctions = function(e) {
 	// this.onCommentMouseOver(e);
 };
 
+Player.prototype.checkKeyPointsTime = function() {
+	for (var i = 0; i < this.keyPoints.length; i++) {
+		var keyPoint = this.keyPoints[i];
+		// if (keyPoint.options.drawOnTimeLine !== true)
+		// continue;
+		var currentTime = this.getCurrentTime();
+		if (keyPoint.startTime >= currentTime && keyPoint.endTime < currentTime) {
+			// Should be activated
+			if (keyPoint.highlighted !== true) {
+				keyPoint.highlighted = true;
+				keyPoint.highlightedTime = true;
+				$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
+			}
+		} else  {
+			if (keyPoint.highlightedTime == true) {
+				keyPoint.highlighted = false;
+				keyPoint.highlightedTime = undefined;
+				$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
+			}
+		
+	}
+
+};
+
 Player.prototype.checkKeyPointHover = function(event) {
 	var coords = this.getRelativeMouseCoordinates(event);
 	for (var i = 0; i < this.keyPoints.length; i++) {
@@ -978,6 +1006,7 @@ Player.prototype.setMouseOverThumb = function(event) {
 
 /**
  * Only used when areaSelectionEnabled == true
+ * 
  * @param event
  */
 Player.prototype.setMouseDownThumb = function(event) {
@@ -1292,6 +1321,7 @@ Player.prototype.setupVideoPlayback = function() {
 		instance.checkKeyPointClick(e);
 	});
 
+	this.initialized = true;
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
 
@@ -1360,6 +1390,7 @@ Player.prototype.setupVideoRecording = function() {
 
 	this.duration = this.options.maxRecordingTime;
 	this.repaint();
+	this.initialized = true;
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
 
@@ -1825,13 +1856,13 @@ function getTimeCodeFromSeconds(time, duration, separator) {
 }
 
 function get_random_color() {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.round(Math.random() * 15)];
-    }
+	var letters = '0123456789ABCDEF'.split('');
+	var color = '#';
+	for (var i = 0; i < 6; i++) {
+		color += letters[Math.round(Math.random() * 15)];
+	}
 
-    return color;
+	return color;
 }
 
 /**
@@ -1840,9 +1871,10 @@ function get_random_color() {
  * (String), (e.g. "comment", "caption", etc.) id - the id for the keypoint
  * 
  * The options parameter contains the following variables: drawOnTimeLine =
- * true; - Whether to draw the keypoint on the timeline color = get_random_color(); - the
- * default color to draw the keypoint with highlightedColor = "#FF0000"; - the
- * default color when the keypoint is highlighted (e.g. onHover, onClick, etc.)
+ * true; - Whether to draw the keypoint on the timeline color =
+ * get_random_color(); - the default color to draw the keypoint with
+ * highlightedColor = "#FF0000"; - the default color when the keypoint is
+ * highlighted (e.g. onHover, onClick, etc.)
  * 
  */
 function KeyPoint(id, startTime, endTime, type, options) {
