@@ -492,20 +492,39 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	player.createControls();
 
 	$(player).on(Player.EVENT_AREA_SELECTION_CHANGED, function() {
-		startTimeInput.val( roundNumber(player.currentMinTimeSelected, 2));
-	    endTimeInput.val( roundNumber(player.currentMaxTimeSelected, 2));
+		startTimeInput.val( roundNumber(player.currentMinTimeSelected, 2) );
+	    endTimeInput.val( roundNumber(player.currentMaxTimeSelected, 2) );
 	});
 	
- 	$(player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, function(event, post) {
-		highlightPostBorder(post);
-		scrollPostIntoView(post.id);
+ 	$(player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, function(event, keyPoint, coords) {
+// 		post = infoarray.keyPoint;
+// 		var coords = infoarray.coords;
+		highlightPostBorder(keyPoint);
+		scrollPostIntoView(keyPoint.id);
+		console.log('mouse over keypoint event, x: ' + coords.x + ', y: ' + coords.y);
 	});
  	
  	$(player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, function(event, post) {
  		dehighlightPostBorder(post);
 	});
 	
-	return player;
+ 	$(player).on(Player.EVENT_KEYPOINT_CLICK, function(event, keyPoint, coords) {
+ 		// do something
+// 		var coords = infoarray[1];
+ 		console.log('keypoint click event x:' + coords.x + ', y: ' + coords.y);
+ 	});
+	
+ 	$(player).on(Player.EVENT_KEYPOINT_BEGIN, function(event, post) {
+ 		// do something
+ 		console.log('keypoint begin event');
+ 	});
+ 	
+ 	$(player).on(Player.EVENT_KEYPOINT_END, function(event, post) {
+ 		// do something
+ 		console.log('keypoint end event');
+ 	});
+ 	
+ 	return player;
 
 }
 

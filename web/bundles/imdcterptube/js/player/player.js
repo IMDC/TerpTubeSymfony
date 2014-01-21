@@ -18,9 +18,9 @@ Player.EVENT_SEEK = "player_seek";
 Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
 // Player.EVENT_COMMENT_MOUSE_OVER = "player_comment_mouse_over";
 // Player.EVENT_COMMENT_MOUSE_OUT = "player_comment_mouse_out";
-Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over";
+Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over"; // sends coords in array
 Player.EVENT_KEYPOINT_MOUSE_OUT = "player_keypoint_mouse_out";
-Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click";
+Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click"; // sends coords in array
 Player.EVENT_KEYPOINT_BEGIN = "player_keypoint_begin";
 Player.EVENT_KEYPOINT_END = "player_keypoint_end";
 Player.EVENT_PLAYHEAD_HIGHLIGHTED = "player_playhead_highlighted";
@@ -927,16 +927,16 @@ Player.prototype.checkKeyPointHover = function(event) {
 		if (startX > coords.x || endX < coords.x
 				|| coords.y < this.trackPadding
 				|| coords.y > this.trackPadding + this.trackHeight) {
-			if (keypoint.paintHighlighted == true) {
-				keypoint.paintHighlighted = undefined;
+			if (keyPoint.paintHighlighted == true) {
+				keyPoint.paintHighlighted = undefined;
 				$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 			}
 			continue;
 
 		}
-		if (keypoint.paintHighlighted == true)
+		if (keyPoint.paintHighlighted == true)
 			continue;
-		keypoint.paintHighlighted = true;
+		keyPoint.paintHighlighted = true;
 		$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OVER, [keyPoint, coords]);
 
 	}
@@ -956,7 +956,7 @@ Player.prototype.checkKeyPointClick = function(event) {
 			continue;
 
 		}
-		$(this).trigger(Player.EVENT_KEYPOINT_CLICK,[ keyPoint, coords]);
+		$(this).trigger(Player.EVENT_KEYPOINT_CLICK, [keyPoint, coords]);
 
 	}
 };

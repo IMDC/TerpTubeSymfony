@@ -19,7 +19,6 @@ class CompoundMedia
      */
     private $type;
 
-
     /**
      * @var \IMDC\TerpTubeBundle\Entity\Media
      */
@@ -29,7 +28,6 @@ class CompoundMedia
      * @var \IMDC\TerpTubeBundle\Entity\Media
      */
     private $target;
-
 
     /**
      * Get id
@@ -63,7 +61,6 @@ class CompoundMedia
     {
         return $this->type;
     }
-
 
     /**
      * Set sourceID
@@ -110,6 +107,7 @@ class CompoundMedia
     {
         return $this->target;
     }
+    
     /**
      * @var integer
      */
