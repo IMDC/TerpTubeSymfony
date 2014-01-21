@@ -321,6 +321,7 @@ Player.prototype.createControls = function() {
 	}
 
 };
+
 Player.prototype.setPlayHeadImage = function(image) {
 
 	if (!image) {
@@ -909,6 +910,7 @@ Player.prototype.checkKeyPointsTime = function() {
 				keyPoint.highlightedTime = undefined;
 				$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
 			}
+		}
 		
 	}
 
