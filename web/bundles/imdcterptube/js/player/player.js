@@ -897,16 +897,16 @@ Player.prototype.checkKeyPointsTime = function() {
 		var currentTime = this.getCurrentTime();
 		if (keyPoint.startTime >= currentTime && keyPoint.endTime < currentTime) {
 			// Should be activated
-			if (keyPoint.highlighted !== true) {
-				keyPoint.highlighted = true;
-				if (keyPoint.highlightedTime !== true) {
-					keyPoint.highlightedTime = true;
-					$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
-				}
+			if (keyPoint.highlightedTime !== true) {
+				keyPoint.highlightedTime = true;
+				$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
+			}
+			if (keypoint.paintHighlighted !== true) {
+				keypoint.paintHighlighted = true;
 			}
 		} else  {
 			if (keyPoint.highlightedTime == true) {
-				keyPoint.highlighted = undefined;
+				keypoint.paintHighlighted = undefined;
 				keyPoint.highlightedTime = undefined;
 				$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
 			}
@@ -927,17 +927,17 @@ Player.prototype.checkKeyPointHover = function(event) {
 		if (startX > coords.x || endX < coords.x
 				|| coords.y < this.trackPadding
 				|| coords.y > this.trackPadding + this.trackHeight) {
-			if (keyPoint.highlighted == true) {
-				keyPoint.highlighted = undefined;
+			if (keypoint.paintHighlighted == true) {
+				keypoint.paintHighlighted = undefined;
 				$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 			}
 			continue;
 
 		}
-		if (keyPoint.highlighted == true)
+		if (keypoint.paintHighlighted == true)
 			continue;
-		keyPoint.highlighted = true;
-		$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OVER, keyPoint, coords);
+		keypoint.paintHighlighted = true;
+		$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OVER, [keyPoint, coords]);
 
 	}
 };
@@ -956,7 +956,7 @@ Player.prototype.checkKeyPointClick = function(event) {
 			continue;
 
 		}
-		$(this).trigger(Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
+		$(this).trigger(Player.EVENT_KEYPOINT_CLICK,[ keyPoint, coords]);
 
 	}
 };
