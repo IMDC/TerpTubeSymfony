@@ -901,12 +901,12 @@ Player.prototype.checkKeyPointsTime = function() {
 				keyPoint.highlightedTime = true;
 				$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
 			}
-			if (keypoint.paintHighlighted !== true) {
-				keypoint.paintHighlighted = true;
+			if (keyPoint.paintHighlighted !== true) {
+				keyPoint.paintHighlighted = true;
 			}
 		} else  {
 			if (keyPoint.highlightedTime == true) {
-				keypoint.paintHighlighted = undefined;
+				keyPoint.paintHighlighted = undefined;
 				keyPoint.highlightedTime = undefined;
 				$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
 			}
