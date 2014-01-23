@@ -892,26 +892,25 @@ Player.prototype.checkMouseOverFunctions = function(e) {
 Player.prototype.checkKeyPointsTime = function() {
 	for (var i = 0; i < this.keyPoints.length; i++) {
 		var keyPoint = this.keyPoints[i];
-		// if (keyPoint.options.drawOnTimeLine !== true)
-		// continue;
+
+		if (keyPoint.startTime === "" || keyPoint.endTime === "") {
+			continue;
+		}
+			
 		var currentTime = this.getCurrentTime();
-		if (keyPoint.startTime >= currentTime && keyPoint.endTime < currentTime) {
-			// Should be activated
-			if (keyPoint.highlightedTime !== true) {
-				keyPoint.highlightedTime = true;
-				$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
-			}
-			if (keyPoint.paintHighlighted !== true) {
-				keyPoint.paintHighlighted = true;
-			}
-		} else  {
-			if (keyPoint.highlightedTime == true) {
-				keyPoint.paintHighlighted = undefined;
-				keyPoint.highlightedTime = undefined;
-				$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
-			}
+		
+		// code from Kristian Ott
+		if ( !keyPoint.playing && (keyPoint.startTime <= currentTime) && (currentTime <= keyPoint.endTime ) ) {
+			keyPoint.playing = true;
+			$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
 		}
 		
+		if ( currentTime > keyPoint.endTime && keyPoint.playing ) {
+			$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
+			keyPoint.playing = false;
+		}
+		// end code from Kristian Ott
+
 	}
 
 };

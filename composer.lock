@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "2bbf72ee7ae4e991048f5020b82b8cd9",
+    "hash": "540f22bbd1cdafe2b46994b64d672f7a",
     "packages": [
         {
             "name": "ac/transcoding",
@@ -592,7 +592,7 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan H. Wage",
+                    "name": "Jonathan Wage",
                     "email": "jonwage@gmail.com",
                     "homepage": "http://www.jwage.com/",
                     "role": "Creator"
@@ -1082,12 +1082,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "58958e596541cc34d8a26050ca4fe69470c2722b"
+                "reference": "da9a97314884275c77a741205bda9f86afe23ffd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/58958e596541cc34d8a26050ca4fe69470c2722b",
-                "reference": "58958e596541cc34d8a26050ca4fe69470c2722b",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/da9a97314884275c77a741205bda9f86afe23ffd",
+                "reference": "da9a97314884275c77a741205bda9f86afe23ffd",
                 "shasum": ""
             },
             "require": {
@@ -1142,7 +1142,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2014-01-19 03:58:20"
+            "time": "2014-01-22 08:58:14"
         },
         {
             "name": "gregwar/captcha",
@@ -1665,16 +1665,16 @@
         },
         {
             "name": "knplabs/knp-components",
-            "version": "1.2.4",
+            "version": "1.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/knp-components.git",
-                "reference": "ae454fb43473127a7bdc0a777f962f64f94e2795"
+                "reference": "8803fdaa18bd24bd158143e3d9099f4b243a31dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/knp-components/zipball/ae454fb43473127a7bdc0a777f962f64f94e2795",
-                "reference": "ae454fb43473127a7bdc0a777f962f64f94e2795",
+                "url": "https://api.github.com/repos/KnpLabs/knp-components/zipball/8803fdaa18bd24bd158143e3d9099f4b243a31dd",
+                "reference": "8803fdaa18bd24bd158143e3d9099f4b243a31dd",
                 "shasum": ""
             },
             "require": {
@@ -1722,7 +1722,7 @@
                 "pager",
                 "paginator"
             ],
-            "time": "2013-12-23 13:48:48"
+            "time": "2014-01-09 16:23:31"
         },
         {
             "name": "knplabs/knp-menu",
@@ -1844,12 +1844,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle.git",
-                "reference": "e817cbddfa13cb9a72bf1ddcaf6a36b99cda5c2d"
+                "reference": "0558122152ca6a7af71730f88b728a091dea490e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/e817cbddfa13cb9a72bf1ddcaf6a36b99cda5c2d",
-                "reference": "e817cbddfa13cb9a72bf1ddcaf6a36b99cda5c2d",
+                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/0558122152ca6a7af71730f88b728a091dea490e",
+                "reference": "0558122152ca6a7af71730f88b728a091dea490e",
                 "shasum": ""
             },
             "require": {
@@ -1861,7 +1861,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3.x-dev"
+                    "dev-master": "2.4.x-dev"
                 }
             },
             "autoload": {
@@ -1894,7 +1894,7 @@
                 "pagination",
                 "paginator"
             ],
-            "time": "2013-12-19 09:14:09"
+            "time": "2014-01-21 11:16:05"
         },
         {
             "name": "knplabs/knp-time-bundle",
@@ -2181,12 +2181,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/RabbitMqBundle.git",
-                "reference": "513de5bd7c19128fd996ac99d74e5afd366a6c18"
+                "reference": "dd06773254704b91711c38f902c4b0a623ab625d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/513de5bd7c19128fd996ac99d74e5afd366a6c18",
-                "reference": "513de5bd7c19128fd996ac99d74e5afd366a6c18",
+                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/dd06773254704b91711c38f902c4b0a623ab625d",
+                "reference": "dd06773254704b91711c38f902c4b0a623ab625d",
                 "shasum": ""
             },
             "require": {
@@ -2225,7 +2225,7 @@
                 "queue",
                 "rabbitmq"
             ],
-            "time": "2014-01-19 19:56:21"
+            "time": "2014-01-20 20:54:33"
         },
         {
             "name": "php-ffmpeg/php-ffmpeg",
@@ -2577,12 +2577,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataAdminBundle.git",
-                "reference": "7edddb7497814c3251f0fb60e44c6ee1c3e3c2e1"
+                "reference": "5e8c2ce9116cde7ccaa4220d60f38f1d53209d73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/7edddb7497814c3251f0fb60e44c6ee1c3e3c2e1",
-                "reference": "7edddb7497814c3251f0fb60e44c6ee1c3e3c2e1",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/5e8c2ce9116cde7ccaa4220d60f38f1d53209d73",
+                "reference": "5e8c2ce9116cde7ccaa4220d60f38f1d53209d73",
                 "shasum": ""
             },
             "require": {
@@ -2649,7 +2649,7 @@
                 "bootstrap",
                 "sonata"
             ],
-            "time": "2014-01-16 13:06:00"
+            "time": "2014-01-21 09:04:46"
         },
         {
             "name": "sonata-project/block-bundle",

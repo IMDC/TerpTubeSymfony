@@ -13,6 +13,11 @@ var global_video_dom;
 
 $(document).ready(function() {
 
+	
+    $("#7").on("timeupdate", function(event) {
+    	checkKeyPointStartTime(this.currentTime);
+    });
+	
 //	$("#video-speed").popover(
 //	 {
 //		 trigger: 'hover',
@@ -274,7 +279,12 @@ $("a#post-comment-reply").click(function(e) {
 //    }
     
 	
+
 });
+
+function checkKeyPointStartTime(currentTime) {
+	// do something on time update
+}
 
 function getPostWrapJQueryObject(postid) {
 	targetElement = "div#post-" + postid + "-wrap";
@@ -516,12 +526,13 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	
  	$(player).on(Player.EVENT_KEYPOINT_BEGIN, function(event, post) {
  		// do something
- 		console.log('keypoint begin event');
+ 		console.log('keypoint begin event fired at ' + $("video:first")[0].currentTime + ' keypoint id: ' + post.id + ', startTime: ' + post.startTime + ', endTime: ' + post.endTime);
  	});
  	
  	$(player).on(Player.EVENT_KEYPOINT_END, function(event, post) {
  		// do something
- 		console.log('keypoint end event');
+ 		console.log('keypoint end event fired at ' + $("video:first")[0].currentTime + ' keypoint id: ' + post.id + ', startTime: ' + post.startTime + ', endTime: ' + post.endTime);
+
  	});
  	
  	return player;
