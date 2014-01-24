@@ -893,11 +893,19 @@ Player.prototype.checkKeyPointsTime = function() {
 	for (var i = 0; i < this.keyPoints.length; i++) {
 		var keyPoint = this.keyPoints[i];
 
-		if (keyPoint.startTime === "" || keyPoint.endTime === "") {
+		// skip keypoints with no temporal info
+		if (keyPoint.startTime === "" 
+				|| keyPoint.endTime === "" 
+				|| keyPoint.startTime == undefined 
+				|| keyPoint.endTime == undefined) {
 			continue;
 		}
-			
+		
 		var currentTime = this.getCurrentTime();
+		
+		if (currentTime < keyPoint.startTime) {
+			keyPoint.playing = false;
+		}
 		
 		// code from Kristian Ott
 		if ( !keyPoint.playing && (keyPoint.startTime <= currentTime) && (currentTime <= keyPoint.endTime ) ) {
