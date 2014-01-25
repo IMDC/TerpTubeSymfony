@@ -7,9 +7,9 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Publicaccess</th>
-                <th>Userswithlink</th>
-                <th>Privateaccess</th>
+                <th>Access level</th>
+                <th>Users with Access</th>
+                <th>Groups with Access</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -17,9 +17,17 @@
         {% for entity in entities %}
             <tr>
                 <td><a href="{{ path('permissions_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.publicAccess }}</td>
-                <td>{{ entity.usersWithLink }}</td>
-                <td>{{ entity.privateAccess }}</td>
+                <td>{{ entity.accessLevel }}</td>
+                <td>
+                {% for users in entity.usersWithAccess %}
+                    {{ usersWithAccess.getUsername|join(', ') }}
+                {% endfor %}
+                </td>
+                <td>
+                {% for usergroups in entity.userGroupsWithAccess %}
+                    {{ userGroupsWithAccess.getTitle|join(', ') }}
+                {% endfor %}
+                </td>
                 <td>
                 <ul>
                     <li>

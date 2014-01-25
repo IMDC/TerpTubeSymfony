@@ -70,4 +70,11 @@ IMDC\TerpTubeBundle\Entity\Thread:
         posts:
             targetEntity: Post
             mappedBy: parentThread
+    oneToOne: 
+        permissions: # one to one unidirectional
+            targetEntity: Permissions
+            joinColumn:
+                name: permissions_id
+                referencedColumnName: id
+            cascade: ["all"]
     lifecycleCallbacks: {  }

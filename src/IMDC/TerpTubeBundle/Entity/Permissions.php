@@ -9,35 +9,28 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Permissions
 {
+    const ACCESS_PUBLIC = -1;
+    const ACCESS_CREATOR = 0;
+    const ACCESS_CREATORS_FRIENDS = 1;
+    const ACCESS_WITH_LINK = 2;
+    const ACCESS_USER_LIST = 3;
+    const ACCESS_GROUP_LIST = 4;
+    const ACCESS_REGISTERED_MEMBERS = 5;
+    
     /**
      * @var integer
      */
     private $id;
 
     /**
-     * @var boolean
+     * @var integer
      */
-    private $publicAccess;
-
-    /**
-     * @var boolean
-     */
-    private $usersWithLinkHaveAccess;
-
-    /**
-     * @var boolean
-     */
-    private $privateAccess;
-
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
-     */
-    private $friendsOfMember;
+    private $accessLevel;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    private $groupsWithAccess;
+    private $userGroupsWithAccess;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -50,7 +43,7 @@ class Permissions
      */
     public function __construct()
     {
-        $this->groupsWithAccess = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userGroupsWithAccess = new \Doctrine\Common\Collections\ArrayCollection();
         $this->usersWithAccess  = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
@@ -65,177 +58,84 @@ class Permissions
     }
 
     /**
-     * Set publicAccess
+     * Set accessLevel
      *
-     * @param boolean $publicAccess
+     * @param integer $accessLevel
      * @return Permissions
      */
-    public function setPublicAccess($publicAccess)
+    public function setAccessLevel($accessLevel)
     {
-        $this->publicAccess = $publicAccess;
+        $this->accessLevel = $accessLevel;
+    
+        return $this;
+    }
+    
+    /**
+     * Get accessLevel
+     *
+     * @return integer
+     */
+    public function getAccessLevel()
+    {
+        return $this->accessLevel;
+    }
+    
+    
+    /**
+     * Add userGroupsWithAccess
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $userGroupsWithAccess
+     * @return Permissions
+     */
+    public function addUserGroupsWithAccess(\IMDC\TerpTubeBundle\Entity\UserGroup $userGroupsWithAccess)
+    {
+        $this->userGroupsWithAccess[] = $userGroupsWithAccess;
     
         return $this;
     }
 
     /**
-     * Get publicAccess
+     * Remove userGroupsWithAccess
      *
-     * @return boolean 
+     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $userGroupsWithAccess
      */
-    public function getPublicAccess()
+    public function removeUserGroupsWithAccess(\IMDC\TerpTubeBundle\Entity\UserGroup $userGroupsWithAccess)
     {
-        return $this->publicAccess;
+        $this->userGroupsWithAccess->removeElement($userGroupsWithAccess);
     }
 
     /**
-     * Set usersWithLinkHaveAccess
-     *
-     * @param boolean $usersWithLinkHaveAccess
-     * @return Permissions
-     */
-    public function setUsersWithLinkHaveAccess($usersWithLinkHaveAccess)
-    {
-        $this->usersWithLinkHaveAccess = $usersWithLinkHaveAccess;
-    
-        return $this;
-    }
-
-    /**
-     * Get usersWithLinkHaveAccess
-     *
-     * @return boolean 
-     */
-    public function getUsersWithLinkHaveAccess()
-    {
-        return $this->usersWithLinkHaveAccess;
-    }
-
-    /**
-     * Set privateAccess
-     *
-     * @param boolean $privateAccess
-     * @return Permissions
-     */
-    public function setPrivateAccess($privateAccess)
-    {
-        $this->privateAccess = $privateAccess;
-    
-        return $this;
-    }
-
-    /**
-     * Get privateAccess
-     *
-     * @return boolean 
-     */
-    public function getPrivateAccess()
-    {
-        return $this->privateAccess;
-    }
-
-    
-    /**
-     * Set friendsOfMember
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $friendsOfMember
-     * @return Permissions
-     */
-    public function setFriendsOfMember(\IMDC\TerpTubeBundle\Entity\User $friendsOfMember = null)
-    {
-        $this->friendsOfMember = $friendsOfMember;
-    
-        return $this;
-    }
-
-    /**
-     * Get friendsOfMember
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\User 
-     */
-    public function getFriendsOfMember()
-    {
-        return $this->friendsOfMember;
-    }
-
-    /**
-     * Add groupsWithAccess
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess
-     * @return Permissions
-     */
-    public function addGroupsWithAccess(\IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess)
-    {
-        $this->groupsWithAccess[] = $groupsWithAccess;
-    
-        return $this;
-    }
-
-    /**
-     * Remove groupsWithAccess
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess
-     */
-    public function removeGroupsWithAccess(\IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess)
-    {
-        $this->groupsWithAccess->removeElement($groupsWithAccess);
-    }
-
-    /**
-     * Get groupsWithAccess
+     * Get userGroupsWithAccess
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getGroupsWithAccess()
+    public function getuserGroupsWithAccess()
     {
-        return $this->groupsWithAccess;
+        return $this->userGroupsWithAccess;
     }
-
-    /**
-     * Add groupsWithAccess
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess
-     * @return Permissions
-     */
-    public function addGroupsWithAcces(\IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess)
-    {
-        $this->groupsWithAccess[] = $groupsWithAccess;
     
+    public function setUserGroupsWithAccess($userGroupsWithAccess)
+    {
+        $this->userGroupsWithAccess = $userGroupsWithAccess;
+        
         return $this;
     }
 
-    /**
-     * Remove groupsWithAccess
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess
-     */
-    public function removeGroupsWithAcces(\IMDC\TerpTubeBundle\Entity\UserGroup $groupsWithAccess)
-    {
-        $this->groupsWithAccess->removeElement($groupsWithAccess);
-    }
-
-    /**
-     * Add usersWithAccess
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersWithAccess
-     * @return Permissions
-     */
-    public function addUsersWithAcces(\IMDC\TerpTubeBundle\Entity\User $usersWithAccess)
+    
+    
+    public function addUsersWithAccess(\IMDC\TerpTubeBundle\Entity\User $usersWithAccess)
     {
         $this->usersWithAccess[] = $usersWithAccess;
-    
+        
         return $this;
     }
-
-    /**
-     * Remove usersWithAccess
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $usersWithAccess
-     */
-    public function removeUsersWithAcces(\IMDC\TerpTubeBundle\Entity\User $usersWithAccess)
+    
+    
+    public function removeUsersWithAccess(\IMDC\TerpTubeBundle\Entity\User $usersWithAccess)
     {
         $this->usersWithAccess->removeElement($usersWithAccess);
     }
-
+    
     /**
      * Get usersWithAccess
      *
@@ -244,5 +144,12 @@ class Permissions
     public function getUsersWithAccess()
     {
         return $this->usersWithAccess;
+    }
+    
+    public function setUsersWithAccess($usersWithAccess)
+    {
+        $this->usersWithAccess = $usersWithAccess;
+        
+        return $this;
     }
 }

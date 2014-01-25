@@ -22,6 +22,8 @@ use IMDC\TerpTubeBundle\Form\Type\PostFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\Permissions;
+use IMDC\TerpTubeBundle\IMDCTerpTubeBundle;
 
 
 class ThreadController extends Controller
@@ -73,11 +75,21 @@ class ThreadController extends Controller
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
         
+        $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
         
-        $em = $this->getDoctrine()->getManager();
-        
+        // retrieve thread from storage layer
         $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadid);
+        
+        
+        if (!$this->canAccessThread($thread, $user)) {
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                'This topic is private and you are not permitted to view it at this time.'
+            );
+            return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+        }
+        
         $threadposts = $thread->getPosts();
         
         $newpost = new Post();
@@ -190,7 +202,7 @@ class ThreadController extends Controller
             $forum = $forumrepo->findOneBy(array('id' => $forumid));
             $newthread->setParentForum($forum);
         }
-
+        
         $form = $this->createForm(new ThreadFormType(), $newthread, array(
                 'user' => $this->getUser(),
         ));
@@ -266,7 +278,7 @@ class ThreadController extends Controller
             $user->addThread($newthread);
             $user->increasePostCount(1);
             	
-            // request to persist message object to database
+            // request to persist objects to database
             $em->persist($newthread);
             $em->persist($user);
             	
@@ -427,6 +439,79 @@ class ThreadController extends Controller
                 array('form' => $threadeditform->createView(),
                         'thread' => $threadToEdit,
                 ));
+    }
+    
+    /**
+     * 
+     * @param IMDCTerpTubeBundle:Thread $thread
+     * @param IMDCTerpTubeBundle:User $user
+     * @return boolean
+     */
+    public function canAccessThread($thread, $user)
+    {
+        // check for a thread permissions object
+        $accessGranted = FALSE;
+        $threadperms = $thread->getPermissions();
+        if ($threadperms){
+            switch ($threadperms->getAccessLevel()) {
+            	case Permissions::ACCESS_CREATOR:
+            	    if ($user == $thread->getCreator()) {
+            	        $accessGranted = TRUE;
+            	    }
+            	    break;
+            	     
+            	case Permissions::ACCESS_CREATORS_FRIENDS:
+            	    if ($thread->getCreator->getFriendsList()->contains($user))
+            	    {
+            	        // grant access
+            	        $accessGranted = TRUE;
+            	    }
+            	    break;
+            	     
+            	case Permissions::ACCESS_GROUP_LIST:
+            	    if (!empty(array_intersect($user->getUserGroups()->toArray(), $threadperms->getUserGroupsWithAccess()->toArray())))
+            	    {
+            	        // grant access
+            	        $accessGranted = TRUE;
+            	    }
+            	    break;
+            	     
+            	case Permissions::ACCESS_USER_LIST:
+            	    if ($threadperms->getUsersWithAccess()->contains($user)) {
+            	        // grant access
+            	        $accessGranted = TRUE;
+            	    }
+            	    break;
+            	     
+            	case Permissions::ACCESS_WITH_LINK:
+            	     
+            	case Permissions::ACCESS_PUBLIC:
+            	    // do something common for both with link and accesspublic
+            	    $accessGranted = TRUE;
+            	    break;
+        
+            	default:
+            	    $accessGranted = FALSE;
+            	    break;
+            }
+        }
+        else { // no thread permissions exist, create default private permissions
+            $perms = new Permissions();
+            $perms->setAccessLevel(Permissions::ACCESS_CREATOR);
+            $thread->setPermissions($perms);
+            
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($thread);
+            $em->persist($perms);
+            $em->flush();
+            
+            $this->get('logger')->info("\n\n*********new Permissions object created for thread: " . $thread->getId());
+            if ($thread->getCreator() === $user) { // user is not the creator of this thread which is now private
+                $accessGranted = TRUE;
+            }
+        }
+        
+        return $accessGranted;
     }
     
 }

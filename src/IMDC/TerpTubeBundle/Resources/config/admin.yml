@@ -99,3 +99,14 @@ services:
             - ~
         calls:
             - [ setTranslationDomain, [IMDCTerpTubeBundle]]    
+    
+    sonata.admin.thread:
+        class: IMDC\TerpTubeBundle\Admin\ThreadAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Threads", label: "Threads" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Thread
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]             

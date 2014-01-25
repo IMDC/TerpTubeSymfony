@@ -75,6 +75,11 @@ class Thread
     private $tags;
     
     /**
+     * @var \IMDC\TerpTubeBundle\Entity\Permissions
+     */
+    private $permissions;
+    
+    /**
      * @var \IMDC\TerpTubeBundle\Entity\Forum
      */
     private $parentForum;
@@ -519,5 +524,28 @@ class Thread
     public function getParentForum()
     {
         return $this->parentForum;
+    }
+
+    /**
+     * Set permissions
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Permissions $permissions
+     * @return Thread
+     */
+    public function setPermissions(\IMDC\TerpTubeBundle\Entity\Permissions $permissions = null)
+    {
+        $this->permissions = $permissions;
+    
+        return $this;
+    }
+
+    /**
+     * Get permissions
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Permissions 
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
     }
 }

@@ -7,19 +7,20 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 use IMDC\TerpTubeBundle\Form\EventListener\AddParentForumSubscriber;
+use IMDC\TerpTubeBundle\Form\Type\PermissionsType;
 
 class ThreadFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 	    
-	    $builder->add('title', null, array('label' => 'Text Title'));
-	    //$builder->add('mediaIncluded');
-	    
 	    // User type
 	    $user = $options['user'];
-	    
+	     
 	    $userid = $user->getId();
+	    
+	    $builder->add('title', null, array('label' => 'Text Title'));
+	    //$builder->add('mediaIncluded');
 	    
 	    // this assumes that the entity manager was passed in as an option
 	    /*
@@ -58,7 +59,8 @@ class ThreadFormType extends AbstractType
 	            },
 	    ));
 	    */
-	    
+	    $builder->add('permissions', new PermissionsType($user));
+
 	    $builder->add('content', null, array('label' => 'Supplementary Content',
 	    ));
 	    

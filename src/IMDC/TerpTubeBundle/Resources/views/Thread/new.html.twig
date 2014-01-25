@@ -28,6 +28,7 @@
 {#         {{ form_row(form.mediaIncluded) }}#}
         {{ form_row(form.title, {'attr':{'class':'input-xxlarge'}}) }}
         {{ form_row(form.content, {'attr':{'class':'input-xxlarge'}}) }}
+        {{ form_row(form.permissions) }}
         <div class="row-fluid">
             {{ form_widget(form.submit) }}
             <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>

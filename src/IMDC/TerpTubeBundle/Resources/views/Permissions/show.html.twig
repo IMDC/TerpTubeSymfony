@@ -10,16 +10,24 @@
                 <td>{{ entity.id }}</td>
             </tr>
             <tr>
-                <th>Publicaccess</th>
-                <td>{{ entity.publicAccess }}</td>
+                <th>Access Level</th>
+                <td>{{ entity.accessLevel }}</td>
             </tr>
             <tr>
-                <th>Userswithlink</th>
-                <td>{{ entity.usersWithLink }}</td>
+                <th>Users with Access</th>
+                <td>
+                {% for users in entity.usersWithAccess %}
+                    {{ usersWithAccess.getUsername|join(', ') }}
+                {% endfor %}
+                </td>
             </tr>
             <tr>
-                <th>Privateaccess</th>
-                <td>{{ entity.privateAccess }}</td>
+                <th>Groups with Access</th>
+                <td>
+                {% for usergroups in entity.userGroupsWithAccess %}
+                    {{ userGroupsWithAccess.getTitle|join(', ') }}
+                {% endfor %}
+                </td>
             </tr>
         </tbody>
     </table>

@@ -8,21 +8,11 @@ IMDC\TerpTubeBundle\Entity\Permissions:
             id: true
             generator:
                 strategy: AUTO
-        publicAccess:
-            type: boolean
-        usersWithLinkHaveAccess:
-            type: boolean
-        privateAccess:
-            type: boolean
-    oneToOne:
-        friendsOfMember: 
-            targetEntity: User
-            joinColumn:
-                name: friends_of_member
-                referencedColumnName: id
-            cascade: ["all"]
+        accessLevel:
+            type: smallint
+            default: 0
     manyToMany: 
-        groupsWithAccess: # one to many unidirectional
+        userGroupsWithAccess: # one to many unidirectional
             targetEntity: UserGroup
             joinTable:
                 name: permissions_usergroups
