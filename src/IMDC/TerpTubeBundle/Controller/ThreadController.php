@@ -469,7 +469,8 @@ class ThreadController extends Controller
             	    break;
             	     
             	case Permissions::ACCESS_GROUP_LIST:
-            	    if (!empty(array_intersect($user->getUserGroups()->toArray(), $threadperms->getUserGroupsWithAccess()->toArray())))
+            	    $possibleGroups = array_intersect($user->getUserGroups()->toArray(), $threadperms->getUserGroupsWithAccess()->toArray());
+            	    if (!empty($possibleGroups))
             	    {
             	        // grant access
             	        $accessGranted = TRUE;
