@@ -95,6 +95,9 @@ layout:
     logged_in_as: Logged in as %username%
     user_inbox: Inbox
 
+interpretationsGateway:
+    title: "My Interpretations"
+    
 filesGateway:
     title: "My Files"
     add:

@@ -1,11 +1,11 @@
 {% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
-{% block title %}My Files{% endblock title %}
+{% block title %}{{ 'interpretationsGateway.title'|trans }}{% endblock title %}
 
-{% block nav_ul_authenticated_my_files %}<li class="active">{% endblock %}
+{% block nav_ul_authenticated_my_interpretations %}<li class="active">{% endblock %}
 
 {% block herounit %}
-<h1>{{ 'filesGateway.title'|trans }}</h1>
+<h1>{{ 'interpretationsGateway.title'|trans }}</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}

@@ -18,7 +18,9 @@ Player.EVENT_SEEK = "player_seek";
 Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
 // Player.EVENT_COMMENT_MOUSE_OVER = "player_comment_mouse_over";
 // Player.EVENT_COMMENT_MOUSE_OUT = "player_comment_mouse_out";
-Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over"; // sends coords in array
+Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over"; // sends
+																	// coords in
+																	// array
 Player.EVENT_KEYPOINT_MOUSE_OUT = "player_keypoint_mouse_out";
 Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click"; // sends coords in array
 Player.EVENT_KEYPOINT_BEGIN = "player_keypoint_begin";
@@ -825,6 +827,7 @@ Player.prototype.repaint = function() {
 			// this.drawSignLinks();
 			// }
 			if (this.redrawKeyPoints == true) {
+				this.clearPlayer();
 				this.drawKeyPoints();
 			}
 		}
@@ -894,26 +897,27 @@ Player.prototype.checkKeyPointsTime = function() {
 		var keyPoint = this.keyPoints[i];
 
 		// skip keypoints with no temporal info
-		if (keyPoint.startTime === "" 
-				|| keyPoint.endTime === "" 
-				|| keyPoint.startTime == undefined 
+		if (keyPoint.startTime === "" || keyPoint.endTime === ""
+				|| keyPoint.startTime == undefined
 				|| keyPoint.endTime == undefined) {
 			continue;
 		}
-		
+
 		var currentTime = this.getCurrentTime();
-		
+
 		if (currentTime < keyPoint.startTime) {
 			keyPoint.playing = false;
+			
 		}
-		
+
 		// code from Kristian Ott
-		if ( !keyPoint.playing && (keyPoint.startTime <= currentTime) && (currentTime <= keyPoint.endTime ) ) {
+		else if (!keyPoint.playing && (keyPoint.startTime <= currentTime)
+				&& (currentTime <= keyPoint.endTime)) {
 			keyPoint.playing = true;
 			$(this).trigger(Player.EVENT_KEYPOINT_BEGIN, keyPoint);
 		}
-		
-		if ( currentTime > keyPoint.endTime && keyPoint.playing ) {
+
+		else if (currentTime > keyPoint.endTime && keyPoint.playing) {
 			$(this).trigger(Player.EVENT_KEYPOINT_END, keyPoint);
 			keyPoint.playing = false;
 		}
@@ -934,17 +938,17 @@ Player.prototype.checkKeyPointHover = function(event) {
 		if (startX > coords.x || endX < coords.x
 				|| coords.y < this.trackPadding
 				|| coords.y > this.trackPadding + this.trackHeight) {
-			if (keyPoint.paintHighlighted == true) {
-				keyPoint.paintHighlighted = undefined;
+			if (keyPoint.hover == true) {
+				keyPoint.hover = false;
 				$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 			}
 			continue;
 
 		}
-		if (keyPoint.paintHighlighted == true)
+		if (keyPoint.hover == true)
 			continue;
-		keyPoint.paintHighlighted = true;
-		$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OVER, [keyPoint, coords]);
+		keyPoint.hover = true;
+		$(this).trigger(Player.EVENT_KEYPOINT_MOUSE_OVER, [ keyPoint, coords ]);
 
 	}
 };
@@ -963,7 +967,7 @@ Player.prototype.checkKeyPointClick = function(event) {
 			continue;
 
 		}
-		$(this).trigger(Player.EVENT_KEYPOINT_CLICK, [keyPoint, coords]);
+		$(this).trigger(Player.EVENT_KEYPOINT_CLICK, [ keyPoint, coords ]);
 
 	}
 };
@@ -1149,8 +1153,7 @@ Player.prototype.setHighlightedRegion = function(startX, endX) {
 	var context = $(this.elementID).find(
 			".videoControlsContainer.track.selectedRegion").eq(0)[0]
 			.getContext("2d");
-	context.clearRect(0, 0, densityBarElement.width(), densityBarElement
-			.height());
+	this.clearPlayer();
 
 	if (this.options.areaSelectionEnabled) {
 		this.drawLeftTriangle(startX, context);

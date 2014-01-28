@@ -1,8 +1,8 @@
 {% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
-{% block title %}My Files{% endblock title %}
+{% block title %}{{ 'interpretationsGateway.title'|trans }}{% endblock title %}
 
-{% block nav_ul_authenticated_my_files %}<li class="active">{% endblock %}
+{% block nav_ul_authenticated_my_interpretations %}<li class="active">{% endblock %}
 
 {% block stylesheets %}
     {{  parent() }}
@@ -10,7 +10,7 @@
 {% endblock stylesheets %}
 
 {% block herounit %}
-<h1>{{ 'filesGateway.title'|trans }}</h1>
+<h1>{{ 'interpretationsGateway.title'|trans }}</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
@@ -50,8 +50,8 @@
  {{ parent() }}
  <script type='text/javascript'>
  $(document).ready(function() {
-	 var player1Element = $("#{{ compoundMedia.getSource.getID }}");
-	 var player2Element = $("#{{ compoundMedia.getTarget.getID }}");
+	 var player2Element = $("#{{ compoundMedia.getSource.getID }}");
+	 var player1Element = $("#{{ compoundMedia.getTarget.getID }}");
 	 var player1 = new Player(player1Element);
 	 var player2 = new Player(player2Element);
 
@@ -73,7 +73,8 @@
 	 //player.options.forwardButton = false;
 	 player2.options.audioBar = false;
 	 player2.options.volumeControl = true;
-	 player2.options.controlBarElement = $('.simultaneousVideoControls');
+	 player2.options.controlBarElement = $('.preview-controls');
+	 player2.options.controlBarVisible = true;
 
 	 player2.options.recordingErrorFunction = function(e)
 	 {

@@ -454,8 +454,8 @@ class AddFileGatewayController extends Controller
 
 		$sourceMedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($sourceMediaID);
 		$compoundMedia = new CompoundMedia();
-		$compoundMedia->setSourceID($sourceMedia);
-		$compoundMedia->setTargetID($media);
+		$compoundMedia->setSource($sourceMedia);
+		$compoundMedia->setTarget($media);
 		$compoundMedia->setTargetStartTime($startTime);
 		$compoundMedia->setType(0); //Simultaneous Recording
 

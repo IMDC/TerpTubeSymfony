@@ -20,8 +20,8 @@ class JSEntities
 	public static function getCompoundMediaObject(CompoundMedia $media)
 	{
 		return array('id' => $media->getId(), 'type' => $media->getType(),
-				'sourceMedia' => JSEntities::getMediaObject($media->getSourceID()),
-				'targetMedia' => JSEntities::getMediaObject($media->getTargetID()),
+				'sourceMedia' => JSEntities::getMediaObject($media->getSource()),
+				'targetMedia' => JSEntities::getMediaObject($media->getTarget()),
 				'targetStartTime' => $media->getTargetStartTime());
 	}
 
