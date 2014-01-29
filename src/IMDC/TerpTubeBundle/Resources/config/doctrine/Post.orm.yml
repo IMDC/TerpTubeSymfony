@@ -45,6 +45,7 @@ IMDC\TerpTubeBundle\Entity\Post:
         replies: #child posts
             targetEntity: Post
             mappedBy: parentPost
+            cascade: ["remove"] # also delete reply posts when you delete a parent post
     manyToOne:
         parentPost: #parent posts to reply child posts
             targetEntity: Post

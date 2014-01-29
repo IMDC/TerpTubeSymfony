@@ -29,10 +29,11 @@
 		"leafo/lessphp" : "dev-master",
 		"sonata-project/admin-bundle" : "dev-master",
 		"sonata-project/doctrine-orm-admin-bundle" : "dev-master",
-		"sonata-project/jquery-bundle" : "1.8.3",
+        "sonata-project/core-bundle": "~2.2@dev",
+        "sonata-project/cache-bundle" : "~2.1",
+        "sonata-project/intl-bundle" : "dev-master",
 		"incenteev/composer-parameter-handler" : "~2.0",
 		"gregwar/captcha-bundle" : "dev-master",
-		"sonata-project/intl-bundle" : "dev-master",
 		"bmatzner/fontawesome-bundle" : "*",
 		"oldsound/rabbitmq-bundle" : "dev-master",
 		"ac/transcoding-bundle" : "dev-master",
@@ -42,7 +43,6 @@
 		"doctrine/doctrine-fixtures-bundle" : "dev-master",
 		"knplabs/knp-time-bundle" : "1.1.*@dev",
 		"pimple/pimple" : "dev-master",
-		"sonata-project/cache-bundle" : "~2.1",
 		"ext-curl" : "*"
 	},
 	"scripts" : {

@@ -13,6 +13,15 @@ var global_video_dom;
 
 $(document).ready(function() {
 
+	$("a#selectFiles").on('click', function() {
+		console.log('inside select files click method');
+		mediaChooser = new MediaChooser($("div#files"), function(mediaID)
+			 	{
+//			 		alert(mediaID);
+		            setMediaID(mediaID);
+		 		}, true);
+		mediaChooser.chooseMedia();
+	});
 	
     $("#7").on("timeupdate", function(event) {
     	checkKeyPointStartTime(this.currentTime);
@@ -88,7 +97,7 @@ $(document).ready(function() {
 	});
 	
 	
-$("a#post-comment-reply").click(function(e) {
+	$("a#post-comment-reply").click(function(e) {
 		
 		var p_id = $(this).data("pid");
 		var $theReplyLink = $(this);
@@ -208,7 +217,8 @@ $("a#post-comment-reply").click(function(e) {
     $(".temporal-post-start-link").click(function(event) {
     	event.preventDefault();
     	
-    	global_video_dom.currentTime = $(this).data('stime');
+//    	global_video_dom.currentTime = $(this).data('stime');
+    	globalPlayer.seek($(this).data('stime'));
     	var post = getPostById($(this).data('pid'));
     	post.paintHighlighted = true;
     	globalPlayer.redrawKeyPoints = true;
@@ -280,7 +290,7 @@ $("a#post-comment-reply").click(function(e) {
     
 	
 
-});
+}); // end of document.ready
 
 function checkKeyPointStartTime(currentTime) {
 	// do something on time update
@@ -540,14 +550,7 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 }
 
 
-$("#selectFiles").click(function(e) {
-	mediaChooser = new MediaChooser($("div#files"), function(mediaID)
-		 	{
-//		 		alert(mediaID);
-	            setMediaID(mediaID);
-	 		}, true);
-	mediaChooser.chooseMedia();
-});
+
 
 function highlightPostBorder(post) {
 	$thepost = getPostDomObject(post);
@@ -776,7 +779,7 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
         $timeComment.css('left', startTimePercentage + '%');
         $timeComment.css('width', widthPercentage + '%');
         $timeComment.css('background', 'red');
-    });
+    }, true);
 
 //    $timeComment.on('mouseover', function() {
 //        $videoElement[0].currentTime = postStartTime;
@@ -796,9 +799,21 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
 //    });
     
     $timeComment.on('click', function() {
-    	$videoElement[0].currentTime = postStartTime;
+    	$(this).focusin();
+    });
+    
+    $timeComment.on('focusin', function() {
+//    	$videoElement[0].currentTime = postStartTime;
+    	globalPlayer.seek(postStartTime);
         var comment = getPostById(postId);
         comment.paintHighlighted = true;
+        globalPlayer.redrawKeyPoints = true;
+		globalPlayer.repaint();
+    });
+    
+    $timeComment.on('focusout', function() {
+        var comment = getPostById(postId);
+        comment.paintHighlighted = false;
         
         globalPlayer.redrawKeyPoints = true;
 		globalPlayer.repaint();

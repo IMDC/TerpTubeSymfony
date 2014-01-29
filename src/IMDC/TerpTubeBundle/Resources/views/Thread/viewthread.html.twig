@@ -6,7 +6,8 @@
 
 {% block headerjavascripts %}
 {{ parent() }}
-<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/player/post.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/player/post.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/thread.js') }}"></script>
 {% endblock headerjavascripts %}
 
 {% block sidebarlinks_pages %}<li class="active">{% endblock %}
@@ -58,7 +59,7 @@ var postArray = new Array();
         <div class="pull-left" id="thread-creator-toolbox">
             <ul class="unstyled inline">
                 <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class=""><i class="fa fa-scissors"></i> Edit</a></li>
-                <li><a href="#" class=""><i class="fa fa-minus-circle"></i> Delete</a></li>
+                <li><a href="{{ path('imdc_thread_delete', {'threadid':thread.id}) }}" class=""><i class="fa fa-minus-circle"></i> Delete</a></li>
             </ul>
         </div>
     </div>
@@ -329,7 +330,7 @@ var postArray = new Array();
 						{% if post.startTime %}
 						<div class="row-fluid div-video-timeline">
 						    <div id="back-timeline">
-						        <div class="front-comment-div" id="time-comment-{{ post.getId }}">
+						        <div class="front-comment-div" id="time-comment-{{ post.getId }}" tabindex="0">
 						            <script type="text/javascript">
 						            $(document).ready(function() {
 						               initMiniVideoTimeline({{ mediaFile.getId }}, 
@@ -411,5 +412,5 @@ var postArray = new Array();
 
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/thread.js') }}"></script>
+{#     <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/thread.js') }}"></script>#}
 {% endblock javascripts %}

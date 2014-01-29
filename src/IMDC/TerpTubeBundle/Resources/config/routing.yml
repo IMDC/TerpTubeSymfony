@@ -265,6 +265,12 @@ imdc_thread_edit_specific:
     requirements:
         threadid: \d+
 
+imdc_thread_delete:
+    pattern: /thread/delete/{threadid}
+    defaults: { _controller: IMDCTerpTubeBundle:Thread:deleteThread }
+    requirements:
+        threadid: \d+
+
     
 imdc_post_create_new:
     pattern: /post/new

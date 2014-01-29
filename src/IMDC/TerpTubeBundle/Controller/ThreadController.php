@@ -441,6 +441,47 @@ class ThreadController extends Controller
                 ));
     }
     
+    public function deleteThreadAction(Request $request, $threadid)
+    {
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+        {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+        
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        
+        // check if the user owns this thread
+        $threadToDelete = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
+        $parentForum = $threadToDelete->getParentForum();
+        
+        if (!$user->getThreads()->contains($threadToDelete) && $threadToDelete->getCreator() !== $user) {
+            $this->get('session')->getFlashBag()->add(
+                    'notice',
+                    'You do not have permission to delete this post'
+            );
+            $refer = $request->headers->get('referer');
+            return new RedirectResponse($referer);
+        }
+        
+        $em->remove($threadToDelete);
+        $em->flush();
+        
+        $this->get('session')->getFlashBag()->add(
+            'success',
+            'Post successfully deleted!'
+        );
+
+        if ($parentForum) {
+            return $this->redirect($this->generateUrl('imdc_forum_view_specific', array('forumid'=>$parentForum->getId())));
+        }
+        else {
+            return $this->redirect($this->generateUrl('imdc_forum_list'));
+        }
+        
+    }
+    
     /**
      * 
      * @param IMDCTerpTubeBundle:Thread $thread

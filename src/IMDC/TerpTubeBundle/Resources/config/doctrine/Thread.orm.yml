@@ -70,6 +70,7 @@ IMDC\TerpTubeBundle\Entity\Thread:
         posts:
             targetEntity: Post
             mappedBy: parentThread
+            cascade: ["remove"]
     oneToOne: 
         permissions: # one to one unidirectional
             targetEntity: Permissions
