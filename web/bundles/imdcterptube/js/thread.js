@@ -778,18 +778,27 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
         $timeComment.css('background', 'red');
     });
 
-    $timeComment.on('mouseover', function() {
-        $videoElement[0].currentTime = postStartTime;
+//    $timeComment.on('mouseover', function() {
+//        $videoElement[0].currentTime = postStartTime;
+//        var comment = getPostById(postId);
+//        comment.paintHighlighted = true;
+//        
+//        globalPlayer.redrawKeyPoints = true;
+//		globalPlayer.repaint();
+//    });
+//    
+//    $timeComment.on('mouseout', function() {
+//        var comment = getPostById(postId);
+//        comment.paintHighlighted = false;
+//        
+//        globalPlayer.redrawKeyPoints = true;
+//		globalPlayer.repaint();
+//    });
+    
+    $timeComment.on('click', function() {
+    	$videoElement[0].currentTime = postStartTime;
         var comment = getPostById(postId);
         comment.paintHighlighted = true;
-        
-        globalPlayer.redrawKeyPoints = true;
-		globalPlayer.repaint();
-    });
-    
-    $timeComment.on('mouseout', function() {
-        var comment = getPostById(postId);
-        comment.paintHighlighted = false;
         
         globalPlayer.redrawKeyPoints = true;
 		globalPlayer.repaint();
