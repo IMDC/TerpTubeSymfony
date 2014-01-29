@@ -109,4 +109,15 @@ services:
             - IMDC\TerpTubeBundle\Entity\Thread
             - ~
         calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.permissions:
+        class: IMDC\TerpTubeBundle\Admin\ThreadAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Permissions", label: "Permissions" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Permissions
+            - ~
+        calls:
             - [ setTranslationDomain, [IMDCTerpTubeBundle]]             

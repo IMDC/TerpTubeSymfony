@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 use IMDC\TerpTubeBundle\Entity\Thread;
+use IMDC\TerpTubeBundle\Entity\Permissions;
 
 class ThreadEditFormType extends AbstractType
 {
@@ -45,6 +46,8 @@ class ThreadEditFormType extends AbstractType
 	    
 		$builder->add('content', null, array('label' => 'Supplemental Text Description'));
 		
+		$builder->add('permissions', new PermissionsType($user));
+
 		$builder->add('submit', 'submit');
 	}	
 

@@ -56,6 +56,8 @@ class ThreadFromMediaFormType extends AbstractType
 	    $builder->add('content', null, array('label' => 'Supplementary Content',
 	    ));
 	    
+	    $builder->add('permissions', new PermissionsType($user));
+	    
 		$builder->add('submit', 'submit');
 	}	
 

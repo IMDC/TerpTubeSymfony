@@ -47,6 +47,11 @@ class Permissions
         $this->usersWithAccess  = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
+    public function __tostring()
+    {
+        return (String) $this->getAccessLevel();
+    }
+    
     /**
      * Get id
      *
