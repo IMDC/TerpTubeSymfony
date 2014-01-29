@@ -222,6 +222,9 @@ var postArray = new Array();
             
             <script type="text/javascript">
             	var options = new Array();
+            	if (typeof post.author.color === 'undefined')
+                	post.author.color = Player.getRandomColor();
+            	options.color =  post.author.color;
             	options.drawOnTimeLine = {{ post.isTemporal ? true : false }};
                 var newpost = new KeyPoint('{{ post.id }}',
  		               '{{ post.startTime }}',

@@ -217,10 +217,19 @@ var postArray = new Array();
     <div class="row-fluid" id="thread-reply-container">
     <div class="span11">
         {% if threadposts|length > 0 %}
+        <script type="text/javascript">
+			var authorColors = new Array();
+        </script>
             {% for post in threadposts %}
             
             <script type="text/javascript">
             	var options = new Array();
+            	
+            	if (typeof authorColors['{{ post.author.getId }}'] === 'undefined')
+            	{
+            		authorColors['{{ post.author.getId }}'] = Player.getRandomColor();
+            	}
+            	options.color =  authorColors['{{ post.author.getId }}'];
             	options.drawOnTimeLine = {{ post.isTemporal ? 'true' : 'false' }};
                 var newpost = new KeyPoint('{{ post.id }}',
                 		               '{{ post.startTime }}',

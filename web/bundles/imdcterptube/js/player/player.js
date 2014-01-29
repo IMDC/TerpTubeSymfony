@@ -19,8 +19,8 @@ Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
 // Player.EVENT_COMMENT_MOUSE_OVER = "player_comment_mouse_over";
 // Player.EVENT_COMMENT_MOUSE_OUT = "player_comment_mouse_out";
 Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over"; // sends
-																	// coords in
-																	// array
+// coords in
+// array
 Player.EVENT_KEYPOINT_MOUSE_OUT = "player_keypoint_mouse_out";
 Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click"; // sends coords in array
 Player.EVENT_KEYPOINT_BEGIN = "player_keypoint_begin";
@@ -433,6 +433,7 @@ Player.prototype.drawKeyPoint = function(keyPoint) {
 	var context = $(this.elementID).find(
 			".videoControlsContainer.track.selectedRegion").eq(0)[0]
 			.getContext("2d");
+	context.strokeStyle = 'black';
 	if (keyPoint.paintHighlighted == true) {
 		context.globalAlpha = 1;
 		context.fillStyle = keyPoint.options.highlightedColor;
@@ -447,6 +448,8 @@ Player.prototype.drawKeyPoint = function(keyPoint) {
 	if (endX > this.trackPadding + this.trackWidth)
 		endX = this.trackPadding + this.trackWidth;
 	context.fillRect(startX, this.trackPadding, endX - startX,
+			densityBarElement.height() - 2 * this.trackPadding);
+	context.strokeRect(startX, this.trackPadding, endX - startX,
 			densityBarElement.height() - 2 * this.trackPadding);
 	context.globalAlpha = 1;
 };
@@ -819,7 +822,7 @@ Player.prototype.repaint = function() {
 		} else if (this.options.updateTimeType == Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE) {
 			this.updateTimeBox(time, this.getDuration());
 		}
-		if (!this.areaSelectionEnabled) {
+		if (!this.options.areaSelectionEnabled) {
 			// if (this.redrawComments == true) {
 			// this.drawComments();
 			// }
@@ -829,6 +832,8 @@ Player.prototype.repaint = function() {
 			if (this.redrawKeyPoints == true) {
 				this.clearPlayer();
 				this.drawKeyPoints();
+				// FIXME something weird is happening here. it should not go
+				// here if areaSelectionEnabled is false
 			}
 		}
 	}
@@ -907,7 +912,7 @@ Player.prototype.checkKeyPointsTime = function() {
 
 		if (currentTime < keyPoint.startTime) {
 			keyPoint.playing = false;
-			
+
 		}
 
 		// code from Kristian Ott
@@ -1772,20 +1777,20 @@ Player.prototype.setControlsEnabled = function(flag) {
 };
 
 Player.prototype.setVolumeBarVisible = function(flag) {
+	var volumeSlider = $(this.elementID).find(
+			".videoControlsContainer.volumeControl.volumeSlider").eq(0);
+	if ((volumeSlider.css("display") == "none") != flag)
+		return;
 	if (flag)
 		// $("#volumeSlider").css("display", "block");
-		$(this.elementID).find(
-				".videoControlsContainer.volumeControl.volumeSlider").eq(0)
-				.show('slide', {
-					direction : "right"
-				}, 200);
+		volumeSlider.show('slide', {
+			direction : "right"
+		}, 200);
 	else
 		// $("#volumeSlider").css("display", "none");
-		$(this.elementID).find(
-				".videoControlsContainer.volumeControl.volumeSlider").eq(0)
-				.hide('slide', {
-					direction : "right"
-				}, 200);
+		volumeSlider.hide('slide', {
+			direction : "right"
+		}, 200);
 };
 
 Player.prototype.toggleMute = function() {
@@ -1869,7 +1874,7 @@ function getTimeCodeFromSeconds(time, duration, separator) {
 		return result + separator + resultDuration;
 }
 
-function get_random_color() {
+Player.getRandomColor = function() {
 	var letters = '0123456789ABCDEF'.split('');
 	var color = '#';
 	for (var i = 0; i < 6; i++) {
@@ -1886,7 +1891,7 @@ function get_random_color() {
  * 
  * The options parameter contains the following variables: drawOnTimeLine =
  * true; - Whether to draw the keypoint on the timeline color =
- * get_random_color(); - the default color to draw the keypoint with
+ * Player.getRandomColor(); - the default color to draw the keypoint with
  * highlightedColor = "#FF0000"; - the default color when the keypoint is
  * highlighted (e.g. onHover, onClick, etc.)
  * 
@@ -1899,7 +1904,7 @@ function KeyPoint(id, startTime, endTime, type, options) {
 
 	this.options = {
 		drawOnTimeLine : true,
-		color : get_random_color(),
+		color : Player.getRandomColor(),
 		highlightedColor : "#FF0000"
 	};
 	if (typeof options !== 'undefined') {
