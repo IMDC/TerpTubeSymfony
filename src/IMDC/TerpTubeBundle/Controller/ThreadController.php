@@ -456,29 +456,28 @@ class ThreadController extends Controller
         $threadToDelete = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
         $parentForum = $threadToDelete->getParentForum();
         
-        if (!$user->getThreads()->contains($threadToDelete) && $threadToDelete->getCreator() !== $user) {
+        if ($user->getThreads()->contains($threadToDelete) && $threadToDelete->getCreator() === $user) {
+            $em->remove($threadToDelete);
+            $em->flush();
+            
             $this->get('session')->getFlashBag()->add(
-                    'notice',
-                    'You do not have permission to delete this post'
+                'success',
+                'Post successfully deleted!'
             );
-            $refer = $request->headers->get('referer');
-            return new RedirectResponse($referer);
+            
+            if ($parentForum) {
+                return $this->redirect($this->generateUrl('imdc_forum_view_specific', array('forumid'=>$parentForum->getId())));
+            }
+            else {
+                return $this->redirect($this->generateUrl('imdc_forum_list'));
+            }
         }
-        
-        $em->remove($threadToDelete);
-        $em->flush();
         
         $this->get('session')->getFlashBag()->add(
-            'success',
-            'Post successfully deleted!'
+            'error',
+            'You do not have permission to delete this post'
         );
-
-        if ($parentForum) {
-            return $this->redirect($this->generateUrl('imdc_forum_view_specific', array('forumid'=>$parentForum->getId())));
-        }
-        else {
-            return $this->redirect($this->generateUrl('imdc_forum_list'));
-        }
+        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
         
     }
     
