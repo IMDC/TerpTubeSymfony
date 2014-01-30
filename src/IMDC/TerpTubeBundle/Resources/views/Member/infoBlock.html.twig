@@ -20,16 +20,20 @@
                 </li>
                 <li>
                     {% if thisistheuser is defined %}
-                    <i class="fa fa-heart" style="color:gray"></i>
+                    <i class="fa fa-user" style="color:gray" title="This is you"></i>
                     {% elseif app.user.isUserOnFriendsList(member) %}
-                    <i class="fa fa-heart" style="color:green" title="Already friends"></i>
+                    <i class="fa fa-group" style="color:green" title="Already friends"></i>
                     {% else %}
-                    <a href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}"><i class="fa fa-heart"></i></a>
+                    <a href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}"><i class="fa fa-plus"></i></a>
                     {% endif %}
                 </li>
            </ul>
-       </p>    
-       <p>{{ 'member.infoBlock.joined'|trans }}: {{ member.getJoinDate()|date('M j Y') }}</p>
-       <p>{{ 'member.infoBlock.postCount'|trans }}: {{ member.getPostCount() }}</p>
+       </p>
+       <ul class="unstyled">
+           <li class="muted" style="font-size:80%;">{{ 'member.infoBlock.joined'|trans }}: {{ member.getJoinDate()|date('M j Y') }}</li>
+           <li class="muted" style="font-size:80%;">{{ 'member.infoBlock.postCount'|trans }}: {{ member.getPostCount() }}</li>
+       </ul>
+{#        <p class="muted" style="font-size:80%;">{{ 'member.infoBlock.joined'|trans }}: {{ member.getJoinDate()|date('M j Y') }}</p>#}
+{#        <p class="muted" style="font-size:80%;">{{ 'member.infoBlock.postCount'|trans }}: {{ member.getPostCount() }}</p>#}
    </div> <!--  /thread-creator-info-wrap -->
 </div> <!-- /row-fluid -->

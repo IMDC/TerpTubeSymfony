@@ -24,6 +24,7 @@ use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Permissions;
 use IMDC\TerpTubeBundle\IMDCTerpTubeBundle;
+use IMDC\TerpTubeBundle\Form\Type\ThreadFormDeleteType;
 
 
 class ThreadController extends Controller
@@ -392,7 +393,7 @@ class ThreadController extends Controller
          
         $threadeditform = $this->createForm(new ThreadEditFormType(), $threadToEdit,
                 array('user' => $user,
-                        'thread' => $threadToEdit,
+                      'thread' => $threadToEdit,
                 ));
          
         $threadeditform->handleRequest($request);
@@ -434,12 +435,12 @@ class ThreadController extends Controller
         }
          
         // form not valid, show the basic form
-        return $this
-        ->render('IMDCTerpTubeBundle:Thread:editThread.html.twig',
+        return $this->render('IMDCTerpTubeBundle:Thread:editThread.html.twig',
                 array('form' => $threadeditform->createView(),
-                        'thread' => $threadToEdit,
-                ));
+                      'thread' => $threadToEdit,
+        ));
     }
+    
     
     public function deleteThreadAction(Request $request, $threadid)
     {
@@ -457,27 +458,44 @@ class ThreadController extends Controller
         $parentForum = $threadToDelete->getParentForum();
         
         if ($user->getThreads()->contains($threadToDelete) && $threadToDelete->getCreator() === $user) {
-            $em->remove($threadToDelete);
-            $em->flush();
             
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                'Post successfully deleted!'
-            );
+            // create the thread delete form
+            $threadDeleteForm = $this->createForm(new ThreadFormDeleteType(), $threadToDelete);
+             
+            $threadDeleteForm->handleRequest($request);
+             
+            if ($threadDeleteForm->isValid()) {
             
-            if ($parentForum) {
-                return $this->redirect($this->generateUrl('imdc_forum_view_specific', array('forumid'=>$parentForum->getId())));
+                $em->remove($threadToDelete);
+                $em->flush();
+                
+                $this->get('session')->getFlashBag()->add(
+                    'success',
+                    'Post successfully deleted!'
+                );
+                
+                if ($parentForum) {
+                    return $this->redirect($this->generateUrl('imdc_forum_view_specific', array('forumid'=>$parentForum->getId())));
+                }
+                else {
+                    return $this->redirect($this->generateUrl('imdc_forum_list'));
+                }
             }
-            else {
-                return $this->redirect($this->generateUrl('imdc_forum_list'));
-            }
+            
+            // form not valid or not submitted yet, show the basic form
+            return $this->render('IMDCTerpTubeBundle:Thread:deleteThread.html.twig',
+                array('form' => $threadDeleteForm->createView(),
+                      'thread' => $threadToDelete,
+            ));
+            
         }
-        
-        $this->get('session')->getFlashBag()->add(
-            'error',
-            'You do not have permission to delete this post'
-        );
-        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+        else { // user doesn't own this thread to delete it
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                'You do not have permission to delete this post'
+            );
+            return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+        }
         
     }
     
