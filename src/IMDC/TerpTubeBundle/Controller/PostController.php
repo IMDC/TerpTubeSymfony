@@ -20,6 +20,7 @@ use IMDC\TerpTubeBundle\Form\Type\PostFormType;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
+use IMDC\TerpTubeBundle\Form\Type\PostReplyToPostFormType;
 
 class PostController extends Controller
 {
@@ -121,7 +122,7 @@ class PostController extends Controller
 	        }
 	        
 	        $user->addPost($newpost);
-	        $user->increasePostCount(1);
+	        $user->increasePostCount(1); // necessary?
 	         
 	        // request to persist objects to database
 	        $em->persist($user);
@@ -396,6 +397,63 @@ class PostController extends Controller
 	     
 	}
 	
+	
+	public function replyPostAction(Request $request, $pid) 
+	{
+	    // check if user logged in
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+	    {
+	        return $this->redirect($this->generateUrl('fos_user_security_login'));
+	    }
+	     
+	    $user = $this->getUser();
+	    $em = $this->getDoctrine()->getManager();
+	     
+	    $postToReplyTo = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+	    
+	    $replyPost = new Post();
+	    $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
+	     
+	    $postReplyForm->handleRequest($request);
+	     
+	    if ($postReplyForm->isValid()) {
+	        
+	        $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+	        if (!$postReplyForm->get('mediatextarea')->isEmpty()) {
+	             
+	            $rawmediaID = $postReplyForm->get('mediatextarea')->getData();
+	            $logger = $this->container->get('logger');
+	            $logger->info('*************media id is ' . $rawmediaID);
+	            $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
+	             
+	            if ($user->getResourceFiles()->contains($mediaFile)) {
+	                $logger = $this->get('logger');
+	                $logger->info('User owns this media file');
+	                $replyPost->addAttachedFile($mediaFile);
+	            }
+	             
+	        }
+	        
+	        $replyPost->setAuthor($user);
+	        $replyPost->setCreated(new \DateTime('now'));
+	        $replyPost->setParentPost($postToReplyTo);
+	        $postToReplyTo->addReplies($replyPost);
+	        
+	        $em->persist($replyPost);
+	        $em->flush();
+	         
+	        $this->get('session')->getFlashBag()->add(
+	            'success',
+	            'Reply created successfully!'
+	        );
+	         
+	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array(
+	            'threadid'=>$postToReplyTo->getParentThread()->getId()
+	        )));
+	    }
+	    
+	}
+	
 	public function replyPostAjaxAction(Request $request, $pid)
 	{
 	    // check if user logged in
@@ -404,24 +462,44 @@ class PostController extends Controller
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
 	    
+	    // $pid is the post you are replying to!
+	    
 	    //$request = $this->get('request');
 	    //$postid = $request->request->get('pid');
 	    
 	    
-	    // if not ajax, throw an error
+	    // if not ajax, we are submitting a form
 	    if (!$request->isXmlHttpRequest()) {
 	        throw new BadRequestHttpException('Only Ajax POST calls accepted');
+	        
+// 	        $form->handleRequest($request);
+    	    
+//     	    $validator = $this->get('validator');
+//     	    $formerrors = $validator->validate($newpost);
+    	
+//     	    if ($form->isValid()) {
+    	        
+//     	    }
 	    }
 	    
 	    $user = $this->getUser();
 	    $em   = $this->getDoctrine()->getManager();
 	    
-	    $postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+	    $postToReplyTo = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
 	    
-        $posteditform = $this->createForm(new PostReplytoPostFormType(), $postToEdit,
-            array('user' => $user,
-        ));
-    
+	    $replyPost = new Post();
+	    $replyPost->setAuthor($user);
+	    $replyPost->setParentPost($postToReplyTo);
+	    $replyPost->setParentThread($postToReplyTo->getParentThread());
+	    
+        $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
         
+        $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:replyPostAjax.html.twig',
+            array('form' => $postReplyForm->createView(), 'post' => $replyPost));
+        
+        $return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
+        
+        $return = json_encode($return); // json encode the array
+        return new Response($return, 200, array('Content-Type' => 'application/json'));
 	}
 }

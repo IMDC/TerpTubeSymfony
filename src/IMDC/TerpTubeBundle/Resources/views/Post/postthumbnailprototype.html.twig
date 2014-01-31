@@ -34,7 +34,11 @@
 		                </div>
 		                {% else %}
 	                	<div class="span9">
+	                	    {% if post.getParentThread is null %}
+		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentPost.getParentThread.getId}) }}#{{ post.id }}">
+		                	{% else %}
 		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
+		                	{% endif %}
 		                	{{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: postMediaFile}, with_context = false) }}
 		                		<div class="row-fluid">
 		                		{{ post.content|truncate(60) }}

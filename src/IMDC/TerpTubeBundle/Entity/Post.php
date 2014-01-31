@@ -372,7 +372,7 @@ class Post
      * @param \IMDC\TerpTubeBundle\Entity\Post $replies
      * @return Post
      */
-    public function addReplie(\IMDC\TerpTubeBundle\Entity\Post $replies)
+    public function addReplies(\IMDC\TerpTubeBundle\Entity\Post $replies)
     {
         $this->replies[] = $replies;
     

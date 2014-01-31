@@ -38,6 +38,13 @@ div.post-reply-content {
     overflow-y: auto;
 }
 
+div.offset-comment-reply-wrap {
+     border: 1px solid #ddd;
+     border-collapse: collapse;
+     padding-top: 5px;
+     padding-bottom: 10px;
+}
+
 a#selectFiles {
 	vertical-align: top;
 }

@@ -18,7 +18,7 @@ $(document).ready(function() {
 		mediaChooser = new MediaChooser($("div#files"), function(mediaID)
 			 	{
 //			 		alert(mediaID);
-		            setMediaID(mediaID);
+		            setMediaID($("#PostFormFromThread_mediatextarea"),mediaID);
 		 		}, true);
 		mediaChooser.chooseMedia();
 	});
@@ -44,7 +44,7 @@ $(document).ready(function() {
 	/**
 	 * launch the modal dialog to delete a comment when you click the trash icon
 	 */
-	$("a#post-comment-delete-modal").click(function(e) {
+	$("a.post-comment-delete-modal").click(function(e) {
 		e.preventDefault();
 		var p_id = $(this).data('pid');
 		
@@ -53,13 +53,13 @@ $(document).ready(function() {
 		$("#modaldiv").modal('toggle');
 	});
 	
-	$("a#post-comment-edit").click(function(e) {
+	$("a.post-comment-edit").click(function(e) {
 		
 		var p_id = $(this).data("pid");
 		var $theEditLink = $(this);
 		
 		// prevent the click from scrolling the page
-		event.preventDefault();
+		e.preventDefault();
 		
 		// the comment wrap in question    
 		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
@@ -96,49 +96,122 @@ $(document).ready(function() {
 		});
 	});
 	
+//	$("a.post-comment-edit").click(function(event) {
+//    	
+//    	var p_id = $(this).data("pid");
+//    	var $theEditLink = $(this);
+//    	var $theWholePost = $("div#post-" + p_id + "-wrap");
+//    	
+//    	// prevent the click from scrolling the page
+//    	event.preventDefault();
+//    	
+//    	$.ajax({
+//    		url : Routing.generate('imdc_post_edit_specific_ajax', {pid: p_id}),
+//    		type : "POST",
+//    		contentType : "application/x-www-form-urlencoded",
+//    		data :
+//    		{
+//    			pid : p_id
+//    		},
+//    		success : function(data)
+//    		{
+//    			console.log("success");
+//    			console.log(data);
+//    			
+//                // remove the entire post and replace it with the post form
+//    			$theWholePost.append(data);
+//    			$theWholePost.remove();
+//    		},
+//    		error : function(request)
+//    		{
+//    			console.log(request);
+//    			alert(request.statusText);
+//    		}
+//    	});
+//
+//    });
+//	
 	
-	$("a#post-comment-reply").click(function(e) {
-		
-		var p_id = $(this).data("pid");
-		var $theReplyLink = $(this);
-		
-		// prevent the click from scrolling the page
-		event.preventDefault();
-		
-		// the comment wrap in question    
-		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
-		
-		// fade out the original comment
-		//$theWholeComment.fadeOut('slow');
-		
-		// ajax call to get the edit comment form
-		$.ajax({
-			url : Routing.generate('imdc_post_reply_ajax_specific', {pid: p_id}),
-			type : "POST",
-			contentType : "application/x-www-form-urlencoded",
-			data :
-			{
-				pid : p_id
-			},
-			success : function(data)
-			{
-				console.log("success");
-				console.log(data);
-				
-				$oldcomment = $theWholeComment.clone();
-				
-				$theWholeComment.find("div.post-" + p_id + "-wrap").append(data.form);
-				//$theWholeComment.hide();
+//	$("a.post-comment-reply").click(function(e) {
+//		
+//		var p_id = $(this).data("pid");
+//		var $theReplyLink = $(this);
+//		
+//		// prevent the click from scrolling the page
+//		e.preventDefault();
+//		
+//		// the comment wrap in question    
+//		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
+//		
+//		// fade out the original comment
+//		//$theWholeComment.fadeOut('slow');
+//		
+//		// ajax call to get the edit comment form
+//		$.ajax({
+//			url : Routing.generate('imdc_post_reply_ajax_specific', {pid: p_id}),
+//			type : "POST",
+//			contentType : "application/x-www-form-urlencoded",
+//			data :
+//			{
+//				pid : p_id
+//			},
+//			success : function(data)
+//			{
+//				console.log("success");
+//				console.log(data);
+//				
+//				$oldcomment = $theWholeComment.clone();
+//				
+//				$theWholeComment.find("div.post-" + p_id + "-wrap").append(data.form);
+//				//$theWholeComment.hide();
+//
+//			},
+//			error : function(request)
+//			{
+//				console.log(request);
+//				$theWholeComment.fadeIn('slow');
+//				alert(request.statusText);
+//			}
+//		});
+//	});
+	
+	$("a.post-comment-reply").click(function(event) {
+    	var p_id = $(this).data("pid");
+    	var $theReplyLink = $(this);
+    	var $theWholePost = $("div#post-" + p_id + "-wrap");
+    	
+    	// prevent the click from scrolling the page
+    	event.preventDefault();
+    	
+    	$.ajax({
+    		url : Routing.generate('imdc_post_reply_ajax_specific', {pid: p_id}),
+    		type : "POST",
+    		contentType : "application/x-www-form-urlencoded",
+    		data :
+    		{
+    			pid : p_id
+    		},
+    		success : function(data)
+    		{
+    			console.log("success");
+    			console.log(data);
+    			
+                // append the post form
+    			$theWholePost.find("#post-"+p_id+"-reply-content").append(data.form);
+    			
+    			// hide the reply link
+    			$theReplyLink.hide();
+//    			$theWholePost.remove();
+    		},
+    		error : function(request)
+    		{
+    			console.log(request);
+    			alert(request.statusText);
+    		}
+    	});
 
-			},
-			error : function(request)
-			{
-				console.log(request);
-				$theWholeComment.fadeIn('slow');
-				alert(request.statusText);
-			}
-		});
-	});
+    });
+	
 	
 	
 	/**
@@ -289,6 +362,11 @@ $(document).ready(function() {
 //    }
     
 	
+    
+    
+    
+    
+    
 
 }); // end of document.ready
 
@@ -334,7 +412,7 @@ function initVideoCaptioningFunction(videodomelement, ccnormalimgpath, ccpressed
  * When you click on the trash icon to delete a post, you have to confirm via
  * a dialog and then it ajax deletes the post
  */
-$("a#post-comment-delete").click(function(event) {
+$("a.post-comment-delete").click(function(event) {
 	
 	var p_id = $(this).data("pid");
 	var $theDeleteLink = $(this);
@@ -587,8 +665,9 @@ function scrollPostIntoView(postid) {
 //								- $postContainer.height()/2 + $($targetElement).height()/2);
 }
 
-function setMediaID(mid) {
-    $("#PostFormFromThread_mediatextarea").val(mid);
+function setMediaID(elem, mid) {
+	elem.val(mid);
+    //$("#PostFormFromThread_mediatextarea").val(mid);
  }
 
 function getPostDomObject(comment) {
@@ -820,40 +899,7 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
     });
 }
 
-/*
-$("a#post-comment-edit").click(function(event) {
-	
-	var p_id = $(this).data("pid");
-	var $theEditLink = $(this);
-	var $theWholePost = $("div#post-" + p_id + "-wrap");
-	
-	// prevent the click from scrolling the page
-	event.preventDefault();
-	
-	$.ajax({
-		url : Routing.generate('imdc_post_edit_specific_ajax', {pid: p_id}),
-		type : "POST",
-		contentType : "application/x-www-form-urlencoded",
-		data :
-		{
-			pid : p_id
-		},
-		success : function(data)
-		{
-			console.log("success");
-			console.log(data);
-			
-            // remove the entire post and replace it with the post form
-			$theWholePost.append(data);
-			$theWholePost.remove();
-		},
-		error : function(request)
-		{
-			console.log(request);
-			alert(request.statusText);
-		}
-	});
 
-});
-*/
+
+
 

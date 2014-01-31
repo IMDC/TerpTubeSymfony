@@ -120,7 +120,7 @@ class AddFileGatewayController extends Controller
 				$em->flush();
 
 				$this->container->get('session')->getFlashBag()
-						->add('media', 'Audio file uploaded successfully successfully!');
+						->add('media', 'Audio file uploaded successfully!');
 
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($audioMedia);
@@ -199,7 +199,7 @@ class AddFileGatewayController extends Controller
 				$em->flush();
 
 				$this->container->get('session')->getFlashBag()
-						->add('media', 'Video file uploaded successfully successfully!');
+						->add('media', 'Video file uploaded successfully!');
 
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($videoMedia);
@@ -278,7 +278,7 @@ class AddFileGatewayController extends Controller
 				$em->flush();
 
 				$this->container->get('session')->getFlashBag()
-						->add('media', 'Image file uploaded successfully successfully!');
+						->add('media', 'Image file uploaded successfully!');
 
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($imageMedia);
@@ -515,7 +515,7 @@ class AddFileGatewayController extends Controller
 				$em->flush();
 
 				$this->container->get('session')->getFlashBag()
-						->add('media', 'File uploaded successfully successfully!');
+						->add('media', 'File uploaded successfully!');
 
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($otherMedia);

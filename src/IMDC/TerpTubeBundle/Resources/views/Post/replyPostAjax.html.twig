@@ -1,0 +1,36 @@
+<div class="row-fluid" id="post-{{ post.id }}-comment-reply-form-wrap">
+	<div class="span12">
+	{# set formpath = path(app.request.attributes.get("_route"), {'pid' : post.id}) #}
+	{% set formpath = path('imdc_post_reply_specific', {'pid' : post.parentPost.id}) %}
+	
+	{{ form_start(form, {'action' : "#{formpath}"}) }}
+	    {{ form_errors(form) }}
+	    <div class="controls controls-row">
+	        <a class="btn btn-primary" id="selectFiles-{{ post.id }}" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
+	        {{ form_widget(form.mediatextarea, {'attr': {"class":"fileDisplay"}}) }}{{ form_errors(form.mediatextarea) }}
+	    </div>
+	    <div id="files-{{ post.id }}"></div>
+	    {{ form_row(form.content, {'attr': {'style':'width:90%', 'class':'autosize'}}) }}
+	    <div class="controls controls-row">
+	        {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
+	        <a href="#" class="btn btn-danger" id="post-{{ post.id }}-comment-reply-form-cancel-button"><i class="fa fa-times"></i> Cancel</a>
+	    </div>
+	
+	{{ form_end(form) }}
+	</div>
+</div>
+<script>
+$("a#post-{{ post.id }}-comment-reply-form-cancel-button").click( function() {
+	$("div#post-{{ post.id }}-comment-reply-form-wrap").remove();
+// 	$("a.post-comment-reply").data('post.id');
+});
+$("a#selectFiles-{{ post.id }}").on('click', function() {
+	console.log('inside select files click method');
+	mediaChooser = new MediaChooser($("div#files-{{ post.id }}"), function(mediaID)
+		 	{
+//		 		alert(mediaID);
+	            setMediaID($("a#selectFiles-{{ post.id }}").parent().find("input.fileDisplay").first(), mediaID);
+	 		}, true);
+	mediaChooser.chooseMedia();
+});
+</script>
