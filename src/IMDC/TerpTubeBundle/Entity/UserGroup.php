@@ -65,6 +65,11 @@ class UserGroup
     private $joinByInvitationOnly;
     
     /**
+     * @var \IMDC\TerpTubeBundle\Entity\Forum
+     */
+    private $userGroupForum;
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -384,5 +389,29 @@ class UserGroup
     public function __toString()
     {
         return $this->name;
+    }
+
+
+    /**
+     * Set userGroupForum
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Forum $userGroupForum
+     * @return UserGroup
+     */
+    public function setUserGroupForum(\IMDC\TerpTubeBundle\Entity\Forum $userGroupForum = null)
+    {
+        $this->userGroupForum = $userGroupForum;
+    
+        return $this;
+    }
+
+    /**
+     * Get userGroupForum
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Forum 
+     */
+    public function getUserGroupForum()
+    {
+        return $this->userGroupForum;
     }
 }

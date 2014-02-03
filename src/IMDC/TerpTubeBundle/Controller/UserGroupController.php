@@ -20,6 +20,7 @@ use FOS\UserBundle\Model\UserManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
+use IMDC\TerpTubeBundle\Entity\Forum;
 
 class UserGroupController extends Controller
 {
@@ -138,7 +139,7 @@ class UserGroupController extends Controller
 
 		$newusergroup = new UserGroup();
 
-		$form = $this->createForm(new UserGroupType(), $newusergroup);
+		$form = $this->createForm(new UserGroupType(new Forum()), $newusergroup);
 
 		$form->handleRequest($request);
 
@@ -148,6 +149,14 @@ class UserGroupController extends Controller
 			$newusergroup->setUserFounder($user);
 			$newusergroup->addAdmin($user);
 			$newusergroup->addMember($user);
+			$newusergroup->getUserGroupForum()->setTitleText($newusergroup->getName());
+			$newusergroup->getUserGroupForum()->setCreationDate(new \DateTime('now'));
+			$newusergroup->getUserGroupForum()->setLastActivity(new \DateTime('now'));
+			$newusergroup->getUserGroupForum()->setCreator($user);
+			
+			//TODO: make sure to set forum permissions on newly created forum to be 'group only' when permission are used
+			
+			
 			$user->addUserGroup($newusergroup);
 
 			$em = $this->getDoctrine()->getManager();

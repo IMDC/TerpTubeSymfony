@@ -10,15 +10,7 @@ use Doctrine\ORM\EntityRepository;
 class ForumFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
-	{
-	    
-	    $builder->add('titleText', null, array('label' => 'Text Title'));
-	    
-	    // User type
-	    $user = $options['user'];
-	    
-	    $userid = $user->getId();
-	    
+	{    
 	    $builder->add('mediatextarea', 'text', array('required' => false, 
 	                                                'mapped' => false,
 	                                                'read_only' => true,
@@ -26,7 +18,7 @@ class ForumFormType extends AbstractType
                                                     'attr' => array('cols' => 1,
                                                                     'rows' => 1)));
 
-
+	    $builder->add('titleText', null, array('label' => 'Text Title'));
 		$builder->add('submit', 'submit');
 	}	
 
@@ -38,12 +30,5 @@ class ForumFormType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\Forum',));
-		
-		$resolver->setRequired(array(
-		        'user',
-        ));
-		$resolver->setAllowedTypes(array(
-		        'user' => 'IMDC\TerpTubeBundle\Entity\User',
-		));
 	}
 }

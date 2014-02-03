@@ -1,15 +1,73 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/UserGroup/new.html.twig #}
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
-{% block title %}New UserGroup{% endblock title %}
+{% block title %}New Group{% endblock title %}
 
 {% block herounit %}
-<h1>Create a new UserGroup</h1>
+<h1>Create a new Group</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
 <div class="span9">
-    {{ form(form) }}
+    {{ form_start(form) }}
+        {{ form_row(form.name) }}
+        {{ form_row(form.visibleToPublic) }}
+        {{ form_row(form.visibleToRegisteredUsers) }}
+        {{ form_row(form.openForNewMembers) }}
+        {{ form_row(form.joinByInvitationOnly) }}
+        <div class="row-fluid well">
+            <p>When you create a new Group, a Forum is automatically created for you with the same name</p>
+	        <p>
+	            Please add a media file (audio, video, image) to this forum, eg. a group logo or picture:<br />
+		        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Forum Media File</a>
+{# 		        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini', 'placeholder':'File ID'}}) }}{{ form_errors(form.mediatextarea) }}#}
+                {{ form_widget(form.userGroupForum.mediatextarea, {'attr' : {'class':'input-mini', 'placeholder':'File ID'}}) }}{{ form_errors(form.userGroupForum.mediatextarea) }}
+		        <div id="files"></div>
+		        {{ form_row(form.userGroupForum.titleText, {'required': false, 'attr' : {'style':'display:none;'}}) }}
+	        </p>
+        </div>
+        <div class="row-fluid">
+            {{ form_widget(form.submit, {'attr' : {'style':'display:none;'}}) }}
+            <a id="usergroup-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
+            <a id="usergroup-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
+        </div>
+    
+    {{ form_end(form) }}
 </div>
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
+
+{% block javascripts %}
+ {{ parent() }}
+ <script type='text/javascript'>
+ var mediaChooser;
+ $("#selectFiles").click(function(e) {
+ 	mediaChooser = new MediaChooser($("#files"), function(mediaID)
+ 		 	{
+		 		//alert(mediaID);
+ 	            setMediaID(mediaID);
+	 		}, true);
+ 	mediaChooser.chooseMedia();
+ });
+
+ function setMediaID(mid) {
+	    $("#ForumForm_mediaID").attr('data-mid', mid);
+	    $("#UserGroupForm_userGroupForum_mediatextarea").val(mid);
+	    
+	    //alert(mid);
+};
+
+$(document).ready(function() {
+    // since I hid the real 'submit' button to provide a nicely stylized button
+    // I have to click the real button when you click on the fancy one
+    $("#usergroup-form-submit-button").click(function(e) {
+        e.preventDefault();
+    	$("button#UserGroupForm_submit").click();
+    	
+    });
+});
+
+</script>
+ 
+
+{% endblock javascripts %}
