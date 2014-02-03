@@ -54,18 +54,25 @@ var postArray = new Array();
          
          {# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%     thread owner stuff %%%%%%%%%%%%%%%%%%%%%%%%%% #}
          
-	    {% if app.user == thread.creator %}
+	    
 	    <div class="row-fluid">
 	        <div class="pull-left" id="thread-creator-toolbox">
 	            <ul class="unstyled inline">
+	            {% if app.user == thread.creator %}
 	                <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class=""><i class="fa fa-scissors"></i> Edit</a></li>
 	                <li><a href="{{ path('imdc_thread_delete', {'threadid':thread.id}) }}" class=""><i class="fa fa-minus-circle"></i> Delete</a></li>
+                {% endif %}
+                {% set threadPermission = thread.getPermissions.accessLevel %}
+                    <li>{% include 'IMDCTerpTubeBundle:Permissions:permissionIcons.html.twig' %}</li>
 	            </ul>
 	        </div>
 	    </div>
-	    {% endif %}
+	    
+	    
     
          {# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%  end thread owner stuff %%%%%%%%%%%%%%%%%%%%%%%%%% #}
+         
+         
 
      {% if thread.mediaIncluded|length != 0 %}
         {% set mediaFile = thread.mediaIncluded[0] %}

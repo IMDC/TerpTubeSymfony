@@ -86,6 +86,37 @@ class Permissions
     }
     
     
+    public function getAccessLevelStringFromInteger()
+    {
+//         const ACCESS_PUBLIC = -1;
+//         const ACCESS_CREATOR = 0;
+//         const ACCESS_CREATORS_FRIENDS = 1;
+//         const ACCESS_WITH_LINK = 2;
+//         const ACCESS_USER_LIST = 3;
+//         const ACCESS_GROUP_LIST = 4;
+//         const ACCESS_REGISTERED_MEMBERS = 5;
+
+        switch ($this->getAccessLevel()) {
+        	case Permissions::ACCESS_PUBLIC:
+        	    return 'Anyone can view';
+        	    break;
+        	case Permissions::ACCESS_CREATOR:
+    	    case Permissions::ACCESS_CREATORS_FRIENDS:
+	        case Permissions::ACCESS_USER_LIST:
+	        case Permissions::ACCESS_GROUP_LIST:
+    	        return 'Private';
+    	        break;
+	        case Permissions::ACCESS_WITH_LINK:
+	            return 'Anyone with link can view';
+                break;
+	        case Permissions::ACCESS_REGISTERED_MEMBERS:
+	            return 'Registered members only';
+        	default:
+        	    return 'Access not defined';
+        	break;
+        }
+    }
+    
     /**
      * Add userGroupsWithAccess
      *

@@ -39,3 +39,7 @@ span.contentTimeStampSpan {
     font-size: 85%;
     color: #ccc;
 }
+
+video.preview {
+    border: 1px solid #ddd;
+}
