@@ -387,24 +387,6 @@ Player.prototype.removeKeyPoint = function(keyPoint) {
 	}
 };
 
-// Player.prototype.addComment = function(comment) {
-// this.comments.push(comment);
-// this.redrawComments = true;
-// this.repaint();
-// // this.drawComments();
-// };
-
-// Player.prototype.removeComment = function(commentID) {
-// for (var i = 0; i < this.comments.length; i++) {
-// if (this.comments[i].id == commentID) {
-// this.comments.splice(i, 1);
-// this.redrawComments = true;
-// this.repaint();
-// return;
-// }
-// }
-// };
-
 Player.prototype.drawKeyPoints = function() {
 	this.redrawKeyPoints = false;
 	// console.log("DrawComments called");
@@ -454,88 +436,6 @@ Player.prototype.drawKeyPoint = function(keyPoint) {
 	context.globalAlpha = 1;
 };
 
-//
-// Player.prototype.drawComments = function() {
-// this.redrawComments = false;
-// // console.log("DrawComments called");
-// if (!this.comments) {
-// return;
-// }
-//
-// // Draw comments that are not highlighted first
-// for (var i = 0; i < this.comments.length; i++) {
-// if (!this.comments[i].paintHighlighted)
-// this.drawComment(this.comments[i]);
-// }
-// // Draw comments that are highlighted last so that they go on top of others
-// for (var i = 0; i < this.comments.length; i++) {
-// if (this.comments[i].paintHighlighted == true)
-// this.drawComment(this.comments[i]);
-// }
-//
-// };
-
-// Player.prototype.drawComment = function(comment) {
-// if (comment.isTemporal == 0)
-// return;
-// var densityBarElement = $(this.elementID).find(
-// ".videoControlsContainer.track.densitybar").eq(0);
-// var context = $(this.elementID).find(
-// ".videoControlsContainer.track.selectedRegion").eq(0)[0]
-// .getContext("2d");
-// if (comment.paintHighlighted == true) {
-// context.globalAlpha = 1;
-// context.fillStyle = this.options.commentHighlightedColor;
-// } else {
-// context.globalAlpha = 0.4;
-// context.fillStyle = comment.color;
-// }
-// var startX = this.getXForTime(comment.startTime);
-// if (startX < this.trackPadding)
-// startX = this.trackPadding;
-// var endX = this.getXForTime(comment.endTime);
-// if (endX > this.trackPadding + this.trackWidth)
-// endX = this.trackPadding + this.trackWidth;
-// context.fillRect(startX, this.trackPadding, endX - startX,
-// densityBarElement.height() - 2 * this.trackPadding);
-// context.globalAlpha = 1;
-// };
-//
-// Player.prototype.drawSignLinks = function() {
-// this.redrawSignlinks = false;
-// if (!this.signLinks) {
-// return;
-// }
-// for (var i = 0; i < this.signLinks.length; i++) {
-// this.drawSignLink(this.signLinks[i], this.options.signLinkColor);
-// }
-//
-// };
-//
-// Player.prototype.drawSignLink = function(signlink, color) {
-// var densityBarElement = $(this.elementID).find(
-// ".videoControlsContainer.track.densitybar").eq(0);
-// var context = $(this.elementID).find(
-// ".videoControlsContainer.track.selectedRegion").eq(0)[0]
-// .getContext("2d");
-// context.globalAlpha = 0.4;
-//
-// context.fillStyle = color;
-// var startX = this.getXForTime(signlink.startTime);
-// if (startX < this.trackPadding)
-// startX = this.trackPadding;
-// var endX = this.getXForTime(signlink.endTime);
-// if (endX > this.trackPadding + this.trackWidth)
-// endX = this.trackPadding + this.trackWidth;
-// context.fillRect(startX, this.trackPadding, endX - startX,
-// densityBarElement.height() - 2 * this.trackPadding);
-// context.globalAlpha = 1;
-// };
-//
-// Player.prototype.setSignLinks = function(signLinksArray) {
-// this.signLinks = signLinksArray;
-//
-// };
 Player.prototype.clearPlayer = function() {
 	var densityBarElement = $(this.elementID).find(
 			".videoControlsContainer.track.densitybar").eq(0);
@@ -1882,7 +1782,7 @@ Player.getRandomColor = function() {
 	}
 
 	return color;
-}
+};
 
 /**
  * Required arguments: startTime - the starting time for the keypoint (Number)

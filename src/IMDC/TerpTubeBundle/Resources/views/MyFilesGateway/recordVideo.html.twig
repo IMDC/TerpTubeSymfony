@@ -47,6 +47,9 @@
 	 // player.options.playHeadImageOnClick = function(){ alert("plus");};
 
 	 player.createControls();
+
+	 setRecorder(player);
+	 
 	 videoElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
 		 {
 		 if (player !=null)

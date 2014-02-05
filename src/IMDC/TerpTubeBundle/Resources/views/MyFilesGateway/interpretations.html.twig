@@ -29,7 +29,7 @@
                    	<tr>
                         <td>
                             <a class="delete-button" href='#' data-url="{{ path('imdc_files_gateway_remove', {'mediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-minus-circle"></i> {{ 'filesGateway.deleteLink'|trans }}</a>
-                            {% if interpretation.getTarget.getMetaData.getSize == -1 %}
+                            {% if interpretation.getTarget.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') %}
                             <a class="preview-button disabled" href='#' data-type="{{ interpretation.type }}" data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>
                             {% else %}
                             <a class="preview-button" href='#' data-type="{{ interpretation.type }}" data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>

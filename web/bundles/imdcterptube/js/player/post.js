@@ -25,15 +25,3 @@ function postfull(pid, pthreadid, authID, textcont, start, end,
 	this.authorJoinDate = authorjoindate;
 	this.color = color;
 }
-
-//generate a random color for the rectangles
-// FIXME: make this issue nonce color's
-//function get_random_color() {
-//    var letters = '0123456789ABCDEF'.split('');
-//    var color = '#';
-//    for (var i = 0; i < 6; i++ ) {
-//        color += letters[Math.round(Math.random() * 15)];
-//    }
-//
-//    return color;
-//}
