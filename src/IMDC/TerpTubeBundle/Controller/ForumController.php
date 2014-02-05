@@ -24,6 +24,7 @@ use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\Permissions;
 
 class ForumController extends Controller
 {
@@ -179,15 +180,28 @@ class ForumController extends Controller
 	            ORDER BY t.lastPostAt DESC";
 	    
 	    $query = $em->createQuery($dql)->setParameter('fid', $forum->getId());
+	    $threads = $query->getResult();
+	    
+	    // if a thread does not have a permissions object yet, we create a new one and 
+	    // make it default private
+	    foreach ($threads as $thread) {
+	        if (!$thread->getPermissions()) {
+	            $thread->setPermissions(new Permissions());
+	            $thread->getPermissions()->setAccessLevel(Permissions::ACCESS_CREATOR);
+	            $em->persist($thread);
+	        }
+	    }
+	    $em->flush();
 	    
 	    $paginator = $this->get('knp_paginator');
 	    $pagination = $paginator->paginate(
-	        $query,
+// 	        $query,
+	        $threads,
 	        $this->get('request')->query->get('page', 1) /* page number */,
 	        8, /* limit per page */
 	        array('distinct' => false)
 	    );
-	    
+	        
 	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', 
 	        array('forum' => $forum,
 	            'threads' => $pagination)

@@ -11,6 +11,7 @@ class Permissions
 {
     const ACCESS_PUBLIC = -1;
     const ACCESS_CREATOR = 0;
+    const ACCESS_PRIVATE = 0; // synonym
     const ACCESS_CREATORS_FRIENDS = 1;
     const ACCESS_WITH_LINK = 2;
     const ACCESS_USER_LIST = 3;

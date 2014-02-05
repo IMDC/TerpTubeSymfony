@@ -1,0 +1,35 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% set profile = member.getProfile %}
+
+<div class="span2 post-reply-user-info-wrap">
+    <div class="row-fluid post-reply-user-avatar-wrap">
+        <img class="avatar" alt="avatar" title="" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+    </div>
+    <div class="row-fluid text-center post-reply-user-info">
+        <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName}) }}">{{ member.getUserName }}</a>
+    </div>
+    <div class="row-fluid text-center post-reply-user-tools">
+        <ul class="unstyled inline thread-creator-tools-wrap">
+            <li>
+                {% if app.user.getId == member.getId %}
+                {% set thisistheuser = true %}
+                <i class="fa fa-envelope-o" style="color:lightgray"></i>
+                {% else %}
+                <a href="{{ path('imdc_message_user_specific', {'userid':member.getUserName()}) }}" title="Send a message to {{ member.getUserName }}"><i class="fa fa-envelope-o"></i></a>
+                {% endif %}
+            </li>
+            {#  ---------- friend section ---------------------- #}
+            <li>
+                {% if app.user.getId == member.getId %}
+                <i class="fa fa-user" style="color:lightgray" title="This is you"></i>
+                {% elseif app.user.isUserOnFriendsList(member) %}
+                <i class="fa fa-group" style="color:green" title="Already friends"></i>
+                {% else %}
+                <a href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" title="Click to add {{ member.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
+                {% endif %}
+            </li>
+            {#  ---------------- end friend section ---------------- #}
+       </ul>
+    </div> <!-- ./post-reply-user-tools -->                    
+</div> <!-- /post-reply-user-info-wrap div -->

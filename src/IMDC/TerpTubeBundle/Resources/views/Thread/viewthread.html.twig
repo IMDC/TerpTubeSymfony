@@ -114,7 +114,7 @@ var postArray = new Array();
 				        {{ form_start(form, { 'attr' : {'id' : 'postCommentForm'} }) }}
 				            {{ form_errors(form) }}
 				            <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-				            {{ form_widget(form.mediatextarea, {'attr':{'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
+				            {{ form_widget(form.mediatextarea, {'attr':{'placeholder':'File ID','class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
 				            <div id="files"></div>
 				{#          <input type="textarea" disabled="true" id="file-textarea" />#}
 				{#          {{ form_row(form.mediaID) }}#}
@@ -179,6 +179,7 @@ var postArray = new Array();
 	            
 	            <p>
 	            <div class="row-fluid post-reply-wrap" id="post-{{ post.id }}-wrap" data-pid="{{ post.id }}">
+	                <div class="row-fluid">
 	                <div class="span2 post-reply-user-info-wrap">
 	                    <div class="row-fluid post-reply-user-avatar-wrap">
 	                        <img class="avatar" alt="avatar" title="" src="{{ post.author.getProfile.avatar ? asset(post.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
@@ -248,11 +249,13 @@ var postArray = new Array();
 	                        </ul>
 	                    </div>
 	                </div> <!-- /post-reply-tools -->
-	            
+	            </div>
 	            
 	            {####################        ******************* POST REPLIES   *******************     ######################}
 	                {% for postReply in post.replies %}
-	                    {% include 'IMDCTerpTubeBundle:Thread:commentReplies.html.twig' %}
+	                <div class="row-fluid">
+	                    {% include 'IMDCTerpTubeBundle:Post:commentReplies.html.twig' %}
+                    </div>
 	                {% endfor %} 
 	            {####################    END OF PRINTING POST REPLIES        ######################}
 	            </div> <!-- ./post-reply-wrap -->

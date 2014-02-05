@@ -454,7 +454,7 @@ class PostController extends Controller
 	    
 	}
 	
-	public function replyPostAjaxAction(Request $request, $pid)
+	public function replyPostAjaxAction(Request $request, $pid) // $pid is the post you are replying to!
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -462,24 +462,9 @@ class PostController extends Controller
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
 	    
-	    // $pid is the post you are replying to!
-	    
-	    //$request = $this->get('request');
-	    //$postid = $request->request->get('pid');
-	    
-	    
-	    // if not ajax, we are submitting a form
+	    // if not ajax, throw an exception
 	    if (!$request->isXmlHttpRequest()) {
 	        throw new BadRequestHttpException('Only Ajax POST calls accepted');
-	        
-// 	        $form->handleRequest($request);
-    	    
-//     	    $validator = $this->get('validator');
-//     	    $formerrors = $validator->validate($newpost);
-    	
-//     	    if ($form->isValid()) {
-    	        
-//     	    }
 	    }
 	    
 	    $user = $this->getUser();
@@ -495,7 +480,8 @@ class PostController extends Controller
         $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
         
         $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:replyPostAjax.html.twig',
-            array('form' => $postReplyForm->createView(), 'post' => $replyPost));
+//             array('form' => $postReplyForm->createView(), 'post' => $replyPost));
+            array('form' => $postReplyForm->createView(), 'post' => $postToReplyTo, 'user' => $user));
         
         $return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
         

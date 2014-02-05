@@ -96,84 +96,6 @@ $(document).ready(function() {
 		});
 	});
 	
-//	$("a.post-comment-edit").click(function(event) {
-//    	
-//    	var p_id = $(this).data("pid");
-//    	var $theEditLink = $(this);
-//    	var $theWholePost = $("div#post-" + p_id + "-wrap");
-//    	
-//    	// prevent the click from scrolling the page
-//    	event.preventDefault();
-//    	
-//    	$.ajax({
-//    		url : Routing.generate('imdc_post_edit_specific_ajax', {pid: p_id}),
-//    		type : "POST",
-//    		contentType : "application/x-www-form-urlencoded",
-//    		data :
-//    		{
-//    			pid : p_id
-//    		},
-//    		success : function(data)
-//    		{
-//    			console.log("success");
-//    			console.log(data);
-//    			
-//                // remove the entire post and replace it with the post form
-//    			$theWholePost.append(data);
-//    			$theWholePost.remove();
-//    		},
-//    		error : function(request)
-//    		{
-//    			console.log(request);
-//    			alert(request.statusText);
-//    		}
-//    	});
-//
-//    });
-//	
-	
-//	$("a.post-comment-reply").click(function(e) {
-//		
-//		var p_id = $(this).data("pid");
-//		var $theReplyLink = $(this);
-//		
-//		// prevent the click from scrolling the page
-//		e.preventDefault();
-//		
-//		// the comment wrap in question    
-//		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
-//		
-//		// fade out the original comment
-//		//$theWholeComment.fadeOut('slow');
-//		
-//		// ajax call to get the edit comment form
-//		$.ajax({
-//			url : Routing.generate('imdc_post_reply_ajax_specific', {pid: p_id}),
-//			type : "POST",
-//			contentType : "application/x-www-form-urlencoded",
-//			data :
-//			{
-//				pid : p_id
-//			},
-//			success : function(data)
-//			{
-//				console.log("success");
-//				console.log(data);
-//				
-//				$oldcomment = $theWholeComment.clone();
-//				
-//				$theWholeComment.find("div.post-" + p_id + "-wrap").append(data.form);
-//				//$theWholeComment.hide();
-//
-//			},
-//			error : function(request)
-//			{
-//				console.log(request);
-//				$theWholeComment.fadeIn('slow');
-//				alert(request.statusText);
-//			}
-//		});
-//	});
 	
 	$("a.post-comment-reply").click(function(event) {
     	var p_id = $(this).data("pid");
@@ -197,7 +119,8 @@ $(document).ready(function() {
     			console.log(data);
     			
                 // append the post form
-    			$theWholePost.find("#post-"+p_id+"-reply-content").append(data.form);
+//    			$theWholePost.find("#post-"+p_id+"-reply-content").append(data.form);
+    			$theWholePost.append(data.form);
     			
     			// hide the reply link
     			$theReplyLink.hide();

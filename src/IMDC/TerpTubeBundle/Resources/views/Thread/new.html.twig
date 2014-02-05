@@ -5,6 +5,13 @@
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
+{% block headerjavascripts %}
+{{ parent() }}
+<script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript" charset="utf-8"></script>
+<link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
+{% endblock headerjavascripts %}
+
+
 {% block title %}Create a new Topic{% endblock title %}
 
 {% block sidebarlinks_pages %}<li class="active">{% endblock %}
@@ -20,18 +27,34 @@
 
     {{ form_start(form) }}
         {{ form_errors(form) }}
-        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
-        <div id="files"></div>
+        <div class="row-fluid">
+            <p>Select a file (video, image, or audio) to be used as the title image for your new Topic</p>
+	        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
+	        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
+	        <div id="files"></div>
+        </div>
 {#         <input type="textarea" disabled="true" id="file-textarea" />#}
 {#         {{ form_row(form.mediaID) }}#}
 {#         {{ form_row(form.mediaIncluded) }}#}
+        <p>
         {{ form_row(form.title, {'attr':{'class':'input-xxlarge'}}) }}
         {{ form_row(form.content, {'attr':{'class':'input-xxlarge'}}) }}
-        {{ form_row(form.permissions) }}
+        </p>
+        <div class="row-fluid" id="permRadioButtons">
+        {{ form_row(form.permissions.accessLevel.0) }} {# private, creator access #}
+        {{ form_row(form.permissions.accessLevel.1) }} {# Only people on friends list #}
+        {{ form_widget(form.permissions.userFriendsWithAccess, {'attr' : {'style' : 'display: none;'}}) }} 
+        {{ form_row(form.permissions.accessLevel.2) }} {# Anyone with the link #}
+        {{ form_row(form.permissions.accessLevel.3) }} {# list of specific users #}
+	    {{ form_widget(form.permissions.userListWithAccess, {'attr' : {'style' : 'display: none;'}}) }}
+        {{ form_row(form.permissions.accessLevel.4) }} {# list of specific groups #}
+        {{ form_widget(form.permissions.userGroupsWithAccess, {'attr' : {'style' : 'display: none;'}}) }}
+        {{ form_row(form.permissions.accessLevel.5) }} {# only ppl with accounts #}
+        {{ form_row(form.permissions.accessLevel.6) }} {# public, anyone can see it #}
+        </div>
         <div class="row-fluid">
             {{ form_widget(form.submit) }}
-            <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
+            <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Create New Topic</a>
             <a id="thread-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
         </div>
     {{ form_end(form) }}
@@ -64,6 +87,8 @@
 
 $(document).ready(function() {
     $("#ThreadForm_content").autosize();
+    $("#ThreadForm_permissions_userListWithAccess").tagit();
+    $("ul.tagit").css('width', '50%').hide();
 
     // since I hid the real 'submit' button to provide a nicely stylized button
     // I have to click the real button when you click on the fancy one
@@ -71,6 +96,31 @@ $(document).ready(function() {
         e.preventDefault();
     	$("button#ThreadForm_submit").click();
     	
+    });
+
+    $("#permRadioButtons").click(function() {
+        if ( $("#ThreadForm_permissions_accessLevel_3").is(':checked')) {
+//             $("#ThreadForm_permissions_userListWithAccess").show();
+            $("ul.tagit").show();
+            $("#ThreadForm_permissions_userGroupsWithAccess").hide();
+            $("#ThreadForm_permissions_userFriendsWithAccess").hide();
+        }
+        else if ( $("#ThreadForm_permissions_accessLevel_4").is(':checked')) {
+            $("#ThreadForm_permissions_userGroupsWithAccess").show();
+            $("#ThreadForm_permissions_userFriendsWithAccess").hide();
+            $("ul.tagit").hide();
+        }
+        else if ( $("#ThreadForm_permissions_accessLevel_1").is(':checked')) {
+            $("#ThreadForm_permissions_userFriendsWithAccess").show();
+            $("#ThreadForm_permissions_userGroupsWithAccess").hide();
+            $("ul.tagit").hide();
+        }
+        else { // hide all
+            $("#ThreadForm_permissions_userFriendsWithAccess").hide();
+            $("#ThreadForm_permissions_userGroupsWithAccess").hide();
+//             $("#ThreadForm_permissions_userListWithAccess").hide();
+            $("ul.tagit").hide();
+        }
     });
 });
 

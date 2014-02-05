@@ -38,9 +38,22 @@ class ThreadController extends Controller
         $dql = "SELECT t FROM IMDCTerpTubeBundle:Thread t ORDER BY t.creationDate DESC";
         $query = $em->createQuery($dql);
         
+        $threads = $query->getResult();
+        // if a thread does not have a permissions object yet, we create a new one and
+        // make it default private
+        foreach ($threads as $thread) {
+            if (!$thread->getPermissions()) {
+                $thread->setPermissions(new Permissions());
+                $thread->getPermissions()->setAccessLevel(Permissions::ACCESS_CREATOR);
+                $em->persist($thread);
+            }
+        }
+        $em->flush();
+        
         $paginator = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
-            $query,
+//             $query,
+            $threads,
             $this->get('request')->query->get('page', 1), /*page number*/
             8 /*limit per page*/
         );
@@ -207,12 +220,6 @@ class ThreadController extends Controller
         $form = $this->createForm(new ThreadFormType(), $newthread, array(
                 'user' => $this->getUser(),
         ));
-
-        /*
-        $form = $this->createForm(new ThreadFormType(), $newthread, array(
-                'em' => $em,
-        ));
-        */
         
         $form->handleRequest($request);
         
@@ -241,8 +248,6 @@ class ThreadController extends Controller
                 }
                 
             }
-            
-            
             
             /*
             // split up the media id by whitespace
@@ -278,7 +283,40 @@ class ThreadController extends Controller
             	
             $user->addThread($newthread);
             $user->increasePostCount(1);
+            
+            // deal with thread permissions
+            $threadAccessLevel = $newthread->getPermissions()->getAccessLevel();
+            if ($threadAccessLevel == Permissions::ACCESS_CREATORS_FRIENDS) {
+                $newthread->getPermissions()->setUsersWithAccess($user->getFriendsList());
+                $newthread->getPermissions()->setUserGroupsWithAccess(null);
+            }
+            else if ($threadAccessLevel == Permissions::ACCESS_USER_LIST) {
+                
+                
+                $newthread->getPermissions()->setUserGroupsWithAccess(null);
+            }
+            else if ($threadAccessLevel == Permissions::ACCESS_GROUP_LIST) {
+                $rawusers = explode(' ', $form->get('userListWithAccess')->getData());
+                if ($rawusers) {
+                    $theusers = new ArrayCollection();
+                    foreach ($rawusers as $possuser) {
+                        try {
+                            $user = $userrepo->findOneBy(array('id' => $possuser));
+                            $newthread->getPermissions()->addUsersWithAccess($user);
+                        } catch (\PDOException $e) {
+                            // todo: create message to user about media file not found
+                        }
+                    }
+                }
+                
+                $newthread->getPermissions()->setUsersWithAccess(null);                
+            }
+            else {
+                $newthread->getPermissions()->setUserGroupsWithAccess(null);
+                $newthread->getPermissions()->setUsersWithAccess(null);
+            }
             	
+            
             // request to persist objects to database
             $em->persist($newthread);
             $em->persist($user);
@@ -415,7 +453,7 @@ class ThreadController extends Controller
                 if ($user->getResourceFiles()->contains($mediaFile)) {
                     $logger = $this->get('logger');
                     $logger->info('User owns this media file');
-                    // FIXME: setMediaIncluded replaces ALL media when editing a thread
+                    //FIXME: setMediaIncluded replaces ALL media when editing a thread
                     $threadToEdit->setMediaIncluded($mediaFile);
                 }
                  

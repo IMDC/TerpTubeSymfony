@@ -59,10 +59,11 @@ class ThreadFormType extends AbstractType
 	            },
 	    ));
 	    */
-	    $builder->add('permissions', new PermissionsType($user));
 
-	    $builder->add('content', null, array('label' => 'Supplementary Content',
+	    $builder->add('content', null, array('label' => 'Supplementary Content - a brief description of the Topic',
 	    ));
+	    
+	    $builder->add('permissions', new PermissionsType($user), array('label' => false));
 	    
 	    // this was used to test if you could choose a different parentForum from a selection drop down
 	    //$builder->addEventSubscriber(new AddParentForumSubscriber());
@@ -78,25 +79,14 @@ class ThreadFormType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\Thread',));
-		
-		/*
-		$resolver->setRequired(array(
-		        'em',
-		));
-		*/
+
 		$resolver->setRequired(array(
 		        'user',
         ));
 		$resolver->setAllowedTypes(array(
 		        'user' => 'IMDC\TerpTubeBundle\Entity\User',
 		));
-		
-		
-		/*
-		$resolver->setAllowedTypes(array(
-		        'em' => 'Doctrine\Common\Persistence\ObjectManager',
-		));
-		*/
+
 		
 	}
 }

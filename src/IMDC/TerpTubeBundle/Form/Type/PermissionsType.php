@@ -30,27 +30,31 @@ class PermissionsType extends AbstractType
         $builder
             ->add('accessLevel', 'choice', array(
                 'choices' => array(Permissions::ACCESS_CREATOR => 'Private, only you can see it',
-                                    Permissions::ACCESS_CREATORS_FRIENDS => 'Only people on your friends list',
-                                    Permissions::ACCESS_WITH_LINK => 'Anyone with the link',
+                                    Permissions::ACCESS_CREATORS_FRIENDS => 'Members of your friends list',
+                                    Permissions::ACCESS_WITH_LINK => 'Anyone with the link (unlisted)',
                                     Permissions::ACCESS_USER_LIST => 'Select specific users with access',
                                     Permissions::ACCESS_GROUP_LIST => 'Select specific groups with access',
                                     Permissions::ACCESS_REGISTERED_MEMBERS => 'Only registered members of the site',
                                     Permissions::ACCESS_PUBLIC => 'Public, anyone can see it'),
                 'multiple' => false,
-                'expanded' => true
+                'expanded' => true,
+                'data' => Permissions::ACCESS_PUBLIC
             ))
-            ->add('usersWithAccess', 'entity', array(
+            ->add('userFriendsWithAccess', 'entity', array(
                 'class' => 'IMDCTerpTubeBundle:User',
                 'choices' => $this->user->getFriendsList(),
                 'multiple' => true,
                 'required' => false,
             ))
+            
             ->add('userGroupsWithAccess', 'entity', array(
                 'class' => 'IMDCTerpTubeBundle:UserGroup',
                 'choices' => $this->user->getUserGroups(),
                 'multiple' => true,
                 'required' => false,
             ))
+            ->add('userListWithAccess', 'text', array('mapped' => false,
+                'required' => false,))
             ;
     }
     
