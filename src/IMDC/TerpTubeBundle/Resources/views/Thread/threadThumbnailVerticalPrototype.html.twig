@@ -53,7 +53,7 @@
             		    <div class="span12">
                 		    <div class="row-fluid">    	                		
                     		    <p>
-                        		    <span class="badge">{{ thread.getPosts|length }} Replies</span>
+                        		    <span class="badge badge-info">{{ thread.getPosts|length }} Replies</span>
                     		    </p>
                     		    <p>
                         		    {% if thread.getLastPostAt is defined %}Last post: <span title="{{ thread.lastPostAt|date('g:ia M j Y') }}">{{ time_diff(thread.lastPostAt) }}</span>{% endif %}

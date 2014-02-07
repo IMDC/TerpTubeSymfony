@@ -25,6 +25,7 @@ use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Permissions;
+use IMDC\TerpTubeBundle\Entity\ForumRepository;
 
 class ForumController extends Controller
 {
@@ -152,10 +153,14 @@ class ForumController extends Controller
 	    {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
+	    
+	    // setup necessary vars
 	    $em = $this->getDoctrine()->getManager();
 	    $user = $this->getUser();
+	    $forumRepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
 	    
-	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid));
+	    // retrieve forum from storage layer
+	    $forum = $forumRepo->findOneBy(array('id' => $forumid));
 	    
 	    if (!$forum) {
 	        $this->get('session')->getFlashBag()->add(
@@ -166,37 +171,23 @@ class ForumController extends Controller
 	        return $this->redirect($this->generateUrl('imdc_forum_list'));
 	    }
 	    
-// 	    $forumthreads = $em->getRepository('IMDCTerpTubeBundle:Thread')->findRecentPostsForForum(4);
-// 	    $response = $this->render('IMDCTerpTubeBundle:Forum:view.html.twig',
-// 	        array('forum' => $forum,
-// 	              'threads' => $forumthreads)
-// 	    );
-// 	    return $response;
-	      
-	    $dql = "SELECT t
-	            FROM IMDCTerpTubeBundle:Thread t
-	            WHERE t.parentForum IS NOT NULL
-	            AND t.parentForum = :fid
-	            ORDER BY t.lastPostAt DESC";
+	    //FIXME: implement forum permissions check here
 	    
-	    $query = $em->createQuery($dql)->setParameter('fid', $forum->getId());
-	    $threads = $query->getResult();
+	    $threads = $forumRepo->getTopLevelThreadsForForum($forum->getId());
+	    $filteredThreads = array();
 	    
-	    // if a thread does not have a permissions object yet, we create a new one and 
-	    // make it default private
 	    foreach ($threads as $thread) {
-	        if (!$thread->getPermissions()) {
-	            $thread->setPermissions(new Permissions());
-	            $thread->getPermissions()->setAccessLevel(Permissions::ACCESS_CREATOR);
-	            $em->persist($thread);
-	        }
+            // check for the correct permissions access
+            if ($thread->visibleToUser($user)) {
+                $filteredThreads[] = $thread;
+            }
 	    }
 	    $em->flush();
 	    
 	    $paginator = $this->get('knp_paginator');
 	    $pagination = $paginator->paginate(
 // 	        $query,
-	        $threads,
+	        $filteredThreads,
 	        $this->get('request')->query->get('page', 1) /* page number */,
 	        8, /* limit per page */
 	        array('distinct' => false)

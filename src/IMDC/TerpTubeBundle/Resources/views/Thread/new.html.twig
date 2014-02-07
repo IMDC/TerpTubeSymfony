@@ -55,7 +55,7 @@
         <div class="row-fluid">
             {{ form_widget(form.submit) }}
             <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Create New Topic</a>
-            <a id="thread-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
+            <a id="thread-form-cancel-button" class="btn btn-danger" href="javascript:history.back(-1)"><i class="fa fa-times"></i> Cancel</a>
         </div>
     {{ form_end(form) }}
   

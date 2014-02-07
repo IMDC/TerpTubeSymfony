@@ -81,7 +81,7 @@ EOT
 
         $manipulator = $this->getContainer()->get('imdc.utils.user_manipulator');
         $manipulator->create($username, $password, $email, $firstname, $lastname, $city, $country, !$inactive, $superadmin);
-
+                
         $output->writeln(sprintf('Created user <comment>%s</comment>', $username));
     }
 

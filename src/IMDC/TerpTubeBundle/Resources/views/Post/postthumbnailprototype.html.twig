@@ -28,7 +28,11 @@
 {# 						{% if postMediaFile is not defined or postMediaFile is null %}#}
 						{% if postMediaFile == null %}
 					    <div class="span9 post-thumb-content">
+					        {% if post.getParentThread.getId is defined %}
 						    <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
+						    {% else %}
+						    <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentPost.getParentThread.getId}) }}#{{ post.id }}">
+						    {% endif %}
 			                	{{ post.content|truncate(250) }}
 		                	</a>
 		                </div>

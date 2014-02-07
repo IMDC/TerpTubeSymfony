@@ -40,3 +40,15 @@ span.thread-date-span {
 .post-reply-user-avatar-wrap {
     padding-top: 30px;
 }
+
+div.thread-thumbnail-media-wrap {
+
+}
+
+div.thread-title-wrap {
+    
+}
+
+.thumbnail-video video {
+    max-height: 200px;
+}

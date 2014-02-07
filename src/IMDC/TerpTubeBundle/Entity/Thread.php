@@ -540,12 +540,72 @@ class Thread
     }
 
     /**
-     * Get permissions
+     * Get permissions, or create new default private permissions if a thread doesn't have any
      *
      * @return \IMDC\TerpTubeBundle\Entity\Permissions 
      */
     public function getPermissions()
     {
+        if (!$this->permissions) {
+            // create new Permissions because this thread doesn't have any
+            $newPermissions = new Permissions();
+            $newPermissions->setAccessLevel(Permissions::ACCESS_CREATOR);
+            $this->setPermissions($newPermissions);
+        }
         return $this->permissions;
     }
+    
+    /**
+     * Determines if the given user has accesss to this thread
+     * based on the permissions
+     * 
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return boolean
+     */
+    public function userHasAccess($user)
+    {
+        $tPerm = $this->getPermissions();
+        
+        $accessLevel = $tPerm->getAccessLevel();
+        
+        if ($accessLevel == Permissions::ACCESS_PUBLIC)
+            return true;
+        else if ($accessLevel == Permissions::ACCESS_CREATOR && $user === $this->getCreator())
+            return true;
+        else if ($accessLevel == Permissions::ACCESS_CREATORS_FRIENDS && ( $user === $this->getCreator() || $this->getCreator()->getFriendsList()->contains($user) ) )
+                    return true;
+        else if ($accessLevel == Permissions::ACCESS_WITH_LINK)
+            return true;
+        else if ($accessLevel == Permissions::ACCESS_USER_LIST && ( $user === $this->getCreator() || $tPerm->getUsersWithAccess()->contains($user)) )
+            return true;
+        else if ($accessLevel == Permissions::ACCESS_GROUP_LIST && ( $user === $this->getCreator() || !empty(array_intersect($tPerm->getuserGroupsWithAccess(),$user->getUserGroups()))) )
+            return true;
+        else if ($accessLevel == Permissions::ACCESS_REGISTERED_MEMBERS && $user)
+            return true;
+        else
+            return false;
+        
+    }
+    
+    /**
+     * Determines if a thread is visible to a user while browsing forums
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return boolean
+     */
+    public function visibleToUser($user)
+    {
+        $tPerm = $this->getPermissions();
+        $accessLevel = $tPerm->getAccessLevel();
+        
+        switch ($accessLevel) {
+        	case Permissions::ACCESS_WITH_LINK:
+        	    if ($user === $this->getCreator())
+        	        return true;
+        	break;
+        	
+        	default: return $this->userHasAccess($user);
+        	break;
+        }
+    }
+
 }

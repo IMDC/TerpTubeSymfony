@@ -7,19 +7,19 @@
 {#          const ACCESS_REGISTERED_MEMBERS = 5; #}
 
 {% if threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_PUBLIC') %}
-<i title="Public" class="fa fa-unlock"></i>
+<i class="fa fa-unlock toolPop" title="This is visible to everyone" ></i>
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_CREATOR') %}
-<i title="Private" class="fa fa-lock"></i> 
+<i class="fa fa-lock toolPop" title="This is private"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_CREATORS_FRIENDS') %}
-<i title="Private" class="fa fa-lock"></i> 
+<i class="fa fa-lock toolPop" title="This is visible to your friends"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_WITH_LINK') %}
-<i title="Users with link" class="fa fa-link"></i> 
+<i class="fa fa-link toolPop" title="Only people with the link can see this"></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_USER_LIST') %}
-<i title="Private" class="fa fa-lock"></i> 
+<i class="fa fa-lock toolPop" title="Only people you choose can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_GROUP_LIST') %}
-<i title="Private" class="fa fa-lock"></i> 
+<i class="fa fa-lock toolPop" title="Only groups you choose can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_REGISTERED_MEMBERS') %}
-<i title="Registered Members Only" class="fa fa-lock"></i> 
+<i class="fa fa-lock toolPop" title="Only people with an account can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% else %}
-<i title="Undefined" class="fa fa-question"></i> 
+<i class="fa fa-question"></i> 
 {% endif %}

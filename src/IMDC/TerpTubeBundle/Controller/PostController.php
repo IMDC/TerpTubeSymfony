@@ -21,6 +21,7 @@ use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostReplyToPostFormType;
+use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
 
 class PostController extends Controller
 {

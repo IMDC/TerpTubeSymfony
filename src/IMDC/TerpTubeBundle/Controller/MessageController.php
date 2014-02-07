@@ -28,12 +28,14 @@ class MessageController extends Controller
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
+		$em = $this->getDoctrine()->getManager();
+		
 		$message = new Message();
 		//$form = $this->createForm(new PrivateMessageType(), $message);
 
 		
 		$form = $this->createForm(new PrivateMessageType(), $message, array(
-		        'em' => $this->getDoctrine()->getManager(),
+		        'em' => $em,
 		));
 		
 
@@ -49,38 +51,9 @@ class MessageController extends Controller
 			// set owner/author of the message to be the currently logged in user
 			$message->setOwner($this->getUser());
 
-			$em = $this->getDoctrine()->getManager();
-
 			$user = $this->getUser();
 			$user->addSentMessage($message);
-
-			/*
-			$existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
-			$userProvider = $this->container->get('fos_user.user_provider.username');
-
-			// split up the recipients by whitespace
-			$rawrecips = explode(' ', $form->get('to')->getData());
-			foreach ($rawrecips as $possuser)
-			{
-				try
-				{
-					$theuser = $userProvider->loadUserByUsername($possuser);
-					$existingUsers[] = $theuser;
-					$message->addRecipient($theuser);
-				}
-				catch (UsernameNotFoundException $e)
-				{
-					// todo: create message to user about recip not found
-				}
-			}
-
-		    
-			foreach ($existingUsers as $euser)
-			{
-				$euser->addReceivedMessage($message);
-				$em->persist($euser);
-			}
-			*/
+			$em->persist($user);
 			
 			foreach ($message->getRecipients() as $recipient) {
 			    $recipient->addReceivedMessage($message);
@@ -131,6 +104,7 @@ class MessageController extends Controller
 
 			$user = $this->getUser();
 			$user->addSentMessage($message);
+			$em->persist($user);
 
 			$existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
 			$userManager = $this->container->get('fos_user.user_manager');
@@ -147,7 +121,7 @@ class MessageController extends Controller
 				}
 				catch (UsernameNotFoundException $e)
 				{
-					// todo: create message to user about recip not found
+					//FIXME: create message to user about recip not found
 				}
 			}
 
@@ -184,22 +158,14 @@ class MessageController extends Controller
 
 		$em = $this->getDoctrine()->getManager();
 
-		$messages = $em->getRepository('IMDCTerpTubeBundle:User')->getMostRecentInboxMessages($user, 30);
+// 		$messages = $em->getRepository('IMDCTerpTubeBundle:User')->getMostRecentInboxMessages($user, 30);
+		$messages = $user->getReceivedMessages();
 
-		// if no feedback message, just show all messages
-		if (is_null($feedbackmsg))
-		{
-			$response = $this->render('IMDCTerpTubeBundle:Message:inbox.html.twig', array('messages' => $messages));
-			return $response;
-		}
-		// show all messages and the feedback message
-		else
-		{
-			$response = $this
-					->render('IMDCTerpTubeBundle:Message:inbox.html.twig',
-							array('messages' => $messages, 'feedback' => $feedbackmsg));
-			return $response;
-		}
+		$response = $this
+				->render('IMDCTerpTubeBundle:Message:inbox.html.twig',
+						array('messages' => $messages, 'feedback' => $feedbackmsg));
+		return $response;
+
 	}
 
 	public function messageSuccessAction(Request $request)
@@ -215,6 +181,15 @@ class MessageController extends Controller
 		}
 	}
 
+	/**
+	 * 'Deletes' a message from a user's inbox. Doesn't actually delete the message, as messages
+	 * are objects that are shared amongst many users, but instead marks it as 'deleted' and
+	 * removes it from a user's received messages
+	 * 
+	 * @param Request $request
+	 * @param int $messageid
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 */
 	public function deleteMessageAction(Request $request, $messageid)
 	{
 		// check if user logged in
@@ -231,19 +206,23 @@ class MessageController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$message = $em->getRepository('IMDCTerpTubeBundle:Message')->findOneById($messageid);
 
-		if (!$messages->contains($message))
+		if (!$messages->contains($message)) 
 		{
 			throw $this->createNotFoundException('No message found for id: ' . $messageid);
 		}
 		// make sure the current user is a recipient on this message
-		else if (!$message->getRecipients()->contains($user))
+		else if (!$message->getRecipients()->contains($user)) 
 		{
 			throw $this
 					->createNotFoundException('User is not found in the recipients for this message id: ' . $messageid);
 		}
 
-		// remove message from users received messages
+		// remove message from user's received messages
 		$user->removeReceivedMessage($message);
+		
+		// remove message from archived messages (if archived)
+		$user->removeArchivedMessage($message);
+
 
 		// add message to users deleted messages
 		$user->addDeletedMessage($message);
@@ -356,14 +335,19 @@ class MessageController extends Controller
 		if ($message->getRecipients()->contains($user) 
 		        || $message->getOwner() == $user) {
 		    
+		    // is this message deleted already?
+		    if ($user->getDeletedMessages()->contains($message)) {
+		        $this->get('session')->getFlashBag()->add(
+		            'error',
+		            'This message has been deleted'
+		        );
+		        return $this->redirect($this->generateUrl('imdc_message_view_all'));
+		    }
+		            
 		    $alreadyRead = $user->getReadMessages()->contains($message);
 		    
 		    // if the message is already read, don't try to insert it again as this causes SQL errors
-		    if ($alreadyRead)
-		    {
-		        // skip
-		    }
-		    else
+		    if (!$alreadyRead)
 		    {
 		        $user->addReadMessage($message);
 		        // flush object to database
@@ -482,10 +466,5 @@ class MessageController extends Controller
 		);
 		return $response;
 		 */
-	}
-
-	public function recentMessagesAction($max = 30)
-	{
-
 	}
 }

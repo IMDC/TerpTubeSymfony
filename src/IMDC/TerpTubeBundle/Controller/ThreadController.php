@@ -95,7 +95,7 @@ class ThreadController extends Controller
         // retrieve thread from storage layer
         $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadid);
         
-        
+        // check if user has permissions to view thread
         if (!$this->canAccessThread($thread, $user)) {
             $this->get('session')->getFlashBag()->add(
                 'error',
@@ -286,17 +286,14 @@ class ThreadController extends Controller
             
             // deal with thread permissions
             $threadAccessLevel = $newthread->getPermissions()->getAccessLevel();
+            
             if ($threadAccessLevel == Permissions::ACCESS_CREATORS_FRIENDS) {
                 $newthread->getPermissions()->setUsersWithAccess($user->getFriendsList());
                 $newthread->getPermissions()->setUserGroupsWithAccess(null);
             }
             else if ($threadAccessLevel == Permissions::ACCESS_USER_LIST) {
                 
-                
-                $newthread->getPermissions()->setUserGroupsWithAccess(null);
-            }
-            else if ($threadAccessLevel == Permissions::ACCESS_GROUP_LIST) {
-                $rawusers = explode(' ', $form->get('userListWithAccess')->getData());
+                $rawusers = explode(',', $form->get('userListWithAccess')->getData());
                 if ($rawusers) {
                     $theusers = new ArrayCollection();
                     foreach ($rawusers as $possuser) {
@@ -304,18 +301,25 @@ class ThreadController extends Controller
                             $user = $userrepo->findOneBy(array('id' => $possuser));
                             $newthread->getPermissions()->addUsersWithAccess($user);
                         } catch (\PDOException $e) {
-                            // todo: create message to user about media file not found
+                            //FIXME: do something to notify user that user name not found?
+                            $logger->info("\n\n*****ERROR: username: " . $possuser . "not found in USER_LIST****\n\n");
                         }
                     }
                 }
                 
+                $newthread->getPermissions()->setUserGroupsWithAccess(null);
+            }
+            else if ($threadAccessLevel == Permissions::ACCESS_GROUP_LIST) {
+                // user groups with access set automagically
                 $newthread->getPermissions()->setUsersWithAccess(null);                
             }
             else {
+                // permissions that get here are 
+                // access_creator, access_public, access_with_link, registered_members
+                // really do this?
                 $newthread->getPermissions()->setUserGroupsWithAccess(null);
                 $newthread->getPermissions()->setUsersWithAccess(null);
             }
-            	
             
             // request to persist objects to database
             $em->persist($newthread);
@@ -538,6 +542,8 @@ class ThreadController extends Controller
     }
     
     /**
+     * Determines if the given user has permission access to view the given thread,
+     * Also creates a new default permissions object for threads without one
      * 
      * @param IMDCTerpTubeBundle:Thread $thread
      * @param IMDCTerpTubeBundle:User $user
@@ -557,31 +563,25 @@ class ThreadController extends Controller
             	    break;
             	     
             	case Permissions::ACCESS_CREATORS_FRIENDS:
-            	    if ($thread->getCreator->getFriendsList()->contains($user))
-            	    {
-            	        // grant access
+            	    if ($thread->getCreator->getFriendsList()->contains($user) || $user == $thread->getCreator() ) {
             	        $accessGranted = TRUE;
             	    }
             	    break;
             	     
             	case Permissions::ACCESS_GROUP_LIST:
             	    $possibleGroups = array_intersect($user->getUserGroups()->toArray(), $threadperms->getUserGroupsWithAccess()->toArray());
-            	    if (!empty($possibleGroups))
-            	    {
-            	        // grant access
+            	    if (!empty($possibleGroups) || $user == $thread->getCreator() ) {
             	        $accessGranted = TRUE;
             	    }
             	    break;
             	     
             	case Permissions::ACCESS_USER_LIST:
-            	    if ($threadperms->getUsersWithAccess()->contains($user)) {
-            	        // grant access
+            	    if ($threadperms->getUsersWithAccess()->contains($user) || $user == $thread->getCreator()) {
             	        $accessGranted = TRUE;
             	    }
             	    break;
             	     
             	case Permissions::ACCESS_WITH_LINK:
-            	     
             	case Permissions::ACCESS_PUBLIC:
             	    // do something common for both with link and accesspublic
             	    $accessGranted = TRUE;

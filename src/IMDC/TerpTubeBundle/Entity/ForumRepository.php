@@ -35,4 +35,20 @@ class ForumRepository extends EntityRepository
         
         return $query->getResult();
     }
+    
+    /**
+     * Does this belong here, or in the Thread Repository?
+     * @param unknown $fid
+     */
+    public function getTopLevelThreadsForForum($fid)
+    {
+        $dql = "SELECT t
+	            FROM IMDCTerpTubeBundle:Thread t
+	            WHERE t.parentForum IS NOT NULL
+	            AND t.parentForum = :fid
+	            ORDER BY t.lastPostAt DESC";
+        
+        $query = $this->getEntityManager()->createQuery($dql)->setParameter('fid', $fid);
+        return $query->getResult();
+    }
 }

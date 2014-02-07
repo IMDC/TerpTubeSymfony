@@ -18,6 +18,10 @@ div.threadthumbnail {
     min-height: 310px;
 }
 
+.thumbnail-video video {
+    max-height: 200px;
+}
+
 div.postthumbnail {
 	min-height: 220px;
 }

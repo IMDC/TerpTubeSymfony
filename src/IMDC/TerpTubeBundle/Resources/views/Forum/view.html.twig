@@ -36,7 +36,7 @@
         <div class="row-fluid">
             <h1>{{ forum.titleText }}</h1>
             <h4>Created: {{ forum.getCreationDate|date('g:ia F j Y') }}</h4>
-            <h5>Topics: {{ forum.getThreads|length }}</h5>
+            <h5>Topics: {{ threads|length }}</h5>
         </div>
     </div>
     <div class="span6">

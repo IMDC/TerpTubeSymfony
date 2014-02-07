@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Utils;
 
 use FOS\UserBundle\Model\UserManagerInterface;
 use IMDC\TerpTubeBundle\Entity\UserProfile;
+use Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher;
 
 /**
  * Executes some manipulations on the users

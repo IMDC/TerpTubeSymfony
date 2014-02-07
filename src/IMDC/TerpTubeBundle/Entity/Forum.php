@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Entity\Permissions;
 
 /**
  * Forum
@@ -160,7 +161,18 @@ class Forum
     {
         return $this->threads;
     }
-
+    
+    
+    /**
+     * Returns all threads for the forum that have public access
+     * 
+     * @return multitype:|boolean
+     */
+    public function getPublicThreads()
+    {
+        return array_filter($this->threads->toArray(), function($t) { return $t->getPermissions()->getAccessLevel() == Permissions::ACCESS_PUBLIC; });
+    }
+    
     /**
      * Set creator
      *

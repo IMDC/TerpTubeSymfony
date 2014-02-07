@@ -16,17 +16,17 @@
                 {% set thisistheuser = true %}
                 <i class="fa fa-envelope-o" style="color:lightgray"></i>
                 {% else %}
-                <a href="{{ path('imdc_message_user_specific', {'userid':member.getUserName()}) }}" title="Send a message to {{ member.getUserName }}"><i class="fa fa-envelope-o"></i></a>
+                <a href="{{ path('imdc_message_user_specific', {'userid':member.getUserName()}) }}"><i class="fa fa-envelope-o toolPop" title="Send a message to {{ member.getUserName }}"></i></a>
                 {% endif %}
             </li>
             {#  ---------- friend section ---------------------- #}
             <li>
                 {% if app.user.getId == member.getId %}
-                <i class="fa fa-user" style="color:lightgray" title="This is you"></i>
+                <i class="fa fa-user toolPop" style="color:lightgray" title="This is you"></i>
                 {% elseif app.user.isUserOnFriendsList(member) %}
-                <i class="fa fa-group" style="color:green" title="Already friends"></i>
+                <i class="fa fa-group toolPop" style="color:green" title="You are already friends"></i>
                 {% else %}
-                <a href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" title="Click to add {{ member.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
+                <a href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" class="toolPop" title="Click to add {{ member.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
                 {% endif %}
             </li>
             {#  ---------------- end friend section ---------------- #}
