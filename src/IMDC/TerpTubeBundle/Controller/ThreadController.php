@@ -293,12 +293,13 @@ class ThreadController extends Controller
             }
             else if ($threadAccessLevel == Permissions::ACCESS_USER_LIST) {
                 
+                $usermanager = $this->get('fos_user.user_manager');
                 $rawusers = explode(',', $form->get('userListWithAccess')->getData());
                 if ($rawusers) {
                     $theusers = new ArrayCollection();
                     foreach ($rawusers as $possuser) {
                         try {
-                            $user = $userrepo->findOneBy(array('id' => $possuser));
+                            $user = $usermanager->findUserByUsername($possuser);
                             $newthread->getPermissions()->addUsersWithAccess($user);
                         } catch (\PDOException $e) {
                             //FIXME: do something to notify user that user name not found?
@@ -306,7 +307,9 @@ class ThreadController extends Controller
                         }
                     }
                 }
-                
+                else {
+                    $newthread->getPermissions()->setUsersWithAccess(null);
+                }
                 $newthread->getPermissions()->setUserGroupsWithAccess(null);
             }
             else if ($threadAccessLevel == Permissions::ACCESS_GROUP_LIST) {

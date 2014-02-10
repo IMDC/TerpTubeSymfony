@@ -34,5 +34,4 @@ IMDC\TerpTubeBundle\Entity\Permissions:
                     user_id:
                         referencedColumnName: id
                         unique: true
-        
     lifecycleCallbacks: {  }

@@ -682,6 +682,21 @@ class User extends BaseUser
         }
         return $usernames;
     }
+    
+    public function getFriendsListAsIdUsernameArray()
+    {
+        $userIdAndUsername = array();
+        foreach ($this->getFriendsList() as $friend) {
+            $userIdAndUsername[] = array($friend->getId() => $friend->getUsername());
+        }
+        return $userIdAndUsername;
+    }
+    
+    public function getFriendsListAsUsernameString()
+    {
+        $string = '"'.implode('", "', $this->getFriendsList()->toArray()).'"';
+        return $string;
+    }
 
     /**
      * Add roleGroups
