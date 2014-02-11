@@ -163,8 +163,10 @@ MediaChooser.prototype.popUp = function (onOpenFunction, onCloseFunction, title)
 	this.element.dialog("open");
 };
 
-function recordVideo(destinationDivElement, address, recorderConfiguration)
+MediaChooser.prototype.recordVideo = function(address, recorderConfiguration)
 {
+	//FIXME need to get this to work for ajax calls
+	var instance = this;
 	$.ajax(
 	{
 		url : address,
@@ -173,7 +175,8 @@ function recordVideo(destinationDivElement, address, recorderConfiguration)
 		data: {recorderConfiguration: recorderConfiguration},
 		success : function(data)
 		{
-			destinationDivElement.html(data);
+			instance.element.html(data);
+			alert("success");
 		},
 		error : function(request)
 		{

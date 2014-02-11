@@ -204,8 +204,11 @@ class MediaChooserGatewayController extends Controller
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
+		$prefix = '';
+		if ($request->isXmlHttpRequest())
+			$prefix = "ajax.";
 		return $this
-				->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig',
+				->render('IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'recordVideo.html.twig',
 						array("recorderConfiguration" => $recorderConfiguration));
 	}
 

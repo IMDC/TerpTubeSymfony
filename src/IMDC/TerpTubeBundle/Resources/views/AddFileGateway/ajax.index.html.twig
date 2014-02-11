@@ -73,7 +73,7 @@
         });
         $('#record-link').click(function(e) {
             var recorderConfiguration = {forwardButton: true, forwardFunction: "forwardFunction", recordingSuccessFunction: "callBack"};
-        	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href'), recorderConfiguration), "Record");
+            mediaChooser.loadNextPage(mediaChooser.recordVideo($(this).attr('href'), recorderConfiguration), "Record");
         	return false;
         });
 	</script>
