@@ -279,7 +279,7 @@ class ThreadController extends Controller
             $newthread->setCreationDate(new \DateTime('now'));
             $newthread->setLocked(FALSE);
             $newthread->setSticky(FALSE);
-//             $newthread->setLastPostAt(new \DateTime('now'));
+            $newthread->setLastPostAt(new \DateTime('now'));
             	
             $user->addThread($newthread);
             $user->increasePostCount(1);
@@ -294,7 +294,7 @@ class ThreadController extends Controller
             else if ($threadAccessLevel == Permissions::ACCESS_USER_LIST) {
                 
                 $usermanager = $this->get('fos_user.user_manager');
-                $rawusers = explode(',', $form->get('userListWithAccess')->getData());
+                $rawusers = explode(',', $form->get('permissions')->get('userListWithAccess')->getData());
                 if ($rawusers) {
                     $theusers = new ArrayCollection();
                     foreach ($rawusers as $possuser) {
@@ -332,7 +332,7 @@ class ThreadController extends Controller
             $em->flush();
         
             $this->get('session')->getFlashBag()->add(
-                    'notice',
+                    'success',
                     'Thread created successfully!'
             );
             
@@ -430,7 +430,7 @@ class ThreadController extends Controller
         // does the user own this thread?
         if (!$user->getThreads()->contains($threadToEdit)) {
             $this->get('session')->getFlashBag()->add(
-                    'notice',
+                    'error',
                     'You do not have permission to edit this thread'
             );
             return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));

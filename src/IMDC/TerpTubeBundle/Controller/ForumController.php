@@ -171,7 +171,7 @@ class ForumController extends Controller
 	        return $this->redirect($this->generateUrl('imdc_forum_list'));
 	    }
 	    
-	    //FIXME: implement forum permissions check here
+	    //FIXME: implement forum permissions check here when permissions enabled for forums
 	    
 	    $threads = $forumRepo->getTopLevelThreadsForForum($forum->getId());
 	    $filteredThreads = array();
@@ -179,7 +179,7 @@ class ForumController extends Controller
 	    foreach ($threads as $thread) {
             // check for the correct permissions access
             if ($thread->visibleToUser($user)) {
-                $filteredThreads[] = $thread;
+                $filteredThreads[] = $thread; // push onto end of array
             }
 	    }
 	    $em->flush();

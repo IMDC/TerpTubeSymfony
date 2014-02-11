@@ -28,7 +28,7 @@
     {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="row-fluid">
-            <p>Select a file (video, image, or audio) to be used as the title image for your new Topic</p>
+            <p>Select a file (video, image, or audio) to be used as the title for your new Topic</p>
 	        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
 	        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
 	        <div id="files"></div>
@@ -40,18 +40,7 @@
         {{ form_row(form.title, {'attr':{'class':'input-xxlarge'}}) }}
         {{ form_row(form.content, {'attr':{'class':'input-xxlarge'}}) }}
         </p>
-        <div class="row-fluid" id="permRadioButtons">
-        {{ form_row(form.permissions.accessLevel.0) }} {# private, creator access #}
-{#         {{ form_row(form.permissions.accessLevel.1) }} {# Only people on friends list #}
-{#         {{ form_widget(form.permissions.userFriendsWithAccess, {'attr' : {'style' : 'display: none;'}}) }} #}
-        {{ form_row(form.permissions.accessLevel.1) }} {# Anyone with the link #}
-        {{ form_row(form.permissions.accessLevel.2) }} {# list of specific users #}
-	    {{ form_widget(form.permissions.userListWithAccess, {'attr' : {'style' : 'display: none;'}}) }}
-        {{ form_row(form.permissions.accessLevel.3) }} {# list of specific groups #}
-        {{ form_widget(form.permissions.userGroupsWithAccess, {'attr' : {'style' : 'display: none;'}}) }}
-        {{ form_row(form.permissions.accessLevel.4) }} {# only ppl with accounts #}
-        {{ form_row(form.permissions.accessLevel.5) }} {# public, anyone can see it #}
-        </div>
+        {% include ('IMDCTerpTubeBundle:Thread:threadPermissions.html.twig') %}
         <div class="row-fluid">
             {{ form_widget(form.submit) }}
             <a id="thread-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Create New Topic</a>
@@ -88,11 +77,12 @@
 $(document).ready(function() {
     $("#ThreadForm_content").autosize();
     $("#ThreadForm_permissions_userListWithAccess").tagit({
+    	{% if app.user.getFriendsList|length >= 1 %}
         showAutocompleteOnFocus: true,
-    	{% set usernames = app.user.getFriendsListAsUsernames %}
-        availableTags: [{{ app.user.getFriendsListAsUsernameString|raw }}]
+        {% endif %}
+    	{% set usernames = app.user.getFriendsListAsUsernameString %}   	
+        availableTags: [{{ usernames|raw }}]
     });
-
 
     $("ul.tagit").css('width', '50%').hide();
 
@@ -103,34 +93,10 @@ $(document).ready(function() {
     	$("button#ThreadForm_submit").click();
     	
     });
-
-    $("#permRadioButtons").click(function() {
-        if ( $("#ThreadForm_permissions_accessLevel_2").is(':checked')) { // specific users
-//             $("#ThreadForm_permissions_userListWithAccess").show();
-            $("ul.tagit").show();
-            $("#ThreadForm_permissions_userGroupsWithAccess").hide();
-//             $("#ThreadForm_permissions_userFriendsWithAccess").hide();
-        }
-        else if ( $("#ThreadForm_permissions_accessLevel_3").is(':checked')) { // specific groups
-            $("#ThreadForm_permissions_userGroupsWithAccess").show();
-//             $("#ThreadForm_permissions_userFriendsWithAccess").hide();
-            $("ul.tagit").hide();
-        }
-//         else if ( $("#ThreadForm_permissions_accessLevel_1").is(':checked')) { // user friends
-//             $("#ThreadForm_permissions_userFriendsWithAccess").show();
-//             $("#ThreadForm_permissions_userGroupsWithAccess").hide();
-//             $("ul.tagit").hide();
-//         }
-        else { // hide all
-            $("#ThreadForm_permissions_userFriendsWithAccess").hide();
-            $("#ThreadForm_permissions_userGroupsWithAccess").hide();
-//             $("#ThreadForm_permissions_userListWithAccess").hide();
-            $("ul.tagit").hide();
-        }
-    });
 });
-
 </script>
+ 
+<script src="{{ asset('bundles/imdcterptube/js/permissionButtons.js') }}" type="text/javascript" charset="utf-8"></script>
  
 
 {% endblock javascripts %}

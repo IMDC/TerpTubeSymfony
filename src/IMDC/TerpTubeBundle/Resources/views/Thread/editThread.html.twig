@@ -5,6 +5,12 @@
     <link href="{{ asset('bundles/imdcterptube/css/thread.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
+{% block headerjavascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript" charset="utf-8"></script>
+	<link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
+{% endblock headerjavascripts %}
+
 {% block title %}Edit Forum Post{% endblock title %}
 
 {% block herounit %}
@@ -19,11 +25,12 @@
 <div class="span9">
 {{ form_start(form) }}
         {{ form_errors(form) }}
-        <div class="controls controls-row">
-            <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-            {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
-        </div>
-        <div id="files"></div>
+{#         <div class="controls controls-row">#}
+{#             <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>#}
+{#             {{ form_widget(form.mediatextarea, {'attr' : {'style':'display:none;'}}) }}{{ form_errors(form.mediatextarea, {'attr' : {'style':'display:none;'}}) }}#}
+{#             {{ form_row(form.mediatextarea, {'attr' : {'style':'display:none;'}}) }}#}
+{#         </div>#}
+{#         <div id="files"></div>#}
         {% if mediaFile != null %}
         <p>
         <div class="row-fluid">
@@ -35,7 +42,8 @@
         {% else %}
         {% endif %}
         {{ form_row(form.title, {'attr': {'class':'autosize'}}) }}
-        {{ form_row(form.content, {'attr': {'class':'autosize'}}) }} 
+        {{ form_row(form.content, {'attr': {'class':'autosize'}}) }}
+{#         {% include ('IMDCTerpTubeBundle:Thread:threadPermissions.html.twig') %}#}
         <div class="controls controls-row">
             {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
             <a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
@@ -50,7 +58,30 @@
 {% block javascripts %}
 {{ parent() }}
 
-<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/editThread.js') }}"></script>
 
+<script>
+$(document).ready(function() {
+    $("#ThreadEditForm_content").autosize();
+    $("#ThreadEditForm_permissions_userListWithAccess").tagit({
+    	{% if app.user.getFriendsList|length >= 1 %}
+        showAutocompleteOnFocus: true,
+        {% endif %}
+    	{% set usernames = app.user.getFriendsListAsUsernameString %}   	
+        availableTags: [{{ usernames|raw }}]
+    });
+
+    $("ul.tagit").css('width', '50%').hide();
+
+    // since I hid the real 'submit' button to provide a nicely stylized button
+    // I have to click the real button when you click on the fancy one
+    $("#thread-form-submit-button").click(function(e) {
+        e.preventDefault();
+    	$("button#ThreadEditForm_submit").click();
+    	
+    });
+});
+</script>
+
+<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/editThread.js') }}"></script>
 {% endblock javascripts %}
 

@@ -18,7 +18,7 @@ class ThreadEditFormType extends AbstractType
 	    $user = $options['user'];
 	    $userid = $user->getId();
 	    
-	    $thread = $options['thread'];
+	    $thread = $options['thread']; // probably unnecessary, could be removed?
 	    
 	    /*
 	    $builder->add('includedFile', 'entity', array(
@@ -35,18 +35,17 @@ class ThreadEditFormType extends AbstractType
 	    ));
 	    */
 	    
-	    $builder->add('mediatextarea', 'text', array('required' => false, 
-	                                                'mapped' => false,
-	                                                'read_only' => true,
-	                                                'label' => 'Media ID',
-                                                    ));
+// 	    $builder->add('mediatextarea', 'text', array('required' => false, 
+// 	                                                'mapped' => false,
+// 	                                                'read_only' => true,
+// 	                                                'label' => 'Media ID',
+//                                                     ));
 	    
-	    $builder->add('title', null, array('label' => 'Title',
-	    ));
+	    $builder->add('title', null, array('label' => 'Title'));
 	    
 		$builder->add('content', null, array('label' => 'Supplemental Text Description'));
 		
-		$builder->add('permissions', new PermissionsType($user));
+		$builder->add('permissions');
 
 		$builder->add('submit', 'submit');
 	}	

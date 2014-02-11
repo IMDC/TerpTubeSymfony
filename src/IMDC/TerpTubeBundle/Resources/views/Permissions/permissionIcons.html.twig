@@ -11,13 +11,13 @@
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_CREATOR') %}
 <i class="fa fa-lock toolPop" title="This is private"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_CREATORS_FRIENDS') %}
-<i class="fa fa-lock toolPop" title="This is visible to your friends"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
+<i class="fa fa-lock toolPop" title="Only certain people can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_WITH_LINK') %}
 <i class="fa fa-link toolPop" title="Only people with the link can see this"></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_USER_LIST') %}
-<i class="fa fa-lock toolPop" title="Only people you choose can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
+<i class="fa fa-lock toolPop" title="Only certain people can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_GROUP_LIST') %}
-<i class="fa fa-lock toolPop" title="Only groups you choose can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
+<i class="fa fa-lock toolPop" title="Only certain groups can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% elseif threadPermission == constant('IMDC\\TerpTubeBundle\\Entity\\Permissions::ACCESS_REGISTERED_MEMBERS') %}
 <i class="fa fa-lock toolPop" title="Only people with an account can see this"{% if thread.userHasAccess(app.user) %} style="color:green;"{% endif %}></i> 
 {% else %}

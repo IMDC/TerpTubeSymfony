@@ -24,7 +24,7 @@
                     {% elseif app.user.isUserOnFriendsList(member) %}
                     <i class="fa fa-group toolPop" style="color:green" title="You are already friends"></i>
                     {% else %}
-                    <a href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" title="Click to add {{ member.username }} to friends list"><i class="fa fa-plus"></i></a>
+                    <a class="toolPop" href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" title="Click to add {{ member.username }} to friends list"><i class="fa fa-plus"></i></a>
                     {% endif %}
                 </li>
            </ul>

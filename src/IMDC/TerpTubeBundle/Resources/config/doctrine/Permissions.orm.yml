@@ -33,5 +33,4 @@ IMDC\TerpTubeBundle\Entity\Permissions:
                 inverseJoinColumns:
                     user_id:
                         referencedColumnName: id
-                        unique: true
     lifecycleCallbacks: {  }

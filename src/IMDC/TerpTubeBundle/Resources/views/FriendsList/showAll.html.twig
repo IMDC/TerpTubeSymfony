@@ -36,6 +36,9 @@
         {% set counter = counter + 1 %}
         
     {% endfor %}
+    {% if friends|length == 0 %}
+    <p>No friends yet! Why not go to the <a href="{{ path('imdc_member_list_public') }}">members directory</a> to see some profiles?</p>
+    {% endif %}
     </div> <!-- ./row-fluid -->
 </ul> <!-- ./thumbnails -->
 {% endblock underherounitrow1 %}
