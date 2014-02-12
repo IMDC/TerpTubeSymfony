@@ -25,6 +25,9 @@ use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Permissions;
 use IMDC\TerpTubeBundle\IMDCTerpTubeBundle;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormDeleteType;
+use IMDC\TerpTubeBundle\Entity\User;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Debug\Exception\ContextErrorException;
 
 
 class ThreadController extends Controller
@@ -285,6 +288,8 @@ class ThreadController extends Controller
             $user->increasePostCount(1);
             
             // deal with thread permissions
+            $this->handleThreadPermissions($newthread, $form);
+            /*
             $threadAccessLevel = $newthread->getPermissions()->getAccessLevel();
             
             if ($threadAccessLevel == Permissions::ACCESS_CREATORS_FRIENDS) {
@@ -323,6 +328,7 @@ class ThreadController extends Controller
                 $newthread->getPermissions()->setUserGroupsWithAccess(null);
                 $newthread->getPermissions()->setUsersWithAccess(null);
             }
+            */
             
             // request to persist objects to database
             $em->persist($newthread);
@@ -448,31 +454,76 @@ class ThreadController extends Controller
             $threadToEdit->setEditedAt(new \DateTime('now'));
             $threadToEdit->setEditedBy($user);
              
-            $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
-            if (!$threadeditform->get('mediatextarea')->isEmpty()) {
+//             $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
+//             if (!$threadeditform->get('mediatextarea')->isEmpty()) {
                  
-                $rawmediaID = $threadeditform->get('mediatextarea')->getData();
-                $logger = $this->container->get('logger');
-                $logger->info('*************media id is ' . $rawmediaID);
-                /** @var $mediaFile \IMDCTerpTubeBundle:Media */
-                $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
+//                 $rawmediaID = $threadeditform->get('mediatextarea')->getData();
+//                 $logger = $this->container->get('logger');
+//                 $logger->info('*************media id is ' . $rawmediaID);
+//                 /** @var $mediaFile \IMDCTerpTubeBundle:Media */
+//                 $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
                  
-                if ($user->getResourceFiles()->contains($mediaFile)) {
-                    $logger = $this->get('logger');
-                    $logger->info('User owns this media file');
-                    //FIXME: setMediaIncluded replaces ALL media when editing a thread
-                    $threadToEdit->setMediaIncluded($mediaFile);
-                }
+//                 if ($user->getResourceFiles()->contains($mediaFile)) {
+//                     $logger = $this->get('logger');
+//                     $logger->info('User owns this media file');
+//                     //FIXME: setMediaIncluded replaces ALL media when editing a thread
+//                     $threadToEdit->setMediaIncluded($mediaFile);
+//                 }
                  
-            }
+//             }
              
+            //$this->handleThreadPermissions($threadToEdit, $threadeditform);
+            
+            // deal with thread permissions
+            $threadAccessLevel = $threadToEdit->getPermissions()->getAccessLevel();
+            
+            if ($threadAccessLevel == Permissions::ACCESS_CREATORS_FRIENDS) {
+                $threadToEdit->getPermissions()->setUsersWithAccess($user->getFriendsList());
+                $threadToEdit->getPermissions()->setUserGroupsWithAccess(null);
+            }
+            else if ($threadAccessLevel == Permissions::ACCESS_USER_LIST) {
+                $threadToEdit->getPermissions()->setUsersWithAccess(null); // reset access list
+                $usermanager = $this->get('fos_user.user_manager');
+                $rawusers = explode(',', $threadeditform->get('permissions')->get('usersWithAccess')->getData());
+                if ($rawusers) {
+                    $logger = $this->container->get('logger');
+                    $theusers = new ArrayCollection();
+                    foreach ($rawusers as $possuser) {
+                        try {
+                            $user = $usermanager->findUserByUsername($possuser);
+                            $threadToEdit->getPermissions()->addUsersWithAccess($user);
+                        } catch (Exception $e) {
+                            //FIXME: do something to notify user that user name not found?
+                            $logger->info("\n\n*****ERROR: username: " . $possuser . "not found in USER_LIST****\n\n");
+                        }
+                    }
+                }
+                else {
+                    $threadToEdit->getPermissions()->setUsersWithAccess(null);
+                }
+                $threadToEdit->getPermissions()->setUserGroupsWithAccess(null);
+            }
+            else if ($threadAccessLevel == Permissions::ACCESS_GROUP_LIST) {
+                // user groups with access set automagically
+                $threadToEdit->getPermissions()->setUsersWithAccess(null);
+            }
+            else {
+                // permissions that get here are
+                // access_creator, access_public, access_with_link, registered_members
+                // really do this?
+                $threadToEdit->getPermissions()->setUserGroupsWithAccess(null);
+                $threadToEdit->getPermissions()->setUsersWithAccess(null);
+            }
+            
+            
             // request to persist objects to database
             //$em->persist($user);
             $em->persist($threadToEdit);
+            $em->persist($threadToEdit->getPermissions());
             $em->flush();
              
             $this->get('session')->getFlashBag()->add(
-                    'notice',
+                    'success',
                     'Forum post edited successfully!'
             );
              
@@ -613,5 +664,50 @@ class ThreadController extends Controller
         
         return $accessGranted;
     }
+    
+    protected function handleThreadPermissions(Thread $thread, Form $form)
+    {
+        // deal with thread permissions
+        $threadAccessLevel = $thread->getPermissions()->getAccessLevel();
+        
+        if ($threadAccessLevel == Permissions::ACCESS_CREATORS_FRIENDS) {
+            $thread->getPermissions()->setUsersWithAccess($this->getUser()->getFriendsList());
+            $thread->getPermissions()->setUserGroupsWithAccess(null);
+        }
+        else if ($threadAccessLevel == Permissions::ACCESS_USER_LIST) {
+        
+            $usermanager = $this->get('fos_user.user_manager');
+            $rawusers = explode(',', $form->get('permissions')->get('usersWithAccess')->getData());
+            if ($rawusers) {
+                $logger = $this->container->get('logger');
+                $theusers = new ArrayCollection();
+                foreach ($rawusers as $possuser) {
+                    try {
+                        $user = $usermanager->findUserByUsername($possuser);
+                        $thread->getPermissions()->addUsersWithAccess($user);
+                    } catch (\PDOException $e) {
+                        //FIXME: do something to notify user that user name not found?
+                        $logger->info("\n\n*****ERROR: username: " . $possuser . "not found in USER_LIST****\n\n");
+                    }
+                }
+            }
+            else {
+                $thread->getPermissions()->setUsersWithAccess(null);
+            }
+            $thread->getPermissions()->setUserGroupsWithAccess(null);
+        }
+        else if ($threadAccessLevel == Permissions::ACCESS_GROUP_LIST) {
+            // user groups with access set automagically
+            $thread->getPermissions()->setUsersWithAccess(null);
+        }
+        else {
+            // permissions that get here are
+            // access_creator, access_public, access_with_link, registered_members
+            // really do this?
+            $thread->getPermissions()->setUserGroupsWithAccess(null);
+            $thread->getPermissions()->setUsersWithAccess(null);
+        }
+	}
+
     
 }

@@ -573,12 +573,12 @@ class Thread
         else if ($accessLevel == Permissions::ACCESS_CREATOR && $user === $this->getCreator())
             return true;
         else if ($accessLevel == Permissions::ACCESS_CREATORS_FRIENDS && ( $user === $this->getCreator() || $this->getCreator()->getFriendsList()->contains($user) ) )
-                    return true;
+            return true;
         else if ($accessLevel == Permissions::ACCESS_WITH_LINK)
             return true;
         else if ($accessLevel == Permissions::ACCESS_USER_LIST && ( $user === $this->getCreator() || $tPerm->getUsersWithAccess()->contains($user)) )
             return true;
-        else if ($accessLevel == Permissions::ACCESS_GROUP_LIST && ( $user === $this->getCreator() || !empty(array_intersect($tPerm->getuserGroupsWithAccess(),$user->getUserGroups()))) )
+        else if ($accessLevel == Permissions::ACCESS_GROUP_LIST && ( $user === $this->getCreator() || !empty(array_intersect($tPerm->getuserGroupsWithAccess()->toArray(),$user->getUserGroups()->toArray())) ))
             return true;
         else if ($accessLevel == Permissions::ACCESS_REGISTERED_MEMBERS && $user)
             return true;

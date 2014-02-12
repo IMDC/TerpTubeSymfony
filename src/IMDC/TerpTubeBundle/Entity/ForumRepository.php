@@ -46,7 +46,7 @@ class ForumRepository extends EntityRepository
 	            FROM IMDCTerpTubeBundle:Thread t
 	            WHERE t.parentForum IS NOT NULL
 	            AND t.parentForum = :fid
-	            ORDER BY t.lastPostAt ASC";
+	            ORDER BY t.lastPostAt DESC";
         
         $query = $this->getEntityManager()->createQuery($dql)->setParameter('fid', $fid);
         return $query->getResult();

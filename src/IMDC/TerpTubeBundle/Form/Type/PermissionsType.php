@@ -13,10 +13,14 @@ class PermissionsType extends AbstractType
 {
     
     private $user;
+    private $permissions;
     
-    public function __construct(User $user)
+    public function __construct(Array $options)
     {
-        $this->user = $user;
+        $this->user = $options['user'];
+        if (isset($options['permissions']))
+            $this->permissions = $options['permissions'];
+        
     }
 
 
@@ -27,19 +31,55 @@ class PermissionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
        
-        $builder
-            ->add('accessLevel', 'choice', array(
+        if ($this->permissions) {
+            $builder->add('accessLevel', 'choice', array(
+                    'choices' => array(Permissions::ACCESS_CREATOR => 'Private, only you can see it',
+                                        //Permissions::ACCESS_CREATORS_FRIENDS => 'Members of your friends list',
+                                        Permissions::ACCESS_WITH_LINK => 'Anyone with the link (unlisted)',
+                                        Permissions::ACCESS_USER_LIST => 'Select specific users with access',
+                                        Permissions::ACCESS_GROUP_LIST => 'Select specific groups with access',
+                                        Permissions::ACCESS_REGISTERED_MEMBERS => 'Only registered members of the site',
+                                        Permissions::ACCESS_PUBLIC => 'Public, anyone can see it'),
+                    'multiple' => false,
+                    'expanded' => true,
+                    'data' => $this->permissions->getAccessLevel() // default choice
+            ));
+            $builder->add('userGroupsWithAccess', 'entity', array(
+                'class' => 'IMDCTerpTubeBundle:UserGroup',
+                'choices' => $this->permissions->getUserGroupsWithAccess(),
+                'multiple' => true,
+                'required' => false,
+            ));
+            $builder->add('usersWithAccess', 'text', array(
+                'mapped' => false,
+                'required' => false,
+                'data' => $this->permissions->getUsersWithAccessAsUsernameString(),
+            ));
+        }
+        else {
+            $builder->add('accessLevel', 'choice', array(
                 'choices' => array(Permissions::ACCESS_CREATOR => 'Private, only you can see it',
-                                    //Permissions::ACCESS_CREATORS_FRIENDS => 'Members of your friends list',
-                                    Permissions::ACCESS_WITH_LINK => 'Anyone with the link (unlisted)',
-                                    Permissions::ACCESS_USER_LIST => 'Select specific users with access',
-                                    Permissions::ACCESS_GROUP_LIST => 'Select specific groups with access',
-                                    Permissions::ACCESS_REGISTERED_MEMBERS => 'Only registered members of the site',
-                                    Permissions::ACCESS_PUBLIC => 'Public, anyone can see it'),
+                    //Permissions::ACCESS_CREATORS_FRIENDS => 'Members of your friends list',
+                    Permissions::ACCESS_WITH_LINK => 'Anyone with the link (unlisted)',
+                    Permissions::ACCESS_USER_LIST => 'Select specific users with access',
+                    Permissions::ACCESS_GROUP_LIST => 'Select specific groups with access',
+                    Permissions::ACCESS_REGISTERED_MEMBERS => 'Only registered members of the site',
+                    Permissions::ACCESS_PUBLIC => 'Public, anyone can see it'),
                 'multiple' => false,
                 'expanded' => true,
-                'data' => Permissions::ACCESS_PUBLIC
-            ))
+                'data' => Permissions::ACCESS_PUBLIC // default choice
+            ));
+            $builder->add('userGroupsWithAccess', 'entity', array(
+                'class' => 'IMDCTerpTubeBundle:UserGroup',
+                'choices' => $this->user->getUserGroups(),
+                'multiple' => true,
+                'required' => false,
+            ));
+            $builder->add('usersWithAccess', 'text', array(
+                'mapped' => false,
+                'required' => false,
+            ));
+        }
 //             ->add('userFriendsWithAccess', 'entity', array(
 //                 'class' => 'IMDCTerpTubeBundle:User',
 //                 'choices' => $this->user->getFriendsList(),
@@ -48,16 +88,7 @@ class PermissionsType extends AbstractType
 //                 'mapped' => false,
 //             ))
             
-            ->add('userGroupsWithAccess', 'entity', array(
-                'class' => 'IMDCTerpTubeBundle:UserGroup',
-                'choices' => $this->user->getUserGroups(),
-                'multiple' => true,
-                'required' => false,
-            ))
-            ->add('userListWithAccess', 'text', array(
-                'mapped' => false,
-                'required' => false,))
-            ;
+            
     }
     
     /**

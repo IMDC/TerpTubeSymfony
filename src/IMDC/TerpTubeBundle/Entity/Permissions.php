@@ -183,6 +183,11 @@ class Permissions
         return $this->usersWithAccess;
     }
     
+    public function getUsersWithAccessAsUsernameString()
+    {
+        return implode(",", $this->getUsersWithAccess()->toArray());
+    }
+    
     public function setUsersWithAccess($usersWithAccess)
     {
         $this->usersWithAccess = $usersWithAccess;

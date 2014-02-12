@@ -45,7 +45,7 @@ class ThreadEditFormType extends AbstractType
 	    
 		$builder->add('content', null, array('label' => 'Supplemental Text Description'));
 		
-		$builder->add('permissions');
+		$builder->add('permissions', new PermissionsType(array('user' => $user, 'permissions' => $thread->getPermissions())));
 
 		$builder->add('submit', 'submit');
 	}	

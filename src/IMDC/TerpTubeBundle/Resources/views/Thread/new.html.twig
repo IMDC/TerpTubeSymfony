@@ -76,7 +76,7 @@
 
 $(document).ready(function() {
     $("#ThreadForm_content").autosize();
-    $("#ThreadForm_permissions_userListWithAccess").tagit({
+    $("#ThreadForm_permissions_usersWithAccess").tagit({
     	{% if app.user.getFriendsList|length >= 1 %}
         showAutocompleteOnFocus: true,
         {% endif %}

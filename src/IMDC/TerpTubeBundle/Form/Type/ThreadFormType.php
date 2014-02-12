@@ -63,7 +63,7 @@ class ThreadFormType extends AbstractType
 	    $builder->add('content', null, array('label' => 'Supplementary Content - a brief description of the Topic',
 	    ));
 	    
-	    $builder->add('permissions', new PermissionsType($user), array('label' => false));
+	    $builder->add('permissions', new PermissionsType(array('user' => $user)));
 	    
 	    // this was used to test if you could choose a different parentForum from a selection drop down
 	    //$builder->addEventSubscriber(new AddParentForumSubscriber());

@@ -4,7 +4,7 @@
 {#         {{ form_widget(form.permissions.userFriendsWithAccess, {'attr' : {'style' : 'display: none;'}}) }} #}
         {{ form_row(form.permissions.accessLevel.1) }} {# Anyone with the link #}
         {{ form_row(form.permissions.accessLevel.2) }} {# list of specific users #}
-	    {{ form_widget(form.permissions.userListWithAccess, {'attr' : {'style' : 'display: none;'}}) }}
+	    {{ form_widget(form.permissions.usersWithAccess, {'attr' : {'style' : 'display: none;'}}) }}
         {{ form_row(form.permissions.accessLevel.3) }} {# list of specific groups #}
         {{ form_widget(form.permissions.userGroupsWithAccess, {'attr' : {'style' : 'display: none;'}}) }}
         {{ form_row(form.permissions.accessLevel.4) }} {# only ppl with accounts #}
