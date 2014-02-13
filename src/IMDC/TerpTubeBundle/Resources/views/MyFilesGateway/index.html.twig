@@ -169,7 +169,9 @@ endblock title %} {% block nav_ul_authenticated_my_files %}
             if ($(this).hasClass('disabled'))
                 return false;
             $('#preview').html('');
-        	previewFileLink($(this), $('#preview'), true);
+            var button = this;
+//         	previewFileLink($(currentElement).attr('data-val'), $(currentElement).attr('data-url'), true);
+        	window["mediaChooser"].previewMediaFile($(button).attr('data-val'), $(button).attr('data-url'), true);
         	return false;
         });
         $('.delete-button').click(function(e) {

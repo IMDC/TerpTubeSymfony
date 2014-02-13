@@ -30,93 +30,93 @@ function deleteFile(currentElement, message) {
 	return false;
 }
 
-function recordVideo(destinationDivElement, address, recorderConfiguration) {
-	$.ajax({
-		url : address,
-		type : "POST",
-		// contentType : "application/x-www-form-urlencoded",
-		data : {
-			recorderConfiguration : recorderConfiguration
-		},
-		success : function(data) {
-			destinationDivElement.html(data);
-		},
-		error : function(request) {
-			console.log(request);
-			alert(request.statusText);
-		}
-	});
-	return false;
-}
+//function recordVideo(destinationDivElement, address, recorderConfiguration) {
+//	$.ajax({
+//		url : address,
+//		type : "POST",
+//		// contentType : "application/x-www-form-urlencoded",
+//		data : {
+//			recorderConfiguration : recorderConfiguration
+//		},
+//		success : function(data) {
+//			destinationDivElement.html(data);
+//		},
+//		error : function(request) {
+//			console.log(request);
+//			alert(request.statusText);
+//		}
+//	});
+//	return false;
+//}
 
-function previewFileLink(currentElement, destinationDivElement, isPopUp) {
-	var mediaId = $(currentElement).attr('data-val');
-	var mediaURL = $(currentElement).attr('data-url'); // Used to obtain the
-														// URL for the media
+//function previewFileLink(currentElement, destinationDivElement, isPopUp) {
+//	var mediaId = $(currentElement).attr('data-val');
+//	var mediaURL = $(currentElement).attr('data-url'); // Used to obtain the
+//														// URL for the media
+//
+//	previewMediaFile(mediaId, mediaURL, destinationDivElement, isPopUp);
+//}
 
-	previewMediaFile(mediaId, mediaURL, destinationDivElement, isPopUp);
-}
+//function popUp(destinationDivElement, functionName, title) {
+//	destinationDivElement.dialog({
+//
+//		autoOpen : false,
+//		resizable : false,
+//		modal : true,
+//		draggable : false,
+//		closeOnEscape : true,
+//		dialogClass : "player-dialog",
+//		open : function(event, ui) {
+//			// $(".ui-dialog-titlebar-close", this.parentNode).hide();
+//			functionName;
+//		},
+//		create : function(event, ui) {
+//			$(event.target).parent().css('position', 'relative'); // Dumb
+//																	// comment
+//																	// at this
+//																	// line!
+//		},
+//		position : {
+//			my : "center top",
+//			// at : "center top",
+//			of : $("body")
+//		},
+//		show : "blind",
+//		hide : "blind",
+//		minWidth : 740,
+//		title : title
+//	});
+//
+//	destinationDivElement.dialog("open");
+//}
 
-function popUp(destinationDivElement, functionName, title) {
-	destinationDivElement.dialog({
+//function previewMediaFile(mediaId, mediaURL, destinationDivElement, isPopUp) {
+//	if (isPopUp) {
+//		popUp(destinationDivElement, loadMediaPage(mediaId, mediaURL,
+//				destinationDivElement), "Preview");
+//	} else {
+//		loadMediaPage(mediaId, mediaURL, destinationDivElement);
+//	}
+//
+//}
 
-		autoOpen : false,
-		resizable : false,
-		modal : true,
-		draggable : false,
-		closeOnEscape : true,
-		dialogClass : "player-dialog",
-		open : function(event, ui) {
-			// $(".ui-dialog-titlebar-close", this.parentNode).hide();
-			functionName;
-		},
-		create : function(event, ui) {
-			$(event.target).parent().css('position', 'relative'); // Dumb
-																	// comment
-																	// at this
-																	// line!
-		},
-		position : {
-			my : "center top",
-			// at : "center top",
-			of : $("body")
-		},
-		show : "blind",
-		hide : "blind",
-		minWidth : 740,
-		title : title
-	});
-
-	destinationDivElement.dialog("open");
-}
-
-function previewMediaFile(mediaId, mediaURL, destinationDivElement, isPopUp) {
-	if (isPopUp) {
-		popUp(destinationDivElement, loadMediaPage(mediaId, mediaURL,
-				destinationDivElement), "Preview");
-	} else {
-		loadMediaPage(mediaId, mediaURL, destinationDivElement);
-	}
-
-}
-
-function loadMediaPage(mediaId, mediaURL, destinationDivElement) {
-	$.ajax({
-		url : mediaURL,
-		type : "POST",
-		contentType : "application/x-www-form-urlencoded",
-		data : {
-			mediaId : mediaId
-		},
-		success : function(data) {
-			destinationDivElement.html(data);
-		},
-		error : function(request) {
-			console.log(request);
-			alert(request.statusText);
-		}
-	});
-}
+//function loadMediaPage(mediaId, mediaURL, destinationDivElement) {
+//	$.ajax({
+//		url : mediaURL,
+//		type : "POST",
+//		contentType : "application/x-www-form-urlencoded",
+//		data : {
+//			mediaId : mediaId
+//		},
+//		success : function(data) {
+//			destinationDivElement.html(data);
+//		},
+//		error : function(request) {
+//			console.log(request);
+//			alert(request.statusText);
+//		}
+//	});
+//}
 
 function hidePIP(pipDiv) {
 	var clip = $(pipDiv);

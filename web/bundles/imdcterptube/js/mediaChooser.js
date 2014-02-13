@@ -7,6 +7,7 @@ MediaChooser.TYPE_RECORD_AUDIO = 5;
 MediaChooser.TYPE_UPLOAD_VIDEO = 6;
 
 MediaChooser.DIALOG_TITLE = "Record/Choose a file";
+MediaChooser.DIALOG_TITLE_PREVIEW = "Preview";
 
 function MediaChooser(element, callBackFunction, isPopUp)
 {
@@ -78,7 +79,15 @@ MediaChooser.prototype.loadChooserPage = function(data)
 			});
 };
 
+MediaChooser.prototype.previewMediaFile = function (mediaId, mediaURL, isPopUp) {
+	var instance = this;
+	if (isPopUp) {
+		this.popUp(function(){instance.loadMediaPage(mediaId, mediaURL);}, this.terminatingFunction, MediaChooser.DIALOG_TITLE_PREVIEW);
+	} else {
+		this.loadMediaPage(mediaId, mediaURL);
+	}
 
+}
 
 MediaChooser.prototype.loadMediaPage = function(mediaId, mediaURL) {
 	this.loadNextPage(mediaURL, {mediaId: mediaId}, "POST");
