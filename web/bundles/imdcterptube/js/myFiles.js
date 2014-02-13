@@ -49,16 +49,6 @@ function recordVideo(destinationDivElement, address, recorderConfiguration) {
 	return false;
 }
 
-function getRecorder()
-{
-	return recorder;
-}
-
-function setRecorder(newRecorder)
-{
-	recorder = newRecorder;
-}
-
 function previewFileLink(currentElement, destinationDivElement, isPopUp) {
 	var mediaId = $(currentElement).attr('data-val');
 	var mediaURL = $(currentElement).attr('data-url'); // Used to obtain the

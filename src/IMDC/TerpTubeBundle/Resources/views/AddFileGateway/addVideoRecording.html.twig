@@ -12,7 +12,7 @@
 	 player.options.areaSelectionEnabled = false;
 	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
 	 player.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
-	 player.options.backButton = false;
+	 player.options.backButtons = false;
 	 //player.options.forwardButton = false;
 	 player.options.audioBar = false;
 	 player.options.volumeControl = false;
@@ -27,14 +27,15 @@
 		 fn(data);
 		 console.log('Success!', data);
 	 }
-	 player.options.forwardFunction = function(data)
+	 player.options.forwardButtons.push('<button class="forwardButton"></button>');
+	 player.options.forwardFunctions.push(function(data)
 	 {
 		 player.destroyRecorder();
 		 console.log(recorderConfiguration);
 		 var fn = window[recorderConfiguration.forwardFunction]||null;
 		 fn(data);
 		 console.log('Success!', data);
-	 }
+	 });
 	 player.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
 
 	 player.createControls();

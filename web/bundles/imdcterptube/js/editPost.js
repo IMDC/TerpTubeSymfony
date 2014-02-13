@@ -1,12 +1,11 @@
- var mediaChooser;
  
  $("#selectFiles").click(function(e) {
-	mediaChooser = new MediaChooser($("#files"), function(mediaID)
+	window["mediaChooser"] = new MediaChooser($("#files"), function(mediaID)
 		 	{
 		 		//alert(mediaID);
 	            setMediaID(mediaID);
 	 		}, true);
-	mediaChooser.chooseMedia();
+	window["mediaChooser"].chooseMedia();
  });
 
  function setMediaID(mid) 

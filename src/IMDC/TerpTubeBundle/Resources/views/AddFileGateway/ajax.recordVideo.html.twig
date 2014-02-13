@@ -1,7 +1,7 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-{% block motionMedia %}
-<video	class="preview"  width="100%" id="record" preload="auto" autoplay muted>
+
+<video class="preview" width="100%" id="record" preload="auto" autoplay muted>
 </video>
 <script type='text/javascript'>
  $(document).ready(function() {
@@ -13,7 +13,6 @@
 	 player.options.areaSelectionEnabled = false;
 	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
 	 player.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
-	 player.options.backButton = false;
 	 //player.options.forwardButton = false;
 	 player.options.audioBar = false;
 	 player.options.volumeControl = false;
@@ -23,31 +22,26 @@
 	 }
 	 player.options.recordingSuccessFunction = function(data)
 	 {
-		 console.log(recorderConfiguration);
 		 var fn = window[recorderConfiguration.recordingSuccessFunction];
 		 fn(data);
-		 console.log('Success!', data);
+		 console.log('Recording Success!', data);
 	 }
-	 player.options.forwardFunction = function(data)
-	 {
-		 player.destroyRecorder();
-		 console.log(recorderConfiguration);
-		 var fn = window[recorderConfiguration.forwardFunction]||null;
-		 fn(data);
-		 console.log('Success!', data);
-	 }
+	 var forwardFunctions = recorderConfiguration.forwardFunctions;
+	 for (var i=0;i<forwardFunctions.length;i++)
+ 	 {
+	 	 var funct = forwardFunctions[i];
+	 	 player.options.forwardFunctions[i] = function(data)
+	 	 {
+	 		 player.destroyRecorder();
+	 		 var fn = window[funct]||null;
+	 		 fn(data);
+	 		 console.log('Success!', data);
+	 	 };
+ 	 }
 	 player.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
-	 //player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType ?>');}};
-	 //player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename(
-		//	$outputVideoFile)
-			//																						 ?>', <?php echo $keepVideoFile ?>, controls);};
-	 
-	 // player.options.playHeadImage = "images/feedback_icons/round_plus.png";
-	 // player.options.playHeadImageOnClick = function(){ alert("plus");};
-
 	 player.createControls();
 
-	 setRecorder(player);
+	 window["mediaChooser"].setRecorder(player);
 	 
 	 videoElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
 		 {
@@ -58,6 +52,5 @@
 
   </script>
 
-{% endblock motionMedia %}
 
  

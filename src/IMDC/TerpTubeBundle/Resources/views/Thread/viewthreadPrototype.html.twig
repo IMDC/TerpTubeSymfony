@@ -456,7 +456,7 @@ var postArray = new Array();
     
         $('#record-link').click(function(e) {
             e.preventDefault();
-            var recorderConfiguration = {forwardButton: true, forwardFunction: "forwardFunction", recordingSuccessFunction: "callBack"};
+            var recorderConfiguration = {forwardButtons: ["<button class='forwardButton'></button>"], forwardFunctions: ["forwardFunction"], recordingSuccessFunction: "callBack"};
         	recordVideo($('#record-video-div'), $(this).attr('href'), recorderConfiguration);
         	$(this).toggle();
         	$("#cancel-record-link").show();

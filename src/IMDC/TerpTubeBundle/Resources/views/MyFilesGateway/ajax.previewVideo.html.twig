@@ -1,4 +1,4 @@
-{% extends "IMDCTerpTubeBundle:MyFilesGateway:previewMotionMedia.html.twig" %}
+{% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block motionMedia %}
@@ -10,8 +10,7 @@
  var player = new Player($("#{{ mediaFile.getID }}"));
  player.options.areaSelectionEnabled = true;
  player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
- player.options.backButton = false;
- player.options.forwardButton = false;
+ player.options.forwardButtons = false;
  // player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
  // player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
  

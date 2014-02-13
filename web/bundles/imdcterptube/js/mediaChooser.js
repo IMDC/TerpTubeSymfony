@@ -6,7 +6,7 @@ MediaChooser.TYPE_RECORD_VIDEO = 4;
 MediaChooser.TYPE_RECORD_AUDIO = 5;
 MediaChooser.TYPE_UPLOAD_VIDEO = 6;
 
-MediaChooser.DIALOG_TITLE = "Choose a file";
+MediaChooser.DIALOG_TITLE = "Record/Choose a file";
 
 function MediaChooser(element, callBackFunction, isPopUp)
 {
@@ -20,17 +20,17 @@ function MediaChooser(element, callBackFunction, isPopUp)
  * Gateway function to all media choosing functions
  * @param type - the type of media to choose, defaults to MediaChooser.TYPE_ALL
  */
-MediaChooser.prototype.chooseMedia = function(type)
+MediaChooser.prototype.chooseMedia = function(type, data)
 {
 	this.type = (typeof type === "undefined") ? MediaChooser.TYPE_ALL : type;
 	var instance = this;
 	if (this.isPopUp)
 	{
-		this.popUp(function(){instance.loadChooserPage(instance.type);}, this.terminatingFunction, MediaChooser.DIALOG_TITLE);
+		this.popUp(function(){instance.loadChooserPage(data);}, this.terminatingFunction, MediaChooser.DIALOG_TITLE);
 	}
 	else
 	{
-		this.loadChooserPage(this.type);
+		this.loadChooserPage(data);
 	}
 };
 
@@ -53,19 +53,18 @@ MediaChooser.prototype.terminatingFunction = function(mediaID)
 	
 };
 
-MediaChooser.prototype.loadChooserPage = function()
+MediaChooser.prototype.loadChooserPage = function(data)
 {
 	var instance = this;
+	data = (typeof data === "undefined") ? {type: instance.type}: data;
+	data.type = (typeof type === "undefined") ? instance.type : data.type;
 	console.log("Load Chooser Page");
 	$.ajax(
 			{
 				url : Routing.generate('imdc_media_chooser_by_type', {type: instance.type}),
 				type : "POST",
 				contentType : "application/x-www-form-urlencoded",
-				data :
-				{
-					type : instance.type
-				},
+				data : data,
 				success : function(data)
 				{
 					console.log("Loaded Chooser Page");
@@ -77,6 +76,12 @@ MediaChooser.prototype.loadChooserPage = function()
 					alert(request.statusText);
 				}
 			});
+};
+
+
+
+MediaChooser.prototype.loadMediaPage = function(mediaId, mediaURL) {
+	this.loadNextPage(mediaURL, {mediaId: mediaId}, "POST");
 };
 
 MediaChooser.prototype.loadNextPage = function(url,data, method)
@@ -185,7 +190,18 @@ MediaChooser.prototype.recordVideo = function(address, recorderConfiguration)
 		}
 	});
 	return false;
-}
+};
+
+MediaChooser.prototype.getRecorder = function ()
+{
+	return this.recorder;
+};
+
+MediaChooser.prototype.setRecorder = function(newRecorder)
+{
+	this.recorder = newRecorder;
+};
+
 /*
 function previewFileLink(currentElement, destinationDivElement, isPopUp)
 {

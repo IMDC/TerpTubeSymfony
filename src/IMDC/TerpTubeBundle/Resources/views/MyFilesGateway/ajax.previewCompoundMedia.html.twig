@@ -1,4 +1,4 @@
-{% extends "IMDCTerpTubeBundle:MyFilesGateway:previewMotionMedia.html.twig" %}
+{% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 {% block stylesheets %}
     {{  parent() }}
@@ -45,8 +45,8 @@
 	 
 	 player1.options.areaSelectionEnabled = false;
 	 player1.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	 player1.options.backButton = false;
-	 player1.options.forwardButton = false;
+	 player1.options.backButtons = false;
+	 player1.options.forwardButtons = false;
 	 player1.options.audioBar = false;
 	 //player1.options.controlBarElement = $('.simultaneousVideoControls');
 	 player1.options.controlBarVisible = false;
@@ -54,8 +54,8 @@
 	 
 	 player2.options.areaSelectionEnabled = false;
 	 player2.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	 player2.options.backButton = false;
-	 //player.options.forwardButton = false;
+	 player2.options.backButtons = false;
+	 //player.options.forwardButtons = false;
 	 player2.options.audioBar = false;
 	 player2.options.volumeControl = true;
 	 player2.options.controlBarElement = $('.preview-controls');
@@ -71,14 +71,15 @@
 		// fn(data);
 		 console.log('Success!', data);
 	 };
-	 player2.options.forwardFunction = function(data)
+	 player2.options.forwardButtons.push('<button class="forwardButton"></button>');
+	 player2.options.forwardFunctions.push(function(data)
 	 {
 		 player.destroyRecorder();
 		// console.log(recorderConfiguration);
 		// var fn = window[recorderConfiguration.forwardFunction]||null;
 		// fn(data);
 		 console.log('Forward!', data);
-	 };
+	 });
 	 //player2.options.controlBarElement = $('.simultaneousVideoControls');
 
 	 player1.createControls();

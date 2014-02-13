@@ -57,8 +57,8 @@
 	 
 	 player1.options.areaSelectionEnabled = false;
 	 player1.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	 player1.options.backButton = false;
-	 player1.options.forwardButton = false;
+	 player1.options.backButtons = false;
+	 player1.options.forwardButtons = false;
 	 player1.options.audioBar = false;
 	 player1.options.controlBarElement = $('.simultaneousVideoControls');
 	 player1.options.controlBarVisible = true;
@@ -67,8 +67,8 @@
 	 player2.options.areaSelectionEnabled = false;
 	 player2.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
 	 player2.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
-	 player2.options.backButton = false;
-	 player2.options.forwardButton = true;
+	 player2.options.backButtons = false;
+	 player2.options.forwardButtons = true;
 	 player2.options.audioBar = false;
 	 player2.options.volumeControl = false;
 	 player2.options.recordingErrorFunction = function(e)
@@ -82,7 +82,8 @@
 		// fn(data);
 		 console.log('Success!', data);
 	 };
-	 player2.options.forwardFunction = function(data)
+	 player2.options.forwardButtons.push('<button class="forwardButton"></button>');
+	 player2.options.forwardFunctions.push(function(data)
 	 {
 		 player2.destroyRecorder();
 		// console.log(recorderConfiguration);
@@ -90,7 +91,7 @@
 		// fn(data);
 		 console.log('Forward!', data);
 		 goForward();
-	 };
+	 });
 	
 	 player2.options.controlBarElement = $('.simultaneousVideoControls');
 

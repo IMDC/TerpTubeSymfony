@@ -150,7 +150,7 @@
         	return false;
         });
         $('#record-link').click(function(e) {
-            var recorderConfiguration = {forwardButton: true, forwardFunction: "forwardFunction", recordingSuccessFunction: "callBack"};
+            var recorderConfiguration = {forwardButtons: ["<button class='forwardFunction'></button>"], forwardFunctions: ["forwardFunction"], recordingSuccessFunction: "callBack"};
         	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href'), recorderConfiguration), "Record");
         	return false;
         });

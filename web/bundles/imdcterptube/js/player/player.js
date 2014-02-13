@@ -134,24 +134,24 @@ Player.prototype.createControls = function() {
 					'<div class="videoControlsContainer controlsBar forwardButtons"></div>')
 			.append(
 					'<div class="videoControlsContainer controlsBar videoControls"></div>');
-	if (this.options.backButton) {
-		if (this.options.type == Player.DENSITY_BAR_TYPE_PLAYER) {
-			$(this.elementID)
-					.find(".videoControlsContainer.controlsBar.backButtons")
-					.eq(0)
-					.append(
-							'<button type="button" class="videoControlsContainer controlsBar backButtons backButton"></button>');
-		} else {
-			$(this.elementID)
-					.find(".videoControlsContainer.controlsBar.backButtons")
-					.eq(0)
-					.append(
-							'<button type="button" class="videoControlsContainer controlsBar backButtons backButton record"></button>');
+	if (this.options.backButtons.length > 0) {
+		//Main back button used to be have a class backButton
+			var backButtons = $(this.elementID).find(
+			".videoControlsContainer.controlsBar.backButtons").eq(0);
+			for (var i = 0; i < this.options.backButtons.length; i++) {
+				var button = this.options.backButtons[i];
+				button = $(button); 
+				backButtons.append(button);
+				$(button).addClass("videoControlsContainer");
+				$(button).addClass("controlsBar");
+				$(button).addClass("backButtons");
+				
+				if (this.options.type !== Player.DENSITY_BAR_TYPE_PLAYER) {
+						$(button).addClass("record");
+				}
+				$(button).click(instance.options.backFunctions[i]);
+			}
 		}
-		$(this.elementID).find(
-				".videoControlsContainer.controlsBar.backButtons.backButton")
-				.eq(0).click(instance.options.backFunction);
-	}
 	if (this.options.type == Player.DENSITY_BAR_TYPE_PLAYER) {
 		$(this.elementID)
 				.find(".videoControlsContainer.controlsBar.videoControls")
@@ -207,24 +207,26 @@ Player.prototype.createControls = function() {
 					instance.recording_toggleRecording();
 				});
 	}
-	if (this.options.forwardButton) {
-		if (this.options.type == Player.DENSITY_BAR_TYPE_PLAYER) {
-			$(this.elementID)
-					.find(".videoControlsContainer.controlsBar.forwardButtons")
-					.eq(0)
-					.append(
-							'<button type="button" class="videoControlsContainer controlsBar forwardButtons forwardButton"></button>');
-		} else {
-			$(this.elementID)
-					.find(".videoControlsContainer.controlsBar.forwardButtons")
-					.eq(0)
-					.append(
-							'<button type="button" class="videoControlsContainer controlsBar forwardButtons forwardButton record"></button>');
+	if (this.options.forwardButtons.length > 0) {
+		//Main forward button used to be have a class forwardButton
+		var forwardButtons = $(this.elementID).find(
+		".videoControlsContainer.controlsBar.forwardButtons").eq(0);
+		for (var i = 0; i < this.options.forwardButtons.length; i++) {
+			var button = this.options.forwardButtons[i];
+			button = $(button);
+			$(button).addClass("videoControlsContainer");
+			$(button).addClass("controlsBar");
+			$(button).addClass("forwardButtons");
+			
+			forwardButtons.append(button);
+			console.log(button);
+			console.log($(button));
+			
+			if (this.options.type !== Player.DENSITY_BAR_TYPE_PLAYER) {
+				$(button).addClass("record");
+			}
+			$(button).click(instance.options.forwardFunctions[i]);
 		}
-		$(this.elementID)
-				.find(
-						".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
-				.eq(0).click(instance.options.forwardFunction);
 	}
 	if (this.options.audioBar) {
 		$(this.elementID)
@@ -469,14 +471,10 @@ function Player(videoID, options) {
 		type : Player.DENSITY_BAR_TYPE_PLAYER,
 		recordingStream : null,
 		updateTimeType : Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
-		backButton : false,
-		backFunction : function() {
-			alert("Hello there Back");
-		},
-		forwardButton : false,
-		forwardFunction : function() {
-			alert("Forward");
-		},
+		backButtons : new Array(),
+		backFunctions : new Array(),
+		forwardButtons : new Array(),
+		forwardFunctions : new Array(),
 		recordingErrorFunction : function(e) {
 			alert("Error:" + e);
 		},

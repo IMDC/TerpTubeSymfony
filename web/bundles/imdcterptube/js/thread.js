@@ -2,7 +2,6 @@ var globalPlayer;
 var globalPlayHeadImage;
 var globalStartTimeInput;
 var globalEndTimeInput;
-var mediaChooser;
 var speedSlowNormalImagePath;
 var speedSlowFastImagePath;
 var speedSlowSlowImagePath;
@@ -15,12 +14,12 @@ $(document).ready(function() {
 
 	$("a#selectFiles").on('click', function() {
 		console.log('inside select files click method');
-		mediaChooser = new MediaChooser($("div#files"), function(mediaID)
+		window["mediaChooser"] = new MediaChooser($("div#files"), function(mediaID)
 			 	{
 //			 		alert(mediaID);
 		            setMediaID($("#PostFormFromThread_mediatextarea"),mediaID);
 		 		}, true);
-		mediaChooser.chooseMedia();
+		window["mediaChooser"].chooseMedia();
 	});
 	
     $("#7").on("timeupdate", function(event) {
@@ -494,8 +493,8 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	
 	player.options.areaSelectionEnabled = false;
 	player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	player.options.backButton = false;
-	player.options.forwardButton = false;
+	player.options.backButtons = false;
+	player.options.forwardButtons = false;
 	player.options.audioBar = false;
 	// player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
 	// player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};

@@ -65,34 +65,34 @@ class MediaChooserGatewayController extends Controller
 		switch ($type)
 		{
 		case MediaChooserGatewayController::TYPE_ALL:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:gateway');
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:gateway', array('url' => null));
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_VIDEO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideo');
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideo', array('url' => null));
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_AUDIO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudio');
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudio', array('url' => null));
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_IMAGE:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addImage');
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addImage', array('url' => null));
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_OTHER:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addOther');
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addOther', array('url' => null));
 			break;
 		case MediaChooserGatewayController::TYPE_RECORD_AUDIO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudioRecording');
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudioRecording', array('url' => null));
 			break;
 		case MediaChooserGatewayController::TYPE_RECORD_VIDEO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideoRecording');
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideoRecording', array('url' => null));
 			break;
 		}
-		if ($request->isXmlHttpRequest())
-		{
-			$content = $response->getContent();
-			$return = array('page' => $content, 'finished' => false);
-			$return = json_encode($return); // json encode the array
-			return new Response($return, 200, array('Content-Type' => 'application/json'));
-		}
+// 		if ($request->isXmlHttpRequest())
+// 		{
+// 			$content = $response->getContent();
+// 			$return = array('page' => $content, 'finished' => false);
+// 			$return = json_encode($return); // json encode the array
+// 			return new Response($return, 200, array('Content-Type' => 'application/json'));
+// 		}
 		$this->get('session')->set('mediaChooseFinished', false);
 		return $response;
 	}
@@ -211,5 +211,6 @@ class MediaChooserGatewayController extends Controller
 				->render('IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'recordVideo.html.twig',
 						array("recorderConfiguration" => $recorderConfiguration));
 	}
+	
 
 }

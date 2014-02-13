@@ -72,7 +72,7 @@ imdc_files_gateway_image:
     
 imdc_files_gateway_record_media: 
     pattern: /myFiles/recordMedia
-    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:recordMedia, url: null }
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addVideoRecording, url: null }
 
 imdc_files_gateway_other: 
     pattern: /myFiles/add/other

@@ -96,8 +96,7 @@ class MyFilesGatewayController extends Controller {
 			// FIXME need to fix the ajax css file to work better.
 			return $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:ajax.previewCompoundMedia.html.twig', array (
 					"compoundMedia" => $mediaFile 
-			)
-			 );
+			) );
 	}
 	
 	/**
@@ -168,31 +167,49 @@ class MyFilesGatewayController extends Controller {
 		$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
 		
 		$responseURL = "";
+		
+		if ($request->isXmlHttpRequest ()) {
+			$prefix = "ajax.";
+		}
+		// form not valid, show the basic form
 		if ($media !== null) {
 			// FIXME Should check for file permissions before showing the media to the user
 			switch ($media->getType ()) {
 				case Media::TYPE_AUDIO :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:previewAudio.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewAudio.html.twig';
 					break;
 				case Media::TYPE_VIDEO :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:previewVideo.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewVideo.html.twig';
 					break;
 				case Media::TYPE_IMAGE :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:previewImage.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewImage.html.twig';
 					break;
 				case Media::TYPE_AUDIO :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:previewAudio.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewAudio.html.twig';
 					break;
 				case Media::TYPE_OTHER :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:previewOther.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewOther.html.twig';
 					break;
 			}
 		} else {
 			throw new EntityNotFoundException ( "Cannot find media with that ID" );
 		}
-		return $this->render ( $responseURL, array (
+		$response = $this->render ( $responseURL, array (
 				'mediaFile' => $media 
 		) );
+		
+		if ($request->isXmlHttpRequest ()) {
+			$return = array (
+					'page' => $response->getContent (),
+					'finished' => false
+			);
+			$return = json_encode ( $return ); // json encode the array
+			$response = new Response ( $return, 200, array (
+					'Content-Type' => 'application/json'
+			) );
+		}
+		
+		return $response;
 	}
 	public function recordMediaAction(Request $request, $url) {
 		// throw new NotImplementedException("Not yet implemented");
