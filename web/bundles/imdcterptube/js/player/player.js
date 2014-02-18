@@ -1046,21 +1046,21 @@ Player.prototype.setMouseDownThumb = function(event) {
 		}
 	}
 };
-Player.prototype.setAreaSelectionStartTime(time) {
+Player.prototype.setAreaSelectionStartTime = function(time) {
 	this.currentMinTimeSelected = time;
 	this.currentMinSelected = this.getXForTime(this.currentMinTimeSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	this.repaint();
-	$(instance).trigger(
+	$(this).trigger(
 			Player.EVENT_AREA_SELECTION_CHANGED);
 };
 
-Player.prototype.setAreaSelectionEndTime(time) {
+Player.prototype.setAreaSelectionEndTime = function(time) {
 	this.currentMaxTimeSelected = time;
 	this.currentMaxSelected = this.getXForTime(this.currentMaxTimeSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	this.repaint();
-	$(instance).trigger(
+	$(this).trigger(
 			Player.EVENT_AREA_SELECTION_CHANGED);
 };
 
