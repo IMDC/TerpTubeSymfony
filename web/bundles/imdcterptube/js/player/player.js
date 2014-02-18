@@ -1046,6 +1046,23 @@ Player.prototype.setMouseDownThumb = function(event) {
 		}
 	}
 };
+Player.prototype.setAreaSelectionStartTime(time) {
+	this.currentMinTimeSelected = time;
+	this.currentMinSelected = this.getXForTime(this.currentMinTimeSelected);
+	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+	this.repaint();
+	$(instance).trigger(
+			Player.EVENT_AREA_SELECTION_CHANGED);
+};
+
+Player.prototype.setAreaSelectionEndTime(time) {
+	this.currentMaxTimeSelected = time;
+	this.currentMaxSelected = this.getXForTime(this.currentMaxTimeSelected);
+	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+	this.repaint();
+	$(instance).trigger(
+			Player.EVENT_AREA_SELECTION_CHANGED);
+};
 
 Player.prototype.setHighlightedRegion = function(startX, endX) {
 	// alert (currentMinSelected +" "+startX);
