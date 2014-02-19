@@ -19,7 +19,7 @@
           
 		<div class="row-fluid comment-reply-wrap" id="post-{{ postReply.id }}-wrap" data-pid="{{ postReply.id }}">
 		    <div class="span2" id="nested-comment-spacer"></div>
-		    <div class="span10 well">
+		    <div class="span10 well nested-comment-wrap">
 			    <div class="span2 post-reply-user-info-wrap">
 			        <div class="row-fluid post-reply-user-avatar-wrap">
 			            <img class="avatar" alt="avatar" title="" src="{{ postReply.author.getProfile.avatar ? asset(postReply.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />

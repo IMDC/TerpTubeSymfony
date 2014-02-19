@@ -33,6 +33,10 @@ div.post-reply-date {
     color: #aaa;
 }
 
+div.post-reply-content-wrap {
+    min-height: 180px;
+}
+
 div.post-reply-content {
     max-height: 600px;
     overflow-y: auto;
@@ -132,4 +136,21 @@ div.temporal-post-wrap {
 
 #spacerdiv {
      height: 400px;
+}
+
+div.post-reply-content video {
+    border-top: 1px solid #ddd;
+}
+
+div.post-reply-inner-wrap {
+    margin-bottom: 15px;
+}
+
+div.comment-reply-wrap {
+    margin-top: 10px;
+}
+
+div.nested-comment-wrap {
+    border-top: 1px dashed #999;
+    margin-top: 15px;
 }

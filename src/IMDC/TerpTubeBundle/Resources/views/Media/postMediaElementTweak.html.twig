@@ -1,3 +1,5 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
 <div class="row-fluid text-center" id="mediaFileWrap">
     
 	        
@@ -63,14 +65,16 @@
     </audio>
 </div> <!-- /mediaFileWrap div -->
     {% endif %}
+{% if thread.title is defined %}
 <div class="row-fluid thread-title-wrap">
     <h1>{{ thread.title }}</h1>
 </div>
-<div class="row-fluid thread-content-wrap">
-            <div class="span12" id="maincontent">
-                {{ thread.content|nl2br }}
-           </div>
-</div> <!-- /.thread-content-wrap -->
+{% endif %}
+{# <div class="row-fluid thread-content-wrap">#}
+{#             <div class="span12" id="maincontent">#}
+{#                 {{ thread.content|nl2br }}#}
+{#            </div>#}
+{# </div> <!-- /.thread-content-wrap -->#}
 <div class="row-fluid thread-edited-element-wrap">
     <ul class="unstyled inline">
         <li><span class="edited-text-span" title="{{ thread.creationDate|date('o-m-d H:i') }}">Created {{ time_diff(thread.creationDate)}}</span></li>
@@ -83,6 +87,50 @@
     <div class="span12">
         {# include('IMDCTerpTubeBundle:Thread:smalluserinfo.html.twig') #}
         {% set member = thread.creator %}
-        {% include('IMDCTerpTubeBundle:Member:infoBlock.html.twig') %}
+{#         {% include('IMDCTerpTubeBundle:Member:infoBlock.html.twig') %} #}
+            {% set profile = member.getProfile %}
+
+		<div class="row-fluid">
+		   <div class="span2" id="avatar-wrap">
+		       <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName()} ) }}"><img class="avatar" alt="avatar" title="" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a>
+		   </div> <!-- /avatar-wrap -->
+		   <div class="span2" id="thread-creator-info-wrap">
+		       <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName()} ) }}">{{ member.getUserName() }}</a>
+		       <p>
+		            <ul class="unstyled inline thread-creator-tools-wrap">
+		                <li>
+		                    {% if app.user.getId == member.getId %}
+		                    {% set thisistheuser = true %}
+		                    <i class="fa fa-envelope" style="color:gray"></i>
+		                    {% else %}
+		                    <a class="toolPop" href="{{ path('imdc_message_user_specific', {'userid':member.getUserName()}) }}" title="Click to send {{ member.getUserName }} a message"><i class="fa fa-envelope"></i></a>
+		                    {% endif %}
+		                </li>
+		                <li>
+		                    {% if thisistheuser is defined %}
+		                    <i class="fa fa-user toolPop" style="color:gray" title="This is you"></i>
+		                    {% elseif app.user.isUserOnFriendsList(member) %}
+		                    <i class="fa fa-group toolPop" style="color:green" title="You are already friends"></i>
+		                    {% else %}
+		                    <a class="toolPop" href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" title="Click to add {{ member.username }} to friends list"><i class="fa fa-plus"></i></a>
+		                    {% endif %}
+		                </li>
+		           </ul>
+		       </p>
+		       <ul class="unstyled">
+		           <li class="muted" style="font-size:80%;">{{ 'member.infoBlock.joined'|trans }}: {{ member.getJoinDate()|date('M j Y') }}</li>
+		           <li class="muted" style="font-size:80%;">{{ 'member.infoBlock.postCount'|trans }}: {{ member.getPostCount() }}</li>
+		       </ul>
+		{#        <p class="muted" style="font-size:80%;">{{ 'member.infoBlock.joined'|trans }}: {{ member.getJoinDate()|date('M j Y') }}</p>#}
+		{#        <p class="muted" style="font-size:80%;">{{ 'member.infoBlock.postCount'|trans }}: {{ member.getPostCount() }}</p>#}
+		   </div> <!--  /thread-creator-info-wrap -->
+		   <div class="span8 thread-content-wrap">
+		       {% if thread.content is defined %}
+		       <div class="row-fluid" id="maincontent">
+		           {{ thread.content|nl2br }}
+	           </div>
+	           {% endif %}
+		   </div>
+		</div> <!-- /row-fluid -->
     </div> <!-- /span12 -->
 </div> <!-- /.thread-creator-details end of user-deets -->

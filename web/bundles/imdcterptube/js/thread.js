@@ -22,6 +22,7 @@ $(document).ready(function() {
 		window["mediaChooser"].chooseMedia();
 	});
 	
+	// what is this?
     $("#7").on("timeupdate", function(event) {
     	checkKeyPointStartTime(this.currentTime);
     });
@@ -156,10 +157,61 @@ $(document).ready(function() {
 	});
 	
 	$("#cancelButton").click(function() {
+		//clear form values for start and endtime
+		$("#PostFormFromThread_startTime").val('');
+		$("#PostFormFromThread_endTime").val('');
+		// hide form
 		$("#comment-form-wrap").hide();
+		
+		// show new reply button
 		$("#post-comment-button").show();
 		enableTemporalComment(globalPlayer, false, globalStartTimeInput, globalEndTimeInput);
 		
+	});
+	
+	// when the user types in a value into the start time box,
+	// activate the temporal comment mode on the player
+	// at the time specified in the input start time box
+	$("#PostFormFromThread_startTime").on('blur', function() {
+		var startOfComment = $(this).val();
+		if (!startOfComment == '') {
+			
+			if (!globalPlayer.options.areaSelectionEnabled) { // if not making a temporal comment
+				enableTemporalComment(globalPlayer, true, globalStartTimeInput, globalEndTimeInput);
+			}
+			globalPlayer.setAreaSelectionStartTime(startOfComment);
+			globalPlayer.seek(startOfComment);
+		}
+	});
+	
+	// when the user types in a value into the end time box,
+	// activate the temporal comment mode on the player
+	// at the time specified in the input end time box if we aren't
+	// already creating a temporal comment
+	$("#PostFormFromThread_endTime").on('blur', function() {
+		var endOfComment = $(this).val();
+		if (!$(this).val() == '') {
+			var startOfComment = $("#PostFormFromThread_startTime").val();
+			if (startOfComment == '') {
+				$("#PostFormFromThread_startTime").val(endOfComment-1);
+				globalPlayer.setAreaSelectionStartTime(endOfComment-1);
+			}
+//			if (endOfComment <= startOfComment) {
+//				endOfComment = parseInt(startOfComment) + 1;
+//			}
+			if (endOfComment > globalPlayer.getDuration()) {
+				endOfComment = globalPlayer.getDuration();
+			}
+			
+			if (!globalPlayer.options.areaSelectionEnabled) {
+				globalPlayer.seek(Math.max(1, endOfComment-1));
+				enableTemporalComment(globalPlayer, true, globalStartTimeInput, globalEndTimeInput);
+			}
+			else {
+				globalPlayer.seek(Math.max(1, endOfComment));
+			}
+			globalPlayer.setAreaSelectionEndTime(endOfComment);
+		}
 	});
 	
 	// make the content section grow automatically when necessary
@@ -282,13 +334,6 @@ $(document).ready(function() {
 //    if ( $("#comment-form-wrap").find("span.help*") ) {
 //    	$("#comment-form-wrap").show();
 //    }
-    
-	
-    
-    
-    
-    
-    
 
 }); // end of document.ready
 
@@ -769,35 +814,18 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
 	$videoElement = $('video#'+mediaFileId);
     $timeComment = $('#time-comment-'+postId);
      
-    $videoElement[0].addEventListener('loadedmetadata', function(event) {
-        $duration = $videoElement[0].duration;
-        $timeComment = $('#time-comment-'+postId);
-
-        startTimePercentage = ((100*postStartTime)/$duration).toFixed(2);
-        endTimePercentage = ((100*postEndTime)/$duration).toFixed(2);
-        widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
-        
-        $timeComment.css('left', startTimePercentage + '%');
-        $timeComment.css('width', widthPercentage + '%');
-        $timeComment.css('background', 'red');
-    }, true);
-
-//    $timeComment.on('mouseover', function() {
-//        $videoElement[0].currentTime = postStartTime;
-//        var comment = getPostById(postId);
-//        comment.paintHighlighted = true;
+//    $videoElement[0].addEventListener('loadedmetadata', function(event) {
+//        $duration = $videoElement[0].duration;
+//        $timeComment = $('#time-comment-'+postId);
+//
+//        startTimePercentage = ((100*postStartTime)/$duration).toFixed(2);
+//        endTimePercentage = ((100*postEndTime)/$duration).toFixed(2);
+//        widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
 //        
-//        globalPlayer.redrawKeyPoints = true;
-//		globalPlayer.repaint();
-//    });
-//    
-//    $timeComment.on('mouseout', function() {
-//        var comment = getPostById(postId);
-//        comment.paintHighlighted = false;
-//        
-//        globalPlayer.redrawKeyPoints = true;
-//		globalPlayer.repaint();
-//    });
+//        $timeComment.css('left', startTimePercentage + '%');
+//        $timeComment.css('width', widthPercentage + '%');
+//        $timeComment.css('background', 'red');
+//    }, true);
     
     $timeComment.on('click', function() {
     	$(this).focusin();
@@ -819,6 +847,28 @@ function initMiniVideoTimeline(mediaFileId, postId, postStartTime, postEndTime) 
         globalPlayer.redrawKeyPoints = true;
 		globalPlayer.repaint();
     });
+
+//    $timeComment.on( "dblclick", postDoubleClickHandler(postId, postStartTime, postEndTime));
+    
+}
+
+function postDoubleClickHandler(postId, postStartTime, postEndTime) {
+
+	$(globalPlayer).one(Player.EVENT_KEYPOINT_END, function(event, keyPoint, coords) {
+		if (keyPoint.id == postId) {
+			console.log('end event triggered');
+			globalPlayer.pause();
+		}
+	});
+	// listen for seek event
+//	globalPlayer.on(Player.EVENT_SEEK, function(event, keyPoint, coords) {
+//		console.log('event seek triggered');
+//		// detach double click handler
+//		globalPlayer.off(Player.EVENT_SEEK, postDoubleClickHandler);
+//	});
+	// listen until seek event
+	
+	globalPlayer.play();
 }
 
 

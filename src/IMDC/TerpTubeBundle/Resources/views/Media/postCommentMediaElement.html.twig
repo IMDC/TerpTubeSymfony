@@ -37,6 +37,26 @@
     <div id="back-timeline">
         <div class="front-comment-div" id="time-comment-{{ post.getId }}" tabindex="0">
             <script type="text/javascript">
+                var postId = {{ post.id }};
+                var postStartTime = {{ post.startTime }};
+                var postEndTime = {{ post.endTime }};
+
+                $videoElement = $('video#'+'{{ mediaFile.getID }}');
+                $timeComment = $('#time-comment-' + '{{  post.id }}');
+
+	            $videoElement[0].addEventListener('loadedmetadata', function(event) {
+	                $duration = $videoElement[0].duration;
+	                $timeComment = $('#time-comment-'+'{{  post.id }}');
+	
+	                startTimePercentage = ((100*postStartTime)/$duration).toFixed(2);
+	                endTimePercentage = ((100*postEndTime)/$duration).toFixed(2);
+	                widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
+	                
+	                $timeComment.css('left', startTimePercentage + '%');
+	                $timeComment.css('width', widthPercentage + '%');
+	                $timeComment.css('background', 'red');
+	            }, true);
+	            
                 $(document).ready(function() {
                     initMiniVideoTimeline({{ mediaFile.getId }}, 
                                        {{ post.getId }}, 
