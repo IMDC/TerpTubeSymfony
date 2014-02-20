@@ -11,8 +11,8 @@
 {{ form_start(form, {'action' : "#{formpath}"}) }}
     {{ form_errors(form) }}
     <div class="controls controls-row">
-        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-        {{ form_widget(form.mediatextarea) }}{{ form_errors(form.mediatextarea) }}
+        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Record Video or Select File</a>
+        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
     </div>
     <div id="files"></div>
     {% if mediaFile != null %}

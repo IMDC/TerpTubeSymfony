@@ -85,12 +85,22 @@ $(document).ready(function() {
 				
 				$theWholeComment.find("div.post-reply-content").html(data.form);
 				//$theWholeComment.hide();
-
+				
+				var editCommentKeypoint = getKeyPointFromId(window["postArray"], p_id);
+				console.log(editCommentKeypoint.options.drawOnTimeline);
+				
+				if (editCommentKeypoint.options.drawOnTimeLine) { // drawOnTimeline is == isTemporal
+					enableTemporalComment(globalPlayer, true, $("#PostEditForm_startTime"), $("#PostEditForm_endTime"));
+					
+					$("#PostFormFromThread_startTime").on('blur', startTimeBlurFunction($("#PostEditForm_startTime")));
+					$("#PostFormFromThread_endTime").on('blur', endTimeBlurFunction($("#PostEditForm_endTime")));
+				}
+				
 			},
 			error : function(request)
 			{
 				console.log(request);
-				$theWholeComment.fadeIn('slow');
+				//$theWholeComment.fadeIn('slow');
 				alert(request.statusText);
 			}
 		});
@@ -165,6 +175,8 @@ $(document).ready(function() {
 		
 		// show new reply button
 		$("#post-comment-button").show();
+		
+		// deactivate temporal comment mode
 		enableTemporalComment(globalPlayer, false, globalStartTimeInput, globalEndTimeInput);
 		
 	});
@@ -375,6 +387,46 @@ function initVideoCaptioningFunction(videodomelement, ccnormalimgpath, ccpressed
 	ccPressedImagePath = ccpressedimgpath;
 }
 
+function startTimeBlurFunction(startTime) {
+
+	var startOfComment = $(startTime).val();
+	if (!startOfComment == '') {
+		
+		if (!globalPlayer.options.areaSelectionEnabled) { // if not making a temporal comment
+			enableTemporalComment(globalPlayer, true, globalStartTimeInput, globalEndTimeInput);
+		}
+		globalPlayer.setAreaSelectionStartTime(startOfComment);
+		globalPlayer.seek(startOfComment);
+	}
+
+}
+
+function endTimeBlurFunction(endTime) {
+	var endOfComment = $(endTime).val();
+	if (!$(endTime).val() == '') {
+		var startOfComment = $(endTime).parents().find("#PostFormFromThread_startTime").val();
+		if (startOfComment == '') {
+			$("#PostFormFromThread_startTime").val(endOfComment-1);
+			globalPlayer.setAreaSelectionStartTime(endOfComment-1);
+		}
+//		if (endOfComment <= startOfComment) {
+//			endOfComment = parseInt(startOfComment) + 1;
+//		}
+		if (endOfComment > globalPlayer.getDuration()) {
+			endOfComment = globalPlayer.getDuration();
+		}
+		
+		if (!globalPlayer.options.areaSelectionEnabled) {
+			globalPlayer.seek(Math.max(1, endOfComment-1));
+			enableTemporalComment(globalPlayer, true, globalStartTimeInput, globalEndTimeInput);
+		}
+		else {
+			globalPlayer.seek(Math.max(1, endOfComment));
+		}
+		globalPlayer.setAreaSelectionEndTime(endOfComment);
+	}
+}
+
 /**
  * When you click on the trash icon to delete a post, you have to confirm via
  * a dialog and then it ajax deletes the post
@@ -421,10 +473,10 @@ $("a.post-comment-delete").click(function(event) {
                         // scroll to the top of the page to see the feedback
                         //$("html, body").animate({ scrollTop: 0 }, "slow");
                         
-                        // wipe out the feedback message after 8 seconds
+                        // wipe out the feedback message after 5 seconds
                         setTimeout(function(){
                     		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
-                    	}, 8000);
+                    	}, 5000);
         			},
         			error : function(request)
         			{
@@ -472,19 +524,25 @@ function confirmPostDelete() {
 			console.log("success");
 			console.log(data);
 			$("#modaldiv").modal('hide');
+			
+			// create a feedback message 
             $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
+            
+            // fade out the original comment
 			$theWholeComment.fadeOut('slow', function(){$(this).remove();});
             
 			//delete timeline region
-            globalPlayer.removeComment(p_id);
+			var tempKeyPoint = new KeyPoint();
+			tempKeyPoint = getKeyPointFromId(window["postArray"], p_id);
+            globalPlayer.removeKeyPoint(tempKeyPoint);
 
             // scroll to the top of the page to see the feedback
             //$("html, body").animate({ scrollTop: 0 }, "slow");
             
-            // wipe out the feedback message after 8 seconds
+            // wipe out the feedback message after 5 seconds
             setTimeout(function(){
         		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
-        	}, 8000);
+        	}, 5000);
 		},
 		error : function(request)
 		{
@@ -872,6 +930,17 @@ function postDoubleClickHandler(postId, postStartTime, postEndTime) {
 }
 
 
-
+function getKeyPointFromId(keyPointArray, keyPointId) {
+	
+	for (var int = 0; int < keyPointArray.length; int++) {
+		var array_element = keyPointArray[int];
+		console.log(array_element);
+		if (array_element.id == keyPointId) {
+			console.log('keypoint match found');
+			return array_element;
+		}
+	}
+	return;
+}
 
 

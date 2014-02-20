@@ -177,6 +177,7 @@ var postArray = new Array();
 	            	}
 	            	options.color =  authorColors['{{ post.author.getId }}'];
 	            	options.drawOnTimeLine = {{ post.isTemporal ? 'true' : 'false' }};
+
 	                var newpost = new KeyPoint('{{ post.id }}',
 	                		               '{{ post.startTime }}',
 	                		               '{{ post.endTime }}',
