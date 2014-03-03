@@ -16,20 +16,13 @@ Player.EVENT_INITIALIZED = "player_initialized";
 Player.EVENT_SEEK = "player_seek";
 
 Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
-// Player.EVENT_COMMENT_MOUSE_OVER = "player_comment_mouse_over";
-// Player.EVENT_COMMENT_MOUSE_OUT = "player_comment_mouse_out";
-Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over"; // sends
-// coords in
-// array
+Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over"; 
+// sends coords in array
 Player.EVENT_KEYPOINT_MOUSE_OUT = "player_keypoint_mouse_out";
 Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click"; // sends coords in array
 Player.EVENT_KEYPOINT_BEGIN = "player_keypoint_begin";
 Player.EVENT_KEYPOINT_END = "player_keypoint_end";
 Player.EVENT_PLAYHEAD_HIGHLIGHTED = "player_playhead_highlighted";
-
-// TODO make the player more modular. Don't tie it in comments/signlinks but
-// make generic timeline elements and add types for them. Later We can generate
-// events for "on hover", "on mouse out", "on timeline element reached"
 
 // FIXME Add events for every action that the player does - e.g. onPlay, onStop,
 // onRecordingStarted, onRecordingStopped
@@ -613,13 +606,54 @@ Player.prototype.setAreaSelectionEnabled = function(flag) {
 		// this.redrawSignlinks = true;
 		// this.redrawComments = true;
 		this.redrawKeyPoints = true;
+		this.currentMinSelected = this.minSelected;
+		this.currentMaxSelected = this.maxSelected;
+		this.currentMinTimeSelected = this.getTimeForX(this.currentMinSelected);
+		this.currentMaxTimeSelected = this.getTimeForX(this.currentMaxSelected);
 	}
+	
 
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	// console.log("SetAreaSelectionEnabled called");
 	this.repaint();
 };
 
+Player.prototype.setAreaSelectionStartFromCoordinates = function(coordinate)
+{
+	this.currentMinSelected = coordinate;
+	this.currentMinTimeSelected = this.getTimeForX(this.currentMinSelected);
+	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+	this.repaint();
+	$(this).trigger(
+			Player.EVENT_AREA_SELECTION_CHANGED);
+};
+
+Player.prototype.setAreaSelectionEndFromCoordinates = function(coordinate)
+{
+	this.currentMaxSelected = coordinate;
+	this.currentMaxTimeSelected = this.getTimeForX(this.currentMinSelected);
+	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+	this.repaint();
+	$(this).trigger(
+			Player.EVENT_AREA_SELECTION_CHANGED);
+};
+/*
+Player.prototype.setCurrentMinTimeSelected = function(time)
+{
+	this.currentMinTimeSelected = time;
+	this.currentMinSelected = this.getXForTime(this.currentMinTimeSelected);
+	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+	this.repaint();
+};
+
+Player.prototype.setCurrentMaxTimeSelected = function(time)
+{
+	this.currentMaxTimeSelected = time;
+	this.currentMaxSelected = this.getXForTime(this.currentMaxTimeSelected);
+	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+	this.repaint();
+};
+*/
 Player.prototype.getRelativeMouseCoordinates = function(event) {
 
 	var x = 0;
