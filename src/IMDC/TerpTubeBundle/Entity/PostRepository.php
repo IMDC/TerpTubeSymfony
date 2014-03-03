@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Metadata\Driver\AbstractFileDriver;
 
 /**
  * PostRepository
@@ -12,12 +13,24 @@ use Doctrine\ORM\EntityRepository;
  */
 class PostRepository extends EntityRepository
 {
+    /**
+     * Returns the last x number of posts made that have a parentThread with permissions
+     * that are public.
+     * 
+     * @param number $limit
+     * @return Ambigous <multitype:, \Doctrine\ORM\mixed, \Doctrine\ORM\Internal\Hydration\mixed, \Doctrine\DBAL\Driver\Statement, \Doctrine\Common\Cache\mixed>
+     */
 	public function getRecentPosts($limit=30)
 	{
 		$query = $this->getEntityManager()
 		->createQuery
 			('SELECT p
 			FROM IMDCTerpTubeBundle:Post p
+		    JOIN IMDCTerpTubeBundle:Thread t
+		    WHERE p.parentThread = t
+		    JOIN IMDCTerpTubeBundle:Permissions m
+			WHERE t.permissions = m
+		    AND m.accessLevel = (-1)
             ORDER BY p.created DESC
             ');
 		$query->setMaxResults($limit);

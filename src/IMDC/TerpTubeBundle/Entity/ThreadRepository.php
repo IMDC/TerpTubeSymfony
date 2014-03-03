@@ -18,6 +18,8 @@ class ThreadRepository extends EntityRepository
                       ->createQuery
                       ('SELECT t
                         FROM IMDCTerpTubeBundle:Thread t
+                        JOIN IMDCTerpTubeBundle:Permissions p
+                        WHERE p.accessLevel = (-1)
                         ORDER BY t.creationDate DESC
                        ');
         $query->setMaxResults($limit);

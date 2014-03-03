@@ -351,7 +351,7 @@ class Thread {
 	 * @return Thread
 	 */
 	public function addUsersFollowing(\IMDC\TerpTubeBundle\Entity\User $usersFollowing) {
-		$this->usersFollowing [] = $usersFollowing;
+		$this->usersFollowing[] = $usersFollowing;
 		
 		return $this;
 	}
@@ -362,7 +362,7 @@ class Thread {
 	 * @param \IMDC\TerpTubeBundle\Entity\User $usersFollowing        	
 	 */
 	public function removeUsersFollowing(\IMDC\TerpTubeBundle\Entity\User $usersFollowing) {
-		$this->usersFollowing->removeElement ( $usersFollowing );
+		$this->usersFollowing->removeElement( $usersFollowing );
 	}
 	
 	/**
@@ -381,7 +381,7 @@ class Thread {
 	 * @return Thread
 	 */
 	public function addPost(\IMDC\TerpTubeBundle\Entity\Post $posts) {
-		$this->posts [] = $posts;
+		$this->posts[] = $posts;
 		
 		return $this;
 	}
@@ -411,7 +411,7 @@ class Thread {
 	 * @return Thread
 	 */
 	public function addMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
-		$this->mediaIncluded [] = $mediaIncluded;
+		$this->mediaIncluded[] = $mediaIncluded;
 		
 		return $this;
 	}
@@ -434,7 +434,7 @@ class Thread {
 		return $this->mediaIncluded;
 	}
 	public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
-		$this->mediaIncluded [] = $mediaIncluded;
+		$this->mediaIncluded[] = $mediaIncluded;
 		
 		return $this;
 	}
@@ -442,7 +442,7 @@ class Thread {
 	/**
 	 * Set editedAt
 	 *
-	 * @param \DateTime $editedAt        	
+	 * @param \DateTime $editedAt
 	 * @return Thread
 	 */
 	public function setEditedAt($editedAt) {
@@ -463,7 +463,7 @@ class Thread {
 	/**
 	 * Set editedBy
 	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\User $editedBy        	
+	 * @param \IMDC\TerpTubeBundle\Entity\User $editedBy
 	 * @return Thread
 	 */
 	public function setEditedBy(\IMDC\TerpTubeBundle\Entity\User $editedBy = null) {
@@ -484,7 +484,7 @@ class Thread {
 	/**
 	 * Set parentForum
 	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\Forum $parentForum        	
+	 * @param \IMDC\TerpTubeBundle\Entity\Forum $parentForum
 	 * @return Thread
 	 */
 	public function setParentForum(\IMDC\TerpTubeBundle\Entity\Forum $parentForum = null) {
@@ -505,7 +505,7 @@ class Thread {
 	/**
 	 * Set permissions
 	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\Permissions $permissions        	
+	 * @param \IMDC\TerpTubeBundle\Entity\Permissions $permissions
 	 * @return Thread
 	 */
 	public function setPermissions(\IMDC\TerpTubeBundle\Entity\Permissions $permissions = null) {
@@ -515,16 +515,16 @@ class Thread {
 	}
 	
 	/**
-	 * Get permissions, or create new default private permissions if a thread doesn't have any
-	 *
+	 * Get permissions, or create new default private permissions if a thread doesn't have any.
+	 * New default permissions are created with ACCESS_CREATOR permission
 	 * @return \IMDC\TerpTubeBundle\Entity\Permissions
 	 */
 	public function getPermissions() {
-		if (! $this->permissions) {
+		if ( !$this->permissions ) {
 			// create new Permissions because this thread doesn't have any
-			$newPermissions = new Permissions ();
-			$newPermissions->setAccessLevel ( Permissions::ACCESS_CREATOR );
-			$this->setPermissions ( $newPermissions );
+			$newPermissions = new Permissions();
+			$newPermissions->setAccessLevel( Permissions::ACCESS_CREATOR );
+			$this->setPermissions( $newPermissions );
 		}
 		return $this->permissions;
 	}
@@ -537,23 +537,23 @@ class Thread {
 	 * @return boolean
 	 */
 	public function userHasAccess($user) {
-		$tPerm = $this->getPermissions ();
+		$tPerm = $this->getPermissions();
 		
-		$accessLevel = $tPerm->getAccessLevel ();
+		$accessLevel = $tPerm->getAccessLevel();
 		
 		if ($accessLevel == Permissions::ACCESS_PUBLIC)
 			return true;
-		else if ($accessLevel == Permissions::ACCESS_CREATOR && $user === $this->getCreator ())
+		else if ($accessLevel == Permissions::ACCESS_CREATOR && $user === $this->getCreator())
 			return true;
-		else if ($accessLevel == Permissions::ACCESS_CREATORS_FRIENDS && ($user === $this->getCreator () || $this->getCreator ()->getFriendsList ()->contains ( $user )))
+		else if ($accessLevel == Permissions::ACCESS_CREATORS_FRIENDS && ($user === $this->getCreator() || $this->getCreator()->getFriendsList()->contains ( $user )))
 			return true;
 		else if ($accessLevel == Permissions::ACCESS_WITH_LINK)
 			return true;
-		else if ($accessLevel == Permissions::ACCESS_USER_LIST && ($user === $this->getCreator () || $tPerm->getUsersWithAccess ()->contains ( $user )))
+		else if ($accessLevel == Permissions::ACCESS_USER_LIST && ($user === $this->getCreator() || $tPerm->getUsersWithAccess()->contains( $user )))
 			return true;
 		else {
-			$intersection = array_intersect ( $tPerm->getuserGroupsWithAccess ()->toArray (), $user->getUserGroups ()->toArray () );
-			if ($accessLevel == Permissions::ACCESS_GROUP_LIST && ($user === $this->getCreator ()) || ! empty ( $intersection ))
+			$intersection = array_intersect( $tPerm->getuserGroupsWithAccess()->toArray(), $user->getUserGroups()->toArray() );
+			if ($accessLevel == Permissions::ACCESS_GROUP_LIST && ($user === $this->getCreator()) || !empty( $intersection ))
 				return true;
 			else if ($accessLevel == Permissions::ACCESS_REGISTERED_MEMBERS && $user)
 				return true;
@@ -569,17 +569,17 @@ class Thread {
 	 * @return boolean
 	 */
 	public function visibleToUser($user) {
-		$tPerm = $this->getPermissions ();
-		$accessLevel = $tPerm->getAccessLevel ();
+		$tPerm = $this->getPermissions();
+		$accessLevel = $tPerm->getAccessLevel();
 		
 		switch ($accessLevel) {
 			case Permissions::ACCESS_WITH_LINK :
-				if ($user === $this->getCreator ())
+				if ($user === $this->getCreator())
 					return true;
 				break;
 			
 			default :
-				return $this->userHasAccess ( $user );
+				return $this->userHasAccess( $user );
 				break;
 		}
 	}

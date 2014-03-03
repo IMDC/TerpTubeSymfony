@@ -202,6 +202,7 @@ $(document).ready(function() {
 	// already creating a temporal comment
 	$("#PostFormFromThread_endTime").on('blur', function() {
 		var endOfComment = $(this).val();
+		var vidDuration = globalPlayer.getDuration();
 		if (!$(this).val() == '') {
 			var startOfComment = $("#PostFormFromThread_startTime").val();
 			if (startOfComment == '') {
@@ -211,8 +212,8 @@ $(document).ready(function() {
 //			if (endOfComment <= startOfComment) {
 //				endOfComment = parseInt(startOfComment) + 1;
 //			}
-			if (endOfComment > globalPlayer.getDuration()) {
-				endOfComment = globalPlayer.getDuration();
+			if (endOfComment > vidDuration) {
+				endOfComment = vidDuration;
 			}
 			
 			if (!globalPlayer.options.areaSelectionEnabled) {
