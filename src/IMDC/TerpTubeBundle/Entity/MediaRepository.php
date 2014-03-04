@@ -26,4 +26,16 @@ class MediaRepository extends EntityRepository
         ->getResult();
     }
     
+    public function getMediaFilesForUser($userid)
+    {
+        return $this->getEntityManager()->createQuery('
+                SELECT m
+                FROM IMDCTerpTubeBundle:Media m
+                JOIN IMDCTerpTubeBundle:User u
+                WHERE m.owner = :id
+            ')
+            ->setParameter(':id' , $userid)
+        ->getResult();
+    }
+    
 }

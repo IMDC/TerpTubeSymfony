@@ -32,6 +32,12 @@ use Symfony\Component\Debug\Exception\ContextErrorException;
 
 class ThreadController extends Controller
 {
+    /**
+     * Lists all threads, currently not useful
+     * If a thread with no Permissions object is found, a new ACCESS_CREATOR is created
+     * 
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
@@ -201,7 +207,12 @@ class ThreadController extends Controller
         ));
     }
     
-    
+    /**
+     * If a user is logged in, creates a new thread object under the the given forumid forum
+     * @param Request $request the request object
+     * @param string $forumid the parent forum's integer id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function createNewThreadAction(Request $request, $forumid=null)
     {
     	// check if user logged in
@@ -214,22 +225,31 @@ class ThreadController extends Controller
         $em = $this->getDoctrine()->getManager();
         
         $newthread = new Thread();
+        $form = $this->createForm(new ThreadFormType(), $newthread, array(
+            'user' => $this->getUser(),
+        ));
+        
         if ($forumid) {
             $forumrepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
             $forum = $forumrepo->findOneBy(array('id' => $forumid));
             $newthread->setParentForum($forum);
         }
+        else {
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                'No valid parent forum found'
+            );
+            // form not valid, show the basic form
+            return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig',
+                array('form' => $form->createView(),
+            ));
+        }
         
-        $form = $this->createForm(new ThreadFormType(), $newthread, array(
-                'user' => $this->getUser(),
-        ));
-        
+        // the magic
         $form->handleRequest($request);
         
         if ($form->isValid()) {
-            	
-            //$em = $this->getDoctrine()->getManager();
-        	
+
             $threadrepo = $em->getRepository('IMDCTerpTubeBundle:Media');
             // if the media text area isn't empty, the user has selected a media
             // file to create a new thread with
@@ -289,46 +309,6 @@ class ThreadController extends Controller
             
             // deal with thread permissions
             $this->handleThreadPermissions($newthread, $form);
-            /*
-            $threadAccessLevel = $newthread->getPermissions()->getAccessLevel();
-            
-            if ($threadAccessLevel == Permissions::ACCESS_CREATORS_FRIENDS) {
-                $newthread->getPermissions()->setUsersWithAccess($user->getFriendsList());
-                $newthread->getPermissions()->setUserGroupsWithAccess(null);
-            }
-            else if ($threadAccessLevel == Permissions::ACCESS_USER_LIST) {
-                
-                $usermanager = $this->get('fos_user.user_manager');
-                $rawusers = explode(',', $form->get('permissions')->get('userListWithAccess')->getData());
-                if ($rawusers) {
-                    $theusers = new ArrayCollection();
-                    foreach ($rawusers as $possuser) {
-                        try {
-                            $user = $usermanager->findUserByUsername($possuser);
-                            $newthread->getPermissions()->addUsersWithAccess($user);
-                        } catch (\PDOException $e) {
-                            //FIXME: do something to notify user that user name not found?
-                            $logger->info("\n\n*****ERROR: username: " . $possuser . "not found in USER_LIST****\n\n");
-                        }
-                    }
-                }
-                else {
-                    $newthread->getPermissions()->setUsersWithAccess(null);
-                }
-                $newthread->getPermissions()->setUserGroupsWithAccess(null);
-            }
-            else if ($threadAccessLevel == Permissions::ACCESS_GROUP_LIST) {
-                // user groups with access set automagically
-                $newthread->getPermissions()->setUsersWithAccess(null);                
-            }
-            else {
-                // permissions that get here are 
-                // access_creator, access_public, access_with_link, registered_members
-                // really do this?
-                $newthread->getPermissions()->setUserGroupsWithAccess(null);
-                $newthread->getPermissions()->setUsersWithAccess(null);
-            }
-            */
             
             // request to persist objects to database
             $em->persist($newthread);
@@ -354,6 +334,14 @@ class ThreadController extends Controller
         ));
     }
     
+    /**
+     * This action is called from the My Files section or similar.
+     * Given a resource id, creates a new Thread object. Requires the user
+     * to select a given forum to create the thread under.
+     * @param Request $request
+     * @param unknown $resourceid
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function createNewThreadFromMediaAction(Request $request, $resourceid)
     {
         
@@ -384,6 +372,7 @@ class ThreadController extends Controller
         $form = $this->createForm(new ThreadFromMediaFormType(), $newthread, array(
                 'user' => $this->getUser(),
                 'resource' => $chosenmedia,
+                'em' => $em,
         ));
          
         $form->handleRequest($request);
@@ -514,7 +503,6 @@ class ThreadController extends Controller
                 $threadToEdit->getPermissions()->setUserGroupsWithAccess(null);
                 $threadToEdit->getPermissions()->setUsersWithAccess(null);
             }
-            
             
             // request to persist objects to database
             //$em->persist($user);

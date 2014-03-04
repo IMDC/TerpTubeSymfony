@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class ThreadFromMediaFormType extends AbstractType
 {
@@ -18,8 +16,13 @@ class ThreadFromMediaFormType extends AbstractType
 	    $user = $options['user'];
 	    $userid = $user->getId();
 	    
+	    // media info
 	    $mediafile   = $options['resource'];
 	    $mediafileid = $mediafile->getId();
+	    
+	    // entity manager
+	    $em = $options['em'];
+	    
 	    /*
 	    $builder->add('mediatextarea', 'textarea', array('required' => false, 
 	                                                'mapped' => false,
@@ -30,6 +33,9 @@ class ThreadFromMediaFormType extends AbstractType
 	    
 	    */
 	    
+	    /**
+	     * Replace this with the below skeleton when Forums have permissions
+	     */
 	    $builder->add('parentForum', 'entity', array(
 	            'class' => 'IMDCTerpTubeBundle:Forum',
 	            'property' => 'titleText',
@@ -37,12 +43,28 @@ class ThreadFromMediaFormType extends AbstractType
 	            'label' => 'Which forum would you like to post this under?'
 	    ));
 	    
+	    /***SKELETON AND NOT USED, IMPLEMENT WHEN FORUMS HAVE PERMISSIONS***********/
+// 	    $forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->findForumsUserHasAccessTo($user);
+// 	    $builder->add('parentForum', 'entity', array(
+// 	            'class' => 'IMDCTerpTubeBundle:Forum',
+// 	            'property' => 'title',
+// 	            'required' => true,
+// 	            'label' => 'Which forum would you like to post this under?',
+// 	            'choices' => $forums,
+// 	    ));
+	    
+	    // retrieve the media entity the user has decided to post
+	    // can we use the repositor to retrieve the file rather than the query builder?
+	    $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')->findOneBy(
+	    	array('owner' => $userid, 'id' => $mediafileid)
+	    );
 	    $builder->add('mediaIncluded', 'entity', array(
 	            'class' => 'IMDCTerpTubeBundle:Media',
 	            'property' => 'title',
-	            //'empty_value' => 'Choose an option',
+	            'disabled' => true,
 	            'required' => true,
 	            'label' => 'File',
+// 	            'choices' => $mediaFile,
 	            'query_builder' => function(EntityRepository $er) use ($userid, $mediafileid) {
 	                return $er->createQueryBuilder('m')
 	                            ->where('m.owner = :id')
@@ -51,12 +73,13 @@ class ThreadFromMediaFormType extends AbstractType
 	                            ->setParameter('rid', $mediafileid);
 	            },
 	    ));
+	    
+	    
 	    $builder->add('title');
 	    
-	    $builder->add('content', null, array('label' => 'Supplementary Content',
-	    ));
+	    $builder->add('content', null, array('label' => 'Supplementary Content',));
 	    
-	    $builder->add('permissions', new PermissionsType($user));
+	    $builder->add('permissions', new PermissionsType(array('user' => $user)));
 	    
 		$builder->add('submit', 'submit');
 	}	
@@ -72,11 +95,13 @@ class ThreadFromMediaFormType extends AbstractType
 		
 		$resolver->setRequired(array(
 		        'user',
-		        'resource'
+		        'resource',
+		        'em',
         ));
 		$resolver->setAllowedTypes(array(
 		        'user' => 'IMDC\TerpTubeBundle\Entity\User',
 		        'resource' => 'IMDC\TerpTubeBundle\Entity\Media',
+		        'em' => 'Doctrine\Common\Persistence\ObjectManager',
 		));
 	}
 }

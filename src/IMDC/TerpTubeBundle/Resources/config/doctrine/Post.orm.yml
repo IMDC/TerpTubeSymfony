@@ -10,7 +10,7 @@ IMDC\TerpTubeBundle\Entity\Post:
                 strategy: AUTO
         content:
             type: text
-        isDeleted:
+        isDeleted: # probably can remove this field
             type: boolean
         created:
             type: datetime

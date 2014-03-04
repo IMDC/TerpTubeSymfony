@@ -20,6 +20,8 @@ class Post
     private $content;
     
     /**
+     * I don't believe this field is used anywhere and probably could be removed 
+     * @paul
      * @var boolean
      */
     private $isDeleted;
@@ -65,8 +67,9 @@ class Post
     private $editedBy;
 
     /**
-     * This is a collection to support inclusion of multiple files per post
-     * at a later date
+     * This is a collection in order to support inclusion of multiple files per post
+     * such as a transcript file, a captions file, etc.
+     * (at a later date)
      * @var \Doctrine\Common\Collections\Collection
      */
     private $attachedFile;

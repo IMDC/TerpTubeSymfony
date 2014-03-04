@@ -41,4 +41,21 @@ class ThreadRepository extends EntityRepository
         
         return $query->getResult();
     }
+    
+    public function findThreadsUserHasAccessTo($user)
+    {
+        $levels = array(-1, 5);
+        $query = $this->getEntityManager()->createQuery('
+            SELECT t FROM IMDCTerpTubeBundle:Thread t
+        ');
+        $allThreads = $query->getResult();
+        $results = array();
+        foreach ($allThreads as $athread) {
+        	if ($athread->userHasAccess($user)) {
+        	    $results[] = $athread;
+        	}
+        }
+
+        return $results;
+    }
 }

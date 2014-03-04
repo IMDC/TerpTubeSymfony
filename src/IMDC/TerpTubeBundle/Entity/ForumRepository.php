@@ -51,4 +51,27 @@ class ForumRepository extends EntityRepository
         $query = $this->getEntityManager()->createQuery($dql)->setParameter('fid', $fid);
         return $query->getResult();
     }
+    
+    /**
+     * Currently not used as Forums don't have permissions yet
+     * Also the Forum->userHasAccess method does not exist yet
+     * 
+     * @param IMDCTerpTubeBundle:User $user
+     * @return multitype:Ambigous <multitype:, \Doctrine\ORM\mixed, \Doctrine\ORM\Internal\Hydration\mixed, \Doctrine\DBAL\Driver\Statement, \Doctrine\Common\Cache\mixed>
+     */
+    public function findForumsThatUserHasAccessTo($user)
+    {
+        $query = $this->getEntityManager()->createQuery('
+            SELECT f FROM IMDCTerpTubeBundle:Forum f
+        ');
+        $allForums = $query->getResult();
+        $results = array();
+        foreach ($allForums as $aForum) {
+        	if ($aForum->userHasAccess($user)) {
+        	    $results[] = $aForum;
+        	}
+        }
+
+        return $results;
+    }
 }
