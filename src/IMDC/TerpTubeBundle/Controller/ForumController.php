@@ -70,7 +70,7 @@ class ForumController extends Controller
         
         $newforum = new Forum();
         $form = $this->createForm(new ForumFormType(), $newforum, array(
-                'user' => $this->getUser(),
+//                 'user' => $this->getUser(),
         ));
         $em = $this->getDoctrine()->getManager();
         

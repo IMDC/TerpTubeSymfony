@@ -6,7 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 use IMDC\TerpTubeBundle\Entity\Permissions;
 
 /**
- * Forum
+ * Forum class, serves as general organization for discussion topics (Threads).
+ * Each Forum has a text title and a media title, a collection of admins and mods,
+ * and a list of threads it contains
  */
 class Forum
 {

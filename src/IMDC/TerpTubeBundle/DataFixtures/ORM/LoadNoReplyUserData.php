@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use FOS\UserBundle\Doctrine\UserManager;
 use IMDC\TerpTubeBundle\Entity\User;
+use Symfony\Component\Security\Core\Util\SecureRandom;
 
 /**
  * Class to create a new user in the TerpTube system that acts as the sender for introduction 
@@ -48,9 +49,11 @@ class LoadNoReplyUserData implements FixtureInterface, ContainerAwareInterface
         
         $user->setUsername('noreply');
         
-        $randpass = base_convert(rand(78364164096, 2821109907455), 10, 36);
-        $user->setPlainPassword($randpass);
+        // create 25 char random password
+        $generator = new SecureRandom();
+        $user->setPlainPassword($generator->nextBytes(25));
         
+        // do not enable this account as no one should ever log in
         $user->setEnabled(false);
         
         $randnum = rand(0, 10000);
