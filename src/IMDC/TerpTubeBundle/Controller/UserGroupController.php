@@ -22,8 +22,18 @@ use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 
+/**
+ * Controller for UserGroup's which are essentially 'Groups' but the Group object is taken
+ * @author paul
+ *
+ */
 class UserGroupController extends Controller
 {
+    /**
+     * Lists all usergroups
+     * 
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
 	public function indexAction()
 	{
 		$em = $this->getDoctrine()->getManager();
@@ -35,6 +45,13 @@ class UserGroupController extends Controller
 		return $response;
 	}
 
+	/**
+	 * View a specific usergroup
+	 * 
+	 * @param Request $request
+	 * @param integer $usergroupid
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function viewGroupAction(Request $request, $usergroupid)
 	{
 	    // check if user logged in
@@ -51,6 +68,14 @@ class UserGroupController extends Controller
 		return $response;
 	}
 
+	/**
+	 * Edit a specific usergroup
+	 * 
+	 * @param Request $request
+	 * @param unknown $usergroupid
+	 * @throws AccessDeniedException
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function editUserGroupAction(Request $request, $usergroupid)
 	{
 	    // check if user logged in
@@ -89,6 +114,14 @@ class UserGroupController extends Controller
 		                                                                                   'usergroup' => $usergroup));
 	}
 	
+	/**
+	 * Delete a specific usergroup
+	 * 
+	 * @param Request $request
+	 * @param unknown $usergroupid
+	 * @throws AccessDeniedException
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 */
 	public function deleteUserGroupAction(Request $request, $usergroupid)
 	{
 	    // check if user logged in
@@ -127,6 +160,12 @@ class UserGroupController extends Controller
 	    return $this->redirect($this->generateUrl('imdc_groups_show_all'));	    
 	}
 	
+	/**
+	 * Create a new usergroup and also create a new Forum with the usergroup's name
+	 * 
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function createNewUserGroupAction(Request $request)
 	{
 		// check if user logged in
@@ -155,7 +194,6 @@ class UserGroupController extends Controller
 			$newusergroup->getUserGroupForum()->setCreator($user);
 			
 			//TODO: make sure to set forum permissions on newly created forum to be 'group only' when permission are used
-			
 			
 			$user->addUserGroup($newusergroup);
 
@@ -216,6 +254,12 @@ class UserGroupController extends Controller
 		return $response;
 	}
 	
+	/**
+	 * Show the user groups for the currently logged in user
+	 * 
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function myGroupShowAction(Request $request)
 	{
 	    // check if user logged in

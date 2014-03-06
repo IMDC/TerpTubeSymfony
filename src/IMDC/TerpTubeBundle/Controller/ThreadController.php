@@ -29,12 +29,17 @@ use IMDC\TerpTubeBundle\Entity\User;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Debug\Exception\ContextErrorException;
 
-
+/**
+ * Controller for all Thread related actions including edit, delete, create
+ * 
+ * @author paul
+ *
+ */
 class ThreadController extends Controller
 {
     /**
      * Lists all threads, currently not useful
-     * If a thread with no Permissions object is found, a new ACCESS_CREATOR is created
+     * If a thread with no Permissions object is found, a new ACCESS_CREATOR Permissions object is created
      * 
      * @return \Symfony\Component\HttpFoundation\Response
      */

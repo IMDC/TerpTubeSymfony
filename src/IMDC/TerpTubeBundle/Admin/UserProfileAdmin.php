@@ -8,6 +8,13 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
+/**
+ * Allows manipulation of UserProfile objects in the admin interface, used by
+ * the UserAdmin class
+ * 
+ * @author paul
+ *
+ */
 class UserProfileAdmin extends Admin
 {
     // Fields to be shown on create/edit forms

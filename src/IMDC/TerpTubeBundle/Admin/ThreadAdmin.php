@@ -10,6 +10,12 @@ use Sonata\AdminBundle\Form\FormMapper;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Permissions;
 
+/**
+ * Allows manipulation and display of Thread objects in the admin interface
+ * 
+ * @author paul
+ *
+ */
 class ThreadAdmin extends Admin
 {
     // Fields to be shown on create/edit forms

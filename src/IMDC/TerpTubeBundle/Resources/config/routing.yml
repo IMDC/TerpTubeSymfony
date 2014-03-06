@@ -168,10 +168,6 @@ fos_user_group:
     resource: "@FOSUserBundle/Resources/config/routing/group.xml"
     prefix: /rolegroup
     
-imdc_initial_noreply_user_create:
-    pattern: /createNoReplyOnce
-    defaults: { _controller: IMDCTerpTubeBundle:Default:createNoReplyOnce }
-    
     
     
 imdc_add_to_friends_list:

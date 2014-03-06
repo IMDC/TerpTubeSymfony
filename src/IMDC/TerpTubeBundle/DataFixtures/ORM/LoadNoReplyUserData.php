@@ -10,6 +10,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use FOS\UserBundle\Doctrine\UserManager;
 use IMDC\TerpTubeBundle\Entity\User;
 
+/**
+ * Class to create a new user in the TerpTube system that acts as the sender for introduction 
+ * messages to new users.
+ * 
+ * This class is used via the command-line using the command
+ * `php app/console doctrine:fixtures:load --append`
+ * 
+ * @author paul
+ *
+ */
 class LoadNoReplyUserData implements FixtureInterface, ContainerAwareInterface
 {
     /**
@@ -25,6 +35,11 @@ class LoadNoReplyUserData implements FixtureInterface, ContainerAwareInterface
         $this->container = $container;
     }
     
+    /**
+     * Creates a new user in the TerpTube system with username 'noreply'
+     * and a randomly generated password, then manually sets their 
+     * user id to 0 (which is not used previously)
+     */
     public function load(ObjectManager $manager)
     {
         $userManager = $this->container->get('fos_user.user_manager');
@@ -32,7 +47,10 @@ class LoadNoReplyUserData implements FixtureInterface, ContainerAwareInterface
         $user = $userManager->createUser();
         
         $user->setUsername('noreply');
-        $user->setPlainPassword('7980fau!%#!FDSkdf9813hkladf89FDASJ#H!%a8s');
+        
+        $randpass = base_convert(rand(78364164096, 2821109907455), 10, 36);
+        $user->setPlainPassword($randpass);
+        
         $user->setEnabled(false);
         
         $randnum = rand(0, 10000);

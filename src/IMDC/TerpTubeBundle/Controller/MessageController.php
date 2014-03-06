@@ -18,8 +18,20 @@ use IMDC\TerpTubeBundle\Form\Type\PrivateMessageReplyType;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Doctrine\Common\Collections\ArrayCollection;
 
+/**
+ * Controller for the all Private Message (similar to email) actions 
+ * @author paul
+ * 
+ */
 class MessageController extends Controller
 {
+    /**
+     * Create a new private message
+     * 
+     * @param Request $request
+     * @param string $userid
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
 	public function createMessageAction(Request $request, $userid = null)
 	{
 		// check if user logged in
@@ -31,14 +43,11 @@ class MessageController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		
 		$message = new Message();
-		//$form = $this->createForm(new PrivateMessageType(), $message);
-
-		
+	
 		$form = $this->createForm(new PrivateMessageType(), $message, array(
 		        'em' => $em,
 		));
 		
-
 		$form->handleRequest($request);
 
 		if ($form->isValid())
@@ -76,6 +85,13 @@ class MessageController extends Controller
 
 	}
 
+	/**
+	 * Create a new private message to another specific user
+	 * 
+	 * @param Request $request
+	 * @param unknown $userid
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function createMessageToAction(Request $request, $userid)
 	{
 		// check if user logged in
@@ -92,7 +108,6 @@ class MessageController extends Controller
 
 		if ($form->isValid())
 		{
-
 			// set sentDate of message to be when form request received
 			// this is automatically set again when the object is inserted into the database anyway
 			$message->setSentDate(new \DateTime('now'));
@@ -111,22 +126,18 @@ class MessageController extends Controller
 
 			// split up the recipients by whitespace
 			$rawrecips = explode(' ', $form->get('to')->getData());
-			foreach ($rawrecips as $possuser)
-			{
-				try
-				{
+			foreach ($rawrecips as $possuser) {
+				try {
 					$theuser = $userManager->loadUserByUsername($possuser);
 					$existingUsers[] = $theuser;
 					$message->addRecipient($theuser);
 				}
-				catch (UsernameNotFoundException $e)
-				{
+				catch (UsernameNotFoundException $e) {
 					//FIXME: create message to user about recip not found
 				}
 			}
 
-			foreach ($existingUsers as $euser)
-			{
+			foreach ($existingUsers as $euser) {
 				$euser->addReceivedMessage($message);
 				$em->persist($euser);
 			}
@@ -170,11 +181,11 @@ class MessageController extends Controller
 
 	public function messageSuccessAction(Request $request)
 	{
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) 
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
-		else
+		else 
 		{
 			$response = $this
 					->forward('IMDCTerpTubeBundle:Message:viewAllMessages', 'Your message has been sent succesfully');
@@ -367,8 +378,6 @@ class MessageController extends Controller
 		    );
 		    return $this->redirect($this->generateUrl('imdc_message_view_all'));
 		}
-		
-		
 
 	}
 
@@ -392,7 +401,6 @@ class MessageController extends Controller
 
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json')); //make sure it has the correct content type
-
 	}
 
 	public function replyToMessageAction(Request $request, $messageid)
@@ -459,12 +467,5 @@ class MessageController extends Controller
 		return $this
 				->render('IMDCTerpTubeBundle:Message:replytoprivatemessage.html.twig',
 						array('form' => $form->createView(), 'message' => $message,));
-
-		/*
-		$response = $this->render('IMDCTerpTubeBundle:Message:replytoprivatemessage.html.twig',
-		        array('message' => $message)
-		);
-		return $response;
-		 */
 	}
 }

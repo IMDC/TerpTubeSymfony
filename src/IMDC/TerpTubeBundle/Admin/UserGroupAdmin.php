@@ -8,6 +8,12 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
+/**
+ * Allows manipulation and viewing of UserGroups in the Admin interface
+ * 
+ * @author paul
+ *
+ */
 class UserGroupAdmin extends Admin
 {
     // Fields to be shown on create/edit forms

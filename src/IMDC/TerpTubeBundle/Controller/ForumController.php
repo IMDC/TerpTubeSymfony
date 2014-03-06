@@ -27,18 +27,17 @@ use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Permissions;
 use IMDC\TerpTubeBundle\Entity\ForumRepository;
 
+/**
+ * Controller for all Forum object related actions such as new, edit, delete
+ * 
+ * @author paul
+ *
+ */
 class ForumController extends Controller
 {
 	public function indexAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
-		
-// 		$forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->findAll();
-// 		$forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getMostRecentForums(4);
-// 		$response = $this->render('IMDCTerpTubeBundle:Forum:index.html.twig',
-// 				array('forums' => $forums)
-// 		);
-// 		return $response;
 		
 		$dql = "SELECT f FROM IMDCTerpTubeBundle:Forum f ORDER BY f.lastActivity DESC";
 		$query = $em->createQuery($dql);
@@ -103,8 +102,8 @@ class ForumController extends Controller
            
             $newforum->setCreator($user);
             $newforum->setCreationDate(new \DateTime('now'));
-//             $newforum->setLocked(FALSE);
-//             $newforum->setSticky(FALSE);
+//             $newforum->setLocked(FALSE); // not currently in model
+//             $newforum->setSticky(FALSE); // not currently in model
             $newforum->setLastActivity(new \DateTime('now'));
             	
             $user->addForum($newforum);
@@ -117,7 +116,7 @@ class ForumController extends Controller
             // persist all objects to database
             $em->flush();
         
-            // creating the ACL
+            // creating the ACL which is not currently used for access restrictions
             $aclProvider = $this->get('security.acl.provider');
             $objectIdentity = ObjectIdentity::fromDomainObject($newforum);
             $acl = $aclProvider->createAcl($objectIdentity);

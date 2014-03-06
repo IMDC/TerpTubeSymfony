@@ -17,6 +17,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
 
+/**
+ * Controller for User object actions
+ * 
+ * @author paul
+ *
+ */
 class UserController extends Controller
 {
     /**

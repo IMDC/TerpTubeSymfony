@@ -8,6 +8,12 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
+/**
+ * Allows manipulation of Permission objects in the admin interface.
+ * 
+ * @author paul
+ *
+ */
 class PermissionsAdmin extends Admin
 {
     // Fields to be shown on create/edit forms

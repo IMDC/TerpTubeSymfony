@@ -8,6 +8,12 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
+/**
+ * Allows manipulation of MetaData objects in the admin interface
+ * 
+ * @author paul
+ *
+ */
 class MetaDataAdmin extends Admin
 {
     // Fields to be shown on create/edit forms

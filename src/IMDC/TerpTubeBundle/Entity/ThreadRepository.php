@@ -42,9 +42,16 @@ class ThreadRepository extends EntityRepository
         return $query->getResult();
     }
     
+    /**
+     * Iterates through all threads and returns an array of Thread objects
+     * that the given user can access based on the thread permissions and 
+     * the 'userHasAccess' method for a Thread object.
+     * 
+     * @param IMDCTerpTubeBundle:User $user
+     * @return multitype:Ambigous <multitype:, \Doctrine\ORM\mixed, \Doctrine\ORM\Internal\Hydration\mixed, \Doctrine\DBAL\Driver\Statement, \Doctrine\Common\Cache\mixed>
+     */
     public function findThreadsUserHasAccessTo($user)
     {
-        $levels = array(-1, 5);
         $query = $this->getEntityManager()->createQuery('
             SELECT t FROM IMDCTerpTubeBundle:Thread t
         ');

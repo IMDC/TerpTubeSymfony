@@ -11,6 +11,13 @@ use Sonata\AdminBundle\Form\FormMapper;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
 use IMDC\TerpTubeBundle\Entity\Media;
 
+/**
+ * Class to allow manipulation of Media objects in the admin interface.
+ * Triggers event so files are uploaded/transcoded correctly on creation
+ * 
+ * @author paul
+ *
+ */
 class MediaAdmin extends Admin
 {
     // Fields to be shown on create/edit forms

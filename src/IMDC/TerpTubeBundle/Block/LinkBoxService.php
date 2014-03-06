@@ -9,6 +9,12 @@ use Sonata\BlockBundle\Model\BlockInterface;
 use Sonata\BlockBundle\Block\BaseBlockService;
 use Sonata\BlockBundle\Block\BlockContextInterface;
 
+/**
+ * A custom block to insert a link back to the main TerpTube homepage from the Admin side
+ * 
+ * @author paul
+ *
+ */
 class LinkBoxService extends BaseBlockService
 {
     public function getName()

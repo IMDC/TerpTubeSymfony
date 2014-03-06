@@ -11,8 +11,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FOS\UserBundle\Model\UserManager;
 use IMDC\TerpTubeBundle\Entity;
 
+/**
+ * Controller for all FriendsList actions
+ * 
+ * @author paul
+ *
+ */
 class FriendsListController extends Controller
 {
+    /**
+     * Add a user to the currently logged in user's friendlist
+     * 
+     * @param Request $request
+     * @param unknown $userid
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
 	public function addAction(Request $request, $userid)    
 	{
 
@@ -40,6 +53,14 @@ class FriendsListController extends Controller
 								        array('userName' => $usertoadd->getUserName())));
 	}
 
+	/**
+	 * Remove a user from a friendslist
+	 * 
+	 * @param Request $request
+	 * @param integer $userid
+	 * @param string $redirect where to send the user after removed
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse
+	 */
 	public function removeAction(Request $request, $userid, $redirect)
 	{
 		// check if user logged in
@@ -64,16 +85,20 @@ class FriendsListController extends Controller
 
 		if ($redirect == NULL)
 		{
-			return $this
-					->redirect(
-							$this
-									->generateUrl('imdc_terp_tube_user_profile_specific',
-											array('userName' => $usertoremove->getUserName())));
+			return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific',
+			    array('userName' => $usertoremove->getUserName()))
+			);
 		}
 
 		return $this->redirect($this->generateUrl($redirect));
 	}
 
+	/**
+	 * Show all people on friends list
+	 * 
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function showAllAction(Request $request)
 	{
 		// check if user logged in

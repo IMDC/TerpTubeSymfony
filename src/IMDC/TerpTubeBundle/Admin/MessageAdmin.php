@@ -8,6 +8,12 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
+/**
+ * Class to allow manipulation of Message objects in the admin interface
+ * 
+ * @author paul
+ *
+ */
 class MessageAdmin extends Admin
 {
     // Fields to be shown on create/edit forms

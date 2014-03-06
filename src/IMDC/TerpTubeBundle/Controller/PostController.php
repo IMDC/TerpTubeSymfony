@@ -23,8 +23,14 @@ use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostReplyToPostFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
 
+/**
+ * Controller for all Post related actions including creating, deleting, editing and replying
+ * @author paul
+ *
+ */
 class PostController extends Controller
 {
+    
 	public function indexAction()
 	{
 		$em = $this->getDoctrine()->getManager();
@@ -36,6 +42,11 @@ class PostController extends Controller
 		return $response;
 	}
 	
+	/**
+	 * 
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+	 */
 	public function createNewPostAction(Request $request) 
 	{
 		// check if user logged in
@@ -481,8 +492,8 @@ class PostController extends Controller
         $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
         
         $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:replyPostAjax.html.twig',
-//             array('form' => $postReplyForm->createView(), 'post' => $replyPost));
-            array('form' => $postReplyForm->createView(), 'post' => $postToReplyTo, 'user' => $user));
+            array('form' => $postReplyForm->createView(), 'post' => $postToReplyTo, 'user' => $user)
+        );
         
         $return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
         

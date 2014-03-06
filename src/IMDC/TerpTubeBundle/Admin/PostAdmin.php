@@ -8,6 +8,12 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 
+/**
+ * Allows manipulation of Post objects in the Admin interface
+ * 
+ * @author paul
+ *
+ */
 class PostAdmin extends Admin
 {
     // Fields to be shown on create/edit forms
