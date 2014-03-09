@@ -26,8 +26,8 @@
             {% block fos_user_content %}
          {%		set gender = 'profile.show.gender.'~profile.gender %}   
 		{% if app.user == user.userName %}
-		<div class="link edit_profile"><a href="{{ path('imdc_terp_tube_user_profile_edit',{'userName': app.user}) }}">Edit</a></div>
 		<div class="profile_field"><a class="avatar" href="{{ path('imdc_terp_tube_user_avatar_edit',{'userName': app.user}) }}"><img class="avatar" alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></div>
+		<div class="link edit_profile"><a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_edit',{'userName': app.user}) }}">Edit</a></div>
 		{% else %}
 		<div class="profile_field"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></div>
 		{% endif %}
@@ -65,7 +65,32 @@
 {% block underherounitrow2 %}
 {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
     {% if app.user == user.userName %}
-        
+        {# print out list of user's current mentor's #}
+        {% if app.user.getMentorList|length > 0 %}
+        <div class="text-info">
+            <h4>Current Mentor's</h4>
+            <table class="table relationshipTable">
+           {% for mentor in app.user.getMentorList %}
+               <tr>
+                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentor.profile.avatar ? asset(mentor.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td><td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}">{{ mentor.getUserName }}</a></td>
+               </tr>
+           {% endfor %} 
+            </table>
+        </div>
+        {% endif %}
+        {# print out list of user's current mentee's #}
+        {% if app.user.getMenteeList|length > 0 %}
+        <div class="text-info">
+            <h4>Current Mentee's</h4>
+            <table class="table relationshipTable">
+           {% for mentee in app.user.getMenteeList %}
+               <tr>
+                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentee.profile.avatar ? asset(mentee.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td><td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}">{{ mentee.getUserName }}</a></td>
+               </tr>
+           {% endfor %} 
+            </table>
+        </div>
+        {% endif %}
     {% else %}
         {% if app.user.isUserOnFriendsList(user) %}
             <div class="text-info">

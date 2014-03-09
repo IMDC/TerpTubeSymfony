@@ -12,3 +12,7 @@ a img.avatar:hover
 {
 	border: 2px solid blue;
 }
+
+.avatarCell {
+	width: 50px;
+}

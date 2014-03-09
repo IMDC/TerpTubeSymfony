@@ -29,6 +29,10 @@ class Language
      */
     private $proficiency;
 
+    public function __toString()
+    {
+        return $this->name;
+    }
 
     /**
      * Get id

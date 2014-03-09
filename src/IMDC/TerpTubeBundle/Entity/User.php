@@ -95,6 +95,21 @@ class User extends BaseUser
 	 */
 	private $forums;
 	
+	/**
+	 * This is a collection of users that act as Mentor to the current user
+	 * ie) all users that are mentors to this person 
+	 * 
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $mentorList;
+	
+	/**
+	 * This is a collection of users that act as mentee to the current user
+	 * ie) all users this person mentor's
+	 * 
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $menteeList;
 	
     public function __construct()
     {
@@ -113,6 +128,8 @@ class User extends BaseUser
         $this->editedPosts      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->editedThreads    = new \Doctrine\Common\Collections\ArrayCollection();
         $this->forums           = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->mentorList       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->menteeList       = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -729,5 +746,96 @@ class User extends BaseUser
     public function getRoleGroups()
     {
         return $this->roleGroups;
+    }
+
+
+    /**
+     * Add to a user's mentorList
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $mentorList
+     * @return User
+     */
+    public function addMentorList(\IMDC\TerpTubeBundle\Entity\User $mentorList)
+    {
+        $this->mentorList[] = $mentorList;
+    
+        return $this;
+    }
+
+    /**
+     * Remove a user from the mentorList
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $mentorList
+     */
+    public function removeMentorList(\IMDC\TerpTubeBundle\Entity\User $mentorList)
+    {
+        $this->mentorList->removeElement($mentorList);
+    }
+
+    /**
+     * Get mentorList
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMentorList()
+    {
+        return $this->mentorList;
+    }
+    
+    /**
+     * Check whether the user passed as parameter exists on the
+     * user's mentor list
+     * 
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return boolean
+     */
+    public function isUserOnMentorList(\IMDC\TerpTubeBundle\Entity\User $user)
+    {
+        return $this->mentorList->contains($user);
+    }
+
+    /**
+     * Add a user to the menteeList
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $menteeList
+     * @return User
+     */
+    public function addMenteeList(\IMDC\TerpTubeBundle\Entity\User $menteeList)
+    {
+        $this->menteeList[] = $menteeList;
+    
+        return $this;
+    }
+
+    /**
+     * Remove a user from the menteeList
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $menteeList
+     */
+    public function removeMenteeList(\IMDC\TerpTubeBundle\Entity\User $menteeList)
+    {
+        $this->menteeList->removeElement($menteeList);
+    }
+
+    /**
+     * Get menteeList
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMenteeList()
+    {
+        return $this->menteeList;
+    }
+    
+    /**
+     * Convenience method to check if given user is on the mentee list
+     * of the current user
+     * 
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return boolean
+     */
+    public function isUserOnMenteeList(\IMDC\TerpTubeBundle\Entity\User $user) 
+    {
+        return $this->menteeList->contains($user);
     }
 }

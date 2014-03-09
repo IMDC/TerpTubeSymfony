@@ -16,6 +16,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pagerfanta\Adapter\DoctrineORMAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Intl\Exception\NotImplementedException;
 
 /**
  * Controller for User object actions
@@ -75,5 +76,6 @@ class UserController extends Controller
         
         return $this->render('IMDCTerpTubeBundle:Member:index.html.twig', array('pagination' => $pagination));        
     }
+    
 
 }

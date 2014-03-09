@@ -42,6 +42,8 @@ class UserAdmin extends Admin
 //         ->end()
 //         ->with('Friends')
             ->add('friendsList', null, array('required' => false))
+            ->add('mentorList', null, array('required' => false))
+            ->add('menteeList', null, array('required' => false))
 //         ->end()
 
 //         ->with('Management')

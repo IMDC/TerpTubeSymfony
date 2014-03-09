@@ -46,21 +46,30 @@
             <p>{{'profile.show.interestedInMentoringInterpreter.title'|trans}} : {{ profile.interestedInMentoringInterpreter is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringInterpreter? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>
             <p>{{'profile.show.interestedInMentoringMentor.title'|trans}} : {{ profile.interestedInMentoringMentor is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringMentor? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>
             <p>
-                {% if app.user == member %}
+            {% if app.user == member %}
                 <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Your Profile</a>
-                {% else %}
-                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
-                {% endif %}
-                {% if app.user == member %}
                 <a class="btn" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> View your Friend's list</a>
-                {% elseif app.user is not null and app.user.isUserOnFriendsList(member) %}
+            {% elseif app.user is not null and app.user.isUserOnFriendsList(member) %}
+                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
                 <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : member.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}"><i class="fa fa-minus-circle"></i> Remove from Friend's list</a>
-                {% else %}
+            {% else %}
+                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
                 <a class="btn btn-success" href="{{ path('imdc_add_to_friends_list', {'userid' : member.id, 'redirect' : 'imdc_member_list_public'} ) }}"><i class="fa fa-plus-circle"></i> Add to Friend's list</a>
+            {% endif %}
+            
+            {% if not (app.user == member) %}
+                {% if app.user.isUserOnMentorList(member) %}
+                <span class="label label-success"><i class="fa fa-star"></i> This person is your mentor</span>
+                {% else %}
+                <a class="btn" href="#"><i class="fa fa-asterisk"></i> Invite user to be your mentor</a>
                 {% endif %}
+                {% if app.user.isUserOnMenteeList(member) %}
+                <span class="label label-warning"><i class="fa fa-star"></i> This user is your mentee</span>
+                {% endif %}
+            {% endif %}
             </p>
             <p>
-                Post count: {{ member.getPostCount() }}
+                Post count: {{ member.getPostCount }}
             </p>
         </a>
     </li>

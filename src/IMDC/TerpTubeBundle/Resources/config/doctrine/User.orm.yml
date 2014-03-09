@@ -121,3 +121,23 @@ IMDC\TerpTubeBundle\Entity\User:
                 inverseJoinColumns:
                     friend_user_id:
                         referencedColumnName: id
+        mentorList:
+            targetEntity: User
+            joinTable:
+                name: user_mentor
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    mentor_user_id:
+                        referencedColumnName: id
+        menteeList:
+            targetEntity: User
+            joinTable:
+                name: user_mentee
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    mentee_user_id:
+                        referencedColumnName: id

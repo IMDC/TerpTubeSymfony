@@ -351,6 +351,9 @@ imdc_forum_delete:
     requirements:
         forumid: \d+
         
+
+
+    
 admin:
     resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'
     prefix: /admin
