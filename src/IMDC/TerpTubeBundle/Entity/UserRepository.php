@@ -6,21 +6,17 @@ use Doctrine\ORM\EntityRepository;
 
 class UserRepository extends EntityRepository
 {
-    /**
-     * Straight SQL statement to modify the noreply user's id
-     * so that the id is 0.
-     * 
-     * @param unknown $adminemail
-     * @return number the number of affected rows
-     */
-    public function modifyNoReplyUser($adminemail) {
+    public function findNoReplyUser()
+    {
+        $query = $this->getEntityManager()->createQuery('
+                    SELECT u
+                    FROM IMDCTerpTubeBundle:User u
+                    WHERE u.id = :uid
+                ')
+                ->setParameter('uid', 0);
+        $query->setMaxResults(1);
         
-        $stmt = $this->getEntityManager()->getConnection()
-                  ->prepare("UPDATE fos_user set id=0 where email=? LIMIT 1");
-        
-        $stmt->bindParam(1, $adminemail);
-        $stmt->execute();
-        return $stmt->rowCount();
+        return $query->getFirstResult();
     }
     
     public function getMostRecentInboxMessages($user, $limit=30) 

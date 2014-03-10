@@ -1,0 +1,42 @@
+invitation:
+    pattern:  /
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:index" }
+
+invitation_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:show" }
+
+invitation_new:
+    pattern:  /new
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:new" }
+
+invitation_create:
+    pattern:  /create
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:create" }
+    requirements: { _method: post }
+
+imdc_invitation_create_tobementor:
+    pattern: /create/mentor/{id}
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:createMentorInvitation" }
+    requirements: 
+        id: \d+
+        
+imdc_invitation_create_tobementee:
+    pattern: /create/mentee/{id}
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:createMenteeInvitation" }
+    requirements:
+        id: \d+        
+        
+invitation_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:edit" }
+
+invitation_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:update" }
+    requirements: { _method: post|put }
+
+invitation_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:delete" }
+    requirements: { _method: post|delete }

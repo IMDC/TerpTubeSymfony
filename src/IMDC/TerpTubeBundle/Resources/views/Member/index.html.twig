@@ -40,11 +40,11 @@
             <h3>{{ member.userName }}</h3>
             <p>Joined: {{ member.joinDate|date('F j, Y') }}</p>
             {#<p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null?'form.generic.empty'|trans: profile.interestedInMentoredByMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</p>#}
-            <p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null? '<i class="fa fa-question"></i>' : profile.interestedInMentoredByMentor ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p>
-            <p>{{'profile.show.interestedInMentoredByInterpreter.title'|trans}} : {{ profile.interestedInMentoredByInterpreter is null?'<i class="fa fa-question"></i>': profile.interestedInMentoredByInterpreter? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>
-            <p>{{'profile.show.interestedInMentoringSignLanguage.title'|trans}} : {{ profile.interestedInMentoringSignLanguage is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringSignLanguage? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>
-            <p>{{'profile.show.interestedInMentoringInterpreter.title'|trans}} : {{ profile.interestedInMentoringInterpreter is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringInterpreter? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>
-            <p>{{'profile.show.interestedInMentoringMentor.title'|trans}} : {{ profile.interestedInMentoringMentor is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringMentor? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>
+{#             <p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null? '<i class="fa fa-question"></i>' : profile.interestedInMentoredByMentor ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p>#}
+{#             <p>{{'profile.show.interestedInMentoredByInterpreter.title'|trans}} : {{ profile.interestedInMentoredByInterpreter is null?'<i class="fa fa-question"></i>': profile.interestedInMentoredByInterpreter? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
+{#             <p>{{'profile.show.interestedInMentoringSignLanguage.title'|trans}} : {{ profile.interestedInMentoringSignLanguage is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringSignLanguage? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
+{#             <p>{{'profile.show.interestedInMentoringInterpreter.title'|trans}} : {{ profile.interestedInMentoringInterpreter is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringInterpreter? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
+{#             <p>{{'profile.show.interestedInMentoringMentor.title'|trans}} : {{ profile.interestedInMentoringMentor is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringMentor? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
             <p>
             {% if app.user == member %}
                 <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Your Profile</a>
@@ -61,7 +61,7 @@
                 {% if app.user.isUserOnMentorList(member) %}
                 <span class="label label-success"><i class="fa fa-star"></i> This person is your mentor</span>
                 {% else %}
-                <a class="btn" href="#"><i class="fa fa-asterisk"></i> Invite user to be your mentor</a>
+                <a class="btn" href="{{ path('imdc_invitation_create_tobementor', {'id':member.id}) }}"><i class="fa fa-asterisk"></i> Invite user to be your mentor</a>
                 {% endif %}
                 {% if app.user.isUserOnMenteeList(member) %}
                 <span class="label label-warning"><i class="fa fa-star"></i> This user is your mentee</span>

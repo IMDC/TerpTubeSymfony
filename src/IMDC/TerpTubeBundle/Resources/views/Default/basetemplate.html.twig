@@ -78,9 +78,12 @@
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                                 {% set profileURL = '<a class="navbar-link" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="fa fa-user"></i> ' ~app.user.username~'</a>' %}
                                 {{ 'layout.logged_in_as'| trans({'%username%': profileURL}, 'FOSUserBundle') |raw}} |
-               					<a class="navbar-link" href="{{ path('imdc_message_view_all') }}">
-               					    <i class="fa fa-inbox"></i> {{  'layout.user_inbox'|trans({}, 'IMDCTerpTubeBundle') }} <span class="badge badge-inverse">{{ app.user.getNumUnreadPMs }}</span>
-               					</a> | 
+               					<a class="navbar-link toolpop" href="{{ path('imdc_message_view_all') }}" title="Inbox">
+               					    <i class="fa fa-envelope"></i><span class="badge badge-inverse">{{ app.user.getNumUnreadPMs }}</span>
+               					</a>
+               					<a class="navbar-link toolpop" href="{{ path('imdc_invitations_list') }}" title="Invitations">
+               					    <i class="fa fa-inbox"></i><span class="badge badge-inverse">{{ app.user.getNumActiveInvitations }}</span>
+               					</a>| 
                					<a  class="navbar-link" href="{{ path('fos_user_security_logout') }}">
                    					 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="fa fa-sign-out"></i>
                					</a>

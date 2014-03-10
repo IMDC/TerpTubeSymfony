@@ -1,0 +1,49 @@
+IMDC\TerpTubeBundle\Entity\Invitation:
+    type: entity
+    table: null
+    repositoryClass: IMDC\TerpTubeBundle\Entity\InvitationRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        dateCreated:
+            type: datetime
+        isAccepted:
+            type: boolean
+            nullable: true
+        dateAccepted:
+            type: datetime
+            nullable: true
+        isCancelled:
+            type: boolean
+            nullable: true
+        dateCancelled:
+            type: datetime
+            nullable: true
+        isDeclined:
+            type: boolean
+            nullable: true
+        dateDeclined:
+            type: datetime
+            nullable: true
+        becomeMentor:
+            type: boolean
+            nullable: true
+        becomeMentee:
+            type: boolean
+            nullable: true
+            
+    manyToOne:
+        creator:
+            targetEntity: User
+            joinColumn:
+                name: creator_id
+                referencedColumnName: id
+        recipient:
+            targetEntity: User
+            joinColumn:
+                name: recipient_id
+                referencedColumnName: id
+    lifecycleCallbacks: {  }

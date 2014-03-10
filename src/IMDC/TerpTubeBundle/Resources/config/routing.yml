@@ -120,8 +120,8 @@ imdc_message_create:
     defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage } 
         
 imdc_message_user_specific:
-    pattern: /createMessage/{userid}
-    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage, userid:null }
+    pattern: /createMessage/{username}
+    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage, username:null }
 
 imdc_message_view_all:
     pattern: /inbox
@@ -352,8 +352,43 @@ imdc_forum_delete:
         forumid: \d+
         
 
-
+IMDCTerpTubeBundle_invitation:
+        resource: "@IMDCTerpTubeBundle/Resources/config/routing/invitation.yml"
+        prefix:   /invitation
+   
+imdc_invitations_list:
+    pattern: /invitations
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:list }   
+   
+imdc_invitation_cancel:
+    pattern: /invitation/{id}/cancel
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:cancel }   
     
+imdc_invitation_reactivate:
+    pattern: /invitation/{id}/reactivate
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:reactivate }  
+   
+imdc_invitation_accept:
+    pattern: /invitation/{id}/accept
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:accept }   
+
+imdc_invitation_decline:
+    pattern: /invitation/{id}/decline
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:decline }   
+   
+imdc_mentee_remove:
+    pattern: /mentee/{id}/remove
+    defaults: { _controller: IMDCTerpTubeBundle:User:menteeRemove }
+    
+imdc_mentor_remove:
+    pattern: /mentor/{id}/remove
+    defaults: { _controller: IMDCTerpTubeBundle:User:mentorRemove }
+   
+   
+IMDCTerpTubeBundle_permissions:
+    resource: "@IMDCTerpTubeBundle/Resources/config/routing/permissions.yml"
+    prefix: /permissions   
+ 
 admin:
     resource: '@SonataAdminBundle/Resources/config/routing/sonata_admin.xml'
     prefix: /admin
@@ -363,7 +398,5 @@ _sonata_admin:
     type: sonata_admin
     prefix: /admin
     
-IMDCTerpTubeBundle_permissions:
-    resource: "@IMDCTerpTubeBundle/Resources/config/routing/permissions.yml"
-    prefix: /permissions
+
     

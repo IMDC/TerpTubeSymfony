@@ -111,25 +111,37 @@ class User extends BaseUser
 	 */
 	private $menteeList;
 	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $createdInvitations;
+	
+	/**
+	 * @var \Doctrine\Common\Collections\Collection
+	 */
+	private $receivedInvitations;
+	
     public function __construct()
     {
         parent::__construct();
-        $this->sentMessages     = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->receivedMessages = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->readMessages     = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->archivedMessages = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->deletedMessages  = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->userGroups       = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->roleGroups       = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->resourceFiles    = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->friendsList      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->editedPosts      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->editedThreads    = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->forums           = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->mentorList       = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->menteeList       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->sentMessages         = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->receivedMessages     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->readMessages         = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->archivedMessages     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->deletedMessages      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->userGroups           = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->roleGroups           = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->resourceFiles        = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->friendsList          = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->posts                = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->threads              = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->editedPosts          = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->editedThreads        = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forums               = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->mentorList           = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->menteeList           = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->createdInvitations   = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->receivedInvitations  = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -280,7 +292,27 @@ class User extends BaseUser
         }
         return $msg_count;
     }
+    
+    public function getNumActiveInvitations()
+    {
+        $invitationCount = 0;
+        foreach ($this->getReceivedInvitations() as $receivedInvitation) {
+            // if not cancelled, not declined, not accepted
+            if (!$receivedInvitation->getIsCancelled()
+            && !$receivedInvitation->getIsDeclined()
+            && !$receivedInvitation->getIsAccepted() ) {
+                $invitationCount++;
+            }
+        }
+        
+        return $invitationCount;
+    }
 
+    public function getNumUnreadItems() 
+    {
+        return $this->getNumUnreadPMs() + $this->getNumActiveInvitations();
+    }
+    
     /**
      * Add archivedMessages
      *
@@ -837,5 +869,85 @@ class User extends BaseUser
     public function isUserOnMenteeList(\IMDC\TerpTubeBundle\Entity\User $user) 
     {
         return $this->menteeList->contains($user);
+    }
+
+    /**
+     * Add createdInvitations
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Invitation $createdInvitations
+     * @return User
+     */
+    public function addCreatedInvitation(\IMDC\TerpTubeBundle\Entity\Invitation $createdInvitations)
+    {
+        $this->createdInvitations[] = $createdInvitations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove createdInvitations
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Invitation $createdInvitations
+     */
+    public function removeCreatedInvitation(\IMDC\TerpTubeBundle\Entity\Invitation $createdInvitations)
+    {
+        $this->createdInvitations->removeElement($createdInvitations);
+    }
+
+    /**
+     * Get createdInvitations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCreatedInvitations()
+    {
+        return $this->createdInvitations;
+    }
+
+    /**
+     * Add receivedInvitations
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Invitation $receivedInvitations
+     * @return User
+     */
+    public function addReceivedInvitation(\IMDC\TerpTubeBundle\Entity\Invitation $receivedInvitations)
+    {
+        $this->receivedInvitations[] = $receivedInvitations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove receivedInvitations
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Invitation $receivedInvitations
+     */
+    public function removeReceivedInvitation(\IMDC\TerpTubeBundle\Entity\Invitation $receivedInvitations)
+    {
+        $this->receivedInvitations->removeElement($receivedInvitations);
+    }
+
+    /**
+     * Get receivedInvitations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getReceivedInvitations()
+    {
+        return $this->receivedInvitations;
+    }
+    
+    public function createMessageToUser(User $messageAuthor, $subject, $content)
+    {
+        $message = new Message();
+        $message->setOwner($messageAuthor);
+        $message->setSubject($subject);
+        $message->setContent($content);
+        $message->addRecipient($this);
+        $message->setSentDate(new \DateTime('now'));
+        $this->addReceivedMessage($message);
+        $messageAuthor->addSentMessage($message);
+        
+        return $message;
     }
 }

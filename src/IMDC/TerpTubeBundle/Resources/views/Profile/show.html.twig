@@ -72,7 +72,14 @@
             <table class="table relationshipTable">
            {% for mentor in app.user.getMentorList %}
                <tr>
-                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentor.profile.avatar ? asset(mentor.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td><td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}">{{ mentor.getUserName }}</a></td>
+                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentor.profile.avatar ? asset(mentor.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
+                   <td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}">{{ mentor.getUserName }}</a></td>
+                   <td>
+                       <ul class="unstyled inline">
+                           <li><a class="btn" href="{{ path('imdc_mentor_remove', {'id':mentor.id}) }}">Remove</a></li>
+                           <li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentor.username}) }}">Send message</a></li>
+                       </ul>
+                   </td>
                </tr>
            {% endfor %} 
             </table>
@@ -85,7 +92,14 @@
             <table class="table relationshipTable">
            {% for mentee in app.user.getMenteeList %}
                <tr>
-                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentee.profile.avatar ? asset(mentee.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td><td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}">{{ mentee.getUserName }}</a></td>
+                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentee.profile.avatar ? asset(mentee.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
+                   <td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}">{{ mentee.getUserName }}</a></td>
+                   <td>
+                       <ul class="unstyled inline">
+                           <li><a class="btn" href="{{ path('imdc_mentee_remove', {'id':mentee.id}) }}">Remove</a></li>
+                           <li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentee.username}) }}">Send message</a></li>
+                       </ul>
+                   </td>
                </tr>
            {% endfor %} 
             </table>

@@ -37,6 +37,12 @@ IMDC\TerpTubeBundle\Entity\User:
         editedThreads:
             targetEntity: Thread
             mappedBy: editedBy
+        createdInvitations:
+            targetEntity: Invitation
+            mappedBy: creator
+        receivedInvitations:
+            targetEntity: Invitation
+            mappedBy: recipient
     oneToOne:
         profile:
             targetEntity: UserProfile

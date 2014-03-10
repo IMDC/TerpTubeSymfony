@@ -21,7 +21,7 @@ class MessageAdmin extends Admin
     {
         $formMapper
             ->add('owner', 'sonata_type_model_list', array('class' => 'IMDC\TerpTubeBundle\Entity\User'))
-            ->add('recipients', 'sonata_type_collection', array('property_path' => 'recipients'))
+            ->add('recipients')
             ->add('subject')
             ->add('content', 'text', array('label' => 'Message Content'))
             ->add('attachedMedia', 'sonata_type_collection', array('property_path' => 'attachedMedia'))
@@ -44,9 +44,9 @@ class MessageAdmin extends Admin
         $listMapper
             ->addIdentifier('owner')
             ->add('recipients')
-            ->add('subject')
+            ->addIdentifier('subject')
             ->add('sentDate')
-            ->add('content')
+            ->addIdentifier('content')
         ;
     }
 }

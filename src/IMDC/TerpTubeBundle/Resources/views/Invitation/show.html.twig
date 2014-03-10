@@ -1,0 +1,66 @@
+{% extends 'IMDCTerpTubeBundle:Default:basetemplate.html.twig' %}
+
+{% block rightsidecontent %}
+<div class="span11">
+    <h1>Invitation</h1>
+
+    <table class="table table-striped table-condensed table-hover record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Creator</th>
+                <td>{{ entity.creator.getusername }}</td>
+            </tr>
+            <tr>
+                <th>Recipient</th>
+                <td>{{ entity.recipient.getusername }}</td>
+            </tr>
+            <tr>
+                <th>Date created</th>
+                <td>{{ entity.dateCreated|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Is accepted</th>
+                <td>{{ entity.isAccepted ? 'yes' : 'no' }}</td>
+            </tr>
+            <tr>
+                <th>Date accepted</th>
+                <td>{{ entity.dateAccepted|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Is cancelled</th>
+                <td>{{ entity.isCancelled ? 'yes' : 'no' }}</td>
+            </tr>
+            <tr>
+                <th>Date cancelled</th>
+                <td>{{ entity.dateCancelled|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Become mentor</th>
+                <td>{{ entity.becomeMentor ? 'yes' : 'no' }}</td>
+            </tr>
+            <tr>
+                <th>Become mentee</th>
+                <td>{{ entity.becomeMentee ? 'yes' : 'no' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="unstyled inline record_actions">
+    <li>
+        <a class="btn" href="{{ path('invitation') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a class="btn" href="{{ path('invitation_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+</div>
+{% endblock %}

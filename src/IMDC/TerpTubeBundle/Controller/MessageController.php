@@ -89,10 +89,10 @@ class MessageController extends Controller
 	 * Create a new private message to another specific user
 	 * 
 	 * @param Request $request
-	 * @param unknown $userid
+	 * @param string $username
 	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
 	 */
-	public function createMessageToAction(Request $request, $userid)
+	public function createMessageToAction(Request $request, $username)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))

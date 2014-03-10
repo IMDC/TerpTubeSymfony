@@ -12,7 +12,6 @@ Inbox
 
 {% block herounit_wrap %}
     <h1>Inbox</h1>
-    <h2>Your messages appear below:</h2>
 {% endblock herounit_wrap %}
 {% block underherounitrow1 %}
     {% if app.session.flashbag.get('inbox') is defined %}
@@ -78,10 +77,17 @@ Inbox
     </div>
 {% endblock underherounitrow1 %}
 {% block underherounitrow2 %}
+    <h2>Invitations</h2>
+    {% set activeInvitations = app.user.getNumActiveInvitations %}
+    {% if activeInvitations > 0 %}
+    <h4>You have <span class="badge badge-success">{{ activeInvitations }}</span> invitations that need your attention!</h4>
+    {% endif %}
+    <a class="btn" href="{{ path('imdc_invitations_list') }}"><i class="fa fa-arrow-right"></i> Go to invitations</a>
+    
     <h2>Notifications</h2>
     <table>
-        <th>Message</th>
         {% if notifications is defined %}
+        <th>Message</th>
             {% for notification in notifications %}
                 <tr><td>{{ notification.message }}</td></tr>
             {% endfor %}
