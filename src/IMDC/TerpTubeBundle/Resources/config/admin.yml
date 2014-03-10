@@ -121,6 +121,17 @@ services:
             - ~
         calls:
             - [ setTranslationDomain, [IMDCTerpTubeBundle]]     
+    
+    sonata.admin.invitations:
+        class: IMDC\TerpTubeBundle\Admin\InvitationAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Invitations", label: "Invitations" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Invitation
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
             
     sonata.block.service.linkbox:
         class: IMDC\TerpTubeBundle\Block\LinkBoxService

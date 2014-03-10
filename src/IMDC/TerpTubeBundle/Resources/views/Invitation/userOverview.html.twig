@@ -20,7 +20,7 @@
                 {% if receivedInvitations|length > 0 %}
                     <tr><th>Date received</th><th>From</th><th>Description</th><th>Status</th><th>Tools</th></tr>
                     {% for invitation in receivedInvitations %}
-                        <tr onclick="goToInvitation('{{ path('invitation_show', {'id': invitation.id}) }}');">
+                        <tr>
                             <td>{{ time_diff(invitation.datecreated) }}</td>
                             <td>{{ invitation.creator.getUserName }}</td>
                             <td>
@@ -58,7 +58,7 @@
                 {% if sentInvitations|length > 0 %}
                     <tr><th>Date sent</th><th>Recipient</th><th>Description</th><th>Status</th><th>Tools</th></tr>
                     {% for invitation in sentInvitations %}
-                        <tr onclick="goToInvitation('{{ path('invitation_show', {'id': invitation.id}) }}');">
+                        <tr>
                             <td>{{ time_diff(invitation.datecreated) }}</td>
                             <td>{{ invitation.recipient.getUserName }}</td>
                             <td>

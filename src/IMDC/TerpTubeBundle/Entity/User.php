@@ -937,6 +937,14 @@ class User extends BaseUser
         return $this->receivedInvitations;
     }
     
+    /**
+     * Create a new private message to this user
+     * 
+     * @param User $messageAuthor The author of the message
+     * @param string $subject The subject of the message
+     * @param string $content The content of the message
+     * @return \IMDC\TerpTubeBundle\Entity\Message
+     */
     public function createMessageToUser(User $messageAuthor, $subject, $content)
     {
         $message = new Message();

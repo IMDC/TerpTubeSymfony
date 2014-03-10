@@ -1,14 +1,18 @@
-invitation:
-    pattern:  /
-    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:index" }
+#invitation:
+#    pattern:  /
+#    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:index" }
+imdc_invitations_list:
+    pattern: /
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:list }  
 
-invitation_show:
-    pattern:  /{id}/show
-    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:show" }
+#
+#invitation_show:
+#    pattern:  /{id}/show
+#    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:show" }
 
-invitation_new:
-    pattern:  /new
-    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:new" }
+#invitation_new:
+#    pattern:  /new
+#    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:new" }
 
 invitation_create:
     pattern:  /create
@@ -27,16 +31,34 @@ imdc_invitation_create_tobementee:
     requirements:
         id: \d+        
         
-invitation_edit:
-    pattern:  /{id}/edit
-    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:edit" }
+#invitation_edit:
+#    pattern:  /{id}/edit
+#    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:edit" }
+#
+#invitation_update:
+#    pattern:  /{id}/update
+#    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:update" }
+#    requirements: { _method: post|put }
+#
+#invitation_delete:
+#    pattern:  /{id}/delete
+#    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:delete" }
+#    requirements: { _method: post|delete }
 
-invitation_update:
-    pattern:  /{id}/update
-    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:update" }
-    requirements: { _method: post|put }
+ 
+imdc_invitation_cancel:
+    pattern: /{id}/cancel
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:cancel }   
+    
+imdc_invitation_reactivate:
+    pattern: /{id}/reactivate
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:reactivate }  
+   
+imdc_invitation_accept:
+    pattern: /{id}/accept
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:accept }   
 
-invitation_delete:
-    pattern:  /{id}/delete
-    defaults: { _controller: "IMDCTerpTubeBundle:Invitation:delete" }
-    requirements: { _method: post|delete }
+imdc_invitation_decline:
+    pattern: /{id}/decline
+    defaults: { _controller: IMDCTerpTubeBundle:Invitation:decline }
+    

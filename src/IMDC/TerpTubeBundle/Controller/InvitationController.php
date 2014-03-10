@@ -165,6 +165,8 @@ class InvitationController extends Controller
         
         $em->flush();
         
+        $this->get('session')->getFlashBag()->add('success', 'Invitation sent');
+        
         $url = $this->getRequest()->headers->get("referer");
         return new RedirectResponse($url);
     }

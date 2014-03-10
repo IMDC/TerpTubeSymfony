@@ -19,6 +19,8 @@ IMDC\TerpTubeBundle\Entity\User:
         sentMessages:
             targetEntity: Message
             mappedBy: owner
+            orderBy:
+                sentDate: DESC
         resourceFiles:
             targetEntity: Media
             mappedBy: owner
@@ -40,9 +42,13 @@ IMDC\TerpTubeBundle\Entity\User:
         createdInvitations:
             targetEntity: Invitation
             mappedBy: creator
+            orderBy:
+                dateCreated: DESC
         receivedInvitations:
             targetEntity: Invitation
             mappedBy: recipient
+            orderBy:
+                dateCreated: DESC
     oneToOne:
         profile:
             targetEntity: UserProfile
@@ -62,6 +68,8 @@ IMDC\TerpTubeBundle\Entity\User:
                 inverseJoinColumns:
                     message_id:
                         referencedColumnName: id
+            orderBy:
+                sentDate: DESC
         #functions as many to many
         readMessages:
             targetEntity: Message
@@ -84,6 +92,8 @@ IMDC\TerpTubeBundle\Entity\User:
                 inverseJoinColumns:
                     message_id:
                         referencedColumnName: id
+            orderBy:
+                sentDate: DESC
         #functions as many to many
         deletedMessages:
             targetEntity: Message
