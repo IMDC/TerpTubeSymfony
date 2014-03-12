@@ -97,6 +97,9 @@ layout:
 
 interpretationsGateway:
     title: "My Interpretations"
+    type:
+        0: "Simultaneous"
+        1: "Consecutive"
     
 filesGateway:
     title: "My Files"

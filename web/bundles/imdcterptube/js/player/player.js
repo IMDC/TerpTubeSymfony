@@ -212,8 +212,8 @@ Player.prototype.createControls = function() {
 			$(button).addClass("forwardButtons");
 			
 			forwardButtons.append(button);
-			console.log(button);
-			console.log($(button));
+//			console.log(button);
+//			console.log($(button));
 			
 			if (this.options.type !== Player.DENSITY_BAR_TYPE_PLAYER) {
 				$(button).addClass("record");

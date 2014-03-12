@@ -88,15 +88,26 @@ class MyFilesGatewayController extends Controller {
 		if ($userObject == null) {
 			throw new NotFoundHttpException ( "This user does not exist" );
 		}
+		
+		
 		if (! $request->isXmlHttpRequest ())
 			return $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:previewCompoundMedia.html.twig', array (
 					"compoundMedia" => $mediaFile 
 			) );
 		else
-			// FIXME need to fix the ajax css file to work better.
-			return $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:ajax.previewCompoundMedia.html.twig', array (
+			$response =  $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:ajax.previewCompoundMedia.html.twig', array (
 					"compoundMedia" => $mediaFile 
+			));
+			// FIXME need to fix the ajax css file to work better.
+			$return = array (
+					'page' => $response->getContent (),
+					'finished' => false
+			);
+			$return = json_encode ( $return ); // json encode the array
+			$response = new Response ( $return, 200, array (
+					'Content-Type' => 'application/json'
 			) );
+			return $response;
 	}
 	
 	/**

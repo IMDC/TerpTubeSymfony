@@ -48,6 +48,7 @@
 
 {% block javascripts %}
  {{ parent() }}
+ <script src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>
  <script type='text/javascript'>
  $(document).ready(function() {
 	 var player2Element = $("#{{ compoundMedia.getSource.getID }}");
@@ -60,21 +61,22 @@
 	 
 	 player1.options.areaSelectionEnabled = false;
 	 player1.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	 player1.options.backButtons = false;
-	 player1.options.forwardButtons = false;
+// 	 player1.options.backButtons = false;
+// 	 player1.options.forwardButtons = false;
 	 player1.options.audioBar = false;
 	 //player1.options.controlBarElement = $('.simultaneousVideoControls');
-	 player1.options.controlBarVisible = false;
-
+	 player1.options.controlBarVisible = true;
+	 player1.options.controlBarElement = $('.preview-controls');
+	 player1.options.volumeControl = true;
 	 
 	 player2.options.areaSelectionEnabled = false;
 	 player2.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	 player2.options.backButtons = false;
+// 	 player2.options.backButtons = false;
 	 //player.options.forwardButtons = false;
 	 player2.options.audioBar = false;
-	 player2.options.volumeControl = true;
-	 player2.options.controlBarElement = $('.preview-controls');
-	 player2.options.controlBarVisible = true;
+// 	 player2.options.volumeControl = true;
+	 
+	 player2.options.controlBarVisible = false;
 
 	 player2.options.recordingErrorFunction = function(e)
 	 {
@@ -87,14 +89,21 @@
 		// fn(data);
 		 console.log('Success!', data);
 	 };
-	 player2.options.forwardButtons.push('<button class="forwardButton"></button>');
-	 player2.options.forwardFunctions.push(function(data)
+	 player1.options.forwardButtons.push('<button class="forwardButton"></button>');
+	 player1.options.forwardFunctions.push(function(data)
 	 {
-		 player.destroyRecorder();
 		// console.log(recorderConfiguration);
 		// var fn = window[recorderConfiguration.forwardFunction]||null;
 		// fn(data);
 		 console.log('Forward!', data);
+	 });
+	 player1.options.forwardButtons.push('<button class="cutButton"></button>');
+	 player1.options.forwardFunctions.push(function(data)
+	 {
+		// console.log(recorderConfiguration);
+		// var fn = window[recorderConfiguration.forwardFunction]||null;
+		// fn(data);
+		 console.log('Cut!', data);
 	 });
 	 //player2.options.controlBarElement = $('.simultaneousVideoControls');
 
@@ -165,7 +174,7 @@
 		 });
      console.log($(player1.elementID).find('.volumeControl').eq(0));
 
-     var player2VideoControlsElement = $(player2.elementID).find('.videoControls').eq(0);
+     var player1VideoControlsElement = $(player1.elementID).find('.videoControls').eq(0);
      var sourceVolumeControl = $('<div class="sourceVolumeControl"></div>');
 
      var hidePIPButton = $('<button id="hidePIP">Hide PIP</button>');
@@ -180,11 +189,11 @@
      
      
      sourceVolumeControl.append('<div>Source Volume</div>');
-     $(player1.elementID).find('.volumeControl').eq(0).detach().appendTo(sourceVolumeControl);
+     $(player2.elementID).find('.volumeControl').eq(0).detach().appendTo(sourceVolumeControl);
 
-	 sourceVolumeControl.appendTo(player2VideoControlsElement);
-	 hidePIPButton.appendTo(player2VideoControlsElement);
-	 swapPIPButton.appendTo(player2VideoControlsElement);
+	 sourceVolumeControl.appendTo(player1VideoControlsElement);
+	 hidePIPButton.appendTo(player1VideoControlsElement);
+	 swapPIPButton.appendTo(player1VideoControlsElement);
 
      $("div#pipwrap").draggable({containment: "#videoContainer"});
 

@@ -81,3 +81,10 @@ div .video {
 	text-align: center;
 	width: 80px;
 }
+
+.videoControlsContainer.controlsBar.forwardButtons.cut
+{
+	background-image: url(../../img/player/submit_small.png); 
+	background-repeat: no-repeat;	
+	margin-top:0px;
+}

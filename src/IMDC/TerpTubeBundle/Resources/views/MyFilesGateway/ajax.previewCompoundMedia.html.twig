@@ -74,11 +74,18 @@
 	 player2.options.forwardButtons.push('<button class="forwardButton"></button>');
 	 player2.options.forwardFunctions.push(function(data)
 	 {
-		 player.destroyRecorder();
 		// console.log(recorderConfiguration);
 		// var fn = window[recorderConfiguration.forwardFunction]||null;
 		// fn(data);
 		 console.log('Forward!', data);
+	 });
+	 player2.options.forwardButtons.push('<button class="cutButton"></button>');
+	 player2.options.forwardFunctions.push(function(data)
+	 {
+		// console.log(recorderConfiguration);
+		// var fn = window[recorderConfiguration.forwardFunction]||null;
+		// fn(data);
+		 console.log('Cut!', data);
 	 });
 	 //player2.options.controlBarElement = $('.simultaneousVideoControls');
 

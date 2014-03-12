@@ -27,20 +27,28 @@
 				{%  if interpretations and interpretations|length >0 %}
 						{% for interpretation in interpretations %}
                    	<tr>
-                        <td>
-                            <a class="delete-button" href='#' data-url="{{ path('imdc_files_gateway_remove', {'mediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-minus-circle"></i> {{ 'filesGateway.deleteLink'|trans }}</a>
-                            {% if interpretation.getTarget.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') %}
-                            <a class="preview-button disabled" href='#' data-type="{{ interpretation.type }}" data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>
-                            {% else %}
-                            <a class="preview-button" href='#' data-type="{{ interpretation.type }}" data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}</a>
-                            {% endif %}
-                            <a class="share-button" href="{{ path('imdc_thread_create_new_from_media', {'resourceid': interpretation.id} ) }}" data-type-"{{ interpretation.type }}" data-val="{{ interpretation.id }}"><i class="fa fa-share"></i> {{ 'filesGateway.shareLink'|trans }}</a>
-                        </td>
+                   		<td><a class="btn btn-small delete-button" href='#'
+						data-url="{{ path('imdc_files_gateway_remove', {'mediaId': interpretation.id}) }}"
+						data-val="{{ interpretation.id }}"><i class="fa fa-minus-circle"></i>
+							{{ 'filesGateway.deleteLink'|trans }}</a> {% if
+						interpretation.getTarget.getIsReady ==
+						constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') %} <a
+						class="btn btn-small preview-button disabled" href='#'
+						data-type="{{ interpretation.type }}" data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-play-circle"></i>
+							{{ 'filesGateway.previewLink'|trans }}</a> {% else %} <a
+						class="btn btn-small preview-button" href='#'
+						data-type="{{ interpretation.type }}" data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}" data-val="{{ interpretation.id }}"><i class="fa fa-play-circle"></i>
+							{{ 'filesGateway.previewLink'|trans }}</a> {% endif %} <a
+						class="btn btn-small share-button"
+						href="{{ path('imdc_thread_create_new_from_media', {'resourceid': interpretation.id} ) }}" data-type-"{{ interpretation.type }}" data-val="{{ interpretation.id }}"><i
+							class="fa fa-share-square-o"></i> {{
+							'filesGateway.shareLink'|trans }}</a>
+							
                         <td>
                         	{{ interpretation.getTarget.title }}
                         </td>
                         <td>
-                        	{{ ('filesGateway.type.'~interpretation.type)|trans }}
+                        	{{ ('interpretationsGateway.type.'~interpretation.type)|trans }}
                         </td>
                         <td>{{ interpretation.getTarget.getMetaData.getTimeUploaded|date('g:ia M j') }}</td>
                         {% if interpretation.getTarget.getMetaData.getSize == -1 %}
@@ -80,7 +88,7 @@
 			console.log(mediaId);
 			var mediaURL = "{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': '-1'}) }}";
 			mediaURL = mediaURL.replace('-1',mediaId);
-			previewMediaFile(mediaId, mediaURL, $('#preview'), true);
+			window["mediaChooser"].previewMediaFile(mediaId, mediaURL, true);
 	 }
 
 	 function addMediaRow(media)
@@ -128,7 +136,8 @@
 	            if ($(this).hasClass('disabled'))
 	                return false;
 	            $('#preview').html('');
-	        	previewFileLink($(this), $('#preview'), true);
+	            var button = this;
+	            window["mediaChooser"].previewMediaFile($(button).attr('data-val'), $(button).attr('data-url'), true);
 	        	return false;
 		 });
          $('.delete-button').click(function(e) {
@@ -138,11 +147,18 @@
 	 }
 	 
   $(document).ready(function() {
+
+	  	window["mediaChooser"] = new MediaChooser($("#preview"), function(mediaID)
+	 	{
+            console.log("Successfully finished creating media! with mediaID: " + mediaID);
+ 		}, true);
+ 		
         $('.preview-button').click(function(e) {
             if ($(this).hasClass('disabled'))
                 return false;
             $('#preview').html('');
-        	previewFileLink($(this), $('#preview'), true);
+			var button = this;
+	        window["mediaChooser"].previewMediaFile($(button).attr('data-val'), $(button).attr('data-url'), true);
         	return false;
         });
         $('.delete-button').click(function(e) {

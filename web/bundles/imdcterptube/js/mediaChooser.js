@@ -87,7 +87,7 @@ MediaChooser.prototype.previewMediaFile = function (mediaId, mediaURL, isPopUp) 
 		this.loadMediaPage(mediaId, mediaURL);
 	}
 
-}
+};
 
 MediaChooser.prototype.loadMediaPage = function(mediaId, mediaURL) {
 	this.loadNextPage(mediaURL, {mediaId: mediaId}, "POST");
@@ -210,35 +210,3 @@ MediaChooser.prototype.setRecorder = function(newRecorder)
 {
 	this.recorder = newRecorder;
 };
-
-/*
-function previewFileLink(currentElement, destinationDivElement, isPopUp)
-{
-	var mediaId = $(currentElement).attr('data-val');
-	var mediaURL = $(currentElement).attr('data-url'); // Used to obtain the URL for the media
-
-	previewMediaFile(mediaId, mediaURL, destinationDivElement, isPopUp);
-}
-
-function loadMediaPage(mediaId, mediaURL, destinationDivElement)
-{
-	$.ajax(
-	{
-		url : mediaURL,
-		type : "POST",
-		contentType : "application/x-www-form-urlencoded",
-		data :
-		{
-			mediaId : mediaId
-		},
-		success : function(data)
-		{
-			destinationDivElement.html(data);
-		},
-		error : function(request)
-		{
-			console.log(request);
-			alert(request.statusText);
-		}
-	});
-}*/
