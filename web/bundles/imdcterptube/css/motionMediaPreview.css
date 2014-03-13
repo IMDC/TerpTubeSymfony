@@ -2,7 +2,7 @@
 
 .videoControlsContainer.controlsBar.forwardButtons.cutButton
 {
-	background-image: url(../img/player/next_small.png); 
+	background-image: url(../img/crop_video_small.png); 
 	background-repeat: no-repeat;	
 	margin-top:0px;
 }
