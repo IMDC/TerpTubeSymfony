@@ -29,6 +29,19 @@
         {% endif %}
 
         {{ form_row(form.subject) }}
+        {{ form_row(form.attachedMedia) }}
+{#         {{ form_label(form.attachedMedia) }}#}
+{#         {{ form_errors(form.attachedMedia) }}#}
+        
+{#         <ul id="attachedMedia-fields-list" class="unstyled inline" data-prototype="{{ form_widget(form.attachedMedia.vars.prototype)|e }}">#}
+{#             {% for mediaField in form.attachedMedia %}#}
+{#             <li>#}
+{#                 {{ form_errors(mediaField) }}#}
+{#                 {{ form_widget(mediaField) }}#}
+{#             </li>#}
+{#             {% endfor %}#}
+{#         </ul>#}
+{#         <a href="#" id="add-another-attachedMedia">Add another media item</a>#}
         {{ form_row(form.content) }}
         
     {{ form_end(form) }}
@@ -40,8 +53,21 @@
 {% block javascripts %}
 {{ parent() }}
 <script type="text/javascript">
+//var attachedMediaCount = '{{ form.attachedMedia|length }}';
 $(document).ready(function() {
     $("#PrivateMessageForm_recipients").tagit();
+
+//     var attachedMediaList = $('#attachedMedia-fields-list');
+
+//     // grab the prototype template
+//     var newWidget = attachedMediaList.attr('data-prototype');
+
+//     newWidget = newWidget.replace(/__name__/g, attachedMediaCount);
+//     attachedMediaCount++;
+
+//     // create a new list element and add it to the list
+//     var newLi = $('<li></li>').html(newWidget);
+//     newLi.appendTo($('#attachedMedia-fields-list'));
 
 });
 </script>

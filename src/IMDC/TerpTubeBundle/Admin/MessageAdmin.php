@@ -24,7 +24,7 @@ class MessageAdmin extends Admin
             ->add('recipients')
             ->add('subject')
             ->add('content', 'text', array('label' => 'Message Content'))
-            ->add('attachedMedia', 'sonata_type_collection', array('property_path' => 'attachedMedia'))
+            ->add('attachedMedia')
         ;
     }
 
@@ -42,11 +42,13 @@ class MessageAdmin extends Admin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
+            ->addIdentifier('id')
             ->addIdentifier('owner')
             ->add('recipients')
             ->addIdentifier('subject')
             ->add('sentDate')
             ->addIdentifier('content')
+            ->addIdentifier('attachedMedia')
         ;
     }
 }

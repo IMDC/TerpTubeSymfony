@@ -62,6 +62,20 @@
                 {{ message.subject }}
             </div>
         </div>
+        {% if message.attachedMedia is defined and message.attachedMedia is not null and message.attachedMedia|length > 0 %}
+        <div class="row-fluid message-info-header">
+            <div class="span1">
+                Attached Media:
+            </div>
+            <div class="span9">
+                {% for mediaFile in message.attachedMedia %}
+                <div class="span2">
+                    {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
         <div class="row-fluid message-info-header lastbottomborder">
             <div class="span9 message-content-wrap">
                 {{ message.content|nl2br }}

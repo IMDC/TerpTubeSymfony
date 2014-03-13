@@ -41,11 +41,13 @@ class MessageController extends Controller
 		}
 
 		$em = $this->getDoctrine()->getManager();
+		$user = $this->getUser();
 		
 		$message = new Message();
 	
 		$form = $this->createForm(new PrivateMessageType(), $message, array(
 		        'em' => $em,
+		        'user' => $user,
 		));
 		
 		$form->handleRequest($request);
@@ -87,6 +89,7 @@ class MessageController extends Controller
 
 	/**
 	 * Create a new private message to another specific user
+	 * NOT SURE IF THIS IS USED ANYWHERE
 	 * 
 	 * @param Request $request
 	 * @param string $username
@@ -99,11 +102,19 @@ class MessageController extends Controller
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
-
+		
+		$em = $this->getDoctrine()->getManager();
+		
 		$message = new Message();
+		$user = $this->getUser();
 
-		$form = $this->createForm(new PrivateMessageType(), $message);
+		//$form = $this->createForm(new PrivateMessageType(), $message);
 
+		$form = $this->createForm(new PrivateMessageType(), $message, array(
+		    'em' => $em,
+		    'user' => $user,
+		));
+		
 		$form->handleRequest($request);
 
 		if ($form->isValid())
@@ -115,9 +126,6 @@ class MessageController extends Controller
 			// set owner/author of the message to be the currently logged in user
 			$message->setOwner($this->getUser());
 
-			$em = $this->getDoctrine()->getManager();
-
-			$user = $this->getUser();
 			$user->addSentMessage($message);
 			$em->persist($user);
 
@@ -420,6 +428,7 @@ class MessageController extends Controller
 
 		$form = $this->createForm(new PrivateMessageReplyType(), $message, array(
 		    'em' => $this->getDoctrine()->getManager(),
+		    'user' => $user,
 		));
 		
 		$form->setData($message);

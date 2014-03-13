@@ -7,12 +7,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use IMDC\TerpTubeBundle\Form\DataTransformer\UsersToStringsTransformer;
+use IMDC\TerpTubeBundle\Entity\Post;
 
 class PrivateMessageType extends AbstractType
 {   
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$entityManager = $options['em'];
+    	$mediaRepository = $em->getRepository('IMDCTerpTubeBundle:Media');
     	$transformer = new UsersToStringsTransformer($entityManager);
     	
         $builder->add(
@@ -20,6 +22,17 @@ class PrivateMessageType extends AbstractType
                     ->addModelTransformer($transformer)
         );
     	$builder->add('subject');
+    	$builder->add('attachedMedia');
+    	
+//     	$builder->add('attachedMedia', 'collection', array(
+//     	    'type' => 'entity',
+//     	    'label' => 'Select media to attach',
+//     	    'options' => array(
+//         	    'class' => 'IMDCTerpTubeBundle:Media',
+//         	    'required' => false,
+//     	        'choices' => $repository->findAllMediaCreatedByUser($user),
+//     	    )
+//     	));
         $builder->add('content', 'textarea');
         $builder->add('submit', 'submit');
     }
@@ -36,10 +49,12 @@ class PrivateMessageType extends AbstractType
         
         $resolver->setRequired(array(
         		'em',
+                'user',
         ));
         
         $resolver->setAllowedTypes(array(
         		'em' => 'Doctrine\Common\Persistence\ObjectManager',
+                'user' => 'IMDC\TerpTubeBundle\Entity\User',
         ));
         
     }

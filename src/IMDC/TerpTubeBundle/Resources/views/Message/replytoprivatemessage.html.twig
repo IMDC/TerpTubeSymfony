@@ -21,16 +21,48 @@
         
 {#         {{ form_row(form.to, {'value' : message.getOwner() }) }}#}
         {{ form_row(form.recipients) }}
-        {{ form_row(form.subject, {'value' : 'Re: ' ~ form.vars.value.subject }) }}
+        {{ form_row(form.subject, {'value' : 'Re: ' ~ form.vars.value.subject, 'attr' : {'class' : 'input-xxlarge'}}) }}
+        {{ form_row(form.attachedMedia) }} 
 
+{#         {{ form_label(form.attachedMedia) }}#}
+{#         {{ form_errors(form.attachedMedia) }}#}
+        
+{#         <ul id="attachedMedia-fields-list" class="unstyled inline" data-prototype="{{ form_widget(form.attachedMedia.vars.prototype)|e }}">#}
+{#             {% for mediaField in form.attachedMedia %}#}
+{#             <li>#}
+{#                 {{ form_errors(mediaField) }}#}
+{#                 {{ form_widget(mediaField) }}#}
+{#             </li>#}
+{#             {% endfor %}#}
+{#         </ul>#}
+{#         <a href="#" id="add-another-attachedMedia">Add another media item</a>#}
+        
         {{ form_row(form.content, 
             {'value' : "\n\n\n\n" ~ 
                        '>From: ' ~ message.getOwner() ~ "\n" ~
                        '>To: ' ~ message.getRecipients()|join(', ') ~ "\n" ~ 
                        '>Subject: ' ~ message.getSubject() ~ "\n" ~
-                       '>Sent: ' ~ message.getSentDate()|date('g:ia M j') ~ "\n" ~
-                       "----Original Message below----\n\n" ~ form.vars.value.content }) 
+                       '>Sent: ' ~ message.getSentDate()|date('g:ia M j') ~ "\n>\n" ~
+                       ">----Original Message below----\n\n" ~ form.vars.value.content }) 
         }}
+        {% if message.getAttachedMedia is defined and message.getAttachedMedia is not null and message.getAttachedMedia|length > 0 %}
+        <div class="row-fluid well">
+            <div class="span2">
+                This message has the following attached Media:
+            </div>
+            <div class="span10">
+                <ul class="unstyled inline">
+                {% for mediaFile in message.getAttachedMedia %}
+			        <li>
+				        <div class="span2">
+				        {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
+				        </div>
+			        </li>
+		        {% endfor %}
+		        </ul>
+	        </div>
+        </div>
+        {% endif %}
 
         
     {{ form_end(form) }}
@@ -42,9 +74,25 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
+//     var attachedMediaCount = '{{ form.attachedMedia|length }}';
+
 $(document).ready(function() {
 	$("#PrivateMessageReplyForm_recipients").tagit();
     $("textarea#PrivateMessageReplyForm_content").focus();
+
+    $("#PrivateMessageForm_recipients").tagit();
+
+//     var attachedMediaList = $('#attachedMedia-fields-list');
+
+//     // grab the prototype template
+//     var newWidget = attachedMediaList.attr('data-prototype');
+
+//     newWidget = newWidget.replace(/__name__/g, attachedMediaCount);
+//     attachedMediaCount++;
+
+//     // create a new list element and add it to the list
+//     var newLi = $('<li></li>').html(newWidget);
+//     newLi.appendTo($('#attachedMedia-fields-list'));
 });
 </script>
 {% endblock javascripts %}
