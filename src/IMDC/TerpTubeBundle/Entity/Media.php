@@ -208,7 +208,7 @@ class Media
     
     public function __toString()
     {
-        return $this->getTitle();
+        return (string) $this->getTitle();
         
 //         switch ($this->type) {
 //             case 0: // image

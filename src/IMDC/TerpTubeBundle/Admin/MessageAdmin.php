@@ -24,7 +24,7 @@ class MessageAdmin extends Admin
             ->add('recipients')
             ->add('subject')
             ->add('content', 'text', array('label' => 'Message Content'))
-            ->add('attachedMedia')
+            ->add('attachedMedia', null, array('required' => false))
         ;
     }
 

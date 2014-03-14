@@ -24,22 +24,21 @@ class PrivateMessageReplyType extends AbstractType
                     ->addModelTransformer($transformer)
         );
     	$builder->add('subject');
-    	$builder->add('attachedMedia');
     	
-//     	$builder->add('attachedMedia', 'collection', array(
-//     	    'type' => 'entity',
-//     	    'allow_add' => true,
-//     	    'allow_delete' => true,
-//     	    'prototype' => true,
-//     	    'options' => array(
-// 	            'label' => ' ',
-//     	        'class' => 'IMDCTerpTubeBundle:Media',
-//     	        'data' => 'Choose an option',
-//     	        'required' => false,
-//     	        'empty_value' => 'Choose an option',
-//     	        'choices' => $repository->findAllMediaCreatedByUser($user),
-//     	    )
-// 	    ));
+    	$builder->add('attachedMedia', 'collection', array(
+    	    'type' => 'entity',
+    	    'allow_add' => true,
+    	    'allow_delete' => true,
+    	    'prototype' => true,
+    	    'options' => array(
+	            'label' => ' ',
+    	        'class' => 'IMDCTerpTubeBundle:Media',
+    	        'data' => 0,
+    	        'required' => false,
+    	        'empty_value' => 'Choose an option',
+    	        'choices' => $repository->findAllMediaCreatedByUser($user),
+    	    )
+	    ));
     	
         $builder->add('content', 'textarea');
         $builder->add('submit', 'submit');

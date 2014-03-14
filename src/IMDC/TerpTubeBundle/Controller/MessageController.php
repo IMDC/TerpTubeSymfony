@@ -460,6 +460,12 @@ class MessageController extends Controller
 			    // request persistence of user object to database
 			    $em->persist($recp);
 			}
+			
+			foreach ($message->getAttachedMedia() as $possMedia) {
+			    if ($possMedia === null) {
+			        $message->getAttachedMedia()->removeElement($possMedia);
+			    }
+			}
 
 			// request to persist message object to database
 			$em->persist($messagereply);
