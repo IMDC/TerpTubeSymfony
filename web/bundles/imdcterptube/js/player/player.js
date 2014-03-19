@@ -1298,11 +1298,11 @@ Player.prototype.setupVideoRecording = function() {
 	var recordButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.videoControls.recordButton")
 			.eq(0);
-	var forwardButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
+	var forwardButtons = $(this.elementID).find(
+			".videoControlsContainer.controlsBar.forwardButtons")
 			.eq(0);
 	this.setInputEnabled(recordButton, false);
-	this.setInputEnabled(forwardButton, false);
+	this.setInputEnabled(forwardButtons, false);
 	this.minTimeCoordinate = this.getXForTime(this.minTime) - this.trackPadding;
 	// this.minTimeCoordinate = this.getXForTime(this.minTime);
 	this.currentMinSelected = this.minSelected;
@@ -1364,10 +1364,10 @@ Player.prototype.setupVideoRecording = function() {
 
 Player.prototype.setInputEnabled = function(element, enabled) {
 	if (enabled) {
-		element.attr("disabled", false);
+		element.find('*').attr("disabled", false);
 		element.css('opacity', 1);
 	} else {
-		element.attr("disabled", true);
+		element.find('*').attr("disabled", true);
 		element.css('opacity', 0.5);
 	}
 };
@@ -1406,12 +1406,12 @@ Player.prototype.recording_startRecording = function() {
 	var recordButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.videoControls.recordButton")
 			.eq(0);
-	var forwardButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
+	var forwardButtons = $(this.elementID).find(
+			".videoControlsContainer.controlsBar.forwardButtons")
 			.eq(0);
 	recordButton.addClass("recording");
 	this.setInputEnabled(recordButton, false);
-	this.setInputEnabled(forwardButton, false);
+	this.setInputEnabled(forwardButtons, false);
 	this.currentMinSelected = this.minSelected;
 	this.currentMinTimeSelected = this.getTimeForX(this.currentMinSelected);
 	// this.currentMaxSelected =this.maxSelected;
@@ -1455,13 +1455,13 @@ Player.prototype.recording_stopRecording = function() {
 			.eq(0);
 	var backButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
-	var forwardButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
+	var forwardButtons = $(this.elementID).find(
+			".videoControlsContainer.controlsBar.forwardButtons")
 			.eq(0);
 
 	this.setInputEnabled(recordButton, false);
 	this.setInputEnabled(backButton, false);
-	this.setInputEnabled(forwardButton, false);
+	this.setInputEnabled(forwardButtons, false);
 
 	recordButton.removeClass("recording");
 	this.hasRecorded = this.getCurrentTime();
@@ -1538,14 +1538,14 @@ Player.prototype.recording_recordingStopped = function(success, data) {
 			.eq(0);
 	var backButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
-	var forwardButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
+	var forwardButtons = $(this.elementID).find(
+			".videoControlsContainer.controlsBar.forwardButtons")
 			.eq(0);
 	this.setInputEnabled(recordButton, true);
 	this.setInputEnabled(backButton, true);
 
 	if (success) {
-		this.setInputEnabled(forwardButton, true);
+		this.setInputEnabled(forwardButtons, true);
 		this.options.recordingSuccessFunction(data);
 	} else {
 		this.options.recordingErrorFunction;
@@ -1585,10 +1585,10 @@ Player.prototype.recording_goToPreviewing = function() {
 			.eq(0);
 	var backButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
-	var forwardButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
+	var forwardButtons = $(this.elementID).find(
+			".videoControlsContainer.controlsBar.forwardButtons")
 			.eq(0);
-	this.setInputEnabled(forwardButton, false);
+	this.setInputEnabled(forwardButtons, false);
 	this.setInputEnabled(recordButton, false);
 	this.setInputEnabled(backButton, false);
 	var blurText = "Converting video";
@@ -1621,12 +1621,12 @@ Player.prototype.recording_recordingTranscodingFinished = function(fileName) {
 		var backButton = $(this.elementID).find(
 				".videoControlsContainer.controlsBar.backButtons.backButton")
 				.eq(0);
-		var forwardButton = $(this.elementID)
+		var forwardButtons = $(this.elementID)
 				.find(
-						".videoControlsContainer.controlsBar.forwardButtons.forwardButton")
+						".videoControlsContainer.controlsBar.forwardButtons")
 				.eq(0);
 		alert("Converting video failed! Please record again.");
-		this.setInputEnabled(forwardButton, false);
+		this.setInputEnabled(forwardButtons, false);
 		this.setInputEnabled(recordButton, true);
 		this.setInputEnabled(backButton, true);
 	} else {

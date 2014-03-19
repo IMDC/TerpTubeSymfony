@@ -1,7 +1,12 @@
 {% extends "IMDCTerpTubeBundle:Default:index.html.twig" %} {%
 trans_default_domain 'IMDCTerpTubeBundle' %} {% block title %}My Files{%
 endblock title %} {% block nav_ul_authenticated_my_files %}
-<li class="active">{% endblock %} {% block herounit %}
+<li class="active">{% endblock %} 
+{% block stylesheets %}
+    {{  parent() }}
+    <link href="{{ asset('bundles/imdcterptube/css/motionMediaPreview.css') }}" rel="stylesheet" />
+{% endblock stylesheets %}
+{% block herounit %}
 	<h1>{{ 'filesGateway.title'|trans }}</h1> {% endblock herounit %} {%
 	block underherounitrow1 %}
 	<p>
@@ -117,23 +122,37 @@ endblock title %} {% block nav_ul_authenticated_my_files %}
 		 var row = $(document.createElement('tr'));
 		 row.append($(document.createElement('td'))
 				 .append($(document.createElement('a'))
-						 .addClass("delete-button")
+						 .addClass("delete-button").addClass("btn").addClass("btn-small")
 						 .attr('href',"#")
 						 .attr('data-url', "{{ path('imdc_files_gateway_remove', {'mediaId': 0}) }}".replace('0',media.id))
 						 .attr('data-val',media.id)
 						 .html('<i class="fa fa-minus-circle"></i>{{ "filesGateway.deleteLink"|trans }} '))
 				 .append($(document.createElement('a'))
-						 .addClass("preview-button")
+						 .addClass("preview-button").addClass("btn").addClass("btn-small")
 						 .addClass("disabled")
-						 .attr('href',"#")
+						 .attr('href',"{{ path('imdc_thread_create_new_from_media', {'resourceid': 0}) }}".replace('0', media.id))
 						 .attr('data-type', media.type)
-						 .attr('data-url', "{{ path('imdc_files_gateway_preview', {'mediaId': 0}) }}".replace('0',media.id))
 						 .attr('data-val',media.id)
-						 .html('<i class="fa fa-play-circle"></i>{{ "filesGateway.previewLink"|trans }}')));
-		 row.append($(document.createElement('td'))
+						 .html('<i class="fa fa-play-circle"></i>{{ "filesGateway.previewLink"|trans }}'))
+				 .append($(document.createElement('a'))
+						 .addClass(" share-button").addClass("btn").addClass("btn-small")
+						 .attr('href',"#")
+						 .attr('data-url', "{{ path('imdc_files_gateway_remove', {'mediaId': 0}) }}".replace('0',media.id))
+						 .attr('data-val',media.id)
+						 .html('<i class="fa fa-share-square-o"></i>{{ "filesGateway.shareLink"|trans }} ')));
+
+	 	row.append($(document.createElement('td'))
 				 .html(media.title));
+		var icon = '<i class="fa fa-film"></i>';
+		if (media.type == 0) 
+			icon = '<i class="fa fa-picture-o"></i>';
+		else if (media.type == 1)
+			icon =  '<i class="fa fa-film"></i>';
+		else if (media.type == 2) 
+			icon = '<i class="fa fa-headphones"></i>'
+		 
 		 row.append($(document.createElement('td'))
-				 .html(mediaType));
+				 .html(icon+mediaType));
 
 		 var timeUploaded = new Date(media.metaData.timeUploaded.date);
 		 var ampm = timeUploaded.getHours()>=12?"pm":"am";
@@ -181,7 +200,7 @@ endblock title %} {% block nav_ul_authenticated_my_files %}
         });
         $('#record-link').click(function(e) {
         	
-            var recorderConfiguration = {forwardButtons: ["<button class='forwardButton'></button>"], forwardFunctions: ["forwardFunction"], recordingSuccessFunction: "callBack"};
+            var recorderConfiguration = {forwardButtons: ["<button class='cutButton'></button>"], forwardFunctions: ["forwardFunction"], recordingSuccessFunction: "callBack"};
             window["mediaChooser"].chooseMedia(MediaChooser.TYPE_RECORD_VIDEO, {recorderConfiguration: recorderConfiguration});
 //         	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href'), recorderConfiguration), "Record");
         	return false;
