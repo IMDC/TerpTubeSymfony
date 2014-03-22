@@ -34,7 +34,9 @@ class PrivateMessageType extends AbstractType
 //     	    )
 //     	));
         $builder->add('content', 'textarea');
-        $builder->add('submit', 'submit');
+        $builder->add('submit', 'submit', array(
+                'attr' => array('class' => 'btn btn-success')
+        ));
     }
     
     public function getName()

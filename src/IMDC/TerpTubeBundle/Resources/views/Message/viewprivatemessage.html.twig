@@ -70,7 +70,13 @@
             <div class="span9">
                 {% for mediaFile in message.attachedMedia %}
                 <div class="span2">
+                    {% if mediaFile.type == 1 %}
+                    <a href="{{ asset(mediaFile.getResource.getWebPathWebm) }}">
+                    {% else %}
+                    <a href="{{ asset(mediaFile.getResource.getWebPath) }}">
+                    {% endif %}
                     {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
+                    </a>
                 </div>
                 {% endfor %}
             </div>
