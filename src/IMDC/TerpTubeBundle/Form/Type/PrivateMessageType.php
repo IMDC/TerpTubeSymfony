@@ -14,7 +14,7 @@ class PrivateMessageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$entityManager = $options['em'];
-    	$mediaRepository = $em->getRepository('IMDCTerpTubeBundle:Media');
+    	$mediaRepository = $entityManager->getRepository('IMDCTerpTubeBundle:Media');
     	$transformer = new UsersToStringsTransformer($entityManager);
     	
         $builder->add(

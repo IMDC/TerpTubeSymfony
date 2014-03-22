@@ -29,7 +29,10 @@
         {% endif %}
 
         {{ form_row(form.subject) }}
+        <a href="#" class="btn" id="attachedMediaShowLink">Attach media to message</a>
+        <div id="attachedMediaWrap" style="display:none">
         {{ form_row(form.attachedMedia) }}
+        </div>
 {#         {{ form_label(form.attachedMedia) }}#}
 {#         {{ form_errors(form.attachedMedia) }}#}
         
@@ -53,23 +56,29 @@
 {% block javascripts %}
 {{ parent() }}
 <script type="text/javascript">
-//var attachedMediaCount = '{{ form.attachedMedia|length }}';
-$(document).ready(function() {
-    $("#PrivateMessageForm_recipients").tagit();
-
-//     var attachedMediaList = $('#attachedMedia-fields-list');
-
-//     // grab the prototype template
-//     var newWidget = attachedMediaList.attr('data-prototype');
-
-//     newWidget = newWidget.replace(/__name__/g, attachedMediaCount);
-//     attachedMediaCount++;
-
-//     // create a new list element and add it to the list
-//     var newLi = $('<li></li>').html(newWidget);
-//     newLi.appendTo($('#attachedMedia-fields-list'));
-
-});
+    //var attachedMediaCount = '{{ form.attachedMedia|length }}';
+    $(document).ready(function() {
+        $("#PrivateMessageForm_recipients").tagit();
+    
+        $("a#attachedMediaShowLink").click(function(e) {
+            e.preventDefault();
+            $("div#attachedMediaWrap").show();
+            $(this).hide();
+        });
+        
+    //     var attachedMediaList = $('#attachedMedia-fields-list');
+    
+    //     // grab the prototype template
+    //     var newWidget = attachedMediaList.attr('data-prototype');
+    
+    //     newWidget = newWidget.replace(/__name__/g, attachedMediaCount);
+    //     attachedMediaCount++;
+    
+    //     // create a new list element and add it to the list
+    //     var newLi = $('<li></li>').html(newWidget);
+    //     newLi.appendTo($('#attachedMedia-fields-list'));
+    
+    });
 </script>
 {% endblock javascripts %}
 
