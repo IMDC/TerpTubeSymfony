@@ -19,12 +19,8 @@ use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Doctrine\UserManager;
 
 /**
- * Listener for the 'completed' event of user registration.
- * Creates an introduction message so the user finds a message
- * in their inbox upon first login
+ * Listener for the transcoding events
  * 
- * @author paul
- *
  */
 class TranscodeListener implements EventSubscriberInterface
 {

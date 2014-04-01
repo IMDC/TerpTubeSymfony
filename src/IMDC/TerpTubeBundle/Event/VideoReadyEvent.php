@@ -6,10 +6,10 @@ use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Component\EventDispatcher\Event;
 
-class UploadEvent extends Event
+class VideoReadyEvent extends Event
 {
 	protected $media;
-	const EVENT_UPLOAD = "imdc_terptube.event.uploadEvent";
+	const EVENT_VIDEO_READY = "imdc_terptube.event.videoReadyEvent";
 	
 	public function __construct(Media $media)
 	{

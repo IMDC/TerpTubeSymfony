@@ -89,25 +89,87 @@ class MyFilesGatewayController extends Controller {
 			throw new NotFoundHttpException ( "This user does not exist" );
 		}
 		
-		
 		if (! $request->isXmlHttpRequest ())
 			return $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:previewCompoundMedia.html.twig', array (
 					"compoundMedia" => $mediaFile 
 			) );
 		else
-			$response =  $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:ajax.previewCompoundMedia.html.twig', array (
+			$response = $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:ajax.previewCompoundMedia.html.twig', array (
 					"compoundMedia" => $mediaFile 
-			));
-			// FIXME need to fix the ajax css file to work better.
-			$return = array (
-					'page' => $response->getContent (),
-					'finished' => false
-			);
-			$return = json_encode ( $return ); // json encode the array
-			$response = new Response ( $return, 200, array (
-					'Content-Type' => 'application/json'
 			) );
-			return $response;
+			// FIXME need to fix the ajax css file to work better.
+		$return = array (
+				'page' => $response->getContent (),
+				'finished' => false 
+		);
+		$return = json_encode ( $return ); // json encode the array
+		$response = new Response ( $return, 200, array (
+				'Content-Type' => 'application/json' 
+		) );
+		return $response;
+	}
+	
+	/**
+	 * An Ajax function to trim a media with a specific media ID, start and end times
+	 *
+	 * @param Request $request        	
+	 * @param Media $mediaId        	
+	 * @param $startTime
+	 * @param $endTime
+	 */
+	public function trimMediaAction(Request $request, $mediaId, $startTime, $endTime) {
+		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request )) {
+			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
+		}
+		if (! $request->isXmlHttpRequest ())
+			throw new BadRequestHttpException ( 'Only Ajax POST calls accepted' );
+		$user = $this->getUser ();
+		$em = $this->get ( 'doctrine' )->getManager ();
+		/**
+		 *
+		 * @var $media IMDC\TerpTubeBundle\Entity\Media
+		 */
+		$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
+		if ($media->getOwner () != $user) {
+			$return = array (
+					'responseCode' => 400,
+					'feedback' => 'Not the rightful owner of the file' 
+			);
+		} else {
+			// FIXME if video is being transcoded, need to queue the operation to execute once it completes
+			// FIXME check if start/end times are proper values
+			$resourceFile = $media->getResource ();
+			$webmFile = $resourceFile->getAbsolutePathWebm ();
+			$mp4File = $resourceFile->getAbsolutePath();
+			
+			$transcoder = $this->container->get ( 'imdc_terptube.transcoder' ); // ($this->get('logger'));
+			//FIXME Throws exception at rename when trying to move the mp4 file.
+			if ($media->getIsReady () == Media::READY_YES) {
+				$resultWebM = $transcoder->trimVideo ( $webmFile, $startTime, $endTime );
+				$resultMp4 = $transcoder->trimVideo ( $mp4File, $startTime, $endTime );
+				if ($resultWebM && $resultMp4) {
+					$return = array (
+							'responseCode' => 200,
+							'feedback' => 'Successfully trimmed media!' 
+					);
+				} else {
+					$return = array (
+							'responseCode' => 400,
+							'feedback' => 'Trimming media failed!.' 
+					);
+				}
+			} else {
+				
+				$return = array (
+						'responseCode' => 200,
+						'feedback' => 'Media queued for trimming!' 
+				);
+			}
+		}
+		$return = json_encode ( $return ); // json encode the array
+		return new Response ( $return, 200, array (
+				'Content-Type' => 'application/json' 
+		) );
 	}
 	
 	/**
@@ -212,11 +274,11 @@ class MyFilesGatewayController extends Controller {
 		if ($request->isXmlHttpRequest ()) {
 			$return = array (
 					'page' => $response->getContent (),
-					'finished' => false
+					'finished' => false 
 			);
 			$return = json_encode ( $return ); // json encode the array
 			$response = new Response ( $return, 200, array (
-					'Content-Type' => 'application/json'
+					'Content-Type' => 'application/json' 
 			) );
 		}
 		

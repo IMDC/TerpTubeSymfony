@@ -85,6 +85,15 @@ imdc_files_gateway_remove:
         _method:  POST
         mediaId: \d+
         
+imdc_files_gateway_trim: 
+     pattern: /myFiles/trim/{mediaId}/{startTime}/{endTime}
+     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:trimMedia }
+     requirements:
+        _method:  POST
+        mediaId: \d+
+     options:
+        expose: true
+        
 imdc_files_gateway_record: 
      pattern: /myFiles/record
      defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, url: null }

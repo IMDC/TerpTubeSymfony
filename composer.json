@@ -11,7 +11,7 @@
 	"require" : {
 		"php" : ">=5.3.3",
 		"symfony/symfony" : "2.3.*",
-		"doctrine/orm" : ">=2.2.3,<2.4-dev",
+		"doctrine/orm" : "~2.2, >=2.2.3",
 		"doctrine/doctrine-bundle" : "1.2.*",
 		"twig/extensions" : "1.0.*",
 		"symfony/assetic-bundle" : "2.3.*",
@@ -27,7 +27,7 @@
 		"braincrafted/bootstrap-bundle" : "dev-master",
 		"twitter/bootstrap" : "<3.0.0",
 		"leafo/lessphp" : "dev-master",
-		"sonata-project/admin-bundle" : "dev-master",
+		"sonata-project/admin-bundle" : "~2.3@dev", 
 		"sonata-project/doctrine-orm-admin-bundle" : "dev-master",
         "sonata-project/core-bundle": "~2.2@dev",
         "sonata-project/cache-bundle" : "~2.1",

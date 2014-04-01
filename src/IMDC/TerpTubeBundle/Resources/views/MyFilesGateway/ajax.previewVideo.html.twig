@@ -1,18 +1,15 @@
-{% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
-{% trans_default_domain 'IMDCTerpTubeBundle' %}
-
-{% block motionMedia %}
-<video	class="preview" width="100%" id="{{ mediaFile.getID }}" preload="auto">
-	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
-	<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
+{% extends
+"IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
+{% trans_default_domain 'IMDCTerpTubeBundle' %} {% block motionMedia %}
+<video class="preview" width="100%" id="{{ mediaFile.getID }}"
+	preload="auto">
+	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}" />
+	<source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
 </video>
 <script type='text/javascript'> 
 	 var player = new Player($("#{{ mediaFile.getID }}"));
 	 player.options.areaSelectionEnabled = true;
 	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
-	 // player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
-	 // player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
-	 
 	 // player.options.playHeadImage = "images/feedback_icons/round_plus.png";
 	 // player.options.playHeadImageOnClick = function(){ alert("plus");};
 	 player.options.forwardButtons.push('<button class="cutButton"></button>');
@@ -21,7 +18,9 @@
 		// console.log(recorderConfiguration);
 		// var fn = window[recorderConfiguration.forwardFunction]||null;
 		// fn(data);
-		 console.log('Cut!', data);
+		var mediaManager = new MediaManager();
+ 		mediaManager.trimMedia({{ mediaFile.getID }}, player.currentMinTimeSelected, player.currentMaxTimeSelected);
+		console.log('Cut!', data);
 	 });
 
 	 player.options.forwardButtons.push('<button class="doneButton"></button>');
@@ -36,4 +35,4 @@
  </script>
 {% endblock motionMedia %}
 
- 
+

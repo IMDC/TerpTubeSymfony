@@ -53,3 +53,41 @@ MediaManager.prototype.deleteMedia = function(mediaID, confirmationMessage)
 		}
 	});
 };
+
+MediaManager.prototype.trimMedia = function(mediaID, startTime, endTime)
+{
+	var instance = this;
+	
+	var address = Routing.generate('imdc_files_gateway_trim', {'mediaId': mediaID, 'startTime': startTime, 'endTime': endTime});
+	var data = {'mediaId': mediaID, 'startTime': startTime, 'endTime': endTime};
+	$.ajax({
+		url : address,
+		type : "POST",
+		contentType : "application/x-www-form-urlencoded",
+		data : data,
+		success : function(data)
+		{
+			console.log(data);
+			if (data.responseCode == 200)
+			{
+//				console.log(data);
+//				$(instance).trigger(MediaManager.EVENT_DELETE_SUCCESS);
+			}
+			else if (data.responseCode == 400)
+			{ // bad request
+//				$(instance).trigger(MediaManager.EVENT_DELETE_ERROR,data.feedback);
+				console.log('Error: ' + data.feedback);
+			}
+			else
+			{
+//				$(instance).trigger(MediaManager.EVENT_DELETE_ERROR,"Unknown Error");
+				console.log('An unexpected error occured');
+			}
+		},
+		error : function(request)
+		{
+//			$(instance).trigger(MediaManager.EVENT_DELETE_ERROR,request);
+			console.log(request);
+		}
+	});
+};
