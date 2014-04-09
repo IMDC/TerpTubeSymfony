@@ -20,6 +20,7 @@ use FFMpeg\FFMpeg;
 
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
+use Symfony\Component\Filesystem\Filesystem;
 
 class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 {
@@ -77,17 +78,36 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 		$videoWidth = $this->ffprobe->streams($mp4File->getRealPath())->videos()->first()->get('width');
 		$videoHeight = $this->ffprobe->streams($mp4File->getRealPath())->videos()->first()->get('height');
 		$videoDuration = $this->ffprobe->streams($mp4File->getRealPath())->videos()->first()->get('duration');
-		$fileSize = filesize($mp4File->getRealPath());
 		
+		$mp4DestinationFile = $resource->getUploadRootDir() . '/' . $resource->getId() . '.mp4';
+		if (file_exists($mp4DestinationFile))
+		{
+			$destinationVideoDuration = $this->ffprobe->streams($mp4DestinationFile)->videos()->first()->get('duration');
+			if ($videoDuration > $destinationVideoDuration)
+			{
+				$mp4File = new File($mp4DestinationFile);
+				$videoDuration = $destinationVideoDuration;
+			}
+		}
+		$fileSize = filesize($mp4File->getRealPath());
 		$metaData->setWidth($videoWidth);
 		$metaData->setHeight($videoHeight);
 		$metaData->setDuration($videoDuration);
 		$metaData->setSize($fileSize);
 		
+		//Correct the permissions to 664
+		$old = umask(0);
+		chmod($mp4File->getRealPath(), 0664);
+		chmod($webmFile->getRealPath(), 0664);
+		umask($old);
+		
 		if ($resourceFile->getRealPath() != $mp4File->getRealPath() && $resourceFile->getRealPath() != $webmFile->getRealPath())
 			unlink($resourceFile->getRealPath());
-		rename($webmFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
-		rename($mp4File, $resource->getUploadRootDir() . '/' . $resource->getId() . '.mp4');
+		$fs = new Filesystem();
+		$fs->rename($webmFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
+		$fs->rename($mp4File, $resource->getUploadRootDir() . '/' . $resource->getId() . '.mp4');
+		
+		
 		
 		
 		$resource->setPath('mp4');

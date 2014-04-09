@@ -1,3 +1,14 @@
+/*
+
+ This file is part of the Sonata package.
+
+ (c) Thomas Rabaix <thomas.rabaix@sonata-project.org>
+
+ For the full copyright and license information, please view the LICENSE
+ file that was distributed with this source code.
+
+ */
+
 jQuery(document).ready(function() {
     jQuery('html').removeClass('no-js');
     if (window.SONATA_CONFIG && window.SONATA_CONFIG.CONFIRM_EXIT) {
@@ -58,7 +69,7 @@ var Admin = {
 
     setup_xeditable: function(subject) {
         jQuery('.x-editable', subject).editable({
-            emptyclass: 'editable-empty btn btn-small',
+            emptyclass: 'editable-empty btn btn-sm',
             emptytext: '<i class="glyphicon glyphicon-edit"></i>',
             success: function(response) {
                 if('KO' === response.status) {
@@ -116,7 +127,7 @@ var Admin = {
                 fieldShortDescription = input.closest('.field-container').find('.field-short-description'),
                 select2 = input.closest('.select2-container')
                 ;
-    
+
             if (fieldShortDescription.length) {
                 target = fieldShortDescription;
             } else if (select2.length) {
@@ -127,7 +138,7 @@ var Admin = {
                 content: message,
                 trigger: 'hover',
                 html: true,
-                placement: 'right',
+                placement: 'top',
                 template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><div class="popover-content alert-error"><p></p></div></div></div>'
             });
 

@@ -28,6 +28,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\File\File;
 
 class AddFileGatewayController extends Controller {
 	
@@ -382,9 +384,12 @@ class AddFileGatewayController extends Controller {
 		
 		$audioFile = $request->files->get ( "audio-blob", null );
 		$videoFile = $request->files->get ( "video-blob", null );
-		
+		//FIXME If the max upload file size is reached it should return an error instead of crash
 		// FIXME Need to sync the audio/videos
 		$transcoder = $this->container->get ( 'imdc_terptube.transcoder' ); // ($this->get('logger'));
+// 		if ($audioFile ==null)
+// 			$mergedFile = $videoFile;
+// 		else
 		$mergedFile = $transcoder->mergeAudioVideo ( $audioFile, $videoFile );
 		$resourceFile = new ResourceFile ();
 		$resourceFile->setMedia ( $media );
@@ -401,6 +406,13 @@ class AddFileGatewayController extends Controller {
 		$em->persist ( $resourceFile );
 		$em->persist ( $media );
 		
+		$em->flush ();
+		$resource = $media->getResource();
+		$resourceFile = new File($resource->getAbsolutePath());
+		$fs = new Filesystem();
+		$fs->rename($resourceFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
+		$resource->setPath("webm");
+// 		$em->persist ( $resourceFile );
 		$em->flush ();
 		
 		$eventDispatcher = $this->container->get ( 'event_dispatcher' );
@@ -443,8 +455,12 @@ class AddFileGatewayController extends Controller {
 		$audioFile = $request->files->get ( "audio-blob", null );
 		$videoFile = $request->files->get ( "video-blob", null );
 		
+		//FIXME If the max upload file size is reached it should return an error instead of crash
 		// FIXME Need to sync the audio/videos
 		$transcoder = $this->container->get ( 'imdc_terptube.transcoder' ); // ($this->get('logger'));
+// 		if ($audioFile ==null)
+// 			$mergedFile = $videoFile;
+// 		else
 		$mergedFile = $transcoder->mergeAudioVideo ( $audioFile, $videoFile );
 		$resourceFile = new ResourceFile ();
 		$resourceFile->setMedia ( $media );
@@ -469,6 +485,14 @@ class AddFileGatewayController extends Controller {
 		$em->persist ( $media );
 		$em->persist ( $compoundMedia );
 		
+		$em->flush ();
+		
+		$resource = $media->getResource();
+		$resourceFile = new File($resource->getAbsolutePath());
+		$fs = new Filesystem();
+		$fs->rename($resourceFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
+		$resource->setPath("webm");
+// 		$em->persist ( $resourceFile );
 		$em->flush ();
 		
 		$eventDispatcher = $this->container->get ( 'event_dispatcher' );

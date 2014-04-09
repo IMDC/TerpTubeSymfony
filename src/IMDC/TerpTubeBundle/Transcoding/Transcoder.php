@@ -9,6 +9,9 @@ use IMDC\TerpTubeBundle\Utils\Utils;
 use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+
 class Transcoder {
 	private $logger;
 	private $ffmpeg;
@@ -19,6 +22,7 @@ class Transcoder {
 		$this->ffmpeg = FFMpeg::create ( $ffmpegConfiguration, $logger );
 		$this->ffprobe = $this->ffmpeg->getFFProbe ();
 		$this->transcoder = $transcoder;
+		$this->fs = new Filesystem();
 	}
 	
 	/**
@@ -32,6 +36,8 @@ class Transcoder {
 	public function mergeAudioVideo(File $audioFile, File $videoFile) {
 		// Process video merging.
 		try {
+			if ($audioFile == null)
+				return $videoFile;
 			$audioFilePath = $audioFile->getRealPath ();
 			$videoFilePath = $videoFile->getRealPath ();
 			
@@ -70,9 +76,10 @@ class Transcoder {
 			) );
 			chdir ( $dir );
 			
-			unlink ( $tempFileName );
+			$this->fs->remove ( $tempFileName );
 			$this->logger->info ( "Transcoding complete!" );
-			rename ( $outputFileWebm, $videoFilePath );
+			$this->fs->rename ( $outputFileWebm, $videoFilePath, true );
+// 			$this->fs->rename ($videoFilePath,  substr($videoFilePath, strrpos(0,$videoFilePath, ".")+1)."webm");
 			// $uploadedFile =new UploadedFile($videoFilePath, "recording", "video/webm", filesize($videoFilePath), UPLOAD_ERR_OK, false);
 			$isValid = $videoFile->isValid ();
 			if ($isValid)
@@ -99,7 +106,7 @@ class Transcoder {
 	 */
 	public function trimVideo($inputFile, $startTime, $endTime) {
 		try {
-			
+			//This fails from a recording
 			$duration = $endTime - $startTime;
 			$startTimeFFMPEG = $this->parseSecondsToFFMPEGTime ( $startTime );
 			$durationFFMPEG = $this->parseSecondsToFFMPEGTime ( $duration );
@@ -109,7 +116,7 @@ class Transcoder {
 			$extension = substr($videoFilePath, strrpos($videoFilePath, ".")+1);
 			$tempDir = '/tmp/terptube-transcoding';
 			//FIXME assumes / as path separator
-			$workingDir = $tempDir . '/' . $extension = substr($videoFilePath, strrpos($videoFilePath, "/")+1);
+			$workingDir = $tempDir . '/' . substr($videoFilePath, strrpos($videoFilePath, "/")+1);
 			$umask = umask ();
 			umask ( 0000 );
 			if (! file_exists ( $tempDir ))
@@ -143,9 +150,14 @@ class Transcoder {
 			
 			chdir ( $dir );
 			
-			unlink ( $tempFileName );
+			$this->fs->remove ( $tempFileName );
 			$this->logger->info ( "Transcoding complete!" );
-			rename ( $outputFileWebm, $videoFilePath );
+			$old = umask(0);
+			$this->fs->chmod($outputFileWebm, 0664);
+			umask($old);
+			$this->fs->rename ( $outputFileWebm, $videoFilePath, true );
+			$this->fs->remove ( $workingDir );
+			
 		} catch ( Exception $e ) {
 			$this->logger->error ( $e->getTraceAsString () );
 			return false;
@@ -183,8 +195,8 @@ class Transcoder {
 		$this->transcoder->transcodeWithPreset ( $inputFile->getRealPath (), $preset, $outputFileWebm );
 		
 		chdir ( $dir );
-		Utils::delTree ( $workingDir );
-		unlink ( $tempFileName );
+		$this->fs->remove ( $workingDir );
+		$this->fs->remove ( $tempFileName );
 		$this->logger->info ( "Transcoding complete!" );
 		
 		return new File ( $outputFileWebm );
@@ -220,8 +232,8 @@ class Transcoder {
 		$this->transcoder->transcodeWithPreset ( $inputFile->getRealPath (), $preset, $outputFileWebm );
 		
 		chdir ( $dir );
-		Utils::delTree ( $workingDir );
-		unlink ( $tempFileName );
+		$this->fs->remove ( $workingDir );
+		$this->fs->remove ( $tempFileName );
 		$this->logger->info ( "Transcoding complete!" );
 		
 		return new File ( $outputFileWebm );

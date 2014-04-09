@@ -43,7 +43,8 @@
 		"doctrine/doctrine-fixtures-bundle" : "dev-master",
 		"knplabs/knp-time-bundle" : "1.1.*@dev",
 		"pimple/pimple" : "dev-master",
-		"ext-curl" : "*"
+		"ext-curl" : "*",
+		"symfony/filesystem": "dev-master"
 	},
 	"scripts" : {
 		"post-install-cmd" : [

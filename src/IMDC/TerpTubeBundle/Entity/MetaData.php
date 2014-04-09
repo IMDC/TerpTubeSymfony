@@ -30,7 +30,7 @@ class MetaData
     private $height;
     
     /**
-     * @var integer
+     * @var double
      */
     private $duration;
     
@@ -124,7 +124,7 @@ class MetaData
     /**
      * Set duration
      *
-     * @param integer $duration
+     * @param double $duration
      * @return MetaData
      */
     public function setDuration($duration)
@@ -137,7 +137,7 @@ class MetaData
     /**
      * Get duration
      *
-     * @return integer 
+     * @return double 
      */
     public function getDuration()
     {

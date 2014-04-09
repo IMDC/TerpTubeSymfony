@@ -1,12 +1,12 @@
-body{
-    padding-top: 70px;
-}
+/*body{*/
+    /*padding-top: 50px;*/
+/*}*/
 
-@media (max-width: 978px) {
-    body{
-        padding-top: 0;
-    }
-}
+/*@media (max-width: 978px) {*/
+    /*body{*/
+        /*padding-top: 0;*/
+    /*}*/
+/*}*/
 
 div.border {
     border: 1px solid #DDDDDD;
@@ -321,7 +321,7 @@ legend.sonata-ba-fieldset-collapsed-description + .sonata-ba-collapsed-fields {
     border-radius: 4px 4px 4px 4px;
     list-style: none outside none;
     margin: 0 15px 0 0;
-    padding: 5px 15px;
+    padding: 4px 15px;
 }
 
 .inner-field-short-description {
@@ -334,8 +334,4 @@ legend.sonata-ba-fieldset-collapsed-description + .sonata-ba-collapsed-fields {
 
 .form-horizontal .control-group {
     margin-bottom: 10px;
-}
-
-span.field-actions {
-    margin-left: 10px;
 }

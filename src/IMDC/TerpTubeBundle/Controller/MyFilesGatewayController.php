@@ -158,11 +158,32 @@ class MyFilesGatewayController extends Controller {
 							'feedback' => 'Trimming media failed!.' 
 					);
 				}
-			} else {
+			}
+			else if ($media->getIsReady() == Media::READY_WEBM) 
+			{
+				//FIXME this will encode a second time since the video was already queued for transcoding
+				//FIXME need to find out how to dequeue an item from the RabbitMQ queue
+				$resultWebM = $transcoder->trimVideo ( $webmFile, $startTime, $endTime );
+				$eventDispatcher = $this->container->get ( 'event_dispatcher' );
+				$uploadedEvent = new UploadEvent ( $media );
+				$eventDispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, $uploadedEvent );
+				if ($resultWebM) {
+					$return = array (
+							'responseCode' => 200,
+							'feedback' => 'Successfully trimmed media!'
+					);
+				} else {
+					$return = array (
+							'responseCode' => 400,
+							'feedback' => 'Trimming media failed!.'
+					);
+				}
+			}
+			else {
 				
 				$return = array (
-						'responseCode' => 200,
-						'feedback' => 'Media queued for trimming!' 
+						'responseCode' => 400,
+						'feedback' => 'This should not happen!' 
 				);
 			}
 		}
