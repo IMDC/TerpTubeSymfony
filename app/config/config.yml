@@ -29,7 +29,7 @@ twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
 
-bc_bootstrap:
+braincrafted_bootstrap:
     less_filter: lessphp
     assets_dir:  %kernel.root_dir%/../vendor/twitter/bootstrap
     jquery_path: %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-1.8.3.js

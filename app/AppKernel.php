@@ -23,7 +23,7 @@ class AppKernel extends Kernel
             new IMDC\TerpTubeBundle\IMDCTerpTubeBundle(),
             new FOS\UserBundle\FOSUserBundle(),
         	new Sonata\IntlBundle\SonataIntlBundle(),
-            new Bc\Bundle\BootstrapBundle\BcBootstrapBundle(),
+            new Braincrafted\Bundle\BootstrapBundle\BraincraftedBootstrapBundle(),
             new Bmatzner\FontAwesomeBundle\BmatznerFontAwesomeBundle(),
         	new OldSound\RabbitMqBundle\OldSoundRabbitMqBundle(),
         	new AC\TranscodingBundle\ACTranscodingBundle(),
