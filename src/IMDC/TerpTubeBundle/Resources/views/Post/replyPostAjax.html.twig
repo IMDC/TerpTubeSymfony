@@ -1,46 +1,82 @@
-<div class="row-fluid" id="post-{{ post.id }}-comment-reply-form-wrap">
-	<div class="span10 offset2">
-		<div class="row-fluid">
-		    {# <div class="span2"> #}
-		    {% set member = user %}
-		    {% include 'IMDCTerpTubeBundle:Member:postReplyInfoBlock.html.twig' %}
-		    {# </div> #}
-			<div class="span10">
-			{# set formpath = path(app.request.attributes.get("_route"), {'pid' : post.id}) #}
-			{% set formpath = path('imdc_post_reply_specific', {'pid' : post.id}) %}
-			
-			{{ form_start(form, {'action' : "#{formpath}"}) }}
-			    {{ form_errors(form) }}
-			    <div class="controls controls-row">
-			        <a class="btn btn-primary" id="reply-selectFiles-{{ post.id }}" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-			        {{ form_widget(form.mediatextarea, {'attr': {"placeholder":"File ID","class":"fileDisplay input-mini"}}) }}{{ form_errors(form.mediatextarea) }}
-			    </div>
-			    <div id="reply-files-{{ post.id }}"></div>
-			    {{ form_row(form.content, {'attr': {'style':'width:90%', 'class':'autosize'}}) }}
-			    <div class="controls controls-row">
-			        {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
-			        <a href="#" class="btn btn-danger" id="post-{{ post.id }}-comment-reply-form-cancel-button"><i class="fa fa-times"></i> Cancel</a>
-			    </div>
-			
-			{{ form_end(form) }}
+{# ajaxed by
+thread.js
+end ajaxed by #}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+<div class="col-md-12">
+	<div class="row" id="post-{{ post.id }}-comment-reply-form-wrap" style="margin-top: 15px;">
+		<div class="col-md-11 col-md-offset-1">
+			<div class="row">
+				{# <div class="col-md-2"> #}
+				{% set member = user %}
+				{% include 'IMDCTerpTubeBundle:Member:postReplyInfoBlock.html.twig' %}
+				{# </div> #}
+
+				<div class="col-md-10">
+					{# set formpath = path(app.request.attributes.get("_route"), {'pid' : post.id}) #}
+					{% set formpath = path('imdc_post_reply_specific', {'pid' : post.id}) %}
+
+					{{ form_start(form, {'action' : "#{formpath}"}) }}
+						{{ form_errors(form) }}
+
+						<div class="row" id="reply-choose-media-wrap-{{ post.id }}">
+							<div class="col-md-12">
+								<div class="form-group">
+									<a class="btn btn-primary" id="reply-record-link-{{ post.id }}" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+									<!-- <a class="btn btn-primary" id="reply-uploadFile{{ post.id }}" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a> -->
+									<div class="btn-group">
+										<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+											<i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }} <span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu" role="menu">
+											<li id="upload-audio-link"><a href="#"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a></li>
+											<li id="upload-video-link"><a href="#"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a></li>
+											<li id="upload-image-link"><a href="#"><i class="fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a></li>
+											<li id="upload-other-link"><a href="#"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a></li>
+										</ul>
+									</div>
+									<a class="btn btn-primary" id="reply-selectFiles{{ post.id }}" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" id="reply-selected-media-wrap-{{ post.id }}" style="display: none;">
+							<div class="col-md-12">
+								<div class="form-group">
+									<div class="hidden">{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID',"class":"reply-mediatextarea-#{ post.id } input-mini"} }) }}{{ form_errors(form.mediatextarea) }}</div>
+									<label>Selected Media</label>
+									<div><span id="reply-selectedMediaTitle{{ post.id }}" style="margin-right: 5px;"></span><a id="reply-removeMedia{{ post.id }}" title="Remove Media"><i class="fa fa-times-circle"></i></a></div>
+								</div>
+							</div>
+						</div>
+
+						<div id="reply-files-{{ post.id }}"></div>
+
+						<div class="row">
+							<div class="col-md-12">
+								{{ form_row(form.content, { 'attr': { 'class': 'autosize' } }) }}
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-12">
+								{{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
+								<a class="btn btn-danger" href="#" id="post-{{ post.id }}-comment-reply-form-cancel-button"><i class="fa fa-times"></i> Cancel</a>
+							</div>
+						</div>
+
+					{{ form_end(form) }}
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<script>
-$("a#post-{{ post.id }}-comment-reply-form-cancel-button").click( function() {
-	$("div#post-{{ post.id }}-comment-reply-form-wrap").remove();
 
-    // restore the comment reply link if you click the cancel button
-    $("a.post-comment-reply").data('pid', '{{ post.id }}').show();
-});
-$("a#reply-selectFiles-{{ post.id }}").on('click', function() {
-	console.log('inside select files click method');
-	mediaChooser = new MediaChooser($("div#reply-files-{{ post.id }}"), function(mediaID)
-		 	{
-//		 		alert(mediaID);
-	            setMediaID($("a#reply-selectFiles-{{ post.id }}").parent().find("input.fileDisplay").first(), mediaID);
-	 		}, true);
-	mediaChooser.chooseMedia();
-});
-</script>
+	<div id="reply-uploadForms{{ post.id }}" style="display: none;">
+		{% for form in uploadForms %}
+			{{ form_start(form) }}
+			{{ form_widget(form) }}
+			{{ form_end(form) }}
+		{% endfor %}
+	</div>
+</div>

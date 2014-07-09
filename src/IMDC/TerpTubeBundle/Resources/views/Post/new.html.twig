@@ -1,15 +1,18 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Post/new.html.twig #}
+
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block title %}New Post{% endblock title %}
 
 {% block herounit %}
-<h1>Create a new Post</h1>
+	<h1>Create a new Post</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-<div class="span9">
-    {{ form(form) }}
-</div>
+	<div class="col-md-9">
+	    {{ form(form) }}
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

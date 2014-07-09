@@ -5,4 +5,5 @@ $(document).ready(function() {
 	
 	$(".toolPop").tooltip();
 	
+	$(".sign-popover").popover({trigger: 'hover', html: true, delay: { show: 750, hide: 100 }});
 });

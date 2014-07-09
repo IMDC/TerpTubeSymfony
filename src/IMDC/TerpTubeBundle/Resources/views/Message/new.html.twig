@@ -14,7 +14,7 @@
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-<div class="span9">
+<div class="col-md-9">
     {# {{  form(form) }} #}
     
     {{ form_start(form) }}
@@ -29,7 +29,7 @@
         {% endif %}
 
         {{ form_row(form.subject) }}
-        <a href="#" class="btn" id="attachedMediaShowLink">Attach media to message</a>
+        <a href="#" class="btn btn-default" id="attachedMediaShowLink">Attach media to message</a>
         <div id="attachedMediaWrap" style="display:none">
         {{ form_row(form.attachedMedia) }}
         </div>
@@ -50,11 +50,13 @@
     {{ form_end(form) }}
 </div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
 {% block javascripts %}
-{{ parent() }}
+	{{ parent() }}
+
 <script type="text/javascript">
     //var attachedMediaCount = '{{ form.attachedMedia|length }}';
     $(document).ready(function() {
@@ -81,4 +83,3 @@
     });
 </script>
 {% endblock javascripts %}
-

@@ -3,42 +3,41 @@
 
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/inbox.css') }}" rel="stylesheet" />
     <link href="{{ asset('bundles/imdcterptube/css/privatemessage.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
-{% block title %}
-{{ message.subject }} - Private Message Inbox
-{% endblock title %}
+{% block title %}{{ message.subject }} - Private Message Inbox{% endblock title %}
 
 {% block rightsidecontent %}
-<div class="span10">
+<div class="col-md-10">
     <br />
     <a id="messageRead" data-mid="{{ message.id }}" href="{{  path('imdc_message_mark_as_read',{'messageid': message.id}) }}" style="display:none;"></a>
     <div id="readOutput"></div>
-    <a class="btn" href="{{ path('imdc_message_view_all') }}"><i class="fa fa-arrow-left"></i> Back to inbox</a>
-    <a class="btn" href="{{ path('imdc_message_reply', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-reply"></i> Reply</a>
+    <a class="btn btn-default" href="{{ path('imdc_message_view_all') }}"><i class="fa fa-arrow-left"></i> Back to inbox</a>
+    <a class="btn btn-default" href="{{ path('imdc_message_reply', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-reply"></i> Reply</a>
     <div class="pull-right">
         <ul class="unstyled inline">
-            <li><a class="btn" href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-minus-circle"></i> Delete</a></li>
-            <li><a class="btn" href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-archive"></i> Archive</a></li>
+            <li><a class="btn btn-default" href="{{ path('imdc_message_delete', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-minus-circle"></i> Delete</a></li>
+            <li><a class="btn btn-default" href="{{ path('imdc_message_archive', {'messageid': message.id}) }}" data-val="{{ message.id }}"><i class="fa fa-archive"></i> Archive</a></li>
         </ul>
     </div>
     <p></p>
     <div class="message-info-wrap">
-        <div class="row-fluid message-info-header">
-            <div class="span1">
+        <div class="row message-info-header">
+            <div class="col-md-1">
                 Sent:
             </div>
-            <div class="span9">
+            <div class="col-md-9">
                 {{ message.sentDate|date('g:ia F j Y') }}
             </div>
         </div>
-        <div class="row-fluid message-info-header">
-            <div class="span1">
+        <div class="row message-info-header">
+            <div class="col-md-1">
                 From:
             </div>
-            <div class="span9">
+            <div class="col-md-9">
                 {% if message.owner=='noreply' %}
                 {{ message.owner }}
                 {% else %}
@@ -46,30 +45,30 @@
                 {% endif %}
             </div>
         </div>
-        <div class="row-fluid message-info-header">
-            <div class="span1">
+        <div class="row message-info-header">
+            <div class="col-md-1">
                 To:
             </div>
-            <div class="span9">
+            <div class="col-md-9">
                 {{ message.recipients|join(', ') }}
             </div>
         </div>
-        <div class="row-fluid message-info-header">
-            <div class="span1">
+        <div class="row message-info-header">
+            <div class="col-md-1">
                 Subject:
             </div>
-            <div class="span9">
+            <div class="col-md-9">
                 {{ message.subject }}
             </div>
         </div>
         {% if message.attachedMedia is defined and message.attachedMedia is not null and message.attachedMedia|length > 0 %}
-        <div class="row-fluid message-info-header">
-            <div class="span1">
+        <div class="row message-info-header">
+            <div class="col-md-1">
                 Attached Media:
             </div>
-            <div class="span9">
+            <div class="col-md-9">
                 {% for mediaFile in message.attachedMedia %}
-                <div class="span2">
+                <div class="col-md-2">
                     {% if mediaFile.type == 1 %}
                     <a href="{{ asset(mediaFile.getResource.getWebPathWebm) }}">
                     {% else %}
@@ -82,17 +81,17 @@
             </div>
         </div>
         {% endif %}
-        <div class="row-fluid message-info-header lastbottomborder">
-            <div class="span9 message-content-wrap">
+        <div class="row message-info-header lastbottomborder">
+            <div class="col-md-9 message-content-wrap">
                 {{ message.content|nl2br }}
             </div>
         </div>
     </div><!--  message-info-wrap -->
-</div><!-- span10 -->
+</div><!-- col-md-10 -->
 {% endblock rightsidecontent %}
 
 {% block javascripts %}
     {{ parent() }}
+
     <script src="{{ asset('bundles/imdcterptube/js/viewmessage.js') }}"></script>
 {% endblock javascripts %}
-

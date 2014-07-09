@@ -1,11 +1,11 @@
 <ul class="thumbnails">
     {% set counter = 1 %}
-    <div class="row-fluid">
+    <div class="row">
     {% for post in posts %}
     {% if counter != 1 and counter % 4 == 1 %}
-        <div class="row-fluid" data-rowid="{{ counter }}">
+        <div class="row" data-rowid="{{ counter }}">
     {% endif %}
-            <li class="span3">
+            <li class="col-md-3">
                 <div class="thumbnail text-center" style="min-height:95px;">
                 {% if post.getParentThread.getId is defined %}
                 <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}">
@@ -18,12 +18,12 @@
                 </a>
                 {% endif %}
                 </div> <!-- /.thumbnail text-center -->
-            </li> <!-- /.span3 -->
-    {% if counter != 0 and counter % 4 == 0 %}
-        </div> <!--  /.row-fluid  data-rowid {{ counter }} -->
+            </li> <!-- /.col-md-3 -->
+    {% if (counter != 0 and counter % 4 == 0) or counter == posts|length %}
+        </div> <!--  /.row  data-rowid {{ counter }} -->
         <p></p>
     {% endif %}
     {% set counter = counter + 1 %}
 {% endfor %}
-    </div> <!-- /.row-fluid -->
+    </div> <!-- /.row -->
 </ul> <!-- /.thumbnails -->

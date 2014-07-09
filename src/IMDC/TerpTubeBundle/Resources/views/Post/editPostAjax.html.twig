@@ -4,7 +4,7 @@
     {% set mediaFile = none %}
 {% endif %}
 
-<div class="span12">
+<div class="col-md-12">
 {# set formpath = path(app.request.attributes.get("_route"), {'pid' : post.id}) #}
 {% set formpath = path('imdc_post_edit_specific', {'pid' : post.id}) %}
 
@@ -17,21 +17,21 @@
     <div id="files"></div>
     {% if mediaFile != null %}
     <p>
-    <div class="row-fluid">
-        <div class="span4">
+    <div class="row">
+        <div class="col-md-4">
         {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
-        </div> <!-- /span4 -->
-    </div> <!-- /row-fluid -->
+        </div> <!-- /col-md-4 -->
+    </div> <!-- /row -->
     </p>
     {% else %}
     {% endif %}
     {% if form.startTime is defined %}
     <div id="start-end-time-wrap">
-        <div class="row-fluid">
-            <div class="span6">
+        <div class="row">
+            <div class="col-md-6">
                 {{form_label(form.startTime)}}{{ form_widget(form.startTime) }}
             </div>
-            <div class="span6">
+            <div class="col-md-6">
                 {{form_label(form.endTime)}}{{ form_widget(form.endTime) }}
             </div>
         </div>

@@ -1,8 +1,8 @@
-<div class="row-fluid">
-   <div class="span2" id="avatar-wrap">
+<div class="row">
+   <div class="col-md-2" id="avatar-wrap">
        <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':thread.creator.getUserName()} ) }}"><img class="avatar" alt="avatar" title="" src="{{ thread.creator.getProfile().avatar ? asset(thread.creator.getProfile().avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a>
    </div> <!-- /avatar-wrap -->
-   <div class="span10" id="thread-creator-info-wrap">
+   <div class="col-md-10" id="thread-creator-info-wrap">
        <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':thread.creator.getUserName()} ) }}">{{ thread.creator.getUserName() }}</a>
        <p>
             <ul class="unstyled inline thread-creator-tools-wrap">
@@ -28,4 +28,4 @@
        <p>Joined: {{ thread.creator.getJoinDate()|date('M j Y') }}</p>
        <p>Posts: {{ thread.creator.getPostCount() }}</p>
    </div> <!--  /thread-creator-info-wrap -->
-</div> <!-- /row-fluid -->
+</div> <!-- /row -->

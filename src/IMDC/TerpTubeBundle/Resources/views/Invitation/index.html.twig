@@ -1,63 +1,63 @@
 {% extends 'IMDCTerpTubeBundle:Default:basetemplate.html.twig' %}
 
 {% block rightsidecontent -%}
-    <div class="span11">
-    <h1>Invitation list</h1>
+    <div class="col-md-11">
+	    <h1>Invitation list</h1>
 
-    <table class="table table-striped records_list">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Creator</th>
-                <th>Recipient</th>
-                <th>Date created</th>
-                <th>Is accepted</th>
-                <th>Date accepted</th>
-                <th>Is cancelled</th>
-                <th>Date cancelled</th>
-                <th>Is Declined</th>
-                <th>Date Declined</th>
-                <th>Become mentor</th>
-                <th>Become mentee</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('invitation_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.creator }}</td>
-                <td>{{ entity.recipient }}</td>
-                <td>{% if entity.dateCreated %}{{ entity.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ entity.isAccepted ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No' }}</td>
-                <td>{% if entity.dateAccepted %}{{ entity.dateAccepted|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ entity.isCancelled ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No'}}</td>
-                <td>{% if entity.dateCancelled %}{{ entity.dateCancelled|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ entity.isDeclined ? 'Yes' : 'No' }}
-                <td>{% if entity.dateDeclined %}{{ entity.dateDeclined|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ entity.becomeMentor ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No'}}</td>
-                <td>{{ entity.becomeMentee ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No'}}</td>
-                <td>
-                <ul class="unstyled inline">
-                    <li>
-                        <a class="btn" href="{{ path('invitation_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a class="btn" href="{{ path('invitation_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	    <table class="table table-striped records_list">
+	        <thead>
+	            <tr>
+	                <th>Id</th>
+	                <th>Creator</th>
+	                <th>Recipient</th>
+	                <th>Date created</th>
+	                <th>Is accepted</th>
+	                <th>Date accepted</th>
+	                <th>Is cancelled</th>
+	                <th>Date cancelled</th>
+	                <th>Is Declined</th>
+	                <th>Date Declined</th>
+	                <th>Become mentor</th>
+	                <th>Become mentee</th>
+	                <th>Actions</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+		        {% for entity in entities %}
+		            <tr>
+		                <td><a href="{{ path('invitation_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+		                <td>{{ entity.creator }}</td>
+		                <td>{{ entity.recipient }}</td>
+		                <td>{% if entity.dateCreated %}{{ entity.dateCreated|date('Y-m-d H:i:s') }}{% endif %}</td>
+		                <td>{{ entity.isAccepted ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No' }}</td>
+		                <td>{% if entity.dateAccepted %}{{ entity.dateAccepted|date('Y-m-d H:i:s') }}{% endif %}</td>
+		                <td>{{ entity.isCancelled ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No'}}</td>
+		                <td>{% if entity.dateCancelled %}{{ entity.dateCancelled|date('Y-m-d H:i:s') }}{% endif %}</td>
+		                <td>{{ entity.isDeclined ? 'Yes' : 'No' }}
+		                <td>{% if entity.dateDeclined %}{{ entity.dateDeclined|date('Y-m-d H:i:s') }}{% endif %}</td>
+		                <td>{{ entity.becomeMentor ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No'}}</td>
+		                <td>{{ entity.becomeMentee ? '<i class="fa fa-check-circle-o"></i> Yes' : '<i class="fa fa-times"></i> No'}}</td>
+		                <td>
+		                <ul class="unstyled inline">
+		                    <li>
+		                        <a class="btn" href="{{ path('invitation_show', { 'id': entity.id }) }}">show</a>
+		                    </li>
+		                    <li>
+		                        <a class="btn" href="{{ path('invitation_edit', { 'id': entity.id }) }}">edit</a>
+		                    </li>
+		                </ul>
+		                </td>
+		            </tr>
+		        {% endfor %}
+	        </tbody>
+	    </table>
 
-        <ul class="unstyled inline">
-        <li>
-            <a class="btn btn-primary" href="{{ path('invitation_new') }}">
-                Create a new entry
-            </a>
-        </li>
-    </ul>
+		<ul class="unstyled inline">
+	        <li>
+	            <a class="btn btn-primary" href="{{ path('invitation_new') }}">
+	                Create a new entry
+	            </a>
+	        </li>
+	    </ul>
     </div>
-    {% endblock %}
+{% endblock %}

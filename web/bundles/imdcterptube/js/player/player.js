@@ -481,7 +481,8 @@ function Player(videoID, options) {
 		controlBarElement : $(this.elementID),
 		minRecordingTime : 3,
 		maxRecordingTime : 60,
-		minLinkTime : 1
+		minLinkTime : 1,
+		additionalDataToPost: {}
 	// signLinkColor : "#0000FF",
 	// commentHighlightedColor : "#FF0000"
 	};
@@ -490,6 +491,9 @@ function Player(videoID, options) {
 			this.options[key] = options[key];
 		}
 	}
+	// Firefox check
+	this.isFirefox = !!navigator.mozGetUserMedia;
+	this.options.additionalDataToPost.isFirefox = this.isFirefox;
 }
 
 // Player.prototype.checkFeatures = function(format) {
@@ -1420,16 +1424,22 @@ Player.prototype.recording_startRecording = function() {
 	// this.currentMaxSelected);
 	this.isRecording = true;
 	this.hasRecorded = -1;
+	var instance = this;
 	this.recordAudio = RecordRTC(this.stream, {
-	// bufferSize: 16384,
-	// sampleRate: 45000
+		// bufferSize: 16384,
+		// sampleRate: 45000
+		onAudioProcessStarted: function() {
+			if (!instance.isFirefox) {
+				instance.recordVideo.startRecording();
+			}
+        }
 	});
 
 	this.recordVideo = RecordRTC(this.stream, {
 		type : 'video'
 	});
 	this.recordAudio.startRecording();
-	this.recordVideo.startRecording();
+	//this.recordVideo.startRecording();
 
 	this.recording_recordingStarted();
 	// $(this.videoID)[0].startRecording();
@@ -1467,12 +1477,28 @@ Player.prototype.recording_stopRecording = function() {
 	this.hasRecorded = this.getCurrentTime();
 	this.isRecording = false;
 	this.isPastMinimumRecording = false;
-
-	this.recordAudio.stopRecording();
-	this.recordVideo.stopRecording();
-	$(this).trigger(Player.EVENT_RECORDING_STOPPED);
+	var instance = this;
+	var callback = function() {
+		console.log(instance.recordAudio.getBlob());
+    	if (!instance.isFirefox) {
+        	console.log(instance.recordVideo.getBlob());
+    	}
+    	
+    	$(instance).trigger(Player.EVENT_RECORDING_STOPPED);
+    	instance.postRecordings(instance.options.recordingPostURL,
+    			instance.options.additionalDataToPost);
+    };
+	this.recordAudio.stopRecording(function() {
+		if (!instance.isFirefox) {
+	        instance.recordVideo.stopRecording(callback);
+		} else {
+			callback();
+		}
+    });
+	//this.recordVideo.stopRecording();
+	/*$(this).trigger(Player.EVENT_RECORDING_STOPPED);
 	this.postRecordings(this.options.recordingPostURL,
-			this.options.additionalDataToPost);
+			this.options.additionalDataToPost);*/
 
 	// $(this.videoID)[0].stopRecording();
 };
@@ -1493,7 +1519,9 @@ Player.prototype.postRecordings = function(address, additionalDataObject) {
 		});
 	}
 	formData.append('audio-blob', this.recordAudio.getBlob());
-	formData.append('video-blob', this.recordVideo.getBlob());
+	if (!this.isFirefox) {
+		formData.append('video-blob', this.recordVideo.getBlob());
+	}
 	var instance = this;
 	// POST the Blobs
 	$.ajax({

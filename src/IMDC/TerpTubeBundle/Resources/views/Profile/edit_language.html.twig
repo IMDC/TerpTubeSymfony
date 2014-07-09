@@ -1,24 +1,22 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
+
 {% block herounit %}
-<h1>Edit Language</h1>
+	<h1>Edit Language</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-{% for type, messages in app.session.flashbag.all() %}
-		{% for key, message in messages %}
-       		<div class="flash-{{ type }}">
-            	{{ message|trans }}
-            </div>
-      	{% endfor %}
-   	{% endfor %}
-   	
-<form action="{{ path('imdc_terp_tube_user_language_add', {'userName': app.user.username}) }}" {{ form_enctype(form) }} method="POST" class="fos_user_profile_edit">
-    {{ form_widget(form) }}
-    <div>
-        <input type="submit" value="{{ 'profile.edit.language.add.submit'|trans }}" />
-        <input type="button" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile_edit',  {'userName': app.user.username}) }}'" />
-    </div>
-</form>
-
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6">
+				<form action="{{ path('imdc_terp_tube_user_language_add', {'userName': app.user.username}) }}" {{ form_enctype(form) }} method="POST" class="fos_user_profile_edit">
+				    {{ form_widget(form) }}
+				    
+				    <input type="submit" class="btn btn-primary" value="{{ 'profile.edit.language.add.submit'|trans }}" />
+				    <input type="button" class="btn btn-default" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile_edit',  {'userName': app.user.username}) }}'" />
+				</form>
+			</div>
+		</div>
+	</div>
 {% endblock underherounitrow1 %}

@@ -117,7 +117,7 @@ class AddFileGatewayController extends Controller {
 					$response = array (
 							'page' => null,
 							'finished' => true,
-							'mediaID' => $audioMedia->getId () 
+							'media' => JSEntities::getMediaObject ( $audioMedia )
 					);
 					$response = json_encode ( $response ); // json encode the array
 					return new Response ( $response, 200, array (
@@ -132,7 +132,8 @@ class AddFileGatewayController extends Controller {
 			}
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
-				'form' => $form->createView () 
+				'form' => $form->createView (),
+				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_audio' )
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
@@ -193,7 +194,7 @@ class AddFileGatewayController extends Controller {
 					$response = array (
 							'page' => null,
 							'finished' => true,
-							'mediaID' => $videoMedia->getId () 
+							'media' => JSEntities::getMediaObject ( $videoMedia )
 					);
 					$response = json_encode ( $response ); // json encode the array
 					return new Response ( $response, 200, array (
@@ -208,7 +209,8 @@ class AddFileGatewayController extends Controller {
 			}
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
-				'form' => $form->createView () 
+				'form' => $form->createView (),
+				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_video' )
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
@@ -269,7 +271,7 @@ class AddFileGatewayController extends Controller {
 					$response = array (
 							'page' => null,
 							'finished' => true,
-							'mediaID' => $imageMedia->getId () 
+							'media' => JSEntities::getMediaObject ( $imageMedia )
 					);
 					$response = json_encode ( $response ); // json encode the array
 					return new Response ( $response, 200, array (
@@ -284,7 +286,8 @@ class AddFileGatewayController extends Controller {
 			}
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
-				'form' => $form->createView () 
+				'form' => $form->createView (),
+				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_image' )
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
@@ -384,18 +387,22 @@ class AddFileGatewayController extends Controller {
 		
 		$audioFile = $request->files->get ( "audio-blob", null );
 		$videoFile = $request->files->get ( "video-blob", null );
+		
 		//FIXME If the max upload file size is reached it should return an error instead of crash
 		// FIXME Need to sync the audio/videos
 		$transcoder = $this->container->get ( 'imdc_terptube.transcoder' ); // ($this->get('logger'));
-// 		if ($audioFile ==null)
-// 			$mergedFile = $videoFile;
-// 		else
-		$mergedFile = $transcoder->mergeAudioVideo ( $audioFile, $videoFile );
+		// 		if ($audioFile ==null)
+		// 			$mergedFile = $videoFile;
+		// 		else
+		
+		$isFirefox = $request->request->get ( "isFirefox" );
+		$finalFile = $isFirefox == 'false' ? $transcoder->mergeAudioVideo ( $audioFile, $videoFile ) : $transcoder->remuxWebM ( $audioFile );
+		
 		$resourceFile = new ResourceFile ();
 		$resourceFile->setMedia ( $media );
 		$resourceFile->setWebmExtension ( "webm" );
 		$media->setIsReady ( Media::READY_WEBM );
-		$resourceFile->setFile ( $mergedFile );
+		$resourceFile->setFile ( $finalFile );
 		
 		$media->setResource ( $resourceFile );
 		
@@ -407,13 +414,14 @@ class AddFileGatewayController extends Controller {
 		$em->persist ( $media );
 		
 		$em->flush ();
-		$resource = $media->getResource();
+		//FIXME: transcoder seems to do this already. no need to rename and persist
+		/*$resource = $media->getResource();
 		$resourceFile = new File($resource->getAbsolutePath());
 		$fs = new Filesystem();
 		$fs->rename($resourceFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
-		$resource->setPath("webm");
+		$resource->setPath("webm");*/
 // 		$em->persist ( $resourceFile );
-		$em->flush ();
+		//$em->flush ();
 		
 		$eventDispatcher = $this->container->get ( 'event_dispatcher' );
 		$uploadedEvent = new UploadEvent ( $media );
@@ -530,6 +538,11 @@ class AddFileGatewayController extends Controller {
 		
 		$form = $formFactory->create ( new OtherMediaFormType (), $otherMedia, array () );
 		
+		$prefix = "";
+		if ($request->isXmlHttpRequest ()) {
+			$prefix = "ajax.";
+		}
+		
 		if ('POST' === $request->getMethod ()) {
 			$form->bind ( $request );
 			
@@ -551,7 +564,17 @@ class AddFileGatewayController extends Controller {
 				$eventDispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, $uploadedEvent );
 				
 				// $uploadedEvent->getResponse();
-				if ($url === null) {
+				if ($request->isXmlHttpRequest ()) {
+					$response = array (
+							'page' => null,
+							'finished' => true,
+							'media' => JSEntities::getMediaObject ( $otherMedia )
+					);
+					$response = json_encode ( $response ); // json encode the array
+					return new Response ( $response, 200, array (
+							'Content-Type' => 'application/json' 
+					) );
+				} else if ($url === null) {
 					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_files_gateway' ) );
 				} else {
 					$response = new RedirectResponse ( $url );
@@ -559,9 +582,21 @@ class AddFileGatewayController extends Controller {
 				return $response;
 			}
 		}
-		// form not valid, show the basic form
-		return $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:addFile.html.twig', array (
-				'form' => $form->createView () 
+		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
+				'form' => $form->createView (),
+				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_other' )
 		) );
+		// form not valid, show the basic form
+		if ($request->isXmlHttpRequest ()) {
+			$return = array (
+					'page' => $response->getContent (),
+					'finished' => false 
+			);
+			$return = json_encode ( $return ); // json encode the array
+			$response = new Response ( $return, 200, array (
+					'Content-Type' => 'application/json' 
+			) );
+		}
+		return $response;
 	}
 }

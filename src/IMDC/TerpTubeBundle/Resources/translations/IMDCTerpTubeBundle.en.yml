@@ -104,13 +104,14 @@ interpretationsGateway:
 filesGateway:
     title: "My Files"
     add:
-        title: "Select a file"
+        title: "Select from My Files"
     buttons:
-        audio: "Upload Audio file"
-        video: "Upload Video file"
-        image: "Upload Image file"
-        other: "Upload Other file"
-        record: "Record a video"
+        upload: "Upload a new file"
+        audio: "Audio"
+        video: "Video"
+        image: "Image"
+        other: "Other"
+        record: "Record a new video"
     type:
         0: "Image"
         1: "Video"
@@ -229,9 +230,16 @@ profile:
         profileVisibleToPublic:
             title: "Profile is shown on the public directory"
         textBio: "Bio"
+        postCount: "Post Count"
         languages:
             title: "Languages"
             empty: "No languages provided"
+        mentors:
+            title: "Current Mentors"
+            empty: "No mentors assigned"
+        mentees:
+            title: "Current Mentees"
+            empty: "No mentees assigned"
             
     edit:
         submit: "Update Profile"

@@ -1,11 +1,13 @@
-{% extends
-"IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
-{% trans_default_domain 'IMDCTerpTubeBundle' %} {% block motionMedia %}
-<video class="preview" width="100%" id="{{ mediaFile.getID }}"
-	preload="auto">
-	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}" />
-	<source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
-</video>
+{% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% block motionMedia %}
+	<video class="preview" width="100%" id="{{ mediaFile.getID }}" preload="auto">
+		<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}" />
+		<source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+	</video>
+
 <script type='text/javascript'> 
 	 var player = new Player($("#{{ mediaFile.getID }}"));
 	 player.options.areaSelectionEnabled = true;
@@ -30,9 +32,15 @@
 		// var fn = window[recorderConfiguration.forwardFunction]||null;
 		// fn(data);
 		 console.log('Done!', data);
+
+		var media = {
+			'id': "{{ mediaFile.getID }}",
+			'title': "{{ mediaFile.getTitle }}"
+		};
+
+		 mediaChooser.terminatingFunction(media);
 	 });
 	 player.createControls();
  </script>
+
 {% endblock motionMedia %}
-
-

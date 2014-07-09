@@ -1,38 +1,43 @@
 {% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/compoundMediaPreview.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
+
 {% block motionMedia %}
-	    	<div id="videoContainer">
-		    	<div id="pipwrap" class="pipstyle" >
-			   		<video	class="preview" id="{{ compoundMedia.getSource.getId }}" preload="auto" >
-						<source src="{{ asset(compoundMedia.getSource.getResource.getWebPathWebm) }}"/>
-						<source src="{{ asset(compoundMedia.getSource.getResource.getWebPath) }}"/>
-					</video>
-					<i class="xclosepip fa fa-times-circle fa-large" ></i>
-					
-				</div>
-				<div id="sourcewrap" class="sourcestyle">
-					<video	class="preview"  id="{{ compoundMedia.getTarget.getId }}" preload="auto">
-						<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPathWebm) }}"/>
-						<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPath) }}"/>
-					</video>
-					<i class="xclosepip fa fa-times-circle fa-large" style="display:none;"></i>
-					
-				</div>
-			</div>
+	<div id="videoContainer">
+		<div id="pipwrap" class="pipstyle" >
+			<video	class="preview" id="{{ compoundMedia.getSource.getId }}" preload="auto" >
+				<source src="{{ asset(compoundMedia.getSource.getResource.getWebPathWebm) }}"/>
+				<source src="{{ asset(compoundMedia.getSource.getResource.getWebPath) }}"/>
+			</video>
+
+			<i class="xclosepip fa fa-times-circle fa-large" ></i>
+		</div>
+		<div id="sourcewrap" class="sourcestyle">
+			<video	class="preview"  id="{{ compoundMedia.getTarget.getId }}" preload="auto">
+				<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPathWebm) }}"/>
+				<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPath) }}"/>
+			</video>
+	
+			<i class="xclosepip fa fa-times-circle fa-large" style="display:none;"></i>
+		</div>
+	</div>
 {% endblock motionMedia %}
+
 {% block motionControls %}
-			<div class="preview-controls">
-			</div>
+	<div class="preview-controls">
+		
+	</div>
 {% endblock motionControls %}			
 
-
-
 {% block javascripts %}
- {{ parent() }}
+	{{ parent() }}
+
  <script type='text/javascript'>
  $(document).ready(function() {
 	 var player1Element = $("#{{ compoundMedia.getSource.getID }}");

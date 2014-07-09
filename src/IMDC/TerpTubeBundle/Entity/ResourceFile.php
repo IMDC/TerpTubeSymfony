@@ -206,10 +206,10 @@ class ResourceFile
     
     public function removeUpload()
     {
-    	if (isset($this->temp)) {
+    	if (file_exists($this->temp)) {
     		unlink($this->temp);
     	}
-    	if (isset($this->tempWebm)) {
+    	if (file_exists($this->tempWebm)) {
     		unlink($this->tempWebm);
     	}
     }

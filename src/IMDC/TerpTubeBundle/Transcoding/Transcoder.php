@@ -238,6 +238,55 @@ class Transcoder {
 		
 		return new File ( $outputFileWebm );
 	}
+	
+	/**
+	 * Specifically for remuxing (video+audio) WebM files produced by Firefox, so that extra metadata like duration (used by Player.js) is available.
+	 *
+	 * @param File $filePath
+	 * @return UploadedFile $file - The remuxed file.
+	 */
+	public function remuxWebM(File $file) {
+		try {
+			$filePath = $file->getRealPath ();
+				
+			$tempDir = '/tmp/terptube-recordings';
+			$umask = umask ();
+			umask ( 0000 );
+			if (! file_exists ( $tempDir ))
+				mkdir ( $tempDir );
+			$tempFileName = tempnam ( $tempDir, "RemuxedFile" );
+			
+			umask ( $umask );
+			$dir = getcwd ();
+			chdir ( $tempDir );
+			
+			$outputFileWebm = $tempFileName . '.webm';
+			$this->logger->info ( "Remuxing " . $filePath . " to: " . $outputFileWebm );
+				
+			$this->ffmpeg->getFFMpegDriver ()->command ( array (
+					"-i",
+					$filePath,
+					"-c",
+					"copy",
+					"-y",
+					$outputFileWebm
+			) );
+			chdir ( $dir );
+				
+			$this->fs->remove ( $tempFileName );
+			$this->logger->info ( "Remuxing complete!" );
+			$this->fs->rename ( $outputFileWebm, $filePath, true );
+			
+			$isValid = $file->isValid ();
+			if ($isValid)
+				$this->logger->info ( "Uploaded file valid " );
+			else
+				$this->logger->info ( "Uploaded file invalid " );
+		} catch ( Exception $e ) {
+			$this->logger->error ( $e->getTraceAsString () );
+		}
+		return $file;
+	}
 	public function getFFmpeg() {
 		return $this->ffmpeg;
 	}

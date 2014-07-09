@@ -1,132 +1,166 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
+{% block title %}{{ profile.firstName }}'s Profile{% endblock title %}
 
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/profile.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
-{% block title %}{{ profile.firstName }}'s Profile {% endblock title %}
-
 {% block herounit %}
-<h1>This is {{ profile.firstName }} {{ profile.middleName }} {{ profile.lastName }}'s profile</h1>
+	<h1>This is {{ profile.firstName }} {{ profile.middleName }} {{ profile.lastName }}'s profile</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-11">
+				{% if app.user == user.userName %}
+					<a class="avatar" href="{{ path('imdc_terp_tube_user_avatar_edit',{'userName': app.user}) }}">
+				{% endif %}
+		
+				<img class="img-thumbnail avatar" alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+		
+				{% if app.user == user.userName %}
+					</a>
+				{% endif %}
+			</div>
 
-	{% for type, messages in app.session.flashbag.all() %}
-		{% for key, message in messages %}
-       		<div class="flash-{{ type }}">
-            	{{ message|trans({}, 'FOSUserBundle') }}
-            </div>
-      	{% endfor %}
-   	{% endfor %}
-        <div>
-            {% block fos_user_content %}
-         {%		set gender = 'profile.show.gender.'~profile.gender %}   
-		{% if app.user == user.userName %}
-		<div class="profile_field"><a class="avatar" href="{{ path('imdc_terp_tube_user_avatar_edit',{'userName': app.user}) }}"><img class="avatar" alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></div>
-		<div class="link edit_profile"><a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_edit',{'userName': app.user}) }}">Edit</a></div>
-		{% else %}
-		<div class="profile_field"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></div>
-		{% endif %}
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.userName'|trans }}:</span><span class="field_value"> {{ user.username }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.profileVisibleToPublic.title'|trans }}:</span><span class="field_value"> {{ profile.getProfileVisibleToPublic is null?'form.generic.empty'|trans: profile.getProfileVisibleToPublic? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.birthDate'|trans }}:</span><span class="field_value"> {{ profile.birthDate? profile.birthDate|date('Y-m-d'): 'form.profile.birthDate.empty'|trans }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.gender.title'|trans }}:</span><span class="field_value"> {{ gender |trans }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.city'|trans }}:</span><span class="field_value"> {{ profile.city}}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.country'|trans }}:</span><span class="field_value"> {{ profile.country | trans }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.skypeName'|trans }}:</span><span class="field_value"> {{ profile.skypeName }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.textBio'|trans }}:</span><span class="field_value"> {{ profile.textBio |trans }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoredByMentor.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoredByMentor is null?'form.generic.empty'|trans: profile.interestedInMentoredByMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoredByInterpreter.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoredByInterpreter is null?'form.generic.empty'|trans: profile.interestedInMentoredByInterpreter? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringSignLanguage.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringSignLanguage is null?'form.generic.empty'|trans: profile.interestedInMentoringSignLanguage? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringInterpreter.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringInterpreter  is null?'form.generic.empty'|trans: profile.interestedInMentoringInterpreter? 'form.generic.yes'|trans: 'form.generic.no'|trans  }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.interestedInMentoringMentor.title'|trans }}:</span><span class="field_value"> {{ profile.interestedInMentoringMentor is null?'form.generic.empty'|trans: profile.interestedInMentoringMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</span></div>
-		<div class="profile_field"><span class="field_title">{{ 'profile.show.languages.title'|trans }}:</span>
-		{% if profile.languages and profile.languages|length >0 %}
-			<ul>
-            {% for language in profile.languages %}
-            <li>
-            	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.name'|trans }}</span><span class="field_value"> {{ language.name |trans }}</span> </div>        
-            	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.type.title'|trans }}</span><span class="field_value"> {{ ('form.profile.language.type.'~language.type) |trans }}</span></div>
-            	<div class="profile_field_subtype"><span class="field_title">{{ 'form.profile.language.proficiency.title'|trans }}</span><span class="field_value"> {{ ('form.profile.language.proficiency.'~language.proficiency) |trans }}</span> </div>
-            </li>
-            {% endfor %}
-            </ul>
-      	{% else %}
-        	<span class="field_value"> {{ 'profile.show.languages.empty' |trans }}</span>
-        {% endif %}
-            {% endblock fos_user_content %}
-        </div>
-        
+			<div class="col-md-1 text-right">
+				{% if app.user == user.userName %}
+					<div class="link edit_profile">
+						<a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_edit', {'userName': app.user}) }}">Edit</a>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-5 profile">
+				{% block fos_user_content %}
+					<table class="table table-condensed">
+						<tbody>
+							<tr><th>{{ 'profile.show.userName'|trans }}</th><td>{{ user.username }}</td></tr>
+							<tr><th>{{ 'profile.show.profileVisibleToPublic.title'|trans }}</th><td>{{ profile.getProfileVisibleToPublic is null ? 'form.generic.empty'|trans : profile.getProfileVisibleToPublic ? 'form.generic.yes'|trans : 'form.generic.no'|trans }}</td></tr>
+							<tr><th>{{ 'profile.show.birthDate'|trans }}</th><td>{{ profile.birthDate ? profile.birthDate|date('Y-m-d') : 'form.profile.birthDate.empty'|trans }}</td></tr>
+							<tr><th>{{ 'profile.show.gender.title'|trans }}</th><td>{{ ('profile.show.gender.'~profile.gender)|trans }}</td></tr>
+							<tr><th>{{ 'profile.show.city'|trans }}</th><td>{{ profile.city }}</td></tr>
+							<tr><th>{{ 'profile.show.country'|trans }}</th><td>{{ profile.country|trans }}</td></tr>
+							<tr><th>{{ 'profile.show.skypeName'|trans }}</th><td>{{ profile.skypeName }}</td></tr>
+							<tr><th>{{ 'profile.show.postCount'|trans }}</th><td>{{ user.getPostCount() }}</td></tr>
+							<tr><th>{{ 'profile.show.textBio'|trans }}</th><td>{{ profile.textBio |trans }}</td></tr>
+						    <tr><th>{{ 'profile.show.interestedInMentoredByMentor.title'|trans }}</th><td>{{ profile.interestedInMentoredByMentor is null ? 'form.generic.empty'|trans : profile.interestedInMentoredByMentor ? 'form.generic.yes'|trans : 'form.generic.no'|trans }}</td></tr>
+						    <tr><th>{{ 'profile.show.interestedInMentoredByInterpreter.title'|trans }}</th><td>{{ profile.interestedInMentoredByInterpreter is null ? 'form.generic.empty'|trans : profile.interestedInMentoredByInterpreter ? 'form.generic.yes'|trans : 'form.generic.no'|trans }}</td></tr>
+						    <tr><th>{{ 'profile.show.interestedInMentoringSignLanguage.title'|trans }}</th><td>{{ profile.interestedInMentoringSignLanguage is null ? 'form.generic.empty'|trans : profile.interestedInMentoringSignLanguage ? 'form.generic.yes'|trans : 'form.generic.no'|trans }}</td></tr>
+						    <tr><th>{{ 'profile.show.interestedInMentoringInterpreter.title'|trans }}</th><td>{{ profile.interestedInMentoringInterpreter  is null ? 'form.generic.empty'|trans : profile.interestedInMentoringInterpreter ? 'form.generic.yes'|trans : 'form.generic.no'|trans }}</td></tr>
+						    <tr><th>{{ 'profile.show.interestedInMentoringMentor.title'|trans }}</th><td>{{ profile.interestedInMentoringMentor is null ? 'form.generic.empty'|trans : profile.interestedInMentoringMentor ? 'form.generic.yes'|trans : 'form.generic.no'|trans }}</td></tr>
+						</tbody>
+					</table>
+				{% endblock fos_user_content %}
+			</div>
+		</div>
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
-{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-    {% if app.user == user.userName %}
-        {# print out list of user's current mentor's #}
-        {% if app.user.getMentorList|length > 0 %}
-        <div class="text-info">
-            <h4>Current Mentor's</h4>
-            <table class="table relationshipTable">
-           {% for mentor in app.user.getMentorList %}
-               <tr>
-                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentor.profile.avatar ? asset(mentor.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
-                   <td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}">{{ mentor.getUserName }}</a></td>
-                   <td>
-                       <ul class="unstyled inline">
-                           <li><a class="btn" href="{{ path('imdc_mentor_remove', {'id':mentor.id}) }}">Remove</a></li>
-                           <li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentor.username}) }}">Send message</a></li>
-                       </ul>
-                   </td>
-               </tr>
-           {% endfor %} 
-            </table>
-        </div>
-        {% endif %}
-        {# print out list of user's current mentee's #}
-        {% if app.user.getMenteeList|length > 0 %}
-        <div class="text-info">
-            <h4>Current Mentee's</h4>
-            <table class="table relationshipTable">
-           {% for mentee in app.user.getMenteeList %}
-               <tr>
-                   <td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentee.profile.avatar ? asset(mentee.profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
-                   <td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}">{{ mentee.getUserName }}</a></td>
-                   <td>
-                       <ul class="unstyled inline">
-                           <li><a class="btn" href="{{ path('imdc_mentee_remove', {'id':mentee.id}) }}">Remove</a></li>
-                           <li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentee.username}) }}">Send message</a></li>
-                       </ul>
-                   </td>
-               </tr>
-           {% endfor %} 
-            </table>
-        </div>
-        {% endif %}
-    {% else %}
-        {% if app.user.isUserOnFriendsList(user) %}
-            <div class="text-info">
-                <p>
-                    User is on your friends list
-                </p>  
-            </div>
-            <div class="text-warning">
-                <p>
-                    <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid':user.id} ) }}">Remove from friends list</a>
-                </p>
-            </div>
-        {% else %}
-            <div>
-                <p>
-                    <a class="btn" href="{{ path('imdc_add_to_friends_list', {'userid':user.id} ) }}">Add user to friends list</a>
-                </p>
-            </div>
-        {% endif %}
-    {% endif %}
-{% endif %}
-<div class="row-fluid">
-    <p>Post count: {{ user.getPostCount() }}</p>
-</div>
+	<div class="container-fluid">
+	    {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+	        {% if app.user == user.userName %}
+				<div class="row">
+					<div class="col-md-6">
+						{# print out list of user's languages #}
+						<p class="lead">{{ 'profile.show.languages.title'|trans }}</p>
+						{% if profile.languages and profile.languages|length > 0 %}
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>{{ 'form.profile.language.name'|trans }}</th>
+										<th>{{ 'form.profile.language.type.title'|trans }}</th>
+										<th>{{ 'form.profile.language.proficiency.title'|trans }}</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for language in profile.languages %}
+										<tr>
+											<td>{{ language.name|trans }}</td>
+											<td>{{ ('form.profile.language.type.'~language.type)|trans }}</td>
+											<td>{{ ('form.profile.language.proficiency.'~language.proficiency)|trans }}</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						{% else %}
+							<p>{{ 'profile.show.languages.empty'|trans }}</p>
+						{% endif %}
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-8">
+			            {# print out list of user's current mentor's #}
+						<p class="lead">{{ 'profile.show.mentors.title'|trans }}</p>
+			            {% if app.user.getMentorList|length > 0 %}
+			                <table class="table table-condensed">
+				                {% for mentor in app.user.getMentorList %}
+				                   	<tr>
+				                       	<td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentor.profile.avatar ? asset(mentor.profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
+				                       	<td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}">{{ mentor.getUserName }}</a></td>
+				                       	<td>
+				                           	<ul class="unstyled inline">
+				                               	<li><a class="btn" href="{{ path('imdc_mentor_remove', {'id':mentor.id}) }}">Remove</a></li>
+				                               	<li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentor.username}) }}">Send message</a></li>
+				                           	</ul>
+				                       	</td>
+				                   	</tr>
+				               	{% endfor %}
+			               	</table>
+			           	{% else %}
+			           		<p>{{ 'profile.show.mentors.empty'|trans }}</p>
+			           	{% endif %}
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-8">
+						{# print out list of user's current mentee's #}
+						<p class="lead">{{ 'profile.show.mentors.title'|trans }}</p>
+						{% if app.user.getMenteeList|length > 0 %}
+							<table class="table table-condensed">
+								{% for mentee in app.user.getMenteeList %}
+									<tr>
+										<td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentee.profile.avatar ? asset(mentee.profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
+										<td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}">{{ mentee.getUserName }}</a></td>
+										<td>
+											<ul class="unstyled inline">
+												<li><a class="btn" href="{{ path('imdc_mentee_remove', {'id':mentee.id}) }}">Remove</a></li>
+												<li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentee.username}) }}">Send message</a></li>
+											</ul>
+										</td>
+									</tr>
+								{% endfor %}
+							</table>
+						{% else %}
+							<p>{{ 'profile.show.mentees.empty'|trans }}</p>
+						{% endif %}
+					</div>
+				</div>
+			{% else %}
+				{% if app.user.isUserOnFriendsList(user) %}
+					<div class="text-info">
+						<p>User is on your friends list</p>
+					</div>
+					<div class="text-warning">
+						<p><a class="btn btn-default" href="{{ path('imdc_remove_from_friends_list', {'userid':user.id} ) }}">Remove from friends list</a></p>
+					</div>
+				{% else %}
+					<div>
+						<p><a class="btn btn-default" href="{{ path('imdc_add_to_friends_list', {'userid':user.id} ) }}">Add user to friends list</a></p>
+					</div>
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	</div>
 {% endblock underherounitrow2 %}

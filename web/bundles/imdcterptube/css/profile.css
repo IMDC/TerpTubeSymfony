@@ -16,3 +16,7 @@ a img.avatar:hover
 .avatarCell {
 	width: 50px;
 }
+
+div.profile {
+	margin-top: 10px;
+}

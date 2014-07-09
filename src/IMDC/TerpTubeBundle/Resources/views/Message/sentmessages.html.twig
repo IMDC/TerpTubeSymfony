@@ -16,16 +16,16 @@ Sent Messages
     {% endif %}
     {{ include('IMDCTerpTubeBundle:Message:inboxlist.html.twig') }}
     <h2>Sent Messages</h2>
-    <div class="row-fluid">
-        <div class="span3">
+    <div class="row">
+        <div class="col-md-3">
             <a class="btn btn-primary" href="{{ path('imdc_message_create') }}">
                 <i class="fa fa-plus-circle fa-lg"></i> Create new message
             </a>
         </div>
     </div>
     <br />
-    <div class="row-fluid">
-        <div class="span-9">
+    <div class="row">
+        <div class="col-md-9">
             <table class="table table-condensed table-hover table-striped messagetable sentmessagestable">
                 <tr><th>To</th><th>Subject</th><th>Content</th><th>Date Sent</th></tr>
                 {% if messages %}
@@ -50,5 +50,6 @@ Sent Messages
         </div>
     </div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

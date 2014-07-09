@@ -1,22 +1,27 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Post/new.html.twig #}
+
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/post.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block title %}Edit Post{% endblock title %}
 
 {% block herounit %}
-<h1>Edit post</h1>
+	<h1>Edit post</h1>
 {% endblock herounit %}
+
 {% if post.attachedFile[0] is defined %}
     {% set mediaFile = post.attachedFile[0] %}
 {% else %}
     {% set mediaFile = none %}
 {% endif %}
+
 {% block underherounitrow1 %}
-<div class="span9">
+<div class="col-md-9">
 {{ form_start(form) }}
         {{ form_errors(form) }}
         <div class="controls controls-row">
@@ -26,11 +31,11 @@
         <div id="files"></div>
         {% if mediaFile != null %}
         <p>
-        <div class="row-fluid">
-            <div class="span4">
+        <div class="row">
+            <div class="col-md-4">
             {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
-            </div> <!-- /span4 -->
-        </div> <!-- /row-fluid -->
+            </div> <!-- /col-md-4 -->
+        </div> <!-- /row -->
         </p>
         {% else %}
         {% endif %}
@@ -43,13 +48,12 @@
     {{ form_end(form) }}
 </div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
 {% block javascripts %}
-{{ parent() }}
+	{{ parent() }}
 
-<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/editPost.js') }}"></script>
-
+	<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/editPost.js') }}"></script>
 {% endblock javascripts %}
-

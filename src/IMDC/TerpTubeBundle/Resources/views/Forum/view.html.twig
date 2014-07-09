@@ -1,6 +1,8 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
@@ -9,94 +11,99 @@
 {% block title %}{{forum.titleText}}{% endblock title %}
 
 {% block herounit_wrap %}
-<div class="row-fluid breadcrumb-wrap">
-    <ul class="breadcrumb">
-        <li><a href="{{ path('imdc_forum_list') }}">Forums</a> <span class="divider"><i class="fa fa-chevron-left"></i></span></li>
-        <li class="active">{{ forum.getTitleText|truncate(20) }}</li>
-    </ul>
-</div>
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+	        <li><a href="{{ path('imdc_forum_list') }}">Forums</a></li>
+	        <li class="active">{{ forum.getTitleText|truncate(20) }}</li>
+	    </ol>
+	</div>
 
-
-<div class="row-fluid forum-title-wrap">
-    <div class="span6">
-        {% if forum in app.user.getForums %}
-        <div class="row-fluid">
-            <ul class="unstyled inline">
-            <li><a href="{{ path('imdc_forum_edit', {'forumid' : forum.id}) }}"><i class="fa fa-edit"></i> Edit</a></li>
-            <li><a href="{{ path('imdc_forum_delete', {'forumid' : forum.id}) }}"><i class="fa fa-times"></i> Delete</a></li>
-            </ul>
-        </div>
-        {% endif %}
-        {% if forum.getTitleMedia[0] is defined %}
-        <div class="row-fluid">
-            {% set mediaFile = forum.getTitleMedia[0] %}
-                {% include('IMDCTerpTubeBundle:Forum:ForumMediaElement.html.twig') %}
-        </div>
-        {% endif %}
-        <div class="row-fluid">
-            <h1>{{ forum.titleText }}</h1>
-            <h4>Created: {{ forum.getCreationDate|date('g:ia F j Y') }}</h4>
-            <h5>Topics: {{ threads|length }}</h5>
-        </div>
-    </div>
-    <div class="span6">
-        <div class="row-fluid">
-            <div class="span6 text-right">
-                <h4>Created by:</h4>
-            </div>
-            <div class="span6">
-                {% set member = forum.getCreator %}
-                {{ include('IMDCTerpTubeBundle:Member:infoBlock.html.twig') }}
-            </div>
-        </div>
-    </div>
-</div>
-
+	<div class="container-fluid">
+		<div class="col-md-12">
+			<div class="row forum-title-wrap">
+				<div class="col-md-6">
+					{% if forum in app.user.getForums %}
+						<div class="row">
+							<ul class="list-unstyled list-inline">
+								<li><a href="{{ path('imdc_forum_edit', {'forumid' : forum.id}) }}"><i class="fa fa-edit fa-text-link"></i>Edit</a></li>
+								<li><a href="{{ path('imdc_forum_delete', {'forumid' : forum.id}) }}"><i class="fa fa-times fa-text-link"></i>Delete</a></li>
+							</ul>
+						</div>
+					{% endif %}
+		
+					{% if forum.getTitleMedia[0] is defined %}
+						<div class="row">
+							{% set mediaFile = forum.getTitleMedia[0] %}
+							{% include('IMDCTerpTubeBundle:Forum:ForumMediaElement.html.twig') %}
+						</div>
+					{% endif %}
+		
+					<div class="row">
+						<h1>{{ forum.titleText }}</h1>
+						<h4>Created: {{ forum.getCreationDate|date('g:ia F j Y') }}</h4>
+						<h5>Topics: {{ threads|length }}</h5>
+					</div>
+				</div>
+		
+				<div class="col-md-6">
+					<div class="row">
+						<div class="col-md-6 text-right">
+							<h4>Created by:</h4>
+						</div>
+						<div class="col-md-6">
+							{% set member = forum.getCreator %}
+							{{ include('IMDCTerpTubeBundle:Member:infoBlock.html.twig') }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				<p>
+					<a class="btn btn-primary" href="{{ path('imdc_thread_create_new_under_forum', {'forumid' : forum.id}) }}"><i class="fa fa-plus"></i> Create New Post</a>
+				</p>
+			</div>
+		</div>
+	
+		{# {% set threads = forum.getThreads() %} #}
+	
+		<div class="row">
+			<div class="col-md-12">
+				<ul class="list-unstyled list-inline">
+					{% set pagParams = threads.getParams %}
+					<li>Sort: </li>
+					<li{% if threads.isSorted('t.lastPostAt') %} class="btn"{% endif %}>{{ knp_pagination_sortable(threads, 'Last Post', 't.lastPostAt') }}{% if threads.isSorted('t.lastPostAt') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif threads.isSorted('t.lastPostAt') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
+					<li{% if threads.isSorted('t.title') %} class="btn"{% endif %}>{{ knp_pagination_sortable(threads, 'Title', 't.title') }}{% if threads.isSorted('t.title') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif threads.isSorted('t.title') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
+					<li{% if threads.isSorted('t.creationDate') %} class="btn"{% endif %}>{{ knp_pagination_sortable(threads, 'Date Created', 't.creationDate') }}{% if threads.isSorted('t.creationDate') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif threads.isSorted('t.creationDate') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>            
+				</ul>
+			</div>
+		</div>
 
-<div class="fluid-row">
-    <div class="span12">
-        <p>
-            <a class="btn btn-primary" href="{{ path('imdc_thread_create_new_under_forum', {'forumid' : forum.id}) }}"><i class="fa fa-plus"></i> Create New Post</a>
-        </p>    
-    </div>
-</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="navigation">
+					{{ knp_pagination_render(threads) }}
+				</div>
+			</div>
+		</div>
 
-{# {% set threads = forum.getThreads() %} #}
+		{% include 'IMDCTerpTubeBundle:Thread:threadthumbnailprototype.html.twig' %}
 
-<div class="row-fluid">
-    <div class="span12">
-        <ul class="unstyled inline">
-            {% set pagParams = threads.getParams %}
-            <li>Sort: </li>
-            <li{% if threads.isSorted('t.lastPostAt') %} class="btn"{% endif %}>{{ knp_pagination_sortable(threads, 'Last Post', 't.lastPostAt') }}{% if threads.isSorted('t.lastPostAt') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif threads.isSorted('t.lastPostAt') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
-            <li{% if threads.isSorted('t.title') %}    class="btn"{% endif %}>{{ knp_pagination_sortable(threads, 'Title', 't.title') }}{% if threads.isSorted('t.title') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif threads.isSorted('t.title') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
-            <li{% if threads.isSorted('t.creationDate') %} class="btn"{% endif %}>{{ knp_pagination_sortable(threads, 'Date Created', 't.creationDate') }}{% if threads.isSorted('t.creationDate') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif threads.isSorted('t.creationDate') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>            
-        </ul>
-    </div>
-</div>
-
-<div class="row-fluid">
-    <div class="span12">
-        <div class="navigation">
-            {{ knp_pagination_render(threads) }}
-        </div>
-    </div>
-</div>
-
-{% include 'IMDCTerpTubeBundle:Thread:threadthumbnailprototype.html.twig' %}
-
-
-<div class="row-fluid">
-    <div class="span12">
-        <div class="navigation">
-            {{ knp_pagination_render(threads) }}
-        </div>
-    </div>
-</div>
-
+		<div class="row">
+			<div class="col-md-12">
+				<div class="navigation">
+					{{ knp_pagination_render(threads) }}
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

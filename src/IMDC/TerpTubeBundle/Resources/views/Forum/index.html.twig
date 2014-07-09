@@ -1,59 +1,70 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
+{% block title %}Forums{% endblock title %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block sidebarlinks_pages %}<li class="active">{% endblock %}
 
-{% block title %}Forums{% endblock title %}
-
-{% block herounit_wrap %}<h1>Forums</h1>{% endblock herounit_wrap %}
+{% block herounit_wrap %}
+	<div class="col-md-12">
+		<h1>Forums</h1>
+	</div>
+{% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
-{% if is_granted('ROLE_CREATE_FORUMS') %}
-<div class="fluid-row">
-    <div class="span12">
-        <p>
-            <a class="btn btn-primary" href="{{ path('imdc_forum_create_new') }}"><i class="fa fa-plus"></i> Create New</a>
-        </p>    
-    </div>
-</div>
-{% endif %}
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-12">
+				{% if is_granted('ROLE_CREATE_FORUMS') %}
+					<div class="row">
+					    <div class="col-md-12">
+					        <p>
+					            <a class="btn btn-primary" href="{{ path('imdc_forum_create_new') }}"><i class="fa fa-plus"></i> Create New</a>
+					        </p>    
+					    </div>
+					</div>
+				{% endif %}
 
-<div class="row-fluid">
-    <div class="span12">
-        <div class="count">
-            Total number of Forums: {{ pagination.getTotalItemCount }}
-        </div>
-    </div>
-</div>
+				<div class="row">
+				    <div class="col-md-12">
+				        <div class="count">
+				            Total number of Forums: {{ pagination.getTotalItemCount }}
+				        </div>
+				    </div>
+				</div>
 
-{% if pagination.getTotalItemCount > 0 %}
-<div class="row-fluid">
-    <div class="span12">
-        <ul class="unstyled inline">
-            {% set pagParams = pagination.getParams %}
-            <li{% if pagination.isSorted('f.lastActivity') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Last Activity', 'f.lastActivity') }}{% if pagination.isSorted('f.lastActivity') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.lastActivity') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
-            <li{% if pagination.isSorted('f.titleText') %}    class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Title', 'f.titleText') }}{% if pagination.isSorted('f.titleText') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.titleText') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
-            <li{% if pagination.isSorted('f.creationDate') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Date Created', 'f.creationDate') }}{% if pagination.isSorted('f.creationDate') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.creationDate') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>            
-        </ul>
-    </div>
-</div>
-{% endif %}
+				{% if pagination.getTotalItemCount > 0 %}
+					<div class="row">
+						<div class="col-md-12">
+							<ul class="list-unstyled list-inline">
+								{% set pagParams = pagination.getParams %}
+								<li{% if pagination.isSorted('f.lastActivity') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Last Activity', 'f.lastActivity') }}{% if pagination.isSorted('f.lastActivity') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.lastActivity') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
+								<li{% if pagination.isSorted('f.titleText') %}    class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Title', 'f.titleText') }}{% if pagination.isSorted('f.titleText') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.titleText') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>
+								<li{% if pagination.isSorted('f.creationDate') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Date Created', 'f.creationDate') }}{% if pagination.isSorted('f.creationDate') and 'desc' in pagParams %} <i class="fa fa-sort-down"></i> {% elseif pagination.isSorted('f.creationDate') and 'asc' in pagParams %}<i class="fa fa-sort-up"></i> {% endif %}</li>            
+							</ul>
+						</div>
+					</div>
+				{% endif %}
 
-{% set forums = pagination %}
-{% include 'IMDCTerpTubeBundle:Forum:ForumThumbnail.html.twig' %}
+				{% set forums = pagination %}
+				{% include 'IMDCTerpTubeBundle:Forum:ForumThumbnail.html.twig' %}
 
-
-<div class="row-fluid">
-    <div class="span12">
-        <div class="navigation">
-            {{ knp_pagination_render(pagination) }}
-        </div>
-    </div>
-</div>
-
+				<div class="row">
+					<div class="col-md-12">
+						<div class="navigation">
+							{{ knp_pagination_render(pagination) }}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

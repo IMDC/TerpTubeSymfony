@@ -1,7 +1,10 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Forum/new.html.twig #}
+
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
@@ -10,70 +13,68 @@
 {% block sidebarlinks_pages %}<li class="active">{% endblock %}
 
 {% block herounit_wrap %}
-<div class="page-header">
-    <h1>Create a new Forum</h1>
-</div>
+	<div class="page-header">
+	    <h1>Create a new Forum</h1>
+	</div>
 {% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
-<div class="span9">
-  {# {{ form(form) }} #}
-  
+	<div class="span9">
+		{# {{ form(form) }} #}
 
-    {{ form_start(form) }}
-        {{ form_errors(form) }}
-        Add a media file (audio, video, image) to this forum:<br />
-        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select File</a>
-        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini', 'placeholder':'File ID'}}) }}{{ form_errors(form.mediatextarea) }}
-        <div id="files"></div>
-{#         <input type="textarea" disabled="true" id="file-textarea" />#}
-{#         {{ form_row(form.mediaID) }}#}
-{#         {{ form_row(form.mediaIncluded) }}#}
-        {{ form_row(form.titleText, {'attr':{'class':'input-xxlarge'}}) }}
-        <div class="row-fluid">
-            {{ form_widget(form.submit) }}
-            <a id="forum-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
-            <a id="forum-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
-        </div>
-    {{ form_end(form) }}
-  
+	    {{ form_start(form) }}
+	        {{ form_errors(form) }}
 
-</div>
+	        Add a media file (audio, video, image) to this forum:<br />
+	        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select File</a>
+	        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini', 'placeholder':'File ID'}}) }}{{ form_errors(form.mediatextarea) }}
+	        <div id="files"></div>
+        	{# <input type="textarea" disabled="true" id="file-textarea" /> #}
+			{# {{ form_row(form.mediaID) }} #}
+			{# {{ form_row(form.mediaIncluded) }} #}
+	        {{ form_row(form.titleText, {'attr':{'class':'input-xxlarge'}}) }}
+	        <div class="row-fluid">
+	            {{ form_widget(form.submit) }}
+
+	            <a id="forum-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
+	            <a id="forum-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
+	        </div>
+	    {{ form_end(form) }}
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
 {% block javascripts %}
- {{ parent() }}
- <script type='text/javascript'>
- var mediaChooser;
- $("#selectFiles").click(function(e) {
- 	mediaChooser = new MediaChooser($("#files"), function(mediaID)
- 		 	{
+	{{ parent() }}
+
+	<script type='text/javascript'>
+		var mediaChooser;
+
+		$("#selectFiles").click(function(e) {
+ 			mediaChooser = new MediaChooser($("#files"), function(mediaID) {
 		 		//alert(mediaID);
  	            setMediaID(mediaID);
 	 		}, true);
- 	mediaChooser.chooseMedia();
- });
 
- function setMediaID(mid) {
-	    $("#ForumForm_mediaID").attr('data-mid', mid);
-	    $("#ForumForm_mediatextarea").val(mid);
-	    
-	    //alert(mid);
-};
+ 			mediaChooser.chooseMedia();
+ 		});
 
-$(document).ready(function() {
-    // since I hid the real 'submit' button to provide a nicely stylized button
-    // I have to click the real button when you click on the fancy one
-    $("#forum-form-submit-button").click(function(e) {
-        e.preventDefault();
-    	$("button#ForumForm_submit").click();
-    	
-    });
-});
+		function setMediaID(mid) {
+	    	$("#ForumForm_mediaID").attr('data-mid', mid);
+	    	$("#ForumForm_mediatextarea").val(mid);
+	    	
+	    	//alert(mid);
+		};
 
-</script>
- 
-
+		$(document).ready(function() {
+		    // since I hid the real 'submit' button to provide a nicely stylized button
+		    // I have to click the real button when you click on the fancy one
+		    $("#forum-form-submit-button").click(function(e) {
+		        e.preventDefault();
+		    	$("button#ForumForm_submit").click();
+		    });
+		});
+	</script>
 {% endblock javascripts %}

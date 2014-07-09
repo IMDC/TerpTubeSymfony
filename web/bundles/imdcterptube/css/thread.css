@@ -1,5 +1,15 @@
+/*
+included by:
+Thread:viewthread.hml.twig
+Thread:viewthreadPrototype.hml.twig
+*/
 @CHARSET "UTF-8";
 
+/*
+Media:postMediaElement.html.twig
+Media:postMediaElementTweak.html.twig
+Thread:viewthreadPrototype.hml.twig
+*/
 #maincontent {
     min-height: 4em;
     border: 1px solid #bbb;
@@ -10,38 +20,70 @@
     overflow-x: auto;
 }
 
+/*
+Media:postMediaElement.html.twig
+Media:postMediaElementTweak.html.twig
+Thread:viewthreadPrototype.hml.twig
+*/
 div#mediaFileWrap, div#mediaFileWrap img {
     max-height: 720px;
     margin-bottom: 10px;
 }
 
+/*
+Thread:viewthread.html.twig
+Thread:viewthreadPrototype.hml.twig
+*/
 #rightsidecontent {
 /*     border: 1px dotted #cdcdcd;
  */
- max-height: 90%;
+ /*max-height: 90%;*/
  }
 
+/*
+Thread:viewthread.html.twig
+Thread:viewthreadPrototype.hml.twig
+*/
 div.post-reply-wrap {
     border: 1px solid #ddd;
     border-collapse: collapse;
-    padding-top: 5px;
+    border-radius: 4px;
+    padding-top: 15px;
     padding-bottom: 15px;
+    margin: 0;
 }
 
+/*
+Post:commentReplies.html.twig
+Thread:viewthread.html.twig
+Thread:viewthreadPrototype.hml.twig
+*/
 div.post-reply-date {
     font-size: 11px;
     color: #aaa;
 }
 
+/*
+Thread:viewthread.html.twig
+*/
 div.post-reply-content-wrap {
     min-height: 180px;
 }
 
+/*
+Post:commentReplies.html.twig
+Thread:viewthread.html.twig
+Thread:viewthreadPrototype.hml.twig
+thread.js
+*/
 div.post-reply-content {
     max-height: 600px;
     overflow-y: auto;
 }
 
+/*
+none
+*/
 div.offset-comment-reply-wrap {
      border: 1px solid #ddd;
      border-collapse: collapse;
@@ -49,78 +91,143 @@ div.offset-comment-reply-wrap {
      padding-bottom: 10px;
 }
 
+/*
+ambiguously used across many templates
+*/
 a#selectFiles {
 	vertical-align: top;
 }
 
+/*
+thread.js
+*/
 #PostFormFromThread_content {
-    width: 90%;	
+    /*width: 90%;	*/
 }
 
+/*
+thread.js
+*/
 #PostFormFromThread_submit {
 	display: none;
 }
 
+/*
+Thread:viewthread.html.twig
+Thread:viewthreadPrototype.html.twig
+thread.js
+*/
 div#thread-reply-container {
 	max-height: 900px;
 	overflow-y: auto;
 	overflow-x: visible;
 }
 
+/*
+player.js
+*/
 .videoControlsContainer.timeBox {
     font-size: 1.6em !important;
 }
 
+/*
+Media:postCommentMediaElement.html.twig
+Post:commentReplies.html.twig
+Thread:viewthreadPrototype.html.twig
+*/
 img.post-reply-image {
     max-height: 350px;
 }
 
-
+/*
+Media:postMediaElement.html.twig
+Media:postMediaElementTweak.html.twig
+Thread:viewthreadPrototype.html.twig
+*/
 .thread-video-supplemental-controls-wrap {
 /*     position: absolute;
     top: 188px;
     left: 191px; */
 }
 
+/*
+Media:postMediaElement.html.twig
+Media:postMediaElementTweak.html.twig
+Thread:viewThreadPrototype.html.twig
+*/
 .supp-video-controls {
     position: absolute;
 }
 
+/*
+^^^
+|||
+*/
 .supp-video-controls li img {
     max-width: 24px;
     margin-top: 5px;
     margin-left: 5px;
 }
 
+/*
+Media:postMediaElement.html.twig
+Media:postMediaElementTweak.html.twig
+Thread:viewthreadPrototype.html.twig
+*/
 span.edited-text-span {
     color: #aaa;
     font-size: 0.9em;
 }
 
+/*
+unused
+*/
 #ThreadEditForm_title {
     width: 60%;
 }
 
+/*
+Thread:editThread.html.twig
+*/
 #ThreadEditForm_content {
     width: 70%;
 }
 
+/*
+thread.js
+*/
 .postBorderHighlight {
     border: 2px solid red !important;
 }
 
+/*
+GLOBAL
+max-height not needed
+*/
 img.avatar {
+	margin: 0 auto;
     max-height: 150px;
 }
 
+/*
+unused
+*/
 div.temporal-post-wrap {
 
 }
 
+/*
+Media:postCommentMediaElement.html.twig
+Thread:viewthreadPrototype.html.twig
+*/
 .div-video-timeline {
     height: 30px;
 }
 
+/*
+Media:postCommentMediaElement.html.twig
+Thread:viewthreadPrototype.html.twig
+*/
 #back-timeline {
     background: #ddd;
     border: 1px solid #bbb;
@@ -128,29 +235,53 @@ div.temporal-post-wrap {
     width: 99%;
 }
 
+/*
+Media:postCommentMediaElement.html.twig
+Thread:viewthreadPrototype.html.twig
+*/
 .front-comment-div {
     height: 5px;
     position: relative;
     cursor: pointer;
 }
 
+/*
+unused
+hackish
+*/
 #spacerdiv {
      height: 400px;
 }
 
+/*
+thead.js
+*/
 div.post-reply-content video {
     border-top: 1px solid #ddd;
 }
 
+/*
+Thread:viewthread.html.twig
+*/
 div.post-reply-inner-wrap {
     margin-bottom: 15px;
 }
 
+/*
+Post:commentReplies.html.twig
+*/
 div.comment-reply-wrap {
-    margin-top: 10px;
+    /*margin-top: 10px;*/
 }
 
+/*
+Post:commentReplies.html.twig
+*/
 div.nested-comment-wrap {
-    border-top: 1px dashed #999;
+	border-top: 1px dashed #999;
+    border-collapse: collapse;
+    border-radius: 4px 0 0 4px;
     margin-top: 15px;
+    padding: 15px 0 15px 0;
+    background-color: #f5f5f5;
 }

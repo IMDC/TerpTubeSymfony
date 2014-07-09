@@ -10,7 +10,7 @@
 {{  include ('IMDCTerpTubeBundle:UserGroup:groupcreaterow.html.twig') }}
 <ul class="thumbnails">
     {% for usergroup in usergroups %}
-    <li class="span3">
+    <li class="col-md-3">
     	<a href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id} ) }}">
         <div class="thumbnail text-center">
             <h3>{{ usergroup.name }}</h3>

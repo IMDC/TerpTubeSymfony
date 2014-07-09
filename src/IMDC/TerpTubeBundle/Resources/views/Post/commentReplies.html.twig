@@ -1,115 +1,133 @@
-    <script type="text/javascript">
-        var options = new Array();
-        
-        if (typeof authorColors['{{ postReply.author.getId }}'] === 'undefined')
-        {
-        	authorColors['{{ postReply.author.getId }}'] = Player.getRandomColor();
-        }
-        options.color =  authorColors['{{ postReply.author.getId }}'];
-        options.drawOnTimeLine = {{ postReply.isTemporal ? 'true' : 'false' }};
-        var newreply = new KeyPoint('{{ postReply.id }}',
-            		               '{{ postReply.startTime }}',
-               		               '{{ postReply.endTime }}',
-               		               'reply',
-               		               options
-          		               );
-        postArray.push(newreply);
-        console.log(newreply.color);
-    </script>
-          
-		<div class="row-fluid comment-reply-wrap" id="post-{{ postReply.id }}-wrap" data-pid="{{ postReply.id }}">
-		    <div class="span2" id="nested-comment-spacer"></div>
-		    <div class="span10 well nested-comment-wrap">
-			    <div class="span2 post-reply-user-info-wrap">
-			        <div class="row-fluid post-reply-user-avatar-wrap">
-			            <img class="avatar" alt="avatar" title="" src="{{ postReply.author.getProfile.avatar ? asset(postReply.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
-			            </div>
-				    <div class="row-fluid text-center post-reply-user-info">
-				        <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ postReply.author }}</a>
-				    </div>
-				    <div class="row-fluid text-center post-reply-user-tools">
-				        <ul class="unstyled inline thread-creator-tools-wrap">
-				            <li>
-				            {% if app.user.getId == postReply.author.getId %}
-				            {% set thisistheuser = true %}
-				                <i class="fa fa-envelope-o" style="color:lightgray"></i>
-				            {% else %}
-				                <a href="{{ path('imdc_message_user_specific', {'userid':postReply.author.getUserName()}) }}" title="Send a message to {{ postReply.author.getUserName }}"><i class="fa fa-envelope-o"></i></a>
-				            {% endif %}
-				            </li>
-		                            {#  ---------- friend section ---------------------- #}
-		                    <li>
-		                    {% if app.user.getId == postReply.author.getId %}
-		                        <i class="fa fa-user" style="color:lightgray" title="This is you"></i>
-		                    {% elseif app.user.isUserOnFriendsList(postReply.author) %}
-		                        <i class="fa fa-dot-circle-o" style="color:green" title="Already friends"></i>
-		                    {% else %}
-		                        <a href="{{ path('imdc_add_to_friends_list', {'userid':postReply.author.getId} ) }}" title="Click to add {{ postReply.author.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
-		                    {% endif %}
-		                    </li>
-		                    {#  ---------------- end friend section ---------------- #}
-		                </ul>
-			        </div> <!-- ./post-reply-user-tools -->		                    
-			    </div> <!-- /post-reply-user-info-wrap div -->
-		        <div class="span9 post-reply-avatar-content-wrap" data-pid="{{ postReply.id }}">
-			        <div class="row-fluid">
-			            <div class="pull-right post-reply-date">
-			                {{ postReply.created|date('o-m-N H:i') }}
-			                {% if postReply.editedBy is not null %}
-			                (edited at {{ postReply.editedAt|date('o-m-N H:i') }} by {{ postReply.editedBy.getUsername }})
-			                {% endif %}
-			            </div>
-			        </div>
-			        <div class="row-fluid post-reply-content">
-			        {% if postReply.attachedFile is defined and postReply.attachedFile|length > 0 %}
-					    {% set postMediaFile = postReply.attachedFile[0] %}
+{# included by
+Thread:viewthread.html.twig
+end included by #}
+
+<script type="text/javascript">
+	var options = new Array();
+
+	if (typeof authorColors['{{ postReply.author.getId }}'] === 'undefined') {
+		authorColors['{{ postReply.author.getId }}'] = Player.getRandomColor();
+	}
+
+	options.color =  authorColors['{{ postReply.author.getId }}'];
+	options.drawOnTimeLine = {{ postReply.isTemporal ? 'true' : 'false' }};
+
+	var newreply = new KeyPoint('{{ postReply.id }}',
+			'{{ postReply.startTime }}',
+			'{{ postReply.endTime }}',
+			'reply',
+			options
+	);
+
+	postArray.push(newreply);
+	console.log(newreply.color);
+</script>
+
+<div class="col-md-12">
+	<div class="row comment-reply-wrap" id="post-{{ postReply.id }}-wrap" data-pid="{{ postReply.id }}">
+		<div class="col-md-1" id="nested-comment-spacer"></div>
+		<div class="col-md-11 nested-comment-wrap">
+			<div class="col-md-2 post-reply-user-info-wrap">
+				<div class="row post-reply-user-avatar-wrap">
+					<div class="col-md-12">
+						<img class="img-responsive avatar" alt="avatar" title="" src="{{ postReply.author.getProfile.avatar ? asset(postReply.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+					</div>
+				</div>
+				<div class="row text-center post-reply-user-info">
+					<div class="col-md-12">
+						<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ postReply.author }}</a>
+					</div>
+				</div>
+				<div class="row text-center post-reply-user-tools">
+					<div class="col-md-12">
+						<ul class="list-unstyled list-inline thread-creator-tools-wrap">
+							<li>
+							{% if app.user.getId == postReply.author.getId %}
+								{% set thisistheuser = true %}
+								<i class="fa fa-envelope-o" style="color:lightgray"></i>
+							{% else %}
+								<a href="{{ path('imdc_message_user_specific', {'userid':postReply.author.getUserName()}) }}" title="Send a message to {{ postReply.author.getUserName }}"><i class="fa fa-envelope-o"></i></a>
+							{% endif %}
+							</li>
+							{#  ---------- friend section ---------------------- #}
+							<li>
+							{% if app.user.getId == postReply.author.getId %}
+								<i class="fa fa-user" style="color:lightgray" title="This is you"></i>
+							{% elseif app.user.isUserOnFriendsList(postReply.author) %}
+								<i class="fa fa-dot-circle-o" style="color:green" title="Already friends"></i>
+							{% else %}
+								<a href="{{ path('imdc_add_to_friends_list', {'userid':postReply.author.getId} ) }}" title="Click to add {{ postReply.author.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
+							{% endif %}
+							</li>
+							{#  ---------------- end friend section ---------------- #}
+						</ul>
+					</div>
+				</div> <!-- ./post-reply-user-tools -->		                    
+			</div> <!-- /post-reply-user-info-wrap div -->
+			<div class="col-md-9 post-reply-avatar-content-wrap" data-pid="{{ postReply.id }}">
+				<div class="row" style="margin-bottom: 10px;">
+					<div class="pull-right post-reply-date">
+						{{ postReply.created|date('o-m-N H:i') }}
+						{% if postReply.editedBy is not null %}
+							(edited at {{ postReply.editedAt|date('o-m-N H:i') }} by {{ postReply.editedBy.getUsername }})
+						{% endif %}
+					</div>
+				</div>
+				<div class="row post-reply-content">
+					{% if postReply.attachedFile is defined and postReply.attachedFile|length > 0 %}
+						{% set postMediaFile = postReply.attachedFile[0] %}
 					{% else %}
-					    {% set postMediaFile = none  %}
+						{% set postMediaFile = none  %}
 					{% endif %}
-									    
-					{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
-					{% if postMediaFile is not defined or postMediaFile is null %}
-					{# do nothing #}
-					{% elseif postMediaFile.type == 0 %}
-				    {# -----------   if type of media is an IMAGE   -------- #}
-					    <div class="row-fluid">
-					        <img class="post-reply-image" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
-				        </div>
-					{# -----------   if type of media is a VIDEO   -------- #}
-					{% elseif postMediaFile.type == 1 %}
-					    {% set displayTestPostDensityBar = TRUE %}
-				        <div class="row-fluid">
-					        <video controls width="100%" id="{{ postMediaFile.getID }}" preload="auto">
-					        	<source src="{{ asset(postMediaFile.getResource.getWebPathWebm) }}"/>
-					        	<source src="{{ asset(postMediaFile.getResource.getWebPath) }}"/>
-					        </video>
-				        </div>
-					{% elseif postMediaFile.type == 2 %}
-					{# -----------   if type of media is AUDIO   -------- #}
-				        <div class="row-fluid">
-					        <audio controls style="width: 100%">
-					            <source src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
-					            Your browser does not support the audio element, please upgrade to Google Chrome
-					        </audio>
-				        </div>
-					{% endif %}
-		
-		                <div class="row-fluid">
-		                    {{ postReply.content|nl2br }}
-		                </div>
-		            </div>
-		        </div> <!-- /post-reply-avatar-content-wrap div -->
-		        <div class="span1 pull-right" id="post-reply-tools">
-		            <div class="row-fluid">
-		                <ul class="unstyled">
-		                    {% if postReply.author.getId == app.user.getId %}
-		{#                  <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li>#}
-		                    <li><a class="post-comment-edit" title="Edit this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
-		{#                  <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li>#}
-		                    <li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            
-		                    {% endif %}
-		                </ul>
-		            </div>
-		        </div> <!-- /post-reply-tools -->
-	        </div> <!--  /.span10 .well-->
-		</div> <!-- ./post-reply-wrap -->
+
+					<div class="col-md-12">
+						{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
+						{% if postMediaFile is not defined or postMediaFile is null %}
+							{# do nothing #}
+						{% elseif postMediaFile.type == 0 %}
+						{# -----------   if type of media is an IMAGE   -------- #}
+							<div class="row">
+								<img class="img-responsive post-reply-image" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
+							</div>
+						{# -----------   if type of media is a VIDEO   -------- #}
+						{% elseif postMediaFile.type == 1 %}
+							{% set displayTestPostDensityBar = TRUE %}
+							<div class="row">
+								<video controls width="100%" id="{{ postMediaFile.getID }}" preload="auto">
+									<source src="{{ asset(postMediaFile.getResource.getWebPathWebm) }}"/>
+									<source src="{{ asset(postMediaFile.getResource.getWebPath) }}"/>
+								</video>
+							</div>
+						{% elseif postMediaFile.type == 2 %}
+						{# -----------   if type of media is AUDIO   -------- #}
+							<div class="row">
+								<audio controls style="width: 100%">
+									<source src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
+									Your browser does not support the audio element, please upgrade to Google Chrome
+								</audio>
+							</div>
+						{% endif %}
+
+						<div class="row" style="margin-top: 10px;">
+							{{ postReply.content|nl2br }}
+						</div>
+					</div>
+				</div>
+			</div> <!-- /post-reply-avatar-content-wrap div -->
+			<div class="col-md-1 pull-right" id="post-reply-tools">
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="list-unstyled">
+							{% if postReply.author.getId == app.user.getId %}
+								{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
+								<li><a class="post-comment-edit" title="Edit this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
+								{# <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li> #}
+								<li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+			</div> <!-- /post-reply-tools -->
+		</div> <!--  /.col-md-10 .well-->
+	</div> <!-- ./post-reply-wrap -->
+</div>

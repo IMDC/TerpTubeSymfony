@@ -1,6 +1,6 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-<div class="row-fluid text-center" id="mediaFileWrap">
+<div class="row text-center" id="mediaFileWrap">
     
 	        
     {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
@@ -66,7 +66,7 @@
 </div> <!-- /mediaFileWrap div -->
     {% endif %}
 {% if thread.title is defined %}
-<div class="row-fluid thread-title-wrap">
+<div class="row thread-title-wrap">
     <h1>{{ thread.title }}</h1>
 </div>
 {% endif %}
@@ -75,7 +75,7 @@
 {#                 {{ thread.content|nl2br }}#}
 {#            </div>#}
 {# </div> <!-- /.thread-content-wrap -->#}
-<div class="row-fluid thread-edited-element-wrap">
+<div class="row thread-edited-element-wrap">
     <ul class="unstyled inline">
         <li><span class="edited-text-span" title="{{ thread.creationDate|date('o-m-d H:i') }}">Created {{ time_diff(thread.creationDate)}}</span></li>
         {% if thread.editedBy is not null %}
@@ -83,18 +83,18 @@
         {% endif %}
     </ul>
 </div> <!-- /.thread-edited-element-wrap -->
-<div class="row-fluid" class="thread-creator-details">
-    <div class="span12">
+<div class="row" class="thread-creator-details">
+    <div class="col-md-12">
         {# include('IMDCTerpTubeBundle:Thread:smalluserinfo.html.twig') #}
         {% set member = thread.creator %}
 {#         {% include('IMDCTerpTubeBundle:Member:infoBlock.html.twig') %} #}
             {% set profile = member.getProfile %}
 
-		<div class="row-fluid">
-		   <div class="span2" id="avatar-wrap">
+		<div class="row">
+		   <div class="col-md-2" id="avatar-wrap">
 		       <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName()} ) }}"><img class="avatar" alt="avatar" title="" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a>
 		   </div> <!-- /avatar-wrap -->
-		   <div class="span2" id="thread-creator-info-wrap">
+		   <div class="col-md-2" id="thread-creator-info-wrap">
 		       <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName()} ) }}">{{ member.getUserName() }}</a>
 		       <p>
 		            <ul class="unstyled inline thread-creator-tools-wrap">
@@ -124,13 +124,13 @@
 		{#        <p class="muted" style="font-size:80%;">{{ 'member.infoBlock.joined'|trans }}: {{ member.getJoinDate()|date('M j Y') }}</p>#}
 		{#        <p class="muted" style="font-size:80%;">{{ 'member.infoBlock.postCount'|trans }}: {{ member.getPostCount() }}</p>#}
 		   </div> <!--  /thread-creator-info-wrap -->
-		   <div class="span8 thread-content-wrap">
+		   <div class="col-md-8 thread-content-wrap">
 		       {% if thread.content is defined %}
-		       <div class="row-fluid" id="maincontent">
+		       <div class="row" id="maincontent">
 		           {{ thread.content|nl2br }}
 	           </div>
 	           {% endif %}
 		   </div>
-		</div> <!-- /row-fluid -->
-    </div> <!-- /span12 -->
+		</div> <!-- /row -->
+    </div> <!-- /col-md-12 -->
 </div> <!-- /.thread-creator-details end of user-deets -->

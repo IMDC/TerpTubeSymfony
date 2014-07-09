@@ -14,7 +14,7 @@
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-<div class="span9">
+<div class="col-md-9">
     
     {{ form_start(form) }}
         {{ form_errors(form) }}
@@ -46,15 +46,15 @@
                        ">----Original Message below----\n\n" ~ form.vars.value.content }) 
         }}
         {% if message.getAttachedMedia is defined and message.getAttachedMedia is not null and message.getAttachedMedia|length > 0 %}
-        <div class="row-fluid well">
-            <div class="span2">
+        <div class="row well">
+            <div class="col-md-2">
                 This message has the following attached Media:
             </div>
-            <div class="span10">
+            <div class="col-md-10">
                 <ul class="unstyled inline">
                 {% for mediaFile in message.getAttachedMedia %}
 			        <li>
-				        <div class="span2">
+				        <div class="col-md-2">
 				        {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
 				        </div>
 			        </li>
@@ -68,11 +68,13 @@
     {{ form_end(form) }}
 </div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
 {% block javascripts %}
-{{ parent() }}
+	{{ parent() }}
+
 <script>
 //     var attachedMediaCount = '{{ form.attachedMedia|length }}';
 

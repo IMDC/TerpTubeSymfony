@@ -1,24 +1,27 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Thread/new.html.twig #}
+
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block title %}Create a new Topic{% endblock title %}
 
 {% block herounit %}
-<h1>Create a new Topic</h1>
+	<h1>Create a new Topic</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-<div class="span9">
+<div class="col-md-9">
     {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_row(form.parentForum) }}
         {{ form_row(form.mediaIncluded) }}
-        <div class="row-fluid">
-            <div class="span4">
+        <div class="row">
+            <div class="col-md-4">
             {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
             {% if mediaFile is not defined %}
                 <!-- do nothing -->
@@ -38,8 +41,8 @@
                     Your browser does not support the audio element, please upgrade to Google Chrome
                 </audio>
         {% endif %}
-        </div> <!-- /span4 -->
-        </div> <!-- /row-fluid -->
+        </div> <!-- /col-md-4 -->
+        </div> <!-- /row -->
         
         {{ form_row(form.title) }}
         {{ form_row(form.content) }}
@@ -49,5 +52,6 @@
     {{ form_end(form) }}
 </div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

@@ -1,23 +1,23 @@
 {% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block motionMedia %}
-<audio	class="preview" id="{{ mediaFile.getID }}" preload="auto">
-	<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
-	<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
-</audio>
-<script type='text/javascript'> 
- var player = new Player($("#{{ mediaFile.getID }}"));
- player.options.areaSelectionEnabled = true;
- player.options.updateTimeType = player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
- //player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
- //player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
- 
- // player.options.playHeadImage = "images/feedback_icons/round_plus.png";
- // player.options.playHeadImageOnClick = function(){ alert("plus");};
+	<audio	class="preview" id="{{ mediaFile.getID }}" preload="auto">
+		<source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}"/>
+		<source src="{{ asset(mediaFile.getResource.getWebPath) }}"/>
+	</audio>
 
- player.createControls();
+	<script type='text/javascript'>
+		var player = new Player($("#{{ mediaFile.getID }}"));
+ 		player.options.areaSelectionEnabled = true;
+ 		player.options.updateTimeType = player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
+		//player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
+ 		//player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
+
+ 		// player.options.playHeadImage = "images/feedback_icons/round_plus.png";
+ 		// player.options.playHeadImageOnClick = function(){ alert("plus");};
+
+ 		player.createControls();
  </script>
 {% endblock motionMedia %}
-
- 

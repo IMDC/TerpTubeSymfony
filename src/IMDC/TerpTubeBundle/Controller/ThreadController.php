@@ -27,7 +27,10 @@ use IMDC\TerpTubeBundle\IMDCTerpTubeBundle;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormDeleteType;
 use IMDC\TerpTubeBundle\Entity\User;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Debug\Exception\ContextErrorException;
+use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
 
 /**
  * Controller for all Thread related actions including edit, delete, create
@@ -126,6 +129,13 @@ class ThreadController extends Controller
         		'em' => $em,
                 'thread' => $thread,
         ));
+        
+        $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+        $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+        $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+        $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+        $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
+        
         $em = $this->getDoctrine()->getManager();
         
         $postform->handleRequest($request);
@@ -201,6 +211,7 @@ class ThreadController extends Controller
         			'thread' => $thread,
         			'threadposts' => $threadposts,
         	        'threadsjson' => json_encode($threadposts),
+        			'uploadForms' => $uploadForms
         	));
         }
         
@@ -209,6 +220,7 @@ class ThreadController extends Controller
                 'form' => $postform->createView(),
         		'thread' => $thread,
                 'threadposts' => $threadposts,
+        		'uploadForms' => $uploadForms
         ));
     }
     

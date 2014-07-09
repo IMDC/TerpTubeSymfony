@@ -7,29 +7,33 @@
 {% block herounit %}<h1>Groups</h1>{% endblock herounit %}
 
 {% block underherounitrow1 %}
-{{  include ('IMDCTerpTubeBundle:UserGroup:groupcreaterow.html.twig') }}
-<ul class="thumbnails">
-    {% for usergroup in usergroups %}
-    <li class="span3">
-    	<a href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id} ) }}">
-        <div class="thumbnail text-center">
-            <h3>{{ usergroup.name }}</h3>
-            <p>Created: {{ usergroup.dateCreated|date('g:ia F j Y') }}</p>
-            <p>Members: {{ usergroup.getMembers|length }}</p>
-            <p>Founder: {{ usergroup.getUserFounder.getUserName }}</p>
-            <p>
-                <ul class="unstyled inline">
-                <li><a class="btn btn-primary" href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id}) }}">View Group Info</a></li>
-                {% if app.user == usergroup.getUserFounder %}
-                <li><a class="btn btn-primary" href="{{ path('imdc_group_edit', {'usergroupid' : usergroup.id}) }}">Edit Group</a></li>
-                {% endif %}
-                </ul>
-                
-            </p>
-    	</a>
-    </li>
-{% endfor %}
-</ul>
+	{{  include ('IMDCTerpTubeBundle:UserGroup:groupcreaterow.html.twig') }}
+
+	<div class="col-md-12">
+		<ul class="thumbnails">
+			{% for usergroup in usergroups %}
+				<li>
+					<a href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id} ) }}">
+						<div class="thumbnail text-center">
+							<h3>{{ usergroup.name }}</h3>
+							<p>Created: {{ usergroup.dateCreated|date('g:ia F j Y') }}</p>
+							<p>Members: {{ usergroup.getMembers|length }}</p>
+							<p>Founder: {{ usergroup.getUserFounder.getUserName }}</p>
+							<p>
+								<ul class="unstyled inline">
+									<li><a class="btn btn-primary" href="{{ path('imdc_group_view', {'usergroupid' : usergroup.id}) }}">View Group Info</a></li>
+									{% if app.user == usergroup.getUserFounder %}
+										<li><a class="btn btn-primary" href="{{ path('imdc_group_edit', {'usergroupid' : usergroup.id}) }}">Edit Group</a></li>
+									{% endif %}
+								</ul>
+							</p>
+						</div>
+					</a>
+				</li>
+			{% endfor %}
+		</ul>
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

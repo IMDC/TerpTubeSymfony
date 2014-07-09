@@ -5,7 +5,7 @@
 	min-height: 20em;
 }
 body {
-	padding-top: 1em;
+	padding-top: 65px; /* 50px for the navbar + 15px extra */
 }
 
 ul.nav-list img {
@@ -18,12 +18,17 @@ span.content-created-datetime-span {
 }
 
 div.mainsidebarnav {
-  /*   min-width: 100px; */
+    /*min-width: 100px;*/
+    padding-right: 0;
 }
 
 div.sidebar-nav {
     background-color: transparent !important;
     border: none !important;
+}
+
+ul.sidebar-nav-ul li a img {
+	 margin: 0 auto;
 }
 
 ul.mainMenu-nav-ul {
@@ -42,4 +47,8 @@ span.contentTimeStampSpan {
 
 video.preview {
     border: 1px solid #ddd;
+}
+
+.fa-text-link {
+	margin-right: 5px;	
 }

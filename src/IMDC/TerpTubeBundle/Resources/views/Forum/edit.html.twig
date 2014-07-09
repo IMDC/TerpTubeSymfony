@@ -1,7 +1,10 @@
 {# src/IMDC/TerpTubeBundle/Resources/views/Forum/new.html.twig #}
+
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
@@ -10,53 +13,60 @@
 {% block sidebarlinks_pages %}<li class="active">{% endblock %}
 
 {% block herounit_wrap %}
-<div class="page-header">
-    <h1>Editing: {{ forum.titleText }}</h1>
-</div>
+	<div class="page-header">
+	    <h1>Editing: {{ forum.titleText }}</h1>
+	</div>
 {% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
-<div class="span9">
-  {# {{ form(form) }} #}
-  
+	<div class="col-md-9">
+  		{# {{ form(form) }} #}
 
-    {{ form_start(form) }}
-        {{ form_errors(form) }}
-        {% if forum.titleMedia[0] is defined %}
-        {% set mediaFile = forum.titleMedia[0] %}
-        <p>
-        <div class="row-fluid">
-            <div class="span4">
-            {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
-            </div> <!-- /span4 -->
-        </div> <!-- /row-fluid -->
-        </p>
-        Change the media file for this forum (image, audio, video):<br />
-        {% else %}
-        Add a media file to this forum (image, audio, video):<br />
-        {% endif %}
-        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
-        <div id="files"></div>
-{#         <input type="textarea" disabled="true" id="file-textarea" />#}
-{#         {{ form_row(form.mediaID) }}#}
-{#         {{ form_row(form.mediaIncluded) }}#}
-        {{ form_row(form.titleText, {'attr':{'class':'input-xxlarge'}}) }}
-        <div class="row-fluid">
-            {{ form_widget(form.submit) }}
-            <a id="forum-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
-            <a id="forum-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
-        </div>
-    {{ form_end(form) }}
-  
+	    {{ form_start(form) }}
+	        {{ form_errors(form) }}
 
-</div>
+	        {% if forum.titleMedia[0] is defined %}
+		        {% set mediaFile = forum.titleMedia[0] %}
+		        <p>
+			        <div class="row">
+			            <div class="col-md-4">
+			            	{{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
+			            </div> <!-- /"col-md-4" -->
+			        </div> <!-- /row -->
+		        </p>
+		        Change the media file for this forum (image, audio, video):<br />
+		    {% else %}
+		        Add a media file to this forum (image, audio, video):<br />
+	        {% endif %}
+
+	        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
+
+	        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
+
+	        <div id="files"></div>
+
+			{# <input type="textarea" disabled="true" id="file-textarea" /> #}
+			{# {{ form_row(form.mediaID) }} #}
+			{# {{ form_row(form.mediaIncluded) }} #}
+
+	        {{ form_row(form.titleText, {'attr':{'class':'input-xxlarge'}}) }}
+
+	        <div class="row-fluid">
+	            {{ form_widget(form.submit) }}
+
+	            <a id="forum-form-submit-button" class="btn btn-success" href="#"><i class="fa fa-check"></i> Submit</a>
+	            <a id="forum-form-cancel-button" class="btn btn-danger" href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-times"></i> Cancel</a>
+	        </div>
+	    {{ form_end(form) }}
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
 {% block javascripts %}
- {{ parent() }}
+	{{ parent() }}
+
  <script type='text/javascript'>
  var mediaChooser;
  $("#selectFiles").click(function(e) {

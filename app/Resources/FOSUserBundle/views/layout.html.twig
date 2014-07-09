@@ -1,23 +1,15 @@
 {% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
 
 {%  set page_title = 'title.' ~ app.request.attributes.get('_route') %}
+
 {%  block herounit %}
 	<h1>{{ page_title|trans({}, 'FOSUserBundle') }}</h1>
 {%  endblock herounit %}
-{% block underherounitrow1 %}
-        {% for type, messages in app.session.flashbag.all() %}
-            {% for key, message in messages %}
-                <div class="flash-{{ type }}">
-                    {{ message|trans({}, 'FOSUserBundle') }}
-                </div>
-            {% endfor %}
-        {% endfor %}
 
-        <div>
-            {% block fos_user_content %}
-            {% endblock fos_user_content %}
-        </div>
-        
+{% block underherounitrow1 %}
+	{% block fos_user_content %}
+	{% endblock fos_user_content %}
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

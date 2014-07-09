@@ -14,40 +14,40 @@
             </tr>
         </thead>
         <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td><a href="{{ path('permissions_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.accessLevel }}</td>
-                <td>
-                {% for users in entity.usersWithAccess %}
-                    {{ usersWithAccess.getUsername|join(', ') }}
-                {% endfor %}
-                </td>
-                <td>
-                {% for usergroups in entity.userGroupsWithAccess %}
-                    {{ userGroupsWithAccess.getTitle|join(', ') }}
-                {% endfor %}
-                </td>
-                <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('permissions_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('permissions_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
+	        {% for entity in entities %}
+	            <tr>
+	                <td><a href="{{ path('permissions_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+	                <td>{{ entity.accessLevel }}</td>
+	                <td>
+		                {% for users in entity.usersWithAccess %}
+		                    {{ usersWithAccess.getUsername|join(', ') }}
+		                {% endfor %}
+	                </td>
+	                <td>
+		                {% for usergroups in entity.userGroupsWithAccess %}
+		                    {{ userGroupsWithAccess.getTitle|join(', ') }}
+		                {% endfor %}
+	                </td>
+	                <td>
+	                <ul>
+	                    <li>
+	                        <a href="{{ path('permissions_show', { 'id': entity.id }) }}">show</a>
+	                    </li>
+	                    <li>
+	                        <a href="{{ path('permissions_edit', { 'id': entity.id }) }}">edit</a>
+	                    </li>
+	                </ul>
+	                </td>
+	            </tr>
+	        {% endfor %}
         </tbody>
     </table>
 
-        <ul>
+    <ul>
         <li>
             <a href="{{ path('permissions_new') }}">
                 Create a new entry
             </a>
         </li>
     </ul>
-    {% endblock %}
+{% endblock %}

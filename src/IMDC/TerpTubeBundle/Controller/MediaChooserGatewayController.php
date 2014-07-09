@@ -62,28 +62,33 @@ class MediaChooserGatewayController extends Controller
 		$prefix = "";
 		if ($request->isXmlHttpRequest())
 			$prefix = "ajax.";
+		/*$path = array('url' => null,
+				'_route' => $request->attributes->get('_route'),
+				'_route_params' => $request->attributes->get('_route_params')
+				);*/
+		$path = array('url' => null);
 		switch ($type)
 		{
 		case MediaChooserGatewayController::TYPE_ALL:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:gateway', array('url' => null));
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:gateway', $path);
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_VIDEO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideo', array('url' => null));
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideo', $path);
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_AUDIO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudio', array('url' => null));
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudio', $path);
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_IMAGE:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addImage', array('url' => null));
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addImage', $path);
 			break;
 		case MediaChooserGatewayController::TYPE_UPLOAD_OTHER:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addOther', array('url' => null));
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addOther', $path);
 			break;
 		case MediaChooserGatewayController::TYPE_RECORD_AUDIO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudioRecording', array('url' => null));
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addAudioRecording', $path);
 			break;
 		case MediaChooserGatewayController::TYPE_RECORD_VIDEO:
-			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideoRecording', array('url' => null));
+			$response = $this->forward('IMDCTerpTubeBundle:AddFileGateway:addVideoRecording', $path);
 			break;
 		}
 // 		if ($request->isXmlHttpRequest())

@@ -1,3 +1,7 @@
+/*
+included by:
+Forum:view.hml.twig
+*/
 @CHARSET "UTF-8";
 
 img.forum-img-thumbnail {
@@ -51,4 +55,13 @@ div.thread-title-wrap {
 
 .thumbnail-video video {
     max-height: 200px;
+}
+
+/*
+GLOBAL
+max-height not needed
+*/
+img.avatar {
+    margin: 0 auto;
+    max-height: 150px;
 }

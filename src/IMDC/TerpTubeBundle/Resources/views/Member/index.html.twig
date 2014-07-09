@@ -1,8 +1,10 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/memberDirectory.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
@@ -11,78 +13,90 @@
 {% block sidebarlinks_members %}<li class="active">{% endblock sidebarlinks_members %}
 
 {% block herounit_wrap %}
-<h1>Public Member Directory</h1>
+	<h1>Public Member Directory</h1>
 {% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
+	<div class="container-flow">
+		<div class="row">
+			<div class="col-md-2" style="margin: 0 0 10px 15px;">
+		        {% include('IMDCTerpTubeBundle:Member:sortDropdown.html.twig') %}
+		    </div>
 
-<div class="row-fluid">
-    {% if pagination is defined %}
-    <div class="span2">
-        {{ knp_pagination_render(pagination) }}
-    </div>
-    {% endif %}
-    <div class="span2" style="margin:20px 0;">
-        {% include('IMDCTerpTubeBundle:Member:sortDropdown.html.twig') %}
-    </div>
-</div>
+		    {% if pagination is defined %}
+			    <div class="col-md-8">
+			        {{ knp_pagination_render(pagination) }}
+			    </div>
+		    {% endif %}
+		</div>
 
-<ul class="thumbnails">
-{% set members = pagination %}
-{% for member in members if member.getProfile %}
-    {% set profile = member.getProfile %}
-    {% if loop.index % 4 == 1 %}
-    <div class="row-fluid member-row">
-    {% endif %}
-    <li class="span3">
-        <div class="thumbnail text-center">
-            <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}"><img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
-            <h3>{{ member.userName }}</h3>
-            <p>Joined: {{ member.joinDate|date('F j, Y') }}</p>
-            {#<p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null?'form.generic.empty'|trans: profile.interestedInMentoredByMentor? 'form.generic.yes'|trans: 'form.generic.no'|trans }}</p>#}
-{#             <p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null? '<i class="fa fa-question"></i>' : profile.interestedInMentoredByMentor ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p>#}
-{#             <p>{{'profile.show.interestedInMentoredByInterpreter.title'|trans}} : {{ profile.interestedInMentoredByInterpreter is null?'<i class="fa fa-question"></i>': profile.interestedInMentoredByInterpreter? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
-{#             <p>{{'profile.show.interestedInMentoringSignLanguage.title'|trans}} : {{ profile.interestedInMentoringSignLanguage is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringSignLanguage? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
-{#             <p>{{'profile.show.interestedInMentoringInterpreter.title'|trans}} : {{ profile.interestedInMentoringInterpreter is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringInterpreter? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
-{#             <p>{{'profile.show.interestedInMentoringMentor.title'|trans}} : {{ profile.interestedInMentoringMentor is null?'<i class="fa fa-question"></i>': profile.interestedInMentoringMentor? '<i class="fa fa-check"></i>': '<i class="fa fa-times"></i>' }}</p>#}
-            <p>
-            {% if app.user == member %}
-                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Your Profile</a>
-                <a class="btn" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> View your Friend's list</a>
-            {% elseif app.user is not null and app.user.isUserOnFriendsList(member) %}
-                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
-                <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : member.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}"><i class="fa fa-minus-circle"></i> Remove from Friend's list</a>
-            {% else %}
-                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
-                <a class="btn btn-success" href="{{ path('imdc_add_to_friends_list', {'userid' : member.id, 'redirect' : 'imdc_member_list_public'} ) }}"><i class="fa fa-plus-circle"></i> Add to Friend's list</a>
-            {% endif %}
-            
-            {% if not (app.user == member) %}
-                {% if app.user.isUserOnMentorList(member) %}
-                <span class="label label-success"><i class="fa fa-star"></i> This person is your mentor</span>
-                {% else %}
-                <a class="btn" href="{{ path('imdc_invitation_create_tobementor', {'id':member.id}) }}"><i class="fa fa-asterisk"></i> Invite user to be your mentor</a>
-                {% endif %}
-                {% if app.user.isUserOnMenteeList(member) %}
-                <span class="label label-warning"><i class="fa fa-star"></i> This user is your mentee</span>
-                {% endif %}
-            {% endif %}
-            </p>
-            <p>
-                Post count: {{ member.getPostCount }}
-            </p>
-        </a>
-    </li>
-    {% if loop.index % 4 == 0 %}
-    </div>
-    {% endif %}
-{% endfor %}
-</ul>
+		{% set members = pagination %}
+		{% for member in members if member.getProfile %}
+		    {% set profile = member.getProfile %}
+		    {% if loop.index % 4 == 1 %}
+		    	<div class="row member-row">
+					<div class="col-md-12">
+						<ul class="thumbnails" style="padding-left: 0; list-style-type: none;">
+		    {% endif %}
+	
+		    <li class="col-md-3">
+		        <div class="thumbnail text-center">
+		            <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">
+						<img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" />
+					</a>
+		            <h3>{{ member.userName }}</h3>
+		            <p>Joined: {{ member.joinDate|date('F j, Y') }}</p>
+		            {# <p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null ? 'form.generic.empty'|trans: profile.interestedInMentoredByMentor ? 'form.generic.yes'|trans : 'form.generic.no'|trans }}</p> #}
+					{# <p>{{'profile.show.interestedInMentoredByMentor.title'|trans}} : {{ profile.interestedInMentoredByMentor is null ? '<i class="fa fa-question"></i>' : profile.interestedInMentoredByMentor ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p> #}
+					{# <p>{{'profile.show.interestedInMentoredByInterpreter.title'|trans}} : {{ profile.interestedInMentoredByInterpreter is null ? '<i class="fa fa-question"></i>' : profile.interestedInMentoredByInterpreter ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p> #}
+					{# <p>{{'profile.show.interestedInMentoringSignLanguage.title'|trans}} : {{ profile.interestedInMentoringSignLanguage is null ? '<i class="fa fa-question"></i>' : profile.interestedInMentoringSignLanguage ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p> #}
+					{# <p>{{'profile.show.interestedInMentoringInterpreter.title'|trans}} : {{ profile.interestedInMentoringInterpreter is null ? '<i class="fa fa-question"></i>' : profile.interestedInMentoringInterpreter ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p> #}
+					{# <p>{{'profile.show.interestedInMentoringMentor.title'|trans}} : {{ profile.interestedInMentoringMentor is null ? '<i class="fa fa-question"></i>' : profile.interestedInMentoringMentor ? '<i class="fa fa-check"></i>' : '<i class="fa fa-times"></i>' }}</p> #}
+		            <p>
+			            {% if app.user == member %}
+			                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Your Profile</a>
+			                <a class="btn btn-default" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> View your Friend's list</a>
+			            {% elseif app.user is not null and app.user.isUserOnFriendsList(member) %}
+			                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
+			                <a class="btn btn-default" href="{{ path('imdc_remove_from_friends_list', {'userid' : member.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}"><i class="fa fa-minus-circle"></i> Remove from Friend's list</a>
+			            {% else %}
+			                <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">View Profile</a>
+			                <a class="btn btn-success" href="{{ path('imdc_add_to_friends_list', {'userid' : member.id, 'redirect' : 'imdc_member_list_public'} ) }}"><i class="fa fa-plus-circle"></i> Add to Friend's list</a>
+			            {% endif %}
+			            
+			            {% if not (app.user == member) %}
+			                {% if app.user.isUserOnMentorList(member) %}
+			                	<span class="label label-success"><i class="fa fa-star"></i> This person is your mentor</span>
+			                {% else %}
+			                	<a class="btn" href="{{ path('imdc_invitation_create_tobementor', {'id' : member.id}) }}"><i class="fa fa-asterisk"></i> Invite user to be your mentor</a>
+			                {% endif %}
+			                {% if app.user.isUserOnMenteeList(member) %}
+			                	<span class="label label-warning"><i class="fa fa-star"></i> This user is your mentee</span>
+			                {% endif %}
+			            {% endif %}
+		            </p>
+		            <p>
+		                Post count: {{ member.getPostCount }}
+		            </p>
+		        </div>
+		    </li>
 
-<div class="row-fluid">
-    {{ knp_pagination_render(pagination) }}
-</div>
+		    {% if loop.index % 4 == 0 or loop.index == members|length %}
+						</ul>
+					</div>
+		    	</div>
+		    {% endif %}
+		{% endfor %}
 
+		{% if pagination is defined %}
+			<div class="row">
+			    <div class="col-md-8">
+			        {{ knp_pagination_render(pagination) }}
+			    </div>
+			</div>
+		{% endif %}
+	</div>
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

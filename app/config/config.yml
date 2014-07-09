@@ -32,7 +32,7 @@ twig:
 braincrafted_bootstrap:
     less_filter: lessphp
     assets_dir:  %kernel.root_dir%/../vendor/twitter/bootstrap
-    jquery_path: %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-1.8.3.js
+    jquery_path: %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Resources/public/jquery-1.10.2.js
     
 
 # Assetic Configuration
@@ -43,7 +43,7 @@ assetic:
     #java: /usr/bin/java
     filters:
         lessphp:
-          file:       %kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php
+          file:       %kernel.root_dir%/../vendor/oyejorge/less.php/lessc.inc.php
           apply_to:   "\.less$"
         cssrewrite: ~
         #closure:
@@ -54,34 +54,38 @@ assetic:
         bootstrap_css:
             inputs:
                 - %kernel.root_dir%/../vendor/twitter/bootstrap/less/bootstrap.less
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/less/responsive.less
+                - %kernel.root_dir%/../vendor/braincrafted/bootstrap-bundle/Braincrafted/Bundle/BootstrapBundle/Resources/less/form.less
             filters:
                 - lessphp
                 - cssrewrite
             output: css/bootstrap.css
         bootstrap_js:
             inputs:
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-transition.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-alert.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-button.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-carousel.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-collapse.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-dropdown.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-modal.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-tooltip.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-popover.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-scrollspy.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-tab.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-typeahead.js
-                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/bootstrap-affix.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/transition.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/alert.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/button.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/carousel.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/collapse.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/dropdown.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/modal.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/tooltip.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/popover.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/scrollspy.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/tab.js
+                - %kernel.root_dir%/../vendor/twitter/bootstrap/js/affix.js
+                - %kernel.root_dir%/../vendor/braincrafted/bootstrap-bundle/Braincrafted/Bundle/BootstrapBundle/Resources/js/bc-bootstrap-collection.js
             output: js/bootstrap.js
         jquery:
             inputs:
-                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-1.8.3.js
+                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Resources/public/jquery-1.10.2.js
             output: js/jquery.js
+        jquerymap:
+            inputs:
+                - %kernel.root_dir%/../vendor/jquery/jquerymap/jquery-1.10.2.min.map
+            output: js/jquery.min.map
         jqueryui:
             inputs:
-                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Sonata/jQueryBundle/Resources/public/jquery-ui-1.8.23.js
+                - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Resources/public/jquery-ui-1.10.4.js
             output: js/jquery-ui.js
     
 # Doctrine Configuration

@@ -1,3 +1,9 @@
+/*
+ * included by:
+ * Thread:viewthread.html.twig
+ * Thread:viewthreadPrototype.hml.twig
+ */
+
 var globalPlayer;
 var globalPlayHeadImage;
 var globalStartTimeInput;
@@ -10,48 +16,152 @@ var ccNormalImagePath;
 var ccPressedImagePath;
 var global_video_dom;
 
+Thread.TAG = "Thread: ";
+
+function Thread() {
+	this.mediaChooserParams = {
+		element: function() {
+			return $("div#files");
+		},
+		callback: function(media) {
+			$("#PostFormFromThread_mediatextarea").val(media.id);
+			$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
+		},
+		recorderConfiguration: {
+			forwardButtons:  ["<button class='forwardButton'></button>"],
+			forwardFunctions: [this.forwardFunction],
+			recordingSuccessFunction: this.recordingSucceeded
+		}
+	};
+	this.replyMediaChooserParams = [];
+}
+
+Thread.generateReplyMediaChooserParams = function(postId) {
+	return {
+		element: function() {
+			return $("div#reply-files-" + postId);
+		},
+		callback: function(media) {
+			$(".reply-mediatextarea-" + postId).val(media.id);
+			$("#reply-selectedMediaTitle" + postId).html(media.title);
+			$("#reply-choose-media-wrap-" + postId).hide();
+			$("#reply-selected-media-wrap-" + postId).show();
+		},
+		recorderConfiguration: {
+			forwardButtons:  ["<button class='forwardButton'></button>"],
+			forwardFunctions: [this.forwardFunction],
+			recordingSuccessFunction: this.recordingSucceeded
+		}
+	};
+};
+
+/**
+ * ui element event bindings in order of appearance
+ */
+Thread.prototype.bindUIEvents = function() {
+	console.log(Thread.TAG + "bindUIEvents");
+	
+	/*$("#post-comment-button").click(function() {
+		$("#comment-form-wrap").show();
+		$(this).hide();
+		$("#PostFormFromThread_content").focus();
+	});*/
+	
+	$MC.bindUIEvents(this.mediaChooserParams);
+};
+
+Thread.prototype.bindReplyUIEvents = function(postId) {
+	console.log(Thread.TAG + "bindReplyUIEvents: postId=" + postId);
+	
+	$("a#reply-selectFiles" + postId).on('click', function(e) {
+		e.preventDefault();
+		
+		$MC.getInstance(thread.replyMediaChooserParams[postId]).chooseMedia();
+	});
+	
+	$("#reply-record-link-" + postId).click(function(e) {
+		e.preventDefault();
+		
+		var recorderConfiguration = {
+				forwardButtons:  ['<button class="forwardButton"></button>'],
+				forwardFunctions: ["forwardFunction"],
+				recordingSuccessFunction: "recordingSucceeded"};
+
+		var data = {recorderConfiguration: recorderConfiguration};
+		$MC.getInstance(thread.replyMediaChooserParams[postId]).chooseMedia(MediaChooser.TYPE_RECORD_VIDEO, data);
+	});
+	
+	thread.bindUploadFileUIEvents($("#reply-uploadForms" + postId), $("#reply-choose-media-wrap-" + postId), thread.replyMediaChooserParams[postId]);
+	
+	$("#reply-removeMedia" + postId).click(function(e) {
+		$(".reply-mediatextarea-" + postId).val("");
+		$("#reply-selectedMediaTitle" + postId).html("");
+		$("#reply-selected-media-wrap-" + postId).hide();
+		$("#reply-choose-media-wrap-" + postId).show();
+	});
+
+	$("a#post-" + postId + "-comment-reply-form-cancel-button").click(function(e) {
+		e.preventDefault();
+		
+		$("div#post-" + postId + "-comment-reply-form-wrap").parent().remove();
+
+		delete thread.replyMediaChooserParams.splice(postId);
+
+		// restore the comment reply link if you click the cancel button
+		$("a.post-comment-reply").data("pid", postId).show();
+	});
+};
+
+Thread.prototype.forwardFunction = function() {
+	var mc = $MC.getInstance(thread.mediaChooserParams);
+	console.log(mc.media.id);
+	var mediaURL = Routing.generate('imdc_files_gateway_preview', {mediaId: mc.media.id});
+	mc.loadMediaPage(mc.media.id, mediaURL);
+};
+
+Thread.prototype.recordingSucceeded = function(data) {
+	console.log("Great success!!! Media id is: " + data.media.id);
+};
+
 $(document).ready(function() {
 
-	$("a#selectFiles").on('click', function() {
-		console.log('inside select files click method');
-		window["mediaChooser"] = new MediaChooser($("div#files"), function(mediaID)
-			 	{
-//			 		alert(mediaID);
-		            setMediaID($("#PostFormFromThread_mediatextarea"),mediaID);
-		 		}, true);
-		window["mediaChooser"].chooseMedia();
-	});
+	window.thread = new Thread();
 	
-	// what is this?
-    $("#7").on("timeupdate", function(event) {
-    	checkKeyPointStartTime(this.currentTime);
-    });
-	
-//	$("#video-speed").popover(
-//	 {
-//		 trigger: 'hover',
-//		 placement: 'right',
-//		 title: 'Video Playback Speed',
-//		 content: "Click to toggle between 0.5x, 1x, and 1.5x video speed"
-//	 });
-	
-	$("#post-comment-button").click(function() {
-		$("#comment-form-wrap").toggle();
-		$(this).toggle();
-		$("#PostFormFromThread_content").focus();
-	});
+	thread.bindUIEvents();
 	
 	/**
-	 * launch the modal dialog to delete a comment when you click the trash icon
+	 * When you are creating a new reply to a thread and you click the submit button,
+	 * it is necessary to use js to 'click' the original hidden form submit button 
+	 * as I'm hiding the original form submit button (because it is a button element)
+	 * element and I can't style it with a font-awesome glyph
 	 */
-	$("a.post-comment-delete-modal").click(function(e) {
-		e.preventDefault();
-		var p_id = $(this).data('pid');
-		
-		$("#modalDeleteButton").attr('data-pid', p_id);
-		$("#modalCancelButton").attr('data-pid', p_id);
-		$("#modaldiv").modal('toggle');
+	$("a#post-comment-submit-button").click(function() {
+		if ($("textarea#PostFormFromThread_content").val()) {
+			$(this).after('<span><i class="fa fa-spinner fa-spin"></i> Sending...</span>');
+			$(this).remove();
+			$("#PostFormFromThread_submit").click();
+		}
+		else {
+			// by clicking the form's original submit button, we trigger the html5 validation
+			// on the empty textarea field
+			$("#PostFormFromThread_submit").click();
+		}
 	});
+	
+	/*$("#cancelButton").click(function() {
+		//clear form values for start and endtime
+		$("#PostFormFromThread_startTime").val('');
+		$("#PostFormFromThread_endTime").val('');
+		// hide form
+		$("#comment-form-wrap").hide();
+		
+		// show new reply button
+		$("#post-comment-button").show();
+		
+		// deactivate temporal comment mode
+		enableTemporalComment(globalPlayer, false, globalStartTimeInput, globalEndTimeInput);
+		
+	});*/
 	
 	$("a.post-comment-edit").click(function(e) {
 		
@@ -106,6 +216,17 @@ $(document).ready(function() {
 		});
 	});
 	
+	/**
+	 * launch the modal dialog to delete a comment when you click the trash icon
+	 */
+	$("a.post-comment-delete-modal").click(function(e) {
+		e.preventDefault();
+		var p_id = $(this).data('pid');
+		
+		$("#modalDeleteButton").attr('data-pid', p_id);
+		$("#modalCancelButton").attr('data-pid', p_id);
+		$("#modaldiv").modal('toggle');
+	});
 	
 	$("a.post-comment-reply").click(function(event) {
     	var p_id = $(this).data("pid");
@@ -132,6 +253,12 @@ $(document).ready(function() {
 //    			$theWholePost.find("#post-"+p_id+"-reply-content").append(data.form);
     			$theWholePost.append(data.form);
     			
+    			thread.replyMediaChooserParams[p_id] = Thread.generateReplyMediaChooserParams(p_id);
+
+    			thread.bindReplyUIEvents(p_id);
+
+    			$(".autosize").autosize();
+    			
     			// hide the reply link
     			$theReplyLink.hide();
 //    			$theWholePost.remove();
@@ -145,41 +272,103 @@ $(document).ready(function() {
 
     });
 	
-	
-	
 	/**
-	 * When you are creating a new reply to a thread and you click the submit button,
-	 * it is necessary to use js to 'click' the original hidden form submit button 
-	 * as I'm hiding the original form submit button (because it is a button element)
-	 * element and I can't style it with a font-awesome glyph
+	 * When you click on the trash icon to delete a post, you have to confirm via
+	 * a dialog and then it ajax deletes the post
+	 * @deprecated
 	 */
-	$("a#post-comment-submit-button").click(function() {
-		if ($("textarea#PostFormFromThread_content").val()) {
-			$(this).after('<span><i class="fa fa-spinner fa-spin"></i> Sending...</span>');
-			$(this).remove();
-			$("#PostFormFromThread_submit").click();
-		}
-		else {
-			// by clicking the form's original submit button, we trigger the html5 validation
-			// on the empty textarea field
-			$("#PostFormFromThread_submit").click();
-		}
+	$("a.post-comment-delete").click(function(event) {
+		
+		var p_id = $(this).data("pid");
+		var $theDeleteLink = $(this);
+		
+		// prevent the click from scrolling the page
+		event.preventDefault();
+		
+		// fade out the comment in question    
+		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
+	    $theWholeComment.fadeTo('medium', 0.5);
+		
+	    // show a dialog box asking for confirmation of delete
+	    $( "#dialog-confirm" ).dialog({
+	        resizeable: false,
+	        height: 275,
+	        modal: true,
+	        buttons: {
+	            "Yes": function() {
+	                $.ajax({
+	        			url : Routing.generate('imdc_post_delete_specific_ajax', {pid: p_id}),
+	        			type : "POST",
+	        			contentType : "application/x-www-form-urlencoded",
+	        			data :
+	        			{
+	        				pid : p_id
+	        			},
+	        			success : function(data)
+	        			{
+	        				console.log("success");
+	        				console.log(data);
+	        				
+	        				//$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeOut('slow', function(){$(this).remove();});
+	                        $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
+	        				$theWholeComment.fadeOut('slow', function(){$(this).remove();});
+	                        
+	        				//delete timeline region
+	                        globalPlayer.removeComment(p_id);
+
+	                        // scroll to the top of the page to see the feedback
+	                        //$("html, body").animate({ scrollTop: 0 }, "slow");
+	                        
+	                        // wipe out the feedback message after 5 seconds
+	                        setTimeout(function(){
+	                    		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
+	                    	}, 5000);
+	        			},
+	        			error : function(request)
+	        			{
+	        				console.log(request);
+	        				alert(request.statusText);
+	        			}
+	        		});
+	                
+	                $( this ).dialog( "close" );
+	            },
+	            Cancel: function() {
+	                $( this ).dialog( "close" );
+	                $theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeTo('slow', 1.0);
+	            }
+	        }
+	    });
 	});
 	
-	$("#cancelButton").click(function() {
-		//clear form values for start and endtime
-		$("#PostFormFromThread_startTime").val('');
-		$("#PostFormFromThread_endTime").val('');
-		// hide form
-		$("#comment-form-wrap").hide();
-		
-		// show new reply button
-		$("#post-comment-button").show();
-		
-		// deactivate temporal comment mode
-		enableTemporalComment(globalPlayer, false, globalStartTimeInput, globalEndTimeInput);
-		
-	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// what is this?
+    $("#7").on("timeupdate", function(event) {
+    	checkKeyPointStartTime(this.currentTime);
+    });
+	
+//	$("#video-speed").popover(
+//	 {
+//		 trigger: 'hover',
+//		 placement: 'right',
+//		 title: 'Video Playback Speed',
+//		 content: "Click to toggle between 0.5x, 1x, and 1.5x video speed"
+//	 });
 	
 	// when the user types in a value into the start time box,
 	// activate the temporal comment mode on the player
@@ -229,7 +418,7 @@ $(document).ready(function() {
 	
 	// make the content section grow automatically when necessary
 	// todo: is this necessary anymore?
-	$("#PostFormFromThread_content").autosize();
+	//$("#PostFormFromThread_content").autosize();
 	
 	
 	//Change the video speed when the slowdown button is clicked
@@ -350,6 +539,68 @@ $(document).ready(function() {
 
 }); // end of document.ready
 
+
+
+/**
+ * 
+ * @returns {Boolean}
+ */
+function confirmPostDelete() {
+	
+	var $theDeleteLink = $("#modalDeleteButton");
+	var p_id = $theDeleteLink.data('pid');
+	
+	var $theWholeComment = getPostWrapJQueryObject(p_id);
+	
+	/**
+	 * Ajax request to delete a comment
+	 */
+	$.ajax({
+		url : Routing.generate('imdc_post_delete_specific_ajax', {pid: p_id}),
+		type : "POST",
+		contentType : "application/x-www-form-urlencoded",
+		data :
+		{
+			pid : p_id
+		},
+		success : function(data)
+		{
+			console.log("success");
+			console.log(data);
+			$("#modaldiv").modal('hide');
+			
+			// create a feedback message 
+			//TODO: restyle
+            $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
+            
+            // fade out the original comment
+			$theWholeComment.fadeOut('slow', function(){$(this).remove();});
+            
+			//delete timeline region
+			var tempKeyPoint = new KeyPoint();
+			tempKeyPoint = getKeyPointFromId(window["postArray"], p_id);
+            globalPlayer.removeKeyPoint(tempKeyPoint);
+
+            // scroll to the top of the page to see the feedback
+            //$("html, body").animate({ scrollTop: 0 }, "slow");
+            
+            // wipe out the feedback message after 5 seconds
+            setTimeout(function(){
+        		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
+        	}, 5000);
+		},
+		error : function(request)
+		{
+			console.log(request);
+			alert(request.statusText);
+			$("#modaldiv").modal('hide');
+		}
+	});
+	
+	// return false to prevent the click from scolling around the page
+	return false;
+}
+
 function checkKeyPointStartTime(currentTime) {
 	// do something on time update
 }
@@ -426,135 +677,6 @@ function endTimeBlurFunction(endTime) {
 		}
 		globalPlayer.setAreaSelectionEndTime(endOfComment);
 	}
-}
-
-/**
- * When you click on the trash icon to delete a post, you have to confirm via
- * a dialog and then it ajax deletes the post
- */
-$("a.post-comment-delete").click(function(event) {
-	
-	var p_id = $(this).data("pid");
-	var $theDeleteLink = $(this);
-	
-	// prevent the click from scrolling the page
-	event.preventDefault();
-	
-	// fade out the comment in question    
-	var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
-    $theWholeComment.fadeTo('medium', 0.5);
-	
-    // show a dialog box asking for confirmation of delete
-    $( "#dialog-confirm" ).dialog({
-        resizeable: false,
-        height: 275,
-        modal: true,
-        buttons: {
-            "Yes": function() {
-                $.ajax({
-        			url : Routing.generate('imdc_post_delete_specific_ajax', {pid: p_id}),
-        			type : "POST",
-        			contentType : "application/x-www-form-urlencoded",
-        			data :
-        			{
-        				pid : p_id
-        			},
-        			success : function(data)
-        			{
-        				console.log("success");
-        				console.log(data);
-        				
-        				//$theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeOut('slow', function(){$(this).remove();});
-                        $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
-        				$theWholeComment.fadeOut('slow', function(){$(this).remove();});
-                        
-        				//delete timeline region
-                        globalPlayer.removeComment(p_id);
-
-                        // scroll to the top of the page to see the feedback
-                        //$("html, body").animate({ scrollTop: 0 }, "slow");
-                        
-                        // wipe out the feedback message after 5 seconds
-                        setTimeout(function(){
-                    		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
-                    	}, 5000);
-        			},
-        			error : function(request)
-        			{
-        				console.log(request);
-        				alert(request.statusText);
-        			}
-        		});
-                
-                $( this ).dialog( "close" );
-            },
-            Cancel: function() {
-                $( this ).dialog( "close" );
-                $theDeleteLink.parents("[data-pid='" + p_id + "']").eq(0).fadeTo('slow', 1.0);
-            }
-        }
-    });
-});
-
-
-
-/**
- * 
- * @returns {Boolean}
- */
-function confirmPostDelete() {
-	
-	var $theDeleteLink = $("#modalDeleteButton");
-	var p_id = $theDeleteLink.data('pid');
-	
-	var $theWholeComment = getPostWrapJQueryObject(p_id);
-	
-	/**
-	 * Ajax request to delete a comment
-	 */
-	$.ajax({
-		url : Routing.generate('imdc_post_delete_specific_ajax', {pid: p_id}),
-		type : "POST",
-		contentType : "application/x-www-form-urlencoded",
-		data :
-		{
-			pid : p_id
-		},
-		success : function(data)
-		{
-			console.log("success");
-			console.log(data);
-			$("#modaldiv").modal('hide');
-			
-			// create a feedback message 
-            $theWholeComment.after('<div id="postDeleteSuccess" class="row-fluid"><div class="span12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
-            
-            // fade out the original comment
-			$theWholeComment.fadeOut('slow', function(){$(this).remove();});
-            
-			//delete timeline region
-			var tempKeyPoint = new KeyPoint();
-			tempKeyPoint = getKeyPointFromId(window["postArray"], p_id);
-            globalPlayer.removeKeyPoint(tempKeyPoint);
-
-            // scroll to the top of the page to see the feedback
-            //$("html, body").animate({ scrollTop: 0 }, "slow");
-            
-            // wipe out the feedback message after 5 seconds
-            setTimeout(function(){
-        		$("#postDeleteSuccess").fadeOut('slow', function() {$(this).remove();});
-        	}, 5000);
-		},
-		error : function(request)
-		{
-			console.log(request);
-			alert(request.statusText);
-			$("#modaldiv").modal('hide');
-		}
-	});
-	
-	// return false to prevent the click from scolling around the page
-	return false;
 }
 
 /**
@@ -691,10 +813,7 @@ function scrollPostIntoView(postid) {
 //								- $postContainer.height()/2 + $($targetElement).height()/2);
 }
 
-function setMediaID(elem, mid) {
-	elem.val(mid);
-    //$("#PostFormFromThread_mediatextarea").val(mid);
- }
+
 
 function getPostDomObject(comment) {
 	var postID = comment.id;

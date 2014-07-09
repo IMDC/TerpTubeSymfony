@@ -1,6 +1,8 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
@@ -11,15 +13,16 @@
 {% block herounit %}<h1>Forums</h1>{% endblock herounit %}
 
 {% block underherounitrow1 %}
-<div class="fluid-row">
-    <div class="span12">
-        <p>
-            <a class="btn btn-primary" href="{{ path('imdc_thread_create_new') }}"><i class="fa fa-plus"></i> Create New</a>
-        </p>    
-    </div>
-</div>
-{% include 'IMDCTerpTubeBundle:Thread:ThreadThumbnail.html.twig' %}
-
+	<div class="row">
+	    <div class="col-md-2">
+	        <p>
+	            <a class="btn btn-primary" href="{{ path('imdc_thread_create_new') }}"><i class="fa fa-plus"></i> Create New</a>
+	        </p>    
+	    </div>
+	</div>
+	
+	{% include 'IMDCTerpTubeBundle:Thread:ThreadThumbnail.html.twig' %}
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

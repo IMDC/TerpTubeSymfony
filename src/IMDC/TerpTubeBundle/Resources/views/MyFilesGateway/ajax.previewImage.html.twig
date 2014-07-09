@@ -1,8 +1,7 @@
 {% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMotionMedia.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block motionMedia %}
 	<img class="preview" src="{{ asset(mediaFile.getResource.getWebPath) }}" alt="{{ mediaFile.title }}" title="{{ mediaFile.title }}" />
 {% endblock motionMedia %}
-
- 

@@ -1,4 +1,5 @@
 {# src IMDC/TerpTubeBundle/Resources/views/Post/index.html.twig #}
+
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
 
 {% block title %}Posts{% endblock title %}
@@ -6,7 +7,8 @@
 {% block herounit %}Posts{% endblock herounit %}
 
 {% block underherounitrow1 %}
-{% include 'IMDCTerpTubeBundle:Post:postthumbnail.html.twig' %}
+	{% include 'IMDCTerpTubeBundle:Post:postthumbnail.html.twig' %}
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

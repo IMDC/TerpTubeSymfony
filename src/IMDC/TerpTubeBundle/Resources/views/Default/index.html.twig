@@ -1,32 +1,31 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block flashmessages %}
 	{% for type, messages in app.session.flashbag.all() %}
-	<div class="row-fluid">
-	    <div class="span9">
-		{% for key, message in messages %}
-		    {% if type=='info' %}
-    		    <div class="flash-{{ type }} text-info">
-            {% elseif type=='error' %}
-                <div class="flash-{{ type }} text-error">
-            {% elseif type=='success' %}
-                <div class="flash-{{ type }} text-success">
-            {% else %}
-                <div class="flash-{{ type }} text-warning">
-		    {% endif %}
-       		        {{ message|trans }}
-                </div>
-      	{% endfor %}
-      	</div>
-  	</div>
-   	{% endfor %}
+		<div class="row">
+			<div class="col-md-4">
+				{% for key, message in messages %}
+					{% if (type == 'info') or (type == 'error') or (type == 'success') %}
+						<div class="flash-{{ type }} text-{{ type }}">
+							<span class="label label-{{ type }}">
+					{% else %}
+						<div class="flash-{{ type }} text-warning">
+							<span class="label label-warning">
+					{% endif %}
+							{{ message|trans({}, 'FOSUserBundle') }}
+						</span>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endfor %}
 {% endblock flashmessages %}
 
 {% block herounit %}
-<h1>
-    <span class="fa-stack fa-lg">
-        <i class="fa fa-circle fa-stack-2x"></i>
-        <i class="fa fa-video-camera fa-stack-1x fa-inverse"></i>
-    </span> Welcome to TerpTube
-</h1>
+	<h1>
+	    <span class="fa-stack fa-lg">
+	        <i class="fa fa-circle fa-stack-2x"></i>
+	        <i class="fa fa-video-camera fa-stack-1x fa-inverse"></i>
+	    </span> Welcome to TerpTube
+	</h1>
 {% endblock herounit %}
-

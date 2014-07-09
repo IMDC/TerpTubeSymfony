@@ -1,21 +1,25 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
 
 {% block herounit %}
-<h1>Welcome to TerpTube {{ app.user }}!</h1>
-<a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-<div id="files"></div>
+	<h1>Welcome to TerpTube {{ app.user }}!</h1>
+
+	<a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
+
+	<div id="files"></div>
 {% endblock herounit %}
 
 {% block javascripts %}
- {{ parent() }}
- <script type='text/javascript'>
- var mediaChooser;
- $("#selectFiles").click(function(e) {
- 	mediaChooser = new MediaChooser($("#files"), function(mediaID)
- 		 	{
+	{{ parent() }}
+
+	<script type='text/javascript'>
+		var mediaChooser;
+
+		$("#selectFiles").click(function(e) {
+			mediaChooser = new MediaChooser($("#files"), function(mediaID) {
 		 		alert(mediaID);
 	 		}, true);
- 	mediaChooser.chooseMedia();
- });
-</script>
+
+	 		mediaChooser.chooseMedia();
+		});
+	</script>
 {% endblock javascripts %}

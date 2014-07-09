@@ -11,7 +11,7 @@
 	"require" : {
 		"php" : ">=5.3.3",
 		"symfony/symfony" : "2.3.*",
-		"doctrine/orm" : "~2.2, >=2.2.3",
+		"doctrine/orm" : "~2.2, >=2.3.5",
 		"doctrine/doctrine-bundle" : "1.2.*",
 		"twig/extensions" : "1.0.*",
 		"symfony/assetic-bundle" : "2.3.*",
@@ -26,12 +26,13 @@
 		"friendsofsymfony/jsrouting-bundle" : "1.1.*@dev",
 		"braincrafted/bootstrap-bundle" : "dev-master",
 		"twitter/bootstrap" : "3.1.*",
-		"leafo/lessphp" : "dev-master",
+		"oyejorge/less.php" : "dev-master",
 		"sonata-project/admin-bundle" : "~2.3@dev",
 		"sonata-project/doctrine-orm-admin-bundle" : "dev-master",
 		"sonata-project/core-bundle" : "~2.2@dev",
 		"sonata-project/cache-bundle" : "~2.1",
 		"sonata-project/intl-bundle" : "dev-master",
+		"sonata-project/jquery-bundle" : "1.10.x-dev",
 		"incenteev/composer-parameter-handler" : "~2.0",
 		"gregwar/captcha-bundle" : "dev-master",
 		"bmatzner/fontawesome-bundle" : "*",
@@ -44,7 +45,8 @@
 		"knplabs/knp-time-bundle" : "1.1.*@dev",
 		"pimple/pimple" : "dev-master",
 		"ext-curl" : "*",
-		"symfony/filesystem": "dev-master"
+		"symfony/filesystem" : "dev-master",
+		"jquery/jquerymap" : "1.10.2"
 	},
 	"scripts" : {
 		"post-install-cmd" : [
@@ -78,5 +80,18 @@
 		"branch-alias" : {
 			"dev-master" : "2.3-dev"
 		}
-	}
+	},
+	"repositories" : [
+	    {
+            "type": "package",
+            "package": {
+			    "name": "jquery/jquerymap",
+			    "version": "1.10.2",
+			    "dist": {
+			        "url": "http://code.jquery.com/jquery-1.10.2.min.map",
+			        "type": "file"
+			    }
+            }
+        }
+	]
 }

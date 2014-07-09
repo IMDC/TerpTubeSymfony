@@ -1,53 +1,54 @@
 {% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
+
 {% block title %}{{ 'interpretationsGateway.title'|trans }}{% endblock title %}
 
 {% block nav_ul_authenticated_my_interpretations %}<li class="active">{% endblock %}
 
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/compoundMediaPreview.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block herounit %}
-<h1>{{ 'interpretationsGateway.title'|trans }}</h1>
+	<h1>{{ 'interpretationsGateway.title'|trans }}</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-    <div class="row-fluid">
-    	
+    <div class="row">
 	    <div class="preview-visual">
 	    	<div id="videoContainer">
 		    	<div id="pipwrap" class="pipstyle" >
-			   		<video	class="preview" id="{{ compoundMedia.getSource.getId }}" preload="auto" >
+			   		<video class="preview" id="{{ compoundMedia.getSource.getId }}" preload="auto" >
 						<source src="{{ asset(compoundMedia.getSource.getResource.getWebPathWebm) }}"/>
 						<source src="{{ asset(compoundMedia.getSource.getResource.getWebPath) }}"/>
 					</video>
+
 					<i class="xclosepip fa fa-times-circle fa-large" ></i>
-					
 				</div>
 				<div id="sourcewrap" class="sourcestyle">
-					<video	class="preview"  id="{{ compoundMedia.getTarget.getId }}" preload="auto">
+					<video class="preview"  id="{{ compoundMedia.getTarget.getId }}" preload="auto">
 						<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPathWebm) }}"/>
 						<source src="{{ asset(compoundMedia.getTarget.getResource.getWebPath) }}"/>
 					</video>
-					<i class="xclosepip fa fa-times-circle fa-large" style="display:none;"></i>
-					
+
+					<i class="xclosepip fa fa-times-circle fa-large" style="display: none;"></i>
 				</div>
 			</div>
-			<div class="preview-controls">
-			</div>
+
+			<div class="preview-controls"></div>
 		</div>
     </div>
-
 {% endblock underherounitrow1 %}
 
 {% block underherounitrow2 %}
-
 {% endblock underherounitrow2 %}
 
 {% block javascripts %}
- {{ parent() }}
+	{{ parent() }}
+
  <script src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>
  <script type='text/javascript'>
  $(document).ready(function() {

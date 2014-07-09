@@ -1,9 +1,10 @@
 {% extends "IMDCTerpTubeBundle:MyFilesGateway:previewMotionMedia.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block motionMedia %}
-<video	class="preview"  id="record" preload="auto" autoplay muted>
-</video>
+	<video class="preview" id="record" preload="auto" autoplay muted></video>
+
 <script type='text/javascript'>
  $(document).ready(function() {
 	 var videoElement = $("#record");
@@ -49,5 +50,3 @@
   </script>
 
 {% endblock motionMedia %}
-
- 

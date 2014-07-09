@@ -1,6 +1,8 @@
 {% extends "IMDCTerpTubeBundle:Default:basetemplate.html.twig" %}
+
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/forums.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
@@ -11,28 +13,28 @@
 {% block herounit_wrap %}<h1>Topics</h1>{% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-12">
         <p>
             <a class="btn btn-primary" href="{{ path('imdc_thread_create_new') }}"><i class="fa fa-plus"></i> Create New</a>
         </p>    
     </div>
 </div>
 
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-12">
         <div class="count">
             Total number of Forums: {{ pagination.getTotalItemCount }}
         </div>
     </div>
 </div>
 
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-12">
         <ul class="unstyled inline">
-            <li{% if pagination.isSorted('t.title') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Title', 't.title') }}</li>
-            <li{% if pagination.isSorted('t.creationDate') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Date Created', 't.creationDate') }}</li>            
-            <li{% if pagination.isSorted('t.lastPostAt') %} class="btn"{% endif %}>{{ knp_pagination_sortable(pagination, 'Last Post', 't.lastPostAt') }}</li>            
+            <li{% if pagination.isSorted('t.title') %} class="btn btn-default"{% endif %}>{{ knp_pagination_sortable(pagination, 'Title', 't.title') }}</li>
+            <li{% if pagination.isSorted('t.creationDate') %} class="btn btn-default"{% endif %}>{{ knp_pagination_sortable(pagination, 'Date Created', 't.creationDate') }}</li>            
+            <li{% if pagination.isSorted('t.lastPostAt') %} class="btn btn-default"{% endif %}>{{ knp_pagination_sortable(pagination, 'Last Post', 't.lastPostAt') }}</li>            
         </ul>
     </div>
 </div>
@@ -40,8 +42,8 @@
 {% include 'IMDCTerpTubeBundle:Thread:threadthumbnailprototype.html.twig' %}
 
 {#
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-12">
         <table>
             <tr>
 
@@ -61,8 +63,8 @@
 
 #}
 
-<div class="row-fluid">
-    <div class="span12">
+<div class="row">
+    <div class="col-md-12">
         <div class="navigation">
             {{ knp_pagination_render(pagination) }}
         </div>
@@ -73,5 +75,6 @@
 {# include 'IMDCTerpTubeBundle:Thread:threadthumbnail.html.twig' #}
 
 {% endblock underherounitrow1 %}
+
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}

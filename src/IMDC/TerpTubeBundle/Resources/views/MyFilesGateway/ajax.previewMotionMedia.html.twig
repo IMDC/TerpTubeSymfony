@@ -1,21 +1,21 @@
 {% extends "IMDCTerpTubeBundle:MyFilesGateway:ajax.previewMedia.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
 {% block stylesheets %}
-    {{  parent() }}
-    <link href="{{ asset('bundles/imdcterptube/css/motionMediaPreview.css') }}" rel="stylesheet" />
+	{{  parent() }}
+
+	<link href="{{ asset('bundles/imdcterptube/css/motionMediaPreview.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
+
 {% block preview_media %}
+	<div class="row preview-visual">
+		{% block motionMedia %}
+		{% endblock motionMedia %}
+	</div>
 
-<div class="row-fluid preview-visual">
-	{% block motionMedia %}
-	
-	{% endblock motionMedia %}
-</div>
-<div class="row-fluid preview-controls">
-	{% block motionControls %}
-	
-	{% endblock motionControls%}
-</div>
-
+	<div class="row preview-controls">
+		{% block motionControls %}
+		{% endblock motionControls%}
+	</div>
 {% endblock preview_media %}

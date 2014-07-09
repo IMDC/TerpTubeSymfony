@@ -22,6 +22,12 @@ use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
+
 /**
  * Controller for UserGroup's which are essentially 'Groups' but the Group object is taken
  * @author paul
@@ -179,6 +185,12 @@ class UserGroupController extends Controller
 		$newusergroup = new UserGroup();
 
 		$form = $this->createForm(new UserGroupType(new Forum()), $newusergroup);
+		
+		$formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+		$formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+		$formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+		$formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+		$uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
 
 		$form->handleRequest($request);
 
@@ -224,7 +236,10 @@ class UserGroupController extends Controller
 		}
 
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array('form' => $form->createView(),));
+		return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array(
+				'form' => $form->createView(),
+        		'uploadForms' => $uploadForms
+		));
 
 	}
 	

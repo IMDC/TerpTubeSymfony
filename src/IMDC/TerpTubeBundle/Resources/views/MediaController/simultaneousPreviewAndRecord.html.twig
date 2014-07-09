@@ -1,20 +1,23 @@
 {% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
+
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
+
 {% block title %}My Files{% endblock title %}
 
 {% block nav_ul_authenticated_my_files %}<li class="active">{% endblock %}
 
 {% block stylesheets %}
     {{  parent() }}
+
     <link href="{{ asset('bundles/imdcterptube/css/simultaneousPreviewRecord.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
 {% block herounit %}
-<h1>{{ 'filesGateway.title'|trans }}</h1>
+	<h1>{{ 'filesGateway.title'|trans }}</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
-    <div class="row-fluid">
+    <div class="row">
 	    <div class="simultaneousVideoRecording row-fluid">
 		    <div id="videoContainer">
 			    <div id="pipwrap" class="pipstyle" >
@@ -34,15 +37,14 @@
 			</div>
 		</div>
     </div>
-
 {% endblock underherounitrow1 %}
 
 {% block underherounitrow2 %}
-
 {% endblock underherounitrow2 %}
 
 {% block javascripts %}
- {{ parent() }}
+	{{ parent() }}
+
  <script type='text/javascript'>
  var compoundMediaID = -1;
  $(document).ready(function() {

@@ -31,8 +31,7 @@ imdc_terp_tube_user_profile_edit:
 imdc_media_chooser_by_type: 
     pattern: /myFiles/choose/{type}
     defaults: { _controller: IMDCTerpTubeBundle:MediaChooserGateway:chooseMediaByType, type: 0 }
-    requirements:
-        _method:  POST
+    methods: [GET|POST]
     options:
         expose: true
         
@@ -61,14 +60,20 @@ imdc_files_add_gateway:
 imdc_files_gateway_audio: 
     pattern: /myFiles/add/audio
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addAudio, url: null }
+    options:
+        expose: true
     
 imdc_files_gateway_video: 
     pattern: /myFiles/add/video
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addVideo, url: null }
+    options:
+        expose: true
     
 imdc_files_gateway_image: 
     pattern: /myFiles/add/image
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addImage, url: null }
+    options:
+        expose: true
     
 imdc_files_gateway_record_media: 
     pattern: /myFiles/recordMedia
@@ -77,43 +82,45 @@ imdc_files_gateway_record_media:
 imdc_files_gateway_other: 
     pattern: /myFiles/add/other
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addOther, url: null }
+    options:
+        expose: true
 
 imdc_files_gateway_remove: 
-     pattern: /myFiles/delete/{mediaId}
-     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia }
-     requirements:
+    pattern: /myFiles/delete/{mediaId}
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia }
+    requirements:
         _method:  POST
         mediaId: \d+
         
 imdc_files_gateway_trim: 
-     pattern: /myFiles/trim/{mediaId}/{startTime}/{endTime}
-     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:trimMedia }
-     requirements:
+    pattern: /myFiles/trim/{mediaId}/{startTime}/{endTime}
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:trimMedia }
+    requirements:
         _method:  POST
         mediaId: \d+
-     options:
+    options:
         expose: true
         
 imdc_files_gateway_record: 
-     pattern: /myFiles/record
-     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, url: null }
-     requirements:
+    pattern: /myFiles/record
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, url: null }
+    requirements:
         _method:  POST
         
 imdc_files_gateway_add_simultaneous_recording: 
-     pattern: /myFiles/add/simultaneous_recording/{sourceMediaID}/{startTime}
-     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addSimultaneousRecording, url: null }
-     requirements:
+    pattern: /myFiles/add/simultaneous_recording/{sourceMediaID}/{startTime}
+    defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addSimultaneousRecording, url: null }
+    requirements:
         _method:  POST
-     options:
+    options:
         expose: true
         
 imdc_files_gateway_preview_compound_media: 
-     pattern: /myFiles/preview/compound_media/{compoundMediaId}
-     defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewCompoundMedia, url: null }
+    pattern: /myFiles/preview/compound_media/{compoundMediaId}
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewCompoundMedia, url: null }
 #     requirements:
 #        _method:  POST
-     options:
+    options:
         expose: true
         
 imdc_files_gateway_preview:
@@ -122,11 +129,13 @@ imdc_files_gateway_preview:
     requirements:
         _method:  POST
 #        mediaId: \d+
+    options:
+       expose: true
 
 
 imdc_message_create:
     pattern: /createMessage
-    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage } 
+    defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage }
         
 imdc_message_user_specific:
     pattern: /createMessage/{username}

@@ -1,14 +1,13 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
+<video class="preview" width="100%" id="record" preload="auto" autoplay muted></video>
 
-<video class="preview" width="100%" id="record" preload="auto" autoplay muted>
-</video>
 <script type='text/javascript'>
  $(document).ready(function() {
 	 var videoElement = $("#record");
-	 var recorderConfiguration = {{ recorderConfiguration |json_encode()|raw}};
-	 console.log(recorderConfiguration);
-	 var player = new Player(videoElement,recorderConfiguration);
+	 //var recorderConfiguration = {#{ recorderConfiguration |json_encode()|raw}#}; //TODO: MediaChooser instance now holds this. posting this, then declaring here, etc: not needed
+	 console.log(mediaChooser.recorderConfiguration);
+	 var player = new Player(videoElement, mediaChooser.recorderConfiguration);
 	 
 	 player.options.areaSelectionEnabled = false;
 	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
@@ -22,19 +21,19 @@
 	 }
 	 player.options.recordingSuccessFunction = function(data)
 	 {
-		 var fn = window[recorderConfiguration.recordingSuccessFunction];
+		 var fn = mediaChooser.recorderConfiguration.recordingSuccessFunction;
 		 fn(data);
 		 console.log('Recording Success!', data);
 	 }
-	 var forwardFunctions = recorderConfiguration.forwardFunctions;
+	 var forwardFunctions = mediaChooser.recorderConfiguration.forwardFunctions;
 	 for (var i=0;i<forwardFunctions.length;i++)
  	 {
 	 	 var funct = forwardFunctions[i];
 	 	 player.options.forwardFunctions[i] = function(data)
 	 	 {
 	 		 player.destroyRecorder();
-	 		 var fn = window[funct]||null;
-	 		 fn(data);
+	 		 //var fn = window[funct]||null;
+	 		 funct(data);
 	 		 console.log('Success!', data);
 	 	 };
  	 }
@@ -50,7 +49,4 @@
 		 });
  });
 
-  </script>
-
-
- 
+</script>

@@ -20,8 +20,7 @@ class Post
     private $content;
     
     /**
-     * I don't believe this field is used anywhere and probably could be removed 
-     * @paul
+     * I don't believe this field is used anywhere and probably could be removed (paul)
      * @var boolean
      */
     private $isDeleted;

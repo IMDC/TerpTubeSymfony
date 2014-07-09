@@ -22,6 +22,11 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostReplyToPostFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
 
 /**
  * Controller for all Post related actions including creating, deleting, editing and replying
@@ -491,8 +496,14 @@ class PostController extends Controller
 	    
         $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
         
+        $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+        $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+        $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+        $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+        $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
+        
         $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:replyPostAjax.html.twig',
-            array('form' => $postReplyForm->createView(), 'post' => $postToReplyTo, 'user' => $user)
+            array('form' => $postReplyForm->createView(), 'post' => $postToReplyTo, 'user' => $user, 'uploadForms' => $uploadForms)
         );
         
         $return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
