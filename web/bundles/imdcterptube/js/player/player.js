@@ -1635,7 +1635,9 @@ Player.prototype.recording_goToPreviewing = function() {
 
 Player.prototype.destroyRecorder = function() {
 	$(this.videoID)[0].src = "";
-	this.stream.stop();
+	if (typeof (this.stream) != 'undefined') {
+		this.stream.stop();
+	}
 };
 
 Player.prototype.recording_recordingTranscodingFinished = function(fileName) {
