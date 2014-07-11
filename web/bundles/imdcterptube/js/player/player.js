@@ -16,7 +16,7 @@ Player.EVENT_INITIALIZED = "player_initialized";
 Player.EVENT_SEEK = "player_seek";
 
 Player.EVENT_AREA_SELECTION_CHANGED = "player_area_selection_changed";
-Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over"; 
+Player.EVENT_KEYPOINT_MOUSE_OVER = "player_keypoint_mouse_over";
 // sends coords in array
 Player.EVENT_KEYPOINT_MOUSE_OUT = "player_keypoint_mouse_out";
 Player.EVENT_KEYPOINT_CLICK = "player_keypoint_click"; // sends coords in array
@@ -128,23 +128,23 @@ Player.prototype.createControls = function() {
 			.append(
 					'<div class="videoControlsContainer controlsBar videoControls"></div>');
 	if (this.options.backButtons.length > 0) {
-		//Main back button used to be have a class backButton
-			var backButtons = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.backButtons").eq(0);
-			for (var i = 0; i < this.options.backButtons.length; i++) {
-				var button = this.options.backButtons[i];
-				button = $(button); 
-				backButtons.append(button);
-				$(button).addClass("videoControlsContainer");
-				$(button).addClass("controlsBar");
-				$(button).addClass("backButtons");
-				
-				if (this.options.type !== Player.DENSITY_BAR_TYPE_PLAYER) {
-						$(button).addClass("record");
-				}
-				$(button).click(instance.options.backFunctions[i]);
+		// Main back button used to be have a class backButton
+		var backButtons = $(this.elementID).find(
+				".videoControlsContainer.controlsBar.backButtons").eq(0);
+		for (var i = 0; i < this.options.backButtons.length; i++) {
+			var button = this.options.backButtons[i];
+			button = $(button);
+			backButtons.append(button);
+			$(button).addClass("videoControlsContainer");
+			$(button).addClass("controlsBar");
+			$(button).addClass("backButtons");
+
+			if (this.options.type !== Player.DENSITY_BAR_TYPE_PLAYER) {
+				$(button).addClass("record");
 			}
+			$(button).click(instance.options.backFunctions[i]);
 		}
+	}
 	if (this.options.type == Player.DENSITY_BAR_TYPE_PLAYER) {
 		$(this.elementID)
 				.find(".videoControlsContainer.controlsBar.videoControls")
@@ -193,28 +193,30 @@ Player.prototype.createControls = function() {
 				.eq(0)
 				.append(
 						'<button type="button" class="videoControlsContainer controlsBar videoControls recordButton"></button>');
-		$(this.elementID)
+		var recButton = $(this.elementID)
 				.find(
 						".videoControlsContainer.controlsBar.videoControls.recordButton")
-				.eq(0).click(function() {
+				.eq(0);
+		recButton.click(function() {
 					instance.recording_toggleRecording();
 				});
+		this.setInputEnabled(recButton, false);
 	}
 	if (this.options.forwardButtons.length > 0) {
-		//Main forward button used to be have a class forwardButton
+		// Main forward button used to be have a class forwardButton
 		var forwardButtons = $(this.elementID).find(
-		".videoControlsContainer.controlsBar.forwardButtons").eq(0);
+				".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 		for (var i = 0; i < this.options.forwardButtons.length; i++) {
 			var button = this.options.forwardButtons[i];
 			button = $(button);
 			$(button).addClass("videoControlsContainer");
 			$(button).addClass("controlsBar");
 			$(button).addClass("forwardButtons");
-			
+
 			forwardButtons.append(button);
-//			console.log(button);
-//			console.log($(button));
-			
+			// console.log(button);
+			// console.log($(button));
+
 			if (this.options.type !== Player.DENSITY_BAR_TYPE_PLAYER) {
 				$(button).addClass("record");
 			}
@@ -482,7 +484,7 @@ function Player(videoID, options) {
 		minRecordingTime : 3,
 		maxRecordingTime : 60,
 		minLinkTime : 1,
-		additionalDataToPost: {}
+		additionalDataToPost : {}
 	// signLinkColor : "#0000FF",
 	// commentHighlightedColor : "#FF0000"
 	};
@@ -615,49 +617,40 @@ Player.prototype.setAreaSelectionEnabled = function(flag) {
 		this.currentMinTimeSelected = this.getTimeForX(this.currentMinSelected);
 		this.currentMaxTimeSelected = this.getTimeForX(this.currentMaxSelected);
 	}
-	
 
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	// console.log("SetAreaSelectionEnabled called");
 	this.repaint();
 };
 
-Player.prototype.setAreaSelectionStartFromCoordinates = function(coordinate)
-{
+Player.prototype.setAreaSelectionStartFromCoordinates = function(coordinate) {
 	this.currentMinSelected = coordinate;
 	this.currentMinTimeSelected = this.getTimeForX(this.currentMinSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	this.repaint();
-	$(this).trigger(
-			Player.EVENT_AREA_SELECTION_CHANGED);
+	$(this).trigger(Player.EVENT_AREA_SELECTION_CHANGED);
 };
 
-Player.prototype.setAreaSelectionEndFromCoordinates = function(coordinate)
-{
+Player.prototype.setAreaSelectionEndFromCoordinates = function(coordinate) {
 	this.currentMaxSelected = coordinate;
 	this.currentMaxTimeSelected = this.getTimeForX(this.currentMinSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	this.repaint();
-	$(this).trigger(
-			Player.EVENT_AREA_SELECTION_CHANGED);
+	$(this).trigger(Player.EVENT_AREA_SELECTION_CHANGED);
 };
 /*
-Player.prototype.setCurrentMinTimeSelected = function(time)
-{
-	this.currentMinTimeSelected = time;
-	this.currentMinSelected = this.getXForTime(this.currentMinTimeSelected);
-	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
-	this.repaint();
-};
-
-Player.prototype.setCurrentMaxTimeSelected = function(time)
-{
-	this.currentMaxTimeSelected = time;
-	this.currentMaxSelected = this.getXForTime(this.currentMaxTimeSelected);
-	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
-	this.repaint();
-};
-*/
+ * Player.prototype.setCurrentMinTimeSelected = function(time) {
+ * this.currentMinTimeSelected = time; this.currentMinSelected =
+ * this.getXForTime(this.currentMinTimeSelected);
+ * this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+ * this.repaint(); };
+ * 
+ * Player.prototype.setCurrentMaxTimeSelected = function(time) {
+ * this.currentMaxTimeSelected = time; this.currentMaxSelected =
+ * this.getXForTime(this.currentMaxTimeSelected);
+ * this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
+ * this.repaint(); };
+ */
 Player.prototype.getRelativeMouseCoordinates = function(event) {
 
 	var x = 0;
@@ -1089,8 +1082,7 @@ Player.prototype.setAreaSelectionStartTime = function(time) {
 	this.currentMinSelected = this.getXForTime(this.currentMinTimeSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	this.repaint();
-	$(this).trigger(
-			Player.EVENT_AREA_SELECTION_CHANGED);
+	$(this).trigger(Player.EVENT_AREA_SELECTION_CHANGED);
 };
 
 Player.prototype.setAreaSelectionEndTime = function(time) {
@@ -1098,8 +1090,7 @@ Player.prototype.setAreaSelectionEndTime = function(time) {
 	this.currentMaxSelected = this.getXForTime(this.currentMaxTimeSelected);
 	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	this.repaint();
-	$(this).trigger(
-			Player.EVENT_AREA_SELECTION_CHANGED);
+	$(this).trigger(Player.EVENT_AREA_SELECTION_CHANGED);
 };
 
 Player.prototype.setHighlightedRegion = function(startX, endX) {
@@ -1303,8 +1294,7 @@ Player.prototype.setupVideoRecording = function() {
 			".videoControlsContainer.controlsBar.videoControls.recordButton")
 			.eq(0);
 	var forwardButtons = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons")
-			.eq(0);
+			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 	this.setInputEnabled(recordButton, false);
 	this.setInputEnabled(forwardButtons, false);
 	this.minTimeCoordinate = this.getXForTime(this.minTime) - this.trackPadding;
@@ -1369,9 +1359,11 @@ Player.prototype.setupVideoRecording = function() {
 Player.prototype.setInputEnabled = function(element, enabled) {
 	if (enabled) {
 		element.find('*').attr("disabled", false);
+		element.attr("disabled", false);
 		element.css('opacity', 1);
 	} else {
 		element.find('*').attr("disabled", true);
+		element.attr("disabled", true);
 		element.css('opacity', 0.5);
 	}
 };
@@ -1411,8 +1403,7 @@ Player.prototype.recording_startRecording = function() {
 			".videoControlsContainer.controlsBar.videoControls.recordButton")
 			.eq(0);
 	var forwardButtons = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons")
-			.eq(0);
+			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 	recordButton.addClass("recording");
 	this.setInputEnabled(recordButton, false);
 	this.setInputEnabled(forwardButtons, false);
@@ -1428,18 +1419,18 @@ Player.prototype.recording_startRecording = function() {
 	this.recordAudio = RecordRTC(this.stream, {
 		// bufferSize: 16384,
 		// sampleRate: 45000
-		onAudioProcessStarted: function() {
+		onAudioProcessStarted : function() {
 			if (!instance.isFirefox) {
 				instance.recordVideo.startRecording();
 			}
-        }
+		}
 	});
 
 	this.recordVideo = RecordRTC(this.stream, {
 		type : 'video'
 	});
 	this.recordAudio.startRecording();
-	//this.recordVideo.startRecording();
+	// this.recordVideo.startRecording();
 
 	this.recording_recordingStarted();
 	// $(this.videoID)[0].startRecording();
@@ -1466,8 +1457,7 @@ Player.prototype.recording_stopRecording = function() {
 	var backButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
 	var forwardButtons = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons")
-			.eq(0);
+			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 
 	this.setInputEnabled(recordButton, false);
 	this.setInputEnabled(backButton, false);
@@ -1480,25 +1470,27 @@ Player.prototype.recording_stopRecording = function() {
 	var instance = this;
 	var callback = function() {
 		console.log(instance.recordAudio.getBlob());
-    	if (!instance.isFirefox) {
-        	console.log(instance.recordVideo.getBlob());
-    	}
-    	
-    	$(instance).trigger(Player.EVENT_RECORDING_STOPPED);
-    	instance.postRecordings(instance.options.recordingPostURL,
-    			instance.options.additionalDataToPost);
-    };
+		if (!instance.isFirefox) {
+			console.log(instance.recordVideo.getBlob());
+		}
+
+		$(instance).trigger(Player.EVENT_RECORDING_STOPPED);
+		instance.postRecordings(instance.options.recordingPostURL,
+				instance.options.additionalDataToPost);
+	};
 	this.recordAudio.stopRecording(function() {
 		if (!instance.isFirefox) {
-	        instance.recordVideo.stopRecording(callback);
+			instance.recordVideo.stopRecording(callback);
 		} else {
 			callback();
 		}
-    });
-	//this.recordVideo.stopRecording();
-	/*$(this).trigger(Player.EVENT_RECORDING_STOPPED);
-	this.postRecordings(this.options.recordingPostURL,
-			this.options.additionalDataToPost);*/
+	});
+	// this.recordVideo.stopRecording();
+	/*
+	 * $(this).trigger(Player.EVENT_RECORDING_STOPPED);
+	 * this.postRecordings(this.options.recordingPostURL,
+	 * this.options.additionalDataToPost);
+	 */
 
 	// $(this.videoID)[0].stopRecording();
 };
@@ -1567,8 +1559,7 @@ Player.prototype.recording_recordingStopped = function(success, data) {
 	var backButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
 	var forwardButtons = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons")
-			.eq(0);
+			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 	this.setInputEnabled(recordButton, true);
 	this.setInputEnabled(backButton, true);
 
@@ -1614,8 +1605,7 @@ Player.prototype.recording_goToPreviewing = function() {
 	var backButton = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
 	var forwardButtons = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.forwardButtons")
-			.eq(0);
+			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 	this.setInputEnabled(forwardButtons, false);
 	this.setInputEnabled(recordButton, false);
 	this.setInputEnabled(backButton, false);
@@ -1651,10 +1641,8 @@ Player.prototype.recording_recordingTranscodingFinished = function(fileName) {
 		var backButton = $(this.elementID).find(
 				".videoControlsContainer.controlsBar.backButtons.backButton")
 				.eq(0);
-		var forwardButtons = $(this.elementID)
-				.find(
-						".videoControlsContainer.controlsBar.forwardButtons")
-				.eq(0);
+		var forwardButtons = $(this.elementID).find(
+				".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 		alert("Converting video failed! Please record again.");
 		this.setInputEnabled(forwardButtons, false);
 		this.setInputEnabled(recordButton, true);
