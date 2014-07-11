@@ -21,13 +21,14 @@
 	 player.options.recordingErrorFunction = function(e)
 	 {
 		 console.log('Reeeejected!', e);
-	 }
+		 alert("Problem with Camera.");
+	 };
 	 player.options.recordingSuccessFunction = function(data)
 	 {
 		 var fn = mediaChooser.recorderConfiguration.recordingSuccessFunction;
 		 fn(data);
 		 console.log('Recording Success!', data);
-	 }
+	 };
 	 var forwardFunctions = mediaChooser.recorderConfiguration.forwardFunctions;
 	 console.log("MediaChooser.recorderConfiguration.forwardFunctions:");
 	 for (var i=0;i<forwardFunctions.length;i++)
