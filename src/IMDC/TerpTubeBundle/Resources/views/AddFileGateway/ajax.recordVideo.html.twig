@@ -6,6 +6,9 @@
  $(document).ready(function() {
 	 var videoElement = $("#record");
 	 //var recorderConfiguration = {#{ recorderConfiguration |json_encode()|raw}#}; //TODO: MediaChooser instance now holds this. posting this, then declaring here, etc: not needed
+	 console.log("MediaChooser:");
+	 console.log(mediaChooser);
+	 console.log("MediaChooser.recorderConfiguration:");
 	 console.log(mediaChooser.recorderConfiguration);
 	 var player = new Player(videoElement, mediaChooser.recorderConfiguration);
 	 
@@ -26,6 +29,7 @@
 		 console.log('Recording Success!', data);
 	 }
 	 var forwardFunctions = mediaChooser.recorderConfiguration.forwardFunctions;
+	 console.log("MediaChooser.recorderConfiguration.forwardFunctions:");
 	 for (var i=0;i<forwardFunctions.length;i++)
  	 {
 	 	 var funct = forwardFunctions[i];

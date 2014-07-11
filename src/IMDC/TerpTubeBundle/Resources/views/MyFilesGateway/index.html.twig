@@ -240,7 +240,8 @@
 	        $('#record-link').click(function(e) {
 	        	
 	            var recorderConfiguration = {forwardButtons: ["<button class='cutButton'></button>"], forwardFunctions: ["forwardFunction"], recordingSuccessFunction: "callBack"};
-	            window["mediaChooser"].chooseMedia(MediaChooser.TYPE_RECORD_VIDEO, {recorderConfiguration: recorderConfiguration});
+	            window["mediaChooser"].setRecorderConfiguration(recorderConfiguration);
+	            window["mediaChooser"].chooseMedia(MediaChooser.TYPE_RECORD_VIDEO);
 	//         	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href'), recorderConfiguration), "Record");
 	        	return false;
 	        });
