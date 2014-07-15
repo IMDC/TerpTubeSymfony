@@ -1,76 +1,75 @@
-{% block postgrid %}
-<ul class="thumbnails">
-    {% set counter = 1 %}
-    <div class="row">
-    {% for post in posts %}
-    {% if counter != 1 and counter % 4 == 1 %}
-        <div class="row" data-rowid="{{ counter }}">
-    {% endif %}
-            <li class="col-md-3">
-                <div class="thumbnail postthumbnail text-center">
-                	<div class="row">
-                		<div class="col-md-3 post-reply-user-info-wrap">
-		                    <div class="row post-reply-user-avatar-wrap">
-		                        <img class="avatar" alt="avatar" title="" src="{{ post.author.getProfile.avatar ? asset(post.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
-		                    </div>
-		                    <div class="row text-center post-reply-user-info">
-		                        <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ post.author }}</a>
-		                    </div>
-		                </div>
+{#
+included by:
+Default:recentactivity.html.twig
+#}
 
-{# 		                {% if post.attachedFile is defined and post.attachedFile|length > 0 %}#}
-		                {% if post.attachedFile|length != 0 %}
-						    {% set postMediaFile = post.attachedFile[0] %}
-					    {% else %}
-					    	{% set postMediaFile = null  %}
+{% block postgrid %}
+	{% set counter = 1 %}
+	{% for post in posts %}
+		{% if counter % 4 == 1 %}
+			<div class="row" data-rowid="{{ counter }}">
+				<ul class="list-unstyled thumbnails">
+		{% endif %}
+		<li>
+			<div class="col-md-3">
+				<div class="thumbnail postthumbnail text-center">
+					<div class="row">
+						<div class="col-md-3 post-reply-user-info-wrap">
+							<div class="post-reply-user-avatar-wrap">
+								<img class="img-responsive center-block avatar" alt="avatar" title="" src="{{ post.author.getProfile.avatar ? asset(post.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+							</div>
+							<div class="text-center post-reply-user-info">
+								<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ post.author }}</a>
+							</div>
+						</div>
+						{# {% if post.attachedFile is defined and post.attachedFile|length > 0 %} #}
+						{% if post.attachedFile|length != 0 %}
+							{% set postMediaFile = post.attachedFile[0] %}
+						{% else %}
+							{% set postMediaFile = null  %}
 						{% endif %}
-		                {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
-{# 						{% if postMediaFile is not defined or postMediaFile is null %}#}
+						{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
+						{# {% if postMediaFile is not defined or postMediaFile is null %} #}
 						{% if postMediaFile == null %}
-					    <div class="col-md-9 post-thumb-content">
-					        {% if post.getParentThread.getId is defined %}
-						    <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
-						    {% else %}
-						    <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentPost.getParentThread.getId}) }}#{{ post.id }}">
-						    {% endif %}
-			                	{{ post.content|truncate(250) }}
-		                	</a>
-		                </div>
-		                {% else %}
-	                	<div class="col-md-9">
-	                	    {% if post.getParentThread is null %}
-		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentPost.getParentThread.getId}) }}#{{ post.id }}">
-		                	{% else %}
-		                	<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
-		                	{% endif %}
-		                	{{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: postMediaFile}, with_context = false) }}
-		                		<div class="row">
-		                		{{ post.content|truncate(60) }}
-		                		</div>
-	                		</a>
-                		</div> <!-- ./col-md-9 -->
-		                {% endif %}
-		                <div class="row">
-		                    <div class="col-md-9 col-md-offset-3">
-                                <p>
-                        		    <span class="contentTimeStampSpan" title="{{ post.created|date('g:ia M j Y') }}">{{ time_diff(post.created) }}</span>
-                        		</p>
-		                    </div>
-		                </div>
-		                    
-                	</div> <!-- /.row -->
-{#                 	<div class="row">#}
-{#                     <p><span class="content-created-datetime-span">Created: {{ post.created|date('g:ia M j Y') }}</span></p>#}
-{#                     </div>#}
-                
-                </div> <!-- /.thumbnail text-center -->
-            </li> <!-- /.col-md-3 -->
-    {% if (counter != 0 and counter % 4 == 0) or counter == posts|length %}
-        </div> <!--  /.row  data-rowid {{ counter }} -->
-        <p></p>
-    {% endif %}
-    {% set counter = counter + 1 %}
-{% endfor %}
-    </div> <!-- /.row -->
-</ul> <!-- /.thumbnails -->
+							<div class="col-md-9">
+								{% if post.getParentThread.getId is defined %}
+									<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
+								{% else %}
+									<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentPost.getParentThread.getId}) }}#{{ post.id }}">
+								{% endif %}
+									{{ post.content|truncate(250) }}
+								</a>
+							</div>
+						{% else %}
+							<div class="col-md-9">
+								{% if post.getParentThread is null %}
+									<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentPost.getParentThread.getId}) }}#{{ post.id }}">
+								{% else %}
+									<a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}#{{ post.id }}">
+								{% endif %}
+									{{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: postMediaFile}, with_context = false) }}
+									{{ post.content|truncate(60) }}
+								</a>
+							</div>
+						{% endif %}
+					</div>
+					<div class="row">
+						<div class="col-md-9 col-md-offset-3">
+							<p>
+								<span class="contentTimeStampSpan" title="{{ post.created|date('g:ia M j Y') }}">{{ time_diff(post.created) }}</span>
+							</p>
+						</div>
+					</div>
+					{# <div class="row"> #}
+						{# <p><span class="content-created-datetime-span">Created: {{ post.created|date('g:ia M j Y') }}</span></p> #}
+					{# </div> #}
+				</div>
+			</div>
+		</li>
+		{% if (counter != 0 and counter % 4 == 0) or counter == posts|length %}
+				</ul>
+			</div>
+		{% endif %}
+		{% set counter = counter + 1 %}
+	{% endfor %}
 {% endblock postgrid %}

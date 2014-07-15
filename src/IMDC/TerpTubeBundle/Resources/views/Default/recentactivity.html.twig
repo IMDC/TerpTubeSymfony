@@ -29,29 +29,33 @@
 {% endblock flashmessages %}
 
 {% block herounit_wrap %}
-	<h1>Welcome to TerpTube!</h1>
+	<div class="col-md-12">
+		<h1>Welcome to TerpTube!</h1>
+	</div>
 {% endblock herounit_wrap %}
 
 {% block underherounitrow1 %}
 	{% if threads|length > 0 %}
-		<h3>New Topics</h3>.
+		<div class="col-md-12">
+			<h3>New Topics</h3>
 
-		{% include 'IMDCTerpTubeBundle:Thread:threadThumbnailVerticalPrototype.html.twig' %}
+			{% include 'IMDCTerpTubeBundle:Thread:threadThumbnailVerticalPrototype.html.twig' %}
+		</div>
 	{% endif %}
 {% endblock underherounitrow1 %}
 
 {% block underherounitrow2 %}
-	{% if posts|length > 0 %}
-		<h3>New Posts</h3>
+	<div class="col-md-12">
+		{% if posts|length > 0 %}
+			<h3>New Posts</h3>
 
-		{% include 'IMDCTerpTubeBundle:Post:postthumbnailprototype.html.twig' %}
-	{% endif %}
+			{% include 'IMDCTerpTubeBundle:Post:postthumbnailprototype.html.twig' %}
+		{% endif %}
 
-	{% if forums|length > 0 %}
-		<div class="row">
+		{% if forums|length > 0 %}
 		    <h3>Recent Forum Activity</h3>
 
 		    {% include 'IMDCTerpTubeBundle:Forum:ForumThumbnail.html.twig' %}
-		</div>
-	{% endif %}
+		{% endif %}
+	</div>
 {% endblock underherounitrow2 %}

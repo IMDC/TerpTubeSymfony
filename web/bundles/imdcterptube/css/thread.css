@@ -205,7 +205,6 @@ GLOBAL
 max-height not needed
 */
 img.avatar {
-	margin: 0 auto;
     max-height: 150px;
 }
 

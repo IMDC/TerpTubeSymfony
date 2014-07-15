@@ -17,7 +17,7 @@
     <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/thread.js') }}"></script>
 {% endblock headerjavascripts %}
 
-{% block sidebarlinks_pages %}<li class="active">{% endblock %}
+{% block sidebarlinks_pages %}class="active"{% endblock %}
 
 {% block herounit_wrap %}
 	{% if thread.getParentForum %}
@@ -235,7 +235,7 @@
 												<div class="col-md-2 post-reply-user-info-wrap">
 													<div class="row post-reply-user-avatar-wrap">
 														<div class="col-md-12">
-															<img class="img-responsive avatar" alt="avatar" title="" src="{{ post.author.getProfile.avatar ? asset(post.author.getProfile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+															<img class="img-responsive center-block avatar" alt="avatar" title="" src="{{ post.author.getProfile.avatar ? asset(post.author.getProfile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
 														</div>
 													</div>
 
@@ -284,7 +284,7 @@
 
 												<div class="col-md-9 post-reply-content-wrap" data-pid="{{ post.id }}">
 													<div class="row" style="margin-bottom: 10px;">
-														<div class="pull-right post-reply-date">
+														<div class="col-md-2 col-md-offset-10 pull-right post-reply-date">
 															{{ post.created|date('o-m-N H:i') }}
 															{% if post.editedBy is not null %}
 																(edited at {{ post.editedAt|date('o-m-N H:i') }} by {{ post.editedBy.getUsername }})
@@ -298,24 +298,20 @@
 												</div> <!-- /post-reply-avatar-content-wrap div -->
 
 												<div class="col-md-1 pull-right">
-													<div class="row">
-														<div class="col-md-12">
-															<ul class="list-unstyled">
-																{% if post.isTemporal %}
-																	<li><a href="#" class="temporal-post-start-link" title="Jump to selected timeline region" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="fa fa-clock-o"></i></a></li>
-																{% endif %}
-		
-																{% if post.author.getId == app.user.getId %}
-																	{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
-																	<li><a class="post-comment-edit" title="Edit this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
-																	{# <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li> #}
-																	<li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            
-																{% endif %}
-		
-																{# <li><a class="post-comment-reply" title="Reply to this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-reply"></i></a></li> #}
-															</ul>
-														</div>
-													</div>
+													<ul class="list-unstyled">
+														{% if post.isTemporal %}
+															<li><a href="#" class="temporal-post-start-link" title="Jump to selected timeline region" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="fa fa-clock-o"></i></a></li>
+														{% endif %}
+
+														{% if post.author.getId == app.user.getId %}
+															{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
+															<li><a class="post-comment-edit" title="Edit this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
+															{# <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li> #}
+															<li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            
+														{% endif %}
+
+														{# <li><a class="post-comment-reply" title="Reply to this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-reply"></i></a></li> #}
+													</ul>
 												</div> <!-- /post-reply-tools -->
 											</div>
 

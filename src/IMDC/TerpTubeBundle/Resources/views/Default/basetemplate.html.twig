@@ -112,21 +112,21 @@
 						<ul class="nav navbar-nav navbar-right">
 							{% block loginarea %}
 								{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-		                            {% set profileURL = '<a style="display: inline;" href="'~ path('imdc_terp_tube_user_profile')~'"><i class="fa fa-user"></i> ' ~app.user.username~'</a>' %}
-		                            <li class="navbar-text" style="margin-right: 0; margin-left: 0;">{{ 'layout.logged_in_as'|trans({'%username%': profileURL}, 'FOSUserBundle')|raw }}</li>
-									<li class="navbar-text" style="margin-right: 0; margin-left: 0;">|</li>
+		                            <li>
+										<a class="navbar-link" href="{{ path('imdc_terp_tube_user_profile') }}"> <i class="fa fa-user"></i>
+											{{ app.user.username }}
+										</a>
+									</li>
 		               				<li>
 										<a class="toolpop" href="{{ path('imdc_message_view_all') }}" title="Inbox">
 		               						<i class="fa fa-envelope"></i> <span class="badge badge-{{ app.user.getNumUnreadPMs > 0 ? 'success' : 'inverse' }}">{{ app.user.getNumUnreadPMs }}</span>
 		               					</a>
 									</li>
-									<li class="navbar-text" style="margin-right: 0; margin-left: 0;">|</li>
 		               				<li>
 										<a class="toolpop" href="{{ path('imdc_invitations_list') }}" title="Invitations">
 		               						<i class="fa fa-inbox"></i> <span class="badge badge-{{ app.user.getNumActiveInvitations > 0 ? 'success' : 'inverse' }}">{{ app.user.getNumActiveInvitations }}</span>
 		               					</a>
 									</li>
-									<li class="navbar-text" style="margin-right: 0; margin-left: 0;">|</li>
 		               				<li>
 										<a class="navbar-link" href="{{ path('fos_user_security_logout') }}">
 		                   					{{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="fa fa-sign-out"></i>
@@ -145,35 +145,39 @@
 		<div class="container-fluid">
 			{% block content %}
 				<div class="row">
-					<div class="col-md-1 mainsidebarnav">
+					<div class="col-lg-1 mainsidebarnav">
 						<div class="well sidebar-nav">
-							<ul class="nav nav-list text-center sidebar-nav-ul">
-								{% block sidebarlinks %}
-									{% block sidebarlinks_home %}<li>{% endblock %}
+							{% block sidebarlinks %}
+								<div>
+									<div {% block sidebarlinks_home %}{% endblock %}>
 										<a href="{{ path('imdc_terp_tube_user_splash') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_home.png') }}" />Home</a>
-									</li>
-									{% block sidebarlinks_pages %}<li>{% endblock %}
+									</div>
+									<div {% block sidebarlinks_pages %}{% endblock %}>
 										<a href="{{ path('imdc_forum_list') }}#"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Forums</a>
-									</li>
-									{% block sidebarlinks_vlogs %}<li>{% endblock %}
+									</div>
+								</div>
+								<div>
+									<div {% block sidebarlinks_vlogs %}{% endblock %}>
 										<a href="#"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_vlogs.png') }}" />Video Logs</a>
-									</li>
-									{% block sidebarlinks_groups %}<li>{% endblock %}
+									</div>
+									<div {% block sidebarlinks_groups %}{% endblock %}>
 										<a href="{{ path('imdc_groups_show_all') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Groups</a>
-									</li>
-									{% block sidebarlinks_members %}<li>{% endblock %}
+									</div>
+								</div>
+								<div>
+									<div {% block sidebarlinks_members %}{% endblock %}>
 										<a href="{{ path('imdc_member_list_public') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_member.png') }}" />Members</a>
-									</li>
-									{% block sidebarlinks_help %}<li>{% endblock %}
-										<a href="#"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_help.png') }}" />Help</a>
-									</li>
-								{% endblock sidebarlinks %}
-							</ul><!-- /.nav nav-list text-center -->
+									</div>
+									<div {% block sidebarlinks_help %}{% endblock %}>
+										<a href="#"><img class="img-responsive text-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_help.png') }}" />Help</a>
+									</div>
+								</div>
+							{% endblock sidebarlinks %}
 						</div><!--/.well /.sidebar-nav -->
-					</div><!--/.col-md-1 -->
+					</div><!--/.col-lg-1 -->
 
 					{% block rightsidecontent %}
-						<div class="col-md-11">
+						<div class="col-lg-11">
 							<div class="row">
 								{% block herounit_wrap %}
 									<div class="col-md-12">
@@ -223,13 +227,13 @@
 								{% block underherounitrow2 %}
 								{% endblock underherounitrow2 %}
 							</div><!-- /.row -->
-						</div><!--/.col-md-11 -->
+						</div><!--/.col-lg-11 -->
 					{% endblock rightsidecontent %}
 				</div><!--/.row -->
 
 				<div class="row">
-					<div class="col-md-12">
-						<hr>
+					<div class="col-lg-12">
+						<hr />
 
 						<footer class="container-fluid">
 							{% block footer %}

@@ -1,6 +1,7 @@
-{# included by
+{#
+included by:
 Thread:viewthread.html.twig
-end included by #}
+#}
 
 <script type="text/javascript">
 	var options = new Array();
@@ -27,19 +28,15 @@ end included by #}
 	<div class="row comment-reply-wrap" id="post-{{ postReply.id }}-wrap" data-pid="{{ postReply.id }}">
 		<div class="col-md-1" id="nested-comment-spacer"></div>
 		<div class="col-md-11 nested-comment-wrap">
-			<div class="col-md-2 post-reply-user-info-wrap">
-				<div class="row post-reply-user-avatar-wrap">
-					<div class="col-md-12">
-						<img class="img-responsive avatar" alt="avatar" title="" src="{{ postReply.author.getProfile.avatar ? asset(postReply.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+			<div class="row">
+				<div class="col-md-2 post-reply-user-info-wrap">
+					<div class="post-reply-user-avatar-wrap">
+						<img class="img-responsive center-block avatar" alt="avatar" title="" src="{{ postReply.author.getProfile.avatar ? asset(postReply.author.getProfile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
 					</div>
-				</div>
-				<div class="row text-center post-reply-user-info">
-					<div class="col-md-12">
+					<div class="text-center post-reply-user-info">
 						<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ postReply.author }}</a>
 					</div>
-				</div>
-				<div class="row text-center post-reply-user-tools">
-					<div class="col-md-12">
+					<div class="text-center post-reply-user-tools">
 						<ul class="list-unstyled list-inline thread-creator-tools-wrap">
 							<li>
 							{% if app.user.getId == postReply.author.getId %}
@@ -61,73 +58,63 @@ end included by #}
 							</li>
 							{#  ---------------- end friend section ---------------- #}
 						</ul>
-					</div>
-				</div> <!-- ./post-reply-user-tools -->		                    
-			</div> <!-- /post-reply-user-info-wrap div -->
-			<div class="col-md-9 post-reply-avatar-content-wrap" data-pid="{{ postReply.id }}">
-				<div class="row" style="margin-bottom: 10px;">
-					<div class="pull-right post-reply-date">
-						{{ postReply.created|date('o-m-N H:i') }}
-						{% if postReply.editedBy is not null %}
-							(edited at {{ postReply.editedAt|date('o-m-N H:i') }} by {{ postReply.editedBy.getUsername }})
-						{% endif %}
-					</div>
-				</div>
-				<div class="row post-reply-content">
-					{% if postReply.attachedFile is defined and postReply.attachedFile|length > 0 %}
-						{% set postMediaFile = postReply.attachedFile[0] %}
-					{% else %}
-						{% set postMediaFile = none  %}
-					{% endif %}
-
-					<div class="col-md-12">
-						{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
-						{% if postMediaFile is not defined or postMediaFile is null %}
-							{# do nothing #}
-						{% elseif postMediaFile.type == 0 %}
-						{# -----------   if type of media is an IMAGE   -------- #}
-							<div class="row">
-								<img class="img-responsive post-reply-image" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
-							</div>
-						{# -----------   if type of media is a VIDEO   -------- #}
-						{% elseif postMediaFile.type == 1 %}
-							{% set displayTestPostDensityBar = TRUE %}
-							<div class="row">
-								<video controls width="100%" id="{{ postMediaFile.getID }}" preload="auto">
-									<source src="{{ asset(postMediaFile.getResource.getWebPathWebm) }}"/>
-									<source src="{{ asset(postMediaFile.getResource.getWebPath) }}"/>
-								</video>
-							</div>
-						{% elseif postMediaFile.type == 2 %}
-						{# -----------   if type of media is AUDIO   -------- #}
-							<div class="row">
-								<audio controls style="width: 100%">
-									<source src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
-									Your browser does not support the audio element, please upgrade to Google Chrome
-								</audio>
-							</div>
-						{% endif %}
-
-						<div class="row" style="margin-top: 10px;">
-							{{ postReply.content|nl2br }}
+					</div> <!-- ./post-reply-user-tools -->
+				</div> <!-- /post-reply-user-info-wrap div -->
+				<div class="col-md-9 post-reply-avatar-content-wrap" data-pid="{{ postReply.id }}">
+					<div class="row" style="margin-bottom: 10px;">
+						<div class="col-md-2 col-md-offset-10 pull-right post-reply-date">
+							{{ postReply.created|date('o-m-N H:i') }}
+							{% if postReply.editedBy is not null %}
+								(edited at {{ postReply.editedAt|date('o-m-N H:i') }} by {{ postReply.editedBy.getUsername }})
+							{% endif %}
 						</div>
 					</div>
-				</div>
-			</div> <!-- /post-reply-avatar-content-wrap div -->
-			<div class="col-md-1 pull-right" id="post-reply-tools">
-				<div class="row">
-					<div class="col-md-12">
-						<ul class="list-unstyled">
-							{% if postReply.author.getId == app.user.getId %}
-								{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
-								<li><a class="post-comment-edit" title="Edit this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
-								{# <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li> #}
-								<li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            
-							{% endif %}
-						</ul>
+					<div class="row post-reply-content">
+						{% if postReply.attachedFile is defined and postReply.attachedFile|length > 0 %}
+							{% set postMediaFile = postReply.attachedFile[0] %}
+						{% else %}
+							{% set postMediaFile = none  %}
+						{% endif %}
+						<div class="col-md-12">
+							<div style="margin-bottom: 10px;">
+								{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
+								{% if postMediaFile is not defined or postMediaFile is null %}
+									{# do nothing #}
+								{% elseif postMediaFile.type == 0 %}
+								{# -----------   if type of media is an IMAGE   -------- #}
+									<img class="img-responsive post-reply-image" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
+								{# -----------   if type of media is a VIDEO   -------- #}
+								{% elseif postMediaFile.type == 1 %}
+									{% set displayTestPostDensityBar = TRUE %}
+									<video controls width="100%" id="{{ postMediaFile.getID }}" preload="auto">
+										<source src="{{ asset(postMediaFile.getResource.getWebPathWebm) }}"/>
+										<source src="{{ asset(postMediaFile.getResource.getWebPath) }}"/>
+									</video>
+								{% elseif postMediaFile.type == 2 %}
+								{# -----------   if type of media is AUDIO   -------- #}
+									<audio controls style="width: 100%">
+										<source src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
+										Your browser does not support the audio element, please upgrade to Google Chrome
+									</audio>
+								{% endif %}
+							</div>
+							<div>
+								{{ postReply.content|nl2br }}
+							</div>
+						</div>
 					</div>
-				</div>
-			</div> <!-- /post-reply-tools -->
+				</div> <!-- /post-reply-avatar-content-wrap div -->
+				<div class="col-md-1 pull-right" id="post-reply-tools">
+					<ul class="list-unstyled">
+						{% if postReply.author.getId == app.user.getId %}
+							{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
+							<li><a class="post-comment-edit" title="Edit this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
+							{# <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li> #}
+							<li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            
+						{% endif %}
+					</ul>
+				</div> <!-- /post-reply-tools -->
+			</div>
 		</div> <!--  /.col-md-10 .well-->
 	</div> <!-- ./post-reply-wrap -->
 </div>

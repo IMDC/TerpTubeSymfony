@@ -1,5 +1,6 @@
 {#
 included by:
+Default:recentactivity.html.twig
 Thread:threadthumbnailprototype.html.twig
 Thread:viewthread.html.twig
 #}
@@ -7,19 +8,19 @@ Thread:viewthread.html.twig
 {% extends "IMDCTerpTubeBundle:Media:mediaElement.html.twig" %}
 
 {% block mediaimagetype %}
-	<div class="row thumbnail-image">
-		<img class="forum-img-thumbnail" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
+	<div class="thumbnail-image">
+		<img class="img-responsive center-block avatar" src="{{ asset(mediaFile.getResource.getWebPath) }}" />
 	</div>
 {% endblock mediaimagetype %}
 
 {% block mediavideotype %}
-	<div class="row thumbnail-video">
+	<div class="thumbnail-video">
 		{{ parent() }}
 	</div>
 {% endblock mediavideotype %}
 
 {% block mediaaudiotype %}
-	<div class="row thumbnail-audio">
+	<div class="thumbnail-audio">
 		{{ parent() }}
 	</div>
 {% endblock mediaaudiotype %}

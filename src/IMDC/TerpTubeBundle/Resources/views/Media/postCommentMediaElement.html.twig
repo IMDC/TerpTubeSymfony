@@ -10,74 +10,68 @@ Thread:viewthread.html.twig
 {% endif %}
 
 <div class="col-md-12">
-	{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
-	{% if postMediaFile is not defined or postMediaFile is null %}
-	    {# do nothing #}
-	{% elseif postMediaFile.type == 0 %}
-	{# -----------   if type of media is an IMAGE   -------- #}
-	    <div class="row">
-	        <img class="img-responsive post-reply-image" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
-	    </div>
-	{# -----------   if type of media is a VIDEO   -------- #}
-	{% elseif postMediaFile.type == 1 %}
-	    {% set displayTestPostDensityBar = TRUE %}
-	    <div class="row">
+	<div style="margin-bottom: 10px;">
+		{# mediatype 0 = image 1 = video 2 = audio 9 = other #}
+		{% if postMediaFile is not defined or postMediaFile is null %}
+		    {# do nothing #}
+		{% elseif postMediaFile.type == 0 %}
+		{# -----------   if type of media is an IMAGE   -------- #}
+		   	<img class="img-responsive post-reply-image" src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
+		{# -----------   if type of media is a VIDEO   -------- #}
+		{% elseif postMediaFile.type == 1 %}
+		    {% set displayTestPostDensityBar = TRUE %}
 		    <video controls width="100%" id="{{ postMediaFile.getID }}" preload="auto">
 	        	<source src="{{ asset(postMediaFile.getResource.getWebPathWebm) }}"/>
 	        	<source src="{{ asset(postMediaFile.getResource.getWebPath) }}"/>
 		    </video>
-	    </div>
-	{% elseif postMediaFile.type == 2 %}
-	{# -----------   if type of media is AUDIO   -------- #}
-	    <div class="row">
+		{% elseif postMediaFile.type == 2 %}
+		{# -----------   if type of media is AUDIO   -------- #}
 		    <audio controls style="width: 100%">
 	        <source src="{{ asset(postMediaFile.getResource.getWebPath) }}" />
 		        Your browser does not support the audio element, please upgrade to Google Chrome
 		    </audio>
-	    </div>
-	{% endif %}
-	
-	{# testing ---------------------------------- #}
-	{% if post.startTime %}
-		<div class="row div-video-timeline">
-		    <div id="back-timeline">
-		        <div class="front-comment-div" id="time-comment-{{ post.getId }}" tabindex="0">
-		            <script type="text/javascript">
-		                var postId = {{ post.id }};
-		                var postStartTime = {{ post.startTime }};
-		                var postEndTime = {{ post.endTime }};
-		
-		                $videoElement = $('video#'+'{{ mediaFile.getID }}');
-		                $timeComment = $('#time-comment-' + '{{  post.id }}');
-		
-			            $videoElement[0].addEventListener('loadedmetadata', function(event) {
-			                $duration = $videoElement[0].duration;
-			                $timeComment = $('#time-comment-'+'{{  post.id }}');
+		{% endif %}
+		{# testing ---------------------------------- #}
+		{% if post.startTime %}
+			<div class="div-video-timeline" style="margin-bottom: 10px;">
+			    <div id="back-timeline">
+			        <div class="front-comment-div" id="time-comment-{{ post.getId }}" tabindex="0">
+			            <script type="text/javascript">
+			                var postId = {{ post.id }};
+			                var postStartTime = {{ post.startTime }};
+			                var postEndTime = {{ post.endTime }};
 			
-			                startTimePercentage = ((100*postStartTime)/$duration).toFixed(2);
-			                endTimePercentage = ((100*postEndTime)/$duration).toFixed(2);
-			                widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
-			                
-			                $timeComment.css('left', startTimePercentage + '%');
-			                $timeComment.css('width', widthPercentage + '%');
-			                $timeComment.css('background', 'red');
-			            }, true);
-			            
-		                $(document).ready(function() {
-		                    initMiniVideoTimeline({{ mediaFile.getId }}, 
-		                                       {{ post.getId }}, 
-		                                       {{ post.startTime }}, 
-		                                       {{ post.endTime }}
-		                                       );
-		                });
-			        </script>
+			                $videoElement = $('video#'+'{{ mediaFile.getID }}');
+			                $timeComment = $('#time-comment-' + '{{  post.id }}');
+			
+				            $videoElement[0].addEventListener('loadedmetadata', function(event) {
+				                $duration = $videoElement[0].duration;
+				                $timeComment = $('#time-comment-'+'{{  post.id }}');
+				
+				                startTimePercentage = ((100*postStartTime)/$duration).toFixed(2);
+				                endTimePercentage = ((100*postEndTime)/$duration).toFixed(2);
+				                widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
+				                
+				                $timeComment.css('left', startTimePercentage + '%');
+				                $timeComment.css('width', widthPercentage + '%');
+				                $timeComment.css('background', 'red');
+				            }, true);
+				            
+			                $(document).ready(function() {
+			                    initMiniVideoTimeline({{ mediaFile.getId }}, 
+			                                       {{ post.getId }}, 
+			                                       {{ post.startTime }}, 
+			                                       {{ post.endTime }}
+			                                       );
+			                });
+				        </script>
+				    </div>
 			    </div>
-		    </div>
-		</div>
-	{% endif %}
-	{# end of testing --------------------------- #}
-	
-	<div class="row" style="margin-top: 10px;">
-	    {{ post.content|nl2br }}
+			</div>
+		{% endif %}
+		{# end of testing --------------------------- #}
+	</div>
+	<div>
+		{{ post.content|nl2br }}
 	</div>
 </div>
