@@ -423,4 +423,27 @@ class Post
     {
         return $this->parentPost;
     }
+
+    /**
+     * Add replies
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
+     * @return Post
+     */
+    public function addReply(\IMDC\TerpTubeBundle\Entity\Post $replies)
+    {
+        $this->replies[] = $replies;
+
+        return $this;
+    }
+
+    /**
+     * Remove replies
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
+     */
+    public function removeReply(\IMDC\TerpTubeBundle\Entity\Post $replies)
+    {
+        $this->replies->removeElement($replies);
+    }
 }

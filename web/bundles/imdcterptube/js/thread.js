@@ -84,8 +84,8 @@ Thread.prototype.bindReplyUIEvents = function(postId) {
 		
 		var recorderConfiguration = {
 				forwardButtons:  ['<button class="forwardButton"></button>'],
-				forwardFunctions: ["forwardFunction"],
-				recordingSuccessFunction: "recordingSucceeded"};
+				forwardFunctions: [forwardFunction],
+				recordingSuccessFunction: recordingSucceeded};
 
 		var data = {recorderConfiguration: recorderConfiguration};
 		$MC.getInstance(thread.replyMediaChooserParams[postId]).chooseMedia(MediaChooser.TYPE_RECORD_VIDEO, data);

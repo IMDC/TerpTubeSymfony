@@ -16,6 +16,9 @@ IMDC\TerpTubeBundle\Entity\Media:
             nullable: true;
         isReady: #0-no, 1-webm-ready, 2-mpeg-ready, 3-ready
             type: smallint
+        pendingOperations:
+            type: array
+            nullable: true;
         
     manyToOne:
         owner:

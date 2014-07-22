@@ -1,6 +1,7 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-<video class="preview" width="100%" id="record" preload="auto" autoplay muted></video>
+<video class="preview" width="100%" id="record" preload="auto" autoplay
+	muted></video>
 
 <script type='text/javascript'>
  $(document).ready(function() {
@@ -37,8 +38,9 @@
 	 	 player.options.forwardFunctions[i] = function(data)
 	 	 {
 	 		 player.destroyRecorder();
-	 		 //var fn = window[funct]||null;
+// 	 		 var fn = window[funct]||null;
 	 		 funct(data);
+// 			 fn(data);
 	 		 console.log('Success!', data);
 	 	 };
  	 }

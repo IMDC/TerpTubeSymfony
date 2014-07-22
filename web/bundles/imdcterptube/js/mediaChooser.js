@@ -150,8 +150,8 @@ MediaChooser.prototype.recordingSucceeded = function(data) {
 	console.log($MC.TAG + "recordingSucceeded");
 	
 	this.media = data.media;
-	
 	this.recordingSucceededCallback(data);
+//	window[this.recordingSucceededCallback](data);
 };
 
 /**

@@ -239,7 +239,7 @@
 	        });
 	        $('#record-link').click(function(e) {
 	        	
-	            var recorderConfiguration = {forwardButtons: ["<button class='cutButton'></button>"], forwardFunctions: ["forwardFunction"], recordingSuccessFunction: "callBack"};
+	            var recorderConfiguration = {forwardButtons: ["<button class='cutButton'></button>"], forwardFunctions: [forwardFunction], recordingSuccessFunction: callBack};
 	            window["mediaChooser"].setRecorderConfiguration(recorderConfiguration);
 	            window["mediaChooser"].chooseMedia(MediaChooser.TYPE_RECORD_VIDEO);
 	//         	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href'), recorderConfiguration), "Record");

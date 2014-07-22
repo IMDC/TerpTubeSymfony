@@ -164,9 +164,15 @@ class MyFilesGatewayController extends Controller {
 				//FIXME this will encode a second time since the video was already queued for transcoding
 				//FIXME need to find out how to dequeue an item from the RabbitMQ queue
 				$resultWebM = $transcoder->trimVideo ( $webmFile, $startTime, $endTime );
-				$eventDispatcher = $this->container->get ( 'event_dispatcher' );
-				$uploadedEvent = new UploadEvent ( $media );
-				$eventDispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, $uploadedEvent );
+				$pendingOperations = $media->getPendingOperations();
+				if ($pendingOperations == null)
+					$pendingOperations = array();
+				array_push($pendingOperations, "trim,mp4,".$startTime.",".$endTime);
+				$media->setPendingOperations($pendingOperations);
+				$em->flush ();
+// 				$eventDispatcher = $this->container->get ( 'event_dispatcher' );
+// 				$uploadedEvent = new UploadEvent ( $media );
+// 				$eventDispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, $uploadedEvent );
 				if ($resultWebM) {
 					$return = array (
 							'responseCode' => 200,

@@ -228,4 +228,32 @@ class Media
 //             break;
 //         }
     }
+    /**
+     * @var array
+     */
+    private $pendingOperations;
+
+
+    /**
+     * Set pendingOperations
+     *
+     * @param array $pendingOperations
+     * @return Media
+     */
+    public function setPendingOperations($pendingOperations)
+    {
+        $this->pendingOperations = $pendingOperations;
+
+        return $this;
+    }
+
+    /**
+     * Get pendingOperations
+     *
+     * @return array 
+     */
+    public function getPendingOperations()
+    {
+        return $this->pendingOperations;
+    }
 }

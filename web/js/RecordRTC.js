@@ -1,14 +1,60 @@
-// Last time updated at 03 Feb 2014, 05:46:23
+// Last time updated at July 02, 2014, 08:32:23
 
+//------------------------------------
+/*
+-. breaking updates:
+-. (fixed) audio recording while passing multi-tracks media stream for Firefox.
+-. now, you MUST always set config-type == 'video' for Firefox; otherwise
+-. RecordRTC will record audio/ogg instead of video/webm.
+-. It doesn't matter which kind of stream you're passing. Multi-tracks or single track.
+*/
+
+// issues?
+// - chrome started supporting Blob-in-IndexedDB. Update DiskStorage.js 
+// - ref: http://updates.html5rocks.com/2014/07/Blob-support-for-IndexedDB-landed-on-Chrome-Dev
+
+// -. audio self-playback (ehco/noise/etc.)
+// -. need to fix: recordRTC.setAdvertisementArray( [ 'data:image-webp', 'data:image-webp', 'data:image-webp' ] );
+// -. it seems that RecordRTC is cutting off the last couple of seconds of recordings
+// -. ffmpeg-asm.js demos should encode in Hight Quality audio and video containers (ref issue #204)
+// -. 14K ogg is not a good output; it should be 128k ogg. VLC is unable to play it; it must!
+//------------------------------------
+
+// Browsers Support::
+// Chrome (all versions) [ audio/video individually ]
+// Firefox ( >= 29 ) [ audio/video in single webm/mp4 container or only audio in ogg ]
+// Opera (all versions) [ same as chrome ]
+// Android (Chrome) [ only video ]
+// Android (Opera) [ only video ]
+// Android (Firefox) [ only video ]
+
+//------------------------------------
 // Muaz Khan         - www.MuazKhan.com
 // MIT License       - www.WebRTC-Experiment.com/licence
 // Documentation     - github.com/muaz-khan/WebRTC-Experiment/tree/master/RecordRTC
+//------------------------------------
+// Note: RecordRTC.js is using 3 other libraries; you need to accept their licences as well.
+//------------------------------------
+// 1. RecordRTC.js
+// 2. MRecordRTC.js
+// 3. Cross-Browser-Declarations.js
+// 4. Storage.js
+// 5. MediaStreamRecorder.js
+// 6. StereoRecorder.js
+// 7. StereoAudioRecorder.js
+// 8. CanvasRecorder.js
+// 9. WhammyRecorder.js
+// 10. Whammy.js
+// 11. DiskStorage.js
+// 12. GifRecorder.js
+// 13. gifEncoder.js
+//------------------------------------
 
 // ____________
 // RecordRTC.js
 
 function RecordRTC(mediaStream, config) {
-    config = config || { };
+    config = config || {};
 
     if (!mediaStream) throw 'MediaStream is mandatory.';
     if (!config.type) config.type = 'audio';
@@ -21,7 +67,7 @@ function RecordRTC(mediaStream, config) {
         var Recorder = IsChrome ? window.StereoRecorder : window.MediaStreamRecorder;
 
         // video recorder (in WebM format)
-        if (config.type == 'video') Recorder = window.WhammyRecorder;
+        if (config.type == 'video' && IsChrome) Recorder = window.WhammyRecorder;
 
         // video recorder (in Gif format)
         if (config.type == 'gif') Recorder = window.GifRecorder;
@@ -33,6 +79,9 @@ function RecordRTC(mediaStream, config) {
 
         // Merge all data-types except "function"
         mediaRecorder = mergeProps(mediaRecorder, config);
+        mediaRecorder.onAudioProcessStarted = function () {
+            if (config.onAudioProcessStarted) config.onAudioProcessStarted();
+        };
 
         mediaRecorder.record();
 
@@ -43,29 +92,78 @@ function RecordRTC(mediaStream, config) {
         if (!mediaRecorder) return console.warn(WARNING);
 
         console.warn('stopped recording ' + config.type + ' stream.');
-        mediaRecorder.stop();
-        if (callback && mediaRecorder) {
-            var url = URL.createObjectURL(mediaRecorder.recordedBlob);
-            callback(url);
+
+        if (config.type != 'gif') {
+            mediaRecorder.stop(_callback);
+        } else {
+            mediaRecorder.stop();
+            _callback();
         }
 
-        if (config.autoWriteToDisk) {
-            getDataURL(function(dataURL) {
-                var parameter = { };
-                parameter[config.type + 'Blob'] = dataURL;
-                DiskStorage.Store(parameter);
-            });
+        function _callback() {
+            var blob = mediaRecorder.recordedBlob;
+            if (callback) {
+                var url = URL.createObjectURL(blob);
+                callback(url);
+            }
+            console.debug(blob.type, '->', bytesToSize(blob.size));
+
+            if (config.autoWriteToDisk) {
+                getDataURL(function (dataURL) {
+                    var parameter = {};
+                    parameter[config.type + 'Blob'] = dataURL;
+                    DiskStorage.Store(parameter);
+                });
+            }
         }
     }
 
     function getDataURL(callback, _mediaRecorder) {
         if (!callback) throw 'Pass a callback function over getDataURL.';
+        
+        var recordedBlob = _mediaRecorder ? _mediaRecorder.recordedBlob : mediaRecorder.recordedBlob;
+        
+        if(!recordedBlob) {
+            console.warn('Blob encoder did not yet finished its job.');
+            setTimeout(function() {
+                getDataURL(callback, _mediaRecorder)
+            }, 1000);
+            return;
+        }
 
-        var reader = new FileReader();
-        reader.readAsDataURL(_mediaRecorder ? _mediaRecorder.recordedBlob : mediaRecorder.recordedBlob);
-        reader.onload = function(event) {
-            callback(event.target.result);
-        };
+        _getDataURL();
+
+        function _getDataURL() {
+            if (!!window.Worker) {
+                var webWorker = processInWebWorker(function readFile(_blob) {
+                    postMessage(new FileReaderSync().readAsDataURL(_blob));
+                });
+
+                webWorker.onmessage = function (event) {
+                    callback(event.data);
+                };
+
+                webWorker.postMessage(recordedBlob);
+            } else {
+                var reader = new FileReader();
+                reader.readAsDataURL(recordedBlob);
+                reader.onload = function (event) {
+                    callback(event.target.result);
+                };
+            }
+        }
+
+        function processInWebWorker(_function) {
+            var blob = URL.createObjectURL(new Blob([_function.toString(),
+                'this.onmessage =  function (e) {readFile(e.data);}'
+            ], {
+                type: 'application/javascript'
+            }));
+
+            var worker = new Worker(blob);
+            URL.revokeObjectURL(blob);
+            return worker;
+        }
     }
 
     var WARNING = 'It seems that "startRecording" is not invoked for ' + config.type + ' recorder.';
@@ -75,21 +173,20 @@ function RecordRTC(mediaStream, config) {
     return {
         startRecording: startRecording,
         stopRecording: stopRecording,
-        getBlob: function() {
+        getBlob: function () {
             if (!mediaRecorder) return console.warn(WARNING);
             return mediaRecorder.recordedBlob;
         },
         getDataURL: getDataURL,
-        toURL: function() {
+        toURL: function () {
             if (!mediaRecorder) return console.warn(WARNING);
             return URL.createObjectURL(mediaRecorder.recordedBlob);
         },
-        save: function() {
+        save: function () {
             if (!mediaRecorder) return console.warn(WARNING);
-            console.log('saving recorded ' + config.type + ' stream to disk!');
 
             // bug: should we use "getBlob" instead; to handle aww-snaps!
-            this.getDataURL(function(dataURL) {
+            this.getDataURL(function (dataURL) {
                 var hyperlink = document.createElement('a');
                 hyperlink.href = dataURL;
                 hyperlink.target = '_blank';
@@ -106,18 +203,29 @@ function RecordRTC(mediaStream, config) {
                 (window.URL || window.webkitURL).revokeObjectURL(hyperlink.href);
             });
         },
-        getFromDisk: function(callback) {
+        getFromDisk: function (callback) {
             if (!mediaRecorder) return console.warn(WARNING);
             RecordRTC.getFromDisk(config.type, callback);
+        },
+        setAdvertisementArray: function (arrayOfWebPImages) {
+            this.advertisement = [];
+
+            var length = arrayOfWebPImages.length;
+            for (var i = 0; i < length; i++) {
+                this.advertisement.push({
+                    duration: i,
+                    image: arrayOfWebPImages[i]
+                });
+            }
         }
     };
 }
 
-RecordRTC.getFromDisk = function(type, callback) {
+RecordRTC.getFromDisk = function (type, callback) {
     if (!callback) throw 'callback is mandatory.';
 
     console.log('Getting recorded ' + (type == 'all' ? 'blobs' : type + ' blob ') + ' from disk!');
-    DiskStorage.Fetch(function(dataURL, _type) {
+    DiskStorage.Fetch(function (dataURL, _type) {
         if (type != 'all' && _type == type + 'Blob') {
             if (callback) callback(dataURL);
         }
@@ -128,13 +236,13 @@ RecordRTC.getFromDisk = function(type, callback) {
     });
 };
 
-RecordRTC.writeToDisk = function(options) {
+RecordRTC.writeToDisk = function (options) {
     console.log('Writing recorded blob(s) to disk!');
-    options = options || { };
+    options = options || {};
     if (options.audio && options.video && options.gif) {
-        options.audio.getDataURL(function(audioDataURL) {
-            options.video.getDataURL(function(videoDataURL) {
-                options.gif.getDataURL(function(gifDataURL) {
+        options.audio.getDataURL(function (audioDataURL) {
+            options.video.getDataURL(function (videoDataURL) {
+                options.gif.getDataURL(function (gifDataURL) {
                     DiskStorage.Store({
                         audioBlob: audioDataURL,
                         videoBlob: videoDataURL,
@@ -144,8 +252,8 @@ RecordRTC.writeToDisk = function(options) {
             });
         });
     } else if (options.audio && options.video) {
-        options.audio.getDataURL(function(audioDataURL) {
-            options.video.getDataURL(function(videoDataURL) {
+        options.audio.getDataURL(function (audioDataURL) {
+            options.video.getDataURL(function (videoDataURL) {
                 DiskStorage.Store({
                     audioBlob: audioDataURL,
                     videoBlob: videoDataURL
@@ -153,8 +261,8 @@ RecordRTC.writeToDisk = function(options) {
             });
         });
     } else if (options.audio && options.gif) {
-        options.audio.getDataURL(function(audioDataURL) {
-            options.gif.getDataURL(function(gifDataURL) {
+        options.audio.getDataURL(function (audioDataURL) {
+            options.gif.getDataURL(function (gifDataURL) {
                 DiskStorage.Store({
                     audioBlob: audioDataURL,
                     gifBlob: gifDataURL
@@ -162,8 +270,8 @@ RecordRTC.writeToDisk = function(options) {
             });
         });
     } else if (options.video && options.gif) {
-        options.video.getDataURL(function(videoDataURL) {
-            options.gif.getDataURL(function(gifDataURL) {
+        options.video.getDataURL(function (videoDataURL) {
+            options.gif.getDataURL(function (gifDataURL) {
                 DiskStorage.Store({
                     videoBlob: videoDataURL,
                     gifBlob: gifDataURL
@@ -171,19 +279,19 @@ RecordRTC.writeToDisk = function(options) {
             });
         });
     } else if (options.audio) {
-        options.audio.getDataURL(function(audioDataURL) {
+        options.audio.getDataURL(function (audioDataURL) {
             DiskStorage.Store({
                 audioBlob: audioDataURL
             });
         });
     } else if (options.video) {
-        options.video.getDataURL(function(videoDataURL) {
+        options.video.getDataURL(function (videoDataURL) {
             DiskStorage.Store({
                 videoBlob: videoDataURL
             });
         });
     } else if (options.gif) {
-        options.gif.getDataURL(function(gifDataURL) {
+        options.gif.getDataURL(function (gifDataURL) {
             DiskStorage.Store({
                 gifBlob: gifDataURL
             });
@@ -191,15 +299,152 @@ RecordRTC.writeToDisk = function(options) {
     }
 };
 
-// __________________________
-// Cross-Browser Declarations
+// _____________
+// MRecordRTC.js
+
+function MRecordRTC(mediaStream) {
+    this.addStream = function (_mediaStream) {
+        if (_mediaStream) mediaStream = _mediaStream;
+    };
+
+    this.mediaType = {
+        audio: true,
+        video: true
+    };
+
+    this.startRecording = function () {
+        if (this.mediaType.audio) {
+            this.audioRecorder = RecordRTC(mediaStream, this).startRecording();
+        }
+
+        if (this.mediaType.video) {
+            this.videoRecorder = RecordRTC(mediaStream, {
+                type: 'video'
+            }).startRecording();
+        }
+
+        if (this.mediaType.gif) {
+            this.gifRecorder = RecordRTC(mediaStream, {
+                type: 'gif',
+                frameRate: this.frameRate || 200,
+                quality: this.quality || 10
+            }).startRecording();
+        }
+    };
+
+    this.stopRecording = function (callback) {
+        callback = callback || function () {};
+
+        if (this.audioRecorder) {
+            this.audioRecorder.stopRecording(function (blobURL) {
+                callback(blobURL, 'audio');
+            });
+        }
+
+        if (this.videoRecorder) {
+            this.videoRecorder.stopRecording(function (blobURL) {
+                callback(blobURL, 'video');
+            });
+        }
+
+        if (this.gifRecorder) {
+            this.gifRecorder.stopRecording(function (blobURL) {
+                callback(blobURL, 'gif');
+            });
+        }
+    };
+
+    this.getBlob = function (callback) {
+        var output = {};
+
+        if (this.audioRecorder) {
+            output.audio = this.audioRecorder.getBlob();
+        }
+
+        if (this.videoRecorder) {
+            output.video = this.videoRecorder.getBlob();
+        }
+
+        if (this.gifRecorder) {
+            output.gif = this.gifRecorder.getBlob();
+        }
+        if (callback) callback(output);
+    };
+
+    this.getDataURL = function (callback) {
+        this.getBlob(function (blob) {
+            getDataURL(blob.audio, function (_audioDataURL) {
+                getDataURL(blob.video, function (_videoDataURL) {
+                    callback({
+                        audio: _audioDataURL,
+                        video: _videoDataURL
+                    });
+                });
+            });
+        });
+
+        function getDataURL(blob, callback00) {
+            if (!!window.Worker) {
+                var webWorker = processInWebWorker(function readFile(_blob) {
+                    postMessage(new FileReaderSync().readAsDataURL(_blob));
+                });
+
+                webWorker.onmessage = function (event) {
+                    callback00(event.data);
+                };
+
+                webWorker.postMessage(blob);
+            }
+            else {
+                var reader = new FileReader();
+                reader.readAsDataURL(blob);
+                reader.onload = function (event) {
+                    callback00(event.target.result);
+                };
+            }
+        }
+
+        function processInWebWorker(_function) {
+            var blob = URL.createObjectURL(new Blob([_function.toString(),
+                'this.onmessage =  function (e) {readFile(e.data);}'
+            ], {
+                type: 'application/javascript'
+            }));
+
+            var worker = new Worker(blob);
+            URL.revokeObjectURL(blob);
+            return worker;
+        }
+    };
+
+    this.writeToDisk = function () {
+        RecordRTC.writeToDisk({
+            audio: this.audioRecorder,
+            video: this.videoRecorder,
+            gif: this.gifRecorder
+        });
+    };
+}
+
+MRecordRTC.getFromDisk = RecordRTC.getFromDisk;
+MRecordRTC.writeToDisk = RecordRTC.writeToDisk;
+
+// _____________________________
+// Cross-Browser-Declarations.js
 
 // animation-frame used in WebM recording
-requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
-cancelAnimationFrame = window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame;
+if (!window.requestAnimationFrame) {
+    requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame;
+}
+
+if (!window.cancelAnimationFrame) {
+    cancelAnimationFrame = window.webkitCancelAnimationFrame || window.mozCancelAnimationFrame;
+}
 
 // WebAudio API representer
-AudioContext = window.webkitAudioContext || window.mozAudioContext;
+if (!window.AudioContext) {
+    window.AudioContext = window.webkitAudioContext || window.mozAudioContext;
+}
 
 URL = window.URL || window.webkitURL;
 navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
@@ -221,7 +466,7 @@ function mergeProps(mergein, mergeto) {
 }
 
 function reformatProps(obj) {
-    var output = { };
+    var output = {};
     for (var o in obj) {
         if (o.indexOf('-') != -1) {
             var splitted = o.split('-');
@@ -232,32 +477,103 @@ function reformatProps(obj) {
     return output;
 }
 
+// __________ (used to handle stuff like http://goo.gl/xmE5eg) issue #129
+// Storage.js
+var Storage = {
+    AudioContext: window.AudioContext || window.webkitAudioContext
+};
+
 // ______________________
 // MediaStreamRecorder.js
 
+// todo: need to show alert boxes for incompatible cases
 // encoder only supports 48k/16k mono audio channel
+
+/**
+ * Implementation of https://dvcs.w3.org/hg/dap/raw-file/default/media-stream-capture/MediaRecorder.html
+ * The MediaRecorder accepts a mediaStream as input source passed from UA. When recorder starts,
+ * a MediaEncoder will be created and accept the mediaStream as input source.
+ * Encoder will get the raw data by track data changes, encode it by selected MIME Type, then store the encoded in EncodedBufferCache object.
+ * The encoded data will be extracted on every timeslice passed from Start function call or by RequestData function.
+ * Thread model:
+ * When the recorder starts, it creates a "Media Encoder" thread to read data from MediaEncoder object and store buffer in EncodedBufferCache object.
+ * Also extract the encoded data and create blobs on every timeslice passed from start function or RequestData function called by UA.
+ */
 
 function MediaStreamRecorder(mediaStream) {
     var self = this;
 
-    this.record = function() {
+    // if user chosen only audio option; and he tried to pass MediaStream with
+    // both audio and video tracks;
+    // using a dirty workaround to generate audio-only stream so that we can get audio/ogg output.
+    if (this.type == 'audio' && mediaStream.getVideoTracks && mediaStream.getVideoTracks().length) {
+        var context = new AudioContext();
+        var mediaStreamSource = context.createMediaStreamSource(mediaStream);
+
+        var destination = context.createMediaStreamDestination();
+        mediaStreamSource.connect(destination);
+
+        mediaStream = destination.stream;
+    }
+
+    var dataAvailable = false;
+    this.record = function () {
         // http://dxr.mozilla.org/mozilla-central/source/content/media/MediaRecorder.cpp
         // https://wiki.mozilla.org/Gecko:MediaRecorder
+        // https://dvcs.w3.org/hg/dap/raw-file/default/media-stream-capture/MediaRecorder.html
+
+        // starting a recording session; which will initiate "Reading Thread"
+        // "Reading Thread" are used to prevent main-thread blocking scenarios
         mediaRecorder = new MediaRecorder(mediaStream);
-        mediaRecorder.ondataavailable = function(e) {
+
+        // Dispatching OnDataAvailable Handler
+        mediaRecorder.ondataavailable = function (e) {
+            if (dataAvailable) return;
+
+            if (!e.data.size) {
+                console.warn('Recording of', e.data.type, 'failed.');
+                return;
+            }
+
+            // todo: need to check who commented following two lines and why?
             // pull #118
-            if (self.recordedBlob)
-                self.recordedBlob = new Blob([self.recordedBlob, e.data], { type: 'audio/ogg' });
-            else
-                self.recordedBlob = new Blob([e.data], { type: 'audio/ogg' });
+            // if (self.recordedBlob) self.recordedBlob = new Blob([self.recordedBlob, e.data], { type: e.data.type || 'audio/ogg' });
+
+            dataAvailable = true;
+            self.recordedBlob = new Blob([e.data], {
+                type: e.data.type || 'audio/ogg'
+            });
+            self.callback();
         };
 
+        mediaRecorder.onerror = function (error) {
+            console.warn(error);
+            mediaRecorder.stop();
+            self.record(0);
+        };
+
+        // void start(optional long mTimeSlice)
+        // The interval of passing encoded data from EncodedBufferCache to onDataAvailable
+        // handler. "mTimeSlice < 0" means Session object does not push encoded data to
+        // onDataAvailable, instead, it passive wait the client side pull encoded data
+        // by calling requestData API.
         mediaRecorder.start(0);
+
+        // Start recording. If timeSlice has been provided, mediaRecorder will
+        // raise a dataavailable event containing the Blob of collected data on every timeSlice milliseconds.
+        // If timeSlice isn't provided, UA should call the RequestData to obtain the Blob data, also set the mTimeSlice to zero.
+
+        if (self.onAudioProcessStarted) self.onAudioProcessStarted();
     };
 
-    this.stop = function() {
+    this.stop = function (callback) {
+        this.callback = callback;
+        // mediaRecorder.state == 'recording' means that media recorder is associated with "session"
+        // mediaRecorder.state == 'stopped' means that media recorder is detached from the "session" ... in this case; "session" will also be deleted.
+
         if (mediaRecorder.state == 'recording') {
-            mediaRecorder.requestData();
+            // "stop" method auto invokes "requestData"!
+            // mediaRecorder.requestData();
             mediaRecorder.stop();
         }
     };
@@ -266,32 +582,36 @@ function MediaStreamRecorder(mediaStream) {
     var mediaRecorder;
 }
 
-
 // _________________
 // StereoRecorder.js
 
 function StereoRecorder(mediaStream) {
-    this.record = function() {
+    this.record = function () {
         mediaRecorder = new StereoAudioRecorder(mediaStream, this);
+
+        var self = this;
+        mediaRecorder.onAudioProcessStarted = function () {
+            if (self.onAudioProcessStarted) self.onAudioProcessStarted();
+        };
+
         mediaRecorder.record();
     };
 
-    this.stop = function() {
-        if (mediaRecorder) mediaRecorder.stop();
-        this.recordedBlob = mediaRecorder.recordedBlob;
+    this.stop = function (callback) {
+        var self = this;
+        if (mediaRecorder)
+            mediaRecorder.stop(function () {
+                self.recordedBlob = mediaRecorder.recordedBlob;
+                callback();
+            });
     };
 
     // Reference to "StereoAudioRecorder" object
     var mediaRecorder;
 }
 
-// __________ (used to handle stuff like http://goo.gl/xmE5eg) issue #129
-// Storage.js
-var Storage = {
-    AudioContext: window.AudioContext || window.webkitAudioContext
-};
-
 // source code from: http://typedarray.org/wp-content/projects/WebAudioRecorder/script.js
+// https://github.com/mattdiamond/Recorderjs#license-mit
 // ______________________
 // StereoAudioRecorder.js
 
@@ -306,63 +626,76 @@ function StereoAudioRecorder(mediaStream, root) {
     var recording = false;
     var recordingLength = 0;
 
-    this.record = function() {
-        recording = true;
+    this.record = function () {
         // reset the buffers for the new recording
         leftchannel.length = rightchannel.length = 0;
         recordingLength = 0;
+
+        recording = true;
     };
 
-    this.stop = function() {
-        // stop recording
-        recording = false;
+    this.stop = function (callback) {
+        setTimeout(onRecordingStopped, 1000);
 
-        // flat the left and right channels down
-        var leftBuffer = mergeBuffers(leftchannel, recordingLength);
-        var rightBuffer = mergeBuffers(rightchannel, recordingLength);
+        function onRecordingStopped() {
+            // stop recording
+            recording = false;
 
-        // interleave both channels together
-        var interleaved = interleave(leftBuffer, rightBuffer);
+            // flat the left and right channels down
+            var leftBuffer = mergeBuffers(leftchannel, recordingLength);
+            var rightBuffer = mergeBuffers(rightchannel, recordingLength);
 
-        // create our wav file
-        var buffer = new ArrayBuffer(44 + interleaved.length * 2);
-        var view = new DataView(buffer);
+            // interleave both channels together
+            var interleaved = interleave(leftBuffer, rightBuffer);
 
-        // RIFF chunk descriptor
-        writeUTFBytes(view, 0, 'RIFF');
-        view.setUint32(4, 44 + interleaved.length * 2, true);
-        writeUTFBytes(view, 8, 'WAVE');
+            // create our wav file
+            var buffer = new ArrayBuffer(44 + interleaved.length * 2);
+            var view = new DataView(buffer);
 
-        // FMT sub-chunk
-        writeUTFBytes(view, 12, 'fmt ');
-        view.setUint32(16, 16, true);
-        view.setUint16(20, 1, true);
+            // RIFF chunk descriptor
+            writeUTFBytes(view, 0, 'RIFF');
+            view.setUint32(4, 44 + interleaved.length * 2, true);
+            writeUTFBytes(view, 8, 'WAVE');
 
-        // stereo (2 channels)
-        view.setUint16(22, 2, true);
-        view.setUint32(24, sampleRate, true);
-        view.setUint32(28, sampleRate * 4, true);
-        view.setUint16(32, 4, true);
-        view.setUint16(34, 16, true);
+            // FMT sub-chunk
+            writeUTFBytes(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
 
-        // data sub-chunk
-        writeUTFBytes(view, 36, 'data');
-        view.setUint32(40, interleaved.length * 2, true);
+            // stereo (2 channels)
+            view.setUint16(22, 2, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 4, true);
+            view.setUint16(32, 4, true);
+            view.setUint16(34, 16, true);
 
-        // write the PCM samples
-        var lng = interleaved.length;
-        var index = 44;
-        volume = 1;
-        for (var i = 0; i < lng; i++) {
-            view.setInt16(index, interleaved[i] * (0x7FFF * volume), true);
-            index += 2;
+            // data sub-chunk
+            writeUTFBytes(view, 36, 'data');
+            view.setUint32(40, interleaved.length * 2, true);
+
+            // write the PCM samples
+            var lng = interleaved.length;
+            var index = 44;
+            volume = 1;
+            for (var i = 0; i < lng; i++) {
+                view.setInt16(index, interleaved[i] * (0x7FFF * volume), true);
+                index += 2;
+            }
+
+            // final binary blob
+            self.recordedBlob = new Blob([view], {
+                type: 'audio/wav'
+            });
+
+            // recorded audio length
+            self.length = recordingLength;
+
+            callback();
+
+            isAudioProcessStarted = false;
         }
 
-        // final binary blob
-        this.recordedBlob = new Blob([view], { type: 'audio/wav' });
-
-        // recorded audio length
-        this.length = recordingLength;
+        var self = this;
     };
 
     function interleave(leftChannel, rightChannel) {
@@ -466,8 +799,23 @@ function StereoAudioRecorder(mediaStream, root) {
         throw 'WebAudio API has no support on this browser.';
     }
 
-    __stereoAudioRecorderJavacriptNode.onaudioprocess = function(e) {
+    var isAudioProcessStarted = false,
+        self = this;
+    __stereoAudioRecorderJavacriptNode.onaudioprocess = function (e) {
+        // if MediaStream().stop() or MediaStreamTrack().stop() is invoked.
+        if (mediaStream.ended) {
+            __stereoAudioRecorderJavacriptNode.onaudioprocess = function () {};
+            return;
+        }
+
         if (!recording) return;
+
+        if (!isAudioProcessStarted) {
+            isAudioProcessStarted = true;
+            if (self.onAudioProcessStarted) {
+                self.onAudioProcessStarted();
+            }
+        }
 
         var left = e.inputBuffer.getChannelData(0);
         var right = e.inputBuffer.getChannelData(1);
@@ -481,38 +829,64 @@ function StereoAudioRecorder(mediaStream, root) {
 
     // we connect the recorder
     volume.connect(__stereoAudioRecorderJavacriptNode);
+
+    // to prevent self audio to be connected with speakers
     __stereoAudioRecorderJavacriptNode.connect(context.destination);
 }
 
-// _______________________ (webp detection code is taken from another github repo)
-// WebP presence detection
+// _________________
+// CanvasRecorder.js
 
-var isWebPSupported;
-(function(callback) {
-    var img = new Image();
+function CanvasRecorder(htmlElement) {
+    if (!window.html2canvas) throw 'Please link: //www.webrtc-experiment.com/screenshot.js';
 
-    img.addEventListener('load', function() {
-        if (this.width === 2 && this.height === 1) {
-            callback(true);
-        } else callback(false);
-    });
+    var isRecording;
+    this.record = function () {
+        isRecording = true;
+        drawCanvasFrame();
+    };
 
-    img.addEventListener('error', function() {
-        callback(false);
-    });
+    this.stop = function (callback) {
+        isRecording = false;
+        whammy.frames = dropFirstFrame(frames);
 
-    img.src = 'data:image/webp;base64,UklGRjIAAABXRUJQVlA4ICYAAACyAgCdASoCAAEALmk0mk0iIiIiIgBoSygABc6zbAAA/v56QAAAAA==';
-})(function(_isWebPSupported) {
-    isWebPSupported = _isWebPSupported;
-});
+        this.recordedBlob = whammy.compile();
+
+        frames = [];
+        if (callback) callback(this.recordedBlob);
+    };
+
+    var frames = [];
+
+    function drawCanvasFrame() {
+        html2canvas(htmlElement, {
+            onrendered: function (canvas) {
+                var duration = new Date().getTime() - lastTime;
+                if (!duration) return drawCanvasFrame();
+
+                // via #206, by Jack i.e. @Seymourr
+                lastTime = new Date().getTime();
+
+                frames.push({
+                    duration: duration,
+                    image: canvas.toDataURL('image/webp')
+                });
+
+                if (isRecording) requestAnimationFrame(drawCanvasFrame);
+            }
+        });
+    }
+
+    var lastTime = new Date().getTime();
+
+    var whammy = new Whammy.Video(100);
+}
 
 // _________________
 // WhammyRecorder.js
 
 function WhammyRecorder(mediaStream) {
-    if (!isWebPSupported) console.error('It seems that webp images are not supported in this browser. Please try chrome.');
-
-    this.record = function() {
+    this.record = function () {
         if (!this.width) this.width = video.offsetWidth || 320;
         if (!this.height) this.height = video.offsetHeight || 240;
 
@@ -536,33 +910,52 @@ function WhammyRecorder(mediaStream) {
         video.width = this.video.width;
         video.height = this.video.height;
 
-        startTime = Date.now();
+        console.log('canvas width', canvas.width);
+        console.log('canvas height', canvas.height);
 
-        (function drawVideoFrame(time) {
-            lastAnimationFrame = requestAnimationFrame(drawVideoFrame);
+        console.log('video width', video.width);
+        console.log('video height', video.height);
 
-            if (typeof lastFrameTime === undefined) {
-                lastFrameTime = time;
-            }
+        context = canvas.getContext('2d');
 
-            // ~10 fps
-            // console.log(time, lastFrameTime, time - lastFrameTime, time - lastFrameTime < 90);
-            // if (time - lastFrameTime < 90) return;
-
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            whammy.add(canvas, time - lastFrameTime);
-            // whammy.add(canvas);
-
-            lastFrameTime = time;
-        })();
+        drawFrames();
     };
 
-    this.stop = function() {
-        if (lastAnimationFrame) cancelAnimationFrame(lastAnimationFrame);
-        endTime = Date.now();
+    var frames = [];
+
+    // if user want to display advertisement before recorded video!
+    if (this.advertisement) {
+        frames = advertisement;
+    }
+
+    function drawFrames() {
+        var duration = new Date().getTime() - lastTime;
+        if (!duration) return drawFrames();
+
+        // via #206, by Jack i.e. @Seymourr
+        lastTime = new Date().getTime();
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        frames.push({
+            duration: duration,
+            image: canvas.toDataURL('image/webp')
+        });
+
+        if (!isStopDrawing) {
+            setTimeout(drawFrames, 10);
+        }
+    }
+
+    var isStopDrawing = false;
+
+    this.stop = function (callback) {
+        isStopDrawing = true;
+        whammy.frames = dropFirstFrame(frames);
+        frames = [];
+
         this.recordedBlob = whammy.compile();
-        whammy.frames = [];
+
+        if (callback) callback(this.recordedBlob);
     };
 
     var canvas = document.createElement('canvas');
@@ -575,47 +968,446 @@ function WhammyRecorder(mediaStream) {
     video.src = URL.createObjectURL(mediaStream);
     video.play();
 
-    var lastAnimationFrame = null;
-    var startTime, endTime, lastFrameTime;
+    var lastTime = new Date().getTime();
 
     var whammy = new Whammy.Video();
 }
 
-// _________________
-// CanvasRecorder.js
+// https://github.com/antimatter15/whammy/blob/master/LICENSE
+// _________
+// Whammy.js
 
-function CanvasRecorder(htmlElement) {
-    if (!window.html2canvas) throw 'Please link: //www.webrtc-experiment.com/screenshot.js';
+// todo: Firefox now supports webp for webm containers!
+// their MediaRecorder implementation works well!
+// should we provide an option to record via Whammy.js or MediaRecorder API is a better solution?
 
-    var isRecording;
-    this.record = function() {
-        isRecording = true;
-        drawCanvasFrame();
-    };
+var Whammy = (function () {
 
-    this.stop = function() {
-        isRecording = false;
-        this.recordedBlob = whammy.compile();
-        whammy.frames = [];
-    };
+    function toWebM(frames) {
+        var info = checkFrames(frames);
 
-    function drawCanvasFrame() {
-        html2canvas(htmlElement, {
-            onrendered: function(canvas) {
-                whammy.add(canvas);
-                if (isRecording) requestAnimationFrame(drawCanvasFrame);
-            }
+        var CLUSTER_MAX_DURATION = 30000;
+
+        var EBML = [{
+            "id": 0x1a45dfa3, // EBML
+            "data": [{
+                "data": 1,
+                "id": 0x4286 // EBMLVersion
+            }, {
+                "data": 1,
+                "id": 0x42f7 // EBMLReadVersion
+            }, {
+                "data": 4,
+                "id": 0x42f2 // EBMLMaxIDLength
+            }, {
+                "data": 8,
+                "id": 0x42f3 // EBMLMaxSizeLength
+            }, {
+                "data": "webm",
+                "id": 0x4282 // DocType
+            }, {
+                "data": 2,
+                "id": 0x4287 // DocTypeVersion
+            }, {
+                "data": 2,
+                "id": 0x4285 // DocTypeReadVersion
+            }]
+        }, {
+            "id": 0x18538067, // Segment
+            "data": [{
+                "id": 0x1549a966, // Info
+                "data": [{
+                    "data": 1e6, //do things in millisecs (num of nanosecs for duration scale)
+                    "id": 0x2ad7b1 // TimecodeScale
+                }, {
+                    "data": "whammy",
+                    "id": 0x4d80 // MuxingApp
+                }, {
+                    "data": "whammy",
+                    "id": 0x5741 // WritingApp
+                }, {
+                    "data": doubleToString(info.duration),
+                    "id": 0x4489 // Duration
+                }]
+            }, {
+                "id": 0x1654ae6b, // Tracks
+                "data": [{
+                    "id": 0xae, // TrackEntry
+                    "data": [{
+                        "data": 1,
+                        "id": 0xd7 // TrackNumber
+                    }, {
+                        "data": 1,
+                        "id": 0x63c5 // TrackUID
+                    }, {
+                        "data": 0,
+                        "id": 0x9c // FlagLacing
+                    }, {
+                        "data": "und",
+                        "id": 0x22b59c // Language
+                    }, {
+                        "data": "V_VP8",
+                        "id": 0x86 // CodecID
+                    }, {
+                        "data": "VP8",
+                        "id": 0x258688 // CodecName
+                    }, {
+                        "data": 1,
+                        "id": 0x83 // TrackType
+                    }, {
+                        "id": 0xe0, // Video
+                        "data": [{
+                            "data": info.width,
+                            "id": 0xb0 // PixelWidth
+                        }, {
+                            "data": info.height,
+                            "id": 0xba // PixelHeight
+                        }]
+                    }]
+                }]
+            }]
+        }];
+
+        //Generate clusters (max duration)
+        var frameNumber = 0;
+        var clusterTimecode = 0;
+        while (frameNumber < frames.length) {
+
+            var clusterFrames = [];
+            var clusterDuration = 0;
+            do {
+                clusterFrames.push(frames[frameNumber]);
+                clusterDuration += frames[frameNumber].duration;
+                frameNumber++;
+            } while (frameNumber < frames.length && clusterDuration < CLUSTER_MAX_DURATION);
+
+            var clusterCounter = 0;
+            var cluster = {
+                "id": 0x1f43b675, // Cluster
+                "data": [{
+                    "data": clusterTimecode,
+                    "id": 0xe7 // Timecode
+                }].concat(clusterFrames.map(function (webp) {
+                    var block = makeSimpleBlock({
+                        discardable: 0,
+                        frame: webp.data.slice(4),
+                        invisible: 0,
+                        keyframe: 1,
+                        lacing: 0,
+                        trackNum: 1,
+                        timecode: Math.round(clusterCounter)
+                    });
+                    clusterCounter += webp.duration;
+                    return {
+                        data: block,
+                        id: 0xa3
+                    };
+                }))
+            }; //Add cluster to segment
+            EBML[1].data.push(cluster);
+            clusterTimecode += clusterDuration;
+        }
+
+        return generateEBML(EBML);
+    }
+
+    // sums the lengths of all the frames and gets the duration
+
+    function checkFrames(frames) {
+        if (!frames[0]) {
+            console.warn('Something went wrong. Maybe WebP format is not supported in the current browser.');
+            return;
+        }
+
+        var width = frames[0].width,
+            height = frames[0].height,
+            duration = frames[0].duration;
+
+        for (var i = 1; i < frames.length; i++) {
+            duration += frames[i].duration;
+        }
+        return {
+            duration: duration,
+            width: width,
+            height: height
+        };
+    }
+
+    function numToBuffer(num) {
+        var parts = [];
+        while (num > 0) {
+            parts.push(num & 0xff);
+            num = num >> 8;
+        }
+        return new Uint8Array(parts.reverse());
+    }
+
+    function strToBuffer(str) {
+        return new Uint8Array(str.split('').map(function (e) {
+            return e.charCodeAt(0);
+        }));
+    }
+
+    function bitsToBuffer(bits) {
+        var data = [];
+        var pad = (bits.length % 8) ? (new Array(1 + 8 - (bits.length % 8))).join('0') : '';
+        bits = pad + bits;
+        for (var i = 0; i < bits.length; i += 8) {
+            data.push(parseInt(bits.substr(i, 8), 2));
+        }
+        return new Uint8Array(data);
+    }
+
+    function generateEBML(json) {
+        var ebml = [];
+        for (var i = 0; i < json.length; i++) {
+            var data = json[i].data;
+            if (typeof data == 'object') data = generateEBML(data);
+            if (typeof data == 'number') data = bitsToBuffer(data.toString(2));
+            if (typeof data == 'string') data = strToBuffer(data);
+
+            var len = data.size || data.byteLength || data.length;
+            var zeroes = Math.ceil(Math.ceil(Math.log(len) / Math.log(2)) / 8);
+            var size_str = len.toString(2);
+            var padded = (new Array((zeroes * 7 + 7 + 1) - size_str.length)).join('0') + size_str;
+            var size = (new Array(zeroes)).join('0') + '1' + padded;
+
+            ebml.push(numToBuffer(json[i].id));
+            ebml.push(bitsToBuffer(size));
+            ebml.push(data);
+        }
+
+        return new Blob(ebml, {
+            type: "video/webm"
         });
     }
 
-    var whammy = new Whammy.Video();
-}
+    function toBinStr_old(bits) {
+        var data = '';
+        var pad = (bits.length % 8) ? (new Array(1 + 8 - (bits.length % 8))).join('0') : '';
+        bits = pad + bits;
+        for (var i = 0; i < bits.length; i += 8) {
+            data += String.fromCharCode(parseInt(bits.substr(i, 8), 2));
+        }
+        return data;
+    }
+
+    function generateEBML_old(json) {
+        var ebml = '';
+        for (var i = 0; i < json.length; i++) {
+            var data = json[i].data;
+            if (typeof data == 'object') data = generateEBML_old(data);
+            if (typeof data == 'number') data = toBinStr_old(data.toString(2));
+
+            var len = data.length;
+            var zeroes = Math.ceil(Math.ceil(Math.log(len) / Math.log(2)) / 8);
+            var size_str = len.toString(2);
+            var padded = (new Array((zeroes * 7 + 7 + 1) - size_str.length)).join('0') + size_str;
+            var size = (new Array(zeroes)).join('0') + '1' + padded;
+
+            ebml += toBinStr_old(json[i].id.toString(2)) + toBinStr_old(size) + data;
+
+        }
+        return ebml;
+    }
+
+    function makeSimpleBlock(data) {
+        var flags = 0;
+        if (data.keyframe) flags |= 128;
+        if (data.invisible) flags |= 8;
+        if (data.lacing) flags |= (data.lacing << 1);
+        if (data.discardable) flags |= 1;
+        if (data.trackNum > 127) {
+            throw "TrackNumber > 127 not supported";
+        }
+        var out = [data.trackNum | 0x80, data.timecode >> 8, data.timecode & 0xff, flags].map(function (e) {
+            return String.fromCharCode(e);
+        }).join('') + data.frame;
+
+        return out;
+    }
+
+    function parseWebP(riff) {
+        var VP8 = riff.RIFF[0].WEBP[0];
+
+        var frame_start = VP8.indexOf('\x9d\x01\x2a'); // A VP8 keyframe starts with the 0x9d012a header
+        for (var i = 0, c = []; i < 4; i++) c[i] = VP8.charCodeAt(frame_start + 3 + i);
+
+        var width, height, tmp;
+
+        //the code below is literally copied verbatim from the bitstream spec
+        tmp = (c[1] << 8) | c[0];
+        width = tmp & 0x3FFF;
+        tmp = (c[3] << 8) | c[2];
+        height = tmp & 0x3FFF;
+        return {
+            width: width,
+            height: height,
+            data: VP8,
+            riff: riff
+        };
+    }
+
+    function parseRIFF(string) {
+        var offset = 0;
+        var chunks = {};
+
+        while (offset < string.length) {
+            var id = string.substr(offset, 4);
+            var len = parseInt(string.substr(offset + 4, 4).split('').map(function (i) {
+                var unpadded = i.charCodeAt(0).toString(2);
+                return (new Array(8 - unpadded.length + 1)).join('0') + unpadded;
+            }).join(''), 2);
+            var data = string.substr(offset + 4 + 4, len);
+            offset += 4 + 4 + len;
+            chunks[id] = chunks[id] || [];
+
+            if (id == 'RIFF' || id == 'LIST') {
+                chunks[id].push(parseRIFF(data));
+            } else {
+                chunks[id].push(data);
+            }
+        }
+        return chunks;
+    }
+
+    function doubleToString(num) {
+        return [].slice.call(
+            new Uint8Array((new Float64Array([num])).buffer), 0).map(function (e) {
+            return String.fromCharCode(e);
+        }).reverse().join('');
+    }
+
+    // a more abstract-ish API
+
+    function WhammyVideo(duration) {
+        this.frames = [];
+        this.duration = duration || 1;
+        this.quality = 100;
+    }
+
+    WhammyVideo.prototype.add = function (frame, duration) {
+        if ('canvas' in frame) { //CanvasRenderingContext2D
+            frame = frame.canvas;
+        }
+
+        if ('toDataURL' in frame) {
+            frame = frame.toDataURL('image/webp', this.quality);
+        }
+
+        if (!(/^data:image\/webp;base64,/ig).test(frame)) {
+            throw "Input must be formatted properly as a base64 encoded DataURI of type image/webp";
+        }
+        this.frames.push({
+            image: frame,
+            duration: duration || this.duration
+        });
+    };
+    WhammyVideo.prototype.compile = function () {
+        return new toWebM(this.frames.map(function (frame) {
+            var webp = parseWebP(parseRIFF(atob(frame.image.slice(23))));
+            webp.duration = frame.duration;
+            return webp;
+        }));
+    };
+    return {
+        Video: WhammyVideo,
+        toWebM: toWebM
+    };
+})();
+
+// ______________ (indexed-db)
+// DiskStorage.js
+
+var DiskStorage = {
+    init: function () {
+        var self = this;
+        var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB;
+        var dbVersion = 1;
+        var dbName = location.href.replace(/\/|:|#|%|\.|\[|\]/g, ''),
+            db;
+        var request = indexedDB.open(dbName, dbVersion);
+
+        function createObjectStore(dataBase) {
+            dataBase.createObjectStore(self.dataStoreName);
+        }
+
+        function putInDB() {
+            var transaction = db.transaction([self.dataStoreName], 'readwrite');
+
+            if (self.videoBlob) {
+                transaction.objectStore(self.dataStoreName).put(self.videoBlob, 'videoBlob');
+            }
+
+            if (self.gifBlob) {
+                transaction.objectStore(self.dataStoreName).put(self.gifBlob, 'gifBlob');
+            }
+
+            if (self.audioBlob) {
+                transaction.objectStore(self.dataStoreName).put(self.audioBlob, 'audioBlob');
+            }
+
+            function getFromStore(portionName) {
+                transaction.objectStore(self.dataStoreName).get(portionName).onsuccess = function (event) {
+                    if (self.callback) self.callback(event.target.result, portionName);
+                };
+            }
+
+            getFromStore('audioBlob');
+            getFromStore('videoBlob');
+            getFromStore('gifBlob');
+        }
+
+        request.onerror = self.onError;
+
+        request.onsuccess = function () {
+            db = request.result;
+            db.onerror = self.onError;
+
+            if (db.setVersion) {
+                if (db.version != dbVersion) {
+                    var setVersion = db.setVersion(dbVersion);
+                    setVersion.onsuccess = function () {
+                        createObjectStore(db);
+                        putInDB();
+                    };
+                } else {
+                    putInDB();
+                }
+            } else {
+                putInDB();
+            }
+        };
+        request.onupgradeneeded = function (event) {
+            createObjectStore(event.target.result);
+        };
+    },
+    Fetch: function (callback) {
+        this.callback = callback;
+        this.init();
+
+        return this;
+    },
+    Store: function (config) {
+        this.audioBlob = config.audioBlob;
+        this.videoBlob = config.videoBlob;
+        this.gifBlob = config.gifBlob;
+
+        this.init();
+
+        return this;
+    },
+    onError: function (error) {
+        console.error(JSON.stringify(error, null, '\t'));
+    },
+    dataStoreName: 'recordRTC'
+};
 
 // ______________
 // GifRecorder.js
 
 function GifRecorder(mediaStream) {
-    this.record = function() {
+    this.record = function () {
         if (!this.width) this.width = video.offsetWidth || 320;
         if (!this.height) this.height = video.offsetHeight || 240;
 
@@ -686,7 +1478,7 @@ function GifRecorder(mediaStream) {
         lastAnimationFrame = requestAnimationFrame(drawVideoFrame);
     };
 
-    this.stop = function() {
+    this.stop = function () {
         if (lastAnimationFrame) cancelAnimationFrame(lastAnimationFrame);
 
         endTime = Date.now();
@@ -714,587 +1506,27 @@ function GifRecorder(mediaStream) {
     var gifEncoder;
 }
 
-// _________
-// whammy.js
-
-var Whammy = (function() {
-    // in this case, frames has a very specific meaning, which will be
-    // detailed once i finish writing the code
-
-    function toWebM(frames) {
-        var info = checkFrames(frames);
-
-        //max duration by cluster in milliseconds
-        var CLUSTER_MAX_DURATION = 30000;
-
-        var EBML = [
-            {
-                "id": 0x1a45dfa3, // EBML
-                "data": [
-                    {
-                        "data": 1,
-                        "id": 0x4286 // EBMLVersion
-                    },
-                    {
-                        "data": 1,
-                        "id": 0x42f7 // EBMLReadVersion
-                    },
-                    {
-                        "data": 4,
-                        "id": 0x42f2 // EBMLMaxIDLength
-                    },
-                    {
-                        "data": 8,
-                        "id": 0x42f3 // EBMLMaxSizeLength
-                    },
-                    {
-                        "data": "webm",
-                        "id": 0x4282 // DocType
-                    },
-                    {
-                        "data": 2,
-                        "id": 0x4287 // DocTypeVersion
-                    },
-                    {
-                        "data": 2,
-                        "id": 0x4285 // DocTypeReadVersion
-                    }
-                ]
-            },
-            {
-                "id": 0x18538067, // Segment
-                "data": [
-                    {
-                        "id": 0x1549a966, // Info
-                        "data": [
-                            {
-                                "data": 1e6, //do things in millisecs (num of nanosecs for duration scale)
-                                "id": 0x2ad7b1 // TimecodeScale
-                            },
-                            {
-                                "data": "whammy",
-                                "id": 0x4d80 // MuxingApp
-                            },
-                            {
-                                "data": "whammy",
-                                "id": 0x5741 // WritingApp
-                            },
-                            {
-                                "data": doubleToString(info.duration),
-                                "id": 0x4489 // Duration
-                            }
-                        ]
-                    },
-                    {
-                        "id": 0x1654ae6b, // Tracks
-                        "data": [
-                            {
-                                "id": 0xae, // TrackEntry
-                                "data": [
-                                    {
-                                        "data": 1,
-                                        "id": 0xd7 // TrackNumber
-                                    },
-                                    {
-                                        "data": 1,
-                                        "id": 0x63c5 // TrackUID
-                                    },
-                                    {
-                                        "data": 0,
-                                        "id": 0x9c // FlagLacing
-                                    },
-                                    {
-                                        "data": "und",
-                                        "id": 0x22b59c // Language
-                                    },
-                                    {
-                                        "data": "V_VP8",
-                                        "id": 0x86 // CodecID
-                                    },
-                                    {
-                                        "data": "VP8",
-                                        "id": 0x258688 // CodecName
-                                    },
-                                    {
-                                        "data": 1,
-                                        "id": 0x83 // TrackType
-                                    },
-                                    {
-                                        "id": 0xe0,  // Video
-                                        "data": [
-                                            {
-                                                "data": info.width,
-                                                "id": 0xb0 // PixelWidth
-                                            },
-                                            {
-                                                "data": info.height,
-                                                "id": 0xba // PixelHeight
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ];
-
-        //Generate clusters (max duration)
-        var frameNumber = 0;
-        var clusterTimecode = 0;
-        while (frameNumber < frames.length) {
-
-            var clusterFrames = [];
-            var clusterDuration = 0;
-            do {
-                clusterFrames.push(frames[frameNumber]);
-                clusterDuration += frames[frameNumber].duration;
-                frameNumber++;
-            } while (frameNumber < frames.length && clusterDuration < CLUSTER_MAX_DURATION);
-
-            var clusterCounter = 0;
-            var cluster = {
-                "id": 0x1f43b675, // Cluster
-                "data": [
-                    {
-                        "data": clusterTimecode,
-                        "id": 0xe7 // Timecode
-                    }
-                ].concat(clusterFrames.map(function(webp) {
-                    var block = makeSimpleBlock({
-                        discardable: 0,
-                        frame: webp.data.slice(4),
-                        invisible: 0,
-                        keyframe: 1,
-                        lacing: 0,
-                        trackNum: 1,
-                        timecode: Math.round(clusterCounter)
-                    });
-                    clusterCounter += webp.duration;
-                    return {
-                        data: block,
-                        id: 0xa3
-                    };
-                }))
-            }; //Add cluster to segment
-            EBML[1].data.push(cluster);
-            clusterTimecode += clusterDuration;
-        }
-
-        return generateEBML(EBML);
-    }
-
-    // sums the lengths of all the frames and gets the duration, woo
-
-    function checkFrames(frames) {
-        if (!frames[0]) {
-            console.warn('Something went wrong. Maybe WebP format is not supported in the current browser.');
-            return;
-        }
-
-        var width = frames[0].width,
-            height = frames[0].height,
-            duration = frames[0].duration;
-        for (var i = 1; i < frames.length; i++) {
-            duration += frames[i].duration;
-        }
-        return {
-            duration: duration,
-            width: width,
-            height: height
-        };
-    }
-
-    function numToBuffer(num) {
-        var parts = [];
-        while (num > 0) {
-            parts.push(num & 0xff);
-            num = num >> 8;
-        }
-        return new Uint8Array(parts.reverse());
-    }
-
-    function strToBuffer(str) {
-        return new Uint8Array(str.split('').map(function(e) {
-            return e.charCodeAt(0);
-        }));
-    }
-
-    function bitsToBuffer(bits) {
-        var data = [];
-        var pad = (bits.length % 8) ? (new Array(1 + 8 - (bits.length % 8))).join('0') : '';
-        bits = pad + bits;
-        for (var i = 0; i < bits.length; i += 8) {
-            data.push(parseInt(bits.substr(i, 8), 2));
-        }
-        return new Uint8Array(data);
-    }
-
-    function generateEBML(json) {
-        var ebml = [];
-        for (var i = 0; i < json.length; i++) {
-            var data = json[i].data;
-            if (typeof data == 'object') data = generateEBML(data);
-            if (typeof data == 'number') data = bitsToBuffer(data.toString(2));
-            if (typeof data == 'string') data = strToBuffer(data);
-
-            var len = data.size || data.byteLength || data.length;
-            var zeroes = Math.ceil(Math.ceil(Math.log(len) / Math.log(2)) / 8);
-            var size_str = len.toString(2);
-            var padded = (new Array((zeroes * 7 + 7 + 1) - size_str.length)).join('0') + size_str;
-            var size = (new Array(zeroes)).join('0') + '1' + padded;
-
-            ebml.push(numToBuffer(json[i].id));
-            ebml.push(bitsToBuffer(size));
-            ebml.push(data);
-        }
-
-        return new Blob(ebml, { type: "video/webm" });
-    }
-
-    function toBinStr_old(bits) {
-        var data = '';
-        var pad = (bits.length % 8) ? (new Array(1 + 8 - (bits.length % 8))).join('0') : '';
-        bits = pad + bits;
-        for (var i = 0; i < bits.length; i += 8) {
-            data += String.fromCharCode(parseInt(bits.substr(i, 8), 2));
-        }
-        return data;
-    }
-
-    function generateEBML_old(json) {
-        var ebml = '';
-        for (var i = 0; i < json.length; i++) {
-            var data = json[i].data;
-            if (typeof data == 'object') data = generateEBML_old(data);
-            if (typeof data == 'number') data = toBinStr_old(data.toString(2));
-
-            var len = data.length;
-            var zeroes = Math.ceil(Math.ceil(Math.log(len) / Math.log(2)) / 8);
-            var size_str = len.toString(2);
-            var padded = (new Array((zeroes * 7 + 7 + 1) - size_str.length)).join('0') + size_str;
-            var size = (new Array(zeroes)).join('0') + '1' + padded;
-
-            ebml += toBinStr_old(json[i].id.toString(2)) + toBinStr_old(size) + data;
-
-        }
-        return ebml;
-    }
-
-    function makeSimpleBlock(data) {
-        var flags = 0;
-        if (data.keyframe) flags |= 128;
-        if (data.invisible) flags |= 8;
-        if (data.lacing) flags |= (data.lacing << 1);
-        if (data.discardable) flags |= 1;
-        if (data.trackNum > 127) {
-            throw "TrackNumber > 127 not supported";
-        }
-        var out = [data.trackNum | 0x80, data.timecode >> 8, data.timecode & 0xff, flags].map(function(e) {
-            return String.fromCharCode(e);
-        }).join('') + data.frame;
-
-        return out;
-    }
-
-    function parseWebP(riff) {
-        var VP8 = riff.RIFF[0].WEBP[0];
-
-        var frame_start = VP8.indexOf('\x9d\x01\x2a'); // A VP8 keyframe starts with the 0x9d012a header
-        for (var i = 0, c = []; i < 4; i++) c[i] = VP8.charCodeAt(frame_start + 3 + i);
-
-        var width, height, tmp;
-
-        //the code below is literally copied verbatim from the bitstream spec
-        tmp = (c[1] << 8) | c[0];
-        width = tmp & 0x3FFF;
-        tmp = (c[3] << 8) | c[2];
-        height = tmp & 0x3FFF;
-        return {
-            width: width,
-            height: height,
-            data: VP8,
-            riff: riff
-        };
-    }
-
-    function parseRIFF(string) {
-        var offset = 0;
-        var chunks = { };
-
-        while (offset < string.length) {
-            var id = string.substr(offset, 4);
-            var len = parseInt(string.substr(offset + 4, 4).split('').map(function(i) {
-                var unpadded = i.charCodeAt(0).toString(2);
-                return (new Array(8 - unpadded.length + 1)).join('0') + unpadded;
-            }).join(''), 2);
-            var data = string.substr(offset + 4 + 4, len);
-            offset += 4 + 4 + len;
-            chunks[id] = chunks[id] || [];
-
-            if (id == 'RIFF' || id == 'LIST') {
-                chunks[id].push(parseRIFF(data));
-            } else {
-                chunks[id].push(data);
-            }
-        }
-        return chunks;
-    }
-
-    function doubleToString(num) {
-        return [].slice.call(
-            new Uint8Array((new Float64Array([num])).buffer), 0).map(function(e) {
-                return String.fromCharCode(e);
-            }).reverse().join('');
-    }
-
-    // a more abstract-ish API
-
-    function WhammyVideo() {
-        this.frames = [];
-        this.duration = 1;
-        this.quality = 100;
-    }
-
-    WhammyVideo.prototype.add = function(frame, duration) {
-        if ('canvas' in frame) { //CanvasRenderingContext2D
-            frame = frame.canvas;
-        }
-
-        if ('toDataURL' in frame) {
-            frame = frame.toDataURL('image/webp', this.quality);
-        }
-
-        if (!( /^data:image\/webp;base64,/ig ).test(frame)) {
-            throw "Input must be formatted properly as a base64 encoded DataURI of type image/webp";
-        }
-        this.frames.push({
-            image: frame,
-            duration: duration || this.duration
-        });
-    };
-    WhammyVideo.prototype.compile = function() {
-        return new toWebM(this.frames.map(function(frame) {
-            var webp = parseWebP(parseRIFF(atob(frame.image.slice(23))));
-            webp.duration = frame.duration;
-            return webp;
-        }));
-    };
-    return {
-        Video: WhammyVideo,
-        toWebM: toWebM
-    };
-})();
-
-// ______________ (indexed-db)
-// DiskStorage.js
-
-var DiskStorage = {
-    init: function() {
-        var self = this;
-        var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.OIndexedDB || window.msIndexedDB;
-        var dbVersion = 1;
-        var dbName = location.href.replace( /\/|:|#|%|\.|\[|\]/g , ''), db;
-        var request = indexedDB.open(dbName, dbVersion);
-
-        function createObjectStore(dataBase) {
-            dataBase.createObjectStore(self.dataStoreName);
-        }
-
-        function putInDB() {
-            var transaction = db.transaction([self.dataStoreName], 'readwrite');
-
-            if (self.videoBlob) {
-                transaction.objectStore(self.dataStoreName).put(self.videoBlob, 'videoBlob');
-            }
-
-            if (self.gifBlob) {
-                transaction.objectStore(self.dataStoreName).put(self.gifBlob, 'gifBlob');
-            }
-
-            if (self.audioBlob) {
-                transaction.objectStore(self.dataStoreName).put(self.audioBlob, 'audioBlob');
-            }
-
-            function getFromStore(portionName) {
-                transaction.objectStore(self.dataStoreName).get(portionName).onsuccess = function(event) {
-                    if (self.callback) self.callback(event.target.result, portionName);
-                };
-            }
-
-            getFromStore('audioBlob');
-            getFromStore('videoBlob');
-            getFromStore('gifBlob');
-        }
-
-        request.onerror = self.onError;
-
-        request.onsuccess = function() {
-            db = request.result;
-            db.onerror = self.onError;
-
-            if (db.setVersion) {
-                if (db.version != dbVersion) {
-                    var setVersion = db.setVersion(dbVersion);
-                    setVersion.onsuccess = function() {
-                        createObjectStore(db);
-                        putInDB();
-                    };
-                } else {
-                    putInDB();
-                }
-            } else {
-                putInDB();
-            }
-        };
-        request.onupgradeneeded = function(event) {
-            createObjectStore(event.target.result);
-        };
-    },
-    Fetch: function(callback) {
-        this.callback = callback;
-        this.init();
-
-        return this;
-    },
-    Store: function(config) {
-        this.audioBlob = config.audioBlob;
-        this.videoBlob = config.videoBlob;
-        this.gifBlob = config.gifBlob;
-
-        this.init();
-
-        return this;
-    },
-    onError: function(error) {
-        console.error(JSON.stringify(error, null, '\t'));
-    },
-    dataStoreName: 'recordRTC'
-};
-
-// _____________
-// MRecordRTC.js
-
-function MRecordRTC(mediaStream) {
-    this.addStream = function(_mediaStream) {
-        if (_mediaStream) mediaStream = _mediaStream;
-    };
-
-    this.mediaType = {
-        audio: true,
-        video: true
-    };
-
-    this.startRecording = function() {
-        if (this.mediaType.audio) {
-            this.audioRecorder = RecordRTC(mediaStream, this).startRecording();
-        }
-
-        if (this.mediaType.video) {
-            this.videoRecorder = RecordRTC(mediaStream, {
-                type: 'video'
-            }).startRecording();
-        }
-
-        if (this.mediaType.gif) {
-            this.gifRecorder = RecordRTC(mediaStream, {
-                type: 'gif',
-                frameRate: this.frameRate || 200,
-                quality: this.quality || 10
-            }).startRecording();
-        }
-    };
-
-    this.stopRecording = function(callback) {
-        callback = callback || function() {
-        };
-
-        if (this.audioRecorder) {
-            this.audioRecorder.stopRecording(function(blobURL) {
-                callback(blobURL, 'audio');
-            });
-        }
-
-        if (this.videoRecorder) {
-            this.videoRecorder.stopRecording(function(blobURL) {
-                callback(blobURL, 'video');
-            });
-        }
-
-        if (this.gifRecorder) {
-            this.gifRecorder.stopRecording(function(blobURL) {
-                callback(blobURL, 'gif');
-            });
-        }
-    };
-
-    this.getBlob = function(callback) {
-        var output = { };
-
-        if (this.audioRecorder) {
-            output.audio = this.audioRecorder.getBlob();
-        }
-
-        if (this.videoRecorder) {
-            output.video = this.videoRecorder.getBlob();
-        }
-
-        if (this.gifRecorder) {
-            output.gif = this.gifRecorder.getBlob();
-        }
-        if (callback) callback(output);
-    };
-
-    this.getDataURL = function(callback) {
-        this.getBlob(function(blob) {
-            getDataURL(blob.audio, function(_audioDataURL) {
-                getDataURL(blob.video, function(_videoDataURL) {
-                    callback({
-                        audio: _audioDataURL,
-                        video: _videoDataURL
-                    });
-                });
-            });
-        });
-
-        function getDataURL(blob, callback00) {
-            if (!!window.Worker) {
-                var webWorker = processInWebWorker(function readFile(_blob) {
-                    postMessage(new FileReaderSync().readAsDataURL(_blob));
-                });
-
-                webWorker.onmessage = function(event) {
-                    callback00(event.data);
-                };
-
-                webWorker.postMessage(blob);
-            }
-        }
-
-        function processInWebWorker(_function) {
-            var blob = URL.createObjectURL(new Blob([_function.toString(),
-                    'this.onmessage =  function (e) {readFile(e.data);}'], {
-                        type: 'application/javascript'
-                    }));
-
-            var worker = new Worker(blob);
-            URL.revokeObjectURL(blob);
-            return worker;
-        }
-    };
-
-    this.writeToDisk = function() {
-        RecordRTC.writeToDisk({
-            audio: this.audioRecorder,
-            video: this.videoRecorder,
-            gif: this.gifRecorder
-        });
-    };
+// This method is taken from a modified version of MediaStreamRecorder.js!
+// To solve first frame that is always blank. 
+// See: https://github.com/muaz-khan/WebRTC-Experiment/issues/94
+
+function dropFirstFrame(arr) {
+    arr.shift();
+    return arr;
 }
 
-MRecordRTC.getFromDisk = RecordRTC.getFromDisk;
-MRecordRTC.writeToDisk = RecordRTC.writeToDisk;
+if (location.href.indexOf('file:') == 0) {
+    console.error('Please load this HTML file on HTTP or HTTPS.');
+}
+
+// below function via: http://goo.gl/B3ae8c
+function bytesToSize(bytes) {
+    var k = 1000;
+    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 Bytes';
+    var i = parseInt(Math.floor(Math.log(bytes) / Math.log(k)), 10);
+    return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+}
 
 // _____________
 // gifEncoder.js

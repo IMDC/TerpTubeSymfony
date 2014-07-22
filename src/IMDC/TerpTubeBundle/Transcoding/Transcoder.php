@@ -79,6 +79,12 @@ class Transcoder {
 			$this->fs->remove ( $tempFileName );
 			$this->logger->info ( "Transcoding complete!" );
 			$this->fs->rename ( $outputFileWebm, $videoFilePath, true );
+			
+			//set correct permissions
+			$old = umask ( 0 );
+			chmod ( $videoFilePath, 0664 );
+			umask ( $old );
+			
 // 			$this->fs->rename ($videoFilePath,  substr($videoFilePath, strrpos(0,$videoFilePath, ".")+1)."webm");
 			// $uploadedFile =new UploadedFile($videoFilePath, "recording", "video/webm", filesize($videoFilePath), UPLOAD_ERR_OK, false);
 			$isValid = $videoFile->isValid ();
@@ -102,7 +108,7 @@ class Transcoder {
 	 *        	- The new start time of the video
 	 * @param double $endTime
 	 *        	- The new end time of the video
-	 * @return File $file - The resulting video file. Needs to be moved to a permanent directory.
+	 * @return true if transcoding succeeded, false otherwise.
 	 */
 	public function trimVideo($inputFile, $startTime, $endTime) {
 		try {
