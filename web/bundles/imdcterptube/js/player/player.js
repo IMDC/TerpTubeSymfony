@@ -198,8 +198,8 @@ Player.prototype.createControls = function() {
 						".videoControlsContainer.controlsBar.videoControls.recordButton")
 				.eq(0);
 		recButton.click(function() {
-					instance.recording_toggleRecording();
-				});
+			instance.recording_toggleRecording();
+		});
 		this.setInputEnabled(recButton, false);
 	}
 	if (this.options.forwardButtons.length > 0) {
@@ -1345,6 +1345,11 @@ Player.prototype.setupVideoRecording = function() {
 							window.URL.createObjectURL(stream));
 					instance.recording_cameraReady(true);
 					instance.recording_microphoneReady(true);
+					// Added the delayed video play because chrome currently has
+					// a bug where it does not autoplay videos
+					setTimeout(function() {
+						$(instance.videoID)[0].play();
+					}, 1000);
 				}, instance.options.recordingErrorFunction);
 	} else {
 		videoElement.html('Problem with recording'); // fallback.
