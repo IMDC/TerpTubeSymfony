@@ -20,38 +20,7 @@ end ajaxed by #}
 					{{ form_start(form, {'action' : "#{formpath}"}) }}
 						{{ form_errors(form) }}
 
-						<div class="row" id="reply-choose-media-wrap-{{ post.id }}">
-							<div class="col-md-12">
-								<div class="form-group">
-									<a class="btn btn-primary" id="reply-record-link-{{ post.id }}" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
-									<!-- <a class="btn btn-primary" id="reply-uploadFile{{ post.id }}" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a> -->
-									<div class="btn-group">
-										<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-											<i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }} <span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu" role="menu">
-											<li id="upload-audio-link"><a href="#"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a></li>
-											<li id="upload-video-link"><a href="#"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a></li>
-											<li id="upload-image-link"><a href="#"><i class="fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a></li>
-											<li id="upload-other-link"><a href="#"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a></li>
-										</ul>
-									</div>
-									<a class="btn btn-primary" id="reply-selectFiles{{ post.id }}" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
-								</div>
-							</div>
-						</div>
-
-						<div class="row" id="reply-selected-media-wrap-{{ post.id }}" style="display: none;">
-							<div class="col-md-12">
-								<div class="form-group">
-									<div class="hidden">{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID',"class":"reply-mediatextarea-#{ post.id } input-mini"} }) }}{{ form_errors(form.mediatextarea) }}</div>
-									<label>Selected Media</label>
-									<div><span id="reply-selectedMediaTitle{{ post.id }}" style="margin-right: 5px;"></span><a id="reply-removeMedia{{ post.id }}" title="Remove Media"><i class="fa fa-times-circle"></i></a></div>
-								</div>
-							</div>
-						</div>
-
-						<div id="reply-files-{{ post.id }}"></div>
+						{{ include('IMDCTerpTubeBundle:AddFileGateway:mediaChooserForm.html.twig', {'isCommentReply': true, 'postId': post.id}) }}
 
 						<div class="row">
 							<div class="col-md-12">
@@ -72,7 +41,7 @@ end ajaxed by #}
 		</div>
 	</div>
 
-	<div id="reply-uploadForms{{ post.id }}" style="display: none;">
+	<div id="uploadFormsReply{{ post.id }}" style="display: none;">
 		{% for form in uploadForms %}
 			{{ form_start(form) }}
 			{{ form_widget(form) }}
@@ -80,3 +49,9 @@ end ajaxed by #}
 		{% endfor %}
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		Thread.bindUIEvents(Thread.Page.COMMENT_REPLY, {{ post.id }});
+	});
+</script>

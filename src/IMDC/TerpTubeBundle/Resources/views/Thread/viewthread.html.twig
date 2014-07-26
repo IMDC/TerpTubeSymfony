@@ -113,37 +113,9 @@
 									{{ form_errors(form) }}
 								</div>
 
-								<div class="row" id="choose-media-wrap">
-									<div class="col-md-12">
-										<div class="form-group">
-											<a class="btn btn-primary" id="record-link" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
-											<!-- <a class="btn btn-primary" id="uploadFile" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a> -->
-											<div class="btn-group">
-												<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-													<i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }} <span class="caret"></span>
-												</button>
-												<ul class="dropdown-menu" role="menu">
-													<li id="upload-audio-link"><a href="#"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a></li>
-													<li id="upload-video-link"><a href="#"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a></li>
-													<li id="upload-image-link"><a href="#"><i class="fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a></li>
-													<li id="upload-other-link"><a href="#"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a></li>
-												</ul>
-											</div>
-											<a class="btn btn-primary" id="selectFile" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
-										</div>
-									</div>
-								</div>
-
-								<div class="row" id="selected-media-wrap" style="display: none;">
-									<div class="col-md-12">
-										<div class="hidden">{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID'} }) }}{{ form_errors(form.mediatextarea) }}</div>
-										<div class="form-group">
-											<label>Selected Media</label>
-											<div><span id="selectedMediaTitle" style="margin-right: 5px;"></span><a id="removeMedia" title="Remove Media"><i class="fa fa-times-circle"></i></a></div>
-										</div>
-									</div>
-								</div>
-
+								{{ include('IMDCTerpTubeBundle:AddFileGateway:mediaChooserForm.html.twig') }}
+								{# <input type="textarea" disabled="true" id="file-textarea" /> #}
+								{# {{ form_row(form.mediaID) }} #}
 								<div class="row">
 									<div class="col-md-12">
 										{% if form.startTime is defined %}
@@ -154,18 +126,6 @@
 										{% endif %}
 									</div>
 								</div>
-
-				            	<div id="files"></div>
-
-								{# <input type="textarea" disabled="true" id="file-textarea" /> #}
-								{# {{ form_row(form.mediaID) }} #}
-
-								<div class="row">
-									<div class="col-md-12">
-										{{ form_row(form.content, { 'attr': { 'class': 'autosize' } }) }}
-									</div>
-								</div>
-
 								{# {% if form.startTime is defined %} #}
 								{# <div class="row"> #}
 									{# <div class="col-md-6"> #}
@@ -176,6 +136,12 @@
 									{# </div> #}
 								{# </div> #}
 								{# {% endif %} #}
+
+								<div class="row">
+									<div class="col-md-12">
+										{{ form_row(form.content, { 'attr': { 'class': 'autosize' } }) }}
+									</div>
+								</div>
 
 								<div class="row">
 									<div class="col-md-12">

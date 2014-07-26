@@ -26,6 +26,10 @@ use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Permissions;
 use IMDC\TerpTubeBundle\Entity\ForumRepository;
+use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
+use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
 
 /**
  * Controller for all Forum object related actions such as new, edit, delete
@@ -72,6 +76,13 @@ class ForumController extends Controller
         $form = $this->createForm(new ForumFormType(), $newforum, array(
 //                 'user' => $this->getUser(),
         ));
+        
+        $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+        $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+        $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+        $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+        $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
+        
         $em = $this->getDoctrine()->getManager();
         
         $form->handleRequest($request);
@@ -141,6 +152,7 @@ class ForumController extends Controller
         // form not valid, show the basic form
         return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig',
                 array('form' => $form->createView(),
+                		'uploadForms' => $uploadForms
         ));
 	    
 	}

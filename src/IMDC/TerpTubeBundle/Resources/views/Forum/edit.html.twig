@@ -67,35 +67,11 @@
 {% block javascripts %}
 	{{ parent() }}
 
- <script type='text/javascript'>
- var mediaChooser;
- $("#selectFiles").click(function(e) {
- 	mediaChooser = new MediaChooser($("#files"), function(mediaID)
- 		 	{
-		 		//alert(mediaID);
- 	            setMediaID(mediaID);
-	 		}, true);
- 	mediaChooser.chooseMedia();
- });
+	<script type="text/javascript">
+		$(document).ready(function() {
+			Forum.bindUIEvents(Forum.Page.EDIT);
+		});
+	</script>
 
- function setMediaID(mid) {
-	    $("#ForumForm_mediaID").attr('data-mid', mid);
-	    $("#ForumForm_mediatextarea").val(mid);
-	    
-	    //alert(mid);
-};
-
-$(document).ready(function() {
-    // since I hid the real 'submit' button to provide a nicely stylized button
-    // I have to click the real button when you click on the fancy one
-    $("#forum-form-submit-button").click(function(e) {
-        e.preventDefault();
-    	$("button#ForumForm_submit").click();
-    	
-    });
-});
-
-</script>
- 
-
+	<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/forum.js') }}"></script>
 {% endblock javascripts %}

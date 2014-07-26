@@ -67,17 +67,11 @@
 {% block javascripts %}
 	{{ parent() }}
 
-<script>
-$(document).ready(function() {
-    // since I hid the real 'submit' button to provide a nicely stylized button
-    // I have to click the real button when you click on the fancy one
-    $("#forum-form-submit-button").click(function(e) {
-        e.preventDefault();
-    	$("button#ForumFormDelete_submit").click();
-    	
-    });
-});
+	<script type="text/javascript">
+		$(document).ready(function() {
+			Forum.bindUIEvents(Forum.Page.DELETE);
+		});
+    </script>
 
-</script>
-
+	<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/forum.js') }}"></script>
 {% endblock javascripts %}

@@ -87,6 +87,14 @@ assetic:
             inputs:
                 - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Resources/public/jquery-ui-1.10.4.js
             output: js/jquery-ui.js
+        dustjs:
+            inputs:
+                - %kernel.root_dir%/../bower_components/dustjs/dist/dust-full-0.3.0.min.js
+            output: js/dust.js
+        requirejs:
+            inputs:
+                - %kernel.root_dir%/../bower_components/requirejs/require.js
+            output: js/require.js
     
 # Doctrine Configuration
 doctrine:

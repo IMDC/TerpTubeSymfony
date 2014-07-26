@@ -30,6 +30,7 @@ use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use IMDC\TerpTubeBundle\Model\JSEntities;
 
 // these import the "@Route" and "@Template" annotations
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -190,7 +191,7 @@ class MediaChooserGatewayController extends Controller
 		{
 			throw new EntityNotFoundException("Cannot find media with that ID");
 		}
-		return $this->render($responseURL, array('mediaFile' => $media));
+		return $this->render($responseURL, array('mediaFile' => $media, 'media' => JSEntities::getMediaObject ( $media )));
 	}
 
 	public function recordMediaAction(Request $request, $url)

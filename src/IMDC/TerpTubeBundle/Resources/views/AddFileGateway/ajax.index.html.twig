@@ -49,27 +49,10 @@
 			</tbody>
 		</table>
 	
-		<script type='text/javascript'>
-	        $('.preview-button').click(function(e) {
-	            if ($(this).hasClass('disabled'))
-	                return false;
-	            $('#preview').html('');
-	            var button = this;
-	            //FIXME need to add previewoptions for the player to include forward/back buttons.
-	        	window["mediaChooser"].previewMediaFile($(button).attr('data-val'), $(button).attr('data-url'), false);
-	        	return false;
-	        });
-
-	        $('.select-button').click(function(e) {
-				e.preventDefault();
-
-				var media = {
-					'id': $(this).attr('data-val'),
-					'title': $(this).attr('data-title')
-				};
-
-	            mediaChooser.terminatingFunction(media);
-	        });
+		<script type="text/javascript"> 
+			$(document).ready(function() {
+				MediaChooser.bindUIEventsSelectFromMyFiles();
+			});
 		</script>
 	</div>
 	

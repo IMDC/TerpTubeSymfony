@@ -1,58 +1,10 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-<video class="preview" width="100%" id="record" preload="auto" autoplay="autoplay" muted="muted"></video>
+<video class="preview" width="100%" id="record" preload="auto" autoplay muted></video>
 
 <script type='text/javascript'>
- $(document).ready(function() {
-	 var videoElement = $("#record");
-	 //var recorderConfiguration = {#{ recorderConfiguration |json_encode()|raw}#}; //TODO: MediaChooser instance now holds this. posting this, then declaring here, etc: not needed
-	 console.log("MediaChooser:");
-	 console.log(mediaChooser);
-	 console.log("MediaChooser.recorderConfiguration:");
-	 console.log(mediaChooser.recorderConfiguration);
-	 var player = new Player(videoElement, mediaChooser.recorderConfiguration);
-	 
-	 player.options.areaSelectionEnabled = false;
-	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	 player.options.type = Player.DENSITY_BAR_TYPE_RECORDER;
-	 //player.options.forwardButton = false;
-	 player.options.audioBar = false;
-	 player.options.volumeControl = false;
-	 player.options.recordingErrorFunction = function(e)
-	 {
-		 console.log('Reeeejected!', e);
-		 alert("Problem with Camera.");
-	 };
-	 player.options.recordingSuccessFunction = function(data)
-	 {
-		 var fn = mediaChooser.recorderConfiguration.recordingSuccessFunction;
-		 fn(data);
-		 console.log('Recording Success!', data);
-	 };
-	 var forwardFunctions = mediaChooser.recorderConfiguration.forwardFunctions;
-	 console.log("MediaChooser.recorderConfiguration.forwardFunctions:");
-	 for (var i=0;i<forwardFunctions.length;i++)
- 	 {
-	 	 var funct = forwardFunctions[i];
-	 	 player.options.forwardFunctions[i] = function(data)
-	 	 {
-	 		 player.destroyRecorder();
-// 	 		 var fn = window[funct]||null;
-	 		 funct(data);
-// 			 fn(data);
-	 		 console.log('Success!', data);
-	 	 };
- 	 }
-	 player.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
-	 player.createControls();
-
-	 window["mediaChooser"].setRecorder(player);
-	 
-	 videoElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 
-		 {
-		 if (player !=null)
-		 	player.destroyRecorder();
-		 });
- });
-
+	$(document).ready(function() {
+		//TODO context
+		context.createVideoRecorder($("#record"));
+	});
 </script>

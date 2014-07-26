@@ -18,6 +18,7 @@ use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use IMDC\TerpTubeBundle\Model\JSEntities;
 
 // these import the "@Route" and "@Template" annotations
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -45,8 +46,14 @@ class MyFilesGatewayController extends Controller {
 		}
 		$user = $this->getUser ();
 		$resourceFiles = $user->getResourceFiles ();
+		$formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+		$formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+		$formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+		$formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+		$uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
 		return $this->render ( 'IMDCTerpTubeBundle:MyFilesGateway:index.html.twig', array (
-				'resourceFiles' => $resourceFiles 
+				'resourceFiles' => $resourceFiles,
+				'uploadForms' => $uploadForms
 		) );
 	}
 	
@@ -301,7 +308,8 @@ class MyFilesGatewayController extends Controller {
 		if ($request->isXmlHttpRequest ()) {
 			$return = array (
 					'page' => $response->getContent (),
-					'finished' => false 
+					'finished' => false,
+					'media' => JSEntities::getMediaObject ( $media )
 			);
 			$return = json_encode ( $return ); // json encode the array
 			$response = new Response ( $return, 200, array (

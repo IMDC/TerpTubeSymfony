@@ -8,39 +8,9 @@
 		<source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
 	</video>
 
-<script type='text/javascript'> 
-	 var player = new Player($("#{{ mediaFile.getID }}"));
-	 player.options.areaSelectionEnabled = true;
-	 player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE;
-	 // player.options.playHeadImage = "images/feedback_icons/round_plus.png";
-	 // player.options.playHeadImageOnClick = function(){ alert("plus");};
-	 player.options.forwardButtons.push('<button class="cutButton"></button>');
-	 player.options.forwardFunctions.push(function(data)
-	 {
-		// console.log(recorderConfiguration);
-		// var fn = window[recorderConfiguration.forwardFunction]||null;
-		// fn(data);
-		var mediaManager = new MediaManager();
- 		mediaManager.trimMedia({{ mediaFile.getID }}, player.currentMinTimeSelected, player.currentMaxTimeSelected);
-		console.log('Cut!', data);
-	 });
-
-	 player.options.forwardButtons.push('<button class="doneButton"></button>');
-	 player.options.forwardFunctions.push(function(data)
-	 {
-		// console.log(recorderConfiguration);
-		// var fn = window[recorderConfiguration.forwardFunction]||null;
-		// fn(data);
-		 console.log('Done!', data);
-
-		var media = {
-			'id': "{{ mediaFile.getID }}",
-			'title': "{{ mediaFile.getTitle }}"
-		};
-
-		 mediaChooser.terminatingFunction(media);
-	 });
-	 player.createControls();
- </script>
-
+	<script type="text/javascript"> 
+		$(document).ready(function() {
+			mediaChooser.previewVideo();
+		});
+	</script>
 {% endblock motionMedia %}

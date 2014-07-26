@@ -1,0 +1,58 @@
+{#
+included by:
+Forum:new.html.twig
+Post:replyPostAjax.html.twig
+Thread:viewthread.html.twig
+#}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% if myFiles is not defined %}
+	{% set myFiles = false %}
+{% endif %}
+
+{% if isCommentReply is not defined %}
+	{% set isCommentReply = false %}
+{% endif %}
+
+<div class="row" id="chooseFile{% if isCommentReply %}Reply{{ postId }}{% endif %}">
+	<div class="col-md-12">
+		<div class="form-group">
+			<a class="btn btn-primary" id="recordVideo{% if isCommentReply %}Reply{{ postId }}{% endif %}" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+			<!-- <a class="btn btn-primary" id="uploadFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a> -->
+			<div class="btn-group" id="uploadFile{% if isCommentReply %}Reply{{ postId }}{% endif %}">
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+					<i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }} <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li id="upload-audio-link"><a href="#"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a></li>
+					<li id="upload-video-link"><a href="#"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a></li>
+					<li id="upload-image-link"><a href="#"><i class="fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a></li>
+					<li id="upload-other-link"><a href="#"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a></li>
+				</ul>
+			</div>
+			{% if myFiles == false %}
+				<a class="btn btn-primary" id="selectFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% if myFiles == false %}
+	<div class="row" id="selectedFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" style="display: none;">
+		<div class="col-md-12">
+			<div class="hidden">
+				{% if isCommentReply %}
+					{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID', "class": "mediatextarea-reply-#{ post.id }"} }) }}
+				{% else %}
+					{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID'} }) }}
+				{% endif %}
+			</div>
+			{{ form_errors(form.mediatextarea) }}
+			<div class="form-group">
+				<label>Selected File</label>
+				<div><span id="selectedFileTitle{% if isCommentReply %}Reply{{ postId }}{% endif %}" style="margin-right: 5px;"></span><a id="removeFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" title="Remove File"><i class="fa fa-times-circle"></i></a></div>
+			</div>
+		</div>
+	</div>
+	<div id="files{% if isCommentReply %}Reply{{ postId }}{% endif %}"></div>
+{% endif %}

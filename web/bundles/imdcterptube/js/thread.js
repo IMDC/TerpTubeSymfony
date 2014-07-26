@@ -16,118 +16,180 @@ var ccNormalImagePath;
 var ccPressedImagePath;
 var global_video_dom;
 
-Thread.TAG = "Thread: ";
-
 function Thread() {
-	this.mediaChooserParams = {
-		element: function() {
-			return $("div#files");
-		},
-		callback: function(media) {
-			$("#PostFormFromThread_mediatextarea").val(media.id);
-			$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
-		},
-		recorderConfiguration: {
-			forwardButtons:  ["<button class='forwardButton'></button>"],
-			forwardFunctions: [this.forwardFunction],
-			recordingSuccessFunction: this.recordingSucceeded
-		}
-	};
-	this.replyMediaChooserParams = [];
+	this.player = null;
+	this.forwardButton = "<button class='forwardButton'></button>";
+	this.media = null;
+	
+	//TODO move to media chooser, as this may be a more general function
+	this.bind_onRecordingSuccess = this.onRecordingSuccess.bind(this);
+	this.bind_onRecordingError = this.onRecordingError.bind(this);
+	this.bind_forwardFunction = this.forwardFunction.bind(this);
 }
 
-Thread.generateReplyMediaChooserParams = function(postId) {
-	return {
-		element: function() {
-			return $("div#reply-files-" + postId);
-		},
-		callback: function(media) {
-			$(".reply-mediatextarea-" + postId).val(media.id);
-			$("#reply-selectedMediaTitle" + postId).html(media.title);
-			$("#reply-choose-media-wrap-" + postId).hide();
-			$("#reply-selected-media-wrap-" + postId).show();
-		},
-		recorderConfiguration: {
-			forwardButtons:  ["<button class='forwardButton'></button>"],
-			forwardFunctions: [this.forwardFunction],
-			recordingSuccessFunction: this.recordingSucceeded
-		}
-	};
+Thread.TAG = "Thread";
+
+Thread.Page = {
+		VIEW_THREAD: 0,
+		COMMENT_REPLY: 1 // comment replys are within the view thread page, but consider the comment reply container as it's own page
+};
+
+/**
+ * MediaChooser options for each related page that uses MediaChooser
+ * @param {number} page
+ * @param {number} postId
+ */
+Thread.mediaChooserOptions = function(page, postId) {
+	switch (page) {
+	case Thread.Page.VIEW_THREAD:
+		return {
+			element: $("#files"),
+			isPopUp: true,
+			callbacks: {
+				success: function(media) {
+					$("#PostFormFromThread_mediatextarea").val(media.id);
+					$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
+				},
+				reset: function() {
+					$("#PostFormFromThread_mediatextarea").val("");
+				}
+			}
+		};
+	case Thread.Page.COMMENT_REPLY:
+		return {
+			element: $("#filesReply" + postId),
+			isPopUp: true,
+			callbacks: {
+				success: function(media, postId) {
+					$(".mediatextarea-reply-" + postId).val(media.id);
+				},
+				reset: function(postId) {
+					$(".mediatextarea-reply-" + postId).val("");
+				}
+			},
+			isCommentReply: true,
+			postId: postId
+		};
+	}
 };
 
 /**
  * ui element event bindings in order of appearance
+ * @param {number} page
+ * @param {number} postId
  */
-Thread.prototype.bindUIEvents = function() {
-	console.log(Thread.TAG + "bindUIEvents");
+Thread.bindUIEvents = function(page, postId) {
+	console.log("%s: %s- page=%d", Thread.TAG, "bindUIEvents", page);
 	
-	/*$("#post-comment-button").click(function() {
+	switch (page) {
+	case Thread.Page.VIEW_THREAD:
+		Thread._bindUIEventsViewThread();
+		break;
+	case Thread.Page.COMMENT_REPLY:
+		Thread._bindUIEventsCommentReply(postId);
+		break;
+	}
+};
+
+Thread._bindUIEventsViewThread = function() {
+	console.log("%s: %s", Thread.TAG, "_bindUIEventsViewThread");
+	
+	/*$("#post-comment-button").on("click", function(e) {
+		e.preventDefault();
+		
 		$("#comment-form-wrap").show();
 		$(this).hide();
 		$("#PostFormFromThread_content").focus();
 	});*/
 	
-	$MC.bindUIEvents(this.mediaChooserParams);
+	MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.VIEW_THREAD));
 };
 
-Thread.prototype.bindReplyUIEvents = function(postId) {
-	console.log(Thread.TAG + "bindReplyUIEvents: postId=" + postId);
+Thread._bindUIEventsCommentReply = function(postId) {
+	console.log("%s: %s- postId=%d", Thread.TAG, "_bindUIEventsCommentReply", postId);
 	
-	$("a#reply-selectFiles" + postId).on('click', function(e) {
+	MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.COMMENT_REPLY, postId));
+	
+	//TODO revise
+	$("#post-" + postId + "-comment-reply-form-cancel-button").click(function(e) {
 		e.preventDefault();
 		
-		$MC.getInstance(thread.replyMediaChooserParams[postId]).chooseMedia();
-	});
-	
-	$("#reply-record-link-" + postId).click(function(e) {
-		e.preventDefault();
-		
-		var recorderConfiguration = {
-				forwardButtons:  ['<button class="forwardButton"></button>'],
-				forwardFunctions: [forwardFunction],
-				recordingSuccessFunction: recordingSucceeded};
-
-		var data = {recorderConfiguration: recorderConfiguration};
-		$MC.getInstance(thread.replyMediaChooserParams[postId]).chooseMedia(MediaChooser.TYPE_RECORD_VIDEO, data);
-	});
-	
-	thread.bindUploadFileUIEvents($("#reply-uploadForms" + postId), $("#reply-choose-media-wrap-" + postId), thread.replyMediaChooserParams[postId]);
-	
-	$("#reply-removeMedia" + postId).click(function(e) {
-		$(".reply-mediatextarea-" + postId).val("");
-		$("#reply-selectedMediaTitle" + postId).html("");
-		$("#reply-selected-media-wrap-" + postId).hide();
-		$("#reply-choose-media-wrap-" + postId).show();
-	});
-
-	$("a#post-" + postId + "-comment-reply-form-cancel-button").click(function(e) {
-		e.preventDefault();
-		
-		$("div#post-" + postId + "-comment-reply-form-wrap").parent().remove();
-
-		delete thread.replyMediaChooserParams.splice(postId);
+		$("#post-" + postId + "-comment-reply-form-wrap").parent().remove();
 
 		// restore the comment reply link if you click the cancel button
 		$("a.post-comment-reply").data("pid", postId).show();
 	});
 };
 
-Thread.prototype.forwardFunction = function() {
-	var mc = $MC.getInstance(thread.mediaChooserParams);
-	console.log(mc.media.id);
-	var mediaURL = Routing.generate('imdc_files_gateway_preview', {mediaId: mc.media.id});
-	mc.loadMediaPage(mc.media.id, mediaURL);
+/**
+ * @param {object} videoElement
+ */
+//TODO move to media chooser, as this may be a more general function
+Thread.prototype.createVideoRecorder = function(videoElement) {
+	console.log("%s: %s", Thread.TAG, "createVideoRecorder");
+	
+	this.player = new Player(videoElement, {
+		areaSelectionEnabled: false,
+		updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
+		type: Player.DENSITY_BAR_TYPE_RECORDER,
+		audioBar: false,
+		volumeControl: false,
+		recordingSuccessFunction: this.bind_onRecordingSuccess,
+		recordingErrorFunction: this.bind_onRecordingError,
+		recordingPostURL: Routing.generate('imdc_files_gateway_record'),
+		forwardButtons: [this.forwardButton],
+		forwardFunctions: [this.bind_forwardFunction],
+	});
+	this.player.createControls();
+
+	//TODO revise
+	videoElement.parents(".ui-dialog").on("dialogbeforeclose", (function(event, ui) {
+		console.log("videoElement dialogbeforeclose");
+		if (this.player != null) {
+			this.player.destroyRecorder();
+		}
+	}).bind(this));
+}
+
+//TODO move to media chooser, as this may be a more general function
+Thread.prototype.onRecordingSuccess = function(data) {
+	console.log("%s: %s- mediaId=%d", Thread.TAG, "onRecordingSuccess", data.media.id);
+	
+	this.media = data.media;
+	//mediaChooser.setMedia(this.media);
 };
 
-Thread.prototype.recordingSucceeded = function(data) {
-	console.log("Great success!!! Media id is: " + data.media.id);
+//TODO move to media chooser, as this may be a more general function
+Thread.prototype.onRecordingError = function(e) {
+	console.log("%s: %s- e=%s", Thread.TAG, "onRecordingError", e);
+};
+
+//TODO move to media chooser, as this may be a more general function
+Thread.prototype.forwardFunction = function() {
+	console.log("%s: %s", Thread.TAG, "forwardFunction");
+	
+	this.player.destroyRecorder();
+	
+	/*mediaChooser.loadNextPage({
+		url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
+		method: "POST",
+		data: { mediaId: this.media.id }
+	});*/
+	
+	mediaChooser.previewMedia({
+		type: MediaChooser.TYPE_RECORD_VIDEO,
+		mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
+		mediaId: this.media.id
+	});
 };
 
 $(document).ready(function() {
 
-	window.thread = new Thread();
+	thread = new Thread();
+	//TODO context
+	context = thread;
 	
-	thread.bindUIEvents();
+	Thread.bindUIEvents(Thread.Page.VIEW_THREAD);
 	
 	/**
 	 * When you are creating a new reply to a thread and you click the submit button,
@@ -252,10 +314,6 @@ $(document).ready(function() {
                 // append the post form
 //    			$theWholePost.find("#post-"+p_id+"-reply-content").append(data.form);
     			$theWholePost.append(data.form);
-    			
-    			thread.replyMediaChooserParams[p_id] = Thread.generateReplyMediaChooserParams(p_id);
-
-    			thread.bindReplyUIEvents(p_id);
 
     			$(".autosize").autosize();
     			

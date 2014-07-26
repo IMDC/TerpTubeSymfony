@@ -17,7 +17,7 @@ function Group() {
 		}
 	};
 	
-	$MC.getInstance(this.mediaChooserParams);
+	MediaChooser.getInstance(this.mediaChooserParams);
 }
 
 /**
@@ -34,7 +34,7 @@ Group.prototype.bindUIEvents = function() {
     	$("button#UserGroupForm_submit").click();
     });
 	
-	$MC.bindUIEvents(this.mediaChooserParams);
+    MediaChooser.bindUIEvents(this.mediaChooserParams);
 };
 
 Group.prototype.forwardFunction = function() {

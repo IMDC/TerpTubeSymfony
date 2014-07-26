@@ -1,19 +1,211 @@
-var recorder;
+function MyFiles() {
+	this.forwardButton = "<button class='cutButton'></button>";
+	this.media = null;
+	
+	//TODO move to media chooser, as this may be a more general function
+	this.bind_onRecordingSuccess = this.onRecordingSuccess.bind(this);
+	this.bind_onRecordingError = this.onRecordingError.bind(this);
+	this.bind_forwardFunction = this.forwardFunction.bind(this);
+	
+	this.bind__addMediaRow = this._addMediaRow.bind(this);
+	this.bind__deleteFile = this._deleteFile.bind(this);
+	
+	dust.compileFn($("#mediaRow").html(), "mediaRow");
+}
 
-function deleteFile(currentElement, message) {
+MyFiles.TAG = "MyFiles";
+
+MyFiles.Page = {
+		INDEX: 0,
+};
+
+/**
+ * MediaChooser options for each related page that uses MediaChooser
+ * @param {number} page
+ * @param {number} postId
+ */
+MyFiles.mediaChooserOptions = function(page) {
+	switch (page) {
+	case MyFiles.Page.INDEX:
+		return {
+			element: $("#preview"),
+			isPopUp: true,
+			callbacks: {
+				success: function(media) {
+					context.bind__addMediaRow(media);
+				},
+				reset: function() {
+					
+				}
+			},
+			isFileSelection: false
+		};
+	}
+};
+
+/**
+ * ui element event bindings in order of appearance
+ * @param {number} page
+ */
+MyFiles.bindUIEvents = function(page) {
+	console.log("%s: %s- page=%d", MyFiles.TAG, "bindUIEvents", page);
+	
+	switch (page) {
+	case MyFiles.Page.INDEX:
+		MyFiles._bindUIEventsIndex();
+		break;
+	}
+};
+
+/**
+ * @param {object} options
+ */
+MyFiles._bindUIEventsIndex = function() {
+	console.log("%s: %s", MyFiles.TAG, "_bindUIEventsIndex");
+	
+	Media.bindUIEvents(MyFiles.mediaChooserOptions(MyFiles.Page.INDEX));
+	
+	$(".preview-button").on("click", MyFiles.onPreviewButtonClick);
+	
+	$(".delete-button").on("click", MyFiles.onDeleteButtonClick);
+};
+
+/**
+ * @param {object} videoElement
+ */
+//TODO move to media chooser, as this may be a more general function
+MyFiles.prototype.createVideoRecorder = function(videoElement) {
+	console.log("%s: %s", MyFiles.TAG, "createVideoRecorder");
+	
+	this.player = new Player(videoElement, {
+		areaSelectionEnabled: false,
+		updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
+		type: Player.DENSITY_BAR_TYPE_RECORDER,
+		audioBar: false,
+		volumeControl: false,
+		recordingSuccessFunction: this.bind_onRecordingSuccess,
+		recordingErrorFunction: this.bind_onRecordingError,
+		recordingPostURL: Routing.generate('imdc_files_gateway_record'),
+		forwardButtons: [this.forwardButton],
+		forwardFunctions: [this.bind_forwardFunction],
+	});
+	this.player.createControls();
+
+	//TODO revise
+	videoElement.parents(".ui-dialog").on("dialogbeforeclose", (function(event, ui) {
+		console.log("videoElement dialogbeforeclose");
+		if (this.player != null) {
+			this.player.destroyRecorder();
+		}
+	}).bind(this));
+}
+
+//TODO move to media chooser, as this may be a more general function
+MyFiles.prototype.onRecordingSuccess = function(data) {
+	console.log("%s: %s- mediaId=%d", MyFiles.TAG, "onRecordingSuccess", data.media.id);
+	
+	this.media = data.media;
+	//mediaChooser.setMedia(this.media);
+};
+
+//TODO move to media chooser, as this may be a more general function
+MyFiles.prototype.onRecordingError = function(e) {
+	console.log("%s: %s- e=%s", MyFiles.TAG, "onRecordingError", e);
+};
+
+//TODO move to media chooser, as this may be a more general function
+MyFiles.prototype.forwardFunction = function() {
+	console.log("%s: %s", MyFiles.TAG, "forwardFunction");
+	
+	this.player.destroyRecorder();
+	
+	mediaChooser.previewMedia({
+		type: MediaChooser.TYPE_RECORD_VIDEO,
+		mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
+		mediaId: this.media.id
+	});
+};
+
+MyFiles.prototype._addMediaRow = function(media) {
+	console.log("%s: %s", MyFiles.TAG, "_addMediaRow");
+	
+	this.media = media;
+	
+	var data = {
+			media: this.media
+	};
+	
+	if (this.media.isReady == 0) {
+		data.previewDisabled = true;
+	}
+	
+	//TODO revise
+	switch (this.media.type) {
+	case 0:
+		data.icon = "fa-picture-o";
+		data.mediaType = "Image";
+		break;
+	case 1:
+		data.icon = "fa-film";
+		data.mediaType = "Video";
+		data.canInterpret = true;
+		break;
+	case 2:
+		data.icon = "fa-headphones";
+		data.mediaType = "Audio";
+		data.canInterpret = true;
+		break;
+	default:
+		data.icon = "fa-film";
+		data.mediaType = "Other";
+		break;
+	}
+	
+	//TODO revise
+	var timeUploaded = new Date(this.media.metaData.timeUploaded.date);
+	var ampm = timeUploaded.getHours()>=12?"pm":"am";
+	var hours = (timeUploaded.getHours()>12?timeUploaded.getHours()-12:timeUploaded.getHours());
+	hours = hours<10?"0"+hours:hours;
+	var time = hours+":"+(timeUploaded.getMinutes()<10?"0"+timeUploaded.getMinutes():timeUploaded.getMinutes())+ampm ;
+	var timeDateString = time+" "+$.datepicker.formatDate('M d', timeUploaded);
+	
+	data.dateString = timeDateString;
+	
+	if (this.media.metaData.size > 0) {
+		data.mediaSize = (this.media.metaData.size / 1024 / 1024).toFixed(2);
+	}
+	
+	data.deleteUrl = Routing.generate('imdc_files_gateway_remove', { mediaId: this.media.id });
+	data.previewUrl = Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id });
+	data.newThreadUrl = Routing.generate('imdc_thread_create_new_from_media', { resourceid: this.media.id });
+	data.simulRecordUrl = Routing.generate('imdc_media_simultaneous_record', { mediaID: this.media.id });
+	
+	dust.render("mediaRow", data, function(err, out) {
+		$("#files-table").append(out);
+	});
+	
+	$(".preview-button").on("click", MyFiles.onPreviewButtonClick);
+	
+	$(".delete-button").on("click", MyFiles.onDeleteButtonClick);
+};
+
+MyFiles.prototype._deleteFile = function(currentElement, message) {
+	console.log("%s: %s", MyFiles.TAG, "_deleteFile");
+	
 	var response = confirm(message);
-	if (!response)
+	if (!response) {
 		return false;
-	var address = $(currentElement).attr('data-url');
+	}
+	var address = $(currentElement).data("url");
 
 	$.ajax({
-		url : address,
-		type : "POST",
-		contentType : "application/x-www-form-urlencoded",
-		data : {
-			mediaId : $(currentElement).attr('data-val')
+		url: address,
+		type: "POST",
+		contentType: "application/x-www-form-urlencoded",
+		data: {
+			mediaId: $(currentElement).data("val")
 		},
-		success : function(data) {
+		success: function(data) {
 			if (data.responseCode == 200) {
 				$(currentElement).parent().parent().remove();
 			} else if (data.responseCode == 400) { // bad request
@@ -22,13 +214,46 @@ function deleteFile(currentElement, message) {
 				alert('An unexpected error occured');
 			}
 		},
-		error : function(request) {
-			console.log(request);
-			alert(request.statusText);
+		error: function(request) {
+			console.log(request.statusText);
 		}
 	});
-	return false;
 }
+
+MyFiles.prototype.onPreviewButtonClick = function(e) {
+	e.preventDefault();
+	
+	if ($(e.target).hasClass("disabled")) {
+		return false;
+	}
+	
+	$('#preview').html('');
+	
+	mediaChooser.previewMedia({
+		mediaUrl: $(e.target).data("url"),
+		mediaId: $(e.target).data("val")
+	});
+};
+
+MyFiles.prototype.onDeleteButtonClick = function(e) {
+	e.preventDefault();
+	
+	this.bind__deleteFile($(e.target), $("#mediaDeleteConfirmMessage").html());
+};
+
+
+
+
+
+
+
+
+
+
+
+
+var recorder;
+
 
 //function recordVideo(destinationDivElement, address, recorderConfiguration) {
 //	$.ajax({

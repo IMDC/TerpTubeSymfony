@@ -33,9 +33,19 @@
 		<![endif]-->
 		
 		{% block headerjavascripts %}
+			<script type="text/javascript">
+				Function.prototype.extend = function(parentClass) {
+					for (var f in parentClass.prototype)
+						this.prototype[f] = parentClass.prototype[f];
+					this.prototype.constructor = this;
+					this.prototype.parent = parentClass.prototype;
+					
+					return this;
+				};
+			</script>
+
 			{# <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> #}
 	 		<script src="{{ asset('js/jquery.js') }}"></script>
-	 		<script src="{{ asset('js/jquery-ui.js') }}"></script>
 			
 			<!-- jQuery autosize textboxes script -->
 			<script src="{{ asset('bundles/imdcterptube/js/autosize/jquery.autosize.min.js') }}"></script>
@@ -45,6 +55,7 @@
 			<script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 			
 			<!-- Javascript player and mediachooser scripts -->
+			<script src="{{ asset('bundles/imdcterptube/js/media.js') }}"></script>
 			<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
 			<script src="{{ asset('bundles/imdcterptube/js/mediaChooser.js') }}"></script>
 			<script src="{{ asset('bundles/imdcterptube/js/mediaManager.js') }}"></script>
@@ -248,10 +259,17 @@
 		</div><!--/.container-fluid -->
 
 		{% block javascripts %}
+			<script src="{{ asset('js/bootstrap.js') }}"></script>
+			<script type="text/javascript">
+				var bootstrapButton = $.fn.button.noConflict();
+				$.fn.bootstrapBtn = bootstrapButton;
+			</script>
+			<script src="{{ asset('js/jquery-ui.js') }}"></script>
+			<script src="{{ asset('js/dust.js') }}"></script>
+
 		    <script src="{{ asset('bundles/imdcterptube/js/main.js') }}"></script>
 		{% endblock javascripts %}
-
-		<script src="{{ asset('js/bootstrap.js') }}"></script>
+		
 	</body>
 
 	{% block postfooteroutsidebody %}

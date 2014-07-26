@@ -12,38 +12,21 @@
     <link href="{{ asset('bundles/imdcterptube/css/motionMediaPreview.css') }}" rel="stylesheet" />
 {% endblock stylesheets %}
 
+{% block headerjavascripts %}
+	{{ parent() }}
+
+    <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>
+{% endblock headerjavascripts %}
+
 {% block herounit %}
 	<h1>{{ 'filesGateway.title'|trans }}</h1>
 {% endblock herounit %}
 
 {% block underherounitrow1 %}
 	<div class="container-fluid">
+		{{ include('IMDCTerpTubeBundle:AddFileGateway:mediaChooserForm.html.twig', {'myFiles': true}) }}
 		<div class="row">
-			<p class="col-md-9">
-				<a id="record-link" class="btn btn-primary" href="{{ path('imdc_files_gateway_record_media') }}">
-					<i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}
-				</a>
-				<a class="btn btn-primary" href="{{ path('imdc_files_gateway_audio') }}">
-					<i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}
-				</a>
-				<a class="btn btn-primary" href="{{ path('imdc_files_gateway_video') }}">
-					<i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}
-				</a>
-				<a class="btn btn-primary" href="{{ path('imdc_files_gateway_image') }}">
-					<i class=" fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}
-				</a>
-				<a class="btn btn-primary" href="{{ path('imdc_files_gateway_other') }}">
-					<i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}
-				</a>
-			</p>
-		</div>
-	</div>
-{% endblock underherounitrow1 %}
-
-{% block underherounitrow2 %}
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-md-9">
+			<div class="col-md-12">
 				<table id="files-table" class="table table-responsive table-hover table-striped pmtable">
 					<thead>
 						<tr>
@@ -81,7 +64,7 @@
 										{% endif %}
 										<a class="btn btn-small share-button"
 											href="{{ path('imdc_thread_create_new_from_media', {'resourceid': resourceFile.id} ) }}"
-											data-type-"{{ resourceFile.type }}" data-val="{{ resourceFile.id }}">
+											data-type"{{ resourceFile.type }}" data-val="{{ resourceFile.id }}">
 												<i class="fa fa-share-square-o"></i> {{ 'filesGateway.shareLink'|trans }}
 										</a>
 										{% if resourceFile.type == 1 or resourceFile.type == 2 %}
@@ -120,132 +103,67 @@
 			</div>
 		</div>
 	</div>
-
 	<div id="preview"></div>
+{% endblock underherounitrow1 %}
+
+{% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
+
+{% block postfooteroutsidebody %}
+	<div id="uploadForms" style="display: none;">
+		{% for form in uploadForms %}
+			{{ form_start(form) }}
+			{{ form_widget(form) }}
+			{{ form_end(form) }}
+		{% endfor %}
+	</div>
+{% endblock postfooteroutsidebody %}
 
 {% block javascripts %}
 	{{ parent() }}
 
-	<script src="{{ asset('bundles/imdcterptube/js/myFiles.js') }}"></script>
+	<script id="mediaRow">
+		<tr>
+			<td>
+				<a class="btn btn-small delete-button" href="#" data-url="{deleteUrl}" data-val="{media.id}">
+					<i class="fa fa-minus-circle"></i> {{ "filesGateway.deleteLink"|trans }}
+				</a>
+				<a class="btn btn-small preview-button{{ '{#previewDisabled} disabled{/previewDisabled}' }}" href="#" data-type="{media.type}" data-url="{previewUrl}" data-val="{media.id}">
+					<i class="fa fa-play-circle"></i> {{ "filesGateway.previewLink"|trans }}
+				</a>
+				<a class="btn btn-small share-button" href="{newThreadUrl}" data-type="{media.type}" data-val="{media.id}">
+					<i class="fa fa-share-square-o"></i> {{ "filesGateway.shareLink"|trans }}
+				</a>
+				{{ '{#canInterpret}' }}
+					<a class="btn btn-small interpret-button" href="{simulRecordUrl}">
+						<i class="fa fa-film"></i> Create Interpretation
+					</a>
+				{/canInterpret}
+			</td>
+			<td>{media.title}</td>
+			<td><i class="fa {icon}"></i> {mediaType}</td>
+			<td>{dateString}</td>
+			<td>
+				{{ '{\#mediaSize}' }}
+					{mediaSize} MB
+				{:else}
+					<i class="fa fa-spinner fa-spin fa-large"></i>
+				{/mediaSize}
+			</td>
+		</tr>
+	</script>
 
-	<script type='text/javascript'>
-	
-		var recordedMedia;
-	 	function callBack(data)
-		 {
-			 	var media = data['media'];
-			 	recordedMedia=media; 
-			 	addMediaRow(recordedMedia);
-				console.log("Great success!!! Media id is: " +media['id']);
-		 }
-	
-		 function forwardFunction()
-		 {
-				var mediaId = recordedMedia['id'];
-				console.log(mediaId);
-				var mediaURL = "{{ path('imdc_files_gateway_preview', {'mediaId': '-1'}) }}";
-				mediaURL = mediaURL.replace('-1',mediaId);
-				window["mediaChooser"].loadMediaPage(mediaId, mediaURL);
-		 }
-		 
-	
-		 function addMediaRow(media)
-		 {
-			 //FIXME should add a prototype row and then move this function to the js file.
-			 var mediaTypes ={ 0 : "{{ 'filesGateway.type.0'|trans }}",
-			 1: "{{ 'filesGateway.type.1'|trans }}",
-			 2: "{{ 'filesGateway.type.2'|trans }}",
-			 9: "{{ 'filesGateway.type.9'|trans }}"};
-			 var mediaType = mediaTypes[media.type];
-			 var row = $(document.createElement('tr'));
-			 row.append($(document.createElement('td'))
-					 .append($(document.createElement('a'))
-							 .addClass("delete-button").addClass("btn").addClass("btn-small")
-							 .attr('href',"#")
-							 .attr('data-url', "{{ path('imdc_files_gateway_remove', {'mediaId': 0}) }}".replace('0',media.id))
-							 .attr('data-val',media.id)
-							 .html('<i class="fa fa-minus-circle"></i>{{ "filesGateway.deleteLink"|trans }} '))
-					 .append($(document.createElement('a'))
-							 .addClass("preview-button").addClass("btn").addClass("btn-small")
-							 .addClass("disabled")
-							 .attr('href',"{{ path('imdc_thread_create_new_from_media', {'resourceid': 0}) }}".replace('0', media.id))
-							 .attr('data-type', media.type)
-							 .attr('data-val',media.id)
-							 .html('<i class="fa fa-play-circle"></i>{{ "filesGateway.previewLink"|trans }}'))
-					 .append($(document.createElement('a'))
-							 .addClass(" share-button").addClass("btn").addClass("btn-small")
-							 .attr('href',"#")
-							 .attr('data-url', "{{ path('imdc_files_gateway_remove', {'mediaId': 0}) }}".replace('0',media.id))
-							 .attr('data-val',media.id)
-							 .html('<i class="fa fa-share-square-o"></i>{{ "filesGateway.shareLink"|trans }} ')));
-	
-		 	row.append($(document.createElement('td'))
-					 .html(media.title));
-			var icon = '<i class="fa fa-film"></i>';
-			if (media.type == 0) 
-				icon = '<i class="fa fa-picture-o"></i>';
-			else if (media.type == 1)
-				icon =  '<i class="fa fa-film"></i>';
-			else if (media.type == 2) 
-				icon = '<i class="fa fa-headphones"></i>'
-			 
-			 row.append($(document.createElement('td'))
-					 .html(icon+mediaType));
-	
-			 var timeUploaded = new Date(media.metaData.timeUploaded.date);
-			 var ampm = timeUploaded.getHours()>=12?"pm":"am";
-			 var hours = (timeUploaded.getHours()>12?timeUploaded.getHours()-12:timeUploaded.getHours());
-			 hours = hours<10?"0"+hours:hours;
-			 var time = hours+":"+(timeUploaded.getMinutes()<10?"0"+timeUploaded.getMinutes():timeUploaded.getMinutes())+ampm ;
-			 var timeDateString = time+" "+$.datepicker.formatDate('M d', timeUploaded);
-			 
-			 row.append($(document.createElement('td'))
-					 .html(timeDateString));
-			 row.append($(document.createElement('td'))
-					 .html('<i class="fa fa-spinner fa-spin fa-large"></i>'));
-			 $("#files-table").append(row);
-			 $('.preview-button').click(function(e) {
-		            if ($(this).hasClass('disabled'))
-		                return false;
-		            $('#preview').html('');
-		            var button = this;
-		            window["mediaChooser"].previewMediaFile($(button).attr('data-val'), $(button).attr('data-url'), true);
-		        	return false;
-			 });
-	         $('.delete-button').click(function(e) {
-		            	deleteFile($(this), "{{ 'filesGateway.deleteConfirmMessage'|trans }}");
-		            	return false;
-	         });
-		 }
-		 
-	  $(document).ready(function() {
-		  	window["mediaChooser"] = new MediaChooser($("#preview"), function(mediaID)
-				 	{
-			            console.log("Successfully finished creating media! with mediaID: " + mediaID);
-			 		}, true);
-	        $('.preview-button').click(function(e) {
-	            if ($(this).hasClass('disabled'))
-	                return false;
-	            $('#preview').html('');
-	            var button = this;
-	//         	previewFileLink($(currentElement).attr('data-val'), $(currentElement).attr('data-url'), true);
-	        	window["mediaChooser"].previewMediaFile($(button).attr('data-val'), $(button).attr('data-url'), true);
-	        	return false;
-	        });
-	        $('.delete-button').click(function(e) {
-	        	deleteFile($(this), "{{ 'filesGateway.deleteConfirmMessage'|trans }}");
-	        	return false;
-	        });
-	        $('#record-link').click(function(e) {
-	        	
-	            var recorderConfiguration = {forwardButtons: ["<button class='cutButton'></button>"], forwardFunctions: [forwardFunction], recordingSuccessFunction: callBack};
-	            window["mediaChooser"].setRecorderConfiguration(recorderConfiguration);
-	            window["mediaChooser"].chooseMedia(MediaChooser.TYPE_RECORD_VIDEO);
-	//         	popUp($('#preview'), recordVideo($('#preview'), $(this).attr('href'), recorderConfiguration), "Record");
-	        	return false;
-	        });
-	    });
-	
-	  </script>
+	<script id="mediaDeleteConfirmMessage">
+		<div>{{ 'filesGateway.deleteConfirmMessage'|trans }}</div>
+	</script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			myFiles = new MyFiles();
+			//TODO context
+			context = myFiles;
+
+			MyFiles.bindUIEvents(MyFiles.Page.INDEX);
+		});
+	</script>
 {% endblock javascripts %}
