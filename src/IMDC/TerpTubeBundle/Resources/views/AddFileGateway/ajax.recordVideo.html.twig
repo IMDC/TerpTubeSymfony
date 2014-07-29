@@ -1,10 +1,10 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-<video class="preview" width="100%" id="record" preload="auto" autoplay muted></video>
+<video class="preview" width="100%" id="record" preload="auto" autoplay="autoplay" muted="muted"></video>
 
 <script type='text/javascript'>
-	$(document).ready(function() {
+	//$(document).ready(function() {
 		//TODO context
 		context.createVideoRecorder($("#record"));
-	});
+	//});
 </script>

@@ -30,6 +30,7 @@ Forum.Page = {
 Forum.mediaChooserOptions = function(page) {
 	switch (page) {
 	case Forum.Page.NEW:
+	case Forum.Page.EDIT:
 		return {
 			element: $("#files"),
 			isPopUp: true,
@@ -39,7 +40,7 @@ Forum.mediaChooserOptions = function(page) {
 					//$("#ForumForm_mediaID").attr("data-mid", media.id); //TODO not used??
 				},
 				reset: function() {
-					
+					$("#ForumForm_mediatextarea").val("");
 				}
 			}
 		};

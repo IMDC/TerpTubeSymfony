@@ -11,6 +11,7 @@
 {% block headerjavascripts %}
 	{{ parent() }}
 
+	<script src="{{ asset('bundles/imdcterptube/js/thread.js') }}"></script>
 	<script src="{{ asset('js/tag-it.min.js') }}" type="text/javascript" charset="utf-8"></script>
 	<link href="{{ asset('css/jquery.tagit.css') }}" rel="stylesheet" type="text/css">
 {% endblock headerjavascripts %}
@@ -32,9 +33,7 @@
         {{ form_errors(form) }}
         <div class="row">
             <p>Select a file (video, image, or audio) to be used as the title for your new Topic</p>
-	        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Select Files</a>
-	        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
-	        <div id="files"></div>
+	        {{ include('IMDCTerpTubeBundle:AddFileGateway:mediaChooserForm.html.twig') }}
         </div>
 {#         <input type="textarea" disabled="true" id="file-textarea" />#}
 {#         {{ form_row(form.mediaID) }}#}
@@ -61,47 +60,38 @@
 {% block javascripts %}
 	{{ parent() }}
 
- <script type='text/javascript'>
- var mediaChooser;
- $("#selectFiles").click(function(e) {
- 	mediaChooser = new MediaChooser($("#files"), function(mediaID)
- 		 	{
-		 		//alert(mediaID);
- 	            setMediaID(mediaID);
-	 		}, true);
- 	mediaChooser.chooseMedia();
- });
+	<script type="text/javascript">
+		$(document).ready(function() {
+			thread = new Thread();
+			//TODO context
+			context = thread;
 
- function setMediaID(mid) {
-	    $("#ThreadForm_mediaID").attr('data-mid', mid);
-	    $("#ThreadForm_mediatextarea").val(mid);
-	    
-	    //alert(mid);
-};
+			Thread.bindUIEvents(Thread.Page.NEW);
 
-$(document).ready(function() {
-    $("#ThreadForm_content").autosize();
-    $("#ThreadForm_permissions_usersWithAccess").tagit({
-    	{% if app.user.getFriendsList|length >= 1 %}
-        showAutocompleteOnFocus: true,
-        {% endif %}
-    	{% set usernames = app.user.getFriendsListAsUsernameString %}   	
-        availableTags: [{{ usernames|raw }}]
-    });
+			$("#ThreadForm_content").autosize();
+			$("#ThreadForm_permissions_usersWithAccess").tagit({
+				{% if app.user.getFriendsList|length >= 1 %}
+					showAutocompleteOnFocus: true,
+				{% endif %}
+				{% set usernames = app.user.getFriendsListAsUsernameString %}   	
+				availableTags: [{{ usernames|raw }}]
+			});
 
-    $("ul.tagit").css('width', '50%').hide();
+			$("ul.tagit").css('width', '50%').hide();
+		});
+	</script>
 
-    // since I hid the real 'submit' button to provide a nicely stylized button
-    // I have to click the real button when you click on the fancy one
-    $("#thread-form-submit-button").click(function(e) {
-        e.preventDefault();
-    	$("button#ThreadForm_submit").click();
-    	
-    });
-});
-</script>
- 
-<script src="{{ asset('bundles/imdcterptube/js/permissionButtons.js') }}" type="text/javascript" charset="utf-8"></script>
- 
-
+	<script src="{{ asset('bundles/imdcterptube/js/permissionButtons.js') }}" type="text/javascript" charset="utf-8"></script>
 {% endblock javascripts %}
+
+{% block postfooteroutsidebody %}
+	{{ parent() }}
+
+	<div id="uploadForms" style="display: none;">
+		{% for form in uploadForms %}
+			{{ form_start(form) }}
+			{{ form_widget(form) }}
+			{{ form_end(form) }}
+		{% endfor %}
+	</div>
+{% endblock postfooteroutsidebody %}

@@ -211,7 +211,7 @@ class ForumController extends Controller
 	    
 	}
 	
-	public function editAction(Request $request, Forum $forumid)
+	public function editAction(Request $request, $forumid)
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -229,11 +229,17 @@ class ForumController extends Controller
 	    $em = $this->getDoctrine()->getManager();
 	    $user = $this->getUser();
 	     
-	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid->getId()));
+	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid));
 	    
 	    $form = $this->createForm(new ForumFormType(), $forum, array(
-	        'user' => $this->getUser(),
+	        //'user' => $this->getUser(),
 	    ));
+	    
+	    $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+	    $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+	    $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+	    $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+	    $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
 	    
 	    $form->handleRequest($request);
 	    
@@ -255,7 +261,7 @@ class ForumController extends Controller
 	            if ($user->getResourceFiles()->contains($mediaFile)) {
 	                $logger = $this->get('logger');
 	                $logger->info('User owns this media file');
-	                $newforum->addTitleMedia($mediaFile);
+	                $forum->addTitleMedia($mediaFile);
 	            }
 	        }
 	         
@@ -287,7 +293,7 @@ class ForumController extends Controller
 	        
         // form not valid, show the basic form
         return $this->render('IMDCTerpTubeBundle:Forum:edit.html.twig',
-            array('form' => $form->createView(), 'forum' => $forum
+            array('form' => $form->createView(), 'forum' => $forum, 'uploadForms' => $uploadForms
         ));
 	}
 	

@@ -7,8 +7,8 @@ Thread:viewthread.html.twig
 
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-{% if myFiles is not defined %}
-	{% set myFiles = false %}
+{% if isFileSelection is not defined %}
+	{% set isFileSelection = true %}
 {% endif %}
 
 {% if isCommentReply is not defined %}
@@ -31,13 +31,13 @@ Thread:viewthread.html.twig
 					<li id="upload-other-link"><a href="#"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a></li>
 				</ul>
 			</div>
-			{% if myFiles == false %}
+			{% if isFileSelection %}
 				<a class="btn btn-primary" id="selectFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
 			{% endif %}
 		</div>
 	</div>
 </div>
-{% if myFiles == false %}
+{% if isFileSelection %}
 	<div class="row" id="selectedFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" style="display: none;">
 		<div class="col-md-12">
 			<div class="hidden">

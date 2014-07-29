@@ -246,6 +246,12 @@ class ThreadController extends Controller
             'user' => $this->getUser(),
         ));
         
+        $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+        $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+        $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+        $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+        $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
+        
         if ($forumid) {
             $forumrepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
             $forum = $forumrepo->findOneBy(array('id' => $forumid));
@@ -258,7 +264,7 @@ class ThreadController extends Controller
             );
             // form not valid, show the basic form
             return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig',
-                array('form' => $form->createView(),
+                array('form' => $form->createView(), 'uploadForms' => $uploadForms
             ));
         }
         
@@ -347,7 +353,7 @@ class ThreadController extends Controller
         
         // form not valid, show the basic form
         return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig',
-                array('form' => $form->createView(),
+                array('form' => $form->createView(), 'uploadForms' => $uploadForms
         ));
     }
     

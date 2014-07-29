@@ -30,8 +30,10 @@ function Thread() {
 Thread.TAG = "Thread";
 
 Thread.Page = {
-		VIEW_THREAD: 0,
-		COMMENT_REPLY: 1 // comment replys are within the view thread page, but consider the comment reply container as it's own page
+		NEW: 0,
+		EDIT: 1,
+		VIEW_THREAD: 2,
+		COMMENT_REPLY: 3 // comment replys are within the view thread page, but consider the comment reply container as it's own page
 };
 
 /**
@@ -41,6 +43,21 @@ Thread.Page = {
  */
 Thread.mediaChooserOptions = function(page, postId) {
 	switch (page) {
+	case Thread.Page.NEW:
+	case Thread.Page.EDIT:
+		return {
+			element: $("#files"),
+			isPopUp: true,
+			callbacks: {
+				success: function(media) {
+				    $("#ThreadForm_mediatextarea").val(media.id);
+				    //$("#ThreadForm_mediaID").attr('data-mid', mid); //TODO not used?
+				},
+				reset: function() {
+					$("#ThreadForm_mediatextarea").val("");
+				}
+			}
+		};
 	case Thread.Page.VIEW_THREAD:
 		return {
 			element: $("#files"),
@@ -82,6 +99,10 @@ Thread.bindUIEvents = function(page, postId) {
 	console.log("%s: %s- page=%d", Thread.TAG, "bindUIEvents", page);
 	
 	switch (page) {
+	case Thread.Page.NEW:
+	case Thread.Page.EDIT:
+		Thread._bindUIEventsNewEdit();
+		break;
 	case Thread.Page.VIEW_THREAD:
 		Thread._bindUIEventsViewThread();
 		break;
@@ -89,6 +110,22 @@ Thread.bindUIEvents = function(page, postId) {
 		Thread._bindUIEventsCommentReply(postId);
 		break;
 	}
+};
+
+Thread._bindUIEventsNewEdit = function() {
+	console.log("%s: %s", Thread.TAG, "_bindUIEventsNewEdit");
+	
+	MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.NEW));
+	
+	/*
+	 * by paul: since I hid the real 'submit' button to provide a nicely stylized button
+	 * I have to click the real button when you click on the fancy one
+	 */
+	$("#thread-form-submit-button").on("click", function(e) {
+		e.preventDefault();
+		
+		$("#ThreadForm_submit").click();
+	});
 };
 
 Thread._bindUIEventsViewThread = function() {

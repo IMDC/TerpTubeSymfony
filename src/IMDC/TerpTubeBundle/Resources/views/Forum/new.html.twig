@@ -11,7 +11,7 @@
 {% block headerjavascripts %}
 	{{ parent() }}
 
-    <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/forum.js') }}"></script>
+    <script src="{{ asset('bundles/imdcterptube/js/forum.js') }}"></script>
 {% endblock headerjavascripts %}
 
 {% block title %}Create a new Forum{% endblock title %}
@@ -50,16 +50,6 @@
 {% block underherounitrow2 %}
 {% endblock underherounitrow2 %}
 
-{% block postfooteroutsidebody %}
-	<div id="uploadForms" style="display: none;">
-		{% for form in uploadForms %}
-			{{ form_start(form) }}
-			{{ form_widget(form) }}
-			{{ form_end(form) }}
-		{% endfor %}
-	</div>
-{% endblock postfooteroutsidebody %}
-
 {% block javascripts %}
 	{{ parent() }}
 
@@ -73,3 +63,15 @@
 		});
 	</script>
 {% endblock javascripts %}
+
+{% block postfooteroutsidebody %}
+	{{ parent() }}
+
+	<div id="uploadForms" style="display: none;">
+		{% for form in uploadForms %}
+			{{ form_start(form) }}
+			{{ form_widget(form) }}
+			{{ form_end(form) }}
+		{% endfor %}
+	</div>
+{% endblock postfooteroutsidebody %}

@@ -292,6 +292,9 @@ MediaChooser.prototype._popUp = function (type, onOpen) {
 		show: "blind",
 		hide: "blind",
 		minWidth: 740,
+		position: {
+			at: "top+200"
+		},
 		title: MediaChooser._dialogTitleForType(type)
 	});
 
