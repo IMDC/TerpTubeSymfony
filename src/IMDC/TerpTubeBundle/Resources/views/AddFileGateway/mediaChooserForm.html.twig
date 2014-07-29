@@ -11,16 +11,16 @@ Thread:viewthread.html.twig
 	{% set isFileSelection = true %}
 {% endif %}
 
-{% if isCommentReply is not defined %}
-	{% set isCommentReply = false %}
+{% if isPost is not defined %}
+	{% set isPost = false %}
 {% endif %}
 
-<div class="row" id="chooseFile{% if isCommentReply %}Reply{{ postId }}{% endif %}">
+<div class="row" id="chooseFile{% if isPost %}Post{{ postId }}{% endif %}">
 	<div class="col-md-12">
 		<div class="form-group">
-			<a class="btn btn-primary" id="recordVideo{% if isCommentReply %}Reply{{ postId }}{% endif %}" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
-			<!-- <a class="btn btn-primary" id="uploadFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a> -->
-			<div class="btn-group" id="uploadFile{% if isCommentReply %}Reply{{ postId }}{% endif %}">
+			<a class="btn btn-primary" id="recordVideo{% if isPost %}Post{{ postId }}{% endif %}" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+			<!-- <a class="btn btn-primary" id="uploadFile{% if isPost %}Post{{ postId }}{% endif %}" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a> -->
+			<div class="btn-group" id="uploadFile{% if isPost %}Post{{ postId }}{% endif %}">
 				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
 					<i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }} <span class="caret"></span>
 				</button>
@@ -32,17 +32,17 @@ Thread:viewthread.html.twig
 				</ul>
 			</div>
 			{% if isFileSelection %}
-				<a class="btn btn-primary" id="selectFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
+				<a class="btn btn-primary" id="selectFile{% if isPost %}Post{{ postId }}{% endif %}" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
 			{% endif %}
 		</div>
 	</div>
 </div>
 {% if isFileSelection %}
-	<div class="row" id="selectedFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" style="display: none;">
+	<div class="row" id="selectedFile{% if isPost %}Post{{ postId }}{% endif %}" style="display: none;">
 		<div class="col-md-12">
 			<div class="hidden">
-				{% if isCommentReply %}
-					{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID', "class": "mediatextarea-reply-#{ post.id }"} }) }}
+				{% if isPost %}
+					{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID', "class": "mediatextarea-post-#{ post.id }"} }) }}
 				{% else %}
 					{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID'} }) }}
 				{% endif %}
@@ -50,9 +50,9 @@ Thread:viewthread.html.twig
 			{{ form_errors(form.mediatextarea) }}
 			<div class="form-group">
 				<label>Selected File</label>
-				<div><span id="selectedFileTitle{% if isCommentReply %}Reply{{ postId }}{% endif %}" style="margin-right: 5px;"></span><a id="removeFile{% if isCommentReply %}Reply{{ postId }}{% endif %}" title="Remove File"><i class="fa fa-times-circle"></i></a></div>
+				<div><span id="selectedFileTitle{% if isPost %}Post{{ postId }}{% endif %}" style="margin-right: 5px;"></span><a id="removeFile{% if isPost %}Post{{ postId }}{% endif %}" title="Remove File"><i class="fa fa-times-circle"></i></a></div>
 			</div>
 		</div>
 	</div>
-	<div id="files{% if isCommentReply %}Reply{{ postId }}{% endif %}"></div>
+	<div id="files{% if isPost %}Post{{ postId }}{% endif %}"></div>
 {% endif %}

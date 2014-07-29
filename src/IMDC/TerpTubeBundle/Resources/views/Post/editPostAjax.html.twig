@@ -5,43 +5,51 @@
 {% endif %}
 
 <div class="col-md-12">
-{# set formpath = path(app.request.attributes.get("_route"), {'pid' : post.id}) #}
-{% set formpath = path('imdc_post_edit_specific', {'pid' : post.id}) %}
+	{# set formpath = path(app.request.attributes.get("_route"), {'pid' : post.id}) #}
+	{% set formpath = path('imdc_post_edit_specific', {'pid' : post.id}) %}
+	{{ form_start(form, {'action' : "#{formpath}"}) }}
+		{{ form_errors(form) }}
+		{{ include('IMDCTerpTubeBundle:AddFileGateway:mediaChooserForm.html.twig', {'isPost': true, 'postId': post.id}) }}
+	    {% if mediaFile != null %}
+	    <p>
+	    <div class="row">
+	        <div class="col-md-4">
+	        {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
+	        </div> <!-- /col-md-4 -->
+	    </div> <!-- /row -->
+	    </p>
+	    {% else %}
+	    {% endif %}
+	    {% if form.startTime is defined %}
+	    <div id="start-end-time-wrap">
+	        <div class="row">
+	            <div class="col-md-6">
+	                {{form_label(form.startTime)}}{{ form_widget(form.startTime) }}
+	            </div>
+	            <div class="col-md-6">
+	                {{form_label(form.endTime)}}{{ form_widget(form.endTime) }}
+	            </div>
+	        </div>
+	    </div>
+	    {% endif %}
+	    {{ form_row(form.content, {'attr': {'style':'width:90%'}}) }}
+	    <div class="controls controls-row">
+	        {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
+			<a class="btn btn-danger cancel-post" href="#" id="cancelEditPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
+	    </div>
+	{{ form_end(form) }}
 
-{{ form_start(form, {'action' : "#{formpath}"}) }}
-    {{ form_errors(form) }}
-    <div class="controls controls-row">
-        <a class="btn btn-primary" id="selectFiles" href="#"><i class="fa fa-cloud-upload"></i> Record Video or Select File</a>
-        {{ form_widget(form.mediatextarea, {'attr' : {'class':'input-mini'}}) }}{{ form_errors(form.mediatextarea) }}
-    </div>
-    <div id="files"></div>
-    {% if mediaFile != null %}
-    <p>
-    <div class="row">
-        <div class="col-md-4">
-        {{ include('IMDCTerpTubeBundle:Media:mediaElement.html.twig') }}
-        </div> <!-- /col-md-4 -->
-    </div> <!-- /row -->
-    </p>
-    {% else %}
-    {% endif %}
-    {% if form.startTime is defined %}
-    <div id="start-end-time-wrap">
-        <div class="row">
-            <div class="col-md-6">
-                {{form_label(form.startTime)}}{{ form_widget(form.startTime) }}
-            </div>
-            <div class="col-md-6">
-                {{form_label(form.endTime)}}{{ form_widget(form.endTime) }}
-            </div>
-        </div>
-    </div>
-    {% endif %}
-    {{ form_row(form.content, {'attr': {'style':'width:90%'}}) }}
-    <div class="controls controls-row">
-        {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
-        <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
-    </div>
+	<div id="uploadFormsPost{{ post.id }}" style="display: none;">
+		{% for form in uploadForms %}
+			{{ form_start(form) }}
+			{{ form_widget(form) }}
+			{{ form_end(form) }}
+		{% endfor %}
+	</div>
 
-{{ form_end(form) }}
+	<script type="text/javascript">
+		//$(document).ready(function() {
+			Post.bindUIEvents(Post.Page.EDIT, {{ post.id }});
+		//});
+	</script>
 </div>

@@ -4,18 +4,6 @@
  * Thread:viewthreadPrototype.hml.twig
  */
 
-var globalPlayer;
-var globalPlayHeadImage;
-var globalStartTimeInput;
-var globalEndTimeInput;
-var speedSlowNormalImagePath;
-var speedSlowFastImagePath;
-var speedSlowSlowImagePath;
-var speedSlow;
-var ccNormalImagePath;
-var ccPressedImagePath;
-var global_video_dom;
-
 function Thread() {
 	this.player = null;
 	this.forwardButton = "<button class='forwardButton'></button>";
@@ -32,8 +20,7 @@ Thread.TAG = "Thread";
 Thread.Page = {
 		NEW: 0,
 		EDIT: 1,
-		VIEW_THREAD: 2,
-		COMMENT_REPLY: 3 // comment replys are within the view thread page, but consider the comment reply container as it's own page
+		VIEW_THREAD: 2
 };
 
 /**
@@ -65,27 +52,12 @@ Thread.mediaChooserOptions = function(page, postId) {
 			callbacks: {
 				success: function(media) {
 					$("#PostFormFromThread_mediatextarea").val(media.id);
-					$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
+					//$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
 				},
 				reset: function() {
 					$("#PostFormFromThread_mediatextarea").val("");
 				}
 			}
-		};
-	case Thread.Page.COMMENT_REPLY:
-		return {
-			element: $("#filesReply" + postId),
-			isPopUp: true,
-			callbacks: {
-				success: function(media, postId) {
-					$(".mediatextarea-reply-" + postId).val(media.id);
-				},
-				reset: function(postId) {
-					$(".mediatextarea-reply-" + postId).val("");
-				}
-			},
-			isCommentReply: true,
-			postId: postId
 		};
 	}
 };
@@ -105,9 +77,6 @@ Thread.bindUIEvents = function(page, postId) {
 		break;
 	case Thread.Page.VIEW_THREAD:
 		Thread._bindUIEventsViewThread();
-		break;
-	case Thread.Page.COMMENT_REPLY:
-		Thread._bindUIEventsCommentReply(postId);
 		break;
 	}
 };
@@ -140,22 +109,78 @@ Thread._bindUIEventsViewThread = function() {
 	});*/
 	
 	MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.VIEW_THREAD));
-};
-
-Thread._bindUIEventsCommentReply = function(postId) {
-	console.log("%s: %s- postId=%d", Thread.TAG, "_bindUIEventsCommentReply", postId);
 	
-	MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.COMMENT_REPLY, postId));
-	
-	//TODO revise
-	$("#post-" + postId + "-comment-reply-form-cancel-button").click(function(e) {
+	$(".post-comment-edit").on("click", function(e) {
 		e.preventDefault();
 		
-		$("#post-" + postId + "-comment-reply-form-wrap").parent().remove();
-
-		// restore the comment reply link if you click the cancel button
-		$("a.post-comment-reply").data("pid", postId).show();
+		var postId = $(this).data("pid");
+		var data = {pid: postId};
+		
+		$(".cancel-post").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
+		
+		// ajax call to get the edit comment form
+		$.ajax({
+			url: Routing.generate('imdc_post_edit_ajax_specific', data),
+			type: "POST",
+			contentType: "application/x-www-form-urlencoded",
+			data: data,
+			success: function(data) {
+				console.log("%s: %s: %s", Thread.TAG, "_bindUIEventsViewThread", "success");
+				
+				$("#containerPost" + postId).hide();
+				
+				$("#containerEditPost" + postId).html(data.form);
+				$("#containerEditPost" + postId).show();
+				
+				var editCommentKeypoint = getKeyPointFromId(window["postArray"], postId);
+				console.log(editCommentKeypoint.options.drawOnTimeline);
+				
+				if (editCommentKeypoint.options.drawOnTimeLine) { // drawOnTimeline is == isTemporal
+					enableTemporalComment(globalPlayer, true, $("#PostEditForm_startTime"), $("#PostEditForm_endTime"));
+					
+					$("#PostFormFromThread_startTime").on('blur', startTimeBlurFunction($("#PostEditForm_startTime")));
+					$("#PostFormFromThread_endTime").on('blur', endTimeBlurFunction($("#PostEditForm_endTime")));
+				}
+				
+			},
+			error: function(request) {
+				console.log("%s: %s: %s", Thread.TAG, "_bindUIEventsViewThread", "error");
+				
+				console.log(request.statusText);
+			}
+		});
 	});
+	
+	$(".post-comment-reply").click(function(e) {
+		e.preventDefault();
+		
+    	var postId = $(this).data("pid");
+    	var data = {pid: postId};
+    	
+    	$(".cancel-post").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
+    	
+    	//var replyLink = $(this);
+    	
+    	$.ajax({
+    		url: Routing.generate('imdc_post_reply_ajax_specific', data),
+    		type: "POST",
+    		contentType: "application/x-www-form-urlencoded",
+    		data: data,
+    		success: function(data) {
+    			console.log("%s: %s: %s", Thread.TAG, "_bindUIEventsViewThread", "success");
+    			
+				$("div#post-" + postId + "-wrap").append(data.form);
+    			
+				$(".post-comment-reply[data-pid=" + postId + "]").hide();
+    		},
+    		error: function(request) {
+				console.log("%s: %s: %s", Thread.TAG, "_bindUIEventsViewThread", "error");
+				
+				console.log(request.statusText);
+    		}
+    	});
+
+    });
 };
 
 /**
@@ -220,6 +245,18 @@ Thread.prototype.forwardFunction = function() {
 	});
 };
 
+var globalPlayer;
+var globalPlayHeadImage;
+var globalStartTimeInput;
+var globalEndTimeInput;
+var speedSlowNormalImagePath;
+var speedSlowFastImagePath;
+var speedSlowSlowImagePath;
+var speedSlow;
+var ccNormalImagePath;
+var ccPressedImagePath;
+var global_video_dom;
+
 $(document).ready(function() {
 
 	thread = new Thread();
@@ -262,58 +299,7 @@ $(document).ready(function() {
 		
 	});*/
 	
-	$("a.post-comment-edit").click(function(e) {
-		
-		var p_id = $(this).data("pid");
-		var $theEditLink = $(this);
-		
-		// prevent the click from scrolling the page
-		e.preventDefault();
-		
-		// the comment wrap in question    
-		var $theWholeComment = $(this).parents("[data-pid='" + p_id + "']").eq(0);
-		
-		// fade out the original comment
-		//$theWholeComment.fadeOut('slow');
-		
-		// ajax call to get the edit comment form
-		$.ajax({
-			url : Routing.generate('imdc_post_edit_ajax_specific', {pid: p_id}),
-			type : "POST",
-			contentType : "application/x-www-form-urlencoded",
-			data :
-			{
-				pid : p_id
-			},
-			success : function(data)
-			{
-				console.log("success");
-				console.log(data);
-				
-				$oldcomment = $theWholeComment.clone();
-				
-				$theWholeComment.find("div.post-reply-content").html(data.form);
-				//$theWholeComment.hide();
-				
-				var editCommentKeypoint = getKeyPointFromId(window["postArray"], p_id);
-				console.log(editCommentKeypoint.options.drawOnTimeline);
-				
-				if (editCommentKeypoint.options.drawOnTimeLine) { // drawOnTimeline is == isTemporal
-					enableTemporalComment(globalPlayer, true, $("#PostEditForm_startTime"), $("#PostEditForm_endTime"));
-					
-					$("#PostFormFromThread_startTime").on('blur', startTimeBlurFunction($("#PostEditForm_startTime")));
-					$("#PostFormFromThread_endTime").on('blur', endTimeBlurFunction($("#PostEditForm_endTime")));
-				}
-				
-			},
-			error : function(request)
-			{
-				console.log(request);
-				//$theWholeComment.fadeIn('slow');
-				alert(request.statusText);
-			}
-		});
-	});
+	
 	
 	/**
 	 * launch the modal dialog to delete a comment when you click the trash icon
@@ -327,45 +313,7 @@ $(document).ready(function() {
 		$("#modaldiv").modal('toggle');
 	});
 	
-	$("a.post-comment-reply").click(function(event) {
-    	var p_id = $(this).data("pid");
-    	var $theReplyLink = $(this);
-    	var $theWholePost = $("div#post-" + p_id + "-wrap");
-    	
-    	// prevent the click from scrolling the page
-    	event.preventDefault();
-    	
-    	$.ajax({
-    		url : Routing.generate('imdc_post_reply_ajax_specific', {pid: p_id}),
-    		type : "POST",
-    		contentType : "application/x-www-form-urlencoded",
-    		data :
-    		{
-    			pid : p_id
-    		},
-    		success : function(data)
-    		{
-    			console.log("success");
-    			console.log(data);
-    			
-                // append the post form
-//    			$theWholePost.find("#post-"+p_id+"-reply-content").append(data.form);
-    			$theWholePost.append(data.form);
-
-    			$(".autosize").autosize();
-    			
-    			// hide the reply link
-    			$theReplyLink.hide();
-//    			$theWholePost.remove();
-    		},
-    		error : function(request)
-    		{
-    			console.log(request);
-    			alert(request.statusText);
-    		}
-    	});
-
-    });
+	
 	
 	/**
 	 * When you click on the trash icon to delete a post, you have to confirm via

@@ -15,6 +15,7 @@
 
     <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/player/post.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/thread.js') }}"></script>
+	<script type="text/javascript" src="{{ asset('bundles/imdcterptube/js/post.js') }}"></script>
 {% endblock headerjavascripts %}
 
 {% block sidebarlinks_pages %}class="active"{% endblock %}
@@ -258,9 +259,11 @@
 														</div>
 													</div>
 
-													<div class="row post-reply-content" id="post-{{ post.id }}-reply-content">
+													<div class="row post-reply-content" id="containerPost{{ post.id }}">
 														{% include 'IMDCTerpTubeBundle:Media:postCommentMediaElement.html.twig' %}
 													</div> <!--  /.post-reply-content -->
+
+													<div class="row" id="containerEditPost{{ post.id }}" style="display: none;"></div>
 												</div> <!-- /post-reply-avatar-content-wrap div -->
 
 												<div class="col-md-1 pull-right">

@@ -289,7 +289,11 @@ class PostController extends Controller
 	    
 	    $postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
 	    $postID = $postToEdit->getId();
-	    $threadid = $postToEdit->getParentThread()->getId();
+	    if ($postToEdit->getParentThread() == null) {
+	    	$threadid = $postToEdit->getParentPost()->getParentThread()->getId();
+	    } else {
+	    	$threadid = $postToEdit->getParentThread()->getId();
+	    }
 	    
 	    // does the user own this post?
 	    if (!$user->getPosts()->contains($postToEdit)) {
@@ -401,9 +405,16 @@ class PostController extends Controller
 		                      array('user' => $user,
 	                      ));
 		    
+		    $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
+		    $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
+		    $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
+		    $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
+		    $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
+		    
 		    $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:editPostAjax.html.twig',
 		                          array('form' => $posteditform->createView(),
 		                              'post' => $postToEdit,
+		                          		'uploadForms' => $uploadForms
 		                  ));
 		    
 			

@@ -5,7 +5,7 @@ function MediaChooser(options) {
 	this.isPopUp = options.isPopUp;
 	this.callbacks = options.callbacks;
 	this.isFileSelection = typeof options.isFileSelection != "undefined" ? options.isFileSelection : true;
-	this.isCommentReply = typeof options.isCommentReply != "undefined" ? options.isCommentReply : false;
+	this.isPost = typeof options.isPost != "undefined" ? options.isPost : false;
 	this.postId = options.postId;
 	
 	this.media = null;
@@ -37,8 +37,8 @@ MediaChooser.DIALOG_RECORD_AUDIO = "Record a new audio";
 MediaChooser.bindUIEvents = function(options) {
 	console.log("%s: %s", MediaChooser.TAG, "bindUIEvents");
 	
-	if (options.isCommentReply) {
-		MediaChooser._bindUIEventsCommentReply(options);
+	if (options.isPost) {
+		MediaChooser._bindUIEventsPost(options);
 		return;
 	}
 	
@@ -64,13 +64,13 @@ MediaChooser.bindUIEvents = function(options) {
 /**
  * @param {object} options
  */
-MediaChooser._bindUIEventsCommentReply = function(options) {
-	console.log("%s: %s- postId=%d", MediaChooser.TAG, "bindUIEventsCommentReply", options.postId);
+MediaChooser._bindUIEventsPost = function(options) {
+	console.log("%s: %s- postId=%d", MediaChooser.TAG, "_bindUIEventsPost", options.postId);
 	
 	var postId = options.postId;
 	var instance = new MediaChooser(options);
 	
-	$("#recordVideoReply" + postId).on("click", function(e) {
+	$("#recordVideoPost" + postId).on("click", function(e) {
 		e.preventDefault();
 		
 		mediaChooser = instance;
@@ -79,7 +79,7 @@ MediaChooser._bindUIEventsCommentReply = function(options) {
 		});
 	});
 	
-	$("#selectFileReply" + postId).on("click", function(e) {
+	$("#selectFilePost" + postId).on("click", function(e) {
 		e.preventDefault();
 		
 		mediaChooser = instance;
@@ -87,11 +87,11 @@ MediaChooser._bindUIEventsCommentReply = function(options) {
 	});
 	
 	Media._bindUIEventsUploadFile(
-			$("#uploadFormsReply" + postId),
-			$("#uploadFileReply" + postId),
+			$("#uploadFormsPost" + postId),
+			$("#uploadFilePost" + postId),
 			instance);
 	
-	$("#removeFileReply" + postId).on("click", function(e) {
+	$("#removeFilePost" + postId).on("click", function(e) {
 		e.preventDefault();
 		
 		mediaChooser = instance;
@@ -200,7 +200,7 @@ MediaChooser.prototype._loadChooserPage = function(type, data) {
 };
 
 MediaChooser.prototype.previewMedia = function(options) {
-	console.log("%s: %s", MediaChooser.TAG, "previewMediaFile");
+	console.log("%s: %s", MediaChooser.TAG, "previewMedia");
 	
 	if (this.isPopUp && !this.element.dialog("isOpen")) {
 		this._popUp(
@@ -353,11 +353,11 @@ MediaChooser.prototype._terminatingFunction = function() {
 MediaChooser.prototype.onSuccess = function() {
 	console.log("%s: %s", MediaChooser.TAG, "onSuccess");
 	
-	if (this.isCommentReply) {
+	if (this.isPost) {
 		if (this.isFileSelection) {
-			$("#chooseFileReply" + this.postId).hide();
-			$("#selectedFileTitleReply" + this.postId).html(this.media.title);
-			$("#selectedFileReply" + this.postId).show();
+			$("#chooseFilePost" + this.postId).hide();
+			$("#selectedFileTitlePost" + this.postId).html(this.media.title);
+			$("#selectedFilePost" + this.postId).show();
 		}
 		
 		this.callbacks.success(this.media, this.postId);
@@ -376,11 +376,11 @@ MediaChooser.prototype.onSuccess = function() {
 MediaChooser.prototype.onReset = function() {
 	console.log("%s: %s", MediaChooser.TAG, "onReset");
 	
-	if (this.isCommentReply) {
+	if (this.isPost) {
 		if (this.isFileSelection) {
-			$("#selectedFileReply" + this.postId).hide();
-			$("#selectedFileTitleReply" + this.postId).html("");
-			$("#chooseFileReply" + this.postId).show();
+			$("#selectedFilePost" + this.postId).hide();
+			$("#selectedFileTitlePost" + this.postId).html("");
+			$("#chooseFilePost" + this.postId).show();
 		}
 		
 		this.callbacks.reset(this.postId);

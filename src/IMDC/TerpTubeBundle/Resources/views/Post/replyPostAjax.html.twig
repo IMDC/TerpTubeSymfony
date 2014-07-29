@@ -20,7 +20,7 @@ end ajaxed by #}
 					{{ form_start(form, {'action' : "#{formpath}"}) }}
 						{{ form_errors(form) }}
 
-						{{ include('IMDCTerpTubeBundle:AddFileGateway:mediaChooserForm.html.twig', {'isCommentReply': true, 'postId': post.id}) }}
+						{{ include('IMDCTerpTubeBundle:AddFileGateway:mediaChooserForm.html.twig', {'isPost': true, 'postId': post.id}) }}
 
 						<div class="row">
 							<div class="col-md-12">
@@ -31,7 +31,7 @@ end ajaxed by #}
 						<div class="row">
 							<div class="col-md-12">
 								{{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
-								<a class="btn btn-danger" href="#" id="post-{{ post.id }}-comment-reply-form-cancel-button"><i class="fa fa-times"></i> Cancel</a>
+								<a class="btn btn-danger cancel-post" href="#" id="cancelReplyPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
 							</div>
 						</div>
 
@@ -41,17 +41,17 @@ end ajaxed by #}
 		</div>
 	</div>
 
-	<div id="uploadFormsReply{{ post.id }}" style="display: none;">
+	<div id="uploadFormsPost{{ post.id }}" style="display: none;">
 		{% for form in uploadForms %}
 			{{ form_start(form) }}
 			{{ form_widget(form) }}
 			{{ form_end(form) }}
 		{% endfor %}
 	</div>
-</div>
 
-<script type="text/javascript">
-	//$(document).ready(function() {
-		Thread.bindUIEvents(Thread.Page.COMMENT_REPLY, {{ post.id }});
-	//});
-</script>
+	<script type="text/javascript">
+		//$(document).ready(function() {
+			Post.bindUIEvents(Post.Page.REPLY, {{ post.id }});
+		//});
+	</script>
+</div>

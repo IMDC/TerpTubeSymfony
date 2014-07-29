@@ -69,7 +69,7 @@ Thread:viewthread.html.twig
 							{% endif %}
 						</div>
 					</div>
-					<div class="row post-reply-content">
+					<div class="row post-reply-content" id="containerPost{{ postReply.getId }}">
 						{% if postReply.attachedFile is defined and postReply.attachedFile|length > 0 %}
 							{% set postMediaFile = postReply.attachedFile[0] %}
 						{% else %}
@@ -103,6 +103,7 @@ Thread:viewthread.html.twig
 							</div>
 						</div>
 					</div>
+					<div class="row" id="containerEditPost{{ postReply.getId }}" style="display: none;"></div>
 				</div> <!-- /post-reply-avatar-content-wrap div -->
 				<div class="col-md-1 pull-right" id="post-reply-tools">
 					<ul class="list-unstyled">
