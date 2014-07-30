@@ -7,12 +7,16 @@
 function Thread() {
 	this.player = null;
 	this.forwardButton = "<button class='forwardButton'></button>";
+	this.doneButton = "<button class='doneButton'></button>";
+	this.doneAndPostButton = "<button class='doneAndPostButton'></button>";
 	this.media = null;
 	
 	//TODO move to media chooser, as this may be a more general function
 	this.bind_onRecordingSuccess = this.onRecordingSuccess.bind(this);
 	this.bind_onRecordingError = this.onRecordingError.bind(this);
 	this.bind_forwardFunction = this.forwardFunction.bind(this);
+	this.bind_doneFunction = this.doneFunction.bind(this);
+	this.bind_doneAndPostFunction = this.doneAndPostFunction.bind(this);
 }
 
 Thread.TAG = "Thread";
@@ -40,6 +44,11 @@ Thread.mediaChooserOptions = function(page, postId) {
 				    $("#ThreadForm_mediatextarea").val(media.id);
 				    //$("#ThreadForm_mediaID").attr('data-mid', mid); //TODO not used?
 				},
+				successAndPost: function(media) {
+					$("#ThreadForm_mediatextarea").val(media.id);
+					console.log("successAndPost");
+					//TODO actually post here
+				},
 				reset: function() {
 					$("#ThreadForm_mediatextarea").val("");
 				}
@@ -53,6 +62,11 @@ Thread.mediaChooserOptions = function(page, postId) {
 				success: function(media) {
 					$("#PostFormFromThread_mediatextarea").val(media.id);
 					//$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
+				},
+				successAndPost: function(media) {
+					$("#PostFormFromThread_mediatextarea").val(media.id);
+					console.log("successAndPost");
+					//TODO actually post here
 				},
 				reset: function() {
 					$("#PostFormFromThread_mediatextarea").val("");
@@ -199,8 +213,8 @@ Thread.prototype.createVideoRecorder = function(videoElement) {
 		recordingSuccessFunction: this.bind_onRecordingSuccess,
 		recordingErrorFunction: this.bind_onRecordingError,
 		recordingPostURL: Routing.generate('imdc_files_gateway_record'),
-		forwardButtons: [this.forwardButton],
-		forwardFunctions: [this.bind_forwardFunction],
+		forwardButtons: [this.forwardButton, this.doneButton, this.doneAndPostButton],
+		forwardFunctions: [this.bind_forwardFunction, this.bind_doneFunction, this.bind_doneAndPostFunction],
 	});
 	this.player.createControls();
 
@@ -218,7 +232,7 @@ Thread.prototype.onRecordingSuccess = function(data) {
 	console.log("%s: %s- mediaId=%d", Thread.TAG, "onRecordingSuccess", data.media.id);
 	
 	this.media = data.media;
-	//mediaChooser.setMedia(this.media);
+//	mediaChooser.setMedia(this.media);
 };
 
 //TODO move to media chooser, as this may be a more general function
@@ -243,6 +257,35 @@ Thread.prototype.forwardFunction = function() {
 		mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
 		mediaId: this.media.id
 	});
+};
+
+Thread.prototype.doneFunction = function() {
+	console.log("%s: %s", Thread.TAG, "doneFunction");
+	
+	this.player.destroyRecorder();
+	
+	/*mediaChooser.loadNextPage({
+		url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
+		method: "POST",
+		data: { mediaId: this.media.id }
+	});*/
+	
+	mediaChooser.setMedia(this.media);
+	mediaChooser._previewVideoForwardFunctionDone();
+};
+
+Thread.prototype.doneAndPostFunction = function() {
+	console.log("%s: %s", Thread.TAG, "doneAndPostFunction");
+	
+	this.player.destroyRecorder();
+	mediaChooser.setMedia(this.media);
+	/*mediaChooser.loadNextPage({
+		url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
+		method: "POST",
+		data: { mediaId: this.media.id }
+	});*/
+	
+	mediaChooser._previewVideoForwardFunctionDoneAndPost();
 };
 
 var globalPlayer;
@@ -762,8 +805,8 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 	
 	player.options.areaSelectionEnabled = false;
 	player.options.updateTimeType = Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE;
-	player.options.backButtons = false;
-	player.options.forwardButtons = false;
+//	player.options.backButtons = false;
+//	player.options.forwardButtons = false;
 	player.options.audioBar = false;
 	// player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
 	// player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};

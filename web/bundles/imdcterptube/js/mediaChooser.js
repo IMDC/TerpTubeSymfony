@@ -12,6 +12,7 @@ function MediaChooser(options) {
 	
 	this.bind__previewVideoForwardFunctionCut = this._previewVideoForwardFunctionCut.bind(this);
 	this.bind__previewVideoForwardFunctionDone = this._previewVideoForwardFunctionDone.bind(this);
+	this.bind__previewVideoForwardFunctionDoneAndPost = this._previewVideoForwardFunctionDoneAndPost.bind(this);
 }
 
 MediaChooser.extend(Media);
@@ -303,14 +304,21 @@ MediaChooser.prototype._popUp = function (type, onOpen) {
 
 MediaChooser.prototype.previewVideo = function() {
 	console.log("%s: %s", MediaChooser.TAG, "previewVideo");
-	
+	var forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>"];
+	var forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone];
+	console.log("isPost: %s postID: %s", this.isPost, this.postId);
+	if (this.isPost)
+	{
+		forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>", "<button class='doneandPostButton'></button>"];
+		forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone, , this.bind__previewVideoForwardFunctionDoneAndPost];
+	}
 	this.player = new Player($("#" + this.media.id), {
 		areaSelectionEnabled: true,
 		updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE,
 		//playHeadImage: "images/feedback_icons/round_plus.png",
 		//playHeadImageOnClick: function(){ alert("plus");},
-		forwardButtons: ["<button class='cutButton'></button>", "<button class='doneButton'></button>"],
-		forwardFunctions: [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone],
+		forwardButtons: forwardButtons,
+		forwardFunctions: forwardFunctions,
 	});
 	this.player.createControls();
 };
@@ -341,6 +349,20 @@ MediaChooser.prototype._previewVideoForwardFunctionDone = function(data) {
 	this._terminatingFunction();
 };
 
+MediaChooser.prototype._previewVideoForwardFunctionDoneAndPost = function(data) {
+	console.log("%s: %s", MediaChooser.TAG, "_previewVideoForwardFunctionDone");
+	
+	// console.log(recorderConfiguration);
+	// var fn = window[recorderConfiguration.forwardFunction]||null;
+	// fn(data);
+	//console.log('Done!', data);
+
+	if (this.media != null) {
+		this.onSuccess(true);
+	}
+	this._terminatingFunction();
+};
+
 MediaChooser.prototype._terminatingFunction = function() {
 	console.log("%s: %s", MediaChooser.TAG, "_terminatingFunction");
 	
@@ -350,7 +372,7 @@ MediaChooser.prototype._terminatingFunction = function() {
 	}
 };
 
-MediaChooser.prototype.onSuccess = function() {
+MediaChooser.prototype.onSuccess = function(post) {
 	console.log("%s: %s", MediaChooser.TAG, "onSuccess");
 	
 	if (this.isPost) {
@@ -359,8 +381,10 @@ MediaChooser.prototype.onSuccess = function() {
 			$("#selectedFileTitlePost" + this.postId).html(this.media.title);
 			$("#selectedFilePost" + this.postId).show();
 		}
-		
-		this.callbacks.success(this.media, this.postId);
+		if (typeof post != "undefined" && post == true)
+			this.callbacks.successAndPost(this.media, this.postId);
+		else
+			this.callbacks.success(this.media, this.postId);
 		return;
 	}
 	

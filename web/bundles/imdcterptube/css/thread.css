@@ -284,3 +284,10 @@ div.nested-comment-wrap {
     padding: 15px 0 15px 0;
     background-color: #f5f5f5;
 }
+
+.videoControlsContainer.controlsBar.forwardButtons.doneButton
+{
+	background-image: url(../img/player/submit_small.png); 
+	background-repeat: no-repeat;
+	margin-top:0px;	
+}
