@@ -31,6 +31,12 @@ Post.mediaChooserOptions = function(page, postId) {
 				    //$("#PostEditForm_mediatextarea").val(media.id);
 				    $(".mediatextarea-post-" + postId).val(media.id);
 				},
+				successAndPost: function(media, postId) {
+				    //$("#PostEditForm_mediatextarea").val(media.id);
+				    $(".mediatextarea-post-" + postId).val(media.id);
+				    //TODO do the post
+				    $("#PostReplyToPostForm_submit").trigger("click");
+				},
 				reset: function() {
 					//$("#PostEditForm_mediatextarea").val("");
 					$(".mediatextarea-post-" + postId).val("");

@@ -6,6 +6,7 @@ function MediaChooser(options) {
 	this.callbacks = options.callbacks;
 	this.isFileSelection = typeof options.isFileSelection != "undefined" ? options.isFileSelection : true;
 	this.isPost = typeof options.isPost != "undefined" ? options.isPost : false;
+	this.isNewPost = typeof options.isNewPost != "undefined" ? options.isNewPost : false;
 	this.postId = options.postId;
 	
 	this.media = null;
@@ -307,10 +308,10 @@ MediaChooser.prototype.previewVideo = function() {
 	var forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>"];
 	var forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone];
 	console.log("isPost: %s postID: %s", this.isPost, this.postId);
-	if (this.isPost)
+	if (this.isPost || this.isNewPost)
 	{
-		forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>", "<button class='doneandPostButton'></button>"];
-		forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone, , this.bind__previewVideoForwardFunctionDoneAndPost];
+		forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>", "<button class='doneAndPostButton'></button>"];
+		forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone, this.bind__previewVideoForwardFunctionDoneAndPost];
 	}
 	this.player = new Player($("#" + this.media.id), {
 		areaSelectionEnabled: true,
@@ -350,7 +351,7 @@ MediaChooser.prototype._previewVideoForwardFunctionDone = function(data) {
 };
 
 MediaChooser.prototype._previewVideoForwardFunctionDoneAndPost = function(data) {
-	console.log("%s: %s", MediaChooser.TAG, "_previewVideoForwardFunctionDone");
+	console.log("%s: %s", MediaChooser.TAG, "_previewVideoForwardFunctionDoneAndPost");
 	
 	// console.log(recorderConfiguration);
 	// var fn = window[recorderConfiguration.forwardFunction]||null;
@@ -393,8 +394,10 @@ MediaChooser.prototype.onSuccess = function(post) {
 		$("#selectedFileTitle").html(this.media.title);
 		$("#selectedFile").show();
 	}
-	
-	this.callbacks.success(this.media);
+	if (this.isNewPost && typeof post != "undefined" && post == true)
+		this.callbacks.successAndPost(this.media);
+	else
+		this.callbacks.success(this.media);
 };
 
 MediaChooser.prototype.onReset = function() {

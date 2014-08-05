@@ -42,11 +42,13 @@ Thread.mediaChooserOptions = function(page, postId) {
 			callbacks: {
 				success: function(media) {
 				    $("#ThreadForm_mediatextarea").val(media.id);
+				    console.log("successNEW/EDIT");
 				    //$("#ThreadForm_mediaID").attr('data-mid', mid); //TODO not used?
 				},
 				successAndPost: function(media) {
 					$("#ThreadForm_mediatextarea").val(media.id);
-					console.log("successAndPost");
+					console.log("successAndPostNEW/EDIT");
+					$("a#post-comment-submit-button").trigger("click");
 					//TODO actually post here
 				},
 				reset: function() {
@@ -62,16 +64,19 @@ Thread.mediaChooserOptions = function(page, postId) {
 				success: function(media) {
 					$("#PostFormFromThread_mediatextarea").val(media.id);
 					//$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
+					console.log("successVIEW");
 				},
 				successAndPost: function(media) {
 					$("#PostFormFromThread_mediatextarea").val(media.id);
-					console.log("successAndPost");
+					console.log("successAndPostVIEW");
+					$("a#post-comment-submit-button").trigger("click");
 					//TODO actually post here
 				},
 				reset: function() {
 					$("#PostFormFromThread_mediatextarea").val("");
 				}
-			}
+			},
+			isNewPost: true
 		};
 	}
 };
