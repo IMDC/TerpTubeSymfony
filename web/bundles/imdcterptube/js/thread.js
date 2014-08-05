@@ -808,6 +808,7 @@ function createPlayer(mediaId, playheadimage, startinput, endinput) {
 //	player.options.backButtons = false;
 //	player.options.forwardButtons = false;
 	player.options.audioBar = false;
+	player.options.overlayControls = true,
 	// player.options.backFunction= function(){if (confirm("This will delete your current recording. Are you sure?")) {goBack('<?php echo $postType?>');}};
 	// player.options.forwardFunction = function (){transcodeAjax('<?php echo basename($video) ?>', '<?php echo basename($outputVideoFile) ?>', <?php echo $keepVideoFile ?>, controls);};
 	

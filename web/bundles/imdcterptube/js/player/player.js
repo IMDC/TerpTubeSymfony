@@ -49,8 +49,25 @@ Player.prototype.createControls = function() {
 
 	var trackElement = $('<div class="videoControlsContainer track"></div>');
 	var canvasElement = $('<div class="videoControlsContainer track canvas"></div>');
+	var videoOverlayElement = $('<div class="videoControlsContainer track controls"></div>')
+	if (this.options.overlayControls == true) {
+		videoOverlayElement.addClass("overlay");
+		videoOverlayElement.css("display","none");
+		canvasElement.css("width", "100%");
+		$(this.videoID)
+		.mouseover(function() {
+//			videoOverlayElement.removeClass("hidden");
+			videoOverlayElement.fadeIn(500)
+		});
+		$(this.videoID).parent()
+		.mouseleave(function() {
+//			videoOverlayElement.addClass("hidden");
+			videoOverlayElement.fadeOut(500);
+		});
+	}
 	$(this.elementID).append(trackElement);
 	trackElement.append(canvasElement);
+	trackElement.append(videoOverlayElement);
 	canvasElement
 			.append(
 					'<canvas class="videoControlsContainer track canvas densitybar"></canvas>')
@@ -58,12 +75,12 @@ Player.prototype.createControls = function() {
 					'<canvas class="videoControlsContainer track canvas selectedRegion"></canvas>')
 			.append(
 					'<canvas class="videoControlsContainer track canvas thumb"></canvas>');
-	trackElement
+	videoOverlayElement
 			.append('<div class="videoControlsContainer track timeBox">0:00/0:00</div>');
-	trackElement
+	videoOverlayElement
 			.append('<button type="button" class="videoControlsContainer track fullScreenButton"></button>');
 	if (this.options.type == Player.DENSITY_BAR_TYPE_RECORDER) {
-		trackElement
+		videoOverlayElement
 				.append('<button type="button" class="videoControlsContainer track selectCameraButton"></button>');
 	}
 	if (this.options.volumeControl) {
@@ -71,13 +88,13 @@ Player.prototype.createControls = function() {
 				.mouseover(function() {
 					instance.setVolumeBarVisible(false);
 				});
-		trackElement
+		videoOverlayElement
 				.append('<div class="videoControlsContainer track volumeControl"></div>');
-		trackElement.find(".videoControlsContainer.volumeControl").eq(0)
+		videoOverlayElement.find(".videoControlsContainer.volumeControl").eq(0)
 				.mouseover(function() {
 					instance.setVolumeBarVisible(true);
 				});
-		trackElement
+		videoOverlayElement
 				.find(".videoControlsContainer.volumeControl")
 				.eq(0)
 				.append('<img alt="volume control" />')
@@ -484,7 +501,8 @@ function Player(videoID, options) {
 		minRecordingTime : 3,
 		maxRecordingTime : 60,
 		minLinkTime : 1,
-		additionalDataToPost : {}
+		additionalDataToPost : {},
+		overlayControls: false
 	// signLinkColor : "#0000FF",
 	// commentHighlightedColor : "#FF0000"
 	};
@@ -1196,7 +1214,9 @@ Player.prototype.fullScreenChange = function(setFullScreen) {
 			$(fullScreenElement).find("object").eq(0).parent().css(
 					"max-height", "");
 		else
+		{
 			$(this.videoID).css("max-height", "");
+			}
 	}
 	var width = densityBarThumbElement.width();
 	densityBarThumbElement[0].width = width;
@@ -1211,6 +1231,7 @@ Player.prototype.fullScreenChange = function(setFullScreen) {
 	this.maxSelected = this.trackPadding + this.trackWidth;
 
 	this.drawTrack();
+	this.redrawKeyPoints = true;
 	this.repaint();
 	if (this.options.areaSelectionEnabled)
 		this.setHighlightedRegion(this.currentMinSelected,

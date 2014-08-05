@@ -27,6 +27,7 @@ Media.bindUIEvents = function(options) {
 			$("#uploadForms"),
 			$("#uploadFile"),
 			instance);
+	return instance;
 };
 
 /**

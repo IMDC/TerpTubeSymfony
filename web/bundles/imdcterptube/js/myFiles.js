@@ -2,6 +2,7 @@ function MyFiles() {
 	this.forwardButton = "<button class='cutButton'></button>";
 	this.media = null;
 	
+	this.mediaChooser = new MediaChooser(MyFiles.mediaChooserOptions(MyFiles.Page.PREVIEW));
 	//TODO move to media chooser, as this may be a more general function
 	this.bind_onRecordingSuccess = this.onRecordingSuccess.bind(this);
 	this.bind_onRecordingError = this.onRecordingError.bind(this);
@@ -17,6 +18,7 @@ MyFiles.TAG = "MyFiles";
 
 MyFiles.Page = {
 		INDEX: 0,
+		PREVIEW: 1,
 };
 
 /**
@@ -40,6 +42,20 @@ MyFiles.mediaChooserOptions = function(page) {
 			},
 			isFileSelection: false
 		};
+	case MyFiles.Page.PREVIEW:
+		return {
+			element: $("#preview"),
+			isPopUp: true,
+			callbacks: {
+				success: function(media) {
+					console.log("Done previewing")
+				},
+				reset: function() {
+					
+				}
+			},
+			isFileSelection: false
+		};
 	}
 };
 
@@ -47,12 +63,12 @@ MyFiles.mediaChooserOptions = function(page) {
  * ui element event bindings in order of appearance
  * @param {number} page
  */
-MyFiles.bindUIEvents = function(page) {
+MyFiles.prototype.bindUIEvents = function(page) {
 	console.log("%s: %s- page=%d", MyFiles.TAG, "bindUIEvents", page);
 	
 	switch (page) {
 	case MyFiles.Page.INDEX:
-		MyFiles._bindUIEventsIndex();
+		this._bindUIEventsIndex();
 		break;
 	}
 };
@@ -60,14 +76,16 @@ MyFiles.bindUIEvents = function(page) {
 /**
  * @param {object} options
  */
-MyFiles._bindUIEventsIndex = function() {
+MyFiles.prototype._bindUIEventsIndex = function() {
 	console.log("%s: %s", MyFiles.TAG, "_bindUIEventsIndex");
 	
 	Media.bindUIEvents(MyFiles.mediaChooserOptions(MyFiles.Page.INDEX));
+	console.log(this.mediaChooser);
+//	$(".preview-button").on("click", this.onPreviewButtonClick);
+	var instance = this;
+	$(".preview-button").on("click", function(e){ instance.onPreviewButtonClick(e)});
 	
-	$(".preview-button").on("click", MyFiles.onPreviewButtonClick);
-	
-	$(".delete-button").on("click", MyFiles.onDeleteButtonClick);
+	$(".delete-button").on("click", function(e){instance.onDeleteButtonClick});
 };
 
 /**
@@ -119,7 +137,7 @@ MyFiles.prototype.forwardFunction = function() {
 	
 	this.player.destroyRecorder();
 	
-	mediaChooser.previewMedia({
+	this.mediaChooser.previewMedia({
 		type: MediaChooser.TYPE_RECORD_VIDEO,
 		mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
 		mediaId: this.media.id
@@ -174,6 +192,7 @@ MyFiles.prototype._addMediaRow = function(media) {
 	if (this.media.metaData.size > 0) {
 		data.mediaSize = (this.media.metaData.size / 1024 / 1024).toFixed(2);
 	}
+	var instance = this;
 	
 	data.deleteUrl = Routing.generate('imdc_files_gateway_remove', { mediaId: this.media.id });
 	data.previewUrl = Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id });
@@ -184,9 +203,9 @@ MyFiles.prototype._addMediaRow = function(media) {
 		$("#files-table").append(out);
 	});
 	
-	$(".preview-button").on("click", MyFiles.onPreviewButtonClick);
+	$(".preview-button").on("click",  function(e){ instance.onPreviewButtonClick(e)});
 	
-	$(".delete-button").on("click", MyFiles.onDeleteButtonClick);
+	$(".delete-button").on("click",  function(e){ instance.onDeleteButtonClick(e)});
 };
 
 MyFiles.prototype._deleteFile = function(currentElement, message) {
@@ -222,14 +241,12 @@ MyFiles.prototype._deleteFile = function(currentElement, message) {
 
 MyFiles.prototype.onPreviewButtonClick = function(e) {
 	e.preventDefault();
-	
+	console.log("Preview");
 	if ($(e.target).hasClass("disabled")) {
 		return false;
 	}
-	
 	$('#preview').html('');
-	
-	mediaChooser.previewMedia({
+	this.mediaChooser.previewMedia({
 		mediaUrl: $(e.target).data("url"),
 		mediaId: $(e.target).data("val")
 	});

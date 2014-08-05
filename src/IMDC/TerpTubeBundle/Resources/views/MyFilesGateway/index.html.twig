@@ -122,7 +122,7 @@
 {% block javascripts %}
 	{{ parent() }}
 
-	<script id="mediaRow">
+	<script type="text/html" id="mediaRow">
 		<tr>
 			<td>
 				<a class="btn btn-small delete-button" href="#" data-url="{deleteUrl}" data-val="{media.id}">
@@ -153,7 +153,7 @@
 		</tr>
 	</script>
 
-	<script id="mediaDeleteConfirmMessage">
+	<script type="text/html" id="mediaDeleteConfirmMessage">
 		<div>{{ 'filesGateway.deleteConfirmMessage'|trans }}</div>
 	</script>
 
@@ -163,7 +163,9 @@
 			//TODO context
 			context = myFiles;
 
-			MyFiles.bindUIEvents(MyFiles.Page.INDEX);
+			myFiles.bindUIEvents(MyFiles.Page.INDEX);
+			//Need a mediaChooser reference for the preview of the files. 
+			mediaChooser = myFiles.mediaChooser;
 		});
 	</script>
 {% endblock javascripts %}
