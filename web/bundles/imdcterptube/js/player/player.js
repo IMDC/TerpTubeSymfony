@@ -24,6 +24,62 @@ Player.EVENT_KEYPOINT_BEGIN = "player_keypoint_begin";
 Player.EVENT_KEYPOINT_END = "player_keypoint_end";
 Player.EVENT_PLAYHEAD_HIGHLIGHTED = "player_playhead_highlighted";
 
+function Player(videoID, options) {
+	this.videoID = videoID;
+	$(this.videoID).wrap('<div class="video" />');
+	this.elementID = $(this.videoID).parent();
+	// this.comments = new Array();
+	this.keyPoints = new Array();
+	// type can be player, recorder
+	// playHeadImage - url of image to use as top of playhead
+	// playHeadImageOnClick - function Player.prototype.to call on
+	// playheadImageClick
+	// onAreaSelectionChanged - triggered when adjusting the selectionArea
+	// signLinkColor - color for the signlinks
+	// onCommentMouseOver(comment) - triggered when hovering over a comment
+	// onCommentMouseOut(comment) - triggered when no longer hovering over a
+	// comment
+	// commentHighlightedColor - color to use when a comment is highlighted
+	// controlBarElement - element where to construct the controlBar
+	// additionalDataToPost - used to post more data to the recording script
+	this.options = {
+		volumeControl : true,
+		type : Player.DENSITY_BAR_TYPE_PLAYER,
+		recordingStream : null,
+		updateTimeType : Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
+		backButtons : new Array(),
+		backFunctions : new Array(),
+		forwardButtons : new Array(),
+		forwardFunctions : new Array(),
+		recordingErrorFunction : function(e) {
+			alert("Error:" + e);
+		},
+		recordingSuccessFunction : function(e) {
+			alert('Success!', e);
+		},
+		audioBar : true,
+		densityBarHeight : 40,
+		areaSelectionEnabled : false,
+		controlBarVisible : true,
+		controlBarElement : $(this.elementID),
+		minRecordingTime : 3,
+		maxRecordingTime : 60,
+		minLinkTime : 1,
+		additionalDataToPost : {},
+		overlayControls: false
+	// signLinkColor : "#0000FF",
+	// commentHighlightedColor : "#FF0000"
+	};
+	if (typeof options != 'undefined') {
+		for (key in options) {
+			this.options[key] = options[key];
+		}
+	}
+	// Firefox check
+	this.isFirefox = !!navigator.mozGetUserMedia;
+	this.options.additionalDataToPost.isFirefox = this.isFirefox;
+}
+
 // FIXME Add events for every action that the player does - e.g. onPlay, onStop,
 // onRecordingStarted, onRecordingStopped
 Player.prototype.createControls = function() {
@@ -33,9 +89,6 @@ Player.prototype.createControls = function() {
 	var instance = this;
 
 	this.elementID = this.options.controlBarElement;
-
-	// this.redrawComments = true;
-	// this.redrawSignlinks = true;
 
 	var el = $('<div class="videoControlsContainer"></div>');
 	$(this.elementID).append(el);
@@ -56,12 +109,10 @@ Player.prototype.createControls = function() {
 		canvasElement.css("width", "100%");
 		$(this.videoID)
 		.mouseover(function() {
-//			videoOverlayElement.removeClass("hidden");
 			videoOverlayElement.fadeIn(500)
 		});
 		$(this.videoID).parent()
 		.mouseleave(function() {
-//			videoOverlayElement.addClass("hidden");
 			videoOverlayElement.fadeOut(500);
 		});
 	}
@@ -283,11 +334,12 @@ Player.prototype.createControls = function() {
 
 	densityBarElement[0].width = densityBarElement.width();
 	densityBarElement[0].height = densityBarElement.height();
-	thumbElement[0].width = thumbElement.width();
+	thumbElement[0].width = thumbElement.innerWidth();
 	thumbElement[0].height = thumbElement.height();
-	selectedRegionElement[0].width = selectedRegionElement.width();
+	selectedRegionElement[0].width = selectedRegionElement.innerWidth();
 	selectedRegionElement[0].height = selectedRegionElement.height();
 
+	console.log("Width: %s",densityBarElement.width());
 	// console.log("Track width:" + this.trackWidth);
 	this.currentMinTimeSelected = 0;
 	this.currentMaxTimeSelected = 0;
@@ -460,61 +512,7 @@ Player.prototype.clearPlayer = function() {
 			.height());
 };
 
-function Player(videoID, options) {
-	this.videoID = videoID;
-	$(this.videoID).wrap('<div class="video" />');
-	this.elementID = $(this.videoID).parent();
-	// this.comments = new Array();
-	this.keyPoints = new Array();
-	// type can be player, recorder
-	// playHeadImage - url of image to use as top of playhead
-	// playHeadImageOnClick - function Player.prototype.to call on
-	// playheadImageClick
-	// onAreaSelectionChanged - triggered when adjusting the selectionArea
-	// signLinkColor - color for the signlinks
-	// onCommentMouseOver(comment) - triggered when hovering over a comment
-	// onCommentMouseOut(comment) - triggered when no longer hovering over a
-	// comment
-	// commentHighlightedColor - color to use when a comment is highlighted
-	// controlBarElement - element where to construct the controlBar
-	// additionalDataToPost - used to post more data to the recording script
-	this.options = {
-		volumeControl : true,
-		type : Player.DENSITY_BAR_TYPE_PLAYER,
-		recordingStream : null,
-		updateTimeType : Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
-		backButtons : new Array(),
-		backFunctions : new Array(),
-		forwardButtons : new Array(),
-		forwardFunctions : new Array(),
-		recordingErrorFunction : function(e) {
-			alert("Error:" + e);
-		},
-		recordingSuccessFunction : function(e) {
-			alert('Success!', e);
-		},
-		audioBar : true,
-		densityBarHeight : 40,
-		areaSelectionEnabled : false,
-		controlBarVisible : true,
-		controlBarElement : $(this.elementID),
-		minRecordingTime : 3,
-		maxRecordingTime : 60,
-		minLinkTime : 1,
-		additionalDataToPost : {},
-		overlayControls: false
-	// signLinkColor : "#0000FF",
-	// commentHighlightedColor : "#FF0000"
-	};
-	if (typeof options != 'undefined') {
-		for (key in options) {
-			this.options[key] = options[key];
-		}
-	}
-	// Firefox check
-	this.isFirefox = !!navigator.mozGetUserMedia;
-	this.options.additionalDataToPost.isFirefox = this.isFirefox;
-}
+
 
 // Player.prototype.checkFeatures = function(format) {
 // if (format == "mp4")
@@ -1222,7 +1220,7 @@ Player.prototype.fullScreenChange = function(setFullScreen) {
 	densityBarThumbElement[0].width = width;
 	densityBarSelectedRegionElement[0].width = width;
 	densityBarElement[0].width = width;
-
+	console.log("Width: %s",width);
 	this.trackWidth = densityBarElement.width() - 2 * this.trackPadding;
 	this.trackHeight = densityBarElement.height() - 2 * this.trackPadding;
 	this.currentMinSelected = this.getXForTime(this.currentMinTimeSelected);
@@ -1305,6 +1303,7 @@ Player.prototype.setupVideoPlayback = function() {
 		instance.checkKeyPointClick(e);
 	});
 
+	window.addEventListener('resize', function(e){instance.resizeCanvas(e)}, false);
 	this.initialized = true;
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
@@ -1378,6 +1377,8 @@ Player.prototype.setupVideoRecording = function() {
 
 	this.duration = this.options.maxRecordingTime;
 	this.repaint();
+	
+	window.addEventListener('resize', function(e){instance.resizeCanvas(e)}, false);
 	this.initialized = true;
 	$(this).trigger(Player.EVENT_INITIALIZED);
 };
@@ -1805,6 +1806,29 @@ Player.prototype.toggleMute = function() {
 				".videoControlsContainer.volumeControl.volumeSlider").eq(0)
 				.slider('value', 0);
 	}
+};
+
+Player.prototype.resizeCanvas = function(e) {
+	console.log("Resizing canvases...");
+	var densityBarThumbElement = $(this.elementID).find(".videoControlsContainer.track.thumb").eq(0);
+	var densityBarSelectedRegionElement = $(this.elementID).find(".videoControlsContainer.track.selectedRegion").eq(0);
+	var densityBarElement = $(this.elementID).find(".videoControlsContainer.track.densitybar").eq(0);
+	
+	console.log($(this.elementID));
+	densityBarThumbElement[0].width = densityBarThumbElement.parent().innerWidth();
+	densityBarSelectedRegionElement[0].width = densityBarThumbElement.parent().innerWidth();
+	densityBarElement[0].width = densityBarThumbElement.parent().innerWidth();
+	
+	this.trackWidth = densityBarElement.width() - 2 * this.trackPadding;
+	this.trackHeight = densityBarElement.height() - 2 * this.trackPadding;
+	this.currentMinSelected = this.getXForTime(this.currentMinTimeSelected);
+	this.currentMaxSelected = this.getXForTime(this.currentMaxTimeSelected);
+	this.minSelected = this.trackPadding;
+	this.maxSelected = this.trackPadding + this.trackWidth;
+
+	this.drawTrack();
+	this.redrawKeyPoints = true;
+	this.repaint();
 };
 
 function getTimeCodeFromSeconds(time, duration, separator) {
