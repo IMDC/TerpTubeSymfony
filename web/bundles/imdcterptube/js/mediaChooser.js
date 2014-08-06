@@ -247,9 +247,8 @@ MediaChooser.prototype.loadNextPage = function(options) {
 			}
 		}).bind(this),
 		error: function(request) {
-			console.log("%s: %s: %s- finished=%s", MediaChooser.TAG, "loadNextPage", "error", data.finished);
+			console.log("%s: %s: %s- %s", MediaChooser.TAG, "loadNextPage", "error", request.statusText);
 			
-			console.log(request.statusText);
 		}
 	};
 	

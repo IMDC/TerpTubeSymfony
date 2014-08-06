@@ -74,10 +74,11 @@ button.videoControlsContainer
 
 .videoControlsContainer.track.canvas 
 {
-	position:absolute;
+	position:relative;
 	left:0px;
     top:0px;
-    width: 100%; 
+    overflow: hidden;
+   /*  width: 100%; */
     height: 40px;
     background-color: transparent;
 }

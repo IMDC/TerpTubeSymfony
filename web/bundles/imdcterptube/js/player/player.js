@@ -117,8 +117,9 @@ Player.prototype.createControls = function() {
 		});
 	}
 	$(this.elementID).append(trackElement);
-	trackElement.append(canvasElement);
 	trackElement.append(videoOverlayElement);
+	trackElement.append(canvasElement);
+	
 	canvasElement
 			.append(
 					'<canvas class="videoControlsContainer track canvas densitybar"></canvas>')
