@@ -1,0 +1,26 @@
+{% extends 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' %}
+
+{% block mediaimagetype %}
+	{{ parent() }}
+{% endblock mediaimagetype %}
+
+{% block mediavideotype %}
+    <ul class="list-unstyled tt-thread-video-controls">
+        <li>
+            <a id="videoSpeed" href="#" title="Click to change video playback speed">
+                <img src="{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}" />
+            </a>
+        </li>
+        <li>
+            <a id="closedCaptions" href="#" title="Click to show/hide captions">
+                <img src="{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}" />
+            </a>
+        </li>
+    </ul>
+    {% set enableVideoControls = false %}
+    {{ parent() }}
+{% endblock mediavideotype %}
+
+{% block mediaaudiotype %}
+	{{ parent() }}
+{% endblock mediaaudiotype %}

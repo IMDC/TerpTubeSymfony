@@ -1,0 +1,38 @@
+{#
+included by:
+_Forum:index.html.twig
+#}
+
+{% set counter = 1 %}
+{% for forum in forums %}
+	{% if counter % 4 == 1 %}
+		<div class="row">
+			<ul class="list-unstyled">
+	{% endif %}
+	<li>
+		<div class="col-md-3">
+            <div class="thumbnail text-center tt-forum-thumbnail">
+                <div class="tt-media-element">
+                    {% if forum.getTitleMedia[0] is defined %}
+                        {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
+                    {% else %}
+                        <div style="height: 50px;"></div>
+                    {% endif %}
+                </div>
+                <a href="{{ path('imdc_forum_view_specific', {'forumid': forum.id} ) }}">
+                    <h3>{{ forum.titleText|truncate(20) }}</h3>
+                    {# <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p> #}
+                    <p><span class="badge badge-info">Topics: {{ forum.getPublicThreads|length }}</span></p>
+                    {# <p>Last post: {{ forum.getLastActivity|date('g:ia M j, Y') }}</p> #}
+                    <p>Last activity: <span class="toolPop" title="{{ forum.getLastActivity|date('g:ia M j, Y') }}">{{ time_diff(forum.getLastActivity) }}</span></p>
+                    <p><span class="tt-date">Created: {{ forum.creationDate|date('g:ia M j, Y') }}</span></p>
+                </a>
+            </div>
+		</div>
+	</li>
+	{% if (counter != 0 and counter % 4 == 0) or counter == forums|length %}
+			</ul>
+		</div>
+	{% endif %}
+	{% set counter = counter + 1 %}
+{% endfor %}

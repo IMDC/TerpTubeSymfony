@@ -1,0 +1,180 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<title>{% block title %}{% endblock %} | TerpTube</title>
+
+		<!--  Bootstrap has to come before font awesome for everything to work right -->
+		<link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
+
+		<link rel="stylesheet" type="text/css" href="{{ asset('bundles/bmatznerfontawesome/css/font-awesome.min.css') }}" />
+
+		{# <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}"> #}
+		<link rel="stylesheet" href="{{ asset('bundles/sonatajquery/themes/flick/jquery-ui-1.10.4.custom.css') }}">
+
+        <link rel="stylesheet" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}">
+		<link rel="stylesheet" href="{{ asset('bundles/imdcterptube/_css/terptube.css') }}">
+
+		{% block headerjavascripts %}
+            <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+            <!--[if lt IE 9]>
+            <script src="../assets/js/html5shiv.js"></script>
+            <![endif]-->
+
+			<script src="{{ asset('js/jquery.js') }}"></script>
+
+			<!-- jQuery autosize textboxes script -->
+			<script src="{{ asset('bundles/imdcterptube/js/autosize/jquery.autosize.min.js') }}"></script>
+
+            <script src="{{ asset('js/require.js') }}"></script>
+
+            <!-- Recorder for web-rtc -->
+            <script src="//www.webrtc-experiment.com/RecordRTC.js" />
+            <script type="text/javascript">
+                if (typeof RecordRTC !== 'function')
+                    document.write('<script src="{{ asset('js/RecordRTC.js') }}"><\/script>');
+            </script>
+
+            <!--  FOS js routing script -->
+            <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+            <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+			<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
+            <script src="{{ asset('bundles/imdcterptube/_js/config.js') }}"></script>
+		{% endblock headerjavascripts %}
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="navbar navbar-inverse navbar-fixed-top tt-navbar-top">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-lg-1">
+								<div class="navbar-header tt-navbar-header">
+									<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#tt-navbar-collapse-1">
+										<span class="sr-only">Toggle navigation</span>
+										<span class="icon-bar"></span>
+										<span class="icon-bar"></span>
+										<span class="icon-bar"></span>
+									</button>
+									<a href="{{ path('imdc_terp_tube_user_splash') }}">
+										<img class="img-responsive center-block tt-navbar-logo" src="{{ asset('bundles/imdcterptube/img/tt_logo_68wx51h.png') }}">
+									</a>
+								</div>
+							</div>
+							<div class="col-lg-11" style="padding-left: 0;">
+								<div class="collapse navbar-collapse" id="tt-navbar-collapse-1">
+									<ul class="nav navbar-nav tt-navbar-nav-top">
+										{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+											{% block nav_ul_authenticated_my_files %}<li>{% endblock %}
+												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_files_gateway') }}"><i class="fa fa-folder-open fa-2x"></i></a>
+											</li>
+											{% block nav_ul_authenticated_my_interpretations %}<li>{% endblock %}
+												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_files_gateway_interpretations') }}"><i class="fa fa-film fa-2x"></i></a>
+											</li>
+											{% block nav_ul_authenticated_my_friends %}<li>{% endblock %}
+												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-user fa-2x"></i></a>
+											</li>
+											{% block nav_ul_authenticated_my_groups %}<li>{% endblock %}
+												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_mygroups') }}"><i class="fa fa-users fa-2x"></i></a>
+											</li>
+											{% if is_granted('ROLE_SUPER_ADMIN') %}
+												{% block nav_ul_authenticated_admin %}<li>{% endblock %}
+													<a class="navbar-link" href="{{ path('sonata_admin_dashboard') }}"><i class="fa fa-cogs fa-2x"></i></a>
+												</li>
+											{% endif %}
+										{% endif %}
+									</ul>
+									<ul class="nav navbar-nav navbar-right tt-navbar-nav-top tt-navbar-right-top">
+										{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+											<li>
+												<a class="navbar-link" href="{{ path('imdc_terp_tube_user_profile') }}">
+													<i class="fa fa-user fa-lg"></i> {{ app.user.username }}
+												</a>
+											</li>
+											<li>
+												<a class="navbar-link toolpop" href="{{ path('imdc_message_view_all') }}" title="Inbox">
+													<i class="fa fa-envelope fa-lg"></i> <span class="badge badge-{{ app.user.getNumUnreadPMs > 0 ? 'success': 'inverse' }}">{{ app.user.getNumUnreadPMs }}</span>
+												</a>
+											</li>
+											<li>
+												<a class="navbar-link toolpop" href="{{ path('imdc_invitations_list') }}" title="Invitations">
+													<i class="fa fa-inbox fa-lg"></i> <span class="badge badge-{{ app.user.getNumActiveInvitations > 0 ? 'success': 'inverse' }}">{{ app.user.getNumActiveInvitations }}</span>
+												</a>
+											</li>
+											<li>
+												<a class="navbar-link" href="{{ path('fos_user_security_logout') }}">
+													{{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="fa fa-sign-out fa-lg"></i>
+												</a>
+											</li>
+										{% else %}
+											<li>
+												<a class="navbar-link" href="{{ path('fos_user_security_login') }}">
+													<i class="fa fa-sign-in"></i> {{ 'layout.login'|trans }} <i class="fa fa-plus fa-white"></i>
+												</a>
+											</li>
+										{% endif %}
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-lg-1 center-block text-center tt-navbar-side">
+							<div>
+								<div {% block sidebarlinks_home %}{% endblock %}>
+									<a href="{{ path('imdc_terp_tube_user_splash') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_home.png') }}" />Home</a>
+								</div>
+								<div {% block sidebarlinks_pages %}{% endblock %}>
+									<a href="{{ path('imdc_forum_list') }}#"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Forums</a>
+								</div>
+							</div>
+							<div>
+								<div {% block sidebarlinks_vlogs %}{% endblock %}>
+									<a href="#"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_vlogs.png') }}" />Video Logs</a>
+								</div>
+								<div {% block sidebarlinks_groups %}{% endblock %}>
+									<a href="{{ path('imdc_groups_show_all') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Groups</a>
+								</div>
+							</div>
+							<div>
+								<div {% block sidebarlinks_members %}{% endblock %}>
+									<a href="{{ path('imdc_member_list_public') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_member.png') }}" />Members</a>
+								</div>
+								<div {% block sidebarlinks_help %}{% endblock %}>
+									<a href="#"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_help.png') }}" />Help</a>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-offset-1 col-lg-11">
+							<div class="row">
+								{% block content %}
+								{% endblock content %}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="navbar navbar-inverse navbar-fixed-bottom tt-navbar-bottom">
+					<div class="container-fluid">
+						<div class="text-center tt-copyright">
+							&copy; IMDC, EKU 2014
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% block javascripts %}
+			<script src="{{ asset('js/bootstrap.js') }}"></script>
+			<script src="{{ asset('js/jquery-ui.js') }}"></script>
+		{% endblock javascripts %}
+	</body>
+    {% block outside_body %}
+    {% endblock outside_body %}
+</html>

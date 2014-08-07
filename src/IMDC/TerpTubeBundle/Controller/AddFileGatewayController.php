@@ -54,9 +54,12 @@ class AddFileGatewayController extends Controller {
 		if ($request->isXmlHttpRequest ()) {
 			$prefix = "ajax.";
 		}
-		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'index.html.twig', array (
-				'resourceFiles' => $resourceFiles 
-		) );
+
+        //$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'index.html.twig', array (
+		$response = $this->render('IMDCTerpTubeBundle:_AddFileGateway:'.$prefix.'index.html.twig', array(
+            'resourceFiles' => $resourceFiles
+		));
+
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
 			$return = array (

@@ -1,0 +1,57 @@
+{% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
+
+{% block title %}Editing: {{ forum.titleText }}{% endblock title %}
+
+{% block headerjavascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                forum = new $tt.Controller.Forum();
+                //TODO context
+                context = forum;
+
+                $tt.Controller.Forum.bindUIEvents($tt.Controller.Forum.Page.EDIT);
+            });
+        });
+    </script>
+{% endblock headerjavascripts %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {% if forum.getTitleMedia[0] is defined %}
+                    <div class="tt-media-element">
+                        {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
+                        <p>Change the media file for this forum (image, audio, video):</p>
+                    </div>
+                {% else %}
+                    <p>Add a media file to this forum (image, audio, video):</p>
+                {% endif %}
+                {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
+                {{ form_row(form.titleText) }}
+                {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+                <button class="btn btn-success"><i class="fa fa-check"></i> Save</button>
+                <a class="btn btn-danger" href="{{ path('imdc_forum_view_specific', {'forumid': forum.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block outside_body %}
+    {{ parent() }}
+
+    {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' %}
+{% endblock outside_body %}

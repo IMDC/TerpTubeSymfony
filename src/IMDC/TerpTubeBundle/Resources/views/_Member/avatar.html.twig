@@ -1,0 +1,9 @@
+{#
+included by:
+_Post:post.html.twig
+_Thread:thumbnail.html.twig
+#}
+
+<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName': member.userName}) }}">
+    <img class="img-responsive center-block tt-avatar" src="{{ member.getProfile.avatar ? asset(member.getProfile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+</a>

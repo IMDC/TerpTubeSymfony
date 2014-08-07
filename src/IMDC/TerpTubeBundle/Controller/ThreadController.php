@@ -31,6 +31,7 @@ use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
+use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
 
 /**
  * Controller for all Thread related actions including edit, delete, create
@@ -122,20 +123,18 @@ class ThreadController extends Controller
         }
         
         $threadposts = $thread->getPosts();
-        
+
+        //
+        // this action should not be handling new post form submissions. consider moving or using PostController::createReplyPostAction
+        //
+
         $newpost = new Post();
         $postform = $this->createForm(new PostFormFromThreadType(), $newpost, array(
         		'user' => $user,
         		'em' => $em,
                 'thread' => $thread,
         ));
-        
-        $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
-        $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
-        $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
-        $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
-        $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
-        
+
         $em = $this->getDoctrine()->getManager();
         
         $postform->handleRequest($request);
@@ -157,9 +156,10 @@ class ThreadController extends Controller
         		}
         
         	}
-        	 
+
         	// set post temporal-ness
-        	if (NULL != $newpost->getStartTime() && NULL != $newpost->getEndTime()) {
+        	//if (NULL != $newpost->getStartTime() && NULL != $newpost->getEndTime()) { // a start time of 0.00 will return false
+            if (is_float($newpost->getStartTime()) && is_float($newpost->getEndTime()) ) {
         	    $newpost->setIsTemporal(TRUE);
         	}
         	
@@ -205,22 +205,24 @@ class ThreadController extends Controller
         			'em' => $em,
         	        'thread' => $thread,
         	));
-        	
-        	return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
+
+            //return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
+            return $this->render('IMDCTerpTubeBundle:_Thread:view.html.twig', array(
         			'form' => $form->createView(),
         			'thread' => $thread,
         			'threadposts' => $threadposts,
         	        'threadsjson' => json_encode($threadposts),
-        			'uploadForms' => $uploadForms
+        			'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
         	));
         }
         
         // form not valid, show the thread
-        return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
+        //return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Thread:view.html.twig', array(
                 'form' => $postform->createView(),
         		'thread' => $thread,
                 'threadposts' => $threadposts,
-        		'uploadForms' => $uploadForms
+        		'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
         ));
     }
     

@@ -22,11 +22,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostReplyToPostFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
-use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
+use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
 
 /**
  * Controller for all Post related actions including creating, deleting, editing and replying
@@ -132,7 +128,7 @@ class PostController extends Controller
 	         
 	        $newpost->setAuthor($user);
 	        $newpost->setCreated(new \DateTime('now'));
-	         
+
 	        // set post temporality
 	        if ( NULL != $newpost->getStartTime() && NULL != $newpost->getEndTime() ) {
 	            $newpost->setIsTemporal(TRUE);
@@ -279,8 +275,7 @@ class PostController extends Controller
 	public function editPostAction(Request $request, $pid)
 	{
 		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 	    
@@ -298,32 +293,27 @@ class PostController extends Controller
 	    // does the user own this post?
 	    if (!$user->getPosts()->contains($postToEdit)) {
 	        $this->get('session')->getFlashBag()->add(
-	                'notice',
-	                'You do not have permission to edit this post'
+                'notice',
+                'You do not have permission to edit this post'
 	        );
 	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
 	    }
 	    
-	    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, 
-                	            array('user' => $user,
-	    ));
-	    
+	    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, array('user' => $user));
 	    $posteditform->handleRequest($request);
 	    
 	    if ($posteditform->isValid()) {
-	    
 	        //$postToEdit->setAuthor($user);
 	        //$postToEdit->setCreated(new \DateTime('now'));
 	        //$postToEdit->setIsDeleted(FALSE);
 	        //$postToEdit->setParentThread($thread);
 	        $postToEdit->setEditedAt(new \DateTime('now'));
 	        $postToEdit->setEditedBy($user);
-	    
-	        //$user->addPost($newpost);
+
+            //$user->addPost($newpost);
 	    
 	        $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
 	        if (!$posteditform->get('mediatextarea')->isEmpty()) {
-	        
 	            $rawmediaID = $posteditform->get('mediatextarea')->getData();
 	            $logger = $this->container->get('logger');
 	            $logger->info('*************media id is ' . $rawmediaID);
@@ -334,97 +324,81 @@ class PostController extends Controller
 	                $logger->info('User owns this media file');
 	                $postToEdit->addAttachedFile($mediaFile);
 	            }
-	        
 	        }
-	        
-	        if ($postToEdit->getStartTime() && $postToEdit->getEndTime()) {
+
+	        //if ($postToEdit->getStartTime() && $postToEdit->getEndTime()) { // a start time of 0.00 will return false
+            if (is_float($postToEdit->getStartTime()) && is_float($postToEdit->getEndTime()) ) {
 	            $postToEdit->setIsTemporal(TRUE);
-	        }
-	        else {
+	        } else {
 	            $postToEdit->setIsTemporal(FALSE);
 	        }
-	        
-	        
+
 	        // request to persist objects to database
 	        //$em->persist($user);
 	        $em->persist($postToEdit);
 	        $em->flush();
 	    
 	        $this->get('session')->getFlashBag()->add(
-	                'notice',
-	                'Post edited successfully!'
+                'notice',
+	            'Post edited successfully!'
 	        );
 	        
-	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)) . '#' . $postID);
+	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid' => $threadid)).'#'.$postID);
 	    }
 	    
 	    // form not valid, show the basic form
-	    return $this
-	    		->render('IMDCTerpTubeBundle:Post:editPost.html.twig',
-	    			array('form' => $posteditform->createView(),
-	            			'post' => $postToEdit,
+	    return $this->render('IMDCTerpTubeBundle:Post:editPost.html.twig', array(
+            'form' => $posteditform->createView(),
+            'post' => $postToEdit
 	    ));
-	    
 	}
 	
 	public function editPostAjaxAction(Request $request, $pid) 
 	{
 	    // check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		
 		//$request = $this->get('request');
 		//$postid = $request->request->get('pid');
-		
-		
+
 		// if not ajax, throw an error
 		if (!$request->isXmlHttpRequest()) {
 			throw new BadRequestHttpException('Only Ajax POST calls accepted');
 		}
 		
 		$user = $this->getUser();
-		$em   = $this->getDoctrine()->getManager();
+		$em = $this->getDoctrine()->getManager();
 		
 		$postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
 		
 		// if post is not owned by the currently logged in user, redirect
 		if (!$postToEdit->getAuthor() == $user) {
 			$this->get('session')->getFlashBag()->add(
-					'error',
-					'You do not have permission to edit this post'
+                'error',
+                'You do not have permission to edit this post'
 			);
 			//return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
 			// return an ajax fail here
 			$return = array('responseCode' => 400, 'feedback' => 'You do not have permission to edit this post');
-		}
-		else {
+		} else {
 			// post is owned by the user
-		    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit,
-		                      array('user' => $user,
-	                      ));
-		    
-		    $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
-		    $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
-		    $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
-		    $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
-		    $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
-		    
-		    $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:editPostAjax.html.twig',
-		                          array('form' => $posteditform->createView(),
-		                              'post' => $postToEdit,
-		                          		'uploadForms' => $uploadForms
-		                  ));
-		    
-			
+		    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, array('user' => $user));
+
+		    //$formhtml = $this->renderView('IMDCTerpTubeBundle:Post:editPostAjax.html.twig', array(
+            $formhtml = $this->renderView('IMDCTerpTubeBundle:_Post:ajax.edit.html.twig', array(
+                'form' => $posteditform->createView(),
+                'post' => $postToEdit,
+                'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+            ));
+
 			$return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
 		}
+
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
-	     
 	}
-	
 	
 	public function replyPostAction(Request $request, $pid) 
 	{
@@ -485,8 +459,7 @@ class PostController extends Controller
 	public function replyPostAjaxAction(Request $request, $pid) // $pid is the post you are replying to!
 	{
 	    // check if user logged in
-	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-	    {
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
 	    
@@ -496,7 +469,7 @@ class PostController extends Controller
 	    }
 	    
 	    $user = $this->getUser();
-	    $em   = $this->getDoctrine()->getManager();
+	    $em = $this->getDoctrine()->getManager();
 	    
 	    $postToReplyTo = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
 	    
@@ -506,16 +479,14 @@ class PostController extends Controller
 	    $replyPost->setParentThread($postToReplyTo->getParentThread());
 	    
         $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
-        
-        $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
-        $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
-        $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
-        $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
-        $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
-        
-        $formhtml = $this->renderView('IMDCTerpTubeBundle:Post:replyPostAjax.html.twig',
-            array('form' => $postReplyForm->createView(), 'post' => $postToReplyTo, 'user' => $user, 'uploadForms' => $uploadForms)
-        );
+
+        //$formhtml = $this->renderView('IMDCTerpTubeBundle:Post:replyPostAjax.html.twig', array(
+        $formhtml = $this->renderView('IMDCTerpTubeBundle:_Post:ajax.reply.html.twig', array(
+                'form' => $postReplyForm->createView(),
+                'post' => $postToReplyTo,
+                'user' => $user,
+                'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+        ));
         
         $return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
         

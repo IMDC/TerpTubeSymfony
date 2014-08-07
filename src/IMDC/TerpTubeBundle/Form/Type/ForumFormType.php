@@ -18,7 +18,7 @@ class ForumFormType extends AbstractType
                                                     'attr' => array('cols' => 1,
                                                                     'rows' => 1)));
 
-	    $builder->add('titleText', null, array('label' => 'Text Title'));
+	    $builder->add('titleText', null, array('label' => 'Title Text'));
 		$builder->add('submit', 'submit');
 	}	
 

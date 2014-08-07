@@ -1,0 +1,60 @@
+{#
+included by:
+_Forum:edit.html.twig
+_Forum:new.html.twig
+_Post:ajax.edit.html.twig
+_Post:ajax.reply.html.twig
+_Thread:view.html.twig
+#}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% if isFileSelection is not defined %}
+	{% set isFileSelection = true %}
+{% endif %}
+
+{% if isPost is not defined %}
+	{% set isPost = false %}
+{% endif %}
+
+<div class="row" id="chooseFile{% if isPost %}Post{{ postId }}{% endif %}">
+	<div class="col-md-12">
+		<div class="form-group">
+			<a class="btn btn-primary" id="recordVideo{% if isPost %}Post{{ postId }}{% endif %}" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+			<!-- <a class="btn btn-primary" id="uploadFile{% if isPost %}Post{{ postId }}{% endif %}" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a> -->
+			<div class="btn-group" id="uploadFile{% if isPost %}Post{{ postId }}{% endif %}">
+				<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+					<i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }} <span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu" role="menu">
+					<li id="upload-audio-link"><a href="#"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a></li>
+					<li id="upload-video-link"><a href="#"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a></li>
+					<li id="upload-image-link"><a href="#"><i class="fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a></li>
+					<li id="upload-other-link"><a href="#"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a></li>
+				</ul>
+			</div>
+			{% if isFileSelection %}
+				<a class="btn btn-primary" id="selectFile{% if isPost %}Post{{ postId }}{% endif %}" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
+			{% endif %}
+		</div>
+	</div>
+</div>
+{% if isFileSelection %}
+	<div class="row" id="selectedFile{% if isPost %}Post{{ postId }}{% endif %}" style="display: none;">
+		<div class="col-md-12">
+			<div class="hidden">
+				{% if isPost %}
+					{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID', "class": "mediatextarea-post-#{ post.id }"} }) }}
+				{% else %}
+					{{ form_widget(form.mediatextarea, {'attr': {'placeholder': 'File ID'} }) }}
+				{% endif %}
+			</div>
+			{{ form_errors(form.mediatextarea) }}
+			<div class="form-group">
+				<label>Selected File</label>
+				<div><span id="selectedFileTitle{% if isPost %}Post{{ postId }}{% endif %}" style="margin-right: 5px;"></span><a id="removeFile{% if isPost %}Post{{ postId }}{% endif %}" title="Remove File"><i class="fa fa-times-circle"></i></a></div>
+			</div>
+		</div>
+	</div>
+	<div id="files{% if isPost %}Post{{ postId }}{% endif %}"></div>
+{% endif %}

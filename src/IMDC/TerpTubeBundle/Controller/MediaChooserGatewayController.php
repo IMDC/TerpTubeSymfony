@@ -217,6 +217,18 @@ class MediaChooserGatewayController extends Controller
 				->render('IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'recordVideo.html.twig',
 						array("recorderConfiguration" => $recorderConfiguration));
 	}
-	
 
+    public static function getUploadForms(Controller $controller) {
+        $formAudio = $controller->createForm(new AudioMediaFormType(), new Media());
+        $formVideo = $controller->createForm(new VideoMediaFormType(), new Media());
+        $formImage = $controller->createForm(new ImageMediaFormType(), new Media());
+        $formOther = $controller->createForm(new OtherMediaFormType(), new Media());
+
+        return array(
+            $formAudio->createView(),
+            $formVideo->createView(),
+            $formImage->createView(),
+            $formOther->createView()
+        );
+    }
 }

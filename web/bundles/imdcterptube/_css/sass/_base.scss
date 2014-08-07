@@ -1,0 +1,115 @@
+@import "bootstrap/variables";
+
+$line-height-base-top: 2; // FontAwesome fa-2x font size (em)
+$line-height-computed-top: floor(($font-size-base * $line-height-base-top));
+
+$navbar-text-color: white;
+
+$navbar-top-height: 70px;
+$navbar-top-padding-vertical: (($navbar-top-height - $line-height-computed-top) / 2);
+
+$navbar-bottom-height: 25px;
+$navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed) / 2);
+
+
+
+body {
+  padding-top: $navbar-top-height + 15px;
+  padding-bottom: $navbar-bottom-height + 15px;
+  background-color: #eeeeee;
+}
+
+.tt-navbar-header {
+  float: none;
+}
+
+@media (max-width: 1200px) and (min-width: 768px) {
+  .tt-navbar-header {
+    float: left;
+  }
+}
+
+.tt-navbar-logo {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  min-height: $navbar-top-height;
+}
+
+.tt-navbar-top {
+  min-height: $navbar-top-height;
+  color: $navbar-text-color;
+}
+
+.tt-navbar-nav-top > li > a {
+  padding-top: $navbar-top-padding-vertical;
+  padding-bottom: $navbar-top-padding-vertical;
+}
+
+.tt-navbar-right-top > li > a {
+  line-height: $line-height-base-top;
+}
+
+.tt-navbar-bottom {
+  min-height: $navbar-bottom-height;
+  color: $navbar-text-color;
+}
+
+.tt-copyright {
+  padding-top: $navbar-bottom-padding-vertical;
+  padding-bottom: $navbar-bottom-padding-vertical;
+}
+
+.tt-navbar-side {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  position: fixed;
+  top: $navbar-top-height;
+  left: 0;
+  bottom: $navbar-bottom-height;
+  background-color: #888888;
+
+  a {
+    color: #000000;
+    font-size: 1.2em;
+  }
+
+  div {
+    padding-bottom: 10px;
+
+    img {
+      max-width: 60px
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .tt-navbar-side {
+    position: relative;
+    top: inherit;
+    left: inherit;
+    bottom: inherit;
+
+    div {
+      display: inline-block;
+    }
+  }
+}
+
+.tt-separator-top {
+  border-top: 1px solid #000000;
+}
+
+.tt-separator-bottom {
+  @extend .tt-separator-top;
+
+  margin-top: 0;
+}
+
+.tt-date {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+.tt-avatar {
+  max-height: 150px;
+}

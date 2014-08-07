@@ -1,0 +1,36 @@
+{#
+ajaxed by:
+TerpTube.Controller.Thread
+#}
+
+<div class="col-md-12">
+	{% set formpath = path('imdc_post_edit_specific', {'pid': post.id}) %}
+	{{ form_start(form, {'action': "#{formpath}"}) }}
+    {{ form_errors(form) }}
+    {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}
+    {% if post.attachedFile[0] is defined %}
+        <div class="row">
+            <div class="col-md-4">
+                {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': post.attachedFile[0]} %}
+            </div>
+        </div>
+    {% endif %}
+    {% if form.startTime is defined %}
+        <ul class="list-unstyled list-inline hidden">
+            <li>{{ form_label(form.startTime) }}</li><li>{{ form_widget(form.startTime) }}</li>
+            <li>{{ form_label(form.endTime) }}</li><li>{{ form_widget(form.endTime) }}</li>
+        </ul>
+    {% endif %}
+    {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+    {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+    <button class="btn btn-success" id="submitEditPost{{ post.id }}"><i class="fa fa-check"></i> Edit</button>
+    <button class="btn btn-danger post-cancel" id="cancelEditPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
+	{{ form_end(form) }}
+    {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' with {'isPost': true, 'postId': post.id} %}
+	<script type="text/javascript">
+        // make all elements with class 'autosize' expand to fit its contents
+        $(".autosize").autosize();
+
+		$tt.Controller.Post.bindUIEvents($tt.Controller.Post.Page.EDIT, {{ post.id }});
+	</script>
+</div>

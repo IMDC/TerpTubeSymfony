@@ -1,0 +1,87 @@
+{#
+included by:
+self
+_Thread:view.html.twig
+#}
+
+{% if isPostReply is not defined %}
+    {% set isPostReply = false %}
+{% endif %}
+
+<div class="row {% if isPostReply == false %}tt-post-container{% endif %}" id="postContainer{{ post.id }}" data-pid="{{ post.id }}" data-starttime="{{ post.startTime }}" data-endtime="{{ post.endTime }}" data-istemporal={{ post.isTemporal ? "true" : "false" }}>
+    <div class="{% if isPostReply %}col-md-11 col-md-offset-1{% else %}col-md-12{% endif %}">
+        <div class="row {% if isPostReply %}tt-post-reply-container-inner{% else %}tt-post-container-inner{% endif %}">
+            <!-- user info -->
+            <div class="col-md-2 text-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% include 'IMDCTerpTubeBundle:_Member:avatar.html.twig' with {'member': post.author} %}
+                        {% include 'IMDCTerpTubeBundle:_Member:username.html.twig' with {'member': post.author} %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {% include 'IMDCTerpTubeBundle:_Member:connectTools.html.twig' with {'member': post.author} %}
+                    </div>
+                </div>
+            </div>
+            <!-- post content -->
+            <div class="col-md-9 tt-post-content-container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-right tt-date">
+                            {{ post.created|date('o-m-N H:i') }}
+                            {% if post.editedBy is not null %}
+                                (edited at {{ post.editedAt|date('o-m-N H:i') }} by {{ post.editedBy.getUsername }})
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="containerPost{{ post.id }}">
+                    <div class="col-md-12">
+                        {% if post.attachedFile|length != 0 %}
+                            <div>
+                                {% include 'IMDCTerpTubeBundle:_Post:mediaElement.html.twig' with {'mediaFile': post.attachedFile[0]} %}
+                            </div>
+                        {% endif %}
+                        {% if post.isTemporal %}
+                            <div class="tt-post-timeline-container">
+                                <div class="tt-post-timeline">
+                                    <div class="tt-post-timeline-keypoint" id="postTimelinePoint{{ post.getId }}" data-pid="{{ post.id }}"></div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <p>{{ post.content|nl2br }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="containerEditPost{{ post.id }}" style="display: none;"></div>
+            </div>
+            <!-- post tools -->
+            <div class="col-md-1 pull-right">
+                <ul class="list-unstyled">
+                    {% if post.isTemporal %}
+                        <li><a class="post-goto-timeline-keypoint" href="#" title="Jump to selected timeline region" data-pid="{{ post.id }}"><i class="fa fa-clock-o"></i></a></li>
+                    {% endif %}
+                    {% if post.author.getId == app.user.getId %}
+                        <li><a class="post-edit" href="#" title="Edit this post" data-pid="{{ post.id }}"><i class="fa fa-pencil"></i></a></li>
+                        <li><a class="post-delete" href="#" title="Delete this post" data-pid="{{ post.id }}"><i class="fa fa-trash-o"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% if isPostReply == false %}
+            <!-- post reply -->
+            <div class="row">
+                <div class="col-md-1 col-md-offset-11">
+                    <p><a class="post-reply" href="#" title="Reply to this post" data-pid="{{ post.getId }}"><i class="fa fa-reply fa-rotate-180 fa-lg"></i></a></p>
+                </div>
+            </div>
+        {% endif %}
+        <!-- replies to post -->
+        {% for postReply in post.replies %}
+            {% include 'IMDCTerpTubeBundle:_Post:post.html.twig' with {'isPostReply': true, 'post': postReply} %}
+        {% endfor %}
+    </div>
+</div>

@@ -48,8 +48,8 @@
 					<div class="col-md-6 pull-left">
 						<ul class="list-unstyled list-inline">
 							{% if app.user == thread.creator %}
-								<li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class=""><i class="fa fa-scissors" style="margin-right: 5px;"></i>Edit</a></li>
-								<li><a href="{{ path('imdc_thread_delete', {'threadid':thread.id}) }}" class=""><i class="fa fa-minus-circle" style="margin-right: 5px;"></i>Delete</a></li>
+								<li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" ><i class="fa fa-scissors"></i> Edit</a></li>
+								<li><a href="{{ path('imdc_thread_delete', {'threadid':thread.id}) }}" ><i class="fa fa-minus-circle"></i> Delete</a></li>
 							{% endif %}
 	
 							{% set threadPermission = thread.getPermissions.accessLevel %}
@@ -61,8 +61,8 @@
 					{# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% following stuff %%%%%%%%%%%%%%%%%%% #}
 					<div class="col-md-6 pull-right text-right">
 						<ul class="list-unstyled list-inline">
-							<li><a href="#"><i class="fa fa-flag fa-text-link"></i>Report</a></li>
-							<li><a href="#"><i class="fa fa-paperclip fa-text-link"></i>Follow</a>
+							<li><a href="#"><i class="fa fa-flag"></i> Report</a></li>
+							<li><a href="#"><i class="fa fa-paperclip"></i> Follow</a>
 						</ul>
 					</div>
 					{# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% end of following stuff %%%%%%%%%%%%%%%%%%% #}

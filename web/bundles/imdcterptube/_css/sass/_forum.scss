@@ -1,0 +1,11 @@
+.tt-forum-thumbnail, .tt-thread-thumbnail {
+  min-height: 420px;
+
+  .tt-media-element {
+  	margin: 10px 0 10px;
+
+    .tt-media-img, .tt-media-video, .tt-media-audio {
+      max-height: 180px;
+    }
+  }
+}

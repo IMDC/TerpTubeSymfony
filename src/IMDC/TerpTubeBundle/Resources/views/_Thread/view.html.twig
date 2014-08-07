@@ -1,0 +1,181 @@
+{% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
+
+{% block title %}{{ thread.title|truncate(50) }}{% endblock title %}
+
+{% block headerjavascripts %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                thread = new $tt.Controller.Thread();
+                //TODO context
+                context = thread;
+
+                {% if thread.mediaIncluded|length != 0 %}
+                    {% if threadposts|length > 0 %}
+                        thread.createKeyPoints();
+                        thread.setPostTimelinePointForPost($("#{{ thread.mediaIncluded[0].getID }}"));
+                    {% endif %}
+
+                    thread.createPlayer({
+                        mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),
+                        playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
+                        speedImages: {
+                            normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",
+                            fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",
+                            slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"
+                        },
+                        captionImages: {
+                            off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",
+                            on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"
+                        }
+                    });
+                {% endif %}
+
+                thread.bindUIEvents($tt.Controller.Thread.Page.VIEW_THREAD);
+            });
+        });
+    </script>
+{% endblock headerjavascripts %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('imdc_forum_list') }}">Forums</a></li>
+			<li><a href="{{ path('imdc_forum_view_specific', {'forumid': thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a></li>
+			<li class="active">{{ thread.title|truncate(30) }}</li>
+		</ol>
+		<div class="row">
+			<!-- left side -->
+			<div class="col-md-5">
+				<div class="row">
+					<!-- thread owner controls -->
+					<div class="col-md-6 pull-left">
+						<ul class="list-unstyled list-inline">
+							{% if app.user == thread.creator %}
+								<li><a href="{{ path('imdc_thread_edit_specific', {'threadid': thread.id}) }}"><i class="fa fa-scissors"></i> Edit</a></li>
+								<li><a href="{{ path('imdc_thread_delete', {'threadid': thread.id}) }}"><i class="fa fa-minus-circle"></i> Delete</a></li>
+							{% endif %}
+							<li>{% include 'IMDCTerpTubeBundle:Permissions:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}</li>
+						</ul>
+					</div>
+					<!-- post controls -->
+					<div class="col-md-6 pull-right text-right">
+						<ul class="list-unstyled list-inline">
+							<li><a href="#"><i class="fa fa-flag"></i> Report</a></li>
+							<li><a href="#"><i class="fa fa-paperclip"></i> Follow</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						{% if thread.mediaIncluded|length != 0 %}
+							{% include 'IMDCTerpTubeBundle:_Thread:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
+						{% else %}
+							<div class="lead text-center" style="padding-top: 30px;">No Media</div>
+						{% endif %}
+					</div>
+				</div>
+                <!-- show post reply form button -->
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button class="btn btn-large btn-success" id="showPostReplyForm">Reply</button>
+                    </div>
+                </div>
+                <!-- post reply form -->
+                <div class="row" id="postReplyForm" style="display: none;">
+                    <div class="col-md-12">
+                        {{ form_start(form) }}
+                        {{ form_errors(form) }}
+                        {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
+                        {% if form.startTime is defined %}
+                            <ul class="list-unstyled list-inline hidden">
+                                <li>{{ form_label(form.startTime) }}</li><li>{{ form_widget(form.startTime) }}</li>
+                                <li>{{ form_label(form.endTime) }}</li><li>{{ form_widget(form.endTime) }}</li>
+                            </ul>
+                        {% endif %}
+                        {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+                        {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+                        <button class="btn btn-success" id="postReplySubmit"><i class="fa fa-check"></i> Reply</button>
+                        <button class="btn btn-danger post-cancel" id="postReplyCancel"><i class="fa fa-times"></i> Cancel</button>
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+				<div class="row">
+					<div class="col-md-12">
+						<h1>{{ thread.title }}</h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<p class="tt-thread-content">{{ thread.content|nl2br }}</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="list-unstyled">
+							<li><span class="tt-date" title="{{ thread.creationDate|date('o-m-d H:i') }}">Created {{ time_diff(thread.creationDate)}}</span></li>
+							{% if thread.editedBy is not null %}
+								<li><span class="tt-date" title="{{ thread.editedAt|date('o-m-d H:i') }}">Edited by {{ thread.editedBy }} {{ time_diff(thread.editedAt) }}</span></li>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						{% include 'IMDCTerpTubeBundle:_Member:infoBlock.html.twig' with {'member': thread.creator} %}
+					</div>
+				</div>
+			</div>
+			<!-- right side -->
+			<div class="col-md-7">
+                <!-- thread replies -->
+				<div class="row tt-thread-reply-container" id="threadReplyContainer">
+					<div class="col-md-12">
+                        {% if threadposts|length > 0 %}
+                            {% for post in threadposts %}
+                                {% include 'IMDCTerpTubeBundle:_Post:post.html.twig' %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
+                        {% endif %}
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}
+
+{% block outside_body %}
+    {{ parent() }}
+
+    <div class="modal fade" id="modaldiv">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Delete Post</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger text-center" role="alert">
+                        <i class="fa fa-exclamation-triangle fa-5x"></i>
+                        <p>
+                            This post will be permanently deleted.<br />
+                            This action cannot be undone.<br />
+                            Are you sure?
+                        </p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-default" id="modalCancelButton" href="#" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
+                    <a class="btn btn-danger" id="modalDeleteButton" href="#"><i class="fa fa-trash-o"></i> Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' %}
+{% endblock outside_body %}

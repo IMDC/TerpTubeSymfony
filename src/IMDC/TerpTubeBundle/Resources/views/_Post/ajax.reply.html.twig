@@ -1,0 +1,29 @@
+{#
+ajaxed by:
+TerpTube.Controller.Thread
+#}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+<div class="col-md-12" id="replyPostContainer{{ post.id }}">
+	<div class="row">
+		<div class="col-md-10 col-md-offset-2">
+            {% set formpath = path('imdc_post_reply_specific', {'pid': post.id}) %}
+            {{ form_start(form, {'action' : "#{formpath}"}) }}
+            {{ form_errors(form) }}
+            {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}
+            {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+            {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+            <button class="btn btn-success"><i class="fa fa-check"></i> Reply</button>
+            <button class="btn btn-danger cancel-post" id="cancelReplyPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
+            {{ form_end(form) }}
+		</div>
+	</div>
+    {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' with {'isPost': true, 'postId': post.id} %}
+	<script type="text/javascript">
+        // make all elements with class 'autosize' expand to fit its contents
+        $(".autosize").autosize();
+
+        $tt.Controller.Post.bindUIEvents($tt.Controller.Post.Page.REPLY, {{ post.id }});
+	</script>
+</div>
