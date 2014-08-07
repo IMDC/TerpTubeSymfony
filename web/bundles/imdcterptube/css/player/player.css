@@ -167,8 +167,9 @@ button.videoControlsContainer
 
 .videoControlsContainer.track.overlay
 {
-	position: relative;
-	bottom:50px;
+	position: absolute;
+	bottom: 50px;
+	right: 0px;
 	float: right;
 	z-index: 10;
 	background-color: white;
