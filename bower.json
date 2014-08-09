@@ -2,6 +2,7 @@
     "name": "TerpTube",
     "dependencies": {
         "requirejs": "2.*",
+        "rjs": "2.1.*",
         "dustjs": "0.3.*"
     }
 }

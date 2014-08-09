@@ -112,7 +112,7 @@ body {
 
 /* line 5, sass/_media.scss */
 .tt-media-video, .tt-media-audio {
-  /*width: 100%;*/
+  width: 100%;
 }
 
 /* line 1, sass/_forum.scss */

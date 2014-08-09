@@ -26,7 +26,7 @@ javascripts_dir = "javascripts"
 # sass-convert -R --from scss --to sass sass scss && rm -rf sass && mv scss sass
 
 on_stylesheet_saved do |filename|
-  FileUtils.copy_file(filename, "../#{File.basename(filename)}")
+  #FileUtils.copy_file(filename, "../#{File.basename(filename)}")
   Growl.notify {
      self.message = "#{File.basename(filename)} updated!"
      self.icon = '/path/to/success.jpg'

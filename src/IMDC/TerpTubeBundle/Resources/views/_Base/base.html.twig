@@ -41,7 +41,20 @@
             <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
 			<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
-            <script src="{{ asset('bundles/imdcterptube/_js/config.js') }}"></script>
+            <script type="text/javascript">
+                requirejs.config({
+                    baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
+                    paths: {
+                        extra: 'lib/extra',
+                        dust: 'lib/dust-full-0.3.0.min'
+                    },
+                    shim: {
+                        main: {
+                            deps: ['extra', 'dust']
+                        }
+                    }
+                });
+            </script>
 		{% endblock headerjavascripts %}
 	</head>
 	<body>

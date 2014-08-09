@@ -46,7 +46,8 @@
 		"pimple/pimple" : "dev-master",
 		"ext-curl" : "*",
 		"symfony/filesystem" : "dev-master",
-		"jquery/jquerymap" : "1.10.2"
+		"jquery/jquerymap" : "1.10.2",
+        "hearsay/require-js-bundle" : "2.0.*@dev"
 	},
 	"scripts" : {
 		"post-install-cmd" : [
