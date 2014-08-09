@@ -41,20 +41,24 @@
             <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
 
 			<script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
-            <script type="text/javascript">
-                requirejs.config({
-                    baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
-                    paths: {
-                        extra: 'lib/extra',
-                        dust: 'lib/dust-full-0.3.0.min'
-                    },
-                    shim: {
-                        main: {
-                            deps: ['extra', 'dust']
+            {% if app.environment == 'dev' %}
+                <script type="text/javascript">
+                    requirejs.config({
+                        baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
+                        paths: {
+                            extra: 'lib/extra',
+                            dust: 'lib/dust-full-0.3.0.min'
+                        },
+                        shim: {
+                            main: {
+                                deps: ['extra', 'dust']
+                            }
                         }
-                    }
-                });
-            </script>
+                    });
+                </script>
+            {% else %}
+                <script src="{{ asset('bundles/imdcterptube/_js/terptube.js') }}"></script>
+            {% endif %}
 		{% endblock headerjavascripts %}
 	</head>
 	<body>
