@@ -96,7 +96,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         switch (page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
-                Thread._bindUIEventsNewEdit();
+                Thread._bindUIEventsNewEdit(page == Thread.Page.EDIT);
                 break;
             case Thread.Page.VIEW_THREAD:
                 this._bindUIEventsViewThread();
@@ -104,7 +104,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         }
     };
 
-    Thread._bindUIEventsNewEdit = function() {
+    Thread._bindUIEventsNewEdit = function(isEdit) {
         console.log("%s: %s", Thread.TAG, "_bindUIEventsNewEdit");
 
         MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.NEW));
@@ -113,11 +113,30 @@ define(['core/mediaChooser'], function(MediaChooser) {
          * by paul: since I hid the real 'submit' button to provide a nicely stylized button
          * I have to click the real button when you click on the fancy one
          */
-        $("#thread-form-submit-button").on("click", function(e) {
+        /*$("#thread-form-submit-button").on("click", function(e) {
             e.preventDefault();
 
             $("#ThreadForm_submit").click();
+        });*/
+
+        $("ul.tagit").hide();
+
+        var prefix = isEdit ? "ThreadEditForm" : "ThreadForm";
+
+        $("#permissionRadioButtons div.radio").on("click", function(e) {
+            if ($("#" + prefix + "_permissions_accessLevel_2").is(':checked')) { // specific users
+                $("ul.tagit").show();
+                $("#" + prefix + "_permissions_userGroupsWithAccess").hide();
+            } else if ($("#" + prefix + "_permissions_accessLevel_3").is(':checked')) { // specific groups
+                $("#" + prefix + "_permissions_userGroupsWithAccess").show();
+                $("ul.tagit").hide();
+            } else { // hide all
+                $("#" + prefix + "_permissions_userGroupsWithAccess").hide();
+                $("ul.tagit").hide();
+            }
         });
+
+        $("#permissionRadioButtons").trigger("click");
     };
 
     Thread.prototype._bindUIEventsViewThread = function() {

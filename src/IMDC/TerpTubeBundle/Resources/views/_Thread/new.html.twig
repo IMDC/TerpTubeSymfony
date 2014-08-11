@@ -1,0 +1,70 @@
+{% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
+
+{% block title %}Create a new Topic{% endblock title %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                thread = new $tt.Controller.Thread();
+                //TODO context
+                context = thread;
+
+                $("#ThreadForm_permissions_usersWithAccess").tagit({
+                    {% if app.user.getFriendsList|length >= 1 %}
+                        showAutocompleteOnFocus: true,
+                    {% endif %}
+                    availableTags: [{{ app.user.getFriendsListAsUsernameString|raw }}]
+                });
+
+                thread.bindUIEvents($tt.Controller.Thread.Page.NEW);
+            });
+        });
+    </script>
+{% endblock header %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
+                {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
+                {{ form_row(form.title, {'attr': {'class': 'autosize'}}) }}
+                {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+                <div id="permissionRadioButtons">
+                    {{ form_row(form.permissions.accessLevel.0) }} {# private, creator access #}
+                    {#{ form_row(form.permissions.accessLevel.1) }#} {# Only people on friends list #}
+                    {#{ form_widget(form.permissions.userFriendsWithAccess, {'attr': {'style': 'display: none;'}}) }#}
+                    {{ form_row(form.permissions.accessLevel.1) }} {# Anyone with the link #}
+                    {{ form_row(form.permissions.accessLevel.2) }} {# list of specific users #}
+                    {{ form_widget(form.permissions.usersWithAccess, {'attr': {'style': 'display: none;'}}) }}
+                    {{ form_row(form.permissions.accessLevel.3) }} {# list of specific groups #}
+                    {{ form_widget(form.permissions.userGroupsWithAccess, {'attr': {'style': 'display: none;'}}) }}
+                    {{ form_row(form.permissions.accessLevel.4) }} {# only ppl with accounts #}
+                    {{ form_row(form.permissions.accessLevel.5) }} {# public, anyone can see it #}
+                </div>
+                {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+                <button class="btn btn-success"><i class="fa fa-check"></i> Create</button>
+                <a class="btn btn-danger" href="{{ path('imdc_forum_view_specific', {'forumid': forumid}) }}"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block outside_body %}
+    {{ parent() }}
+
+    {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' %}
+{% endblock outside_body %}

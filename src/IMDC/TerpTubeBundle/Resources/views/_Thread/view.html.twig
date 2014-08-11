@@ -2,7 +2,7 @@
 
 {% block title %}{{ thread.title|truncate(50) }}{% endblock title %}
 
-{% block headerjavascripts %}
+{% block header %}
     {{ parent() }}
 
     <script type="text/javascript">
@@ -37,7 +37,7 @@
             });
         });
     </script>
-{% endblock headerjavascripts %}
+{% endblock header %}
 
 {% block sidebarlinks_pages %}class="active"{% endblock %}
 

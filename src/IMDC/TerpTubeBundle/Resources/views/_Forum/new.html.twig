@@ -2,7 +2,7 @@
 
 {% block title %}Create a new Forum{% endblock title %}
 
-{% block headerjavascripts %}
+{% block header %}
     {{ parent() }}
 
     <script type="text/javascript">
@@ -16,7 +16,7 @@
             });
         });
     </script>
-{% endblock headerjavascripts %}
+{% endblock header %}
 
 {% block sidebarlinks_pages %}class="active"{% endblock %}
 
@@ -41,7 +41,7 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
 
 {% block outside_body %}
     {{ parent() }}

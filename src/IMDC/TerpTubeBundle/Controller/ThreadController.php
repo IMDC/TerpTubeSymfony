@@ -247,13 +247,7 @@ class ThreadController extends Controller
         $form = $this->createForm(new ThreadFormType(), $newthread, array(
             'user' => $this->getUser(),
         ));
-        
-        $formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
-        $formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
-        $formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
-        $formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
-        $uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
-        
+
         if ($forumid) {
             $forumrepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
             $forum = $forumrepo->findOneBy(array('id' => $forumid));
@@ -265,8 +259,11 @@ class ThreadController extends Controller
                 'No valid parent forum found'
             );
             // form not valid, show the basic form
-            return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig',
-                array('form' => $form->createView(), 'uploadForms' => $uploadForms
+            //return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
+            return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
+                'form' => $form->createView(),
+                'forumid' => $forumid,
+                'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
             ));
         }
         
@@ -354,8 +351,11 @@ class ThreadController extends Controller
         }
         
         // form not valid, show the basic form
-        return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig',
-                array('form' => $form->createView(), 'uploadForms' => $uploadForms
+        //return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
+            'form' => $form->createView(),
+            'forumid' => $forumid,
+            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
         ));
     }
     
@@ -544,9 +544,10 @@ class ThreadController extends Controller
         }
          
         // form not valid, show the basic form
-        return $this->render('IMDCTerpTubeBundle:Thread:editThread.html.twig',
-                array('form' => $threadeditform->createView(),
-                      'thread' => $threadToEdit,
+        //return $this->render('IMDCTerpTubeBundle:Thread:editThread.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Thread:edit.html.twig', array(
+            'form' => $threadeditform->createView(),
+            'thread' => $threadToEdit
         ));
     }
     
@@ -592,9 +593,10 @@ class ThreadController extends Controller
             }
             
             // form not valid or not submitted yet, show the basic form
-            return $this->render('IMDCTerpTubeBundle:Thread:deleteThread.html.twig',
-                array('form' => $threadDeleteForm->createView(),
-                      'thread' => $threadToDelete,
+            //return $this->render('IMDCTerpTubeBundle:Thread:deleteThread.html.twig', array(
+            return $this->render('IMDCTerpTubeBundle:_Thread:delete.html.twig', array(
+                'form' => $threadDeleteForm->createView(),
+                'thread' => $threadToDelete
             ));
             
         }
