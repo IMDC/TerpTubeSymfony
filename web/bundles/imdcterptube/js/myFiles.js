@@ -80,8 +80,6 @@ MyFiles.prototype._bindUIEventsIndex = function() {
 	console.log("%s: %s", MyFiles.TAG, "_bindUIEventsIndex");
 	
 	Media.bindUIEvents(MyFiles.mediaChooserOptions(MyFiles.Page.INDEX));
-	console.log(this.mediaChooser);
-//	$(".preview-button").on("click", this.onPreviewButtonClick);
 	var instance = this;
 	$(".preview-button").on("click", function(e){ instance.onPreviewButtonClick(e)});
 	
@@ -123,7 +121,7 @@ MyFiles.prototype.onRecordingSuccess = function(data) {
 	console.log("%s: %s- mediaId=%d", MyFiles.TAG, "onRecordingSuccess", data.media.id);
 	
 	this.media = data.media;
-	//mediaChooser.setMedia(this.media);
+	this.mediaChooser.setMedia(this.media);
 };
 
 //TODO move to media chooser, as this may be a more general function
