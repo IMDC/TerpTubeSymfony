@@ -87,6 +87,12 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			 * @var $media IMDC\TerpTubeBundle\Entity\Media
 			 */
 			$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
+			if (empty($media))
+			{
+				//Can happen if media is deleted before transcoding can be executed
+				$this->logger->info ( "Media with ID=$mediaId does not exist and cannot be transcoded!" );
+				return true;
+			}
 			$metaData = $media->getMetaData ();
 			$resource = $media->getResource ();
 			$resourceFile = new File ( $resource->getAbsolutePath () );
