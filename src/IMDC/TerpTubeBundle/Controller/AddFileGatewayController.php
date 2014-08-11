@@ -418,13 +418,14 @@ class AddFileGatewayController extends Controller {
 		
 		$em->flush ();
 		//FIXME: transcoder seems to do this already. no need to rename and persist
-		/*$resource = $media->getResource();
+		//Need to rename to webm since in some cases the recording is done as a .bin file
+		$resource = $media->getResource();
 		$resourceFile = new File($resource->getAbsolutePath());
 		$fs = new Filesystem();
 		$fs->rename($resourceFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
-		$resource->setPath("webm");*/
+		$resource->setPath("webm");
 // 		$em->persist ( $resourceFile );
-		//$em->flush ();
+		$em->flush (); 
 		
 		$eventDispatcher = $this->container->get ( 'event_dispatcher' );
 		$uploadedEvent = new UploadEvent ( $media );
@@ -443,7 +444,7 @@ class AddFileGatewayController extends Controller {
 		) );
 		
 		// return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
-	}
+	} 
 	public function addSimultaneousRecordingAction(Request $request, $sourceMediaID, $startTime, $url) {
 		// FIXME add the recording stuff here
 		// throw new NotImplementedException("Not yet implemented");
