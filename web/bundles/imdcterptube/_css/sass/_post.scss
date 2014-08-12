@@ -27,7 +27,7 @@
 .tt-post-content-container {
   min-height: 180px;
 
-  div[class*="col-"] div:first-child {
+  div[class*="col-"] > div {
     margin-bottom: 10px;
   }
 }

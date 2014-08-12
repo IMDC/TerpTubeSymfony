@@ -1,3 +1,11 @@
+.tt-thread-thumbnail {
+  @extend .tt-forum-thumbnail;
+}
+
+.tt-thread-op-container {
+  /*overflow-y: scroll;*/ /* scroll threadOpContainer */
+}
+
 .tt-thread-video-controls {
   position: absolute;
 
@@ -21,7 +29,5 @@
 }
 
 .tt-thread-reply-container {
-  max-height: 900px;
-  overflow-y: auto;
-  overflow-x: visible;
+  overflow-y: scroll; /* scroll threadReplyContainer */
 }

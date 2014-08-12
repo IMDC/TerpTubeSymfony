@@ -11,11 +11,13 @@ $navbar-top-padding-vertical: (($navbar-top-height - $line-height-computed-top) 
 $navbar-bottom-height: 25px;
 $navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed) / 2);
 
+$body-extra-padding: 15px;
+
 
 
 body {
-  padding-top: $navbar-top-height + 15px;
-  padding-bottom: $navbar-bottom-height + 15px;
+  padding-top: $navbar-top-height + $body-extra-padding;
+  padding-bottom: $navbar-bottom-height + $body-extra-padding;
   background-color: #eeeeee;
 }
 

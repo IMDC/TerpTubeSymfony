@@ -34,6 +34,67 @@
                 {% endif %}
 
                 thread.bindUIEvents($tt.Controller.Thread.Page.VIEW_THREAD);
+
+                //
+                // following is layout specific. keep it here
+                //
+                var bodyExtraPadding = 15; // variable from _base.scss
+
+                // scroll threadReplyContainer
+                var pageContainerHeight = $(window).height() - $("#threadReplyContainer").offset().top - $(".tt-navbar-bottom").height() - bodyExtraPadding;
+                var plusHeight = pageContainerHeight - $("#threadReplyContainer div.tt-post-container").last().height();
+
+                $("#threadReplyContainer").data("calcoffset", $("#threadReplyContainer").offset().top - $(".tt-navbar-top").height() - bodyExtraPadding);
+                $("#threadReplyContainer").data("calcheight", pageContainerHeight);
+                $("#threadReplyContainer").height($("#threadReplyContainer").data("calcheight"));
+
+                $("#threadReplyContainer").data("initialheight", $("#threadReplyContainer").height());
+                $("#threadReplyContainer div div").first().append("<div id=\"replyContainerSpacer\"></div>");
+
+                $(window).scroll(function(e) {
+                    var scrollTop = $("#threadOpContainer").offset().top - $(".tt-navbar-top").height();
+
+                    if ($(window).scrollTop() > scrollTop) {
+                        $('#threadReplyContainer').css({
+                            "top": $(window).scrollTop() - scrollTop + bodyExtraPadding,
+                            "height": $("#threadReplyContainer").data("calcheight") + $("#threadReplyContainer").data("calcoffset")
+                        });
+                        $("#replyContainerSpacer").height(plusHeight);
+                    } else {
+                        $('#threadReplyContainer').removeAttr("style");
+                        $('#threadReplyContainer').css({
+                            "height": $("#threadReplyContainer").data("calcheight")
+                        });
+                        $("#replyContainerSpacer").height(plusHeight - $("#threadReplyContainer").data("calcoffset"));
+                    }
+                });
+
+                // scroll threadOpContainer
+                /*$("#threadOpContainer").data("calcoffset", $("#threadOpContainer").offset().top - $(".tt-navbar-top").height() - bodyExtraPadding);
+                $("#threadOpContainer").data("calcheight", $(window).height() - $("#threadOpContainer").offset().top - $(".tt-navbar-bottom").height() - bodyExtraPadding);
+                $("#threadOpContainer").height($("#threadOpContainer").data("calcheight"));
+
+                $("#threadReplyContainer").data("initialheight", $("#threadReplyContainer").height());
+                $("#threadReplyContainer").height($("#threadReplyContainer").height() + $("#threadOpContainer").height() - $("#threadReplyContainer div.tt-post-container").last().height());
+
+                // opening post at top
+                $(window).scroll(function(e) {
+                    var scrollTop = $("#threadReplyContainer").offset().top - $(".tt-navbar-top").height();
+
+                    if ($(window).scrollTop() > scrollTop) {
+                        $('#threadOpContainer').css({
+                            "top": $(window).scrollTop() - scrollTop + bodyExtraPadding,
+                            "height": $("#threadOpContainer").data("calcheight") + $("#threadOpContainer").data("calcoffset")
+                        });
+                    } else {
+                        $('#threadOpContainer').removeAttr("style");
+                        $('#threadOpContainer').css({
+                            "height": $("#threadOpContainer").data("calcheight")
+                        });
+                    }
+                });*/
+
+                $(window).trigger("scroll");
             });
         });
     </script>
@@ -50,7 +111,7 @@
 		</ol>
 		<div class="row">
 			<!-- left side -->
-			<div class="col-md-5">
+			<div class="col-md-5 tt-thread-op-container" id="threadOpContainer">
 				<div class="row">
 					<!-- thread owner controls -->
 					<div class="col-md-6 pull-left">
@@ -131,9 +192,9 @@
 				</div>
 			</div>
 			<!-- right side -->
-			<div class="col-md-7">
+			<div class="col-md-7 tt-thread-reply-container" id="threadReplyContainer">
                 <!-- thread replies -->
-				<div class="row tt-thread-reply-container" id="threadReplyContainer">
+				<div class="row">
 					<div class="col-md-12">
                         {% if threadposts|length > 0 %}
                             {% for post in threadposts %}

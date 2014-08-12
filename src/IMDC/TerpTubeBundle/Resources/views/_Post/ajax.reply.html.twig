@@ -15,7 +15,7 @@ TerpTube.Controller.Thread
             {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
             {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
             <button class="btn btn-success"><i class="fa fa-check"></i> Reply</button>
-            <button class="btn btn-danger cancel-post" id="cancelReplyPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
+            <button class="btn btn-danger post-cancel" id="cancelReplyPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
             {{ form_end(form) }}
 		</div>
 	</div>

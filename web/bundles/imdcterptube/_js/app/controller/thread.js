@@ -430,7 +430,20 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
             $("#postContainer" + keyPoint.id).addClass("tt-post-container-highlight");
 
-            Thread.scrollPostIntoView(keyPoint.id);
+            // avoid animating when key points are overlapped and multiple invokes of this event are called
+            if (!$("#threadReplyContainer").is(':animated')) {
+                // scroll threadReplyContainer
+                $("#threadReplyContainer").animate({
+                    scrollTop: $("#postContainer" + keyPoint.id).position().top
+                }, 200);
+
+                // scroll threadOpContainer
+                /*if (!$("body").is(':animated')) {
+                    $("body").animate({
+                        scrollTop: $("#postContainer" + keyPoint.id).position().top + $(".tt-navbar-top").height() - 15 // variable from _base.scss
+                    }, 200);
+                }*/
+            }
         });
 
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, function(e, keyPoint) {
@@ -463,16 +476,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
         if (this.player) {
             enableTemporalComment(this.player, true, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
         }
-    };
-
-    Thread.scrollPostIntoView = function(postId) {
-        var postContainer = $("#threadReplyContainer");
-        var targetElement = $("#postContainer" + postId);
-
-        postContainer.animate({
-            scrollTop: postContainer.scrollTop() + targetElement.position().top
-                - (postContainer.height() / 2) + (targetElement.height() / 2)
-        }, 200);
     };
 
     Thread.prototype.setPostTimelinePointForPost = function(mediaElement) {

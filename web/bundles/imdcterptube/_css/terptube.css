@@ -1,58 +1,58 @@
-/* line 16, sass/_base.scss */
+/* line 18, sass/_base.scss */
 body {
   padding-top: 85px;
   padding-bottom: 40px;
   background-color: #eeeeee;
 }
 
-/* line 22, sass/_base.scss */
+/* line 24, sass/_base.scss */
 .tt-navbar-header {
   float: none;
 }
 
 @media (max-width: 1200px) and (min-width: 768px) {
-  /* line 27, sass/_base.scss */
+  /* line 29, sass/_base.scss */
   .tt-navbar-header {
     float: left;
   }
 }
-/* line 32, sass/_base.scss */
+/* line 34, sass/_base.scss */
 .tt-navbar-logo {
   padding-top: 5px;
   padding-bottom: 5px;
   min-height: 70px;
 }
 
-/* line 38, sass/_base.scss */
+/* line 40, sass/_base.scss */
 .tt-navbar-top {
   min-height: 70px;
   color: white;
 }
 
-/* line 43, sass/_base.scss */
+/* line 45, sass/_base.scss */
 .tt-navbar-nav-top > li > a {
   padding-top: 21px;
   padding-bottom: 21px;
 }
 
-/* line 48, sass/_base.scss */
+/* line 50, sass/_base.scss */
 .tt-navbar-right-top > li > a {
   line-height: 2;
 }
 
-/* line 52, sass/_base.scss */
+/* line 54, sass/_base.scss */
 .tt-navbar-bottom {
   min-height: 25px;
   color: white;
 }
 
-/* line 57, sass/_base.scss */
+/* line 59, sass/_base.scss */
 .tt-copyright {
   padding-top: 2.5px;
   padding-bottom: 2.5px;
 }
 
-/* line 62, sass/_base.scss */
+/* line 64, sass/_base.scss */
 .tt-navbar-side {
   padding-top: 15px;
   padding-bottom: 15px;
@@ -62,50 +62,50 @@ body {
   bottom: 25px;
   background-color: #888888;
 }
-/* line 71, sass/_base.scss */
+/* line 73, sass/_base.scss */
 .tt-navbar-side a {
   color: #000000;
   font-size: 1.2em;
 }
-/* line 76, sass/_base.scss */
+/* line 78, sass/_base.scss */
 .tt-navbar-side div {
   padding-bottom: 10px;
 }
-/* line 79, sass/_base.scss */
+/* line 81, sass/_base.scss */
 .tt-navbar-side div img {
   max-width: 60px;
 }
 
 @media (max-width: 1200px) {
-  /* line 86, sass/_base.scss */
+  /* line 88, sass/_base.scss */
   .tt-navbar-side {
     position: relative;
     top: inherit;
     left: inherit;
     bottom: inherit;
   }
-  /* line 92, sass/_base.scss */
+  /* line 94, sass/_base.scss */
   .tt-navbar-side div {
     display: inline-block;
   }
 }
-/* line 98, sass/_base.scss */
+/* line 100, sass/_base.scss */
 .tt-separator-top, .tt-separator-bottom {
   border-top: 1px solid #000000;
 }
 
-/* line 102, sass/_base.scss */
+/* line 104, sass/_base.scss */
 .tt-separator-bottom {
   margin-top: 0;
 }
 
-/* line 108, sass/_base.scss */
+/* line 110, sass/_base.scss */
 .tt-date {
   color: #aaa;
   font-size: 0.9em;
 }
 
-/* line 113, sass/_base.scss */
+/* line 115, sass/_base.scss */
 .tt-avatar {
   max-height: 150px;
 }
@@ -118,21 +118,28 @@ body {
 /* line 1, sass/_forum.scss */
 .tt-forum-thumbnail, .tt-thread-thumbnail {
   min-height: 420px;
+  word-wrap: break-word;
 }
-/* line 4, sass/_forum.scss */
+/* line 5, sass/_forum.scss */
 .tt-forum-thumbnail .tt-media-element, .tt-thread-thumbnail .tt-media-element {
   margin: 10px 0 10px;
 }
-/* line 7, sass/_forum.scss */
-.tt-forum-thumbnail .tt-media-element .tt-media-img, .tt-forum-thumbnail .tt-media-element .tt-media-video, .tt-forum-thumbnail .tt-media-element .tt-media-audio, .tt-thread-thumbnail .tt-media-element .tt-media-img, .tt-thread-thumbnail .tt-media-element .tt-media-video, .tt-thread-thumbnail .tt-media-element .tt-media-audio {
+/* line 8, sass/_forum.scss */
+.tt-forum-thumbnail .tt-media-element .tt-media-img, .tt-thread-thumbnail .tt-media-element .tt-media-img, .tt-forum-thumbnail .tt-media-element .tt-media-video, .tt-thread-thumbnail .tt-media-element .tt-media-video, .tt-forum-thumbnail .tt-media-element .tt-media-audio, .tt-thread-thumbnail .tt-media-element .tt-media-audio {
   max-height: 180px;
 }
 
-/* line 1, sass/_thread.scss */
+/* line 5, sass/_thread.scss */
+.tt-thread-op-container {
+  /*overflow-y: scroll;*/
+  /* scroll threadOpContainer */
+}
+
+/* line 9, sass/_thread.scss */
 .tt-thread-video-controls {
   position: absolute;
 }
-/* line 4, sass/_thread.scss */
+/* line 12, sass/_thread.scss */
 .tt-thread-video-controls li img {
   max-width: 24px;
   margin-top: 5px;
@@ -140,7 +147,7 @@ body {
   margin-bottom: 10px;
 }
 
-/* line 12, sass/_thread.scss */
+/* line 20, sass/_thread.scss */
 .tt-thread-content {
   padding: 3px;
   margin-bottom: 15px;
@@ -152,11 +159,10 @@ body {
   background-color: #fff;
 }
 
-/* line 23, sass/_thread.scss */
+/* line 31, sass/_thread.scss */
 .tt-thread-reply-container {
-  max-height: 900px;
-  overflow-y: auto;
-  overflow-x: visible;
+  overflow-y: scroll;
+  /* scroll threadReplyContainer */
 }
 
 /* line 1, sass/_post.scss */
@@ -193,7 +199,7 @@ body {
   min-height: 180px;
 }
 /* line 30, sass/_post.scss */
-.tt-post-content-container div[class*="col-"] div:first-child {
+.tt-post-content-container div[class*="col-"] > div {
   margin-bottom: 10px;
 }
 

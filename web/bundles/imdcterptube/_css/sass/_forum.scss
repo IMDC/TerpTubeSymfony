@@ -1,5 +1,6 @@
-.tt-forum-thumbnail, .tt-thread-thumbnail {
+.tt-forum-thumbnail {
   min-height: 420px;
+  word-wrap: break-word;
 
   .tt-media-element {
   	margin: 10px 0 10px;
