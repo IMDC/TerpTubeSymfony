@@ -120,9 +120,9 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			}
 			// Create a thumbnail
 			
-			$videoWidth = $this->ffprobe->streams ( $mp4File->getRealPath () )->videos ()->first ()->get ( 'width' );
-			$videoHeight = $this->ffprobe->streams ( $mp4File->getRealPath () )->videos ()->first ()->get ( 'height' );
-			$videoDuration = $this->ffprobe->streams ( $mp4File->getRealPath () )->videos ()->first ()->get ( 'duration' );
+			$videoWidth = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'width' );
+			$videoHeight = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'height' );
+			$videoDuration = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'duration' );
 			
 			$mp4DestinationFile = $resource->getUploadRootDir () . '/' . $resource->getId () . '.mp4';
 			
@@ -134,7 +134,7 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 					$videoDuration = $destinationVideoDuration;
 				}
 			}
-			$fileSize = filesize ( $mp4File->getRealPath () );
+			$fileSize = filesize ( $webmFile->getRealPath () );
 			$metaData->setWidth ( $videoWidth );
 			$metaData->setHeight ( $videoHeight );
 			$metaData->setDuration ( $videoDuration );

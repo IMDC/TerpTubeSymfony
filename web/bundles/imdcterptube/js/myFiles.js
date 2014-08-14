@@ -10,6 +10,7 @@ function MyFiles() {
 	
 	this.bind__addMediaRow = this._addMediaRow.bind(this);
 	this.bind__deleteFile = this._deleteFile.bind(this);
+	this.bind__updateMediaRow = this._updateMediaRow.bind(this);
 	
 	dust.compileFn($("#mediaRow").html(), "mediaRow");
 }
@@ -48,7 +49,8 @@ MyFiles.mediaChooserOptions = function(page) {
 			isPopUp: true,
 			callbacks: {
 				success: function(media) {
-					console.log("Done previewing")
+					console.log("Done previewing");
+					context.bind__updateMediaRow(media);
 				},
 				reset: function() {
 					
@@ -81,9 +83,9 @@ MyFiles.prototype._bindUIEventsIndex = function() {
 	
 	Media.bindUIEvents(MyFiles.mediaChooserOptions(MyFiles.Page.INDEX));
 	var instance = this;
-	$(".preview-button").on("click", function(e){ instance.onPreviewButtonClick(e)});
+	$(".preview-button").on("click", function(e){ instance.onPreviewButtonClick(e);});
 	
-	$(".delete-button").on("click", function(e){instance.onDeleteButtonClick});
+	$(".delete-button").on("click", function(e){instance.onDeleteButtonClick(e);});
 };
 
 /**
@@ -114,7 +116,7 @@ MyFiles.prototype.createVideoRecorder = function(videoElement) {
 			this.player.destroyRecorder();
 		}
 	}).bind(this));
-}
+};
 
 //TODO move to media chooser, as this may be a more general function
 MyFiles.prototype.onRecordingSuccess = function(data) {
@@ -201,9 +203,30 @@ MyFiles.prototype._addMediaRow = function(media) {
 		$("#files-table").append(out);
 	});
 	
-	$(".preview-button").on("click",  function(e){ instance.onPreviewButtonClick(e)});
+	$(".preview-button").on("click",  function(e){ instance.onPreviewButtonClick(e);});
 	
-	$(".delete-button").on("click",  function(e){ instance.onDeleteButtonClick(e)});
+	$(".delete-button").on("click",  function(e){ instance.onDeleteButtonClick(e);});
+};
+
+MyFiles.prototype._updateMediaRow = function(media) {
+	//At this points it updates the title and the file-size
+	console.log("%s: %s", MyFiles.TAG, "_updateMediaRow");
+	
+	this.media = media;
+	
+	var data = {
+			media: this.media
+	};
+	
+	if (this.media.metaData.size > 0) {
+		data.mediaSize = (this.media.metaData.size / 1024 / 1024).toFixed(2) + " MB";
+	}
+	data.title = media.title;
+	var row = $('a[data-val|='+data.media.id+']').eq(0).parent().parent();
+	row.children().eq(1).text(data.title);
+	row.children().eq(4).text(data.mediaSize);
+	var instance = this;
+	
 };
 
 MyFiles.prototype._deleteFile = function(currentElement, message) {
@@ -235,7 +258,7 @@ MyFiles.prototype._deleteFile = function(currentElement, message) {
 			console.log(request.statusText);
 		}
 	});
-}
+};
 
 MyFiles.prototype.onPreviewButtonClick = function(e) {
 	e.preventDefault();
@@ -244,6 +267,7 @@ MyFiles.prototype.onPreviewButtonClick = function(e) {
 		return false;
 	}
 	$('#preview').html('');
+	mediaChooser = this.mediaChooser;
 	this.mediaChooser.previewMedia({
 		mediaUrl: $(e.target).data("url"),
 		mediaId: $(e.target).data("val")

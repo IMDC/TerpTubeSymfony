@@ -1,0 +1,13 @@
+@CHARSET "UTF-8";
+
+.preview-title
+{
+	text-align: center;
+}
+
+#preview-media-title
+{
+	width: 50%;
+	text-align: center;
+}
+

@@ -13,7 +13,7 @@ define(function() {
         this.bind__previewVideoForwardFunctionCut = this._previewVideoForwardFunctionCut.bind(this);
         this.bind__previewVideoForwardFunctionDone = this._previewVideoForwardFunctionDone.bind(this);
         this.bind__previewVideoForwardFunctionDoneAndPost = this._previewVideoForwardFunctionDoneAndPost.bind(this);
-    }
+    };
 
     MediaChooser.TAG = "MediaChooser";
 
@@ -399,6 +399,9 @@ define(function() {
         //console.log('Done!', data);
 
         if (this.media != null) {
+        	var mediaManager = new MediaManager();
+    		this.media.title = $('#preview-media-title').val();
+    		mediaManager.updateMedia(this.media);
             this.onSuccess();
         }
         this._terminatingFunction();
@@ -413,6 +416,9 @@ define(function() {
         //console.log('Done!', data);
 
         if (this.media != null) {
+        	var mediaManager = new MediaManager();
+    		this.media.title = $('#preview-media-title').val();
+    		mediaManager.updateMedia(this.media);
             this.onSuccess(true);
         }
         this._terminatingFunction();

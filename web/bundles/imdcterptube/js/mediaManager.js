@@ -1,5 +1,7 @@
 MediaManager.EVENT_DELETE_SUCCESS = "delete_media_success";
 MediaManager.EVENT_DELETE_ERROR = "delete_media_error";
+MediaManager.EVENT_UPDATE_SUCCESS = "update_media_success";
+MediaManager.EVENT_UPDATE_ERROR = "update_media_error";
 
 function MediaManager()
 {
@@ -72,6 +74,7 @@ MediaManager.prototype.trimMedia = function(mediaID, startTime, endTime)
 			{
 //				console.log(data);
 //				$(instance).trigger(MediaManager.EVENT_DELETE_SUCCESS);
+				instance.media = data.media;
 			}
 			else if (data.responseCode == 400)
 			{ // bad request
@@ -87,6 +90,48 @@ MediaManager.prototype.trimMedia = function(mediaID, startTime, endTime)
 		error : function(request)
 		{
 //			$(instance).trigger(MediaManager.EVENT_DELETE_ERROR,request);
+			console.log(request);
+		}
+	});
+};
+
+MediaManager.prototype.updateMedia = function(media)
+{
+	var instance = this;
+	if (typeof media == 'undefined')
+	{
+		$(instance).trigger(MediaManager.EVENT_UPDATE_ERROR, "Must send a media object");
+		console.log('Error: ' + "Must send a media object");	
+	}
+	var address = Routing.generate('imdc_files_gateway_update', {'mediaId': media.id});
+	console.log(media);
+	var data = {'mediaId' : media.id, 'media' : JSON.stringify(media)};
+	console.log(data);
+	$.ajax({
+		url : address,
+		type : "POST",
+		contentType : "application/x-www-form-urlencoded",
+		data : data,
+		success : function(data)
+		{
+			if (data.responseCode == 200)
+			{
+				$(instance).trigger(MediaManager.EVENT_UPDATE_SUCCESS);
+			}
+			else if (data.responseCode == 400)
+			{ // bad request
+				$(instance).trigger(MediaManager.EVENT_UPDATE_ERROR,data.feedback);
+				console.log('Error: ' + data.feedback);
+			}
+			else
+			{
+				$(instance).trigger(MediaManager.EVENT_UPDATE_ERROR,"Unknown Error");
+				console.log('An unexpected error occured');
+			}
+		},
+		error : function(request)
+		{
+			$(instance).trigger(MediaManager.EVENT_UPDATE_ERROR,request);
 			console.log(request);
 		}
 	});

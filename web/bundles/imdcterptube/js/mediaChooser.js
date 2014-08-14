@@ -344,6 +344,10 @@ MediaChooser.prototype._previewVideoForwardFunctionDone = function(data) {
 	//console.log('Done!', data);
 
 	if (this.media != null) {
+		var mediaManager = new MediaManager();
+		this.media.title = $('#preview-media-title').val();
+		mediaManager.updateMedia(this.media);
+		
 		this.onSuccess();
 	}
 	this._terminatingFunction();
@@ -358,6 +362,9 @@ MediaChooser.prototype._previewVideoForwardFunctionDoneAndPost = function(data) 
 	//console.log('Done!', data);
 
 	if (this.media != null) {
+		var mediaManager = new MediaManager();
+		this.media.title = $('#preview-media-title').val();
+		mediaManager.updateMedia(this.media);
 		this.onSuccess(true);
 	}
 	this._terminatingFunction();

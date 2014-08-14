@@ -1828,7 +1828,7 @@ Player.prototype.resizeCanvas = function(e) {
 	this.maxSelected = this.trackPadding + this.trackWidth;
 
 	this.drawTrack();
-	this.redrawKeyPoints = true;
+	this.setHighlightedRegion(this.currentMinSelected, this.currentMaxSelected);
 	this.repaint();
 };
 

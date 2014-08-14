@@ -103,6 +103,15 @@ imdc_files_gateway_trim:
     options:
         expose: true
         
+imdc_files_gateway_update: 
+    pattern: /myFiles/update/{mediaId}
+    defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:updateMedia }
+    requirements:
+        _method:  POST
+        mediaId: \d+
+    options:
+        expose: true
+        
 imdc_files_gateway_record: 
     pattern: /myFiles/record
     defaults: { _controller: IMDCTerpTubeBundle:AddFileGateway:addRecording, url: null }
