@@ -1,6 +1,6 @@
 define(['core/mediaChooser'], function(MediaChooser) {
-    var Forum = function() {
-        this.player = null;
+    var Group = function() {
+        this.recorder = null;
         this.forwardButton = "<button class='forwardButton'></button>";
         this.media = null;
 
@@ -10,31 +10,29 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.bind_forwardFunction = this.forwardFunction.bind(this);
     }
 
-    Forum.TAG = "Forum";
+    Group.TAG = "Group";
 
-    Forum.Page = {
+    Group.Page = {
         NEW: 0,
-        EDIT: 1,
-        DELETE: 2
+        EDIT: 1
     };
 
     /**
      * MediaChooser params for each related page that uses MediaChooser
      */
-    Forum.mediaChooserOptions = function(page) {
+    Group.mediaChooserOptions = function(page) {
         switch (page) {
-            case Forum.Page.NEW:
-            case Forum.Page.EDIT:
+            case Group.Page.NEW:
+            case Group.Page.EDIT:
                 return {
                     element: $("#files"),
                     isPopUp: true,
                     callbacks: {
                         success: function(media) {
-                            $("#ForumForm_mediatextarea").val(media.id);
-                            //$("#ForumForm_mediaID").attr("data-mid", media.id); //TODO not used??
+                            $("#UserGroupForm_userGroupForum_mediatextarea").val(media.id);
                         },
                         reset: function() {
-                            $("#ForumForm_mediatextarea").val("");
+                            $("#UserGroupForm_userGroupForum_mediatextarea").val("");
                         }
                     }
                 };
@@ -45,56 +43,31 @@ define(['core/mediaChooser'], function(MediaChooser) {
      * ui element event bindings in order of appearance
      * @param {number} page
      */
-    Forum.bindUIEvents = function(page) {
-        console.log("%s: %s- page=%d", Forum.TAG, "bindUIEvents", page);
+    Group.bindUIEvents = function(page) {
+        console.log("%s: %s- page=%d", Group.TAG, "bindUIEvents", page);
 
         switch (page) {
-            case Forum.Page.NEW:
-            case Forum.Page.EDIT:
-                Forum._bindUIEventsNewEdit();
-                break;
-            case Forum.Page.DELETE:
-                Forum._bindUIEventsDelete();
+            case Group.Page.NEW:
+            case Group.Page.EDIT:
+                Group._bindUIEventsNewEdit();
                 break;
         }
     };
 
-    Forum._bindUIEventsNewEdit = function() {
-        console.log("%s: %s", Forum.TAG, "_bindUIEventsNewEdit");
+    Group._bindUIEventsNewEdit = function() {
+        console.log("%s: %s", Group.TAG, "_bindUIEventsNewEdit");
 
-        MediaChooser.bindUIEvents(Forum.mediaChooserOptions(Forum.Page.NEW));
-
-        /*
-         * by paul: since I hid the real 'submit' button to provide a nicely stylized button
-         * I have to click the real button when you click on the fancy one
-         */
-        /*$("#forum-form-submit-button").on("click", function(e) {
-            e.preventDefault();
-
-            $("#ForumForm_submit").click();
-        });*/
-    };
-
-    Forum._bindUIEventsDelete = function() {
-        /*
-         * by paul: since I hid the real 'submit' button to provide a nicely stylized button
-         * I have to click the real button when you click on the fancy one
-         */
-        /*$("#forum-form-submit-button").on("click", function(e) {
-            e.preventDefault();
-
-            $("#ForumFormDelete_submit").click();
-        });*/
+        MediaChooser.bindUIEvents(Group.mediaChooserOptions(Group.Page.NEW));
     };
 
     /**
      * @param {object} videoElement
      */
         //TODO move to media chooser, as this may be a more general function
-    Forum.prototype.createVideoRecorder = function(videoElement) {
-        console.log("%s: %s", Forum.TAG, "createVideoRecorder");
+    Group.prototype.createVideoRecorder = function(videoElement) {
+        console.log("%s: %s", Group.TAG, "createVideoRecorder");
 
-        this.player = new Player(videoElement, {
+        this.recorder = new Player(videoElement, {
             areaSelectionEnabled: false,
             updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
             type: Player.DENSITY_BAR_TYPE_RECORDER,
@@ -106,35 +79,35 @@ define(['core/mediaChooser'], function(MediaChooser) {
             forwardButtons: [this.forwardButton],
             forwardFunctions: [this.bind_forwardFunction]
         });
-        this.player.createControls();
+        this.recorder.createControls();
 
         //TODO revise
         videoElement.parents(".ui-dialog").on("dialogbeforeclose", (function(event, ui) {
             console.log("videoElement dialogbeforeclose");
-            if (this.player != null) {
-                this.player.destroyRecorder();
+            if (this.recorder != null) {
+                this.recorder.destroyRecorder();
             }
         }).bind(this));
     }
 
     //TODO move to media chooser, as this may be a more general function
-    Forum.prototype.onRecordingSuccess = function(data) {
-        console.log("%s: %s- mediaId=%d", Forum.TAG, "onRecordingSuccess", data.media.id);
+    Group.prototype.onRecordingSuccess = function(data) {
+        console.log("%s: %s- mediaId=%d", Group.TAG, "onRecordingSuccess", data.media.id);
 
         this.media = data.media;
         //mediaChooser.setMedia(this.media);
     };
 
     //TODO move to media chooser, as this may be a more general function
-    Forum.prototype.onRecordingError = function(e) {
-        console.log("%s: %s- e=%s", Forum.TAG, "onRecordingError", e);
+    Group.prototype.onRecordingError = function(e) {
+        console.log("%s: %s- e=%s", Group.TAG, "onRecordingError", e);
     };
 
     //TODO move to media chooser, as this may be a more general function
-    Forum.prototype.forwardFunction = function() {
-        console.log("%s: %s", Forum.TAG, "forwardFunction");
+    Group.prototype.forwardFunction = function() {
+        console.log("%s: %s", Group.TAG, "forwardFunction");
 
-        this.player.destroyRecorder();
+        this.recorder.destroyRecorder();
 
         /*mediaChooser.loadNextPage({
          url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
@@ -149,5 +122,5 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });
     };
 
-    return Forum;
+    return Group;
 });

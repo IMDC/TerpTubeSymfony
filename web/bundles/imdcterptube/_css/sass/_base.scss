@@ -19,6 +19,10 @@ body {
   padding-top: $navbar-top-height + $body-extra-padding;
   padding-bottom: $navbar-bottom-height + $body-extra-padding;
   background-color: #eeeeee;
+
+  @media (max-width: 1200px) {
+    padding-top: $navbar-top-height;
+  }
 }
 
 .tt-navbar-header {
@@ -79,22 +83,28 @@ body {
     padding-bottom: 10px;
 
     img {
-      max-width: 60px
+      max-width: 50px;
+      max-height: 50px;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    position: relative;
+    top: 0;
+    right: 0;
+    bottom: inherit;
+    margin-bottom: $body-extra-padding;
+
+    div {
+      padding-bottom: 0;
+      display: inline-block;
     }
   }
 }
 
-@media (max-width: 1200px) {
-  .tt-navbar-side {
-    position: relative;
-    top: inherit;
-    left: inherit;
-    bottom: inherit;
-
-    div {
-      display: inline-block;
-    }
-  }
+.tt-flash-message-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 .tt-separator-top {

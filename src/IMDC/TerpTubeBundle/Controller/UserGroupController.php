@@ -21,12 +21,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Entity\Forum;
-
-use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
+use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
 
 /**
  * Controller for UserGroup's which are essentially 'Groups' but the Group object is taken
@@ -44,11 +39,14 @@ class UserGroupController extends Controller
 	{
 		$em = $this->getDoctrine()->getManager();
 
-		$usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups();
-		//->findAll();
+        $recentGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups(4);
+        $usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups();
 
-		$response = $this->render('IMDCTerpTubeBundle:UserGroup:index.html.twig', array('usergroups' => $usergroups));
-		return $response;
+		//return $this->render('IMDCTerpTubeBundle:UserGroup:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Group:index.html.twig', array(
+            'recentGroups' => $recentGroups,
+            'groups' => $usergroups
+        ));
 	}
 
 	/**
@@ -61,17 +59,18 @@ class UserGroupController extends Controller
 	public function viewGroupAction(Request $request, $usergroupid)
 	{
 	    // check if user logged in
-	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-	    {
+	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
 	    
 		$em = $this->getDoctrine()->getManager();
 
-		$usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
+        $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
 
-		$response = $this->render('IMDCTerpTubeBundle:UserGroup:viewgroup.html.twig', array('usergroup' => $usergroup));
-		return $response;
+        //return $this->render('IMDCTerpTubeBundle:UserGroup:viewgroup.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Group:view.html.twig', array(
+            'group' => $usergroup
+        ));
 	}
 
 	/**
@@ -92,7 +91,7 @@ class UserGroupController extends Controller
 
 		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
-		$usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
+        $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
 		
 		// check if user has permission to edit based on ACL
 		$securityContext = $this->get('security.context');
@@ -102,7 +101,6 @@ class UserGroupController extends Controller
 		    throw new AccessDeniedException();
 		}
 
-		
 		$form = $this->createForm(new UserGroupType(), $usergroup);
 		
 		$form->handleRequest($request);
@@ -115,9 +113,14 @@ class UserGroupController extends Controller
 		    $this->get('session')->getFlashBag()->add('notice', 'UserGroup edited successfully!');
 		    return $this->redirect($this->generateUrl('imdc_group_view', array('usergroupid' => $usergroupid)));
 		}
+
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:UserGroup:editUserGroup.html.twig', array('form' => $form->createView(),
-		                                                                                   'usergroup' => $usergroup));
+		//return $this->render('IMDCTerpTubeBundle:UserGroup:editUserGroup.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Group:edit.html.twig', array(
+            'form' => $form->createView(),
+            'group' => $usergroup,
+            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+        ));
 	}
 	
 	/**
@@ -186,12 +189,6 @@ class UserGroupController extends Controller
 
 		$form = $this->createForm(new UserGroupType(new Forum()), $newusergroup);
 		
-		$formAudio = $this->createForm ( new AudioMediaFormType (), new Media (), array () );
-		$formVideo = $this->createForm ( new VideoMediaFormType (), new Media (), array () );
-		$formImage = $this->createForm ( new ImageMediaFormType (), new Media (), array () );
-		$formOther = $this->createForm ( new OtherMediaFormType (), new Media (), array () );
-		$uploadForms = array ( $formAudio->createView (), $formVideo->createView (), $formImage->createView (), $formOther->createView () );
-
 		$form->handleRequest($request);
 
 		if ($form->isValid())
@@ -236,9 +233,10 @@ class UserGroupController extends Controller
 		}
 
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array(
-				'form' => $form->createView(),
-        		'uploadForms' => $uploadForms
+		//return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Group:new.html.twig', array(
+            'form' => $form->createView(),
+            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
 		));
 
 	}
@@ -264,9 +262,8 @@ class UserGroupController extends Controller
 	    
 	    // flush objects to database
 	    $em->flush();
-	    
-	    $response = $this->render('IMDCTerpTubeBundle:UserGroup:viewgroup.html.twig', array('usergroup' => $usergroup));
-		return $response;
+
+        return $this->redirect($this->generateUrl('imdc_groups_show_all'));
 	}
 	
 	/**

@@ -1,8 +1,3 @@
-/*
- * included by:
- * Thread:viewthread.html.twig
- */
-
 define(['core/mediaChooser'], function(MediaChooser) {
     var Post = function() {
 

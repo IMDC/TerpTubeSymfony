@@ -1,0 +1,51 @@
+{% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
+
+{% block title %}Groups{% endblock title %}
+
+{% block sidebarlinks_groups %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <p>
+                    <a class="btn btn-default" href="{{ path('imdc_group_create_new') }}"><i class="fa fa-plus"></i> Create New Group</a>
+                </p>
+            </div>
+        </div>
+        <!-- recently created groups -->
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <hr class="tt-separator-top" />
+                {% if recentGroups|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:_Group:thumbnail.html.twig' with {'groups': recentGroups} %}
+                {% else %}
+                    <p class="text-center" style="margin-bottom: 20px;">No recent groups</p>
+                {% endif %}
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+        <!-- all groups -->
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <hr class="tt-separator-top" />
+                {% if groups|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:_Group:thumbnail.html.twig' %}
+                {% else %}
+                    <p class="text-center" style="margin-bottom: 20px;">No groups</p>
+                {% endif %}
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+{% endblock content %}

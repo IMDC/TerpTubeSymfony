@@ -38,63 +38,39 @@
                 //
                 // following is layout specific. keep it here
                 //
-                var bodyExtraPadding = 15; // variable from _base.scss
+                var bodyPaddingTop = parseInt($("body").css("padding-top"), 10);
+                var bodyPaddingBottom = parseInt($("body").css("padding-bottom"), 10);
 
-                // scroll threadReplyContainer
-                var pageContainerHeight = $(window).height() - $("#threadReplyContainer").offset().top - $(".tt-navbar-bottom").height() - bodyExtraPadding;
-                var plusHeight = pageContainerHeight - $("#threadReplyContainer div.tt-post-container").last().height();
-
-                $("#threadReplyContainer").data("calcoffset", $("#threadReplyContainer").offset().top - $(".tt-navbar-top").height() - bodyExtraPadding);
-                $("#threadReplyContainer").data("calcheight", pageContainerHeight);
-                $("#threadReplyContainer").height($("#threadReplyContainer").data("calcheight"));
-
-                $("#threadReplyContainer").data("initialheight", $("#threadReplyContainer").height());
+                var replyContainerHeight;
+                var plusHeight;
+                var scrollTop = $("#threadOpContainer").offset().top - bodyPaddingTop;
+                var lastReplyHeight = $("#threadReplyContainer div.tt-post-container").last().height();
                 $("#threadReplyContainer div div").first().append("<div id=\"replyContainerSpacer\"></div>");
 
-                $(window).scroll(function(e) {
-                    var scrollTop = $("#threadOpContainer").offset().top - $(".tt-navbar-top").height();
-
+                $(window).on("scroll", function(e) {
                     if ($(window).scrollTop() > scrollTop) {
-                        $('#threadReplyContainer').css({
-                            "top": $(window).scrollTop() - scrollTop + bodyExtraPadding,
-                            "height": $("#threadReplyContainer").data("calcheight") + $("#threadReplyContainer").data("calcoffset")
+                        $("#threadReplyContainer").css({
+                            "top": $(window).scrollTop() - scrollTop,
+                            "height": replyContainerHeight + scrollTop
                         });
                         $("#replyContainerSpacer").height(plusHeight);
                     } else {
-                        $('#threadReplyContainer').removeAttr("style");
-                        $('#threadReplyContainer').css({
-                            "height": $("#threadReplyContainer").data("calcheight")
+                        $("#threadReplyContainer").css({
+                            "top": 0,
+                            "height": replyContainerHeight + $(window).scrollTop()
                         });
-                        $("#replyContainerSpacer").height(plusHeight - $("#threadReplyContainer").data("calcoffset"));
+                        $("#replyContainerSpacer").height(plusHeight - scrollTop);
                     }
                 });
 
-                // scroll threadOpContainer
-                /*$("#threadOpContainer").data("calcoffset", $("#threadOpContainer").offset().top - $(".tt-navbar-top").height() - bodyExtraPadding);
-                $("#threadOpContainer").data("calcheight", $(window).height() - $("#threadOpContainer").offset().top - $(".tt-navbar-bottom").height() - bodyExtraPadding);
-                $("#threadOpContainer").height($("#threadOpContainer").data("calcheight"));
+                $(window).on("resize", function(e) {
+                    replyContainerHeight = $(window).height() - $("#threadOpContainer").offset().top - bodyPaddingBottom;
+                    plusHeight = replyContainerHeight - lastReplyHeight;
 
-                $("#threadReplyContainer").data("initialheight", $("#threadReplyContainer").height());
-                $("#threadReplyContainer").height($("#threadReplyContainer").height() + $("#threadOpContainer").height() - $("#threadReplyContainer div.tt-post-container").last().height());
+                    $(window).trigger("scroll");
+                });
 
-                // opening post at top
-                $(window).scroll(function(e) {
-                    var scrollTop = $("#threadReplyContainer").offset().top - $(".tt-navbar-top").height();
-
-                    if ($(window).scrollTop() > scrollTop) {
-                        $('#threadOpContainer').css({
-                            "top": $(window).scrollTop() - scrollTop + bodyExtraPadding,
-                            "height": $("#threadOpContainer").data("calcheight") + $("#threadOpContainer").data("calcoffset")
-                        });
-                    } else {
-                        $('#threadOpContainer').removeAttr("style");
-                        $('#threadOpContainer').css({
-                            "height": $("#threadOpContainer").data("calcheight")
-                        });
-                    }
-                });*/
-
-                $(window).trigger("scroll");
+                $(window).trigger("resize");
             });
         });
     </script>

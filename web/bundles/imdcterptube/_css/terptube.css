@@ -4,55 +4,61 @@ body {
   padding-bottom: 40px;
   background-color: #eeeeee;
 }
+@media (max-width: 1200px) {
+  /* line 18, sass/_base.scss */
+  body {
+    padding-top: 70px;
+  }
+}
 
-/* line 24, sass/_base.scss */
+/* line 28, sass/_base.scss */
 .tt-navbar-header {
   float: none;
 }
 
 @media (max-width: 1200px) and (min-width: 768px) {
-  /* line 29, sass/_base.scss */
+  /* line 33, sass/_base.scss */
   .tt-navbar-header {
     float: left;
   }
 }
-/* line 34, sass/_base.scss */
+/* line 38, sass/_base.scss */
 .tt-navbar-logo {
   padding-top: 5px;
   padding-bottom: 5px;
   min-height: 70px;
 }
 
-/* line 40, sass/_base.scss */
+/* line 44, sass/_base.scss */
 .tt-navbar-top {
   min-height: 70px;
   color: white;
 }
 
-/* line 45, sass/_base.scss */
+/* line 49, sass/_base.scss */
 .tt-navbar-nav-top > li > a {
   padding-top: 21px;
   padding-bottom: 21px;
 }
 
-/* line 50, sass/_base.scss */
+/* line 54, sass/_base.scss */
 .tt-navbar-right-top > li > a {
   line-height: 2;
 }
 
-/* line 54, sass/_base.scss */
+/* line 58, sass/_base.scss */
 .tt-navbar-bottom {
   min-height: 25px;
   color: white;
 }
 
-/* line 59, sass/_base.scss */
+/* line 63, sass/_base.scss */
 .tt-copyright {
   padding-top: 2.5px;
   padding-bottom: 2.5px;
 }
 
-/* line 64, sass/_base.scss */
+/* line 68, sass/_base.scss */
 .tt-navbar-side {
   padding-top: 15px;
   padding-bottom: 15px;
@@ -62,50 +68,59 @@ body {
   bottom: 25px;
   background-color: #888888;
 }
-/* line 73, sass/_base.scss */
+/* line 77, sass/_base.scss */
 .tt-navbar-side a {
   color: #000000;
   font-size: 1.2em;
 }
-/* line 78, sass/_base.scss */
+/* line 82, sass/_base.scss */
 .tt-navbar-side div {
   padding-bottom: 10px;
 }
-/* line 81, sass/_base.scss */
+/* line 85, sass/_base.scss */
 .tt-navbar-side div img {
-  max-width: 60px;
+  max-width: 50px;
+  max-height: 50px;
 }
-
 @media (max-width: 1200px) {
-  /* line 88, sass/_base.scss */
+  /* line 68, sass/_base.scss */
   .tt-navbar-side {
     position: relative;
-    top: inherit;
-    left: inherit;
+    top: 0;
+    right: 0;
     bottom: inherit;
+    margin-bottom: 15px;
   }
-  /* line 94, sass/_base.scss */
+  /* line 98, sass/_base.scss */
   .tt-navbar-side div {
+    padding-bottom: 0;
     display: inline-block;
   }
 }
-/* line 100, sass/_base.scss */
+
+/* line 105, sass/_base.scss */
+.tt-flash-message-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* line 110, sass/_base.scss */
 .tt-separator-top, .tt-separator-bottom {
   border-top: 1px solid #000000;
 }
 
-/* line 104, sass/_base.scss */
+/* line 114, sass/_base.scss */
 .tt-separator-bottom {
   margin-top: 0;
 }
 
-/* line 110, sass/_base.scss */
+/* line 120, sass/_base.scss */
 .tt-date {
   color: #aaa;
   font-size: 0.9em;
 }
 
-/* line 115, sass/_base.scss */
+/* line 125, sass/_base.scss */
 .tt-avatar {
   max-height: 150px;
 }

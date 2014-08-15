@@ -1,0 +1,63 @@
+{% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
+
+{% block title %}Create a new Group{% endblock title %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                group = new $tt.Controller.Group();
+                //TODO context
+                context = group;
+
+                $tt.Controller.Group.bindUIEvents($tt.Controller.Group.Page.NEW);
+            });
+        });
+    </script>
+{% endblock header %}
+
+{% block sidebarlinks_groups %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-2">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.visibleToPublic) }}
+                {{ form_row(form.visibleToRegisteredUsers) }}
+                {{ form_row(form.openForNewMembers) }}
+                {{ form_row(form.joinByInvitationOnly) }}
+                <div class="hidden">
+                    {{ form_row(form.userGroupForum.titleText, {'required': false}) }}
+                    {{ form_rest(form.userGroupForum) }}
+                    {{ form_widget(form.submit) }}
+                </div>
+                <button class="btn btn-success"><i class="fa fa-check"></i> Create</button>
+                <a class="btn btn-danger" href="{{ path('imdc_groups_show_all') }}"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-info" role="alert">
+                    When you create a new Group, a Forum is automatically created for you with the same name.
+                    Please add a media file (audio, video, image) to this forum, eg. a group logo or picture.
+                </div>
+                {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'form': form.userGroupForum} %}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block outside_body %}
+    {{ parent() }}
+
+    {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' with {'form': form.userGroupForum} %}
+{% endblock outside_body %}

@@ -1,0 +1,42 @@
+{#
+included by:
+_Group:view.html.twig
+#}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% set counter = 1 %}
+{% for member in members if member.getProfile %}
+    {% if counter % 4 == 1 %}
+        <div class="row">
+            <ul class="list-unstyled">
+    {% endif %}
+    <li>
+        <div class="col-md-3">
+            <div class="thumbnail text-center">
+                <div class="row">
+                    <div class="col-md-4">
+                        {% include 'IMDCTerpTubeBundle:_Member:avatar.html.twig' %}
+                    </div>
+                    <div class="col-md-8">
+                        <h3>{% include 'IMDCTerpTubeBundle:_Member:username.html.twig' %}</h3>
+                        <ul class="list-unstyled">
+                            <li class="text-muted"><strong>{{ 'member.infoBlock.joined'|trans }}:</strong> {{ member.getJoinDate|date('M j Y') }}</li>
+                            <li class="text-muted"><strong>{{ 'member.infoBlock.postCount'|trans }}</strong> <span class="badge">{{ member.getPostCount }}</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="margin-top: 20px; margin-bottom: 10px">
+                        {% include 'IMDCTerpTubeBundle:_Member:connectTools.html.twig' with {'faSize': 'fa-2x'} %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    {% if (counter != 0 and counter % 4 == 0) or counter == members|length %}
+            </ul>
+        </div>
+    {% endif %}
+    {% set counter = counter + 1 %}
+{% endfor %}

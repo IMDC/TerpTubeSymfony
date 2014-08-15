@@ -1,0 +1,35 @@
+{#
+included by:
+_Group:index.html.twig
+#}
+
+{% set counter = 1 %}
+{% for group in groups %}
+    {% if counter % 4 == 1 %}
+        <div class="row">
+            <ul class="list-unstyled">
+    {% endif %}
+    <li>
+        <div class="col-md-3">
+            <div class="thumbnail text-center">
+                <h3><a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a></h3>
+                <p class="text-muted"><strong>Created:</strong> {{ group.dateCreated|date('g:ia F j Y') }}</p>
+                <p class="text-muted"><strong>Members</strong> <span class="badge">{{ group.getMembers|length }}</span></p>
+                <p class="text-muted"><strong>Founder:</strong> {{ group.getUserFounder.getUserName }}</p>
+                <p>
+                    <ul class="list-unstyled list-inline">
+                        <li><a class="btn btn-info" href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">View Group Info</a></li>
+                        {% if app.user == group.getUserFounder %}
+                            <li><a class="btn btn-default" href="{{ path('imdc_group_edit', {'usergroupid': group.id}) }}">Edit Group</a></li>
+                        {% endif %}
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </li>
+    {% if (counter != 0 and counter % 4 == 0) or counter == groups|length %}
+            </ul>
+        </div>
+    {% endif %}
+    {% set counter = counter + 1 %}
+{% endfor %}

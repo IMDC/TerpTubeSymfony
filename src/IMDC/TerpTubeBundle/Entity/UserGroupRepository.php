@@ -13,17 +13,19 @@ use IMDC\TerpTubeBundle\Entity\User;
  */
 class UserGroupRepository extends EntityRepository
 {
-	public function getPublicallyVisibleGroups()
+	public function getPublicallyVisibleGroups($limit=0)
 	{
 		$query = $this->getEntityManager()
-						->createQuery
-							('SELECT g
-		                    	FROM IMDCTerpTubeBundle:UserGroup g
-								WHERE g.visibleToPublic = TRUE
-		                        ORDER BY g.dateCreated DESC
-	                        ');
-		//$query->setMaxResults($limit);
-		 
+						->createQuery('
+                            SELECT g
+                            FROM IMDCTerpTubeBundle:UserGroup g
+                            WHERE g.visibleToPublic = TRUE
+                            ORDER BY g.dateCreated DESC');
+
+        if ($limit > 0) {
+            $query->setMaxResults($limit);
+        }
+
 		return $query->getResult();
 	}
 	

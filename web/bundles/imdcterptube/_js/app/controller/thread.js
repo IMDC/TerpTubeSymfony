@@ -1,9 +1,3 @@
-/*
- * included by:
- * Thread:viewthread.html.twig
- * Thread:viewthreadPrototype.hml.twig
- */
-
 define(['core/mediaChooser'], function(MediaChooser) {
     var Thread = function() {
         this.keyPoints = new Array();
@@ -432,17 +426,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
             // avoid animating when key points are overlapped and multiple invokes of this event are called
             if (!$("#threadReplyContainer").is(':animated')) {
-                // scroll threadReplyContainer
                 $("#threadReplyContainer").animate({
                     scrollTop: $("#postContainer" + keyPoint.id).position().top
                 }, 200);
-
-                // scroll threadOpContainer
-                /*if (!$("body").is(':animated')) {
-                    $("body").animate({
-                        scrollTop: $("#postContainer" + keyPoint.id).position().top + $(".tt-navbar-top").height() - 15 // variable from _base.scss
-                    }, 200);
-                }*/
             }
         });
 
