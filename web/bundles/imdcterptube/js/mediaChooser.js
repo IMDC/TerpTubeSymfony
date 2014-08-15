@@ -152,6 +152,7 @@ MediaChooser._dialogTitleForType = function(type) {
 
 MediaChooser._cleanFileNameNoExt = function(fileName) {
 	//FIXME extract proper file name
+	fileName = fileName.split(/(\\|\/)/g).pop()
 	return (fileName.substr(0, fileName.lastIndexOf('.')) || fileName).replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, '-');
 };
 
