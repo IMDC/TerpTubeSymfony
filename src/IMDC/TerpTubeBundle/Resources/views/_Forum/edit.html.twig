@@ -23,12 +23,12 @@
 {% block content %}
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-offset-2 col-md-8">
                 <img class="img-responsive center-block" src="" />
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-offset-2 col-md-8">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
                 {% if forum.getTitleMedia[0] is defined %}

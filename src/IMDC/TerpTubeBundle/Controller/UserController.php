@@ -63,14 +63,17 @@ class UserController extends Controller
         $query = $em->createQuery($dql)->setHint('knp_paginator.count', $count);
         
         $paginator = $this->get('knp_paginator');
-        $pagination = $paginator->paginate(
+        $members = $paginator->paginate(
             $query,
             $this->get('request')->query->get('page', 1) /* page number */,
             12, /* limit per page */
             array('distinct' => false)
         );
         
-        return $this->render('IMDCTerpTubeBundle:Member:index.html.twig', array('pagination' => $pagination));        
+        //return $this->render('IMDCTerpTubeBundle:Member:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Member:index.html.twig', array(
+            'members' => $members
+        ));
     }
     
     

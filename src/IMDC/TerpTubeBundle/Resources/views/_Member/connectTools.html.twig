@@ -26,4 +26,19 @@ _Post:post.html.twig
             <a href="{{ path('imdc_add_to_friends_list', {'userid': member.getId}) }}" title="Click to add {{ member.getUserName }} to your friends list"><i class="fa fa-plus {{ faSize }}"></i></a>
         {% endif %}
     </li>
+    {% if not (app.user == member) %}
+        <li>
+            {% if app.user.isUserOnMentorList(member) %}
+                <i class="fa fa-star {{ faSize }}" title="This person is your mentor"></i>
+            {% else %}
+                <a href="{{ path('imdc_invitation_create_tobementor', {'id': member.id}) }}" title="Invite user to be your mentor"><i class="fa fa-inbox {{ faSize }}"></i></a>
+            {% endif %}
+        </li>
+        {% if app.user.isUserOnMenteeList(member) %}
+            <li>
+                <i class="fa fa-star {{ faSize }}" title="This user is your mentee"></i>
+            </li>
+        {% endif %}
+    {% endif %}
+    </li>
 </ul>

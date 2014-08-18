@@ -286,8 +286,11 @@ class UserGroupController extends Controller
 	    //$usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($user);
 	    $usergroups = $user->getUserGroups();
 	    //->findAll();
-	    
-	    $response = $this->render('IMDCTerpTubeBundle:UserGroup:myGroups.html.twig', array('usergroups' => $usergroups));
-	    return $response;
+
+        //return $this->render('IMDCTerpTubeBundle:UserGroup:myGroups.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Group:index.html.twig', array(
+            'groups' => $usergroups,
+            'isMyGroups' => true
+        ));
 	}
 }

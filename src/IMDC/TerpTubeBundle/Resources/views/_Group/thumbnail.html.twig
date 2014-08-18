@@ -14,7 +14,7 @@ _Group:index.html.twig
             <div class="thumbnail text-center">
                 <h3><a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a></h3>
                 <p class="text-muted"><strong>Created:</strong> {{ group.dateCreated|date('g:ia F j Y') }}</p>
-                <p class="text-muted"><strong>Members</strong> <span class="badge">{{ group.getMembers|length }}</span></p>
+                <p class="text-muted"><strong>Members:</strong> {{ group.getMembers|length }}</p>
                 <p class="text-muted"><strong>Founder:</strong> {{ group.getUserFounder.getUserName }}</p>
                 <p>
                     <ul class="list-unstyled list-inline">

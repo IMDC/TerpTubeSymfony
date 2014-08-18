@@ -24,8 +24,9 @@ class PrivateMessageReplyType extends AbstractType
                     ->addModelTransformer($transformer)
         );
     	$builder->add('subject');
+        $builder->add('attachedMedia');
     	
-    	$builder->add('attachedMedia', 'collection', array(
+    	/*$builder->add('attachedMedia', 'collection', array(
     	    'type' => 'entity',
     	    'allow_add' => true,
     	    'allow_delete' => true,
@@ -38,7 +39,7 @@ class PrivateMessageReplyType extends AbstractType
     	        'empty_value' => 'Choose an option',
     	        'choices' => $repository->findAllMediaCreatedByUser($user),
     	    )
-	    ));
+	    ));*/
     	
         $builder->add('content', 'textarea');
         $builder->add('submit', 'submit');

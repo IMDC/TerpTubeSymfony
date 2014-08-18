@@ -188,6 +188,8 @@ imdc_message_mark_as_read:
     requirements:
         _method:  POST
         messageid: \d+
+    options:
+        expose: true
 
 imdc_message_reply:
     pattern: /reply/{messageid}

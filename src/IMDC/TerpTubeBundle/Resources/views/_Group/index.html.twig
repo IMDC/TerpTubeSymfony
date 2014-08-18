@@ -1,8 +1,25 @@
 {% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
 
-{% block title %}Groups{% endblock title %}
+{% if isMyGroups is not defined %}
+    {% set isMyGroups = false %}
+{% endif %}
+
+{% block title %}
+    {% if isMyGroups %}
+        {{ app.user }}'s&nbsp;
+    {% endif %}
+    Groups
+{% endblock title %}
 
 {% block sidebarlinks_groups %}class="active"{% endblock %}
+
+{% block sidebarlinks_members %}
+    {% if not isMyGroups %}class="active"{% endif %}
+{% endblock sidebarlinks_members %}
+
+{% block nav_ul_authenticated_my_groups %}
+    {% if isMyGroups %}class="active"{% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="col-md-12">
@@ -13,23 +30,25 @@
                 </p>
             </div>
         </div>
-        <!-- recently created groups -->
-        <div class="row">
-            <div class="col-md-offset-1 col-md-10">
-                <img class="img-responsive center-block" src="" />
+        {% if not isMyGroups %}
+            <!-- recently created groups -->
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10">
+                    <img class="img-responsive center-block" src="" />
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-offset-1 col-md-10">
-                <hr class="tt-separator-top" />
-                {% if recentGroups|length > 0 %}
-                    {% include 'IMDCTerpTubeBundle:_Group:thumbnail.html.twig' with {'groups': recentGroups} %}
-                {% else %}
-                    <p class="text-center" style="margin-bottom: 20px;">No recent groups</p>
-                {% endif %}
-                <hr class="tt-separator-bottom" />
+            <div class="row">
+                <div class="col-md-offset-1 col-md-10">
+                    <hr class="tt-separator-top" />
+                    {% if recentGroups|length > 0 %}
+                        {% include 'IMDCTerpTubeBundle:_Group:thumbnail.html.twig' with {'groups': recentGroups} %}
+                    {% else %}
+                        <p class="text-center" style="margin-bottom: 20px;">No recent groups</p>
+                    {% endif %}
+                    <hr class="tt-separator-bottom" />
+                </div>
             </div>
-        </div>
+        {% endif %}
         <!-- all groups -->
         <div class="row">
             <div class="col-md-offset-1 col-md-10">

@@ -89,20 +89,20 @@
 								<div class="collapse navbar-collapse" id="tt-navbar-collapse-1">
 									<ul class="nav navbar-nav tt-navbar-nav-top">
 										{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-											{% block nav_ul_authenticated_my_files %}<li>{% endblock %}
+											<li {% block nav_ul_authenticated_my_files %}{% endblock %}>
 												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_files_gateway') }}"><i class="fa fa-folder-open fa-2x"></i></a>
 											</li>
-											{% block nav_ul_authenticated_my_interpretations %}<li>{% endblock %}
+                                            <li {% block nav_ul_authenticated_my_interpretations %}{% endblock %}>
 												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_files_gateway_interpretations') }}"><i class="fa fa-film fa-2x"></i></a>
 											</li>
-											{% block nav_ul_authenticated_my_friends %}<li>{% endblock %}
+                                            <li {% block nav_ul_authenticated_my_friends %}{% endblock %}>
 												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-user fa-2x"></i></a>
 											</li>
-											{% block nav_ul_authenticated_my_groups %}<li>{% endblock %}
+                                            <li {% block nav_ul_authenticated_my_groups %}{% endblock %}>
 												<a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_mygroups') }}"><i class="fa fa-users fa-2x"></i></a>
 											</li>
 											{% if is_granted('ROLE_SUPER_ADMIN') %}
-												{% block nav_ul_authenticated_admin %}<li>{% endblock %}
+                                                <li {% block nav_ul_authenticated_admin %}{% endblock %}>
 													<a class="navbar-link" href="{{ path('sonata_admin_dashboard') }}"><i class="fa fa-cogs fa-2x"></i></a>
 												</li>
 											{% endif %}

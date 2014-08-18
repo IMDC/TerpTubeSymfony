@@ -47,7 +47,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                         successAndPost: function(media) {
                             $("#ThreadForm_mediatextarea").val(media.id);
 					console.log("successAndPostNEW/EDIT");
-					$("a#postReplySubmit").trigger("click");
+					$("#postReplySubmit").trigger("click");
                             //TODO actually post here
                         },
                         reset: function() {
@@ -68,7 +68,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                         successAndPost: function(media) {
                             $("#PostFormFromThread_mediatextarea").val(media.id);
 					console.log("successAndPostVIEW");
-					$("a#postReplySubmit").trigger("click");
+					$("#postReplySubmit").trigger("click");
                             //TODO actually post here
                         },
                         reset: function() {

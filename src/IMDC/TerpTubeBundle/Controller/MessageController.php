@@ -83,8 +83,10 @@ class MessageController extends Controller
 		}
 
 		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array('form' => $form->createView(),));
-
+		//return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Message:new.html.twig', array(
+            'form' => $form->createView()
+        ));
 	}
 
 	/**
@@ -180,11 +182,12 @@ class MessageController extends Controller
 // 		$messages = $em->getRepository('IMDCTerpTubeBundle:User')->getMostRecentInboxMessages($user, 30);
 		$messages = $user->getReceivedMessages();
 
-		$response = $this
-				->render('IMDCTerpTubeBundle:Message:inbox.html.twig',
-						array('messages' => $messages, 'feedback' => $feedbackmsg));
-		return $response;
-
+        //return $this->render('IMDCTerpTubeBundle:Message:inbox.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Message:index.html.twig', array(
+            'messages' => $messages,
+            'feedback' => $feedbackmsg,
+            'tab' => 'inbox'
+        ));
 	}
 
 	public function messageSuccessAction(Request $request)
@@ -302,21 +305,11 @@ class MessageController extends Controller
 
 		$messages = $user->getSentMessages();
 
-		// if no feedback message, just show all messages
-		if (@is_null($feedbackmsg))
-		{
-			$response = $this
-					->render('IMDCTerpTubeBundle:Message:sentmessages.html.twig', array('messages' => $messages));
-			return $response;
-		}
-		// show all messages and the feedback message
-		else
-		{
-			$response = $this
-					->render('IMDCTerpTubeBundle:Message:sentmessages.html.twig',
-							array('messages' => $messages, 'feedback' => $feedbackmsg));
-			return $response;
-		}
+		//return $this->render('IMDCTerpTubeBundle:Message:sentmessages.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Message:index.html.twig', array(
+            'messages' => $messages,
+            'tab' => 'sent'
+        ));
 	}
 
 	public function viewArchivedMessagesAction(Request $request)
@@ -332,9 +325,11 @@ class MessageController extends Controller
 		// todo: implement message archive system
 		$messages = $user->getArchivedMessages();
 
-		$response = $this
-				->render('IMDCTerpTubeBundle:Message:archivedmessages.html.twig', array('messages' => $messages));
-		return $response;
+        //return $this->render('IMDCTerpTubeBundle:Message:archivedmessages.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Message:index.html.twig', array(
+            'messages' => $messages,
+            'tab' => 'archive'
+        ));
 	}
 
 	public function viewMessageAction(Request $request, $messageid)
@@ -374,10 +369,11 @@ class MessageController extends Controller
 		        $em->persist($user);
 		        $em->flush();
 		    }
-		    
-		    $response = $this
-		    ->render('IMDCTerpTubeBundle:Message:viewprivatemessage.html.twig', array('message' => $message));
-		    return $response;
+
+            //return $this->render('IMDCTerpTubeBundle:Message:viewprivatemessage.html.twig', array(
+            return $this->render('IMDCTerpTubeBundle:_Message:view.html.twig', array(
+                'message' => $message
+            ));
 		}
 		else {
 		    $this->get('session')->getFlashBag()->add(
@@ -479,8 +475,11 @@ class MessageController extends Controller
 		}
 
 		// form not valid, show the basic form
-		return $this
-				->render('IMDCTerpTubeBundle:Message:replytoprivatemessage.html.twig',
-						array('form' => $form->createView(), 'message' => $message,));
+		//return $this->render('IMDCTerpTubeBundle:Message:replytoprivatemessage.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Message:new.html.twig', array(
+            'form' => $form->createView(),
+            'message' => $message,
+            'isReply' => true
+        ));
 	}
 }

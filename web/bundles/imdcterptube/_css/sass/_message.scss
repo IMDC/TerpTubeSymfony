@@ -1,0 +1,40 @@
+.tt-message-table {
+  > thead {
+    background-color: white;
+  }
+}
+
+$message-div-border-width: 1px;
+$message-div-border-style: solid;
+$message-div-border-color: #ddd;
+$message-div-border: $message-div-border-width $message-div-border-style $message-div-border-color;
+
+.tt-message-div {
+  div.row {
+    border-top: $message-div-border;
+    border-left: $message-div-border;
+    border-right: $message-div-border;
+
+    &:last-child {
+      border-bottom: $message-div-border;
+      margin-bottom: 15px;
+    }
+
+    &.tt-message-div-header {
+      background-color: white;
+
+      > div[class*="col-"]:first-child {
+        font-weight: bold;
+      }
+    }
+  }
+
+  div[class*="col-"] {
+    border-right: $message-div-border;
+    padding: 5px;
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+}

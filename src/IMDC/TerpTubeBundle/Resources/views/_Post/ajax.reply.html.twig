@@ -12,7 +12,7 @@ TerpTube.Controller.Thread
             {{ form_start(form, {'action' : "#{formpath}"}) }}
             {{ form_errors(form) }}
             {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}
-            {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+            {{ form_row(form.content, {'required': false, 'attr': {'class': 'autosize'}}) }}
             {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
             <button class="btn btn-success"><i class="fa fa-check"></i> Reply</button>
             <button class="btn btn-danger post-cancel" id="cancelReplyPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
