@@ -32,6 +32,10 @@ use IMDC\TerpTubeBundle\Entity\Post;
 class MyFilesGatewayController extends Controller
 {
 	
+	const FEEDBACK_MESSAGE_NOT_OWNER = "Not the rightful owner";
+	const FEEDBACK_MESSAGE_NOT_EXIST_MEDIA = "Media does not exist";
+	const FEEDBACK_MESSAGE_NOT_EXIST_USER = "User does not exist";
+	
 	/**
 	 * A gateway form for uploading/recording or selecting existing files
 	 *
@@ -93,6 +97,7 @@ class MyFilesGatewayController extends Controller
 				'interpretations' => $interpretations 
 		));
 	}
+	
 	public function previewCompoundMediaAction(Request $request, $compoundMediaId, $url)
 	{
 		$recorderConfiguration = $request->get("recorderConfiguration");
@@ -108,7 +113,7 @@ class MyFilesGatewayController extends Controller
 		$mediaFile = $em->getRepository('IMDCTerpTubeBundle:CompoundMedia')->find($compoundMediaId);
 		if ($userObject == null)
 		{
-			throw new NotFoundHttpException("This user does not exist");
+			throw new NotFoundHttpException(MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_USER);
 		}
 		
 		if (! $request->isXmlHttpRequest())
@@ -156,11 +161,19 @@ class MyFilesGatewayController extends Controller
 		 * @var $media IMDC\TerpTubeBundle\Entity\Media
 		 */
 		$media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
-		if ($media->getOwner() != $user)
+		
+		if ($media == null)
 		{
 			$return = array (
 					'responseCode' => 400,
-					'feedback' => 'Not the rightful owner of the file' 
+					'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
+			);
+		}
+		else if ($media->getOwner() != $user)
+		{
+			$return = array (
+					'responseCode' => 400,
+					'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
 			);
 		}
 		else
@@ -271,19 +284,17 @@ class MyFilesGatewayController extends Controller
 		 * @var $media IMDC\TerpTubeBundle\Entity\Media
 		 */
 		$media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
-		
-		if ($media->getOwner() != $user)
+		// FIXME need to figure out if video is being transcoded and interrupt it if so and clean up
+		if ($media !== null)
 		{
-			$return = array (
-					'responseCode' => 400,
-					'feedback' => 'Not the rightful owner of the file' 
-			);
-		}
-		else
-		{
-			// FIXME need to figure out if video is being transcoded and interrupt it if so and clean up
-			if ($media !== null)
+			if ($media->getOwner() != $user)
 			{
+				$return = array (
+						'responseCode' => 400,
+						'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
+				);
+			}
+			else {
 				$em->remove($media);
 				$em->flush();
 				$return = array (
@@ -291,13 +302,13 @@ class MyFilesGatewayController extends Controller
 						'feedback' => 'Successfully removed media!' 
 				);
 			}
-			else
-			{
-				$return = array (
-						'responseCode' => 400,
-						'feedback' => 'Could not remove media, or media does not exist.' 
-				);
-			}
+		}
+		else
+		{
+			$return = array (
+					'responseCode' => 400,
+					'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
+			);
 		}
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array (
@@ -379,6 +390,7 @@ class MyFilesGatewayController extends Controller
 		
 		return $response;
 	}
+	
 	public function recordMediaAction(Request $request, $url)
 	{
 		// throw new NotImplementedException("Not yet implemented");
@@ -392,7 +404,7 @@ class MyFilesGatewayController extends Controller
 		$userObject = $userManager->findUserByUsername($user->getUsername());
 		if ($userObject == null)
 		{
-			throw new NotFoundHttpException("This user does not exist");
+			throw new NotFoundHttpException(MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_USER);
 		}
 		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig', array (
 				"recorderConfiguration" => $recorderConfiguration 
@@ -422,11 +434,18 @@ class MyFilesGatewayController extends Controller
 		 */
 		$mediaToUpdate = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
 		
-		if ($mediaToUpdate->getOwner() != $user)
+		if ($mediaToUpdate == null)
 		{
 			$return = array (
 					'responseCode' => 400,
-					'feedback' => 'Not the rightful owner of the file' 
+					'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
+			);
+		}
+		else if ($mediaToUpdate->getOwner() != $user)
+		{
+			$return = array (
+					'responseCode' => 400,
+					'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER 
 			);
 		}
 		else
@@ -445,7 +464,7 @@ class MyFilesGatewayController extends Controller
 			{
 				$return = array (
 						'responseCode' => 400,
-						'feedback' => 'Could not remove media, or media does not exist.' 
+						'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
 				);
 			}
 		}

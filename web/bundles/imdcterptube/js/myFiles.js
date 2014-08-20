@@ -123,7 +123,7 @@ MyFiles.prototype.onRecordingSuccess = function(data) {
 	console.log("%s: %s- mediaId=%d", MyFiles.TAG, "onRecordingSuccess", data.media.id);
 	
 	this.media = data.media;
-	this.mediaChooser.setMedia(this.media);
+	mediaChooser.setMedia(this.media);
 };
 
 //TODO move to media chooser, as this may be a more general function
@@ -137,10 +137,12 @@ MyFiles.prototype.forwardFunction = function() {
 	
 	this.player.destroyRecorder();
 	
-	this.mediaChooser.previewMedia({
+//	mediaChooser = this.mediaChooser;
+	mediaChooser.previewMedia({
 		type: MediaChooser.TYPE_RECORD_VIDEO,
 		mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
-		mediaId: this.media.id
+		mediaId: this.media.id,
+		recording: true
 	});
 };
 

@@ -13,6 +13,7 @@ define(function() {
         this.bind__previewVideoForwardFunctionCut = this._previewVideoForwardFunctionCut.bind(this);
         this.bind__previewVideoForwardFunctionDone = this._previewVideoForwardFunctionDone.bind(this);
         this.bind__previewVideoForwardFunctionDoneAndPost = this._previewVideoForwardFunctionDoneAndPost.bind(this);
+        this.bind__previewVideoBackFunction = this._previewVideoBackFunction.bind(this);
     };
 
     MediaChooser.TAG = "MediaChooser";
@@ -260,6 +261,7 @@ define(function() {
     MediaChooser.prototype.previewMedia = function(options) {
         console.log("%s: %s", MediaChooser.TAG, "previewMedia");
 
+        this.recording = options.recording;
         if (this.isPopUp && !this.element.dialog("isOpen")) {
             this._popUp(
                 options.type,
@@ -274,11 +276,10 @@ define(function() {
 
     MediaChooser.prototype._loadMediaPage = function(mediaUrl, mediaId) {
         console.log("%s: %s", MediaChooser.TAG, "_loadMediaPage");
-
         this.loadNextPage({
             url: mediaUrl,
             method: "POST",
-            data: { mediaId: mediaId }
+            data: {mediaId: mediaId}
         });
     };
 
@@ -293,7 +294,7 @@ define(function() {
 
                 this.setMedia(data.media);
 
-                if (data.finished !== "undefined" && data.finished === true) {
+                if (typeof data.finished !== "undefined" && data.finished === true) {
                     if (this.media != null) {
                         this.onSuccess();
                     }
@@ -368,15 +369,37 @@ define(function() {
             forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>", "<button class='doneAndPostButton'></button>"];
             forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone, this.bind__previewVideoForwardFunctionDoneAndPost];
         }
+        var backButtons;
+        var backFunctions;
+        if (typeof this.recording != 'undefined' && this.recording)
+        {
+        	backButtons = ["<button class='backButton'></button>"]
+        	backFunctions = [this.bind__previewVideoBackFunction]
+    	}
+        
         this.player = new Player($("#" + this.media.id), {
             areaSelectionEnabled: true,
             updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE,
             //playHeadImage: "images/feedback_icons/round_plus.png",
             //playHeadImageOnClick: function(){ alert("plus");},
             forwardButtons: forwardButtons,
-            forwardFunctions: forwardFunctions
+            forwardFunctions: forwardFunctions,
+            backButtons: backButtons,
+            backFunctions: backFunctions
         });
         this.player.createControls();
+    };
+    MediaChooser.prototype._previewVideoBackFunction = function(data) {
+        console.log("%s: %s", MediaChooser.TAG, "_previewVideoBackFunction");
+
+        // delete the current media!
+        var mediaManager = new MediaManager();
+        mediaManager.deleteMedia(this.media.id);
+        
+        //Go back to recording
+        this.element.html("");
+        this.media = null;
+        this._loadChooserPage(MediaChooser.TYPE_RECORD_VIDEO);
     };
 
     MediaChooser.prototype._previewVideoForwardFunctionCut = function(data) {
