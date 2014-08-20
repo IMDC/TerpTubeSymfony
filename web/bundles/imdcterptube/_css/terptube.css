@@ -248,13 +248,13 @@ body {
 
 /* line 13, sass/_message.scss */
 .tt-message-div div.row {
-  border-top: 1px solid #dddddd;
-  border-left: 1px solid #dddddd;
-  border-right: 1px solid #dddddd;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
 }
 /* line 18, sass/_message.scss */
 .tt-message-div div.row:last-child {
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #ddd;
   margin-bottom: 15px;
 }
 /* line 23, sass/_message.scss */
@@ -267,7 +267,7 @@ body {
 }
 /* line 32, sass/_message.scss */
 .tt-message-div div[class*="col-"] {
-  border-right: 1px solid #dddddd;
+  border-right: 1px solid #ddd;
   padding: 5px;
 }
 /* line 36, sass/_message.scss */

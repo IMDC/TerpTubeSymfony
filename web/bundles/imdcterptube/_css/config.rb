@@ -1,6 +1,5 @@
 # Require any additional compass plugins here.
 require 'bootstrap-sass'
-require 'growl'
 
 http_path = "/"
 #css_dir = "stylesheets"
@@ -24,11 +23,3 @@ javascripts_dir = "javascripts"
 # preferred_syntax = :sass
 # and then run:
 # sass-convert -R --from scss --to sass sass scss && rm -rf sass && mv scss sass
-
-on_stylesheet_saved do |filename|
-  #FileUtils.copy_file(filename, "../#{File.basename(filename)}")
-  Growl.notify {
-     self.message = "#{File.basename(filename)} updated!"
-     self.icon = '/path/to/success.jpg'
-   }
-end
