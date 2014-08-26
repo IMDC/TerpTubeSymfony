@@ -27,7 +27,7 @@ use FOS\UserBundle\Controller\ProfileController as BaseController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-class ProfileController extends BaseController
+class ProfileController extends Controller
 {
 
 	/**
@@ -68,13 +68,16 @@ class ProfileController extends BaseController
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
-		$profile = $userObject->getProfile();
-		return $this->container->get('templating')
+		//$profile = $userObject->getProfile();
+		/*8return $this->container->get('templating')
 				->renderResponse(
 						'IMDCTerpTubeBundle:Profile:show.html.'
 								. $this->container->getParameter('fos_user.template.engine'),
-						array('user' => $userObject, 'profile' => $profile));
-
+						array('user' => $userObject, 'profile' => $profile));*/
+        return $this->render('IMDCTerpTubeBundle:_Profile:view.html.twig', array(
+            'user' => $userObject,
+            'profile' => $userObject->getProfile()
+        ));
 	}
 
 	public function updateAvatarAction(Request $request, $userName)
@@ -215,10 +218,13 @@ class ProfileController extends BaseController
 			}
 		}
 
-		return $this->container->get('templating')
+		/*return $this->container->get('templating')
 				->renderResponse(
 						'IMDCTerpTubeBundle:Profile:edit.html.'
 								. $this->container->getParameter('fos_user.template.engine'),
-						array('form' => $form->createView()));
+						array('form' => $form->createView()));*/
+        return $this->render('IMDCTerpTubeBundle:_Profile:edit.html.twig', array(
+            'form' => $form->createView()
+        ));
 	}
 }

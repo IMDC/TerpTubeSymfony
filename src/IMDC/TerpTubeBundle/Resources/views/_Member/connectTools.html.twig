@@ -21,7 +21,7 @@ _Post:post.html.twig
         {% if app.user.getId == member.getId %}
             <i class="fa fa-user {{ faSize }}" style="color: lightgray;" title="This is you"></i>
         {% elseif app.user.isUserOnFriendsList(member) %}
-            <i class="fa fa-group {{ faSize }}" style="color: green;" title="Already friends"></i>
+            <a href="{{ path('imdc_remove_from_friends_list', {'userid': member.id} ) }}" title="Remove {{ member.getUserName }} from your friends list"><i class="fa fa-minus {{ faSize }}"></i></a>
         {% else %}
             <a href="{{ path('imdc_add_to_friends_list', {'userid': member.getId}) }}" title="Click to add {{ member.getUserName }} to your friends list"><i class="fa fa-plus {{ faSize }}"></i></a>
         {% endif %}
@@ -29,16 +29,18 @@ _Post:post.html.twig
     {% if not (app.user == member) %}
         <li>
             {% if app.user.isUserOnMentorList(member) %}
-                <i class="fa fa-star {{ faSize }}" title="This person is your mentor"></i>
+                <i class="fa fa-star {{ faSize }}" title="This user is your mentor"></i>
             {% else %}
                 <a href="{{ path('imdc_invitation_create_tobementor', {'id': member.id}) }}" title="Invite user to be your mentor"><i class="fa fa-inbox {{ faSize }}"></i></a>
             {% endif %}
         </li>
-        {% if app.user.isUserOnMenteeList(member) %}
-            <li>
+        <li>
+            {% if app.user.isUserOnMenteeList(member) %}
                 <i class="fa fa-star {{ faSize }}" title="This user is your mentee"></i>
-            </li>
-        {% endif %}
+            {% else %}
+                <a href="{{ path('imdc_invitation_create_tobementee', {'id': member.id}) }}" title="Invite user to be your mentee"><i class="fa fa-star-o {{ faSize }}"></i></a>
+            {% endif %}
+        </li>
     {% endif %}
     </li>
 </ul>

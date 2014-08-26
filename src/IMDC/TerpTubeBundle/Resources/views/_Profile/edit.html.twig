@@ -1,0 +1,69 @@
+{% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% block title %}Edit Profile{% endblock title %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                $tt.Controller.Profile.bindUIEvents($tt.Controller.Profile.Page.EDIT);
+            });
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+    <div class="col-md-12">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-offset-2 col-md-4">
+                {{ form_errors(form) }}
+                {{ form_row(form.firstName) }}
+                {{ form_row(form.middleName) }}
+                {{ form_row(form.lastName) }}
+                {{ form_row(form.city) }}
+                {{ form_row(form.country) }}
+                {{ form_row(form.skypeName) }}
+                {{ form_row(form.birthDate) }}
+                {{ form_row(form.textBio, {'attr': {'class': 'autosize'}}) }}
+                {{ form_row(form.gender) }}
+            </div>
+            <div class="col-md-4">
+                {{ form_row(form.interestedInMentoredByMentor) }}
+                {{ form_row(form.interestedInMentoredByInterpreter) }}
+                {{ form_row(form.interestedInMentoringSignLanguage) }}
+                {{ form_row(form.interestedInMentoringInterpreter) }}
+                {{ form_row(form.interestedInMentoringMentor) }}
+                <div class="form-group">
+                    <label class="control-label">Languages</label>
+                    <ul style="list-style: none;" id="foss_user_profile_form_languages" data-delete-language-text='{{ "form.profile.language.delete"|trans }}' data-no-languages-text="{{ 'profile.show.languages.empty'|trans }}" data-prototype="{{ form_widget(form.languages.vars.prototype)|e }}">
+                        {% if form.languages and form.languages|length > 0 %}
+                            {% for language in form.languages %}
+                                <li>
+                                    {{ form_errors(language) }}
+                                    {{ form_widget(language) }}
+                                    <button class="btn btn-danger btn-sm tt-delete-language">{{ 'form.profile.language.delete'|trans }} </button>
+                                </li>
+                            {% endfor %}
+                        {% else %}
+                            <p id="no-languages">{{ 'profile.show.languages.empty' |trans }}</p>
+                        {% endif %}
+                    </ul>
+                    <button class="btn btn-default btn-sm" id="addAnotherLanguage">{{ 'form.profile.language.add'|trans }} </button>
+                </div>
+                {{ form_row (form._token) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <button class="btn btn-success"><i class="fa fa-check"></i> {{ 'profile.edit.submit'|trans }}</button>
+                <a class="btn btn-danger" href="{{ path('imdc_terp_tube_user_profile') }}"><i class="fa fa-times"></i> Cancel</a>
+            </div>
+        </div>
+        {{ form_end(form, {'render_rest': false}) }}
+    </div>
+{% endblock content %}
