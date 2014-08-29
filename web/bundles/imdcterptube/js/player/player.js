@@ -196,7 +196,7 @@ Player.prototype.createControls = function() {
 					'<div class="videoControlsContainer controlsBar forwardButtons"></div>')
 			.append(
 					'<div class="videoControlsContainer controlsBar videoControls"></div>');
-	if (this.options.backButtons.length > 0) {
+	if (typeof this.options.backButtons != 'undefined' && this.options.backButtons.length > 0) {
 		// Main back button used to be have a class backButton
 		var backButtons = $(this.elementID).find(
 				".videoControlsContainer.controlsBar.backButtons").eq(0);
@@ -271,7 +271,7 @@ Player.prototype.createControls = function() {
 		});
 		this.setInputEnabled(recButton, false);
 	}
-	if (this.options.forwardButtons.length > 0) {
+	if (typeof this.options.forwardButtons != "undefined" && this.options.forwardButtons.length > 0) {
 		// Main forward button used to be have a class forwardButton
 		var forwardButtons = $(this.elementID).find(
 				".videoControlsContainer.controlsBar.forwardButtons").eq(0);
@@ -1483,7 +1483,7 @@ Player.prototype.recording_stopRecording = function() {
 			".videoControlsContainer.controlsBar.videoControls.recordButton")
 			.eq(0);
 	var backButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
+			".videoControlsContainer.controlsBar.backButtons").eq(0);
 	var forwardButtons = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 
@@ -1585,7 +1585,7 @@ Player.prototype.recording_recordingStopped = function(success, data) {
 			".videoControlsContainer.controlsBar.videoControls.recordButton")
 			.eq(0);
 	var backButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
+			".videoControlsContainer.controlsBar.backButtons").eq(0);
 	var forwardButtons = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 	this.setInputEnabled(recordButton, true);
@@ -1631,7 +1631,7 @@ Player.prototype.recording_goToPreviewing = function() {
 			".videoControlsContainer.controlsBar.videoControls.recordButton")
 			.eq(0);
 	var backButton = $(this.elementID).find(
-			".videoControlsContainer.controlsBar.backButtons.backButton").eq(0);
+			".videoControlsContainer.controlsBar.backButtons").eq(0);
 	var forwardButtons = $(this.elementID).find(
 			".videoControlsContainer.controlsBar.forwardButtons").eq(0);
 	this.setInputEnabled(forwardButtons, false);
@@ -1667,7 +1667,7 @@ Player.prototype.recording_recordingTranscodingFinished = function(fileName) {
 						".videoControlsContainer.controlsBar.videoControls.recordButton")
 				.eq(0);
 		var backButton = $(this.elementID).find(
-				".videoControlsContainer.controlsBar.backButtons.backButton")
+				".videoControlsContainer.controlsBar.backButtons")
 				.eq(0);
 		var forwardButtons = $(this.elementID).find(
 				".videoControlsContainer.controlsBar.forwardButtons").eq(0);
