@@ -127,7 +127,7 @@ class ProfileController extends Controller
 
 				$em->flush();
 
-				$this->container->get('session')->getFlashBag()->add('avatar', 'Avatar updated successfully!');
+				$this->container->get('session')->getFlashBag()->add('info', 'Avatar updated successfully!');
 
 				$eventDispatcher = $this->container->get('event_dispatcher');
 				$uploadedEvent = new UploadEvent($avatar);
@@ -139,11 +139,14 @@ class ProfileController extends Controller
 			}
 		}
 		// form not valid, show the basic form
-		return $this->container->get('templating')
+		/*return $this->container->get('templating')
 				->renderResponse(
 						'IMDCTerpTubeBundle:Profile:edit_avatar.html.'
 								. $this->container->getParameter('fos_user.template.engine'),
-						array('form' => $form->createView()));
+						array('form' => $form->createView()));*/
+        return $this->render('IMDCTerpTubeBundle:_Profile:editAvatar.html.twig', array(
+            'form' => $form->createView()
+        ));
 	}
 
 	/**

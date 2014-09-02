@@ -21,6 +21,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use IMDC\TerpTubeBundle\Model\JSEntities;
 use FFMpeg\FFProbe;
 use Symfony\Component\HttpFoundation\File\File;
+use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
 
 // these import the "@Route" and "@Template" annotations
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -49,25 +50,23 @@ class MyFilesGatewayController extends Controller
 	 */
 	public function gatewayAction(Request $request)
 	{
-		if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
+		if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
+
 		$user = $this->getUser();
-		$resourceFiles = $user->getResourceFiles();
-		$formAudio = $this->createForm(new AudioMediaFormType(), new Media(), array ());
-		$formVideo = $this->createForm(new VideoMediaFormType(), new Media(), array ());
-		$formImage = $this->createForm(new ImageMediaFormType(), new Media(), array ());
-		$formOther = $this->createForm(new OtherMediaFormType(), new Media(), array ());
-		$uploadForms = array (
-				$formAudio->createView(),
-				$formVideo->createView(),
-				$formImage->createView(),
-				$formOther->createView() 
-		);
-		return $this->render('IMDCTerpTubeBundle:MyFilesGateway:index.html.twig', array (
-				'resourceFiles' => $resourceFiles,
-				'uploadForms' => $uploadForms 
+
+        $paginator = $this->get('knp_paginator');
+        $resourceFiles = $paginator->paginate(
+            $user->getResourceFiles(),
+            $this->get('request')->query->get('page', 1), /*page number*/
+            25 /*limit per page*/
+        );
+
+		//return $this->render('IMDCTerpTubeBundle:MyFilesGateway:index.html.twig', array (
+        return $this->render('IMDCTerpTubeBundle:_MyFiles:index.html.twig', array (
+            'resourceFiles' => $resourceFiles,
+            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
 		));
 	}
 	

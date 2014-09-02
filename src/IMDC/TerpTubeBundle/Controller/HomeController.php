@@ -1,6 +1,7 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -22,24 +23,18 @@ class HomeController extends Controller
 	public function indexAction(Request $request)
 	{
 		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+			return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
 		}
 
 		$em = $this->getDoctrine()->getManager();
 
-		$recentPosts = $em->getRepository('IMDCTerpTubeBundle:Post')->getRecentPosts(4);
+		$myForums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getRecentlyCreatedForums(4);
+        $myGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($this->getUser(), 4);
 
-		$recentThreads = $em->getRepository('IMDCTerpTubeBundle:Thread')->getMostRecentThreads(4);
-
-		$recentForums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getMostRecentForums(4);
-		
-		return $this
-				->render('IMDCTerpTubeBundle:Default:recentactivity.html.twig',
-						array('forums' => $recentForums, 'posts' => $recentPosts, 'threads' => $recentThreads));
-
-		//return $this->render('IMDCTerpTubeBundle:Home:index.html.twig');
-
+		return $this->render('IMDCTerpTubeBundle:_Home:index.html.twig', array(
+            'myForums' => $myForums,
+            'myGroups' => $myGroups
+        ));
 	}
 }

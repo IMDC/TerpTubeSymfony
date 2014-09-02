@@ -77,12 +77,8 @@
 				{% else %}
 					<p class="text-center" style="margin-bottom: 20px;">No forums</p>
 				{% endif %}
+                {{ knp_pagination_render(forums) }}
 				<hr class="tt-separator-bottom" />
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
-				{{ knp_pagination_render(forums) }}
 			</div>
 		</div>
 	</div>

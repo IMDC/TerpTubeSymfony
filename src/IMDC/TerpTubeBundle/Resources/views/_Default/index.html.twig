@@ -1,0 +1,49 @@
+{% extends 'IMDCTerpTubeBundle:_Base:core.html.twig' %}
+
+{% block title %}Welcome!{% endblock title %}
+
+{% block base_content %}
+    <div class="col-md-12">
+        <div class="row tt-default-intro">
+            <div class="col-md-3">
+                <img class="img-responsive center-block" src="" />
+                <div class="thumbnail">
+                    <video class="tt-media-video" controls preload="auto">
+                        <source src=""/>
+                    </video>
+                    <div class="caption">
+                        <h3>About TerpTube</h3>
+                        <p>...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <img class="img-responsive center-block" src="" />
+                <div class="thumbnail">
+                    <video class="tt-media-video" controls preload="auto">
+                        <source src=""/>
+                    </video>
+                    <div class="caption">
+                        <h3>FAQ</h3>
+                        <p>...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <img class="img-responsive center-block" src="" />
+                <div class="thumbnail">
+                    <video class="tt-media-video" controls preload="auto">
+                        <source src=""/>
+                    </video>
+                    <div class="caption">
+                        <h3>How to Use</h3>
+                        <p>...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 tt-default-register">
+                {% include 'IMDCTerpTubeBundle:_Member:register.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock base_content %}

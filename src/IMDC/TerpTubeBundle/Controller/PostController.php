@@ -83,7 +83,7 @@ class PostController extends Controller
 			$em->flush();
 			 
 			$this->get('session')->getFlashBag()->add(
-					'notice',
+					'info',
 					'Post created successfully!'
 			);
 			return $this->redirect($this->generateUrl('imdc_post_show_all'));
@@ -164,7 +164,7 @@ class PostController extends Controller
 	        // hopefully	
 	
 	        $this->get('session')->getFlashBag()->add(
-	                'notice',
+	                'info',
 	                'Post created successfully'
 	        );
 	        
@@ -209,7 +209,7 @@ class PostController extends Controller
 		// if post is not owned by the currently logged in user, redirect
 		if (!$postToDelete->getAuthor()->getId() == $user->getId()) {
 			$this->get('session')->getFlashBag()->add(
-					'error',
+					'danger',
 					'You do not have permission to delete this post'
 			);
 			return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
@@ -251,7 +251,7 @@ class PostController extends Controller
 		// if post is not owned by the currently logged in user, redirect
 		if (!$postToDelete->getAuthor()->getId() == $user->getId()) {
 			$this->get('session')->getFlashBag()->add(
-					'error',
+					'danger',
 					'You do not have permission to delete this post'
 			);
 			//return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
@@ -293,7 +293,7 @@ class PostController extends Controller
 	    // does the user own this post?
 	    if (!$user->getPosts()->contains($postToEdit)) {
 	        $this->get('session')->getFlashBag()->add(
-                'notice',
+                'info',
                 'You do not have permission to edit this post'
 	        );
 	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
@@ -339,7 +339,7 @@ class PostController extends Controller
 	        $em->flush();
 	    
 	        $this->get('session')->getFlashBag()->add(
-                'notice',
+                'info',
 	            'Post edited successfully!'
 	        );
 	        
@@ -376,7 +376,7 @@ class PostController extends Controller
 		// if post is not owned by the currently logged in user, redirect
 		if (!$postToEdit->getAuthor() == $user) {
 			$this->get('session')->getFlashBag()->add(
-                'error',
+                'danger',
                 'You do not have permission to edit this post'
 			);
 			//return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));

@@ -1,15 +1,10 @@
-{% extends "IMDCTerpTubeBundle:Default:index.html.twig" %}
+{% extends "IMDCTerpTubeBundle:_Base:base.html.twig" %}
 
-{%  set page_title = 'title.' ~ app.request.attributes.get('_route') %}
+{% trans_default_domain 'FOSUserBundle' %}
 
-{%  block herounit %}
-	<h1>{{ page_title|trans({}, 'FOSUserBundle') }}</h1>
-{%  endblock herounit %}
+{% block title %}{{ ('title.' ~ app.request.attributes.get('_route'))|trans }}{% endblock title %}
 
-{% block underherounitrow1 %}
+{% block content %}
 	{% block fos_user_content %}
 	{% endblock fos_user_content %}
-{% endblock underherounitrow1 %}
-
-{% block underherounitrow2 %}
-{% endblock underherounitrow2 %}
+{% endblock content %}

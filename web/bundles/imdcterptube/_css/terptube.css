@@ -125,6 +125,30 @@ body {
   max-height: 150px;
 }
 
+/* line 130, sass/_base.scss */
+.tt-table > thead, .tt-message-table > thead, .tt-invitation-table > thead, .tt-myFiles-table > thead {
+  background-color: white;
+}
+
+/* line 1, sass/_default.scss */
+.tt-default-intro {
+  margin-top: 100px;
+  min-height: 500px;
+}
+/* line 5, sass/_default.scss */
+.tt-default-intro div.thumbnail {
+  height: 500px;
+}
+
+/* line 10, sass/_default.scss */
+.tt-default-register > div {
+  background-color: #5a5a5a;
+  color: #fff;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border-radius: 4px;
+}
+
 /* line 5, sass/_media.scss */
 .tt-media-video, .tt-media-audio {
   width: 100%;
@@ -241,36 +265,31 @@ body {
   background: red;
 }
 
-/* line 2, sass/_message.scss */
-.tt-message-table > thead, .tt-invitation-table > thead {
-  background-color: white;
-}
-
-/* line 13, sass/_message.scss */
+/* line 11, sass/_message.scss */
 .tt-message-div div.row {
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-right: 1px solid #ddd;
 }
-/* line 18, sass/_message.scss */
+/* line 16, sass/_message.scss */
 .tt-message-div div.row:last-child {
   border-bottom: 1px solid #ddd;
   margin-bottom: 15px;
 }
-/* line 23, sass/_message.scss */
+/* line 21, sass/_message.scss */
 .tt-message-div div.row.tt-message-div-header {
   background-color: white;
 }
-/* line 26, sass/_message.scss */
+/* line 24, sass/_message.scss */
 .tt-message-div div.row.tt-message-div-header > div[class*="col-"]:first-child {
   font-weight: bold;
 }
-/* line 32, sass/_message.scss */
+/* line 30, sass/_message.scss */
 .tt-message-div div[class*="col-"] {
   border-right: 1px solid #ddd;
   padding: 5px;
 }
-/* line 36, sass/_message.scss */
+/* line 34, sass/_message.scss */
 .tt-message-div div[class*="col-"]:last-child {
   border-right: 0;
 }

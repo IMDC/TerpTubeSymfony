@@ -48,7 +48,7 @@ class InvitationController extends Controller
             $em = $this->getDoctrine()->getManager();
             
             if ($entity->getCreator() === $entity->getRecipient()) {
-                $this->get('session')->getFlashBag()->add('error', 'You cannot send an invitation to yourself');
+                $this->get('session')->getFlashBag()->add('danger', 'You cannot send an invitation to yourself');
                 return $this->render('IMDCTerpTubeBundle:Invitation:new.html.twig', array(
                         'entity' => $entity,
                         'form'   => $form->createView(),
@@ -341,7 +341,7 @@ class InvitationController extends Controller
         
         // check to make sure the invitation is not yet accepted
         if ($entity->getIsAccepted()) {
-            $this->get('session')->getFlashBag()->add('error', 'Invitation has already been accepted and cannot be cancelled.');
+            $this->get('session')->getFlashBag()->add('danger', 'Invitation has already been accepted and cannot be cancelled.');
             //return $this->render('IMDCTerpTubeBundle:Invitation:userOverview.html.twig');
             return $this->render('IMDCTerpTubeBundle:_Invitation:index.html.twig');
         }

@@ -204,6 +204,10 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
 
 knp_time: ~ # Enable the helper for use in templates
 
+knp_paginator:
+    template:
+        pagination: KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig
+
 sonata_admin:
     security:
         handler: sonata.admin.security.handler.role

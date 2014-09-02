@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7b640bb240509850fc10ce0f8c7d03bd",
+    "hash": "99eacc257cb567fbe4793062c3f1f19c",
     "packages": [
         {
             "name": "ac/transcoding",
@@ -209,17 +209,17 @@
         },
         {
             "name": "braincrafted/bootstrap-bundle",
-            "version": "dev-master",
+            "version": "2.1.x-dev",
             "target-dir": "Braincrafted/Bundle/BootstrapBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/braincrafted/bootstrap-bundle.git",
-                "reference": "208dc507d0788b5d14c6ab7557f310e3478bd9a5"
+                "reference": "56231594bfce2b4fd293592662f508becc4c494e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/208dc507d0788b5d14c6ab7557f310e3478bd9a5",
-                "reference": "208dc507d0788b5d14c6ab7557f310e3478bd9a5",
+                "url": "https://api.github.com/repos/braincrafted/bootstrap-bundle/zipball/56231594bfce2b4fd293592662f508becc4c494e",
+                "reference": "56231594bfce2b4fd293592662f508becc4c494e",
                 "shasum": ""
             },
             "require": {
@@ -258,15 +258,14 @@
                 {
                     "name": "Florian Eckerstorfer",
                     "email": "florian@eckerstorfer.co",
-                    "homepage": "http://florian.ec",
-                    "role": "Developer"
+                    "homepage": "http://florian.ec"
                 }
             ],
             "description": "BraincraftedBootstrapBundle integrates Bootstrap into Symfony2 by providing templates, Twig extensions, services and commands.",
             "keywords": [
                 "bootstrap"
             ],
-            "time": "2014-04-03 17:17:03"
+            "time": "2014-08-31 10:47:30"
         },
         {
             "name": "doctrine/annotations",
@@ -762,12 +761,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/DoctrineFixturesBundle.git",
-                "reference": "ccd69d9ec90013955a412a21125672afc09738dc"
+                "reference": "3ffa2184c94d94477d5bb625b94597ed0d44ebe0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/DoctrineFixturesBundle/zipball/ccd69d9ec90013955a412a21125672afc09738dc",
-                "reference": "ccd69d9ec90013955a412a21125672afc09738dc",
+                "url": "https://api.github.com/repos/doctrine/DoctrineFixturesBundle/zipball/3ffa2184c94d94477d5bb625b94597ed0d44ebe0",
+                "reference": "3ffa2184c94d94477d5bb625b94597ed0d44ebe0",
                 "shasum": ""
             },
             "require": {
@@ -793,18 +792,16 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
                     "name": "Symfony Community",
                     "homepage": "http://symfony.com/contributors"
                 },
                 {
                     "name": "Doctrine Project",
                     "homepage": "http://www.doctrine-project.org"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
                 }
             ],
             "description": "Symfony DoctrineFixturesBundle",
@@ -813,7 +810,7 @@
                 "Fixture",
                 "persistence"
             ],
-            "time": "2014-03-05 01:11:31"
+            "time": "2014-08-20 20:34:54"
         },
         {
             "name": "doctrine/inflector",
@@ -1108,12 +1105,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "27a84cec3ea4daa32cd6fe308c0847ca9644f588"
+                "reference": "094bea6f318fbb067db3ddf6d26a62af0bf13442"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/27a84cec3ea4daa32cd6fe308c0847ca9644f588",
-                "reference": "27a84cec3ea4daa32cd6fe308c0847ca9644f588",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/094bea6f318fbb067db3ddf6d26a62af0bf13442",
+                "reference": "094bea6f318fbb067db3ddf6d26a62af0bf13442",
                 "shasum": ""
             },
             "require": {
@@ -1167,7 +1164,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2014-08-04 23:04:17"
+            "time": "2014-08-23 11:32:38"
         },
         {
             "name": "gregwar/captcha",
@@ -1225,17 +1222,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Gregwar/CaptchaBundle.git",
-                "reference": "162a2a87cd658753585ce73c8519f3275ce17857"
+                "reference": "62e44cd3881da905ba70563181e8df5537e53c05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Gregwar/CaptchaBundle/zipball/162a2a87cd658753585ce73c8519f3275ce17857",
-                "reference": "162a2a87cd658753585ce73c8519f3275ce17857",
+                "url": "https://api.github.com/repos/Gregwar/CaptchaBundle/zipball/62e44cd3881da905ba70563181e8df5537e53c05",
+                "reference": "62e44cd3881da905ba70563181e8df5537e53c05",
                 "shasum": ""
             },
             "require": {
-                "gregwar/captcha": "v1.0.11",
-                "php": ">=5.3.0"
+                "gregwar/captcha": "~1.0.11",
+                "php": ">=5.3.0",
+                "symfony/form": "~2.1",
+                "symfony/framework-bundle": "~2.1"
             },
             "type": "captcha-bundle",
             "autoload": {
@@ -1269,7 +1268,7 @@
                 "spam",
                 "visual"
             ],
-            "time": "2014-07-31 14:41:27"
+            "time": "2014-08-27 14:12:32"
         },
         {
             "name": "hearsay/require-js-bundle",
@@ -1937,17 +1936,17 @@
         },
         {
             "name": "knplabs/knp-paginator-bundle",
-            "version": "dev-master",
+            "version": "2.4.0",
             "target-dir": "Knp/Bundle/PaginatorBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle.git",
-                "reference": "d35547a771a03923d19d55ea335cd2801ad72dc2"
+                "reference": "4202329b4d639c1a03d0007e31a52049d31c591e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/d35547a771a03923d19d55ea335cd2801ad72dc2",
-                "reference": "d35547a771a03923d19d55ea335cd2801ad72dc2",
+                "url": "https://api.github.com/repos/KnpLabs/KnpPaginatorBundle/zipball/4202329b4d639c1a03d0007e31a52049d31c591e",
+                "reference": "4202329b4d639c1a03d0007e31a52049d31c591e",
                 "shasum": ""
             },
             "require": {
@@ -1959,7 +1958,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.4.x-dev"
+                    "dev-master": "2.3.x-dev"
                 }
             },
             "autoload": {
@@ -1992,7 +1991,7 @@
                 "pagination",
                 "paginator"
             ],
-            "time": "2014-07-18 12:20:39"
+            "time": "2014-01-21 07:26:00"
         },
         {
             "name": "knplabs/knp-time-bundle",
@@ -2468,12 +2467,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Pimple.git",
-                "reference": "3764c3985684ad6af4ad3c7d2e0595f9f09faf5f"
+                "reference": "8156c13d978b98d6b1e6395b9c9f0adc8814c20a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/3764c3985684ad6af4ad3c7d2e0595f9f09faf5f",
-                "reference": "3764c3985684ad6af4ad3c7d2e0595f9f09faf5f",
+                "url": "https://api.github.com/repos/fabpot/Pimple/zipball/8156c13d978b98d6b1e6395b9c9f0adc8814c20a",
+                "reference": "8156c13d978b98d6b1e6395b9c9f0adc8814c20a",
                 "shasum": ""
             },
             "require": {
@@ -2506,7 +2505,7 @@
                 "container",
                 "dependency injection"
             ],
-            "time": "2014-07-29 17:32:26"
+            "time": "2014-08-29 17:31:46"
         },
         {
             "name": "psr/log",
@@ -2695,12 +2694,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataAdminBundle.git",
-                "reference": "892ad14dc7b047ce170702dcc0897815e41152a7"
+                "reference": "982dd6e8350ac7f369d22eb103f3d183fe949f35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/892ad14dc7b047ce170702dcc0897815e41152a7",
-                "reference": "892ad14dc7b047ce170702dcc0897815e41152a7",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/982dd6e8350ac7f369d22eb103f3d183fe949f35",
+                "reference": "982dd6e8350ac7f369d22eb103f3d183fe949f35",
                 "shasum": ""
             },
             "require": {
@@ -2766,7 +2765,7 @@
                 "bootstrap",
                 "sonata"
             ],
-            "time": "2014-08-08 08:04:51"
+            "time": "2014-09-01 20:17:14"
         },
         {
             "name": "sonata-project/block-bundle",
@@ -2966,12 +2965,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataCoreBundle.git",
-                "reference": "e781255d0b6ab661f9e041b01ff8d943ae70ebc0"
+                "reference": "6f36419ad655ee8d396a7d31237e52ec0b1f3ff4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataCoreBundle/zipball/e781255d0b6ab661f9e041b01ff8d943ae70ebc0",
-                "reference": "e781255d0b6ab661f9e041b01ff8d943ae70ebc0",
+                "url": "https://api.github.com/repos/sonata-project/SonataCoreBundle/zipball/6f36419ad655ee8d396a7d31237e52ec0b1f3ff4",
+                "reference": "6f36419ad655ee8d396a7d31237e52ec0b1f3ff4",
                 "shasum": ""
             },
             "require": {
@@ -3020,7 +3019,7 @@
             "keywords": [
                 "sonata"
             ],
-            "time": "2014-08-01 09:50:50"
+            "time": "2014-09-01 21:20:34"
         },
         {
             "name": "sonata-project/doctrine-orm-admin-bundle",
@@ -3028,12 +3027,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataDoctrineORMAdminBundle.git",
-                "reference": "00b222f45a9af5b16e7a7a15e3b6a7369d4d58fa"
+                "reference": "1ab6b728ef03d6565bdde6b0c2b65a9e7a2659b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataDoctrineORMAdminBundle/zipball/00b222f45a9af5b16e7a7a15e3b6a7369d4d58fa",
-                "reference": "00b222f45a9af5b16e7a7a15e3b6a7369d4d58fa",
+                "url": "https://api.github.com/repos/sonata-project/SonataDoctrineORMAdminBundle/zipball/1ab6b728ef03d6565bdde6b0c2b65a9e7a2659b9",
+                "reference": "1ab6b728ef03d6565bdde6b0c2b65a9e7a2659b9",
                 "shasum": ""
             },
             "require": {
@@ -3090,7 +3089,7 @@
                 "generator",
                 "sonata"
             ],
-            "time": "2014-08-05 13:32:38"
+            "time": "2014-09-01 20:21:38"
         },
         {
             "name": "sonata-project/exporter",
@@ -3385,12 +3384,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Filesystem.git",
-                "reference": "0eb05b75932460ef615b926caac9f6086cc022f5"
+                "reference": "ab21893f8e117251b0b6e30f9709e13d2e1fa0cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/0eb05b75932460ef615b926caac9f6086cc022f5",
-                "reference": "0eb05b75932460ef615b926caac9f6086cc022f5",
+                "url": "https://api.github.com/repos/symfony/Filesystem/zipball/ab21893f8e117251b0b6e30f9709e13d2e1fa0cf",
+                "reference": "ab21893f8e117251b0b6e30f9709e13d2e1fa0cf",
                 "shasum": ""
             },
             "require": {
@@ -3413,19 +3412,17 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
                     "name": "Symfony Community",
                     "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
                 }
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "http://symfony.com",
-            "time": "2014-07-09 14:44:54"
+            "time": "2014-08-31 03:28:38"
         },
         {
             "name": "symfony/icu",
@@ -3924,7 +3921,6 @@
         "oldsound/rabbitmq-bundle": 20,
         "ac/transcoding-bundle": 20,
         "php-ffmpeg/php-ffmpeg": 20,
-        "knplabs/knp-paginator-bundle": 20,
         "doctrine/doctrine-fixtures-bundle": 20,
         "knplabs/knp-time-bundle": 20,
         "pimple/pimple": 20,

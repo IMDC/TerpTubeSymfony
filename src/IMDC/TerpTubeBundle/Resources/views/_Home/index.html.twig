@@ -1,0 +1,44 @@
+{% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
+
+{% block title %}Home{% endblock title %}
+
+{% block sidebarlinks_home %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <!-- my forums -->
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <hr class="tt-separator-top" />
+                {% if myForums|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:_Forum:thumbnail.html.twig' with {'forums': myForums} %}
+                {% else %}
+                    <p class="text-center" style="margin-bottom: 20px;">You don't belong to any forums</p>
+                {% endif %}
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+        <!-- my groups -->
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <hr class="tt-separator-top" />
+                {% if myGroups|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:_Group:thumbnail.html.twig' with {'groups': myGroups} %}
+                {% else %}
+                    <p class="text-center" style="margin-bottom: 20px;">You don't belong to any groups</p>
+                {% endif %}
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+{% endblock content %}

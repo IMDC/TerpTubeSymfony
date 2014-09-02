@@ -112,7 +112,7 @@ class MediaChooserGatewayController extends Controller
 		$securityContext = $this->container->get('security.context');
 		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
+			//$this->get('session')->getFlashBag()->add('info', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		if (!$request->isXmlHttpRequest())
@@ -154,7 +154,7 @@ class MediaChooserGatewayController extends Controller
 		$securityContext = $this->container->get('security.context');
 		if (!$securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
 		{
-			$this->get('session')->getFlashBag()->add('notice', 'Please log in first');
+			//$this->get('session')->getFlashBag()->add('info', 'Please log in first');
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 		if (!$request->isXmlHttpRequest())

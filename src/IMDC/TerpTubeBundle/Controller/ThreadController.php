@@ -116,7 +116,7 @@ class ThreadController extends Controller
         // check if user has permissions to view thread
         if (!$this->canAccessThread($thread, $user)) {
             $this->get('session')->getFlashBag()->add(
-                'error',
+                'danger',
                 'This topic is private and you are not permitted to view it at this time.'
             );
             return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
@@ -255,7 +255,7 @@ class ThreadController extends Controller
         }
         else {
             $this->get('session')->getFlashBag()->add(
-                'error',
+                'danger',
                 'No valid parent forum found'
             );
             // form not valid, show the basic form
@@ -386,7 +386,7 @@ class ThreadController extends Controller
         // todo: turn this into an access check instead of an ownership check
         if ($chosenmedia->getOwner() !== $user) {
             $this->get('session')->getFlashBag()->add(
-                'error',
+                'danger',
                 'You do not have access to this resource'
             );
             return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
@@ -421,7 +421,7 @@ class ThreadController extends Controller
             $em->flush();
              
             $this->get('session')->getFlashBag()->add(
-                    'notice',
+                    'info',
                     'Thread created successfully!'
             );
             return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
@@ -450,7 +450,7 @@ class ThreadController extends Controller
         // does the user own this thread?
         if (!$user->getThreads()->contains($threadToEdit)) {
             $this->get('session')->getFlashBag()->add(
-                    'error',
+                    'danger',
                     'You do not have permission to edit this thread'
             );
             return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
@@ -602,7 +602,7 @@ class ThreadController extends Controller
         }
         else { // user doesn't own this thread to delete it
             $this->get('session')->getFlashBag()->add(
-                'error',
+                'danger',
                 'You do not have permission to delete this post'
             );
             return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));

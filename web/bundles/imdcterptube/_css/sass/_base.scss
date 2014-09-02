@@ -125,3 +125,9 @@ body {
 .tt-avatar {
   max-height: 150px;
 }
+
+.tt-table {
+  > thead {
+    background-color: white;
+  }
+}

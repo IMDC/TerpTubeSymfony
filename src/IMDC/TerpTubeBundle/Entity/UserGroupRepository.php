@@ -29,17 +29,21 @@ class UserGroupRepository extends EntityRepository
 		return $query->getResult();
 	}
 	
-	public function getGroupsForUser(User $user)
+	public function getGroupsForUser(User $user, $limit=0)
     {
-        return $this->getEntityManager()
-                ->createQuery
-                ('
+        $query = $this->getEntityManager()
+                ->createQuery('
                     SELECT g
                     FROM IMDCTerpTubeBundle:UserGroup g
                     JOIN IMDCTerpTubeBundle:User u
                     WHERE u.id = :uid
                 ')
-                ->setParameter('uid', $user->getId())
-        ->getResult();
+                ->setParameter('uid', $user->getId());
+
+        if ($limit > 0) {
+            $query->setMaxResults($limit);
+        }
+
+        return $query->getResult();
     }
 }

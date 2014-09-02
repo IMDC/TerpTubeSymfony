@@ -18,7 +18,7 @@ class AuthenticationManager
 	{
 		if (!$this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
 		{
-			$request->getSession()->getFlashBag()->add('notice', 'Please log in first');
+			//$request->getSession()->getFlashBag()->add('notice', 'Please log in first');
 			$request->getSession()->set('redirectUrl', $request->getUri());
 			//return $this->redirect($this->generateUrl('fos_user_security_login'));
 			return false;

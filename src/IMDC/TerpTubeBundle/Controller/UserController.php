@@ -103,7 +103,7 @@ class UserController extends Controller
             $this->get('session')->getFlashBag()->add('success', 'Mentor removed');
         }
         else {
-            $this->get('session')->getFlashBag()->add('error', 'User is not your mentor, nothing to remove');
+            $this->get('session')->getFlashBag()->add('danger', 'User is not your mentor, nothing to remove');
         }
 
         //return $this->redirect($this->generateUrl('imdc_invitations_list'));
@@ -139,7 +139,7 @@ class UserController extends Controller
             
         }
         else {
-            $this->get('session')->getFlashBag()->add('error', 'User is not your mentee, nothing to remove');
+            $this->get('session')->getFlashBag()->add('danger', 'User is not your mentee, nothing to remove');
         }
 
         //return $this->redirect($this->generateUrl('imdc_invitations_list'));

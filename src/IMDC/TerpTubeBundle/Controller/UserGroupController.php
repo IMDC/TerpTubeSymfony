@@ -110,7 +110,7 @@ class UserGroupController extends Controller
 		    
 		    $em->flush();
 		    
-		    $this->get('session')->getFlashBag()->add('notice', 'UserGroup edited successfully!');
+		    $this->get('session')->getFlashBag()->add('info', 'UserGroup edited successfully!');
 		    return $this->redirect($this->generateUrl('imdc_group_view', array('usergroupid' => $usergroupid)));
 		}
 
@@ -165,7 +165,7 @@ class UserGroupController extends Controller
 	    $em->remove($usergroup);
 	    $em->flush();
 	    
-	    $this->get('session')->getFlashBag()->add('notice', 'UserGroup deleted!');
+	    $this->get('session')->getFlashBag()->add('info', 'UserGroup deleted!');
 	    return $this->redirect($this->generateUrl('imdc_groups_show_all'));	    
 	}
 	
@@ -227,7 +227,7 @@ class UserGroupController extends Controller
 			$acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
 			$aclProvider->updateAcl($acl);
 
-			$this->get('session')->getFlashBag()->add('notice', 'UserGroup created successfully!');
+			$this->get('session')->getFlashBag()->add('info', 'UserGroup created successfully!');
 			return $this->redirect($this->generateUrl('imdc_groups_show_all'));
 
 		}

@@ -57,7 +57,7 @@ class AddFileGatewayController extends Controller {
 		}
 		
 		// $response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'index.html.twig', array (
-		$response = $this->render ( 'IMDCTerpTubeBundle:_AddFileGateway:' . $prefix . 'index.html.twig', array (
+		$response = $this->render ( 'IMDCTerpTubeBundle:_MyFiles:' . $prefix . 'index.html.twig', array (
 				'resourceFiles' => $resourceFiles 
 		) );
 		

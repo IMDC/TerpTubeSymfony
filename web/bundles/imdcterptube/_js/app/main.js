@@ -2,6 +2,7 @@ define(function(require) {
     var TerpTube = {};
 
     TerpTube.Controller = {};
+    TerpTube.Controller.MyFiles = require('controller/myFiles');
     TerpTube.Controller.Forum = require('controller/forum');
     TerpTube.Controller.Thread = require('controller/thread');
     TerpTube.Controller.Post = require('controller/post');

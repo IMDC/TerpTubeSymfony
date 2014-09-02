@@ -1,6 +1,7 @@
 imdc_terp_tube:
     resource: "@IMDCTerpTubeBundle/Resources/config/routing.yml"
     prefix:   /
+    schemes:  [https]
 
 fos_user_security:
     resource: "@IMDCTerpTubeBundle/Resources/config/routing/security.xml"

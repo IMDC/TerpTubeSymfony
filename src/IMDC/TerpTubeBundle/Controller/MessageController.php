@@ -158,7 +158,7 @@ class MessageController extends Controller
 			// persist all objects to database
 			$em->flush();
 
-			$this->get('session')->getFlashBag()->add('inbox', 'Message sent successfully!');
+			$this->get('session')->getFlashBag()->add('info', 'Message sent successfully!');
 			return $this->redirect($this->generateUrl('imdc_message_view_all'));
 		}
 
@@ -252,7 +252,7 @@ class MessageController extends Controller
 		$em->persist($user);
 		$em->flush();
 
-		$this->get('session')->getFlashBag()->add('inbox', 'Message id: ' . $message->getId() . ' deleted');
+		$this->get('session')->getFlashBag()->add('info', 'Message id: ' . $message->getId() . ' deleted');
 		return $this->redirect($this->generateUrl('imdc_message_view_all'));
 
 	}
@@ -352,7 +352,7 @@ class MessageController extends Controller
 		    // is this message deleted already?
 		    if ($user->getDeletedMessages()->contains($message)) {
 		        $this->get('session')->getFlashBag()->add(
-		            'error',
+		            'danger',
 		            'This message has been deleted'
 		        );
 		        return $this->redirect($this->generateUrl('imdc_message_view_all'));
@@ -377,7 +377,7 @@ class MessageController extends Controller
 		}
 		else {
 		    $this->get('session')->getFlashBag()->add(
-		            'error',
+		            'danger',
 		            'You do not have permission to view this message'
 		    );
 		    return $this->redirect($this->generateUrl('imdc_message_view_all'));
@@ -469,7 +469,7 @@ class MessageController extends Controller
 			// persist all objects to database
 			$em->flush();
 
-			$this->get('session')->getFlashBag()->add('inbox', 'Message sent successfully!');
+			$this->get('session')->getFlashBag()->add('info', 'Message sent successfully!');
 			
 			return $this->redirect($this->generateUrl('imdc_message_view_all'));
 		}

@@ -33,7 +33,6 @@ class ThreadRepository extends EntityRepository
         		->createQuery('
         				SELECT t
         				FROM IMDCTerpTubeBundle:Thread t
-        				JOIN IMDCTerpTubeBundle:Forum f
         				WHERE t.parentForum = :fid
         				ORDER BY t.creationDate DESC')
         		->setParameter('fid', $fid)

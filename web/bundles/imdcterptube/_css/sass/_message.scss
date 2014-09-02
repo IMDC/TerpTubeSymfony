@@ -1,7 +1,5 @@
 .tt-message-table {
-  > thead {
-    background-color: white;
-  }
+  @extend .tt-table;
 }
 
 $message-div-border-width: 1px;

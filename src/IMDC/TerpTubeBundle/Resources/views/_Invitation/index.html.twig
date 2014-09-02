@@ -85,11 +85,13 @@
                                         {% for invitation in app.user.getCreatedInvitations %}
                                             <tr>
                                                 <td>
-                                                    {% if not invitation.isCancelled and not invitation.isAccepted and not invitation.isDeclined %}
-                                                        <a class="btn btn-danger btn-xs" href="{{ path('imdc_invitation_cancel', {'id': invitation.id}) }}">Cancel</a>
-                                                    {% elseif not invitation.isAccepted and invitation.isCancelled %}
-                                                        <a class="btn btn-primary btn-xs" href="{{ path('imdc_invitation_reactivate', {'id': invitation.id}) }}">Re-activate</a>
-                                                    {% endif %}
+                                                    <div class="text-center">
+                                                        {% if not invitation.isCancelled and not invitation.isAccepted and not invitation.isDeclined %}
+                                                            <a class="btn btn-danger btn-xs" href="{{ path('imdc_invitation_cancel', {'id': invitation.id}) }}"><i class="fa fa-times"></i> Cancel</a>
+                                                        {% elseif not invitation.isAccepted and invitation.isCancelled %}
+                                                            <a class="btn btn-primary btn-xs" href="{{ path('imdc_invitation_reactivate', {'id': invitation.id}) }}"><i class="fa fa-refresh"></i> Re-activate</a>
+                                                        {% endif %}
+                                                     </div>
                                                 </td>
                                                 <td>
                                                     {% if invitation.isAccepted %}

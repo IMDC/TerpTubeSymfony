@@ -51,7 +51,7 @@ class ForumController extends Controller
 			$this->get('request')->query->get('page', 1), /*page number*/
 			8 /*limit per page*/
 		);
-		
+
 		//return $this->render('IMDCTerpTubeBundle:Forum:index.html.twig', array(
 		return $this->render('IMDCTerpTubeBundle:_Forum:index.html.twig', array(
             'recentForums' => $recentForums,
@@ -123,7 +123,7 @@ class ForumController extends Controller
             $aclProvider->updateAcl($acl);
             
             $this->get('session')->getFlashBag()->add(
-                'notice',
+                'info',
                 'Forum created successfully!'
             );
 
@@ -157,7 +157,7 @@ class ForumController extends Controller
 	    
 	    if (!$forum) {
 	        $this->get('session')->getFlashBag()->add(
-	            'notice',
+	            'info',
 	            'A forum with this identification does not exist!'
 	        );
 
@@ -254,7 +254,7 @@ class ForumController extends Controller
 	        $em->flush();
 	        
 	        $this->get('session')->getFlashBag()->add(
-	            'notice',
+	            'info',
 	            'Forum edited successfully!'
 	        );
 
@@ -287,7 +287,7 @@ class ForumController extends Controller
 	    // check if user is the creator of the forum
 	    if ($user !== $forum->getCreator()) {
 	        $this->get('session')->getFlashBag()->add(
-	            'error',
+	            'danger',
 	            'You are not authorized to delete this forum'
 	        );
 	        
@@ -319,7 +319,7 @@ class ForumController extends Controller
 	        $em->flush();
 
 	        $this->get('session')->getFlashBag()->add(
-	            'notice',
+	            'info',
 	            'Forum deleted successfully!'
 	        );
 

@@ -14,12 +14,11 @@
         <div class="row">
             <div class="col-md-offset-2 col-md-4">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 text-center">
+                        <p><img class="img-responsive center-block tt-avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></p>
                         {% if app.user == user.userName %}
-                            <a class="avatar" href="{{ path('imdc_terp_tube_user_avatar_edit', {'userName': app.user}) }}">
+                            <a class="btn btn-default btn-sm"    href="{{ path('imdc_terp_tube_user_avatar_edit', {'userName': app.user}) }}">Edit Avatar</a>
                         {% endif %}
-                        <img class="img-responsive center-block tt-avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
-                        {% if app.user == user.userName %}</a>{% endif %}
                     </div>
                     <div class="col-md-8">
                         <div class="table-responsive">
