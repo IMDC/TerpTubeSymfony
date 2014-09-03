@@ -58,7 +58,6 @@
                                             <div class="text-center">
                                                 <a class="btn btn-danger btn-xs delete-button"
                                                    href="#"
-                                                   data-url="{{ path('imdc_files_gateway_remove', {'mediaId': resourceFile.id}) }}"
                                                    data-val="{{ resourceFile.id }}">
                                                     <i class="fa fa-trash-o"></i> {{ 'filesGateway.deleteLink'|trans }}
                                                 </a>
@@ -134,7 +133,7 @@
     <script type="text/html" id="mediaRow">
         <tr>
             <td>
-                <a class="btn btn-danger btn-xs delete-button" href="#" data-url="{deleteUrl}" data-val="{media.id}">
+                <a class="btn btn-danger btn-xs delete-button" href="#" data-val="{media.id}">
                     <i class="fa fa-trash-o"></i> {{ 'filesGateway.deleteLink'|trans }}
                 </a>
                 <a class="btn btn-default btn-xs preview-button{{ '{#previewDisabled} disabled{/previewDisabled}' }}" href="#" data-type="{media.type}" data-url="{previewUrl}" data-val="{media.id}">
