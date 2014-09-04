@@ -450,7 +450,8 @@ define(
 					forwardButtons : forwardButtons,
 					forwardFunctions : forwardFunctions,
 					backButtons : backButtons,
-					backFunctions : backFunctions
+					backFunctions : backFunctions,
+					selectedRegionColor : "#0000ff"
 				});
 				this.player.createControls();
 			};
@@ -471,15 +472,19 @@ define(
 					data) {
 				console.log("%s: %s", MediaChooser.TAG,
 						"_previewVideoForwardFunctionCut");
-
+				var previousMinMaxTimes = this.player.getCurrentMinMaxTime();
+				var currentMinMaxTimes = this.player.getAreaSelectionTimes();
+				this.player.setCurrentMinMaxTime(currentMinMaxTimes.minTime, currentMinMaxTimes.maxTime);
+				
 				// console.log(recorderConfiguration);
 				// var fn = window[recorderConfiguration.forwardFunction]||null;
 				// fn(data);
 				// console.log('Cut!', data);
-
+				console.log("Current Min/Max Times %s %s", currentMinMaxTimes.minTime, currentMinMaxTimes.maxTime);
+				console.log("Cutting to Min/Max Times %s %s", currentMinMaxTimes.minTime - previousMinMaxTimes.minTime, currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 				this.mediaManager.trimMedia(this.media.id,
-						this.player.currentMinTimeSelected,
-						this.player.currentMaxTimeSelected);
+						currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
+						currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 			};
 
 			MediaChooser.prototype._previewVideoForwardFunctionDone = function(

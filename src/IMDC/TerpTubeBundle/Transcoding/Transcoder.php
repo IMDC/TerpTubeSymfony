@@ -140,16 +140,16 @@ class Transcoder {
 			
 			$this->logger->info ( "Trimming " . $videoFilePath . " to: " . $startTimeFFMPEG . " duration: " . $durationFFMPEG );
 			$this->ffmpeg->getFFMpegDriver ()->command ( array (
-					"-ss",
-					$startTimeFFMPEG,
-					"-t",
-					$durationFFMPEG,
 					"-i",
 					$videoFilePath,
+					"-ss",
+					$startTimeFFMPEG,
 					"-acodec",
 					"copy",
 					"-vcodec",
 					"copy",
+					"-t",
+					$durationFFMPEG,
 					"-y",
 					$outputFileWebm 
 			) );
