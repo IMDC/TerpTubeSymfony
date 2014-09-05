@@ -1,6 +1,6 @@
 define(function() {
     var Profile = function() {
-
+        this.page = null;
     }
 
     Profile.TAG = "Profile";
@@ -13,17 +13,19 @@ define(function() {
      * ui element event bindings in order of appearance
      * @param {number} page
      */
-    Profile.bindUIEvents = function(page) {
+    Profile.prototype.bindUIEvents = function(page) {
         console.log("%s: %s", Profile.TAG, "bindUIEvents");
+
+        this.page = page;
 
         switch (page) {
             case Profile.Page.EDIT:
-                Profile._bindUIEventsEdit();
+                this._bindUIEventsEdit();
                 break;
         }
     };
 
-    Profile._bindUIEventsEdit = function() {
+    Profile.prototype._bindUIEventsEdit = function() {
         console.log("%s: %s", Profile.TAG, "_bindUIEventsEdit");
 
         $("#addAnotherLanguage").on("click", function(e) {

@@ -8,8 +8,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                thread = new $tt.Controller.Thread();
-                //TODO context
+                var thread = new $tt.Controller.Thread();
+                //FIXME context
                 context = thread;
 
                 $("#ThreadForm_permissions_usersWithAccess").tagit({

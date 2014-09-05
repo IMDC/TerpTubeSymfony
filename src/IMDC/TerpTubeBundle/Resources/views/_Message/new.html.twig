@@ -18,13 +18,10 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                {% if isReply %}
-                    var page = $tt.Controller.Message.Page.REPLY;
-                {% else %}
-                    var page = $tt.Controller.Message.Page.NEW;
-                {% endif %}
+                var message = new $tt.Controller.Message();
+                var page = $tt.Controller.Message.Page.{% if isReply %}REPLY{% else %}NEW{% endif %};
 
-                $tt.Controller.Message.bindUIEvents(page);
+                message.bindUIEvents(page);
             });
         });
     </script>

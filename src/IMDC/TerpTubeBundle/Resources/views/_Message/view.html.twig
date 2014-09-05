@@ -8,7 +8,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                $tt.Controller.Message.bindUIEvents($tt.Controller.Message.Page.VIEW);
+                var message = new $tt.Controller.Message();
+                message.bindUIEvents($tt.Controller.Message.Page.VIEW);
             });
         });
     </script>

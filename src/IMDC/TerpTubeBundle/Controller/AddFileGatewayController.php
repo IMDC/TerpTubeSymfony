@@ -57,9 +57,10 @@ class AddFileGatewayController extends Controller {
 		}
 		
 		// $response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'index.html.twig', array (
-		$response = $this->render ( 'IMDCTerpTubeBundle:_MyFiles:' . $prefix . 'index.html.twig', array (
-				'resourceFiles' => $resourceFiles 
-		) );
+		$response = $this->render('IMDCTerpTubeBundle:_MyFiles:'.$prefix.'index.html.twig', array(
+		    'resourceFiles' => $resourceFiles,
+            'isPost' => $this->get('request')->query->get('isPost', false)
+		));
 		
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
@@ -324,7 +325,8 @@ class AddFileGatewayController extends Controller {
 			$prefix = "ajax.";
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'recordVideo.html.twig', array (
-				"recorderConfiguration" => $recorderConfiguration 
+				"recorderConfiguration" => $recorderConfiguration,
+            'isPost' => $this->get('request')->get('isPost', false)
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {

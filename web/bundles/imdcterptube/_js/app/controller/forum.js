@@ -1,12 +1,11 @@
 define(['core/mediaChooser'], function(MediaChooser) {
     var Forum = function() {
-        this.player = null;
+        this.page = null;
+        this.mediaChooser = null;
         this.forwardButton = "<button class='forwardButton'></button>";
-        this.media = null;
 
-        //TODO move to media chooser, as this may be a more general function
-        this.bind_onRecordingSuccess = this.onRecordingSuccess.bind(this);
-        this.bind_onRecordingError = this.onRecordingError.bind(this);
+        this.bind__onSuccess = this._onSuccess.bind(this);
+        this.bind__onReset = this._onReset.bind(this);
         this.bind_forwardFunction = this.forwardFunction.bind(this);
     }
 
@@ -27,16 +26,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Forum.Page.EDIT:
                 return {
                     element: $("#files"),
-                    isPopUp: true,
-                    callbacks: {
-                        success: function(media) {
-                            $("#ForumForm_mediatextarea").val(media.id);
-                            //$("#ForumForm_mediaID").attr("data-mid", media.id); //TODO not used??
-                        },
-                        reset: function() {
-                            $("#ForumForm_mediatextarea").val("");
-                        }
-                    }
+                    isPopUp: true
                 };
         }
     };
@@ -48,13 +38,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum.bindUIEvents = function(page) {
         console.log("%s: %s- page=%d", Forum.TAG, "bindUIEvents", page);
 
-        switch (page) {
+        this.page = page;
+
+        switch (this.page) {
             case Forum.Page.NEW:
             case Forum.Page.EDIT:
-                Forum._bindUIEventsNewEdit();
+                this._bindUIEventsNewEdit();
                 break;
             case Forum.Page.DELETE:
-                Forum._bindUIEventsDelete();
+                this._bindUIEventsDelete();
                 break;
         }
     };
@@ -62,7 +54,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum._bindUIEventsNewEdit = function() {
         console.log("%s: %s", Forum.TAG, "_bindUIEventsNewEdit");
 
-        MediaChooser.bindUIEvents(Forum.mediaChooserOptions(Forum.Page.NEW));
+        this.mediaChooser = new MediaChooser(Forum.mediaChooserOptions(Forum.Page.NEW));
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.bindUIEvents();
 
         /*
          * by paul: since I hid the real 'submit' button to provide a nicely stylized button
@@ -87,65 +82,47 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });*/
     };
 
+    Forum.prototype._onSuccess = function(e) {
+        switch (this.page) {
+            case Forum.Page.NEW:
+            case Forum.Page.EDIT:
+                $("#ForumForm_mediatextarea").val(e.media.id);
+                //$("#ForumForm_mediaID").attr("data-mid", e.media.id); //TODO not used??
+                break;
+        }
+    };
+
+    Forum.prototype._onReset = function(e) {
+        switch (this.page) {
+            case Forum.Page.NEW:
+            case Forum.Page.EDIT:
+                $("#ForumForm_mediatextarea").val("");
+                break;
+        }
+    };
+
     /**
      * @param {object} videoElement
      */
-        //TODO move to media chooser, as this may be a more general function
     Forum.prototype.createVideoRecorder = function(videoElement) {
         console.log("%s: %s", Forum.TAG, "createVideoRecorder");
 
-        this.player = new Player(videoElement, {
-            areaSelectionEnabled: false,
-            updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
-            type: Player.DENSITY_BAR_TYPE_RECORDER,
-            audioBar: false,
-            volumeControl: false,
-            recordingSuccessFunction: this.bind_onRecordingSuccess,
-            recordingErrorFunction: this.bind_onRecordingError,
-            recordingPostURL: Routing.generate('imdc_files_gateway_record'),
+        this.mediaChooser.createVideoRecorder({
+            videoElement: videoElement,
             forwardButtons: [this.forwardButton],
             forwardFunctions: [this.bind_forwardFunction]
         });
-        this.player.createControls();
-
-        //TODO revise
-        videoElement.parents(".ui-dialog").on("dialogbeforeclose", (function(event, ui) {
-            console.log("videoElement dialogbeforeclose");
-            if (this.player != null) {
-                this.player.destroyRecorder();
-            }
-        }).bind(this));
-    }
-
-    //TODO move to media chooser, as this may be a more general function
-    Forum.prototype.onRecordingSuccess = function(data) {
-        console.log("%s: %s- mediaId=%d", Forum.TAG, "onRecordingSuccess", data.media.id);
-
-        this.media = data.media;
-        //mediaChooser.setMedia(this.media);
     };
 
-    //TODO move to media chooser, as this may be a more general function
-    Forum.prototype.onRecordingError = function(e) {
-        console.log("%s: %s- e=%s", Forum.TAG, "onRecordingError", e);
-    };
-
-    //TODO move to media chooser, as this may be a more general function
     Forum.prototype.forwardFunction = function() {
         console.log("%s: %s", Forum.TAG, "forwardFunction");
 
-        this.player.destroyRecorder();
+        this.mediaChooser.destroyRecorder();
 
-        /*mediaChooser.loadNextPage({
-         url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
-         method: "POST",
-         data: { mediaId: this.media.id }
-         });*/
-
-        mediaChooser.previewMedia({
+        this.mediaChooser.previewMedia({
             type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
-            mediaId: this.media.id,
+            mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.mediaChooser.media.id }),
+            mediaId: this.mediaChooser.media.id,
             recording: true
         });
     };

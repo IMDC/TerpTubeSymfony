@@ -1,6 +1,6 @@
 define(function() {
     var Message = function() {
-
+        this.page = null;
     }
 
     Message.TAG = "Message";
@@ -15,24 +15,26 @@ define(function() {
      * ui element event bindings in order of appearance
      * @param {number} page
      */
-    Message.bindUIEvents = function(page) {
+    Message.prototype.bindUIEvents = function(page) {
         console.log("%s: %s- page=%d", Message.TAG, "bindUIEvents", page);
 
-        switch (page) {
+        this.page = page;
+
+        switch (this.page) {
             case Message.Page.NEW:
             case Message.Page.REPLY:
-                Message._bindUIEventsNewReply(page);
+                this._bindUIEventsNewReply(this.page == Message.Page.REPLY);
                 break;
             case Message.Page.VIEW:
-                Message._bindUIEventsView();
+                this._bindUIEventsView();
                 break;
         }
     };
 
-    Message._bindUIEventsNewReply = function(page) {
-        console.log("%s: %s- page=%d", Message.TAG, "_bindUIEventsNewReply", page);
+    Message.prototype._bindUIEventsNewReply = function(isReply) {
+        console.log("%s: %s- isReply=%s", Message.TAG, "_bindUIEventsNewReply", isReply);
 
-        var prefix = page == Message.Page.REPLY ? "PrivateMessageReplyForm" : "PrivateMessageForm";
+        var prefix = isReply ? "PrivateMessageReplyForm" : "PrivateMessageForm";
 
         $("#" + prefix + "_recipients").tagit();
 
@@ -43,7 +45,7 @@ define(function() {
         });
     };
 
-    Message._bindUIEventsView = function() {
+    Message.prototype._bindUIEventsView = function() {
         console.log("%s: %s", Message.TAG, "_bindUIEventsView");
 
         var messageId = $(".tt-message-div").first().data("mid");

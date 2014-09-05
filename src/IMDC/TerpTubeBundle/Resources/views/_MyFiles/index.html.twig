@@ -10,13 +10,11 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                myFiles = new $tt.Controller.MyFiles();
-                //TODO context
+                var myFiles = new $tt.Controller.MyFiles();
+                //FIXME context
                 context = myFiles;
 
                 myFiles.bindUIEvents($tt.Controller.MyFiles.Page.INDEX);
-                //Need a mediaChooser reference for the preview of the files.
-                mediaChooser = myFiles.mediaChooser;
             });
         });
     </script>

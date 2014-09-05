@@ -1,18 +1,18 @@
 define(['core/mediaChooser'], function(MediaChooser) {
     var Thread = function() {
+        this.page = null;
         this.keyPoints = new Array();
         this.player = null;
-        this.recorder = null;
+        this.playerOptions = null;
+        this.mediaChooser = null;
         this.forwardButton = "<button class='forwardButton'></button>";
         this.doneButton = "<button class='doneButton'></button>";
         this.doneAndPostButton = "<button class='doneAndPostButton'></button>";
-        this.media = null;
 
         this.bind__onShowPostReplyFormClick = this._onShowPostReplyFormClick.bind(this);
-
-        //TODO move to media chooser, as this may be a more general function
-        this.bind_onRecordingSuccess = this.onRecordingSuccess.bind(this);
-        this.bind_onRecordingError = this.onRecordingError.bind(this);
+        this.bind__onSuccess = this._onSuccess.bind(this);
+        this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
+        this.bind__onReset = this._onReset.bind(this);
         this.bind_forwardFunction = this.forwardFunction.bind(this);
         this.bind_doneFunction = this.doneFunction.bind(this);
         this.bind_doneAndPostFunction = this.doneAndPostFunction.bind(this);
@@ -29,53 +29,20 @@ define(['core/mediaChooser'], function(MediaChooser) {
     /**
      * MediaChooser options for each related page that uses MediaChooser
      * @param {number} page
-     * @param {number} postId
      */
-    Thread.mediaChooserOptions = function(page, postId) {
+    Thread.mediaChooserOptions = function(page) {
         switch (page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
                 return {
                     element: $("#files"),
-                    isPopUp: true,
-                    callbacks: {
-                        success: function(media) {
-                            $("#ThreadForm_mediatextarea").val(media.id);
-				    console.log("successNEW/EDIT");
-                            //$("#ThreadForm_mediaID").attr('data-mid', mid); //TODO not used?
-                        },
-                        successAndPost: function(media) {
-                            $("#ThreadForm_mediatextarea").val(media.id);
-					console.log("successAndPostNEW/EDIT");
-					$("#postReplySubmit").trigger("click");
-                            //TODO actually post here
-                        },
-                        reset: function() {
-                            $("#ThreadForm_mediatextarea").val("");
-                        }
-                    }
+                    isPopUp: true
                 };
             case Thread.Page.VIEW_THREAD:
                 return {
                     element: $("#files"),
                     isPopUp: true,
-                    callbacks: {
-                        success: function(media) {
-                            $("#PostFormFromThread_mediatextarea").val(media.id);
-                            //$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
-					console.log("successVIEW");
-                        },
-                        successAndPost: function(media) {
-                            $("#PostFormFromThread_mediatextarea").val(media.id);
-					console.log("successAndPostVIEW");
-					$("#postReplySubmit").trigger("click");
-                            //TODO actually post here
-                        },
-                        reset: function() {
-                            $("#PostFormFromThread_mediatextarea").val("");
-                        }
-			},
-			isNewPost: true
+			        isNewPost: true
                 };
         }
     };
@@ -87,10 +54,12 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.bindUIEvents = function(page) {
         console.log("%s: %s- page=%d", Thread.TAG, "bindUIEvents", page);
 
-        switch (page) {
+        this.page = page;
+
+        switch (this.page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
-                Thread._bindUIEventsNewEdit(page == Thread.Page.EDIT);
+                this._bindUIEventsNewEdit(this.page == Thread.Page.EDIT);
                 break;
             case Thread.Page.VIEW_THREAD:
                 this._bindUIEventsViewThread();
@@ -98,10 +67,14 @@ define(['core/mediaChooser'], function(MediaChooser) {
         }
     };
 
-    Thread._bindUIEventsNewEdit = function(isEdit) {
-        console.log("%s: %s", Thread.TAG, "_bindUIEventsNewEdit");
+    Thread.prototype._bindUIEventsNewEdit = function(isEdit) {
+        console.log("%s: %s- isEdit=%s", Thread.TAG, "_bindUIEventsNewEdit", isEdit);
 
-        MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.NEW));
+        this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.NEW));
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.bindUIEvents();
 
         /*
          * by paul: since I hid the real 'submit' button to provide a nicely stylized button
@@ -136,7 +109,11 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype._bindUIEventsViewThread = function() {
         console.log("%s: %s", Thread.TAG, "_bindUIEventsViewThread");
 
-        MediaChooser.bindUIEvents(Thread.mediaChooserOptions(Thread.Page.VIEW_THREAD));
+        this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.VIEW_THREAD));
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.bindUIEvents();
 
         // change the video speed when the slowdown button is clicked
         $("#videoSpeed").on("click", (function(e) {
@@ -464,6 +441,52 @@ define(['core/mediaChooser'], function(MediaChooser) {
         }
     };
 
+    Thread.prototype._onSuccess = function(e) {
+        switch (this.page) {
+            case Thread.Page.NEW:
+            case Thread.Page.EDIT:
+                $("#ThreadForm_mediatextarea").val(e.media.id);
+                console.log("successNEW/EDIT");
+                //$("#ThreadForm_mediaID").attr('data-mid', mid); //TODO not used?
+                break;
+            case Thread.Page.VIEW_THREAD:
+                $("#PostFormFromThread_mediatextarea").val(e.media.id);
+                //$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
+                console.log("successVIEW");
+                break;
+        }
+    };
+
+    Thread.prototype._onSuccessAndPost = function(e) {
+        switch (this.page) {
+            case Thread.Page.NEW:
+            case Thread.Page.EDIT:
+                $("#ThreadForm_mediatextarea").val(e.media.id);
+                console.log("successAndPostNEW/EDIT");
+                $("#postReplySubmit").trigger("click");
+                //TODO actually post here
+                break;
+            case Thread.Page.VIEW_THREAD:
+                $("#PostFormFromThread_mediatextarea").val(e.media.id);
+                console.log("successAndPostVIEW");
+                $("#postReplySubmit").trigger("click");
+                //TODO actually post here
+                break;
+        }
+    };
+
+    Thread.prototype._onReset = function(e) {
+        switch (this.page) {
+            case Thread.Page.NEW:
+            case Thread.Page.EDIT:
+                $("#ThreadForm_mediatextarea").val("");
+                break;
+            case Thread.Page.VIEW_THREAD:
+                $("#PostFormFromThread_mediatextarea").val("");
+                break;
+        }
+    };
+
     Thread.prototype.setPostTimelinePointForPost = function(mediaElement) {
         console.log("%s: %s", Thread.TAG, "setPostTimelinePointForPost");
 
@@ -504,62 +527,25 @@ define(['core/mediaChooser'], function(MediaChooser) {
     /**
      * @param {object} videoElement
      */
-        //TODO move to media chooser, as this may be a more general function
     Thread.prototype.createVideoRecorder = function(videoElement) {
         console.log("%s: %s", Thread.TAG, "createVideoRecorder");
 
-        this.recorder = new Player(videoElement, {
-            areaSelectionEnabled: false,
-            updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
-            type: Player.DENSITY_BAR_TYPE_RECORDER,
-            audioBar: false,
-            volumeControl: false,
-            recordingSuccessFunction: this.bind_onRecordingSuccess,
-            recordingErrorFunction: this.bind_onRecordingError,
-            recordingPostURL: Routing.generate('imdc_files_gateway_record'),
+        this.mediaChooser.createVideoRecorder({
+            videoElement: videoElement,
             forwardButtons: [this.forwardButton, this.doneButton, this.doneAndPostButton],
             forwardFunctions: [this.bind_forwardFunction, this.bind_doneFunction, this.bind_doneAndPostFunction]
         });
-        this.recorder.createControls();
-
-        //TODO revise
-        videoElement.parents(".ui-dialog").on("dialogbeforeclose", (function(event, ui) {
-            console.log("videoElement dialogbeforeclose");
-            if (this.recorder != null) {
-                this.recorder.destroyRecorder();
-            }
-        }).bind(this));
-    }
-
-    //TODO move to media chooser, as this may be a more general function
-    Thread.prototype.onRecordingSuccess = function(data) {
-        console.log("%s: %s- mediaId=%d", Thread.TAG, "onRecordingSuccess", data.media.id);
-
-        this.media = data.media;
-        //	mediaChooser.setMedia(this.media);
     };
 
-    //TODO move to media chooser, as this may be a more general function
-    Thread.prototype.onRecordingError = function(e) {
-        console.log("%s: %s- e=%s", Thread.TAG, "onRecordingError", e);
-    };
-
-    //TODO move to media chooser, as this may be a more general function
     Thread.prototype.forwardFunction = function() {
         console.log("%s: %s", Thread.TAG, "forwardFunction");
 
-        this.recorder.destroyRecorder();
+        this.mediaChooser.destroyRecorder();
 
-        /*mediaChooser.loadNextPage({
-         url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
-         method: "POST",
-         data: { mediaId: this.media.id }
-         });*/
-
-        mediaChooser.previewMedia({
+        this.mediaChooser.previewMedia({
             type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
-            mediaId: this.media.id,
+            mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.mediaChooser.media.id }),
+            mediaId: this.mediaChooser.media.id,
             recording: true
         });
     };
@@ -567,30 +553,17 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.doneFunction = function() {
         console.log("%s: %s", Thread.TAG, "doneFunction");
 
-        this.recorder.destroyRecorder();
+        this.mediaChooser.destroyRecorder();
 
-        /*mediaChooser.loadNextPage({
-         url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
-         method: "POST",
-         data: { mediaId: this.media.id }
-         });*/
-
-        mediaChooser.setMedia(this.media);
-        mediaChooser._previewVideoForwardFunctionDone();
+        this.mediaChooser._previewVideoForwardFunctionDone();
     };
 
     Thread.prototype.doneAndPostFunction = function() {
         console.log("%s: %s", Thread.TAG, "doneAndPostFunction");
 
-        this.recorder.destroyRecorder();
-        mediaChooser.setMedia(this.media);
-        /*mediaChooser.loadNextPage({
-         url: Routing.generate('imdc_files_gateway_preview', {mediaId: this.media.id}),
-         method: "POST",
-         data: { mediaId: this.media.id }
-         });*/
+        this.mediaChooser.destroyRecorder();
 
-        mediaChooser._previewVideoForwardFunctionDoneAndPost();
+        this.mediaChooser._previewVideoForwardFunctionDoneAndPost();
     };
 
     return Thread;

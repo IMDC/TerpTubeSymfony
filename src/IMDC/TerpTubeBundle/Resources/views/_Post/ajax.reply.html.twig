@@ -21,9 +21,11 @@ TerpTube.Controller.Thread
 	</div>
     {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' with {'isPost': true, 'postId': post.id} %}
 	<script type="text/javascript">
-        // make all elements with class 'autosize' expand to fit its contents
-        $(".autosize").autosize();
+        var post = new $tt.Controller.Post();
+        //FIXME context
+        if (!context) context = post;
+        contextPost = post;
 
-        $tt.Controller.Post.bindUIEvents($tt.Controller.Post.Page.REPLY, {{ post.id }});
+        post.bindUIEvents($tt.Controller.Post.Page.REPLY, {{ post.id }});
 	</script>
 </div>

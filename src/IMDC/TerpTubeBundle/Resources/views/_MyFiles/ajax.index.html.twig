@@ -54,11 +54,7 @@ TerpTube.Core.MediaChooser
 			</tbody>
 		</table>
 		<script type="text/javascript">
-            if (typeof $tt != 'undefined') {
-                $tt.Core.MediaChooser.bindUIEventsSelectFromMyFiles();
-            } else {
-                MediaChooser.bindUIEventsSelectFromMyFiles(); //TODO remove. for compatibility only
-            }
+            context{% if isPost %}Post{% endif %}.mediaChooser.bindUIEventsSelectFromMyFiles();
 		</script>
 	</div>
 	<div class="row">

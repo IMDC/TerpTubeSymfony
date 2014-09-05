@@ -8,11 +8,11 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                forum = new $tt.Controller.Forum();
-                //TODO context
+                var forum = new $tt.Controller.Forum();
+                //FIXME context
                 context = forum;
 
-                $tt.Controller.Forum.bindUIEvents($tt.Controller.Forum.Page.NEW);
+                forum.bindUIEvents($tt.Controller.Forum.Page.NEW);
             });
         });
     </script>

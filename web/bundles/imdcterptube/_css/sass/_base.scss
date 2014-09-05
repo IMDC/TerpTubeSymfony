@@ -13,12 +13,14 @@ $navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed
 
 $body-extra-padding: 15px;
 
+$eku-primary: #5e213b;
+
 
 
 body {
   padding-top: $navbar-top-height + $body-extra-padding;
   padding-bottom: $navbar-bottom-height + $body-extra-padding;
-  background-color: #eeeeee;
+  /* background-color: #eeeeee; */
 
   @media (max-width: 1200px) {
     padding-top: $navbar-top-height;
@@ -44,6 +46,7 @@ body {
 .tt-navbar-top {
   min-height: $navbar-top-height;
   color: $navbar-text-color;
+  /* background-color: $eku-primary; */
 }
 
 .tt-navbar-nav-top > li > a {

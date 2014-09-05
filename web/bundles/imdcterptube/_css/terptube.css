@@ -1,64 +1,65 @@
-/* line 18, sass/_base.scss */
+/* line 20, sass/_base.scss */
 body {
   padding-top: 85px;
   padding-bottom: 40px;
-  background-color: #eeeeee;
+  /* background-color: #eeeeee; */
 }
 @media (max-width: 1200px) {
-  /* line 18, sass/_base.scss */
+  /* line 20, sass/_base.scss */
   body {
     padding-top: 70px;
   }
 }
 
-/* line 28, sass/_base.scss */
+/* line 30, sass/_base.scss */
 .tt-navbar-header {
   float: none;
 }
 
 @media (max-width: 1200px) and (min-width: 768px) {
-  /* line 33, sass/_base.scss */
+  /* line 35, sass/_base.scss */
   .tt-navbar-header {
     float: left;
   }
 }
-/* line 38, sass/_base.scss */
+/* line 40, sass/_base.scss */
 .tt-navbar-logo {
   padding-top: 5px;
   padding-bottom: 5px;
   min-height: 70px;
 }
 
-/* line 44, sass/_base.scss */
+/* line 46, sass/_base.scss */
 .tt-navbar-top {
   min-height: 70px;
   color: white;
+  /* background-color: $eku-primary; */
 }
 
-/* line 49, sass/_base.scss */
+/* line 52, sass/_base.scss */
 .tt-navbar-nav-top > li > a {
   padding-top: 21px;
   padding-bottom: 21px;
 }
 
-/* line 54, sass/_base.scss */
+/* line 57, sass/_base.scss */
 .tt-navbar-right-top > li > a {
   line-height: 2;
 }
 
-/* line 58, sass/_base.scss */
+/* line 61, sass/_base.scss */
 .tt-navbar-bottom {
   min-height: 25px;
   color: white;
 }
 
-/* line 63, sass/_base.scss */
+/* line 66, sass/_base.scss */
 .tt-copyright {
   padding-top: 2.5px;
   padding-bottom: 2.5px;
 }
 
-/* line 68, sass/_base.scss */
+/* line 71, sass/_base.scss */
 .tt-navbar-side {
   padding-top: 15px;
   padding-bottom: 15px;
@@ -68,22 +69,22 @@ body {
   bottom: 25px;
   background-color: #888888;
 }
-/* line 77, sass/_base.scss */
+/* line 80, sass/_base.scss */
 .tt-navbar-side a {
   color: #000000;
   font-size: 1.2em;
 }
-/* line 82, sass/_base.scss */
+/* line 85, sass/_base.scss */
 .tt-navbar-side div {
   padding-bottom: 10px;
 }
-/* line 85, sass/_base.scss */
+/* line 88, sass/_base.scss */
 .tt-navbar-side div img {
   max-width: 50px;
   max-height: 50px;
 }
 @media (max-width: 1200px) {
-  /* line 68, sass/_base.scss */
+  /* line 71, sass/_base.scss */
   .tt-navbar-side {
     position: relative;
     top: 0;
@@ -91,41 +92,41 @@ body {
     bottom: inherit;
     margin-bottom: 15px;
   }
-  /* line 98, sass/_base.scss */
+  /* line 101, sass/_base.scss */
   .tt-navbar-side div {
     padding-bottom: 0;
     display: inline-block;
   }
 }
 
-/* line 105, sass/_base.scss */
+/* line 108, sass/_base.scss */
 .tt-flash-message-container {
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
-/* line 110, sass/_base.scss */
+/* line 113, sass/_base.scss */
 .tt-separator-top, .tt-separator-bottom {
   border-top: 1px solid #000000;
 }
 
-/* line 114, sass/_base.scss */
+/* line 117, sass/_base.scss */
 .tt-separator-bottom {
   margin-top: 0;
 }
 
-/* line 120, sass/_base.scss */
+/* line 123, sass/_base.scss */
 .tt-date {
   color: #aaa;
   font-size: 0.9em;
 }
 
-/* line 125, sass/_base.scss */
+/* line 128, sass/_base.scss */
 .tt-avatar {
   max-height: 150px;
 }
 
-/* line 130, sass/_base.scss */
+/* line 133, sass/_base.scss */
 .tt-table > thead, .tt-message-table > thead, .tt-invitation-table > thead, .tt-myFiles-table > thead {
   background-color: white;
 }
