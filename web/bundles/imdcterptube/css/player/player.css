@@ -14,6 +14,16 @@ button.videoControlsContainer
 	background-color: white;
 }
 
+button.videoControlsContainer.forwardButtons
+{
+	margin-left: 5px;
+}
+
+button.videoControlsContainer.backButtons
+{
+	margin-left: 5px;
+}
+
 .preview-media .video 
 {
 	text-align:center;	
@@ -245,7 +255,22 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-image: url(../../img/player/previous_small.png); 
 	background-repeat: no-repeat;	
 }
+
 .videoControlsContainer.controlsBar.forwardButtons.forwardButton
+{
+	background-image: url(../../img/player/edit_post.png); 
+	background-repeat: no-repeat;	
+	margin-top:0px;
+}
+
+.videoControlsContainer.controlsBar.forwardButtons.doneButton
+{
+	background-image: url(../../img/player/submit_done.png); 
+	background-repeat: no-repeat;	
+	margin-top:0px;
+}
+
+.videoControlsContainer.controlsBar.forwardButtons.doneAndPostButton
 {
 	background-image: url(../../img/player/submit_small.png); 
 	background-repeat: no-repeat;	
@@ -260,11 +285,11 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-image: url(../../img/player/cancel_small.png); 
 	background-repeat: no-repeat;	
 }
-.videoControlsContainer.controlsBar.forwardButtons.forwardButton.record
+/* .videoControlsContainer.controlsBar.forwardButtons.forwardButton.record
 {
 	background-image: url(../../img/player/next_small.png); 
 	background-repeat: no-repeat;	
-}
+} */
 
 .videoControlsContainer.controlsBar.backButtons.backButton.record
 {
