@@ -5,7 +5,6 @@ namespace IMDC\TerpTubeBundle\Consumer;
 use Symfony\Component\HttpFoundation\File\File;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\FfmpegFormats\H264;
 use FFMpeg\FFProbe;
 use FFMpeg\Filters\Video\ResizeFilter;
 use FFMpeg\Coordinate\Dimension;
@@ -117,6 +116,8 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			{
 				//Already Transcoded should not be here
 				$this->logger->error ( "Should not be in this place of transcoding when everything is already completed!" );
+				$webmFile = $resourceFile;
+				$mp4File = $resourceFile;
 			}
 			// Create a thumbnail
 			

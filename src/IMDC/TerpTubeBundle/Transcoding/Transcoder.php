@@ -209,6 +209,43 @@ class Transcoder {
 	}
 	
 	/**
+	 * Function that takes an audio file and converts it to WebM using the selected preset and returns the resulting file.
+	 * The returned file is a temporary file that needs to be moved after receiving it.
+	 *
+	 * @param File $inputFile
+	 * @param String $preset
+	 * @return File $file - The converted file. Needs to be moved to a permanent directory.
+	 */
+	public function transcodeAudioToWebM(File $inputFile, $preset) {
+		$tempDir = '/tmp/terptube-transcoding';
+		$workingDir = $tempDir . '/' . $inputFile->getFilename ();
+		$umask = umask ();
+		umask ( 0000 );
+		if (! file_exists ( $tempDir ))
+			mkdir ( $tempDir );
+	
+		if (! file_exists ( $workingDir ))
+			mkdir ( $workingDir );
+		$tempFileName = tempnam ( $tempDir, "WebMAudio" );
+	
+		umask ( $umask );
+		$dir = getcwd ();
+		chdir ( $workingDir );
+		// Convert to webm
+		$outputFileWebm = $tempFileName . '.webm';
+	
+		$this->logger->info ( "Transcoding " . $inputFile->getRealPath () . " to: " . $outputFileWebm );
+		$this->transcoder->transcodeWithPreset ( $inputFile->getRealPath (), $preset, $outputFileWebm );
+	
+		chdir ( $dir );
+		$this->fs->remove ( $workingDir );
+		$this->fs->remove ( $tempFileName );
+		$this->logger->info ( "Transcoding complete!" );
+	
+		return new File ( $outputFileWebm );
+	}
+	
+	/**
 	 * Function that takes a file and converts it to X264 using the selected preset and returns the resulting file.
 	 * The returned file is a temporary file that needs to be moved after receiving it.
 	 *
@@ -242,6 +279,43 @@ class Transcoder {
 		$this->fs->remove ( $tempFileName );
 		$this->logger->info ( "Transcoding complete!" );
 		
+		return new File ( $outputFileWebm );
+	}
+	
+	/**
+	 * Function that takes an  audio file and converts it to X264 using the selected preset and returns the resulting file.
+	 * The returned file is a temporary file that needs to be moved after receiving it.
+	 *
+	 * @param File $inputFile
+	 * @param String $preset
+	 * @return File $file - The converted file. Needs to be moved to a permanent directory.
+	 */
+	public function transcodeAudioToX264(File $inputFile, $preset) {
+		$tempDir = '/tmp/terptube-transcoding';
+		$workingDir = $tempDir . '/' . $inputFile->getFilename ();
+		$umask = umask ();
+		umask ( 0000 );
+		if (! file_exists ( $tempDir ))
+			mkdir ( $tempDir );
+	
+		if (! file_exists ( $workingDir ))
+			mkdir ( $workingDir );
+		$tempFileName = tempnam ( $tempDir, "X264Audio" );
+	
+		umask ( $umask );
+		$dir = getcwd ();
+		chdir ( $workingDir );
+		// Convert to webm
+		$outputFileWebm = $tempFileName . '.m4a';
+	
+		$this->logger->info ( "Transcoding " . $inputFile->getRealPath () . " to: " . $outputFileWebm );
+		$this->transcoder->transcodeWithPreset ( $inputFile->getRealPath (), $preset, $outputFileWebm );
+	
+		chdir ( $dir );
+		$this->fs->remove ( $workingDir );
+		$this->fs->remove ( $tempFileName );
+		$this->logger->info ( "Transcoding complete!" );
+	
 		return new File ( $outputFileWebm );
 	}
 	

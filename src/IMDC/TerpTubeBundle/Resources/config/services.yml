@@ -16,7 +16,7 @@ services:
             
     upload_audio_service:
         class: IMDC\TerpTubeBundle\Consumer\UploadAudioConsumer
-        arguments: ["@logger", "@doctrine", "@transcoder"]
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 

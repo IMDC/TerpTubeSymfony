@@ -342,6 +342,7 @@ div.videoControlsContainer.controlsBar.backButtons
 	top: -30px;
 	border: 1px solid black;
 	text-align: center;
+	z-index: 5;
 }
 .videoControlsContainer.volumeControl.volumeSlider.ui-slider
 {
