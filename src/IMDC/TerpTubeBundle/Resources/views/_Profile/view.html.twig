@@ -34,7 +34,7 @@
                                     </tr>
                                     <tr>
                                         <th>Location</th>
-                                        <td>{{ 'profile.show.city'|trans }}</td>
+                                        <td>{{ profile.city ~ ', ' ~ profile.country}}</td>
                                     </tr>
                                     <tr>
                                         <th>{{ 'profile.show.skypeName'|trans }}</th>
@@ -43,6 +43,10 @@
                                     <tr>
                                         <th>{{ 'profile.show.postCount'|trans }}</th>
                                         <td>{{ user.postCount }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Publicly Visible Profile?</th>
+                                        <td>{% if profile.profileVisibleToPublic %}{{ profile.profileVisibleToPublic }}{% else %}No{% endif %}</td>
                                     </tr>
                                 </tbody>
                             </table>
