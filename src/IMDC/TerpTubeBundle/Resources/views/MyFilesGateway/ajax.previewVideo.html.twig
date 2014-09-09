@@ -9,6 +9,6 @@
 	</video>
 
 	<script type="text/javascript">
-	    context{% if isPost %}Post{% endif %}.mediaChooser.previewVideo();
+	    context{% if isPost  is defined and isPost %}Post{% endif %}.mediaChooser.previewVideo();
 	</script>
 {% endblock motionMedia %}
