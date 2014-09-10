@@ -231,7 +231,7 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
         data.simulRecordUrl = Routing.generate('imdc_media_simultaneous_record', { mediaID: media.id });
 
         dust.render("mediaRow", data, function(err, out) {
-            $("#files-table").append(out);
+            $(".tt-myFiles-table").append(out);
         });
 
         $(".preview-button:last").on("click", this.bind__onPreviewButtonClick);
@@ -250,7 +250,7 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
             data.mediaSize = (media.metaData.size / 1024 / 1024).toFixed(2) + " MB";
         }
         data.title = media.title;
-        var row = $('a[data-val|='+data.media.id+']').eq(0).parent().parent();
+        var row = $('a[data-val|='+data.media.id+']').eq(0).parents('tr').eq(0);
         console.log(row);
         row.children().eq(1).text(data.title);
         row.children().eq(4).text(data.mediaSize);

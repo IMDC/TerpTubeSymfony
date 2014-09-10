@@ -131,21 +131,23 @@
     <script type="text/html" id="mediaRow">
         <tr>
             <td>
-                <a class="btn btn-danger btn-xs delete-button" href="#" data-val="{media.id}">
-                    <i class="fa fa-trash-o"></i> {{ 'filesGateway.deleteLink'|trans }}
-                </a>
-                <a class="btn btn-default btn-xs preview-button{{ '{#previewDisabled} disabled{/previewDisabled}' }}" href="#" data-type="{media.type}" data-url="{previewUrl}" data-val="{media.id}">
-                    <i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
-                </a>
-                <a class="btn btn-default btn-xs share-button" href="{newThreadUrl}" data-type="{media.type}" data-val="{media.id}">
-                    <i class="fa fa-share-square-o"></i> {{ 'filesGateway.shareLink'|trans }}
-                </a>
-                {{ '{#canInterpret}' }}
-                    <!-- TODO interpretations disabled for now
-                    <a class="btn btn-default btn-xs interpret-button" href="{simulRecordUrl}">
-                        <i class="fa fa-film"></i> Create Interpretation
-                    </a>-->
-                {/canInterpret}
+ 				<div class="text-center">
+                	<a class="btn btn-danger btn-xs delete-button" href="#" data-val="{media.id}">
+                	    <i class="fa fa-trash-o"></i> {{ 'filesGateway.deleteLink'|trans }}
+                	</a>
+                	<a class="btn btn-default btn-xs preview-button{{ '{#previewDisabled} disabled{/previewDisabled}' }}" href="#" data-type="{media.type}" data-url="{previewUrl}" data-val="{media.id}">
+                	    <i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
+                	</a>
+                	<a class="btn btn-default btn-xs share-button" href="{newThreadUrl}" data-type="{media.type}" data-val="{media.id}">
+                	    <i class="fa fa-share-square-o"></i> {{ 'filesGateway.shareLink'|trans }}
+                	</a>
+                	{{ '{#canInterpret}' }}
+                	    <!-- TODO interpretations disabled for now
+                	    <a class="btn btn-default btn-xs interpret-button" href="{simulRecordUrl}">
+                	        <i class="fa fa-film"></i> Create Interpretation
+                	    </a>-->
+                	{/canInterpret}
+				</div>
             </td>
             <td>{media.title}</td>
             <td><i class="fa {icon}"></i> {mediaType}</td>
