@@ -49,21 +49,33 @@ class UploadListener implements EventSubscriberInterface
 		
 		
 		$metaData->setTimeUploaded(new \DateTime('now'));
+		$metaData->setSize(-1);
+		
+		$em = $this->doctrine->getManager();
 		//Transcode the different types and populate the metadata for the proper type
 		if ($mediaType == Media::TYPE_AUDIO)
 		{
+			$em->persist($metaData);
+			$media->setMetaData($metaData);
+			$em->flush();
+			
 			$this->logger->info("Uploaded an audio media");
 			$message = array('media_id'=> $media->getId());
 			$this->audio_producer->publish(serialize($message));
-			$metaData->setSize(-1);
+			return;
+			
 		}
 		else if ($mediaType == Media::TYPE_VIDEO)
 		{
+			$em->persist($metaData);
+			$media->setMetaData($metaData);
+			$em->flush();
+			
 			$this->logger->info("Uploaded a video media");
 			//Send the Async Message
 			$message = array('media_id'=> $media->getId());
 			$this->video_producer->publish(serialize($message));
-			$metaData->setSize(-1);
+			return;
 		}
 		else if ($mediaType == Media::TYPE_IMAGE)
 		{
@@ -80,8 +92,6 @@ class UploadListener implements EventSubscriberInterface
 			$this->logger->info("Uploaded something");
 			$metaData->setSize($fileSize);
 		}
-		
-		$em = $this->doctrine->getManager();
 		$em->persist($metaData);
 		$media->setMetaData($metaData);
 			
