@@ -81,7 +81,7 @@
 							<span class="icon-bar"></span>
 						</button>
 						{% block brand %}
-						<a class="navbar-brand" href="{{ path('imdc_terp_tube_user_splash') }}">TerpTube</a>
+						<a class="navbar-brand" href="{{ path('imdc_home_user_home') }}">TerpTube</a>
 						{% endblock brand %}
 					</div>
 
@@ -89,7 +89,7 @@
 						<ul class="nav navbar-nav">
 							{% block nav_ul %}
 								{% block nav_ul_home %}<li>{% endblock %}
-									{# <a href="{{ path('imdc_terp_tube_user_splash') }}"><i class="fa fa-home"></i> Home</a> #}
+									{# <a href="{{ path('imdc_home_user_home') }}"><i class="fa fa-home"></i> Home</a> #}
 								</li>
 								{% block nav_ul_about %}<li>{% endblock %}
 									{# <a href="#about">About</a> #}
@@ -107,7 +107,7 @@
 									    <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> {{ 'nav.my_friends'|trans }}</a>
 									</li>
 									{% block nav_ul_authenticated_my_groups %}<li>{% endblock %}
-									    <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_mygroups') }}"><i class="fa fa-globe"></i> {{ 'nav.my_groups'|trans }}</a>
+									    <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}"><i class="fa fa-globe"></i> {{ 'nav.my_groups'|trans }}</a>
 								    </li>
 								    {% block nav_ul_authenticated_my_interpretations %}<li>{% endblock %}
 								        <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_files_gateway_interpretations') }}"><i class="fa fa-film"></i> {{ 'nav.my_interpretations'|trans }}</a>
@@ -161,7 +161,7 @@
 							{% block sidebarlinks %}
 								<div>
 									<div {% block sidebarlinks_home %}{% endblock %}>
-										<a href="{{ path('imdc_terp_tube_user_splash') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_home.png') }}" />Home</a>
+										<a href="{{ path('imdc_home_user_home') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_home.png') }}" />Home</a>
 									</div>
 									<div {% block sidebarlinks_pages %}{% endblock %}>
 										<a href="{{ path('imdc_forum_list') }}#"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Forums</a>
@@ -172,12 +172,12 @@
 										<a href="#"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_vlogs.png') }}" />Video Logs</a>
 									</div>
 									<div {% block sidebarlinks_groups %}{% endblock %}>
-										<a href="{{ path('imdc_groups_show_all') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Groups</a>
+										<a href="{{ path('imdc_group_list') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Groups</a>
 									</div>
 								</div>
 								<div>
 									<div {% block sidebarlinks_members %}{% endblock %}>
-										<a href="{{ path('imdc_member_list_public') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_member.png') }}" />Members</a>
+										<a href="{{ path('imdc_member_list') }}"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_member.png') }}" />Members</a>
 									</div>
 									<div {% block sidebarlinks_help %}{% endblock %}>
 										<a href="#"><img class="img-responsive" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_help.png') }}" />Help</a>

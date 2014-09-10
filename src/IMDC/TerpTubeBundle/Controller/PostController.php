@@ -47,8 +47,9 @@ class PostController extends Controller
 	 * 
 	 * @param Request $request
 	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @deprecated
 	 */
-	public function createNewPostAction(Request $request) 
+	public function createNewPostAction(Request $request) //TODO delete
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -94,8 +95,14 @@ class PostController extends Controller
 				'form' => $form->createView(),
 		));	
 	}
-	
-	public function createReplyPostAction(Request $request, $threadid)
+
+    /**
+     * @param Request $request
+     * @param $threadid
+     * @return RedirectResponse|Response
+     * @deprecated
+     */
+    public function createReplyPostAction(Request $request, $threadid) //TODO delete
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -182,7 +189,7 @@ class PostController extends Controller
 	        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
 	        $aclProvider->updateAcl($acl);
 
-	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)).'#'.$newpostid);
+	        return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)).'#'.$newpostid);
 	    }
 	
 	    // form is not valid, show the basic form
@@ -212,7 +219,7 @@ class PostController extends Controller
 					'danger',
 					'You do not have permission to delete this post'
 			);
-			return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+			return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
 		}
 		
 		// post is owned by the user
@@ -222,11 +229,11 @@ class PostController extends Controller
 		$em->remove($postToDelete);
 		$em->flush();
 		
-		return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+		return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
 		
 	}
 	
-	public function deletePostAjaxAction(Request $request, $pid)
+	public function deletePostAjaxAction(Request $request, $pid) //TODO merge with deletePostAction
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
@@ -254,7 +261,7 @@ class PostController extends Controller
 					'danger',
 					'You do not have permission to delete this post'
 			);
-			//return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+			//return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
 			// return an ajax fail here
 			$return = array('responseCode' => 400, 'feedback' => 'You do not have permission to delete this post');
 		}
@@ -343,7 +350,7 @@ class PostController extends Controller
 	            'Post edited successfully!'
 	        );
 	        
-	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid' => $threadid)).'#'.$postID);
+	        return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid' => $threadid)).'#'.$postID);
 	    }
 	    
 	    // form not valid, show the basic form
@@ -353,7 +360,7 @@ class PostController extends Controller
 	    ));
 	}
 	
-	public function editPostAjaxAction(Request $request, $pid) 
+	public function editPostAjaxAction(Request $request, $pid) //TODO merge with editPostAction
 	{
 	    // check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -379,7 +386,7 @@ class PostController extends Controller
                 'danger',
                 'You do not have permission to edit this post'
 			);
-			//return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+			//return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
 			// return an ajax fail here
 			$return = array('responseCode' => 400, 'feedback' => 'You do not have permission to edit this post');
 		} else {
@@ -449,14 +456,14 @@ class PostController extends Controller
 	            'Reply created successfully!'
 	        );
 	         
-	        return $this->redirect($this->generateUrl('imdc_thread_view_specific', array(
+	        return $this->redirect($this->generateUrl('imdc_thread_view', array(
 	            'threadid'=>$postToReplyTo->getParentThread()->getId()
 	        )));
 	    }
 	    
 	}
 	
-	public function replyPostAjaxAction(Request $request, $pid) // $pid is the post you are replying to!
+	public function replyPostAjaxAction(Request $request, $pid) // $pid is the post you are replying to! //TODO merge with replyPostAction
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {

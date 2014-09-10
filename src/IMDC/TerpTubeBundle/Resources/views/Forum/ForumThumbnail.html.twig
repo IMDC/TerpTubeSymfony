@@ -13,7 +13,7 @@ Forum:index.html.twig
 		{% endif %}
 		<li>
 			<div class="col-md-3">
-				<a href="{{ path('imdc_forum_view_specific', {'forumid': forum.id} ) }}">
+				<a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}">
 					<div class="thumbnail forumthumbnail text-center" style="min-height: 380px;">
 						<p style="margin-top:10px;">
 							{% if forum.titleMedia|length != 0 %}

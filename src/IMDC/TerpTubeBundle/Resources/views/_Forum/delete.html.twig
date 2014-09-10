@@ -47,7 +47,7 @@
                 {% endif %}
                 {{ form_row(form.titleText) }}
                 {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-                <a class="btn btn-default" href="{{ path('imdc_forum_view_specific', {'forumid': forum.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
                 <button class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</button>
                 {{ form_end(form) }}
             </div>

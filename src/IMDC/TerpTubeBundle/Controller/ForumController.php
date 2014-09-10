@@ -127,7 +127,7 @@ class ForumController extends Controller
                 'Forum created successfully!'
             );
 
-            return $this->redirect($this->generateUrl('imdc_forum_view_specific', array(
+            return $this->redirect($this->generateUrl('imdc_forum_view', array(
                 'forumid' => $newforum->getId()
             )));
         }
@@ -258,7 +258,7 @@ class ForumController extends Controller
 	            'Forum edited successfully!'
 	        );
 
-	        return $this->redirect($this->generateUrl('imdc_forum_view_specific', array(
+	        return $this->redirect($this->generateUrl('imdc_forum_view', array(
                 'forumid' => $forum->getId()
             )));
         }

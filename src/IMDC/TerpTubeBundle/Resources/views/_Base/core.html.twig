@@ -81,7 +81,7 @@
                                         <span class="icon-bar"></span>
                                         <span class="icon-bar"></span>
                                     </button>
-                                    <a href="{{ path('imdc_terp_tube_user_splash') }}">
+                                    <a href="{{ path('imdc_home_user_home') }}">
                                         <img class="img-responsive center-block tt-navbar-logo" src="{{ asset('bundles/imdcterptube/img/tt_logo_68wx51h.png') }}">
                                     </a>
                                 </div>
@@ -101,7 +101,7 @@
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-user fa-2x"></i></a>
                                             </li>
                                             <li {% block nav_ul_authenticated_my_groups %}{% endblock %}>
-                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_mygroups') }}"><i class="fa fa-users fa-2x"></i></a>
+                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}"><i class="fa fa-users fa-2x"></i></a>
                                             </li>
                                             {% if is_granted('ROLE_SUPER_ADMIN') %}
                                                 <li {% block nav_ul_authenticated_admin %}{% endblock %}>

@@ -1,0 +1,39 @@
+#imdc_thread_show_recent: #TODO delete
+  #pattern: /threads
+  #defaults: { _controller: IMDCTerpTubeBundle:Thread:index }
+
+#imdc_thread_new: #TODO delete
+  #pattern: /new
+  #defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
+
+imdc_thread_new_from_media:
+  pattern: /new/myFiles/{resourceid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThreadFromMedia }
+  requirements:
+    resourceid: \d+
+  options:
+    expose: true
+
+imdc_thread_new_under_forum:
+  pattern: /new/forum/{forumid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
+  requirements:
+    forumid: \d+
+
+imdc_thread_view:
+  pattern: /view/{threadid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:viewThread }
+  requirements:
+    threadid: \d+
+
+imdc_thread_edit:
+  pattern: /edit/{threadid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:editThread }
+  requirements:
+    threadid: \d+
+
+imdc_thread_delete:
+  pattern: /delete/{threadid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:deleteThread }
+  requirements:
+    threadid: \d+

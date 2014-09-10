@@ -4,7 +4,7 @@ TerpTube.Controller.Thread
 #}
 
 <div class="col-md-12">
-	{% set formpath = path('imdc_post_edit_specific', {'pid': post.id}) %}
+	{% set formpath = path('imdc_post_edit', {'pid': post.id}) %}
 	{{ form_start(form, {'action': "#{formpath}"}) }}
     {{ form_errors(form) }}
     {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}

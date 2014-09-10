@@ -58,7 +58,7 @@
 										</a>
 									{% endif %}
 										<a class="btn btn-small share-button"
-											href="{{ path('imdc_thread_create_new_from_media', {'resourceid': interpretation.id} ) }}"
+											href="{{ path('imdc_thread_new_from_media', {'resourceid': interpretation.id} ) }}"
 											data-type-"{{ interpretation.type }}"
 											data-val="{{ interpretation.id }}">
 												<i class="fa fa-share-square-o"></i> {{ 'filesGateway.shareLink'|trans }}

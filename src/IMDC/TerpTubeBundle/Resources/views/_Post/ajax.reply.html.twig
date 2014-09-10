@@ -8,7 +8,7 @@ TerpTube.Controller.Thread
 <div class="col-md-12" id="replyPostContainer{{ post.id }}">
 	<div class="row">
 		<div class="col-md-10 col-md-offset-2">
-            {% set formpath = path('imdc_post_reply_specific', {'pid': post.id}) %}
+            {% set formpath = path('imdc_post_reply', {'pid': post.id}) %}
             {{ form_start(form, {'action' : "#{formpath}"}) }}
             {{ form_errors(form) }}
             {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}

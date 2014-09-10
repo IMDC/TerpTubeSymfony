@@ -1,0 +1,25 @@
+imdc_forum_list:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:index }
+
+imdc_forum_new:
+  pattern: /new
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:new }
+
+imdc_forum_view:
+  pattern: /view/{forumid}
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:view }
+  requirements:
+    forumid: \d+
+
+imdc_forum_edit:
+  pattern: /edit/{forumid}
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:edit }
+  requirements:
+    forumid: \d+
+
+imdc_forum_delete:
+  pattern: /delete/{forumid}
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
+  requirements:
+    forumid: \d+

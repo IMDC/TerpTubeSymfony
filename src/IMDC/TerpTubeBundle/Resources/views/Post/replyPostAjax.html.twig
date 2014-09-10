@@ -15,7 +15,7 @@ end ajaxed by #}
 
 				<div class="col-md-10">
 					{# set formpath = path(app.request.attributes.get("_route"), {'pid' : post.id}) #}
-					{% set formpath = path('imdc_post_reply_specific', {'pid' : post.id}) %}
+					{% set formpath = path('imdc_post_reply', {'pid' : post.id}) %}
 
 					{{ form_start(form, {'action' : "#{formpath}"}) }}
 						{{ form_errors(form) }}

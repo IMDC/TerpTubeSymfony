@@ -6,7 +6,7 @@
     <div class="col-lg-1 center-block text-center tt-navbar-side">
         <div>
             <div {% block sidebarlinks_home %}{% endblock %}>
-                <a href="{{ path('imdc_terp_tube_user_splash') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_home.png') }}" />Home</a>
+                <a href="{{ path('imdc_home_user_home') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_home.png') }}" />Home</a>
             </div>
             <div {% block sidebarlinks_pages %}{% endblock %}>
                 <a href="{{ path('imdc_forum_list') }}#"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Forums</a>
@@ -14,10 +14,10 @@
         </div>
         <div>
             <div {% block sidebarlinks_groups %}{% endblock %}>
-                <a href="{{ path('imdc_groups_show_all') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Groups</a>
+                <a href="{{ path('imdc_group_list') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_pages.png') }}" />Groups</a>
             </div>
             <div {% block sidebarlinks_members %}{% endblock %}>
-                <a href="{{ path('imdc_member_list_public') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_member.png') }}" />Members</a>
+                <a href="{{ path('imdc_member_list') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/global_nav_icon_member.png') }}" />Members</a>
             </div>
         </div>
         <div>

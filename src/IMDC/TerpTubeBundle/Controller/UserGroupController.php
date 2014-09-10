@@ -166,7 +166,7 @@ class UserGroupController extends Controller
 	    $em->flush();
 	    
 	    $this->get('session')->getFlashBag()->add('info', 'UserGroup deleted!');
-	    return $this->redirect($this->generateUrl('imdc_groups_show_all'));	    
+	    return $this->redirect($this->generateUrl('imdc_group_list'));
 	}
 	
 	/**
@@ -228,7 +228,7 @@ class UserGroupController extends Controller
 			$aclProvider->updateAcl($acl);
 
 			$this->get('session')->getFlashBag()->add('info', 'UserGroup created successfully!');
-			return $this->redirect($this->generateUrl('imdc_groups_show_all'));
+			return $this->redirect($this->generateUrl('imdc_group_list'));
 
 		}
 
@@ -263,7 +263,7 @@ class UserGroupController extends Controller
 	    // flush objects to database
 	    $em->flush();
 
-        return $this->redirect($this->generateUrl('imdc_groups_show_all'));
+        return $this->redirect($this->generateUrl('imdc_group_list'));
 	}
 	
 	/**

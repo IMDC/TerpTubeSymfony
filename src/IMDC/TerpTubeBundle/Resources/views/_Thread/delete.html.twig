@@ -31,7 +31,7 @@
                 {% endif %}
                 <div><h3>{{ thread.title }}</h3></div>
                 {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-                <a class="btn btn-default" href="{{ path('imdc_thread_view_specific', {'threadid': thread.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-default" href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
                 <button class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</button>
                 {{ form_end(form) }}
             </div>

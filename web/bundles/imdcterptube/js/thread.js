@@ -139,7 +139,7 @@ Thread._bindUIEventsViewThread = function() {
 		
 		// ajax call to get the edit comment form
 		$.ajax({
-			url: Routing.generate('imdc_post_edit_ajax_specific', data),
+			url: Routing.generate('imdc_post_edit_ajax', data),
 			type: "POST",
 			contentType: "application/x-www-form-urlencoded",
 			data: data,
@@ -181,7 +181,7 @@ Thread._bindUIEventsViewThread = function() {
     	//var replyLink = $(this);
     	
     	$.ajax({
-    		url: Routing.generate('imdc_post_reply_ajax_specific', data),
+    		url: Routing.generate('imdc_post_reply_ajax', data),
     		type: "POST",
     		contentType: "application/x-www-form-urlencoded",
     		data: data,
@@ -388,7 +388,7 @@ $(document).ready(function() {
 	        buttons: {
 	            "Yes": function() {
 	                $.ajax({
-	        			url : Routing.generate('imdc_post_delete_specific_ajax', {pid: p_id}),
+	        			url : Routing.generate('imdc_post_delete_ajax', {pid: p_id}),
 	        			type : "POST",
 	        			contentType : "application/x-www-form-urlencoded",
 	        			data :

@@ -25,7 +25,7 @@
 		<div class="col-md-12">
 			<ol class="breadcrumb">
 		        <li><a href="{{ path('imdc_forum_list') }}">Forums</a></li>
-		        <li><a href="{{ path('imdc_forum_view_specific', {'forumid' : thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a></li>
+		        <li><a href="{{ path('imdc_forum_view', {'forumid' : thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a></li>
 		        <li class="active">{{ thread.title|truncate(30) }}</li>
 			</ol>
 		</div>
@@ -48,7 +48,7 @@
 					<div class="col-md-6 pull-left">
 						<ul class="list-unstyled list-inline">
 							{% if app.user == thread.creator %}
-								<li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" ><i class="fa fa-scissors"></i> Edit</a></li>
+								<li><a href="{{ path('imdc_thread_edit', {'threadid':thread.id}) }}" ><i class="fa fa-scissors"></i> Edit</a></li>
 								<li><a href="{{ path('imdc_thread_delete', {'threadid':thread.id}) }}" ><i class="fa fa-minus-circle"></i> Delete</a></li>
 							{% endif %}
 	
@@ -273,7 +273,7 @@
 														{% endif %}
 
 														{% if post.author.getId == app.user.getId %}
-															{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
+															{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
 															<li><a class="post-comment-edit" title="Edit this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
 															{# <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li> #}
 															<li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            

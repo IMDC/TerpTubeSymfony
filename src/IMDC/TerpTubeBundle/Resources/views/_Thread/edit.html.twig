@@ -59,7 +59,7 @@
                 </div>
                 {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
                 <button class="btn btn-success"><i class="fa fa-check"></i> Edit</button>
-                <a class="btn btn-danger" href="{{ path('imdc_thread_view_specific', {'threadid': thread.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-danger" href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>

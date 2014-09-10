@@ -1,0 +1,3 @@
+imdc_member_list:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:User:index }

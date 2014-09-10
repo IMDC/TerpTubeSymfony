@@ -45,13 +45,13 @@ Forum:view.html.twig
 									<div class="col-md-9 thread-thumbnail-content-wrap">
 										{% if threadMediaFile == null %}
 											<div class="row thread-title-wrap">
-												<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+												<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 													<h3>{{ thread.title|truncate(50) }}</h3>
 												</a>
 											</div>
 											<div class="row">
 												<div class="col-md-12">
-													<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+													<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 														<p>{{ thread.content|truncate(250) }}</p>
 														<div class="row" id="thread-post-count-wrap">
 															<p>
@@ -67,19 +67,19 @@ Forum:view.html.twig
 										{% else %}
 											<div class="row thread-thumbnail-media-wrap">
 												<div class="text-center">
-													<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+													<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 														{{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: threadMediaFile}, with_context = false) }}
 													</a>
 												</div>
 											</div>
 											<div class="row thread-title-wrap">
-												<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+												<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 													<h3>{{ thread.title|truncate(40) }}</h3>
 												</a>
 											</div>
 											<div class="row">
 												<p>
-													<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+													<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 														{{ thread.content|truncate(50) }}
 													<p>
 														<span class="badge badge-info">{{ thread.getPosts|length }} {{ thread.getPosts|length == 1 ? 'Reply' : 'Replies'}}</span>

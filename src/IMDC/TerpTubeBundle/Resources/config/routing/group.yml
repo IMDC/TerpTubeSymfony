@@ -1,0 +1,35 @@
+imdc_group_list:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:index }
+
+imdc_group_view:
+  pattern: /view/{usergroupid}
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:viewGroup }
+  requirements:
+    usergroupid: \d+
+
+imdc_group_new:
+  pattern: /new
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
+
+imdc_group_edit:
+  pattern: /edit/{usergroupid}
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:editUserGroup }
+  requirements:
+    usergroupid: \d+
+
+imdc_group_delete:
+  pattern: /delete/{usergroupid}
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:deleteUserGroup }
+  requirements:
+    usergroupid: \d+
+
+imdc_group_my_groups:
+  pattern: /myGroups
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:myGroupShow }
+
+imdc_group_join:
+  pattern: /join/{usergroupid}
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:joinUserGroup }
+  requirements:
+    usergroupid: \d+

@@ -8,7 +8,7 @@
             <li class="col-md-3">
                 <div class="thumbnail text-center" style="min-height:95px;">
                 {% if post.getParentThread.getId is defined %}
-                <a href="{{ path('imdc_thread_view_specific', {'threadid':post.getParentThread.getId}) }}">
+                <a href="{{ path('imdc_thread_view', {'threadid':post.getParentThread.getId}) }}">
                 {% endif %}
                     <p>{{ post.content|truncate(60) }}</p>
                     <p><i class="fa fa-caret-right"></i> {{ post.author }}</p>

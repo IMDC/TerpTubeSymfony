@@ -198,7 +198,7 @@ MyFiles.prototype._addMediaRow = function(media) {
 	
 	data.deleteUrl = Routing.generate('imdc_files_gateway_remove', { mediaId: this.media.id });
 	data.previewUrl = Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id });
-	data.newThreadUrl = Routing.generate('imdc_thread_create_new_from_media', { resourceid: this.media.id });
+	data.newThreadUrl = Routing.generate('imdc_thread_new_from_media', { resourceid: this.media.id });
 	data.simulRecordUrl = Routing.generate('imdc_media_simultaneous_record', { mediaID: this.media.id });
 	
 	dust.render("mediaRow", data, function(err, out) {

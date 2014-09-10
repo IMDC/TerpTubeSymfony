@@ -65,7 +65,7 @@
         </div>
         <div class="controls controls-row">
             {{ form_widget(form.submit, {'attr': {'class':'input-medium btn btn-success'}}) }}
-            <a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
+            <a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
         </div>
     
     {{ form_end(form) }}

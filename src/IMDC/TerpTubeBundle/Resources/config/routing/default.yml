@@ -1,0 +1,3 @@
+imdc_index:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:Default:index }

@@ -27,7 +27,7 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
     		if ($request->getSession()->has('redirectUrl'))
     			$redirectURL = $request->getSession()->remove('redirectUrl');
     		else 
-    			$redirectURL = $this->router->generate('imdc_terp_tube_user_splash');
+    			$redirectURL = $this->router->generate('imdc_home_user_home');
             $response = new RedirectResponse($redirectURL);            
        
             

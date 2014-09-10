@@ -19,7 +19,7 @@
 <div class="row-fluid breadcrumb-wrap">
     <ul class="breadcrumb">
         <li><a href="{{ path('imdc_forum_list') }}">Forums</a> <span class="divider"><i class="fa fa-chevron-left"></i></span></li>
-        <li><a href="{{ path('imdc_forum_view_specific', {'forumid' : thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a> <span class="divider"><i class="fa fa-chevron-left"></i></span></li>
+        <li><a href="{{ path('imdc_forum_view', {'forumid' : thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a> <span class="divider"><i class="fa fa-chevron-left"></i></span></li>
         <li class="active">{{ thread.title|truncate(30) }}</li>
     </ul>
 </div>
@@ -58,7 +58,7 @@ var postArray = new Array();
     <div class="row-fluid">
         <div class="pull-left" id="thread-creator-toolbox">
             <ul class="unstyled inline">
-                <li><a href="{{ path('imdc_thread_edit_specific', {'threadid':thread.id}) }}" class=""><i class="fa fa-scissors"></i> Edit</a></li>
+                <li><a href="{{ path('imdc_thread_edit', {'threadid':thread.id}) }}" class=""><i class="fa fa-scissors"></i> Edit</a></li>
                 <li><a href="#" class=""><i class="fa fa-minus-circle"></i> Delete</a></li>
             </ul>
         </div>
@@ -354,8 +354,8 @@ var postArray = new Array();
                             <li><a href="#" class="temporal-post-start-link" data-pid="{{ post.id }}" data-stime="{{ post.startTime }}" data-etime="{{ post.endTime }}"><i class="fa fa-clock-o"></i></a></li>
                             {% endif %}
                             {% if post.author.getId == app.user.getId %}
-{#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li>#}
-                            <li><a id="post-comment-edit" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit_specific', {'pid':post.getId} ) }}"><i class="fa fa-pencil"></i></a></li>
+{#                             <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li>#}
+                            <li><a id="post-comment-edit" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_edit', {'pid':post.getId} ) }}"><i class="fa fa-pencil"></i></a></li>
 {#                             <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li>#}
                             <li><a id="post-comment-delete-modal" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li>                            
                             {% endif %}

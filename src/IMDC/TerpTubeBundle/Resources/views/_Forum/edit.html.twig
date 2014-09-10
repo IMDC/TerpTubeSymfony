@@ -43,7 +43,7 @@
                 {{ form_row(form.titleText) }}
                 {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
                 <button class="btn btn-success"><i class="fa fa-check"></i> Save</button>
-                <a class="btn btn-danger" href="{{ path('imdc_forum_view_specific', {'forumid': forum.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-danger" href="{{ path('imdc_forum_view', {'forumid': forum.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>

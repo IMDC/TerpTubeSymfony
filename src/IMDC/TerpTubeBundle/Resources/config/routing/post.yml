@@ -1,0 +1,57 @@
+#imdc_post_show_all: #TODO delete
+  #pattern: /all
+  #defaults: { _controller: IMDCTerpTubeBundle:Post:index }
+
+#imdc_post_create_new: #TODO delete
+  #pattern: /new
+  #defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
+
+#imdc_thread_create_reply_post: #TODO delete
+  #pattern: /reply/thread/{threadid}
+  #defaults: { _controller: IMDCTerpTubeBundle:Post:createReplyPost }
+  #requirements:
+    #threadid: \d+
+
+imdc_post_reply:
+  pattern: /reply/{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:replyPost }
+  requirements:
+    pid: \d+
+
+imdc_post_reply_ajax: # load the reply form to make a reply to a post #TODO merge into imdc_post_reply
+  pattern: /replyajax/{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:replyPostAjax }
+  requirements:
+    pid: \d+
+  options:
+    expose: true
+
+imdc_post_edit:
+  pattern: /edit/{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:editPost }
+  requirements:
+    pid: \d+
+
+imdc_post_edit_ajax: #TODO merge into imdc_post_edit
+  pattern: /editajax/{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:editPostAjax }
+  requirements:
+    pid: \d+
+  options:
+    expose: true
+
+#imdc_post_delete: #TODO delete
+  #pattern: /delete/{postid}/thread/{threadid}
+  #defaults: { _controller: IMDCTerpTubeBundle:Post:deletePost }
+  #requirements:
+    #postid: \d+
+    #threadid: \d+
+
+imdc_post_delete_ajax: #TODO merge into imdc_post_delete
+  pattern: /deleteajax/{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:deletePostAjax }
+  requirements:
+    _method: POST
+    pid: \d+
+  options:
+    expose: true

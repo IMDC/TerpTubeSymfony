@@ -46,8 +46,9 @@ class ThreadController extends Controller
      * If a thread with no Permissions object is found, a new ACCESS_CREATOR Permissions object is created
      * 
      * @return \Symfony\Component\HttpFoundation\Response
+     * @deprecated
      */
-    public function indexAction()
+    public function indexAction() //TODO delete
     {
         $em = $this->getDoctrine()->getManager();
     
@@ -119,7 +120,7 @@ class ThreadController extends Controller
                 'danger',
                 'This topic is private and you are not permitted to view it at this time.'
             );
-            return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+            return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $thread->getParentForum()->getId())));
         }
         
         $threadposts = $thread->getPosts();
@@ -346,8 +347,8 @@ class ThreadController extends Controller
             
             $threadInsertedID = $newthread->getId();
             
-            return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid' => $threadInsertedID)));
-            //return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+            return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid' => $threadInsertedID)));
+            //return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId()));
         }
         
         // form not valid, show the basic form
@@ -389,7 +390,7 @@ class ThreadController extends Controller
                 'danger',
                 'You do not have access to this resource'
             );
-            return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+            return $this->redirect($this->generateUrl('imdc_files_gateway'));
         }
         
         //$newthread->setMediaIncluded($chosenmedia);
@@ -424,7 +425,7 @@ class ThreadController extends Controller
                     'info',
                     'Thread created successfully!'
             );
-            return $this->redirect($this->generateUrl('imdc_thread_show_recent'));
+            return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId())));
         }
          
         // form not valid, show the basic form
@@ -540,7 +541,7 @@ class ThreadController extends Controller
                     'Forum post edited successfully!'
             );
              
-            return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+            return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
         }
          
         // form not valid, show the basic form
@@ -585,7 +586,7 @@ class ThreadController extends Controller
                 );
                 
                 if ($parentForum) {
-                    return $this->redirect($this->generateUrl('imdc_forum_view_specific', array('forumid'=>$parentForum->getId())));
+                    return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid'=>$parentForum->getId())));
                 }
                 else {
                     return $this->redirect($this->generateUrl('imdc_forum_list'));
@@ -605,7 +606,7 @@ class ThreadController extends Controller
                 'danger',
                 'You do not have permission to delete this post'
             );
-            return $this->redirect($this->generateUrl('imdc_thread_view_specific', array('threadid'=>$threadid)));
+            return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
         }
         
     }

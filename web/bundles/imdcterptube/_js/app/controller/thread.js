@@ -218,7 +218,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
             // ajax call to get the edit comment form
             $.ajax({
-                url: Routing.generate('imdc_post_edit_ajax_specific', data),
+                url: Routing.generate('imdc_post_edit_ajax', data),
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: data,
@@ -268,7 +268,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             var data = {pid: postId};
 
             $.ajax({
-                url: Routing.generate('imdc_post_delete_specific_ajax', data),
+                url: Routing.generate('imdc_post_delete_ajax', data),
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: data,
@@ -315,7 +315,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             $(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
 
             $.ajax({
-                url: Routing.generate('imdc_post_reply_ajax_specific', data),
+                url: Routing.generate('imdc_post_reply_ajax', data),
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: data,

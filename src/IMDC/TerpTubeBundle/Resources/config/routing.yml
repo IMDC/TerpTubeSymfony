@@ -1,10 +1,38 @@
-imdc_terp_tube_homepage:
-    pattern:  /
-    defaults: { _controller: IMDCTerpTubeBundle:Default:index }
-    
-imdc_terp_tube_user_splash:
-    pattern: /home/
-    defaults: { _controller: IMDCTerpTubeBundle:Home:index }
+IMDCTerpTubeBundle_default:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/default.yml"
+
+IMDCTerpTubeBundle_forum:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/forum.yml"
+  prefix: /forums
+
+IMDCTerpTubeBundle_group:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/group.yml"
+  prefix: /groups
+
+IMDCTerpTubeBundle_home:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/home.yml"
+  prefix: /home
+
+IMDCTerpTubeBundle_member:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/member.yml"
+  prefix: /members
+
+IMDCTerpTubeBundle_post:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/post.yml"
+  prefix: /post
+
+IMDCTerpTubeBundle_thread:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/thread.yml"
+  prefix: /thread
+
+
+
+
+
+
+
+
+
 
 imdc_terp_tube_user_profile_change-password:
     pattern: /profile/{userName}/change-password
@@ -221,171 +249,15 @@ imdc_friends_list_show_all:
     
     
     
-imdc_groups_show_all:
-    pattern: /usergroups
-    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:index }
-    
-imdc_group_view:
-    pattern: /usergroup/{usergroupid}
-    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:viewGroup }
-    
-imdc_group_create_new:
-    pattern: /newusergroup
-    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
-
-imdc_group_edit:
-    pattern: /usergroup/edit/{usergroupid}
-    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:editUserGroup }
-    requirements:
-        usergroupid: \d+
-
-imdc_group_delete:
-    pattern: /usergroup/delete/{usergroupid}
-    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:deleteUserGroup }
-    requirements:
-        usergroupid: \d+
-        
-imdc_group_mygroups:
-    pattern: /mygroups
-    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:myGroupShow }
-
-imdc_group_join:
-    pattern: /usergroup/join/{usergroupid}
-    defaults: { _controller: IMDCTerpTubeBundle:UserGroup:joinUserGroup }
-    requirements:
-        usergroupid: \d+
 
 
-imdc_thread_create_new:
-    pattern: /thread/new
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
-    
-imdc_thread_create_new_from_media:
-    pattern: /thread/new/{resourceid}
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThreadFromMedia }
-    requirements:
-        resourceid: \d+
-    options:
-        expose: true
-    
-imdc_thread_create_new_under_forum:
-    pattern: /thread/new/forum/{forumid}
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
-    requirements:
-        forumid: \d+
-    
-imdc_thread_show_recent:
-    pattern: /threads
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:index }
-    
-imdc_thread_view_specific:
-    pattern: /thread/view/{threadid}
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:viewThread }
-    requirements:
-        threadid: \d+
-        
-imdc_thread_create_reply_post:
-    pattern: /thread/reply/{threadid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:createReplyPost }
-    requirements:
-        threadid: \d+
 
-imdc_thread_edit_specific:
-    pattern: /thread/edit/{threadid}
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:editThread }
-    requirements:
-        threadid: \d+
-
-imdc_thread_delete:
-    pattern: /thread/delete/{threadid}
-    defaults: { _controller: IMDCTerpTubeBundle:Thread:deleteThread }
-    requirements:
-        threadid: \d+
 
     
-imdc_post_create_new:
-    pattern: /post/new
-    defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
-    
-imdc_post_show_all:
-    pattern: /post/all
-    defaults: { _controller: IMDCTerpTubeBundle:Post:index }
-    
-imdc_post_delete_specific:
-    pattern: /post/delete/{postid}/{threadid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:deletePost }
-    requirements:
-        threadid: \d+
-    
-imdc_post_delete_specific_ajax:
-    pattern: /post/deleteajax/{pid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:deletePostAjax }
-    requirements:
-        _method: POST
-        pid: \d+
-    options:
-        expose: true
-        
-imdc_post_edit_specific:
-    pattern: /post/edit/{pid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:editPost }
-    requirements:
-        pid: \d+
-        
-imdc_post_edit_ajax_specific:
-    pattern: /post/editajax/{pid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:editPostAjax }
-    requirements:
-        pid: \d+
-    options:
-        expose: true
-        
-imdc_post_reply_ajax_specific: # load the reply form to make a reply to a post
-    pattern: /post/replyajax/{pid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:replyPostAjax }
-    requirements:
-        pid: \d+
-    options:
-        expose: true    
-        
-imdc_post_reply_specific:
-    pattern: /post/reply/{pid}
-    defaults: { _controller: IMDCTerpTubeBundle:Post:replyPost }
-    requirements:
-        pid: \d+
-    options:
-        expose: true
-        
-        
-imdc_member_list_public:
-    pattern: /members
-    defaults: { _controller: IMDCTerpTubeBundle:User:index }
-    
 
-imdc_forum_list:
-    pattern: /forums
-    defaults: { _controller: IMDCTerpTubeBundle:Forum:index }
-    
-imdc_forum_create_new:
-    pattern: /forums/new
-    defaults: { _controller: IMDCTerpTubeBundle:Forum:new }
         
-imdc_forum_view_specific:
-    pattern: /forums/{forumid}
-    defaults: { _controller: IMDCTerpTubeBundle:Forum:view }
-    requirements:
-        pid: \d+
         
-imdc_forum_edit:
-    pattern: /forums/edit/{forumid}
-    defaults: { _controller: IMDCTerpTubeBundle:Forum:edit }
-        
-imdc_forum_delete:
-    pattern: /forums/delete/{forumid}
-    defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
-    requirements:
-        forumid: \d+
-        
+
 
 IMDCTerpTubeBundle_invitation:
         resource: "@IMDCTerpTubeBundle/Resources/config/routing/invitation.yml"

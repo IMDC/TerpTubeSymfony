@@ -31,7 +31,7 @@ _Forum:view.html.twig
                         {% include 'IMDCTerpTubeBundle:_Member:username.html.twig' with {'member': thread.creator} %}
                     </div>
                     <div class="col-md-8">
-                        <a href="{{ path('imdc_thread_view_specific', {'threadid': thread.getId}) }}">
+                        <a href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}">
                             <h3>{{ thread.title|truncate(50) }}</h3>
                             <p>{{ thread.content|truncate(50) }}</p>
                             <p><span class="badge badge-info">{{ thread.getPosts|length }} {{ thread.getPosts|length == 1 ? 'Reply' : 'Replies'}}</span></p>

@@ -108,7 +108,7 @@ Thread:viewthread.html.twig
 				<div class="col-md-1 pull-right" id="post-reply-tools">
 					<ul class="list-unstyled">
 						{% if postReply.author.getId == app.user.getId %}
-							{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete_specific', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
+							{# <li><a data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="{{ path('imdc_post_delete', {'postid':post.getId, 'threadid':thread.getid} ) }}"><i class="fa fa-trash-o"></i></a></li> #}
 							<li><a class="post-comment-edit" title="Edit this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-pencil"></i></a></li>
 							{# <li><a id="post-comment-delete" data-pid="{{ post.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash"></i></a></li> #}
 							<li><a class="post-comment-delete-modal" title="Delete this post" data-pid="{{ postReply.getId }}" data-tid="{{ thread.getId }}" href="#"><i class="fa fa-trash-o"></i></a></li>                            

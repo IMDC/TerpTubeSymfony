@@ -32,7 +32,7 @@ class DefaultController extends Controller
 	public function indexAction(Request $request)
 	{
         if ($this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('imdc_terp_tube_user_splash'));
+            return $this->redirect($this->generateUrl('imdc_home_user_home'));
         }
 
         $formFactory = $this->container->get('fos_user.registration.form.factory');

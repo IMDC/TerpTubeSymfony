@@ -23,14 +23,14 @@ Default:recentactivity.html.twig
 					{% if threadMediaFile == null %}
 						<div class="row thread-title-wrap">
 							<div class="col-md-12">
-								<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+								<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 									<h3>{{ thread.title|truncate(50) }}</h3>
 								</a>
 							</div>
 						</div>
 						<div class="row">
 							<div class="col-md-12">
-								<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+								<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 									{{ thread.content|truncate(250) }}
 								</a>
 							</div>
@@ -38,14 +38,14 @@ Default:recentactivity.html.twig
 					{% else %}
 						<div class="row">
 							<div class="col-md-12">
-								<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+								<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 									{{ include('IMDCTerpTubeBundle:Post:postMediaElement.html.twig', {mediaFile: threadMediaFile}, with_context = false) }}
 								</a>
 							</div>
 						</div>
 						<div class="row thread-title-wrap">
 							<div class="col-md-12">
-								<a href="{{ path('imdc_thread_view_specific', {'threadid':thread.getId}) }}">
+								<a href="{{ path('imdc_thread_view', {'threadid':thread.getId}) }}">
 									<h3>{{ thread.title|truncate(40) }}</h3>
 									<p>{{ thread.content|truncate(50) }}</p>
 								</a>
