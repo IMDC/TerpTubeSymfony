@@ -18,12 +18,14 @@ button.videoControlsContainer.forwardButtons
 {
 	margin-left: 5px;
 	background-position: -2px -2px;
+	margin-top:0px;
 }
 
 button.videoControlsContainer.backButtons
 {
 	margin-right: 5px;
 	background-position: -2px -2px;
+	margin-top:0px;
 }
 
 .preview-media .video 
@@ -191,13 +193,14 @@ button.videoControlsContainer.backButtons
 
 div.videoControlsContainer.controlsBar.forwardButtons
 {
-	float: right;
+	float: right;	
 	position: absolute;
 	right: 0;	
 /*	width: 10%; */
 	text-align:right;
 	/* margin-right: -40px; */
 	margin-top:0px;
+	z-index: 1;
 }
 
 
@@ -212,6 +215,8 @@ div.videoControlsContainer.controlsBar.backButtons
 /*	width: 10%; */
 	text-align:left;	
 	/* margin-left: -40px; */
+	z-index: 1;
+	margin-top:0px;
 }
 
 .videoControlsContainer.controlsBar.videoControls.beginButton
