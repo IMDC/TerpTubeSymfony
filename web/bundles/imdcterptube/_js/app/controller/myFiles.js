@@ -167,7 +167,7 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
     MyFiles.prototype.forwardFunction = function() {
         console.log("%s: %s", MyFiles.TAG, "forwardFunction");
 
-        this.mediaChooser.destroyRecorder();
+        this.mediaChooser.destroyVideoRecorder();
 
         this.mediaChooser.previewMedia({
             type: MediaChooser.TYPE_RECORD_VIDEO,

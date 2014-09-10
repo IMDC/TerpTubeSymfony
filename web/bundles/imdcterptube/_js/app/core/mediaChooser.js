@@ -232,7 +232,7 @@ define(['core/mediaManager'], function(MediaManager) {
             MediaChooser._updateUploadProgress($("#recordVideoUploadProgress"), percentComplete);
         });
 
-        $(this.recorder).on(Player.EVENT_RECORDING_UPLOADED, function(percentComplete) {
+        $(this.recorder).on(Player.EVENT_RECORDING_UPLOADED, function(data) {
             $("#recordVideoUploadProgress").hide();
         });
 

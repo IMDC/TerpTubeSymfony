@@ -117,7 +117,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum.prototype.forwardFunction = function() {
         console.log("%s: %s", Forum.TAG, "forwardFunction");
 
-        this.mediaChooser.destroyRecorder();
+        this.mediaChooser.destroyVideoRecorder();
 
         this.mediaChooser.previewMedia({
             type: MediaChooser.TYPE_RECORD_VIDEO,

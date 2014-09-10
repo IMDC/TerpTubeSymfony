@@ -540,7 +540,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.forwardFunction = function() {
         console.log("%s: %s", Thread.TAG, "forwardFunction");
 
-        this.mediaChooser.destroyRecorder();
+        this.mediaChooser.destroyVideoRecorder();
 
         this.mediaChooser.previewMedia({
             type: MediaChooser.TYPE_RECORD_VIDEO,
@@ -553,7 +553,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.doneFunction = function() {
         console.log("%s: %s", Thread.TAG, "doneFunction");
 
-        this.mediaChooser.destroyRecorder();
+        this.mediaChooser.destroyVideoRecorder();
 
         this.mediaChooser._previewVideoForwardFunctionDone();
     };
@@ -561,7 +561,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.doneAndPostFunction = function() {
         console.log("%s: %s", Thread.TAG, "doneAndPostFunction");
 
-        this.mediaChooser.destroyRecorder();
+        this.mediaChooser.destroyVideoRecorder();
 
         this.mediaChooser._previewVideoForwardFunctionDoneAndPost();
     };
