@@ -14,7 +14,7 @@
 				    {{ form_widget(form) }}
 				    
 				    <input type="submit" class="btn btn-primary" value="{{ 'profile.edit.language.add.submit'|trans }}" />
-				    <input type="button" class="btn btn-default" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile_edit',  {'userName': app.user.username}) }}'" />
+				    <input type="button" class="btn btn-default" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_profile_edit',  {'userName': app.user.username}) }}'" />
 				</form>
 			</div>
 		</div>

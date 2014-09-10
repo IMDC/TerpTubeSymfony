@@ -21,7 +21,7 @@ define(function() {
 				return false;
 		}
 
-		var address = Routing.generate('imdc_files_gateway_remove', {
+		var address = Routing.generate('imdc_myfiles_remove', {
 			'mediaId' : mediaID
 		});
 		var data = {
@@ -60,7 +60,7 @@ define(function() {
 	MediaManager.prototype.trimMedia = function(mediaID, startTime, endTime) {
 		var instance = this;
 
-		var address = Routing.generate('imdc_files_gateway_trim', {
+		var address = Routing.generate('imdc_myfiles_trim', {
 			'mediaId' : mediaID,
 			'startTime' : startTime,
 			'endTime' : endTime
@@ -108,7 +108,7 @@ define(function() {
 					"Must send a media object");
 			console.log('Error: ' + "Must send a media object");
 		}
-		var address = Routing.generate('imdc_files_gateway_update', {
+		var address = Routing.generate('imdc_myfiles_update', {
 			'mediaId' : media.id
 		});
 		console.log(media);

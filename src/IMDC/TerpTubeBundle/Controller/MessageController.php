@@ -78,7 +78,7 @@ class MessageController extends Controller
 			$em->flush();
 
 			$this->get('session')->getFlashBag()->add('success', 'Message sent successfully!');
-			return $this->redirect($this->generateUrl('imdc_message_view_all'));
+			return $this->redirect($this->generateUrl('imdc_message_inbox'));
 
 		}
 
@@ -159,7 +159,7 @@ class MessageController extends Controller
 			$em->flush();
 
 			$this->get('session')->getFlashBag()->add('info', 'Message sent successfully!');
-			return $this->redirect($this->generateUrl('imdc_message_view_all'));
+			return $this->redirect($this->generateUrl('imdc_message_inbox'));
 		}
 
 		// form not valid, show the basic form
@@ -253,7 +253,7 @@ class MessageController extends Controller
 		$em->flush();
 
 		$this->get('session')->getFlashBag()->add('info', 'Message id: ' . $message->getId() . ' deleted');
-		return $this->redirect($this->generateUrl('imdc_message_view_all'));
+		return $this->redirect($this->generateUrl('imdc_message_inbox'));
 
 	}
 
@@ -290,7 +290,7 @@ class MessageController extends Controller
 
 		$this->get('session')->getFlashBag()
 				->add('inbox', 'Message id:' . $message->getId() . ' successfully archived');
-		return $this->redirect($this->generateUrl('imdc_message_view_all'));
+		return $this->redirect($this->generateUrl('imdc_message_inbox'));
 	}
 
 	public function viewSentMessagesAction(Request $request)
@@ -355,7 +355,7 @@ class MessageController extends Controller
 		            'danger',
 		            'This message has been deleted'
 		        );
-		        return $this->redirect($this->generateUrl('imdc_message_view_all'));
+		        return $this->redirect($this->generateUrl('imdc_message_inbox'));
 		    }
 		            
 		    $alreadyRead = $user->getReadMessages()->contains($message);
@@ -380,7 +380,7 @@ class MessageController extends Controller
 		            'danger',
 		            'You do not have permission to view this message'
 		    );
-		    return $this->redirect($this->generateUrl('imdc_message_view_all'));
+		    return $this->redirect($this->generateUrl('imdc_message_inbox'));
 		}
 
 	}
@@ -471,7 +471,7 @@ class MessageController extends Controller
 
 			$this->get('session')->getFlashBag()->add('info', 'Message sent successfully!');
 			
-			return $this->redirect($this->generateUrl('imdc_message_view_all'));
+			return $this->redirect($this->generateUrl('imdc_message_inbox'));
 		}
 
 		// form not valid, show the basic form

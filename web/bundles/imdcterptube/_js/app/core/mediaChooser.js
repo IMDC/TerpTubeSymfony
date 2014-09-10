@@ -131,7 +131,7 @@ define(['core/mediaManager'], function(MediaManager) {
                 $("#chooseFile" + this.postSuffix).hide();
 
                 this.loadNextPage({
-                    url: Routing.generate("imdc_files_gateway_" + value),
+                    url: Routing.generate("imdc_myfiles_add_" + value),
                     method: "POST",
                     data: new FormData(form[0]),
                     uploadProgress: true
@@ -223,7 +223,7 @@ define(['core/mediaManager'], function(MediaManager) {
             volumeControl: false,
             recordingSuccessFunction: this.bind__onRecordingSuccess,
             recordingErrorFunction: this.bind__onRecordingError,
-            recordingPostURL: Routing.generate('imdc_files_gateway_record'),
+            recordingPostURL: Routing.generate('imdc_myfiles_add_recording'),
             forwardButtons: options.forwardButtons,
             forwardFunctions: options.forwardFunctions
         });

@@ -37,7 +37,7 @@
 		 fn(data);
 		 console.log('Success!', data);
 	 });
-	 player.options.recordingPostURL = "{{ path('imdc_files_gateway_record') }}";
+	 player.options.recordingPostURL = "{{ path('imdc_myfiles_add_recording') }}";
 
 	 player.createControls();
 	 videoElement.parents(".ui-dialog").on("dialogbeforeclose", function(event, ui) 

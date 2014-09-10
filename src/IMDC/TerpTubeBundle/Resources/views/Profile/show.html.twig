@@ -19,7 +19,7 @@
 		<div class="row">
 			<div class="col-md-11">
 				{% if app.user == user.userName %}
-					<a class="avatar" href="{{ path('imdc_terp_tube_user_avatar_edit',{'userName': app.user}) }}">
+					<a class="avatar" href="{{ path('imdc_profile_edit_avatar',{'userName': app.user}) }}">
 				{% endif %}
 		
 				<img class="img-thumbnail avatar" alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
@@ -32,7 +32,7 @@
 			<div class="col-md-1 text-right">
 				{% if app.user == user.userName %}
 					<div class="link edit_profile">
-						<a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_edit', {'userName': app.user}) }}">Edit</a>
+						<a class="btn btn-primary" href="{{ path('imdc_profile_edit', {'userName': app.user}) }}">Edit</a>
 					</div>
 				{% endif %}
 			</div>
@@ -106,12 +106,12 @@
 			                <table class="table table-condensed">
 				                {% for mentor in app.user.getMentorList %}
 				                   	<tr>
-				                       	<td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentor.profile.avatar ? asset(mentor.profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
-				                       	<td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentor.getUserName}) }}">{{ mentor.getUserName }}</a></td>
+				                       	<td class="avatarCell"><a href="{{ path('imdc_profile_user',{'userName': mentor.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentor.profile.avatar ? asset(mentor.profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
+				                       	<td><a href="{{ path('imdc_profile_user',{'userName': mentor.getUserName}) }}">{{ mentor.getUserName }}</a></td>
 				                       	<td>
 				                           	<ul class="unstyled inline">
-				                               	<li><a class="btn" href="{{ path('imdc_mentor_remove', {'id':mentor.id}) }}">Remove</a></li>
-				                               	<li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentor.username}) }}">Send message</a></li>
+				                               	<li><a class="btn" href="{{ path('imdc_member_mentor_remove', {'id':mentor.id}) }}">Remove</a></li>
+				                               	<li><a class="btn" href="{{ path('imdc_message_new_user', {'userid':mentor.username}) }}">Send message</a></li>
 				                           	</ul>
 				                       	</td>
 				                   	</tr>
@@ -131,12 +131,12 @@
 							<table class="table table-condensed">
 								{% for mentee in app.user.getMenteeList %}
 									<tr>
-										<td class="avatarCell"><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentee.profile.avatar ? asset(mentee.profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
-										<td><a href="{{ path('imdc_terp_tube_user_profile_specific',{'userName': mentee.getUserName}) }}">{{ mentee.getUserName }}</a></td>
+										<td class="avatarCell"><a href="{{ path('imdc_profile_user',{'userName': mentee.getUserName}) }}"><img alt="avatar" title="{{ 'profile.show.ownAvatar'|trans }}" src="{{ mentee.profile.avatar ? asset(mentee.profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></a></td>
+										<td><a href="{{ path('imdc_profile_user',{'userName': mentee.getUserName}) }}">{{ mentee.getUserName }}</a></td>
 										<td>
 											<ul class="unstyled inline">
-												<li><a class="btn" href="{{ path('imdc_mentee_remove', {'id':mentee.id}) }}">Remove</a></li>
-												<li><a class="btn" href="{{ path('imdc_message_user_specific', {'userid':mentee.username}) }}">Send message</a></li>
+												<li><a class="btn" href="{{ path('imdc_member_mentee_remove', {'id':mentee.id}) }}">Remove</a></li>
+												<li><a class="btn" href="{{ path('imdc_message_new_user', {'userid':mentee.username}) }}">Send message</a></li>
 											</ul>
 										</td>
 									</tr>
@@ -153,11 +153,11 @@
 						<p>User is on your friends list</p>
 					</div>
 					<div class="text-warning">
-						<p><a class="btn btn-default" href="{{ path('imdc_remove_from_friends_list', {'userid':user.id} ) }}">Remove from friends list</a></p>
+						<p><a class="btn btn-default" href="{{ path('imdc_member_friend_remove', {'userid':user.id} ) }}">Remove from friends list</a></p>
 					</div>
 				{% else %}
 					<div>
-						<p><a class="btn btn-default" href="{{ path('imdc_add_to_friends_list', {'userid':user.id} ) }}">Add user to friends list</a></p>
+						<p><a class="btn btn-default" href="{{ path('imdc_member_friend_add', {'userid':user.id} ) }}">Add user to friends list</a></p>
 					</div>
 				{% endif %}
 			{% endif %}

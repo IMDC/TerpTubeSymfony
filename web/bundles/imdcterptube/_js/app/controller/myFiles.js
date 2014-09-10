@@ -171,7 +171,7 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
 
         this.mediaChooser.previewMedia({
             type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.mediaChooser.media.id }),
+            mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.mediaChooser.media.id }),
             mediaId: this.mediaChooser.media.id,
             recording: true
         });
@@ -225,8 +225,8 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
         }
         var instance = this;
 
-        data.deleteUrl = Routing.generate('imdc_files_gateway_remove', { mediaId: media.id });
-        data.previewUrl = Routing.generate('imdc_files_gateway_preview', { mediaId: media.id });
+        data.deleteUrl = Routing.generate('imdc_myfiles_remove', { mediaId: media.id });
+        data.previewUrl = Routing.generate('imdc_myfiles_preview', { mediaId: media.id });
         data.newThreadUrl = Routing.generate('imdc_thread_new_from_media', { resourceid: media.id });
         data.simulRecordUrl = Routing.generate('imdc_media_simultaneous_record', { mediaID: media.id });
 

@@ -106,7 +106,7 @@ class UserController extends Controller
             $this->get('session')->getFlashBag()->add('danger', 'User is not your mentor, nothing to remove');
         }
 
-        //return $this->redirect($this->generateUrl('imdc_invitations_list'));
+        //return $this->redirect($this->generateUrl('imdc_invitation_list'));
         $url = $this->getRequest()->headers->get("referer");
         return new RedirectResponse($url);
     }
@@ -142,7 +142,7 @@ class UserController extends Controller
             $this->get('session')->getFlashBag()->add('danger', 'User is not your mentee, nothing to remove');
         }
 
-        //return $this->redirect($this->generateUrl('imdc_invitations_list'));
+        //return $this->redirect($this->generateUrl('imdc_invitation_list'));
         $url = $this->getRequest()->headers->get("referer");
         return new RedirectResponse($url);
     }

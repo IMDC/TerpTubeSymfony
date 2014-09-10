@@ -44,7 +44,7 @@ class ProfileController extends Controller
 		}
 		$response = new RedirectResponse(
 				$this->container->get('router')
-						->generate('imdc_terp_tube_user_profile_specific', array('userName' => $user->getUsername())));
+						->generate('imdc_profile_user', array('userName' => $user->getUsername())));
 		return $response;
 
 	}
@@ -91,7 +91,7 @@ class ProfileController extends Controller
 		{
 			$response = new RedirectResponse(
 					$this->container->get('router')
-							->generate('imdc_terp_tube_user_profile_specific', array('userName' => $userName)));
+							->generate('imdc_profile_user', array('userName' => $userName)));
 			return $response;
 		}
 		$userManager = $this->container->get('fos_user.user_manager');
@@ -133,7 +133,7 @@ class ProfileController extends Controller
 				$uploadedEvent = new UploadEvent($avatar);
 				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
 
-				$url = $this->container->get('router')->generate('imdc_terp_tube_user_profile');
+				$url = $this->container->get('router')->generate('imdc_profile_me');
 				$response = new RedirectResponse($url);
 				return $response;
 			}
@@ -167,7 +167,7 @@ class ProfileController extends Controller
 		{
 			$response = new RedirectResponse(
 					$this->container->get('router')
-							->generate('imdc_terp_tube_user_profile_specific', array('userName' => $userName)));
+							->generate('imdc_profile_user', array('userName' => $userName)));
 			return $response;
 		}
 		*/
@@ -209,7 +209,7 @@ class ProfileController extends Controller
 
 				if (null === $response = $event->getResponse())
 				{
-					$url = $this->container->get('router')->generate('imdc_terp_tube_user_profile');
+					$url = $this->container->get('router')->generate('imdc_profile_me');
 					$response = new RedirectResponse($url);
 				}
 

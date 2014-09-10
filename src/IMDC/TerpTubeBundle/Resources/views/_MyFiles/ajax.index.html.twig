@@ -25,14 +25,14 @@ TerpTube.Core.MediaChooser
 								{% if resourceFile.getMetaData.getSize == -1 %}
 									<a class="preview-button disabled" href='#'
 										data-type="{{ resourceFile.type }}"
-										data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}"
+										data-url="{{ path('imdc_myfiles_preview', {'mediaId': resourceFile.id}) }}"
 										data-val="{{ resourceFile.id }}">
 											<i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
 									</a>
 								{% else %}
 									<a class="preview-button" href='#'
 										data-type="{{ resourceFile.type }}"
-										data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}"
+										data-url="{{ path('imdc_myfiles_preview', {'mediaId': resourceFile.id}) }}"
 										data-val="{{ resourceFile.id }}">
 											<i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
 									</a>

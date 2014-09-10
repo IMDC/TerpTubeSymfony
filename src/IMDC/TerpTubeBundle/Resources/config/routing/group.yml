@@ -3,7 +3,7 @@ imdc_group_list:
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:index }
 
 imdc_group_view:
-  pattern: /view/{usergroupid}
+  pattern: /{usergroupid}
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:viewGroup }
   requirements:
     usergroupid: \d+
@@ -13,13 +13,13 @@ imdc_group_new:
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
 
 imdc_group_edit:
-  pattern: /edit/{usergroupid}
+  pattern: /{usergroupid}/edit
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:editUserGroup }
   requirements:
     usergroupid: \d+
 
 imdc_group_delete:
-  pattern: /delete/{usergroupid}
+  pattern: /{usergroupid}/delete
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:deleteUserGroup }
   requirements:
     usergroupid: \d+
@@ -29,7 +29,7 @@ imdc_group_my_groups:
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:myGroupShow }
 
 imdc_group_join:
-  pattern: /join/{usergroupid}
+  pattern: /{usergroupid}/join
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:joinUserGroup }
   requirements:
     usergroupid: \d+

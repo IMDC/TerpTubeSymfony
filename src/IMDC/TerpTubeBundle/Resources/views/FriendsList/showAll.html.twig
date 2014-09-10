@@ -23,14 +23,14 @@
 	        	{% set profile = friend.getProfile %}
 	            <li class="col-md-3" style="list-style-type: none;">
 	                <div class="thumbnail text-center">
-	                    <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : friend.userName}) }}">
+	                    <a href="{{ path('imdc_profile_user', {'userName' : friend.userName}) }}">
 							<img class="avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" />
 						</a>
 	                    <h3>{{ friend.username }}</h3>
 	                    <p>Joined: {{ friend.joinDate|date('g:ia F j Y') }}</p>
 	                    <p>
-	                        <a class="btn btn-primary" href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : friend.userName}) }}"><i class="fa fa-bars"></i> View Profile</a>
-	                        <a class="btn" href="{{ path('imdc_remove_from_friends_list', {'userid' : friend.id, 'redirect' : 'imdc_friends_list_show_all'} ) }}"><i class="fa fa-minus-circle"></i> Remove from Friend's list</a>
+	                        <a class="btn btn-primary" href="{{ path('imdc_profile_user', {'userName' : friend.userName}) }}"><i class="fa fa-bars"></i> View Profile</a>
+	                        <a class="btn" href="{{ path('imdc_member_friend_remove', {'userid' : friend.id, 'redirect' : 'imdc_member_friend_list'} ) }}"><i class="fa fa-minus-circle"></i> Remove from Friend's list</a>
 	                    </p>
 	                </a>
 	            </li> <!-- ./col-md-3 -->

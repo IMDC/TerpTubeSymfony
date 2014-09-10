@@ -13,13 +13,13 @@
     #threadid: \d+
 
 imdc_post_reply:
-  pattern: /reply/{pid}
+  pattern: /{pid}/reply
   defaults: { _controller: IMDCTerpTubeBundle:Post:replyPost }
   requirements:
     pid: \d+
 
 imdc_post_reply_ajax: # load the reply form to make a reply to a post #TODO merge into imdc_post_reply
-  pattern: /replyajax/{pid}
+  pattern: /{pid}/replyajax
   defaults: { _controller: IMDCTerpTubeBundle:Post:replyPostAjax }
   requirements:
     pid: \d+
@@ -27,13 +27,13 @@ imdc_post_reply_ajax: # load the reply form to make a reply to a post #TODO merg
     expose: true
 
 imdc_post_edit:
-  pattern: /edit/{pid}
+  pattern: /{pid}/edit
   defaults: { _controller: IMDCTerpTubeBundle:Post:editPost }
   requirements:
     pid: \d+
 
 imdc_post_edit_ajax: #TODO merge into imdc_post_edit
-  pattern: /editajax/{pid}
+  pattern: /{pid}/editajax
   defaults: { _controller: IMDCTerpTubeBundle:Post:editPostAjax }
   requirements:
     pid: \d+
@@ -48,7 +48,7 @@ imdc_post_edit_ajax: #TODO merge into imdc_post_edit
     #threadid: \d+
 
 imdc_post_delete_ajax: #TODO merge into imdc_post_delete
-  pattern: /deleteajax/{pid}
+  pattern: /{pid}/deleteajax
   defaults: { _controller: IMDCTerpTubeBundle:Post:deletePostAjax }
   requirements:
     _method: POST

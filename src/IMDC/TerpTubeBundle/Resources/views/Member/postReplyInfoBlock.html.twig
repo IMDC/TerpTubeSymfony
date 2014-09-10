@@ -12,7 +12,7 @@ Post:replyPostAjax.html.twig
 		<img class="img-responsive avatar" alt="avatar" title="" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
 	</div>
 	<div class="text-center post-reply-user-info">
-		<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName}) }}">{{ member.getUserName }}</a>
+		<a href="{{ path('imdc_profile_user', {'userName':member.getUserName}) }}">{{ member.getUserName }}</a>
 	</div>
 	<div class="text-center post-reply-user-tools">
 		<ul class="list-unstyled list-inline thread-creator-tools-wrap">
@@ -21,7 +21,7 @@ Post:replyPostAjax.html.twig
 					{% set thisistheuser = true %}
 					<i class="fa fa-envelope-o" style="color:lightgray"></i>
 				{% else %}
-					<a href="{{ path('imdc_message_user_specific', {'userid':member.getUserName()}) }}"><i class="fa fa-envelope-o toolPop" title="Send a message to {{ member.getUserName }}"></i></a>
+					<a href="{{ path('imdc_message_new_user', {'userid':member.getUserName()}) }}"><i class="fa fa-envelope-o toolPop" title="Send a message to {{ member.getUserName }}"></i></a>
 				{% endif %}
 			</li>
 			{#  ---------- friend section ---------------------- #}
@@ -31,7 +31,7 @@ Post:replyPostAjax.html.twig
 				{% elseif app.user.isUserOnFriendsList(member) %}
 					<i class="fa fa-group toolPop" style="color:green" title="You are already friends"></i>
 				{% else %}
-					<a href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" class="toolPop" title="Click to add {{ member.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
+					<a href="{{ path('imdc_member_friend_add', {'userid':member.getId} ) }}" class="toolPop" title="Click to add {{ member.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
 				{% endif %}
 			</li>
 			{#  ---------------- end friend section ---------------- #}

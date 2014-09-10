@@ -133,7 +133,7 @@
 			player1.setControlsEnabled(false);
 			startTime = player1.getCurrentTime();
 			player2.options.additionalDataToPost = {'startTime' : startTime, 'sourceMediaID' : '{{ mediaFile.getID }}'};
-			player2.options.recordingPostURL = Routing.generate('imdc_files_gateway_add_simultaneous_recording', player2.options.additionalDataToPost);
+			player2.options.recordingPostURL = Routing.generate('imdc_myfiles_add_simultaneous_recording', player2.options.additionalDataToPost);
 			player1.play();
 			console.log("Recording Started");
 			if (recordedMediaID != -1)
@@ -193,7 +193,7 @@
 
  function goForward()
  {
-	 window.location = Routing.generate('imdc_files_gateway_preview_compound_media', {compoundMediaId: compoundMediaID});
+	 window.location = Routing.generate('imdc_myfiles_preview_compound_media', {compoundMediaId: compoundMediaID});
  }
   </script>
   

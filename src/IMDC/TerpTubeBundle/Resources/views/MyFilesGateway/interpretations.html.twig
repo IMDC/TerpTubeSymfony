@@ -13,10 +13,10 @@
 {% block underherounitrow1 %}
 	<div class="row">
 		<a id="record-link" class="btn btn-primary" href="{{ path('imdc_files_gateway_record_media') }}"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
-		<a class="btn btn-primary" href="{{ path('imdc_files_gateway_audio') }}"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a>
-		<a class="btn btn-primary" href="{{ path('imdc_files_gateway_video') }}"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a>
-		<a class="btn btn-primary" href="{{ path('imdc_files_gateway_image') }}"><i class=" fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a>
-		<a class="btn btn-primary" href="{{ path('imdc_files_gateway_other') }}"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a>
+		<a class="btn btn-primary" href="{{ path('imdc_myfiles_add_audio') }}"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a>
+		<a class="btn btn-primary" href="{{ path('imdc_myfiles_add_video') }}"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a>
+		<a class="btn btn-primary" href="{{ path('imdc_myfiles_add_image') }}"><i class=" fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a>
+		<a class="btn btn-primary" href="{{ path('imdc_myfiles_add_other') }}"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a>
 	</div>
 {% endblock underherounitrow1 %}
 
@@ -38,21 +38,21 @@
 	                   		<tr>
 	                   			<td>
 									<a class="btn btn-small delete-button" href='#'
-										data-url="{{ path('imdc_files_gateway_remove', {'mediaId': interpretation.id}) }}"
+										data-url="{{ path('imdc_myfiles_remove', {'mediaId': interpretation.id}) }}"
 										data-val="{{ interpretation.id }}">
 											<i class="fa fa-minus-circle"></i> {{ 'filesGateway.deleteLink'|trans }}
 									</a>
 									{% if interpretation.getTarget.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') %}
 										<a class="btn btn-small preview-button disabled" href='#'
 											data-type="{{ interpretation.type }}"
-											data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}"
+											data-url="{{ path('imdc_myfiles_preview_compound_media', {'compoundMediaId': interpretation.id}) }}"
 											data-val="{{ interpretation.id }}">
 												<i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
 										</a>
 									{% else %}
 										<a class="btn btn-small preview-button" href='#'
 											data-type="{{ interpretation.type }}"
-											data-url="{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': interpretation.id}) }}"
+											data-url="{{ path('imdc_myfiles_preview_compound_media', {'compoundMediaId': interpretation.id}) }}"
 											data-val="{{ interpretation.id }}">
 												<i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
 										</a>
@@ -110,7 +110,7 @@
 	 {
 			var mediaId = recordedMedia['id'];
 			console.log(mediaId);
-			var mediaURL = "{{ path('imdc_files_gateway_preview_compound_media', {'compoundMediaId': '-1'}) }}";
+			var mediaURL = "{{ path('imdc_myfiles_preview_compound_media', {'compoundMediaId': '-1'}) }}";
 			mediaURL = mediaURL.replace('-1',mediaId);
 			window["mediaChooser"].previewMediaFile(mediaId, mediaURL, true);
 	 }
@@ -128,7 +128,7 @@
 				 .append($(document.createElement('a'))
 						 .addClass("delete-button")
 						 .attr('href',"#")
-						 .attr('data-url', "{{ path('imdc_files_gateway_remove', {'mediaId': 0}) }}".replace('0',media.id))
+						 .attr('data-url', "{{ path('imdc_myfiles_remove', {'mediaId': 0}) }}".replace('0',media.id))
 						 .attr('data-val',media.id)
 						 .html('<i class="fa fa-minus-circle"></i>{{ "filesGateway.deleteLink"|trans }}'))
 				 .append($(document.createElement('a'))
@@ -136,7 +136,7 @@
 						 .addClass("disabled")
 						 .attr('href',"#")
 						 .attr('data-type', media.type)
-						 .attr('data-url', "{{ path('imdc_files_gateway_preview', {'mediaId': 0}) }}".replace('0',media.id))
+						 .attr('data-url', "{{ path('imdc_myfiles_preview', {'mediaId': 0}) }}".replace('0',media.id))
 						 .attr('data-val',media.id)
 						 .html('<i class="fa fa-play-circle"></i>{{ "filesGateway.previewLink"|trans }}')));
 		 row.append($(document.createElement('td'))

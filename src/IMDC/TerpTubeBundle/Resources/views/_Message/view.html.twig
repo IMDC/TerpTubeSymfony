@@ -27,12 +27,12 @@
             <div class="col-md-offset-2 col-md-4">
                 <p>
                     <a class="btn btn-danger" href="{{ path('imdc_message_delete', {'messageid': message.id}) }}"><i class="fa fa-trash-o"></i> Delete</a>
-                    <a class="btn btn-default" href="{{ path('imdc_message_archive', {'messageid': message.id}) }}"><i class="fa fa-archive"></i> Archive</a>
+                    <a class="btn btn-default" href="{{ path('imdc_message_archive_message', {'messageid': message.id}) }}"><i class="fa fa-archive"></i> Archive</a>
                 </p>
             </div>
             <div class="col-md-4 text-right">
                 <p>
-                    <a class="btn btn-default" href="{{ path('imdc_message_view_all') }}"><i class="fa fa-inbox"></i> Inbox</a>
+                    <a class="btn btn-default" href="{{ path('imdc_message_inbox') }}"><i class="fa fa-inbox"></i> Inbox</a>
                     <a class="btn btn-default" href="{{ path('imdc_message_reply', {'messageid': message.id}) }}"><i class="fa fa-reply"></i> Reply</a>
                 </p>
             </div>
@@ -50,7 +50,7 @@
                             {% if message.owner == 'noreply' %}
                                 {{ message.owner }}
                             {% else %}
-                                <a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName': message.owner }) }}">{{ message.owner }}</a>
+                                <a href="{{ path('imdc_profile_user', {'userName': message.owner }) }}">{{ message.owner }}</a>
                             {% endif %}
                         </div>
                     </div>

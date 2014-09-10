@@ -20,9 +20,9 @@ class InvitationController extends Controller
 
     /**
      * Lists all Invitation entities.
-     *
+     * @deprecated
      */
-    public function indexAction()
+    public function indexAction() //TODO delete
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -34,9 +34,9 @@ class InvitationController extends Controller
     }
     /**
      * Creates a new Invitation entity.
-     *
+     * @deprecated
      */
-    public function createAction(Request $request)
+    public function createAction(Request $request) //TODO delete
     {
         $entity = new Invitation();
         $user = $this->getUser();
@@ -82,8 +82,9 @@ class InvitationController extends Controller
     * @param Invitation $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
+     * @deprecated
     */
-    private function createCreateForm(Invitation $entity)
+    private function createCreateForm(Invitation $entity) //TODO delete
     {
         $form = $this->createForm(new InvitationType(), $entity, array(
             'action' => $this->generateUrl('invitation_create'),
@@ -173,9 +174,9 @@ class InvitationController extends Controller
     
     /**
      * Displays a form to create a new Invitation entity.
-     *
+     * @deprecated
      */
-    public function newAction()
+    public function newAction() //TODO delete
     {
         $entity = new Invitation();
         $entity->setCreator($this->getUser());
@@ -189,9 +190,9 @@ class InvitationController extends Controller
 
     /**
      * Finds and displays a Invitation entity.
-     *
+     * @deprecated
      */
-    public function showAction($id)
+    public function showAction($id) //TODO delete
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -210,9 +211,9 @@ class InvitationController extends Controller
 
     /**
      * Displays a form to edit an existing Invitation entity.
-     *
+     * @deprecated
      */
-    public function editAction($id)
+    public function editAction($id) //TODO delete
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -238,8 +239,9 @@ class InvitationController extends Controller
     * @param Invitation $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
+     * @deprecated
     */
-    private function createEditForm(Invitation $entity)
+    private function createEditForm(Invitation $entity) //TODO delete
     {
         $form = $this->createForm(new InvitationType(), $entity, array(
             'action' => $this->generateUrl('invitation_update', array('id' => $entity->getId())),
@@ -252,9 +254,9 @@ class InvitationController extends Controller
     }
     /**
      * Edits an existing Invitation entity.
-     *
+     * @deprecated
      */
-    public function updateAction(Request $request, $id)
+    public function updateAction(Request $request, $id) //TODO delete
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -282,9 +284,9 @@ class InvitationController extends Controller
     }
     /**
      * Completely deletes a Invitation entity.
-     *
+     * @deprecated
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction(Request $request, $id) //TODO delete
     {
         $form = $this->createDeleteForm($id);
         $form->handleRequest($request);
@@ -367,8 +369,9 @@ class InvitationController extends Controller
      * @param mixed $id The entity id
      *
      * @return \Symfony\Component\Form\Form The form
+     * @deprecated
      */
-    private function createDeleteForm($id)
+    private function createDeleteForm($id) //TODO delete
     {
         return $this->createFormBuilder()
             ->setAction($this->generateUrl('invitation_delete', array('id' => $id)))
@@ -384,8 +387,9 @@ class InvitationController extends Controller
      * @param mixed $id The entity id
      * 
      * @return \Symfony\Component\Form\Form The form
+     * @deprecated
      */
-    private function createCancelForm($id)
+    private function createCancelForm($id) //TODO delete
     {
         return $this->createFormBuilder()
         ->setAction($this->generateUrl('imdc_invitation_cancel', array('id' => $id)))
@@ -434,7 +438,7 @@ class InvitationController extends Controller
         $em->persist($entity);
         $em->flush();
         
-        return $this->redirect($this->generateUrl('imdc_invitations_list'));
+        return $this->redirect($this->generateUrl('imdc_invitation_list'));
         
     }
     
@@ -509,7 +513,7 @@ class InvitationController extends Controller
         
         $em->flush();
         
-        return $this->redirect($this->generateUrl('imdc_invitations_list'));
+        return $this->redirect($this->generateUrl('imdc_invitation_list'));
         
     }
     
@@ -547,6 +551,6 @@ class InvitationController extends Controller
         $em->persist($entity);
         $em->flush();
         
-        return $this->redirect($this->generateUrl('imdc_invitations_list'));
+        return $this->redirect($this->generateUrl('imdc_invitation_list'));
     }
 }

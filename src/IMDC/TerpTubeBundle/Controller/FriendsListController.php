@@ -49,7 +49,7 @@ class FriendsListController extends Controller
 		$em->persist($user);
 		$em->flush();
 
-	    return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific',
+	    return $this->redirect($this->generateUrl('imdc_profile_user',
 								        array('userName' => $usertoadd->getUserName())));
 	}
 
@@ -85,7 +85,7 @@ class FriendsListController extends Controller
 
 		if ($redirect == NULL)
 		{
-			return $this->redirect($this->generateUrl('imdc_terp_tube_user_profile_specific',
+			return $this->redirect($this->generateUrl('imdc_profile_user',
 			    array('userName' => $usertoremove->getUserName()))
 			);
 		}

@@ -103,7 +103,7 @@ MyFiles.prototype.createVideoRecorder = function(videoElement) {
 		volumeControl: false,
 		recordingSuccessFunction: this.bind_onRecordingSuccess,
 		recordingErrorFunction: this.bind_onRecordingError,
-		recordingPostURL: Routing.generate('imdc_files_gateway_record'),
+		recordingPostURL: Routing.generate('imdc_myfiles_add_recording'),
 		forwardButtons: [this.forwardButton],
 		forwardFunctions: [this.bind_forwardFunction],
 	});
@@ -140,7 +140,7 @@ MyFiles.prototype.forwardFunction = function() {
 //	mediaChooser = this.mediaChooser;
 	mediaChooser.previewMedia({
 		type: MediaChooser.TYPE_RECORD_VIDEO,
-		mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id }),
+		mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.media.id }),
 		mediaId: this.media.id,
 		recording: true
 	});
@@ -196,8 +196,8 @@ MyFiles.prototype._addMediaRow = function(media) {
 	}
 	var instance = this;
 	
-	data.deleteUrl = Routing.generate('imdc_files_gateway_remove', { mediaId: this.media.id });
-	data.previewUrl = Routing.generate('imdc_files_gateway_preview', { mediaId: this.media.id });
+	data.deleteUrl = Routing.generate('imdc_myfiles_remove', { mediaId: this.media.id });
+	data.previewUrl = Routing.generate('imdc_myfiles_preview', { mediaId: this.media.id });
 	data.newThreadUrl = Routing.generate('imdc_thread_new_from_media', { resourceid: this.media.id });
 	data.simulRecordUrl = Routing.generate('imdc_media_simultaneous_record', { mediaID: this.media.id });
 	

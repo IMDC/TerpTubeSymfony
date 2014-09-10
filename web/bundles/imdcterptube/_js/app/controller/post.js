@@ -153,7 +153,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         this.mediaChooser.previewMedia({
             type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_files_gateway_preview', { mediaId: this.mediaChooser.media.id }),
+            mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.mediaChooser.media.id }),
             mediaId: this.mediaChooser.media.id,
             recording: true
         });

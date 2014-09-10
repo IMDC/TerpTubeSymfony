@@ -390,7 +390,7 @@ class ThreadController extends Controller
                 'danger',
                 'You do not have access to this resource'
             );
-            return $this->redirect($this->generateUrl('imdc_files_gateway'));
+            return $this->redirect($this->generateUrl('imdc_myfiles_list'));
         }
         
         //$newthread->setMediaIncluded($chosenmedia);
@@ -454,7 +454,7 @@ class ThreadController extends Controller
                     'danger',
                     'You do not have permission to edit this thread'
             );
-            return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+            return $this->redirect($this->generateUrl('imdc_home_user_home'));
         }
          
         $threadeditform = $this->createForm(new ThreadEditFormType(), $threadToEdit,

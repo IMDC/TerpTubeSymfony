@@ -51,14 +51,14 @@
 				    {{ form_row (form._token) }}
 
 				    <input type="submit" class="btn btn-primary" value="{{ 'profile.edit.submit'|trans }}" />
-				    <input type="button" class="btn btn-default" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile') }}'" />
+				    <input type="button" class="btn btn-default" value="{{ 'profile.edit.generic.cancel'|trans }}" onClick="parent.location='{{ path('imdc_profile_me') }}'" />
 
 				{{ form_end(form, {'render_rest': false}) }}
 			</div>
 
 			<div class="col-md-2 col-md-offset-4 text-right">
 				<div class="link edit_profile">
-					<a class="btn btn-default" href="{{ path('imdc_terp_tube_user_profile_change-password', {'userName': app.user.username}) }}" />{{ 'profile.edit.changePassword'|trans }}</a>
+					<a class="btn btn-default" href="{{ path('imdc_profile_edit_password', {'userName': app.user.username}) }}" />{{ 'profile.edit.changePassword'|trans }}</a>
 				</div>
 			</div>
 		</div>

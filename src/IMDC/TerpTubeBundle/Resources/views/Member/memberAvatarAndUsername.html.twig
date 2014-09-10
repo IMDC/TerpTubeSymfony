@@ -8,9 +8,9 @@ Thread:threadthumbnailprototype.html.twig
 {% set profile = member.getProfile %}
 
 <div class="row">
-	<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}"><img class="img-responsive avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
+	<a href="{{ path('imdc_profile_user', {'userName' : member.userName}) }}"><img class="img-responsive avatar" alt="avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" alt="" width="96px" /></a>
 </div>
 
 <div class="row">
-	<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName' : member.userName}) }}">{{ member.userName }}</a>
+	<a href="{{ path('imdc_profile_user', {'userName' : member.userName}) }}">{{ member.userName }}</a>
 </div>

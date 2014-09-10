@@ -49,14 +49,14 @@
 										{% if resourceFile.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') %}
 											<a class="btn btn-small preview-button disabled" href='#'
 												data-type="{{ resourceFile.type }}"
-												data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}"
+												data-url="{{ path('imdc_myfiles_preview', {'mediaId': resourceFile.id}) }}"
 												data-val="{{ resourceFile.id }}">
 													<i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
 											</a>
 										{% else %}
 											<a class="btn btn-small preview-button" href='#'
 												data-type="{{ resourceFile.type }}"
-												data-url="{{ path('imdc_files_gateway_preview', {'mediaId': resourceFile.id}) }}"
+												data-url="{{ path('imdc_myfiles_preview', {'mediaId': resourceFile.id}) }}"
 												data-val="{{ resourceFile.id }}">
 													<i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
 											</a>

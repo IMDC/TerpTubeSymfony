@@ -7,19 +7,19 @@ imdc_forum_new:
   defaults: { _controller: IMDCTerpTubeBundle:Forum:new }
 
 imdc_forum_view:
-  pattern: /view/{forumid}
+  pattern: /{forumid}
   defaults: { _controller: IMDCTerpTubeBundle:Forum:view }
   requirements:
     forumid: \d+
 
 imdc_forum_edit:
-  pattern: /edit/{forumid}
+  pattern: /{forumid}/edit
   defaults: { _controller: IMDCTerpTubeBundle:Forum:edit }
   requirements:
     forumid: \d+
 
 imdc_forum_delete:
-  pattern: /delete/{forumid}
+  pattern: /{forumid}/delete
   defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
   requirements:
     forumid: \d+

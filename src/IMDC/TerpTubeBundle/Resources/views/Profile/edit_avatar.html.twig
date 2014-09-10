@@ -10,11 +10,11 @@
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-6">
-				<form action="{{ path('imdc_terp_tube_user_avatar_edit', {'userName': app.user.username}) }}" {{ form_enctype(form) }} method="POST" >
+				<form action="{{ path('imdc_profile_edit_avatar', {'userName': app.user.username}) }}" {{ form_enctype(form) }} method="POST" >
 				    {{ form_widget(form) }}
 			
 				    <input type="submit" class="btn btn-primary" value="{{ 'profile.edit.avatar.submit'|trans }}" />
-				    <input type="button" class="btn btn-default" value="{{ 'profile.edit.avatar.cancel'|trans }}" onClick="parent.location='{{ path('imdc_terp_tube_user_profile') }}'" />
+				    <input type="button" class="btn btn-default" value="{{ 'profile.edit.avatar.cancel'|trans }}" onClick="parent.location='{{ path('imdc_profile_me') }}'" />
 				</form>
 			</div>
 		</div>

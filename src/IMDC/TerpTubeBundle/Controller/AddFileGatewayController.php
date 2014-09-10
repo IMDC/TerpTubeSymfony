@@ -129,7 +129,7 @@ class AddFileGatewayController extends Controller {
 							'Content-Type' => 'application/json' 
 					) );
 				} else if ($url === null) {
-					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_files_gateway' ) );
+					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_myfiles_list' ) );
 				} else {
 					$response = new RedirectResponse ( $url );
 				}
@@ -138,7 +138,7 @@ class AddFileGatewayController extends Controller {
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
 				'form' => $form->createView (),
-				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_audio' ) 
+				'postUrl' => $this->generateUrl ( 'imdc_myfiles_add_audio' )
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
@@ -206,7 +206,7 @@ class AddFileGatewayController extends Controller {
 							'Content-Type' => 'application/json' 
 					) );
 				} else if ($url === null) {
-					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_files_gateway' ) );
+					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_myfiles_list' ) );
 				} else {
 					$response = new RedirectResponse ( $url );
 				}
@@ -215,7 +215,7 @@ class AddFileGatewayController extends Controller {
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
 				'form' => $form->createView (),
-				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_video' ) 
+				'postUrl' => $this->generateUrl ( 'imdc_myfiles_add_video' )
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
@@ -283,7 +283,7 @@ class AddFileGatewayController extends Controller {
 							'Content-Type' => 'application/json' 
 					) );
 				} else if ($url === null) {
-					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_files_gateway' ) );
+					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_myfiles_list' ) );
 				} else {
 					$response = new RedirectResponse ( $url );
 				}
@@ -292,7 +292,7 @@ class AddFileGatewayController extends Controller {
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
 				'form' => $form->createView (),
-				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_image' ) 
+				'postUrl' => $this->generateUrl ( 'imdc_myfiles_add_image' )
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {
@@ -307,7 +307,15 @@ class AddFileGatewayController extends Controller {
 		}
 		return $response;
 	}
-	public function addVideoRecordingAction(Request $request, $url) {
+
+    /**
+     * @param Request $request
+     * @param $url
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     * @deprecated
+     */
+    public function addVideoRecordingAction(Request $request, $url) { //TODO delete
 		// FIXME add the recording stuff here
 		// throw new NotImplementedException("Not yet implemented");
 		$user = $this->getUser ();
@@ -585,7 +593,7 @@ class AddFileGatewayController extends Controller {
 							'Content-Type' => 'application/json' 
 					) );
 				} else if ($url === null) {
-					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_files_gateway' ) );
+					$response = new RedirectResponse ( $this->generateUrl ( 'imdc_myfiles_list' ) );
 				} else {
 					$response = new RedirectResponse ( $url );
 				}
@@ -594,7 +602,7 @@ class AddFileGatewayController extends Controller {
 		}
 		$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'addFile.html.twig', array (
 				'form' => $form->createView (),
-				'postUrl' => $this->generateUrl ( 'imdc_files_gateway_other' ) 
+				'postUrl' => $this->generateUrl ( 'imdc_myfiles_add_other' )
 		) );
 		// form not valid, show the basic form
 		if ($request->isXmlHttpRequest ()) {

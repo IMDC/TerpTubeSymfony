@@ -10,13 +10,13 @@ Forum:view.html.twig
 <div class="row">
 	<div class="col-md-12">
 		<div style="display: inline-block;" id="avatar-wrap">
-			<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName()} ) }}">
+			<a href="{{ path('imdc_profile_user', {'userName':member.getUserName()} ) }}">
 				<img class="img-responsive avatar" alt="avatar" title="" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath):asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
 			</a>
 		</div> <!-- /avatar-wrap -->
 	
 		<div style="display: inline-block; vertical-align: top;" id="thread-creator-info-wrap">
-			<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':member.getUserName()} ) }}">{{ member.getUserName() }}</a>
+			<a href="{{ path('imdc_profile_user', {'userName':member.getUserName()} ) }}">{{ member.getUserName() }}</a>
 			<p>
 				<ul class="list-unstyled list-inline thread-creator-tools-wrap">
 					<li>
@@ -24,7 +24,7 @@ Forum:view.html.twig
 							{% set thisistheuser = true %}
 							<i class="fa fa-envelope" style="color:gray"></i>
 						{% else %}
-							<a class="toolPop" href="{{ path('imdc_message_user_specific', {'userid':member.getUserName()}) }}" title="Click to send {{ member.getUserName }} a message"><i class="fa fa-envelope"></i></a>
+							<a class="toolPop" href="{{ path('imdc_message_new_user', {'userid':member.getUserName()}) }}" title="Click to send {{ member.getUserName }} a message"><i class="fa fa-envelope"></i></a>
 						{% endif %}
 					</li>
 					<li>
@@ -33,7 +33,7 @@ Forum:view.html.twig
 						{% elseif app.user.isUserOnFriendsList(member) %}
 							<i class="fa fa-group toolPop" style="color:green" title="You are already friends"></i>
 						{% else %}
-							<a class="toolPop" href="{{ path('imdc_add_to_friends_list', {'userid':member.getId} ) }}" title="Click to add {{ member.username }} to friends list"><i class="fa fa-plus"></i></a>
+							<a class="toolPop" href="{{ path('imdc_member_friend_add', {'userid':member.getId} ) }}" title="Click to add {{ member.username }} to friends list"><i class="fa fa-plus"></i></a>
 						{% endif %}
 					</li>
 				</ul>

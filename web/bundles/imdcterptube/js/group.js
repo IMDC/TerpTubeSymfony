@@ -39,7 +39,7 @@ Group.prototype.bindUIEvents = function() {
 
 Group.prototype.forwardFunction = function() {
 	console.log(mediaChooser.media.id);
-	var mediaURL = Routing.generate('imdc_files_gateway_preview', {mediaId: mediaChooser.media.id});
+	var mediaURL = Routing.generate('imdc_myfiles_preview', {mediaId: mediaChooser.media.id});
 	mediaChooser.loadMediaPage(mediaChooser.media.id, mediaURL);
 };
 

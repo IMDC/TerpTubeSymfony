@@ -208,7 +208,7 @@
 
 													<div class="row text-center post-reply-user-info">
 														<div class="col-md-12">
-															<a href="{{ path('imdc_terp_tube_user_profile_specific', {'userName':post.author.getUserName}) }}">{{ post.author }}</a>
+															<a href="{{ path('imdc_profile_user', {'userName':post.author.getUserName}) }}">{{ post.author }}</a>
 														</div>
 													</div>
 
@@ -220,7 +220,7 @@
 																		{% set thisistheuser = true %}
 																		<i class="fa fa-envelope-o" style="color:lightgray"></i>
 																	{% else %}
-																		<a href="{{ path('imdc_message_user_specific', {'userid':post.author.getUserName()}) }}" title="Send a message to {{ post.author.getUserName }}"><i class="fa fa-envelope-o"></i></a>
+																		<a href="{{ path('imdc_message_new_user', {'userid':post.author.getUserName()}) }}" title="Send a message to {{ post.author.getUserName }}"><i class="fa fa-envelope-o"></i></a>
 																	{% endif %}
 																</li>
 	
@@ -231,7 +231,7 @@
 																	{% elseif app.user.isUserOnFriendsList(post.author) %}
 																		<i class="fa fa-group" style="color:green" title="Already friends"></i>
 																	{% else %}
-																		<a href="{{ path('imdc_add_to_friends_list', {'userid':post.author.getId} ) }}" title="Click to add {{ post.author.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
+																		<a href="{{ path('imdc_member_friend_add', {'userid':post.author.getId} ) }}" title="Click to add {{ post.author.getUserName }} to your friends list"><i class="fa fa-plus"></i></a>
 																	{% endif %}
 																</li>
 																{#  ---------------- end friend section ---------------- #}

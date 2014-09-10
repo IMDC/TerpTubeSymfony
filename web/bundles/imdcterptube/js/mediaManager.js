@@ -24,7 +24,7 @@ MediaManager.prototype.deleteMedia = function(mediaID, confirmationMessage)
 			return false;
 	}
 	
-	var address = Routing.generate('imdc_files_gateway_remove', {'mediaId': mediaID});
+	var address = Routing.generate('imdc_myfiles_remove', {'mediaId': mediaID});
 	var data = {'mediaId' : mediaID};
 	$.ajax({
 		url : address,
@@ -60,7 +60,7 @@ MediaManager.prototype.trimMedia = function(mediaID, startTime, endTime)
 {
 	var instance = this;
 	
-	var address = Routing.generate('imdc_files_gateway_trim', {'mediaId': mediaID, 'startTime': startTime, 'endTime': endTime});
+	var address = Routing.generate('imdc_myfiles_trim', {'mediaId': mediaID, 'startTime': startTime, 'endTime': endTime});
 	var data = {'mediaId': mediaID, 'startTime': startTime, 'endTime': endTime};
 	$.ajax({
 		url : address,
@@ -103,7 +103,7 @@ MediaManager.prototype.updateMedia = function(media)
 		$(instance).trigger(MediaManager.EVENT_UPDATE_ERROR, "Must send a media object");
 		console.log('Error: ' + "Must send a media object");	
 	}
-	var address = Routing.generate('imdc_files_gateway_update', {'mediaId': media.id});
+	var address = Routing.generate('imdc_myfiles_update', {'mediaId': media.id});
 	console.log(media);
 	var data = {'mediaId' : media.id, 'media' : JSON.stringify(media)};
 	console.log(data);

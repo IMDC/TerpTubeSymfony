@@ -101,16 +101,16 @@
 							{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 								{% block nav_ul_authenticated %}
 									{% block nav_ul_authenticated_my_files %}<li>{% endblock %}
-										<a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_files_gateway') }}"><i class="fa fa-folder-open"></i> {{ 'nav.my_files'|trans }}</a>
+										<a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_myfiles_list') }}"><i class="fa fa-folder-open"></i> {{ 'nav.my_files'|trans }}</a>
 									</li>
 									{% block nav_ul_authenticated_my_friends %}<li>{% endblock %}
-									    <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_friends_list_show_all') }}"><i class="fa fa-group"></i> {{ 'nav.my_friends'|trans }}</a>
+									    <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_member_friend_list') }}"><i class="fa fa-group"></i> {{ 'nav.my_friends'|trans }}</a>
 									</li>
 									{% block nav_ul_authenticated_my_groups %}<li>{% endblock %}
 									    <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}"><i class="fa fa-globe"></i> {{ 'nav.my_groups'|trans }}</a>
 								    </li>
 								    {% block nav_ul_authenticated_my_interpretations %}<li>{% endblock %}
-								        <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_files_gateway_interpretations') }}"><i class="fa fa-film"></i> {{ 'nav.my_interpretations'|trans }}</a>
+								        <a class="sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_myfiles_list_interpretations') }}"><i class="fa fa-film"></i> {{ 'nav.my_interpretations'|trans }}</a>
 								    </li>
 								    {% if is_granted('ROLE_SUPER_ADMIN') %}
 								    {% block nav_ul_authenticated_admin %}<li>{% endblock %}
@@ -124,17 +124,17 @@
 							{% block loginarea %}
 								{% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
 		                            <li>
-										<a class="navbar-link" href="{{ path('imdc_terp_tube_user_profile') }}"> <i class="fa fa-user"></i>
+										<a class="navbar-link" href="{{ path('imdc_profile_me') }}"> <i class="fa fa-user"></i>
 											{{ app.user.username }}
 										</a>
 									</li>
 		               				<li>
-										<a class="toolpop" href="{{ path('imdc_message_view_all') }}" title="Inbox">
+										<a class="toolpop" href="{{ path('imdc_message_inbox') }}" title="Inbox">
 		               						<i class="fa fa-envelope"></i> <span class="badge badge-{{ app.user.getNumUnreadPMs > 0 ? 'success' : 'inverse' }}">{{ app.user.getNumUnreadPMs }}</span>
 		               					</a>
 									</li>
 		               				<li>
-										<a class="toolpop" href="{{ path('imdc_invitations_list') }}" title="Invitations">
+										<a class="toolpop" href="{{ path('imdc_invitation_list') }}" title="Invitations">
 		               						<i class="fa fa-inbox"></i> <span class="badge badge-{{ app.user.getNumActiveInvitations > 0 ? 'success' : 'inverse' }}">{{ app.user.getNumActiveInvitations }}</span>
 		               					</a>
 									</li>

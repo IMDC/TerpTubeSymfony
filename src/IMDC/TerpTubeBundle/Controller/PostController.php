@@ -303,7 +303,7 @@ class PostController extends Controller
                 'info',
                 'You do not have permission to edit this post'
 	        );
-	        return $this->redirect($this->generateUrl('imdc_terp_tube_homepage'));
+	        return $this->redirect($this->generateUrl('imdc_home_user_home'));
 	    }
 	    
 	    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, array('user' => $user));
