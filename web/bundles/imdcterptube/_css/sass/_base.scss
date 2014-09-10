@@ -134,3 +134,8 @@ body {
     background-color: white;
   }
 }
+
+.tt-popup-dialog {
+	position: fixed !important;
+	z-index: 5000;
+}

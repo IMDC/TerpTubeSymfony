@@ -424,7 +424,7 @@ define(['core/mediaManager'], function(MediaManager) {
             modal: true,
             draggable: false,
             closeOnEscape: true,
-            dialogClass: "popup-dialog",
+            dialogClass: "tt-popup-dialog",
             open: (function(event, ui) {
                 console.log("%s: %s: %s", MediaChooser.TAG, "_popUp", "open");
 
@@ -447,7 +447,8 @@ define(['core/mediaManager'], function(MediaManager) {
             hide: "blind",
             minWidth: 740,
             position: {
-                at: "top+200"
+                at: "top",
+                my: "top"
             },
             title: MediaChooser._dialogTitleForType(type)
         });

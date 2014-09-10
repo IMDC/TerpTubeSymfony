@@ -17,11 +17,13 @@ button.videoControlsContainer
 button.videoControlsContainer.forwardButtons
 {
 	margin-left: 5px;
+	background-position: -2px -2px;
 }
 
 button.videoControlsContainer.backButtons
 {
 	margin-right: 5px;
+	background-position: -2px -2px;
 }
 
 .preview-media .video 
@@ -166,6 +168,7 @@ button.videoControlsContainer.backButtons
 /*	margin-left: -40px;
 	margin-right: -40px;*/
 	text-align: center;
+	position: relative;
 }
 
 .videoControlsContainer.track.controls
@@ -188,7 +191,9 @@ button.videoControlsContainer.backButtons
 
 div.videoControlsContainer.controlsBar.forwardButtons
 {
-	float: right;	
+	float: right;
+	position: absolute;
+	right: 0;	
 /*	width: 10%; */
 	text-align:right;
 	/* margin-right: -40px; */
@@ -202,6 +207,8 @@ div.videoControlsContainer.controlsBar.forwardButtons
 div.videoControlsContainer.controlsBar.backButtons
 {
 	float:left;
+	position: absolute;
+	left: 0;
 /*	width: 10%; */
 	text-align:left;	
 	/* margin-left: -40px; */
@@ -304,7 +311,7 @@ div.videoControlsContainer.controlsBar.backButtons
 	background-repeat: no-repeat;	
 }
 
-.videoControlsContainer.controlsBar.videoControls.recordButton.record
+.videoControlsContainer.controlsBar.videoControls.recordButton.recording
 {
 	background-image: url(../../img/player/rec2_small.gif); 
 	background-repeat: no-repeat;	

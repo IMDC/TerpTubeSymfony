@@ -131,6 +131,12 @@ body {
   background-color: white;
 }
 
+/* line 138, sass/_base.scss */
+.tt-popup-dialog {
+  position: fixed !important;
+  z-index: 5000;
+}
+
 /* line 1, sass/_default.scss */
 .tt-default-intro {
   margin-top: 100px;
