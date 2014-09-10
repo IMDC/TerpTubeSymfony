@@ -123,13 +123,20 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			
 			$videoWidth = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'width' );
 			$videoHeight = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'height' );
-			$videoDuration = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'duration' );
+			
+			if ($this->ffprobe->format ( $webmFile->getRealPath () )->has ( 'duration' ))
+				$videoDuration = $this->ffprobe->format ( $webmFile->getRealPath () )->get ( 'duration' );
+			else 
+				$videoDuration = 0;
 			
 			$mp4DestinationFile = $resource->getUploadRootDir () . '/' . $resource->getId () . '.mp4';
 			
 			// Why is this check here
 			if (file_exists ( $mp4DestinationFile )) {
-				$destinationVideoDuration = $this->ffprobe->streams ( $mp4DestinationFile )->videos ()->first ()->get ( 'duration' );
+				if ($this->ffprobe->format ( $mp4DestinationFile )->has ( 'duration' ))
+					$destinationVideoDuration = $this->ffprobe->format ( $mp4DestinationFile )->get ( 'duration' );
+				else
+					$destinationVideoDuration = 0;
 				if ($videoDuration > $destinationVideoDuration) {
 					$mp4File = new File ( $mp4DestinationFile );
 					$videoDuration = $destinationVideoDuration;

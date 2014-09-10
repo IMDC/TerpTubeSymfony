@@ -27,30 +27,28 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 		$this->transcoder = $transcoder;
 		$this->ffprobe = FFProbe::create();
 	}
-	
 	public function checkForPendingOperations($mediaId)
 	{
-		$em = $this->doctrine->getManager ();
-		$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
-		if ($media->getPendingOperations()!=null && count($media->getPendingOperations()) > 0 )
+		$em = $this->doctrine->getManager();
+		$media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+		if ($media->getPendingOperations() != null && count($media->getPendingOperations()) > 0)
 			return true;
 		else
 			return false;
 	}
-	
 	public function executePendingOperations($mediaId)
 	{
-		$em = $this->doctrine->getManager ();
-		$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
+		$em = $this->doctrine->getManager();
+		$media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
 		$pendingOperations = $media->getPendingOperations();
-		foreach ($pendingOperations as $pendingOperation)
+		foreach ( $pendingOperations as $pendingOperation )
 		{
-			$operation = explode(",",$pendingOperation);
-			$operationType = $operation[0];
+			$operation = explode(",", $pendingOperation);
+			$operationType = $operation [0];
 			if ($operationType == "trim")
 			{
-				$operationMediaType = $operation[1];
-				$resource = $media->getResource ();
+				$operationMediaType = $operation [1];
+				$resource = $media->getResource();
 				if ($operationMediaType == "mp4")
 				{
 					$inputFile = $resource->getAbsolutePath();
@@ -59,23 +57,21 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 				{
 					$inputFile = $resource->getAbsolutePathWebm();
 				}
-				$startTime = $operation[2];
-				$endTime = $operation[3];
-				$this->transcoder->trimVideo ( $inputFile, $startTime, $endTime );
-				$this->logger->info ( "Transcoding operation ".$pendingOperation." completed!" );
+				$startTime = $operation [2];
+				$endTime = $operation [3];
+				$this->transcoder->trimVideo($inputFile, $startTime, $endTime);
+				$this->logger->info("Transcoding operation " . $pendingOperation . " completed!");
 			}
 			else
 			{
-				$this->logger->error ( "Unknown operation ".$pendingOperation."!" );
+				$this->logger->error("Unknown operation " . $pendingOperation . "!");
 			}
-				
 		}
-		//FIXME may have a race condition if pending operations are updated elsewhere
-		$pendingOperations = array();
+		// FIXME may have a race condition if pending operations are updated elsewhere
+		$pendingOperations = array ();
 		$media->setPendingOperations($pendingOperations);
 		$em->flush();
 	}
-	
 	public function execute(AMQPMessage $msg)
 	{
 		// Process video upload.
@@ -86,6 +82,7 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 			$mediaId = $message ['media_id'];
 			$em = $this->doctrine->getManager();
 			/**
+			 *
 			 * @var $media IMDC\TerpTubeBundle\Entity\Media
 			 */
 			$media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
@@ -126,14 +123,19 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 				$mp4File = $resourceFile;
 			}
 			
-			$videoDuration = $this->ffprobe->streams($webmFile->getRealPath())->audios()->first()->get('duration');
-			
+			if ($this->ffprobe->format($webmFile->getRealPath())->has('duration'))
+				$videoDuration = $this->ffprobe->format($webmFile->getRealPath())->get('duration');
+			else 
+				$videoDuration = 0;
 			$mp4DestinationFile = $resource->getUploadRootDir() . '/' . $resource->getId() . '.m4a';
 			
 			// Why is this check here
 			if (file_exists($mp4DestinationFile))
 			{
-				$destinationVideoDuration = $this->ffprobe->streams($mp4DestinationFile)->audios()->first()->get('duration');
+				if ($this->ffprobe->format($mp4DestinationFile)->has('duration'))
+					$destinationVideoDuration = $this->ffprobe->format($mp4DestinationFile)->get('duration');
+				else 
+					$destinationVideoDuration = 0;
 				if ($videoDuration > $destinationVideoDuration)
 				{
 					$mp4File = new File($mp4DestinationFile);
