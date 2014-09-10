@@ -1843,7 +1843,7 @@ Player.prototype.postRecordings = function(address, additionalDataObject)
 				.toFixed(2) * 100;
 			// Do something with upload progress
 			console.log("Uploading: " + percentComplete + "%");
-			$(this).trigger(Player.EVENT_RECORDING_UPLOAD_PROGRESS,
+			$(instance).trigger(Player.EVENT_RECORDING_UPLOAD_PROGRESS,
 				percentComplete);
 		    }
 		}, false);
