@@ -454,7 +454,7 @@ class ThreadController extends Controller
                     'danger',
                     'You do not have permission to edit this thread'
             );
-            return $this->redirect($this->generateUrl('imdc_home_user_home'));
+            return $this->redirect($this->generateUrl('imdc_index'));
         }
          
         $threadeditform = $this->createForm(new ThreadEditFormType(), $threadToEdit,

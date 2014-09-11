@@ -24,7 +24,7 @@ class HomeController extends Controller
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-			return $this->redirect($this->generateUrl('imdc_home_user_home'));
+			return $this->redirect($this->generateUrl('imdc_index'));
 		}
 
 		$em = $this->getDoctrine()->getManager();
