@@ -1,6 +1,6 @@
 {% extends 'IMDCTerpTubeBundle:_Base:base.html.twig' %}
 
-{% block title %}{{ group.name }}{% endblock title %}
+{% block title %}Add Members to Group{% endblock title %}
 
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
@@ -12,23 +12,10 @@
                     {% if app.user == group.userFounder %}
                         <a class="btn btn-default" href="{{ path('imdc_group_edit', {'usergroupid': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a>
                         <a class="btn btn-default" href="{{ path('imdc_group_delete', {'usergroupid': group.id}) }}"><i class="fa fa-times"></i> Delete Group</a>
-                        <a class="btn btn-default" href="{{ path('imdc_group_add_members', {'usergroupid': group.id}) }}"><i class="fa fa-plus"></i> Add Members</a>
-                    {% endif %}
-                    {% if group.openForNewMembers and group not in app.user.getUserGroups %}
-                        <a class="btn btn-default" href="{{ path('imdc_group_join', {'usergroupid': group.id}) }}"><i class="fa fa-plus-circle"></i> Join Group</a>
                     {% endif %}
                 </p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <h4>Members: {{ group.members|length }}</h4>
-                {% if app.user is not null and group in app.user.getUserGroups %}
-                    <p><span class="label label-info">You are currently a member of this group</span></p>
-                {% endif %}
-            </div>
-        </div>
-        <!-- group members -->
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <img class="img-responsive center-block" src="" />
@@ -37,11 +24,12 @@
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <hr class="tt-separator-top" />
-                {% if group.getMembers|length > 0 %}
-                    {% include 'IMDCTerpTubeBundle:_Member:thumbnail.html.twig' with {'members': group.getMembers} %}
+                {% if nonMembers|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:_Member:thumbnail.html.twig' with {'members': nonMembers} %}
                 {% else %}
                     <p class="text-center" style="margin-bottom: 20px;">No members</p>
                 {% endif %}
+                {{ knp_pagination_render(nonMembers) }}
                 <hr class="tt-separator-bottom" />
             </div>
         </div>

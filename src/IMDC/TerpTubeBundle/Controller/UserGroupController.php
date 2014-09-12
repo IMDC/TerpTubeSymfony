@@ -1,7 +1,9 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -11,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
@@ -293,4 +296,93 @@ class UserGroupController extends Controller
             'isMyGroups' => true
         ));
 	}
+
+    public function addMembersAction(Request $request, $usergroupid)
+    {
+        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($usergroupid);
+        if (!$group) {
+            //throw new Exception('group not found');
+            return $this->redirect($this->generateUrl('imdc_group_view', array('usergroupid' => $usergroupid)));
+        }
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('EDIT', $group) === false) {
+            throw new AccessDeniedException();
+        }
+
+        $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
+
+        $defaultData = array('users' => new ArrayCollection());
+        $form = $this->createFormBuilder($defaultData)
+            ->add('userIds', 'collection', array('type' => 'integer'))
+            ->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $formUsers = $form->get('users');
+            $user = $this->getUser();
+            $addedMembers = [];
+            $invitedMembers = [];
+
+            foreach ($formUsers as $userId) {
+                $newMember = $userRepo->find($userId);
+                if (!$newMember) {
+                    // user not found
+                    continue;
+                }
+
+                if ($user->isUserOnMentorList($newMember)
+                    || $user->isUserOnMenteeList($newMember)
+                    || $user->isUserOnFriendsList($newMember)) {
+                    // by pass invitation step and add users directly
+                    $group->addMember($newMember);
+                    $em->persist($group);
+                    $addedMembers[] = $newMember;
+                } else {
+                    // send an invitation
+
+                    $invitedMembers[] = $newMember;
+                }
+            }
+
+            $em->flush();
+
+            $amCount = count($addedMembers);
+            $imCount = count($invitedMembers);
+            if ($amCount > 0 || $imCount > 0) {
+                $fb = $this->get('session')->getFlashBag();
+                if ($amCount > 0)
+                    $fb->add('info', sprintf('Added %d members.', $amCount));
+                if ($imCount > 0)
+                    $fb->add('info', sprintf('Invited %d members.', $imCount));
+            }
+        }
+
+        $groupMemberIds = [];
+        foreach ($group->getMembers() as $member) {
+            $groupMemberIds[] = $member->getId();
+        }
+
+        $qb = $userRepo->createQueryBuilder('u');
+        $nonMembers = $qb->add('where', $qb->expr()->notIn('u.id', ':groupMemberIds'))
+            ->setParameter('groupMemberIds', $groupMemberIds)
+            ->getQuery()->getResult();
+
+        $paginator = $this->get('knp_paginator');
+        $nonMembers = $paginator->paginate(
+            $nonMembers,
+            $request->query->get('page', 1), /*page number*/
+            8 /*limit per page*/
+        );
+
+        return $this->render('IMDCTerpTubeBundle:_Group:addMembers.html.twig', array(
+            'group' => $group,
+            'nonMembers' => $nonMembers
+        ));
+    }
 }

@@ -33,3 +33,9 @@ imdc_group_join:
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:joinUserGroup }
   requirements:
     usergroupid: \d+
+
+imdc_group_add_members:
+  pattern: /{usergroupid}/add
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:addMembers }
+  requirements:
+    usergroupid: \d+
