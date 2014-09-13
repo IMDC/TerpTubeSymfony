@@ -1,0 +1,10 @@
+IMDC\TerpTubeBundle\Entity\InvitationType:
+    type: entity
+    table: invitation_type
+    fields:
+        id:
+            type: integer
+            id: true
+        name:
+            type: string
+    lifecycleCallbacks: {  }

@@ -7,13 +7,14 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
         this.bind_forwardFunction = this.forwardFunction.bind(this);
-    }
+    };
 
     Group.TAG = "Group";
 
     Group.Page = {
         NEW: 0,
-        EDIT: 1
+        EDIT: 1,
+        ADD_MEMBERS: 2
     };
 
     /**
@@ -44,6 +45,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Group.Page.EDIT:
                 this._bindUIEventsNewEdit();
                 break;
+            case Group.Page.ADD_MEMBERS:
+                this._bindUIEventsAddMembers();
+                break;
         }
     };
 
@@ -54,6 +58,51 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.bindUIEvents();
+    };
+
+    Group.prototype._bindUIEventsAddMembers = function() {
+        console.log("%s: %s", Group.TAG, "_bindUIEventsAddMembers");
+
+        $(".group-member").on("click", function(e) {
+            var elem = $(e.target);
+            var isSelected = elem.html() == elem.data("selected");
+
+            elem.html(isSelected
+                    ? elem.data("select")
+                    : elem.data("selected")
+            );
+
+            elem.removeClass(isSelected ? "btn-success" : "btn-default");
+            elem.addClass(isSelected ? "btn-default" : "btn-success");
+        });
+
+        $(".group-member").each(function(key, element) {
+            $(element).html($(element).data("select"));
+        });
+
+        $("#addSelected").on("click", function(e) {
+            e.preventDefault();
+
+            $(e.target).button("loading");
+
+            var userList = $("#addMembersForm .selected-users");
+            var userCount = 0;
+
+            userList.html("");
+            $(".group-member").each(function(key, element) {
+                if ($(element).html() != $(element).data("selected")) {
+                    return;
+                }
+
+                var newUser = userList.data("prototype");
+                newUser = newUser.replace(/__name__/g, userCount);
+                userList.append(newUser);
+                $("." + userCount + "-id").val($(element).data("uid"));
+                userCount++;
+            });
+
+            //$("#addMembersForm").submit();
+        });
     };
 
     Group.prototype._onSuccess = function(e) {

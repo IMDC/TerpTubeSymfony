@@ -32,28 +32,35 @@
                                         {% for invitation in app.user.getReceivedInvitations %}
                                             <tr>
                                                 <td>
-                                                    {% if not invitation.isAccepted and not invitation.isDeclined %}
-                                                        <ul class="list-unstyled list-inline">
-                                                            <li><a class="btn btn-success btn-xs" href="{{ path('imdc_invitation_accept', {'id': invitation.id}) }}">Accept</a></li>
-                                                            <li><a class="btn btn-danger btn-xs" href="{{ path('imdc_invitation_decline', {'id': invitation.id}) }}">Decline</a></li>
-                                                        </ul>
+                                                    {% if not invitation.isCancelled and not invitation.isAccepted and not invitation.isDeclined %}
+                                                        <div class="text-center">
+                                                            <a class="btn btn-success btn-xs" href="{{ path('imdc_invitation_accept', {'id': invitation.id}) }}">Accept</a>
+                                                            <a class="btn btn-danger btn-xs" href="{{ path('imdc_invitation_decline', {'id': invitation.id}) }}">Decline</a>
+                                                        </div>
                                                     {% endif %}
                                                 </td>
                                                 <td>
-                                                    {% if invitation.isAccepted %}
-                                                        <span class="label label-success">Accepted</span>
-                                                    {% elseif invitation.isDeclined %}
-                                                        <span class="label label-danger">Declined</span>
-                                                    {% elseif not invitation.isAccepted and not invitation.isDeclined %}
-                                                        <span class="label label-info">Pending</span>
-                                                    {% endif %}
+                                                    <div class="text-center">
+                                                        {% if invitation.isAccepted %}
+                                                            <span class="label label-success">Accepted</span>
+                                                        {% elseif invitation.isDeclined %}
+                                                            <span class="label label-danger">Declined</span>
+                                                        {% elseif invitation.isCancelled %}
+                                                            <span class="label label-warning">Cancelled</span>
+                                                        {% else %}
+                                                            <span class="label label-info">Pending</span>
+                                                        {% endif %}
+                                                    </div>
                                                 </td>
                                                 <td>{{ invitation.creator.getUserName }}</td>
                                                 <td>
-                                                    {% if invitation.becomeMentor %}
-                                                        {{ invitation.getCreator }} would like to you to be their mentor!
-                                                    {% elseif invitation.becomeMentee %}
+                                                    {% if invitation.type.isMentor %}
+                                                        {{ invitation.getCreator }} would like you to be their mentor!
+                                                    {% elseif invitation.type.isMentee %}
                                                         {{ invitation.getCreator }} would like to mentor you!
+                                                    {% elseif invitation.type.isGroup %}
+                                                        {% set group = groups[invitation.id] %}
+                                                        {{ invitation.getCreator }} would like you to join the "<a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a>" group!
                                                     {% endif %}
                                                 </td>
                                                 <td>{{ time_diff(invitation.datecreated) }}</td>
@@ -94,22 +101,27 @@
                                                      </div>
                                                 </td>
                                                 <td>
-                                                    {% if invitation.isAccepted %}
-                                                        <span class="label label-success">Accepted</span>
-                                                    {% elseif invitation.isDeclined %}
-                                                        <span class="label label-danger">Declined</span>
-                                                    {% elseif invitation.isCancelled %}
-                                                        <span class="label label-warning">Cancelled</span>
-                                                    {% elseif not invitation.isAccepted and not invitation.isDeclined %}
-                                                        <span class="label label-info">Pending</span>
-                                                    {% endif %}
+                                                    <div class="text-center">
+                                                        {% if invitation.isAccepted %}
+                                                            <span class="label label-success">Accepted</span>
+                                                        {% elseif invitation.isDeclined %}
+                                                            <span class="label label-danger">Declined</span>
+                                                        {% elseif invitation.isCancelled %}
+                                                            <span class="label label-warning">Cancelled</span>
+                                                        {% else %}
+                                                            <span class="label label-info">Pending</span>
+                                                        {% endif %}
+                                                    </div>
                                                 </td>
                                                 <td>{{ invitation.recipient.getUserName }}</td>
                                                 <td>
-                                                    {% if invitation.becomeMentor %}
+                                                    {% if invitation.type.isMentor %}
                                                         You asked {{ invitation.getRecipient }} to become your mentor
-                                                    {% elseif invitation.becomeMentee %}
-                                                        You asked {{ invitation.getRecipient }} if they want you as their mentor
+                                                    {% elseif invitation.type.isMentee %}
+                                                        You asked {{ invitation.getRecipient }} if they would like you as their mentor
+                                                    {% elseif invitation.type.isGroup %}
+                                                        {% set group = groups[invitation.id] %}
+                                                        You asked {{ invitation.getRecipient }} if they would like to join the "<a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a>" group!
                                                     {% endif %}
                                                 </td>
                                                 <td>{{ time_diff(invitation.datecreated) }}</td>

@@ -23,14 +23,16 @@ class InvitationAdmin extends Admin
             ->add('creator')
             ->add('recipient')
             ->add('dateCreated')
-            ->add('becomeMentee')
-            ->add('becomeMentor')
+            //->add('becomeMentee')
+            //->add('becomeMentor')
+            ->add('type')
             ->add('isAccepted')
             ->add('dateAccepted')
             ->add('isDeclined')
             ->add('dateDeclined')
             ->add('isCancelled')
             ->add('dateCancelled')
+
         ;
     }
 
@@ -53,8 +55,9 @@ class InvitationAdmin extends Admin
             ->addIdentifier('creator')
             ->addIdentifier('recipient')
             ->add('dateCreated')
-            ->add('becomeMentee')
-            ->add('becomeMentor')
+            //->add('becomeMentee')
+            //->add('becomeMentor')
+            ->add('type')
             ->add('isAccepted')
             ->add('dateAccepted')
             ->add('isDeclined')

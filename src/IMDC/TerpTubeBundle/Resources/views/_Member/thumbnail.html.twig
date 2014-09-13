@@ -6,9 +6,12 @@ _Member:index.html.twig
 
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-{% set counter = 1 %}
-{% for member in members if member.getProfile %}
-    {% if counter % 4 == 1 %}
+{% if isSelection is not defined %}
+    {% set isSelection = false %}
+{% endif %}
+
+{% for member in members %}
+    {% if loop.index % 4 == 1 %}
         <div class="row">
             <ul class="list-unstyled">
     {% endif %}
@@ -28,16 +31,19 @@ _Member:index.html.twig
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12" style="margin-top: 20px; margin-bottom: 10px">
-                        {% include 'IMDCTerpTubeBundle:_Member:connectTools.html.twig' with {'faSize': 'fa-2x'} %}
+                    <div class="col-md-12" style="margin-top: 10px; margin-bottom: 10px">
+                        {% if not isSelection %}
+                            {% include 'IMDCTerpTubeBundle:_Member:connectTools.html.twig' with {'faSize': 'fa-2x'} %}
+                        {% else %}
+                            <button class="btn btn-default group-member" data-toggle="button" data-select="Select" data-selected="Selected" data-uid="{{ member.getId }}"></button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </li>
-    {% if (counter != 0 and counter % 4 == 0) or counter == members|length %}
+    {% if loop.index % 4 == 0 or loop.last %}
             </ul>
         </div>
     {% endif %}
-    {% set counter = counter + 1 %}
 {% endfor %}

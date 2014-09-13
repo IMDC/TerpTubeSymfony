@@ -24,8 +24,9 @@ class InvitationType extends AbstractType
             ->add('dateCancelled')
             ->add('isDeclined')
             ->add('dateDeclined')
-            ->add('becomeMentor')
-            ->add('becomeMentee')
+            //->add('becomeMentor')
+            //->add('becomeMentee')
+            ->add('type')
         ;
     }
     

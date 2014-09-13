@@ -28,13 +28,9 @@ IMDC\TerpTubeBundle\Entity\Invitation:
         dateDeclined:
             type: datetime
             nullable: true
-        becomeMentor:
-            type: boolean
+        data:
+            type: array
             nullable: true
-        becomeMentee:
-            type: boolean
-            nullable: true
-            
     manyToOne:
         creator:
             targetEntity: User
@@ -45,5 +41,11 @@ IMDC\TerpTubeBundle\Entity\Invitation:
             targetEntity: User
             joinColumn:
                 name: recipient_id
+                referencedColumnName: id
+    oneToOne:
+        type:
+            targetEntity: InvitationType
+            joinColumn:
+                name: type_id
                 referencedColumnName: id
     lifecycleCallbacks: {  }

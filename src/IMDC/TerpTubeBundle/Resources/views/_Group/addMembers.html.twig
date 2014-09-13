@@ -2,6 +2,22 @@
 
 {% block title %}Add Members to Group{% endblock title %}
 
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                var group = new $tt.Controller.Group();
+                //FIXME context
+                context = group;
+
+                group.bindUIEvents($tt.Controller.Group.Page.ADD_MEMBERS);
+            });
+        });
+    </script>
+{% endblock header %}
+
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
 {% block content %}
@@ -25,13 +41,24 @@
             <div class="col-md-offset-1 col-md-10">
                 <hr class="tt-separator-top" />
                 {% if nonMembers|length > 0 %}
-                    {% include 'IMDCTerpTubeBundle:_Member:thumbnail.html.twig' with {'members': nonMembers} %}
+                    {% include 'IMDCTerpTubeBundle:_Member:thumbnail.html.twig' with {'members': nonMembers, 'isSelection': true} %}
                 {% else %}
                     <p class="text-center" style="margin-bottom: 20px;">No members</p>
                 {% endif %}
                 {{ knp_pagination_render(nonMembers) }}
+                <button class="btn btn-success" id="addSelected" style="margin-bottom: 15px;" data-loading-text="Adding Members...">Add Selected</button>
                 <hr class="tt-separator-bottom" />
             </div>
         </div>
     </div>
 {% endblock content %}
+
+{% block outside_body %}
+    {{ parent() }}
+
+    <div id="addMembersForm" style="display: none;">
+        {{ form_start(form) }}
+        <div class="selected-users" data-prototype="{{ form_widget(form.users.vars.prototype)|e }}"></div>
+        {{ form_end(form) }}
+    </div>
+{% endblock outside_body %}

@@ -2,11 +2,11 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use IMDC\TerpTubeBundle\Entity\InvitationType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use IMDC\TerpTubeBundle\Entity\Invitation;
-use IMDC\TerpTubeBundle\Form\Type\InvitationType;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use IMDC\TerpTubeBundle\Entity\Message;
@@ -112,16 +112,17 @@ class InvitationController extends Controller
         }
         
         $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
         
         $entity = new Invitation();
         $entity->setCreator($user);
         $entity->setRecipient($userRecipient);
-        $entity->setBecomeMentor(true);
+        //$entity->setBecomeMentor(true);
+        $entity->setType($em->getRepository('IMDCTerpTubeBundle:InvitationType')->find(InvitationType::TYPE_MENTOR));
         
         $user->addCreatedInvitation($entity);
         $userRecipient->addReceivedInvitation($entity);
-        
-        $em = $this->getDoctrine()->getManager();
+
         $em->persist($user);
         $em->persist($userRecipient);
         $em->persist($entity);
@@ -134,7 +135,7 @@ class InvitationController extends Controller
         return new RedirectResponse($url);
     }
     
-    public function createMenteeInvitation(Request $request, $id) 
+    public function createMenteeInvitationAction(Request $request, $id)
     {
         $userManager = $this->container->get('fos_user.user_manager');
         $userRecipient = $userManager->findUserBy(array('id' => $id));
@@ -150,16 +151,17 @@ class InvitationController extends Controller
         }
         
         $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
         
         $entity = new Invitation();
         $entity->setCreator($user);
         $entity->setRecipient($userRecipient);
-        $entity->setBecomeMentee(true);
+        //$entity->setBecomeMentee(true);
+        $entity->setType($em->getRepository('IMDCTerpTubeBundle:InvitationType')->find(InvitationType::TYPE_MENTEE));
         
         $user->addCreatedInvitation($entity);
         $userRecipient->addReceivedInvitation($entity);
-        
-        $em = $this->getDoctrine()->getManager();
+
         $em->persist($user);
         $em->persist($userRecipient);
         $em->persist($entity);
@@ -402,13 +404,35 @@ class InvitationController extends Controller
     public function listAction(Request $request) 
     {
         // check if user logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
-        
+
+        $invitations = $this->getUser()->getReceivedInvitations();
+        $groups = [];
+
+        foreach ($invitations as $invitation) {
+            if ($invitation->getType()->isGroup()) {
+                $data = $invitation->getData();
+                if (!data || !isset($data['groupId'])) {
+                    throw new Exception('invalid invitation data');
+                }
+
+                $em = $this->getDoctrine()->getManager();
+                $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find(intval($data['groupId']));
+                if (!group) {
+                    throw new Exception('group not found');
+                }
+
+                $groups[$invitation->getId()] = $group;
+            }
+        }
+
         //return $this->render('IMDCTerpTubeBundle:Invitation:userOverview.html.twig');
-        return $this->render('IMDCTerpTubeBundle:_Invitation:index.html.twig');
+        return $this->render('IMDCTerpTubeBundle:_Invitation:index.html.twig', array(
+            'invitations' => $invitations,
+            'groups' => $groups
+        ));
     }
     
     public function reactivateAction(Request $request, $id)

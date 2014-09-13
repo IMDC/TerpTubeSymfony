@@ -2,6 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 use Doctrine\ORM\Query\Expr\Join;
+use IMDC\TerpTubeBundle\Entity\Invitation;
+use IMDC\TerpTubeBundle\Entity\InvitationType;
+use IMDC\TerpTubeBundle\Form\Type\IdType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -319,15 +322,18 @@ class UserGroupController extends Controller
 
         $defaultData = array('users' => new ArrayCollection());
         $form = $this->createFormBuilder($defaultData)
-            ->add('userIds', 'collection', array('type' => 'integer'))
+            ->add('users', 'collection', array(
+                'type' => new IdType(),
+                'label' => false,
+                'allow_add' => true))
             ->getForm();
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             $formUsers = $form->get('users');
             $user = $this->getUser();
-            $addedMembers = [];
-            $invitedMembers = [];
+            $addedMembers = 0;
+            $invitedMembers = 0;
 
             foreach ($formUsers as $userId) {
                 $newMember = $userRepo->find($userId);
@@ -342,24 +348,37 @@ class UserGroupController extends Controller
                     // by pass invitation step and add users directly
                     $group->addMember($newMember);
                     $em->persist($group);
-                    $addedMembers[] = $newMember;
+                    $addedMembers++;
                 } else {
                     // send an invitation
+                    //TODO move to InvitationController
+                    $invitation = new Invitation();
+                    $invitation->setCreator($user);
+                    $invitation->setRecipient($newMember);
+                    $invitation->setType($em->getRepository('IMDCTerpTubeBundle:InvitationType')->find(InvitationType::TYPE_GROUP));
+                    $invitation->setData(array(
+                        'groupId' => $group->getId()
+                    ));
 
-                    $invitedMembers[] = $newMember;
+                    $user->addCreatedInvitation($invitation);
+                    $newMember->addReceivedInvitation($invitation);
+
+                    $em->persist($invitation);
+                    $em->persist($user);
+                    $em->persist($newMember);
+
+                    $invitedMembers++;
                 }
             }
 
             $em->flush();
 
-            $amCount = count($addedMembers);
-            $imCount = count($invitedMembers);
-            if ($amCount > 0 || $imCount > 0) {
+            if ($addedMembers > 0 || $invitedMembers > 0) {
                 $fb = $this->get('session')->getFlashBag();
-                if ($amCount > 0)
-                    $fb->add('info', sprintf('Added %d members.', $amCount));
-                if ($imCount > 0)
-                    $fb->add('info', sprintf('Invited %d members.', $imCount));
+                if ($addedMembers > 0)
+                    $fb->add('info', sprintf('Added %d members.', $addedMembers));
+                if ($invitedMembers > 0)
+                    $fb->add('info', sprintf('Invited %d members.', $invitedMembers));
             }
         }
 
@@ -369,8 +388,12 @@ class UserGroupController extends Controller
         }
 
         $qb = $userRepo->createQueryBuilder('u');
-        $nonMembers = $qb->add('where', $qb->expr()->notIn('u.id', ':groupMemberIds'))
-            ->setParameter('groupMemberIds', $groupMemberIds)
+        $nonMembers = $qb->leftJoin('u.profile', 'p', Join::WITH, $qb->expr()->eq('u.profile', 'p.id'))
+            ->where($qb->expr()->eq('p.profileVisibleToPublic', ':public'))
+            ->andWhere($qb->expr()->notIn('u.id', ':groupMemberIds'))
+            ->setParameters(array(
+                'public' => 1,
+                'groupMemberIds' => $groupMemberIds))
             ->getQuery()->getResult();
 
         $paginator = $this->get('knp_paginator');
@@ -382,7 +405,8 @@ class UserGroupController extends Controller
 
         return $this->render('IMDCTerpTubeBundle:_Group:addMembers.html.twig', array(
             'group' => $group,
-            'nonMembers' => $nonMembers
+            'nonMembers' => $nonMembers,
+            'form' => $form->createView()
         ));
     }
 }

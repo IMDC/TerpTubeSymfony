@@ -43,6 +43,11 @@ class LoadNoReplyUserData implements FixtureInterface, ContainerAwareInterface
      */
     public function load(ObjectManager $manager)
     {
+        $exists = $manager->getRepository('IMDCTerpTubeBundle:User')->find(0);
+        if ($exists) {
+            return;
+        }
+
         $userManager = $this->container->get('fos_user.user_manager');
         
         $user = $userManager->createUser();

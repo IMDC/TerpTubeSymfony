@@ -40,14 +40,9 @@ class Invitation
     private $dateCancelled;
 
     /**
-     * @var boolean
+     * @var \IMDC\TerpTubeBundle\Entity\InvitationType
      */
-    private $becomeMentor;
-
-    /**
-     * @var boolean
-     */
-    private $becomeMentee;
+    private $type;
 
     /**
      * @var \IMDC\TerpTubeBundle\Entity\User
@@ -80,8 +75,6 @@ class Invitation
         $this->setIsCancelled(false);
         $this->setIsDeclined(false);
         $this->setDateCreated(new \DateTime('now'));
-        $this->setBecomeMentee(false);
-        $this->setBecomeMentor(false);
     }
     
     /**
@@ -210,49 +203,26 @@ class Invitation
     }
 
     /**
-     * Set becomeMentor
+     * Set type
      *
-     * @param boolean $becomeMentor
+     * @param \IMDC\TerpTubeBundle\Entity\InvitationType $type
      * @return Invitation
      */
-    public function setBecomeMentor($becomeMentor)
+    public function setType($type)
     {
-        $this->becomeMentor = $becomeMentor;
+        $this->type = $type;
     
         return $this;
     }
 
     /**
-     * Get becomeMentor
+     * Get type
      *
-     * @return boolean 
+     * @return \IMDC\TerpTubeBundle\Entity\InvitationType
      */
-    public function getBecomeMentor()
+    public function getType()
     {
-        return $this->becomeMentor;
-    }
-
-    /**
-     * Set becomeMentee
-     *
-     * @param boolean $becomeMentee
-     * @return Invitation
-     */
-    public function setBecomeMentee($becomeMentee)
-    {
-        $this->becomeMentee = $becomeMentee;
-    
-        return $this;
-    }
-
-    /**
-     * Get becomeMentee
-     *
-     * @return boolean 
-     */
-    public function getBecomeMentee()
-    {
-        return $this->becomeMentee;
+        return $this->type;
     }
 
     /**
@@ -345,5 +315,33 @@ class Invitation
     public function getDateDeclined()
     {
         return $this->dateDeclined;
+    }
+    /**
+     * @var array
+     */
+    private $data;
+
+
+    /**
+     * Set data
+     *
+     * @param array $data
+     * @return Invitation
+     */
+    public function setData($data)
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    /**
+     * Get data
+     *
+     * @return array 
+     */
+    public function getData()
+    {
+        return $this->data;
     }
 }
