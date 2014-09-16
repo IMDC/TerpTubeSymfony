@@ -35,7 +35,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
      * ui element event bindings in order of appearance
      * @param {number} page
      */
-    Forum.bindUIEvents = function(page) {
+    Forum.prototype.bindUIEvents = function(page) {
         console.log("%s: %s- page=%d", Forum.TAG, "bindUIEvents", page);
 
         this.page = page;
@@ -51,7 +51,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         }
     };
 
-    Forum._bindUIEventsNewEdit = function() {
+    Forum.prototype._bindUIEventsNewEdit = function() {
         console.log("%s: %s", Forum.TAG, "_bindUIEventsNewEdit");
 
         this.mediaChooser = new MediaChooser(Forum.mediaChooserOptions(Forum.Page.NEW));
@@ -70,7 +70,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });*/
     };
 
-    Forum._bindUIEventsDelete = function() {
+    Forum.prototype._bindUIEventsDelete = function() {
         /*
          * by paul: since I hid the real 'submit' button to provide a nicely stylized button
          * I have to click the real button when you click on the fancy one
@@ -87,7 +87,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Forum.Page.NEW:
             case Forum.Page.EDIT:
                 $("#ForumForm_mediatextarea").val(e.media.id);
-                //$("#ForumForm_mediaID").attr("data-mid", e.media.id); //TODO not used??
                 break;
         }
     };
