@@ -35,7 +35,7 @@ class PostEditFormType extends AbstractType
 	    ));
 	    */
 	    
-	    $builder->add('mediatextarea', 'text', array('required' => false, 
+	    $builder->add('mediatextarea', 'text', array('required' => false,
 	                                                'mapped' => false,
 	                                                'read_only' => true,
 	                                                'label' => 'Media ID',
@@ -43,8 +43,13 @@ class PostEditFormType extends AbstractType
 	    
 	    $builder->addEventSubscriber(new AddStartEndTimeSubscriber());
 	    
-	    $builder->add('content', null, array('label' => 'Content',
-	    ));
+	    $builder->add('content', 'textarea', array(
+            'label' => false,
+            'required' => false,
+            'attr' => array(
+                'class' => 'autosize',
+                'placeholder' => 'Write a comment...')
+        ));
 	    
 		$builder->add('submit', 'submit');
 	}	

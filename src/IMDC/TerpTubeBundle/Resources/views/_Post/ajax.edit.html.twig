@@ -21,7 +21,7 @@ TerpTube.Controller.Thread
             <li>{{ form_label(form.endTime) }}</li><li>{{ form_widget(form.endTime) }}</li>
         </ul>
     {% endif %}
-    {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+    {{ form_row(form.content) }}
     {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
     <button class="btn btn-success" id="submitEditPost{{ post.id }}"><i class="fa fa-check"></i> Edit</button>
     <button class="btn btn-danger post-cancel" id="cancelEditPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>

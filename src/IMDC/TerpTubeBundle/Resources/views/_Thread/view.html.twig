@@ -128,7 +128,7 @@
                                 <li>{{ form_label(form.endTime) }}</li><li>{{ form_widget(form.endTime) }}</li>
                             </ul>
                         {% endif %}
-                        {{ form_row(form.content, {'required': false, 'attr': {'class': 'autosize'}}) }}
+                        {{ form_row(form.content) }}
                         {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
                         <button class="btn btn-success" id="submitReply"><i class="fa fa-check"></i> Reply</button>
                         <button class="btn btn-danger post-cancel" id="resetReply"><i class="fa fa-times"></i> Reset</button>

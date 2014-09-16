@@ -91,10 +91,20 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.bindUIEvents();
 
+        $("#submitReplyPost" + postId).on("click", (function(e) {
+            if ($("#PostReplyToPostForm_content").val() == ""
+                && this.mediaChooser.media == null) {
+                e.preventDefault();
+                alert("Your post cannot be blank. You must either select a file or write a comment.");
+            }
+        }).bind(this));
+
         $("#resetReplyPost" + postId).on("click", function(e) {
             e.preventDefault();
 
             $("#PostReplyToPostForm_content").val("");
+            this.mediaChooser.setMedia(null);
+            $(".mediatextarea-post-" + postId).val("");
         });
 
         $("#cancelReplyPost" + postId).on("click", function(e) {

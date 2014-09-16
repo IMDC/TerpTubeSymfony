@@ -147,13 +147,24 @@ define(['core/mediaChooser'], function(MediaChooser) {
             //$("#closed-caption-button img").attr("src", this.playerOptions.captionImages.on);
         }).bind(this));
 
+        $("#submitReply").on("click", (function(e) {
+            if ($("#PostFormFromThread_startTime").val() == ""
+                && $("#PostFormFromThread_endTime").val() == ""
+                && $("#PostFormFromThread_content").val() == ""
+                && this.mediaChooser.media == null) {
+                e.preventDefault();
+                alert("Your post cannot be blank. You must either make a Sign Link, select a file or write a comment.");
+            }
+        }).bind(this));
+
         $("#resetReply").on("click", (function(e) {
             e.preventDefault();
 
-            // clear form values for start and end time
             $("#PostFormFromThread_startTime").val("");
             $("#PostFormFromThread_endTime").val("");
             $("#PostFormFromThread_content").val("");
+            this.mediaChooser.setMedia(null);
+            $("#PostFormFromThread_mediatextarea").val("");
 
             if (this.player) {
                 enableTemporalComment(this.player, false, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));

@@ -15,7 +15,7 @@ define(['core/mediaManager'], function(MediaManager) {
 
         this.bind__onRecordingSuccess = this._onRecordingSuccess.bind(this);
         this.bind__onRecordingError = this._onRecordingError.bind(this);
-        this.bind__onUploadProgress = this._onUploadProgress.bind(this);
+        //this.bind__onUploadProgress = this._onUploadProgress.bind(this);
         this.bind__previewVideoForwardFunctionCut = this._previewVideoForwardFunctionCut.bind(this);
         this.bind__previewVideoForwardFunctionDone = this._previewVideoForwardFunctionDone.bind(this);
         this.bind__previewVideoForwardFunctionDoneAndPost = this._previewVideoForwardFunctionDoneAndPost.bind(this);
@@ -622,6 +622,8 @@ define(['core/mediaManager'], function(MediaManager) {
             $("#selectedFile" + this.postSuffix).hide();
             $("#selectedFileTitle" + this.postSuffix).html("");
         }
+
+        this.setMedia(null);
 
         //this.callbacks.reset();
         $(this).trigger($.Event(MediaChooser.Event.RESET, {postId: this.postId}));

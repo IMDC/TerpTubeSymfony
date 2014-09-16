@@ -10,6 +10,7 @@ IMDC\TerpTubeBundle\Entity\Post:
                 strategy: AUTO
         content:
             type: text
+            nullable: true
         isDeleted: # probably can remove this field
             type: boolean
         created:
