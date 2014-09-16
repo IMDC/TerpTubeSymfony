@@ -72,8 +72,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
                     : elem.data("selected")
             );
 
-            elem.removeClass(isSelected ? "btn-success" : "btn-default");
-            elem.addClass(isSelected ? "btn-default" : "btn-success");
+            elem.removeClass(isSelected ? "btn-success group-member-selected" : "btn-default");
+            elem.addClass(isSelected ? "btn-default" : "btn-success group-member-selected");
         });
 
         $(".group-member").each(function(key, element) {
@@ -83,17 +83,18 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $("#addSelected").on("click", function(e) {
             e.preventDefault();
 
+            if ($(".group-member-selected").length == 0) {
+                alert("No members selected.");
+                return;
+            }
+
             $(e.target).button("loading");
 
             var userList = $("#addMembersForm .selected-users");
             var userCount = 0;
 
             userList.html("");
-            $(".group-member").each(function(key, element) {
-                if ($(element).html() != $(element).data("selected")) {
-                    return;
-                }
-
+            $(".group-member-selected").each(function(key, element) {
                 var newUser = userList.data("prototype");
                 newUser = newUser.replace(/__name__/g, userCount);
                 userList.append(newUser);
@@ -101,7 +102,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 userCount++;
             });
 
-            //$("#addMembersForm").submit();
+            $("#addMembersForm form").submit();
         });
     };
 

@@ -330,13 +330,13 @@ class UserGroupController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $formUsers = $form->get('users');
+            $formUsers = $form->get('users')->getData();
             $user = $this->getUser();
             $addedMembers = 0;
             $invitedMembers = 0;
 
-            foreach ($formUsers as $userId) {
-                $newMember = $userRepo->find($userId);
+            foreach ($formUsers as $formUser) {
+                $newMember = $userRepo->find($formUser['id']);
                 if (!$newMember) {
                     // user not found
                     continue;
@@ -395,6 +395,22 @@ class UserGroupController extends Controller
                 'public' => 1,
                 'groupMemberIds' => $groupMemberIds))
             ->getQuery()->getResult();
+
+        // exclude users that have a pending invitation for the group
+        for ($i=0; $i<count($nonMembers); $i++) {
+            $member = $nonMembers[$i];
+            $receivedInvites = $member->getReceivedInvitations();
+            foreach ($receivedInvites as $receivedInvite) {
+                if ($receivedInvite->getType()->isGroup()
+                    && !$receivedInvite->getIsAccepted() && !$receivedInvite->getIsDeclined() && !$receivedInvite->getIsCancelled()) {
+                    $group = InvitationController::getGroupFromInviteData($this, $receivedInvite);
+                    if ($group->getId() == $usergroupid) {
+                        unset($nonMembers[$i]);
+                        break; // stop at the first active invite. though more than one active invite should not be present
+                    }
+                }
+            }
+        }
 
         $paginator = $this->get('knp_paginator');
         $nonMembers = $paginator->paginate(

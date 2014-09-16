@@ -42,11 +42,11 @@
                 <hr class="tt-separator-top" />
                 {% if nonMembers|length > 0 %}
                     {% include 'IMDCTerpTubeBundle:_Member:thumbnail.html.twig' with {'members': nonMembers, 'isSelection': true} %}
+                    <button class="btn btn-success" id="addSelected" style="margin-bottom: 15px;" data-loading-text="Adding Members...">Add Selected</button>
+                    {{ knp_pagination_render(nonMembers) }}
                 {% else %}
-                    <p class="text-center" style="margin-bottom: 20px;">No members</p>
+                    <p class="text-center" style="margin-bottom: 20px;">No members to add</p>
                 {% endif %}
-                {{ knp_pagination_render(nonMembers) }}
-                <button class="btn btn-success" id="addSelected" style="margin-bottom: 15px;" data-loading-text="Adding Members...">Add Selected</button>
                 <hr class="tt-separator-bottom" />
             </div>
         </div>

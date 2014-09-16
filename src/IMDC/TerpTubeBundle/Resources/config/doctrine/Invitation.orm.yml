@@ -42,7 +42,6 @@ IMDC\TerpTubeBundle\Entity\Invitation:
             joinColumn:
                 name: recipient_id
                 referencedColumnName: id
-    oneToOne:
         type:
             targetEntity: InvitationType
             joinColumn:

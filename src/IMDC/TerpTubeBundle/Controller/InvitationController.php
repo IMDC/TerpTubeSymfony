@@ -413,18 +413,7 @@ class InvitationController extends Controller
 
         foreach ($invitations as $invitation) {
             if ($invitation->getType()->isGroup()) {
-                $data = $invitation->getData();
-                if (!data || !isset($data['groupId'])) {
-                    throw new Exception('invalid invitation data');
-                }
-
-                $em = $this->getDoctrine()->getManager();
-                $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find(intval($data['groupId']));
-                if (!group) {
-                    throw new Exception('group not found');
-                }
-
-                $groups[$invitation->getId()] = $group;
+                $groups[$invitation->getId()] = InvitationController::getGroupFromInviteData($this, $invitation);
             }
         }
 
@@ -495,37 +484,41 @@ class InvitationController extends Controller
         }
         
         // deal with the actions of the invitation
-        if ($entity->getBecomeMentee()) {
+        //if ($entity->getBecomeMentee()) {
+        if ($entity->getType()->isMentee()) {
             // recipient becomes mentee of the invitation creator
             $entity->getCreator()->addMenteeList($entity->getRecipient());
             // sender/creator becomes mentor to the recipient
             $entity->getRecipient()->addMentorList($entity->getCreator());
-            
-            // send message to invitation creator?
-            $noReplyUser = $em->getRepository('IMDCTerpTubeBundle:User')->findNoReplyUser();
-            
-            $messageSubject = $entity->getRecipient()->getUsername() . ' has accepted your invitation';
-            $messageContent = 'Congratulations, ' . $entity->getRecipient()->getUsername() . ' has accepted your invitation to become your mentee!';
-            
-            $message = $entity->getCreator()->createMessageToUser($noReplyUser, $messageSubject, $messageContent);
-            $em->persist($message);
-            
+
+            $em->persist($entity->getCreator());
         }
-        elseif ($entity->getBecomeMentor()) {
+        //elseif ($entity->getBecomeMentor()) {
+        elseif ($entity->getType()->isMentor()) {
             // recipient becomes mentor of the invitation creator
             $entity->getCreator()->addMentorList($entity->getRecipient());
             // sendor/creates becomes mentee to the recipient
             $entity->getRecipient()->addMenteeList($entity->getCreator());
-            
-            // send message to invitation creator?
-            $noReplyUser = $em->getRepository('IMDCTerpTubeBundle:User')->findOneBy(array('id' => 0));
-            
-            $messageSubject = $entity->getRecipient()->getUsername() . ' has accepted your invitation';
-            $messageContent = 'Congratulations, ' . $entity->getRecipient()->getUsername() . ' has accepted your invitation to become your mentor!';
-            
-            $message = $entity->getCreator()->createMessageToUser($noReplyUser, $messageSubject, $messageContent);
-            $em->persist($message);
+
+            $em->persist($entity->getCreator());
         }
+        elseif ($entity->getType()->isGroup()) {
+            $group = InvitationController::getGroupFromInviteData($this, $entity);
+
+            $user->addUserGroup($group);
+            $group->addMember($user);
+
+            $em->persist($group);
+        }
+
+        // send message to invitation creator?
+        $noReplyUser = $em->getRepository('IMDCTerpTubeBundle:User')->findOneBy(array('id' => 0));
+
+        $messageSubject = $entity->getRecipient()->getUsername() . ' has accepted your invitation';
+        $messageContent = 'Congratulations, ' . $entity->getRecipient()->getUsername() . ' has accepted your invitation!'; //TODO custom message based on invitation type
+
+        $message = $entity->getCreator()->createMessageToUser($noReplyUser, $messageSubject, $messageContent);
+        $em->persist($message);
         
         $entity->setIsAccepted(true);
         $entity->setIsDeclined(false);
@@ -533,12 +526,10 @@ class InvitationController extends Controller
         
         $em->persist($entity);
         $em->persist($user);
-        $em->persist($entity->getCreator());
         
         $em->flush();
         
         return $this->redirect($this->generateUrl('imdc_invitation_list'));
-        
     }
     
     public function declineAction(Request $request, $id)
@@ -576,5 +567,21 @@ class InvitationController extends Controller
         $em->flush();
         
         return $this->redirect($this->generateUrl('imdc_invitation_list'));
+    }
+
+    public static function getGroupFromInviteData(Controller $controller, Invitation $invitation) {
+        $data = $invitation->getData();
+        if (!$data || !isset($data['groupId'])) {
+            throw new Exception('invalid invitation data');
+        }
+
+        $em = $controller->getDoctrine()->getManager();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find(intval($data['groupId']));
+        if (!$group) {
+            //throw new Exception('group not found');
+            return null;
+        }
+
+        return $group;
     }
 }
