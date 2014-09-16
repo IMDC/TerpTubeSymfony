@@ -40,8 +40,8 @@
                 {{ form_errors(form) }}
                 <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
                 {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
-                {{ form_row(form.title, {'attr': {'class': 'autosize'}}) }}
-                {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+                {{ form_row(form.title) }}
+                {{ form_row(form.content) }}
                 <div id="permissionRadioButtons">
                     {{ form_row(form.permissions.accessLevel.0) }} {# private, creator access #}
                     {#{ form_row(form.permissions.accessLevel.1) }#} {# Only people on friends list #}

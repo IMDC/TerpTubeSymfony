@@ -19,7 +19,10 @@ class ThreadFormType extends AbstractType
 	     
 	    $userid = $user->getId();
 	    
-	    $builder->add('title', null, array('label' => 'Text Title'));
+	    $builder->add('title', 'text', array(
+            'label' => 'Text Title',
+            'required' => false
+        ));
 	    //$builder->add('mediaIncluded');
 	    
 	    // this assumes that the entity manager was passed in as an option
@@ -60,7 +63,11 @@ class ThreadFormType extends AbstractType
 	    ));
 	    */
 
-	    $builder->add('content', null, array('label' => 'Supplementary Content - a brief description of the Topic',
+	    $builder->add('content', 'textarea', array(
+            'label' => 'Supplementary Content - a brief description of the Topic',
+            'required' => false,
+            'attr' => array(
+                'class' => 'autosize')
 	    ));
 	    
 	    $builder->add('permissions', new PermissionsType(array('user' => $user)));

@@ -16,6 +16,7 @@ IMDC\TerpTubeBundle\Entity\Thread:
             type: boolean
         content:
             type: text
+            nullable: true
         lastPostID:
             type: integer
             nullable: true
@@ -27,6 +28,7 @@ IMDC\TerpTubeBundle\Entity\Thread:
             nullable: true
         title:
             type: text
+            nullable: true
         type:
             type: smallint
             nullable: true

@@ -80,14 +80,24 @@ define(['core/mediaChooser'], function(MediaChooser) {
          * I have to click the real button when you click on the fancy one
          */
         /*$("#thread-form-submit-button").on("click", function(e) {
-            e.preventDefault();
+         e.preventDefault();
 
-            $("#ThreadForm_submit").click();
-        });*/
+         $("#ThreadForm_submit").click();
+         });*/
 
         $("ul.tagit").hide();
 
         var prefix = isEdit ? "ThreadEditForm" : "ThreadForm";
+
+        if (!isEdit) {
+            $("#submitForm").on("click", (function(e) {
+                if ($("#" + prefix + "_title").val() == ""
+                    && this.mediaChooser.media == null) {
+                    e.preventDefault();
+                    alert("Your topic cannot be blank. You must either select a file or specify a title.");
+                }
+            }).bind(this));
+        }
 
         $("#permissionRadioButtons div.radio").on("click", function(e) {
             if ($("#" + prefix + "_permissions_accessLevel_2").is(':checked')) { // specific users

@@ -41,9 +41,17 @@ class ThreadEditFormType extends AbstractType
 // 	                                                'label' => 'Media ID',
 //                                                     ));
 	    
-	    $builder->add('title', null, array('label' => 'Title'));
+	    $builder->add('title', 'text', array(
+            'label' => 'Title',
+            'required' => false
+        ));
 	    
-		$builder->add('content', null, array('label' => 'Supplemental Text Description'));
+		$builder->add('content', 'textarea', array(
+            'label' => 'Supplemental Text Description',
+            'required' => false,
+            'attr' => array(
+                'class' => 'autosize')
+        ));
 		
 		$builder->add('permissions', new PermissionsType(array('user' => $user, 'permissions' => $thread->getPermissions())));
 
