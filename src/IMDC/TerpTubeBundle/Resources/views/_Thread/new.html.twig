@@ -55,7 +55,7 @@
                     {{ form_row(form.permissions.accessLevel.5) }} {# public, anyone can see it #}
                 </div>
                 {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-                <button class="btn btn-success"><i class="fa fa-check"></i> Create</button>
+                <button class="btn btn-success" id="submitForm"><i class="fa fa-check"></i> Create</button>
                 <a class="btn btn-danger" href="{{ path('imdc_forum_view', {'forumid': forumid}) }}"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
             </div>

@@ -91,6 +91,12 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.bindUIEvents();
 
+        $("#resetReplyPost" + postId).on("click", function(e) {
+            e.preventDefault();
+
+            $("#PostReplyToPostForm_content").val("");
+        });
+
         $("#cancelReplyPost" + postId).on("click", function(e) {
             e.preventDefault();
 
@@ -117,7 +123,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Post.Page.REPLY:
                 //$("#PostEditForm_mediatextarea").val(media.id);
                 $(".mediatextarea-post-" + e.postId).val(e.media.id);
-                //TODO do the post
                 $("#PostReplyToPostForm_submit").trigger("click");
                 break;
         }

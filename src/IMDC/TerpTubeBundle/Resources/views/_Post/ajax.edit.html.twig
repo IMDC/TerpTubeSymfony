@@ -28,6 +28,8 @@ TerpTube.Controller.Thread
 	{{ form_end(form) }}
     {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' with {'isPost': true, 'postId': post.id} %}
 	<script type="text/javascript">
+        $(".autosize").autosize();
+
         var post = new $tt.Controller.Post();
         //FIXME context
         if (!context) context = post;

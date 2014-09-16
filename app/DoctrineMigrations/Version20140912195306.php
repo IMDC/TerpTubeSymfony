@@ -37,7 +37,7 @@ class Version20140912195306 extends AbstractMigration implements ContainerAwareI
         $this->addSql('CREATE TABLE invitation_type (id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE Invitation ADD type_id INT DEFAULT NULL, ADD data LONGTEXT DEFAULT NULL COMMENT \'(DC2Type:array)\', DROP becomeMentor, DROP becomeMentee');
         $this->addSql('ALTER TABLE Invitation ADD CONSTRAINT FK_BE406272C54C8C93 FOREIGN KEY (type_id) REFERENCES invitation_type (id)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_BE406272C54C8C93 ON Invitation (type_id)');
+        $this->addSql('CREATE INDEX IDX_BE406272C54C8C93 ON Invitation (type_id)');
     }
 
     public function postUp(Schema $schema)

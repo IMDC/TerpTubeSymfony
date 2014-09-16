@@ -228,7 +228,7 @@ define(['core/mediaManager'], function(MediaManager) {
             forwardFunctions: options.forwardFunctions
         });
 
-        $(this.recorder).on(Player.EVENT_RECORDING_UPLOAD_PROGRESS, function(percentComplete) {
+        $(this.recorder).on(Player.EVENT_RECORDING_UPLOAD_PROGRESS, function(e, percentComplete) {
             MediaChooser._updateUploadProgress($("#recordVideoUploadProgress"), percentComplete);
         });
 
@@ -569,7 +569,7 @@ define(['core/mediaManager'], function(MediaManager) {
         $(this).trigger($.Event(MediaChooser.Event.DIALOG_CLOSE, {media: this.media}));
     };
 
-    MediaChooser.prototype._invokeSuccess = function(post) {
+    MediaChooser.prototype._invokeSuccess = function(doPost) {
         console.log("%s: %s", MediaChooser.TAG, "_invokeSuccess");
 
         var event = {
@@ -588,7 +588,7 @@ define(['core/mediaManager'], function(MediaManager) {
             $("#chooseFile" + this.postSuffix).show();
         }
 
-        if (this.isNewPost && typeof post != "undefined" && post == true)
+        if (typeof doPost != "undefined" && doPost == true)
             //this.callbacks.successAndPost(this.media);
             $(this).trigger($.Event(MediaChooser.Event.SUCCESS_AND_POST, event));
         else

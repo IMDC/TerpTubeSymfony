@@ -9,14 +9,13 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.doneButton = "<button class='doneButton'></button>";
         this.doneAndPostButton = "<button class='doneAndPostButton'></button>";
 
-        this.bind__onShowPostReplyFormClick = this._onShowPostReplyFormClick.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
         this.bind_forwardFunction = this.forwardFunction.bind(this);
         this.bind_doneFunction = this.doneFunction.bind(this);
         this.bind_doneAndPostFunction = this.doneAndPostFunction.bind(this);
-    }
+    };
 
     Thread.TAG = "Thread";
 
@@ -148,17 +147,13 @@ define(['core/mediaChooser'], function(MediaChooser) {
             //$("#closed-caption-button img").attr("src", this.playerOptions.captionImages.on);
         }).bind(this));
 
-        $("#showPostReplyForm").on("click", this.bind__onShowPostReplyFormClick);
-
-        $("#postReplyCancel").on("click", (function(e) {
+        $("#resetReply").on("click", (function(e) {
             e.preventDefault();
 
             // clear form values for start and end time
             $("#PostFormFromThread_startTime").val("");
             $("#PostFormFromThread_endTime").val("");
-
-            $("#postReplyForm").hide();
-            $("#showPostReplyForm").show();
+            $("#PostFormFromThread_content").val("");
 
             if (this.player) {
                 enableTemporalComment(this.player, false, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
@@ -380,7 +375,13 @@ define(['core/mediaChooser'], function(MediaChooser) {
             audioBar: false,
             overlayControls: true,
             playHeadImage: options.playHeadImage,
-            playHeadImageOnClick: this.bind__onShowPostReplyFormClick
+            playHeadImageOnClick: (function() {
+                //$(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
+
+                if (this.player) {
+                    enableTemporalComment(this.player, true, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
+                }
+            }).bind(this)
         });
 
         this.player.setKeyPoints(this.keyPoints);
@@ -428,30 +429,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });
     };
 
-    Thread.prototype._onShowPostReplyFormClick = function(e) {
-        try { e.preventDefault(); } catch (e) { }
-
-        $(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
-
-        $("#postReplyForm").show();
-        $("#showPostReplyForm").hide();
-
-        if (this.player) {
-            enableTemporalComment(this.player, true, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
-        }
-    };
-
     Thread.prototype._onSuccess = function(e) {
         switch (this.page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
                 $("#ThreadForm_mediatextarea").val(e.media.id);
                 console.log("successNEW/EDIT");
-                //$("#ThreadForm_mediaID").attr('data-mid', mid); //TODO not used?
                 break;
             case Thread.Page.VIEW_THREAD:
                 $("#PostFormFromThread_mediatextarea").val(e.media.id);
-                //$("#post-comment-button").hide(); // shouldn't be visible, but ensure this is hidden
                 console.log("successVIEW");
                 break;
         }
@@ -463,14 +449,12 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Thread.Page.EDIT:
                 $("#ThreadForm_mediatextarea").val(e.media.id);
                 console.log("successAndPostNEW/EDIT");
-                $("#postReplySubmit").trigger("click");
-                //TODO actually post here
+                $("#submitForm").trigger("click");
                 break;
             case Thread.Page.VIEW_THREAD:
                 $("#PostFormFromThread_mediatextarea").val(e.media.id);
                 console.log("successAndPostVIEW");
-                $("#postReplySubmit").trigger("click");
-                //TODO actually post here
+                $("#submitReply").trigger("click");
                 break;
         }
     };

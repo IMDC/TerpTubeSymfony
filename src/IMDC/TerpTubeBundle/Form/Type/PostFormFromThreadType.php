@@ -27,7 +27,7 @@ class PostFormFromThreadType extends AbstractType
 			    		)
     	);
 	    
-		$builder->add('content');
+		$builder->add('content', 'textarea', array('label' => false, 'attr' => array('placeholder' => 'Write a comment...')));
 		$builder->add(
             $builder->create('parentthread', 'hidden')
 	            ->addModelTransformer($transformer));

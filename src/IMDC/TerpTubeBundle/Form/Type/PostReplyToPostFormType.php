@@ -23,7 +23,7 @@ class PostReplyToPostFormType extends AbstractType
 	        )
 	    );
 	    
-		$builder->add('content');
+		$builder->add('content', 'textarea', array('label' => false, 'attr' => array('placeholder' => 'Write a comment...')));
 		
 		// not adding parent post here, do I need it?
 		// $builder->add('parentPost', 'hidden');

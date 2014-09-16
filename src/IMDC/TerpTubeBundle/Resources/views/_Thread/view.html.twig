@@ -116,14 +116,8 @@
 						{% endif %}
 					</div>
 				</div>
-                <!-- show post reply form button -->
-                <div class="row">
-                    <div class="col-md-12 text-right">
-                        <button class="btn btn-large btn-success" id="showPostReplyForm">Reply</button>
-                    </div>
-                </div>
                 <!-- post reply form -->
-                <div class="row" id="postReplyForm" style="display: none;">
+                <div class="row" id="postReplyForm">
                     <div class="col-md-12">
                         {{ form_start(form) }}
                         {{ form_errors(form) }}
@@ -136,8 +130,8 @@
                         {% endif %}
                         {{ form_row(form.content, {'required': false, 'attr': {'class': 'autosize'}}) }}
                         {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-                        <button class="btn btn-success" id="postReplySubmit"><i class="fa fa-check"></i> Reply</button>
-                        <button class="btn btn-danger post-cancel" id="postReplyCancel"><i class="fa fa-times"></i> Cancel</button>
+                        <button class="btn btn-success" id="submitReply"><i class="fa fa-check"></i> Reply</button>
+                        <button class="btn btn-danger post-cancel" id="resetReply"><i class="fa fa-times"></i> Reset</button>
                         {{ form_end(form) }}
                     </div>
                 </div>
