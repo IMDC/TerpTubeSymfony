@@ -89,16 +89,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         var prefix = isEdit ? "ThreadEditForm" : "ThreadForm";
 
-        if (!isEdit) {
-            $("#submitForm").on("click", (function(e) {
-                if ($("#" + prefix + "_title").val() == ""
-                    && this.mediaChooser.media == null) {
-                    e.preventDefault();
-                    alert("Your topic cannot be blank. You must either select a file or specify a title.");
-                }
-            }).bind(this));
-        }
-
         $("#permissionRadioButtons div.radio").on("click", function(e) {
             if ($("#" + prefix + "_permissions_accessLevel_2").is(':checked')) { // specific users
                 $("ul.tagit").show();
@@ -535,10 +525,18 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.createVideoRecorder = function(videoElement) {
         console.log("%s: %s", Thread.TAG, "createVideoRecorder");
 
+        var forwardButtons = [this.forwardButton, this.doneButton];
+        var forwardFunctions = [this.bind_forwardFunction, this.bind_doneFunction];
+
+        if (this.page == Thread.Page.VIEW_THREAD) {
+            forwardButtons.push(this.doneAndPostButton);
+            forwardFunctions.push(this.bind_doneAndPostFunction);
+        }
+
         this.mediaChooser.createVideoRecorder({
             videoElement: videoElement,
-            forwardButtons: [this.forwardButton, this.doneButton, this.doneAndPostButton],
-            forwardFunctions: [this.bind_forwardFunction, this.bind_doneFunction, this.bind_doneAndPostFunction]
+            forwardButtons: forwardButtons,
+            forwardFunctions: forwardFunctions
         });
     };
 

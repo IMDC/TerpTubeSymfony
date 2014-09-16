@@ -20,8 +20,7 @@ class ThreadFormType extends AbstractType
 	    $userid = $user->getId();
 	    
 	    $builder->add('title', 'text', array(
-            'label' => 'Text Title',
-            'required' => false
+            'label' => 'Text Title'
         ));
 	    //$builder->add('mediaIncluded');
 	    

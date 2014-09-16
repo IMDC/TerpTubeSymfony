@@ -27,8 +27,8 @@ IMDC\TerpTubeBundle\Entity\Thread:
             type: datetime
             nullable: true
         title:
-            type: text
-            nullable: true
+            type: string
+            length: '255'
         type:
             type: smallint
             nullable: true

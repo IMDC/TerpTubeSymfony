@@ -42,8 +42,7 @@ class ThreadEditFormType extends AbstractType
 //                                                     ));
 	    
 	    $builder->add('title', 'text', array(
-            'label' => 'Title',
-            'required' => false
+            'label' => 'Title'
         ));
 	    
 		$builder->add('content', 'textarea', array(
