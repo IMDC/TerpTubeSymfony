@@ -68,7 +68,7 @@ function Player(videoID, options)
 	controlBarElement : $(this.elementID),
 	minRecordingTime : 3,
 	maxRecordingTime : 60,
-	minLinkTime : 1,
+	minLinkTime : 0.1,
 	additionalDataToPost : {},
 	overlayControls : false,
 	selectedRegionColor : "#00ff00",

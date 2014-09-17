@@ -8,6 +8,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.forwardButton = "<button class='forwardButton'></button>";
         this.doneButton = "<button class='doneButton'></button>";
         this.doneAndPostButton = "<button class='doneAndPostButton'></button>";
+        
+        this.videoSpeed = 0;
 
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
@@ -118,8 +120,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $("#videoSpeed").on("click", (function(e) {
             e.preventDefault();
 
-            var speedSlow = 1 % 3;
-            switch (speedSlow) {
+            this.videoSpeed = (this.videoSpeed+1)%3;
+            switch (this.videoSpeed) {
                 case 0:
                     this.playerOptions.mediaElement[0].playbackRate = 1.0;
                     $("#videoSpeed img").attr("src", this.playerOptions.speedImages.normal);
