@@ -67,7 +67,7 @@ function Player(videoID, options)
 	controlBarVisible : true,
 	controlBarElement : $(this.elementID),
 	minRecordingTime : 3,
-	maxRecordingTime : 60,
+	maxRecordingTime : 300,
 	minLinkTime : 0.1,
 	additionalDataToPost : {},
 	overlayControls : false,
