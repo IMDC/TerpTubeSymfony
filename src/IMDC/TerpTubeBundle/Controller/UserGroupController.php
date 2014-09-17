@@ -382,7 +382,7 @@ class UserGroupController extends Controller
             }
         }
 
-        $groupMemberIds = [];
+        $groupMemberIds = array();
         foreach ($group->getMembers() as $member) {
             $groupMemberIds[] = $member->getId();
         }
