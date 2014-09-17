@@ -409,7 +409,7 @@ class InvitationController extends Controller
         }
 
         $invitations = $this->getUser()->getReceivedInvitations();
-        $groups = [];
+        $groups = array();
 
         foreach ($invitations as $invitation) {
             if ($invitation->getType()->isGroup()) {
