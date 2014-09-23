@@ -42,7 +42,7 @@
                 {{ form_errors(form) }}
                 {% if forum.getTitleMedia[0] is defined %}
                     <div class="tt-media-element">
-                        {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
+                        {% include 'IMDCTerpTubeBundle:_Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
                     </div>
                 {% endif %}
                 {{ form_row(form.titleText) }}

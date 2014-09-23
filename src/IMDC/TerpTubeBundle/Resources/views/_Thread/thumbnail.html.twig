@@ -15,12 +15,12 @@ _Forum:view.html.twig
                 <div>
                     <div class="col-md-9 col-md-offset-1 pull-left tt-date" title="{{ thread.creationDate|date('g:ia M j Y') }}">Created: {{ time_diff(thread.creationDate) }}</div>
                     <div class="col-md-1 pull-right">
-                        {% include 'IMDCTerpTubeBundle:Permissions:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}
+                        {% include 'IMDCTerpTubeBundle:_Thread:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}
                     </div>
                 </div>
                 <div class="tt-media-element">
                     {% if thread.mediaIncluded[0] is defined %}
-                        {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
+                        {% include 'IMDCTerpTubeBundle:_Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
                     {% else %}
                         <div style="height: 50px;"></div>
                     {% endif %}

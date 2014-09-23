@@ -48,8 +48,7 @@
 		"knplabs/knp-time-bundle" : "1.1.*@dev",
 		"pimple/pimple" : "dev-master",
 		"ext-curl" : "*",
-		"jquery/jquerymap" : "1.10.2",
-        "hearsay/require-js-bundle" : "2.0.*@dev"
+		"jquery/jquerymap" : "1.10.2"
 	},
 	"scripts" : {
 		"post-install-cmd" : [

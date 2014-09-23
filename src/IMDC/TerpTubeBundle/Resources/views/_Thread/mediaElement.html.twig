@@ -1,8 +1,9 @@
-{% extends 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' %}
+{#
+included by:
+_Thread:view.html.twig
+#}
 
-{% block mediaimagetype %}
-	{{ parent() }}
-{% endblock mediaimagetype %}
+{% extends 'IMDCTerpTubeBundle:_Media:element.html.twig' %}
 
 {% block mediavideotype %}
     <ul class="list-unstyled tt-thread-video-controls">
@@ -17,10 +18,6 @@
             </a>
         </li>
     </ul>
-    {% set enableVideoControls = false %}
+    {% set enableControls = false %}
     {{ parent() }}
 {% endblock mediavideotype %}
-
-{% block mediaaudiotype %}
-	{{ parent() }}
-{% endblock mediaaudiotype %}

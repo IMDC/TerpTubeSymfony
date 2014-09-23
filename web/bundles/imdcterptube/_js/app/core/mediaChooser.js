@@ -377,9 +377,9 @@ define(['core/mediaManager'], function(MediaManager) {
                     this.element.html(data.page);
 
                     if (options.preview) {
-                        $('#preview-media-title').blur((function(e) {
+                        $('#mediaPreviewTitle').blur((function(e) {
                             console.log('updated title');
-                            this.media.title = $('#preview-media-title').val();
+                            this.media.title = $('#mediaPreviewTitle').val();
                             this.mediaManager.updateMedia(this.media);
                         }).bind(this));
                     }
@@ -459,11 +459,11 @@ define(['core/mediaManager'], function(MediaManager) {
     MediaChooser.prototype.previewVideo = function() {
         console.log("%s: %s", MediaChooser.TAG, "previewVideo");
 
-        var forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>"];
+        var forwardButtons = ["<button class='forwardButton'></button>", "<button class='doneButton'></button>"];
         var forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone];
         console.log("isPost: %s postID: %s", this.isPost, this.postId);
         if (this.isPost || this.isNewPost) {
-            forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>", "<button class='doneAndPostButton'></button>"];
+            forwardButtons = ["<button class='forwardButton'></button>", "<button class='doneButton'></button>", "<button class='doneAndPostButton'></button>"];
             forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone, this.bind__previewVideoForwardFunctionDoneAndPost];
         }
         var backButtons;
@@ -531,7 +531,7 @@ define(['core/mediaManager'], function(MediaManager) {
 
         if (this.media != null) {
             // var mediaManager = new MediaManager();
-            // this.media.title = $('#preview-media-title').val();
+            // this.media.title = $('#mediaPreviewTitle').val();
             // mediaManager.updateMedia(this.media);
             this._invokeSuccess();
         }
@@ -548,11 +548,15 @@ define(['core/mediaManager'], function(MediaManager) {
 
         if (this.media != null) {
             // var mediaManager = new MediaManager();
-            // this.media.title = $('#preview-media-title').val();
+            // this.media.title = $('#mediaPreviewTitle').val();
             // mediaManager.updateMedia(this.media);
             this._invokeSuccess(true);
         }
         this._terminatingFunction();
+    };
+
+    MediaChooser.prototype.previewAudio = function() {
+        this.previewVideo();
     };
 
     MediaChooser.prototype._terminatingFunction = function() {

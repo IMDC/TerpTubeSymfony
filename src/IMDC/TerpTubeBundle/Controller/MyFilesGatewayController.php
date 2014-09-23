@@ -350,19 +350,16 @@ class MyFilesGatewayController extends Controller
 			switch ($media->getType())
 			{
 				case Media::TYPE_AUDIO :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewAudio.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:_Media:' . $prefix . 'previewAudio.html.twig';
 					break;
 				case Media::TYPE_VIDEO :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewVideo.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:_Media:' . $prefix . 'previewVideo.html.twig';
 					break;
 				case Media::TYPE_IMAGE :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewImage.html.twig';
-					break;
-				case Media::TYPE_AUDIO :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewAudio.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:_Media:' . $prefix . 'previewImage.html.twig';
 					break;
 				case Media::TYPE_OTHER :
-					$responseURL = 'IMDCTerpTubeBundle:MyFilesGateway:' . $prefix . 'previewOther.html.twig';
+					$responseURL = 'IMDCTerpTubeBundle:_Media:' . $prefix . 'previewOther.html.twig';
 					break;
 			}
 		}

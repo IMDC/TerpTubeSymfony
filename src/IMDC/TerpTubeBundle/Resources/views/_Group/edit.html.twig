@@ -48,7 +48,7 @@
             <div class="col-md-4 hidden">
                 {% if group.getUserGroupForum.getTitleMedia[0] is defined %}
                     <div class="tt-media-element">
-                        {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': group.getUserGroupForum.getTitleMedia[0]} %}
+                        {% include 'IMDCTerpTubeBundle:_Media:element.html.twig' with {'mediaFile': group.getUserGroupForum.getTitleMedia[0]} %}
                         <p>Change the media file for the associated forum (image, audio, video):</p>
                     </div>
                 {% else %}

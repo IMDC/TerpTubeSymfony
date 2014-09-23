@@ -21,7 +21,7 @@ define(function() {
 				return false;
 		}
 
-		var address = Routing.generate('imdc_myfiles_remove', {
+		var address = Routing.generate('imdc_myfiles_delete', {
 			'mediaId' : mediaID
 		});
 		var data = {

@@ -26,7 +26,7 @@
                 {{ form_errors(form) }}
                 {% if thread.mediaIncluded[0] is defined %}
                     <div class="tt-media-element">
-                        {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
+                        {% include 'IMDCTerpTubeBundle:_Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
                     </div>
                 {% endif %}
                 <div><h3>{{ thread.title }}</h3></div>

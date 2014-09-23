@@ -1,6 +1,7 @@
 {#
 included by:
 _Forum:index.html.twig
+_Home:index.html.twig
 #}
 
 {% set counter = 1 %}
@@ -14,7 +15,7 @@ _Forum:index.html.twig
             <div class="thumbnail text-center tt-forum-thumbnail">
                 <div class="tt-media-element">
                     {% if forum.getTitleMedia[0] is defined %}
-                        {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
+                        {% include 'IMDCTerpTubeBundle:_Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
                     {% else %}
                         <div style="height: 50px;"></div>
                     {% endif %}

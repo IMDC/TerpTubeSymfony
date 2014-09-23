@@ -45,7 +45,7 @@ imdc_myfiles_update:
   options:
     expose: true
 
-imdc_myfiles_remove:
+imdc_myfiles_delete:
   pattern: /{mediaId}/delete
   defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia }
   requirements:

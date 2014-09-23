@@ -13,6 +13,7 @@ define(function(require) {
     TerpTube.Core = {};
     TerpTube.Core.MediaChooser = require('core/mediaChooser');
     TerpTube.Core.MediaManager = require('core/mediaManager');
+    TerpTube.Core.Helper = require('core/helper');
 
     window.TerpTube = TerpTube;
 

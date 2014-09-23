@@ -24,7 +24,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.Page = {
         NEW: 0,
         EDIT: 1,
-        VIEW_THREAD: 2
+        VIEW: 2
     };
 
     /**
@@ -39,7 +39,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                     element: $("#files"),
                     isPopUp: true
                 };
-            case Thread.Page.VIEW_THREAD:
+            case Thread.Page.VIEW:
                 return {
                     element: $("#files"),
                     isPopUp: true,
@@ -62,7 +62,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Thread.Page.EDIT:
                 this._bindUIEventsNewEdit(this.page == Thread.Page.EDIT);
                 break;
-            case Thread.Page.VIEW_THREAD:
+            case Thread.Page.VIEW:
                 this._bindUIEventsViewThread();
                 break;
         }
@@ -110,7 +110,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype._bindUIEventsViewThread = function() {
         console.log("%s: %s", Thread.TAG, "_bindUIEventsViewThread");
 
-        this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.VIEW_THREAD));
+        this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.VIEW));
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
@@ -449,7 +449,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 $("#ThreadForm_mediatextarea").val(e.media.id);
                 console.log("successNEW/EDIT");
                 break;
-            case Thread.Page.VIEW_THREAD:
+            case Thread.Page.VIEW:
                 $("#PostFormFromThread_mediatextarea").val(e.media.id);
                 console.log("successVIEW");
                 break;
@@ -464,7 +464,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 console.log("successAndPostNEW/EDIT");
                 $("#submitForm").trigger("click");
                 break;
-            case Thread.Page.VIEW_THREAD:
+            case Thread.Page.VIEW:
                 $("#PostFormFromThread_mediatextarea").val(e.media.id);
                 console.log("successAndPostVIEW");
                 $("#submitReply").trigger("click");
@@ -478,7 +478,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Thread.Page.EDIT:
                 $("#ThreadForm_mediatextarea").val("");
                 break;
-            case Thread.Page.VIEW_THREAD:
+            case Thread.Page.VIEW:
                 $("#PostFormFromThread_mediatextarea").val("");
                 break;
         }
@@ -530,7 +530,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         var forwardButtons = [this.forwardButton, this.doneButton];
         var forwardFunctions = [this.bind_forwardFunction, this.bind_doneFunction];
 
-        if (this.page == Thread.Page.VIEW_THREAD) {
+        if (this.page == Thread.Page.VIEW) {
             forwardButtons.push(this.doneAndPostButton);
             forwardFunctions.push(this.bind_doneAndPostFunction);
         }

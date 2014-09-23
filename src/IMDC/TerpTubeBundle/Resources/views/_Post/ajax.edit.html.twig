@@ -11,7 +11,7 @@ TerpTube.Controller.Thread
     {% if post.attachedFile[0] is defined %}
         <div class="row">
             <div class="col-md-4">
-                {% include 'IMDCTerpTubeBundle:_Media:mediaElement.html.twig' with {'mediaFile': post.attachedFile[0]} %}
+                {% include 'IMDCTerpTubeBundle:_Media:element.html.twig' with {'mediaFile': post.attachedFile[0]} %}
             </div>
         </div>
     {% endif %}

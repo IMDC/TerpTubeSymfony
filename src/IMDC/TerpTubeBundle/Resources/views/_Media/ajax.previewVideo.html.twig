@@ -1,0 +1,9 @@
+{% extends 'IMDCTerpTubeBundle:_Media:preview.html.twig' %}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% block preview %}
+    <script type="text/javascript">
+        context{% if isPost is defined and isPost %}Post{% endif %}.mediaChooser.previewVideo();
+    </script>
+{% endblock preview %}

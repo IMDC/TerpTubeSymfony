@@ -33,7 +33,7 @@
                     });
                 {% endif %}
 
-                thread.bindUIEvents($tt.Controller.Thread.Page.VIEW_THREAD);
+                thread.bindUIEvents($tt.Controller.Thread.Page.VIEW);
 
                 //
                 // following is layout specific. keep it here
@@ -96,7 +96,7 @@
 								<li><a href="{{ path('imdc_thread_edit', {'threadid': thread.id}) }}"><i class="fa fa-scissors"></i> Edit</a></li>
 								<li><a href="{{ path('imdc_thread_delete', {'threadid': thread.id}) }}"><i class="fa fa-minus-circle"></i> Delete</a></li>
 							{% endif %}
-							<li>{% include 'IMDCTerpTubeBundle:Permissions:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}</li>
+							<li>{% include 'IMDCTerpTubeBundle:_Thread:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}</li>
 						</ul>
 					</div>
 					<!-- post controls -->
