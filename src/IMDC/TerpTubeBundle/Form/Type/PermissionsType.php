@@ -74,10 +74,16 @@ class PermissionsType extends AbstractType
                 'choices' => $this->user->getUserGroups(),
                 'multiple' => true,
                 'required' => false,
+                'attr' => array(
+                    'style' => 'display: none;'
+                )
             ));
             $builder->add('usersWithAccess', 'text', array(
                 'mapped' => false,
                 'required' => false,
+                'attr' => array(
+                    'style' => 'display: none;'
+                )
             ));
         }
 //             ->add('userFriendsWithAccess', 'entity', array(
@@ -86,6 +92,9 @@ class PermissionsType extends AbstractType
 //                 'multiple' => true,
 //                 'required' => false,
 //                 'mapped' => false,
+//                  'attr' => array(
+//                      'style' => 'display: none;'
+//                  )
 //             ))
             
             

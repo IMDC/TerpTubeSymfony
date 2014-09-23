@@ -72,6 +72,9 @@ class ThreadFromMediaFormType extends AbstractType
 	                            ->setParameter('id', $userid)
 	                            ->setParameter('rid', $mediafileid);
 	            },
+            'attr' => array(
+                'style' => 'display: none;'
+            )
 	    ));
 	    
 	    

@@ -41,6 +41,10 @@ IMDCTerpTubeBundle_thread:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/thread.yml"
   prefix: /thread
 
+IMDCTerpTubeBundle_help:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/help.yml"
+  prefix: /help
+
 
 
 

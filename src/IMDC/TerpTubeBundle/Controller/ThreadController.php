@@ -355,7 +355,6 @@ class ThreadController extends Controller
         //return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
             'form' => $form->createView(),
-            'forumid' => $forumid,
             'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
         ));
     }
@@ -427,12 +426,14 @@ class ThreadController extends Controller
             );
             return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId())));
         }
-         
-        // form not valid, show the basic form
-        return $this
-                ->render('IMDCTerpTubeBundle:Thread:newfrommedia.html.twig',
-                	array('form' => $form->createView(),
-                        	'mediaFile' => $chosenmedia,));
+
+        //return $this->render('IMDCTerpTubeBundle:Thread:newfrommedia.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
+            'form' => $form->createView(),
+            'uploadForms' => MediaChooserGatewayController::getUploadForms($this),
+            'newFromMedia' => true,
+            'mediaFile' => $chosenmedia
+        ));
     }
     
     public function editThreadAction(Request $request, $threadid)

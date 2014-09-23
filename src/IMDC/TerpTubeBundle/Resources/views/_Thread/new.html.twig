@@ -2,6 +2,10 @@
 
 {% block title %}Create a new Topic{% endblock title %}
 
+{% if newFromMedia is not defined %}
+    {% set newFromMedia = false %}
+{% endif %}
+
 {% block header %}
     {{ parent() }}
 
@@ -12,14 +16,10 @@
                 //FIXME context
                 context = thread;
 
-                $("#ThreadForm_permissions_usersWithAccess").tagit({
-                    {% if app.user.getFriendsList|length >= 1 %}
-                        showAutocompleteOnFocus: true,
-                    {% endif %}
+                thread.bindUIEvents($tt.Controller.Thread.Page.NEW, {
+                    showAutocompleteOnFocus: {% if app.user.getFriendsList|length >= 1 %}true{% else %}false{% endif %},
                     availableTags: [{{ app.user.getFriendsListAsUsernameString|raw }}]
                 });
-
-                thread.bindUIEvents($tt.Controller.Thread.Page.NEW);
             });
         });
     </script>
@@ -38,25 +38,25 @@
             <div class="col-md-8 col-md-offset-2">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-                <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
-                {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
+                {% if not newFromMedia %}
+                    <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
+                    {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
+                {% else %}
+                    {{ form_row(form.parentForum) }}
+                    {{ form_row(form.mediaIncluded) }}
+                    {% include 'IMDCTerpTubeBundle:_Media:element.html.twig' %}
+                {% endif %}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
                 <div id="permissionRadioButtons">
-                    {{ form_row(form.permissions.accessLevel.0) }} {# private, creator access #}
-                    {#{ form_row(form.permissions.accessLevel.1) }#} {# Only people on friends list #}
-                    {#{ form_widget(form.permissions.userFriendsWithAccess, {'attr': {'style': 'display: none;'}}) }#}
-                    {{ form_row(form.permissions.accessLevel.1) }} {# Anyone with the link #}
-                    {{ form_row(form.permissions.accessLevel.2) }} {# list of specific users #}
-                    {{ form_widget(form.permissions.usersWithAccess, {'attr': {'style': 'display: none;'}}) }}
-                    {{ form_row(form.permissions.accessLevel.3) }} {# list of specific groups #}
-                    {{ form_widget(form.permissions.userGroupsWithAccess, {'attr': {'style': 'display: none;'}}) }}
-                    {{ form_row(form.permissions.accessLevel.4) }} {# only ppl with accounts #}
-                    {{ form_row(form.permissions.accessLevel.5) }} {# public, anyone can see it #}
+                    {{ form_row(form.permissions.accessLevel) }}
+                    {#{ form_widget(form.permissions.userFriendsWithAccess) }#}
+                    {{ form_widget(form.permissions.usersWithAccess) }}
+                    {{ form_widget(form.permissions.userGroupsWithAccess) }}
                 </div>
                 {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-                <button class="btn btn-success" id="submitForm"><i class="fa fa-check"></i> Create</button>
-                <a class="btn btn-danger" href="{{ path('imdc_forum_view', {'forumid': forumid}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <button class="btn btn-success"><i class="fa fa-check"></i> Create</button>
+                <a class="btn btn-danger" href="#" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>

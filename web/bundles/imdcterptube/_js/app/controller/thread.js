@@ -52,7 +52,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
      * ui element event bindings in order of appearance
      * @param {number} page
      */
-    Thread.prototype.bindUIEvents = function(page) {
+    Thread.prototype.bindUIEvents = function(page, options) {
         console.log("%s: %s- page=%d", Thread.TAG, "bindUIEvents", page);
 
         this.page = page;
@@ -60,15 +60,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
         switch (this.page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
-                this._bindUIEventsNewEdit(this.page == Thread.Page.EDIT);
+                this._bindUIEventsNewEdit(this.page == Thread.Page.EDIT, options);
                 break;
             case Thread.Page.VIEW:
-                this._bindUIEventsViewThread();
+                this._bindUIEventsView();
                 break;
         }
     };
 
-    Thread.prototype._bindUIEventsNewEdit = function(isEdit) {
+    Thread.prototype._bindUIEventsNewEdit = function(isEdit, options) {
         console.log("%s: %s- isEdit=%s", Thread.TAG, "_bindUIEventsNewEdit", isEdit);
 
         this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.NEW));
@@ -77,29 +77,20 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.bindUIEvents();
 
-        /*
-         * by paul: since I hid the real 'submit' button to provide a nicely stylized button
-         * I have to click the real button when you click on the fancy one
-         */
-        /*$("#thread-form-submit-button").on("click", function(e) {
-         e.preventDefault();
+        var prefix = $("[id^=Thread]");
 
-         $("#ThreadForm_submit").click();
-         });*/
-
+        prefix.filter("[id$=_permissions_usersWithAccess]").tagit(options);
         $("ul.tagit").hide();
 
-        var prefix = isEdit ? "ThreadEditForm" : "ThreadForm";
-
         $("#permissionRadioButtons div.radio").on("click", function(e) {
-            if ($("#" + prefix + "_permissions_accessLevel_2").is(':checked')) { // specific users
+            if (prefix.filter("[id$=_permissions_accessLevel_2]").is(':checked')) { // specific users
                 $("ul.tagit").show();
-                $("#" + prefix + "_permissions_userGroupsWithAccess").hide();
-            } else if ($("#" + prefix + "_permissions_accessLevel_3").is(':checked')) { // specific groups
-                $("#" + prefix + "_permissions_userGroupsWithAccess").show();
+                prefix.filter("[id$=_permissions_userGroupsWithAccess]").hide();
+            } else if (prefix.find("[id$=_permissions_accessLevel_3]").is(':checked')) { // specific groups
+                prefix.filter("[id$=_permissions_userGroupsWithAccess]").show();
                 $("ul.tagit").hide();
             } else { // hide all
-                $("#" + prefix + "_permissions_userGroupsWithAccess").hide();
+                prefix.filter("[id$=_permissions_userGroupsWithAccess]").hide();
                 $("ul.tagit").hide();
             }
         });
@@ -107,8 +98,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $("#permissionRadioButtons").trigger("click");
     };
 
-    Thread.prototype._bindUIEventsViewThread = function() {
-        console.log("%s: %s", Thread.TAG, "_bindUIEventsViewThread");
+    Thread.prototype._bindUIEventsView = function() {
+        console.log("%s: %s", Thread.TAG, "_bindUIEventsView");
 
         this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.VIEW));
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
@@ -446,7 +437,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         switch (this.page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
-                $("#ThreadForm_mediatextarea").val(e.media.id);
+                $("[id^=Thread][id$=_mediatextarea]").val(e.media.id);
                 console.log("successNEW/EDIT");
                 break;
             case Thread.Page.VIEW:
@@ -458,12 +449,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
     Thread.prototype._onSuccessAndPost = function(e) {
         switch (this.page) {
-            case Thread.Page.NEW:
-            case Thread.Page.EDIT:
-                $("#ThreadForm_mediatextarea").val(e.media.id);
-                console.log("successAndPostNEW/EDIT");
-                $("#submitForm").trigger("click");
-                break;
             case Thread.Page.VIEW:
                 $("#PostFormFromThread_mediatextarea").val(e.media.id);
                 console.log("successAndPostVIEW");
@@ -476,7 +461,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         switch (this.page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
-                $("#ThreadForm_mediatextarea").val("");
+                $("[id^=Thread][id$=_mediatextarea]").val("");
                 break;
             case Thread.Page.VIEW:
                 $("#PostFormFromThread_mediatextarea").val("");
