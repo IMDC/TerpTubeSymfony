@@ -11,6 +11,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
         
         this.videoSpeed = 0;
 
+        this.bind__onClickPostTimelineKeyPoint = this._onClickPostTimelineKeyPoint.bind(this);
+        this.bind__onMouseEnterPostTimelineKeyPoint = this._onMouseEnterPostTimelineKeyPoint.bind(this);
+        this.bind__onMouseLeavePostTimelineKeyPoint = this._onMouseLeavePostTimelineKeyPoint.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -153,80 +156,41 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $("#resetReply").on("click", (function(e) {
             e.preventDefault();
 
-            $("#PostFormFromThread_startTime").val("");
-            $("#PostFormFromThread_endTime").val("");
-            $("#PostFormFromThread_content").val("");
-            this.mediaChooser.setMedia(null);
-            $("#PostFormFromThread_mediatextarea").val("");
-
             if (this.player) {
                 enableTemporalComment(this.player, false, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
             }
+
+            this.mediaChooser.reset();
+            $("#PostFormFromThread_startTime").val("");
+            $("#PostFormFromThread_endTime").val("");
+            $("#PostFormFromThread_content").val("");
         }).bind(this));
 
         // clicking the clock icon will move the density bar to the comments time
         // and highlight the comment on the density bar
-        $(".post-goto-timeline-keypoint").on("click", (function(e) {
-            e.preventDefault();
-
-            var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
-            keyPoint.paintHighlightedTimeout = true;
-            keyPoint.paintHighlighted = true;
-            this.player.seek(keyPoint.startTime);
-            this.player.redrawKeyPoints = true;
-            this.player.repaint();
-
-            // clear the highlighted comment after 3 seconds
-            setTimeout((function(){
-                keyPoint.paintHighlightedTimeout = false;
-                keyPoint.paintHighlighted = false;
-                this.player.redrawKeyPoints = true;
-                this.player.repaint();
-            }).bind(this), 3000);
-        }).bind(this));
+        $(".post-timeline-keypoint").on("click", this.bind__onClickPostTimelineKeyPoint);
 
         // mousing over the clock icon should highlight the comment on the density bar
-        $(".post-goto-timeline-keypoint").hover(
-            // mouseenter
-            (function(e) {
-                // highlight comment on the density bar
-                var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
-                keyPoint.paintHighlighted = true;
-                this.player.redrawKeyPoints = true;
-                this.player.repaint();
-            }).bind(this),
-            // mouseleave
-            (function(e) {
-                var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
-                if (keyPoint.paintHighlightedTimeout == true) {
-                    return;
-                }
-                keyPoint.paintHighlighted = false;
-                this.player.redrawKeyPoints = true;
-                this.player.repaint();
-            }).bind(this)
-        );
+        $(".post-timeline-keypoint").hover(
+            this.bind__onMouseEnterPostTimelineKeyPoint,
+            this.bind__onMouseLeavePostTimelineKeyPoint);
 
         $(".post-edit").on("click", (function(e) {
             e.preventDefault();
 
             var postId = $(e.currentTarget).data("pid");
-            var data = {pid: postId};
 
             $(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
 
             // ajax call to get the edit comment form
             $.ajax({
-                url: Routing.generate('imdc_post_edit_ajax', data),
-                type: "POST",
-                contentType: "application/x-www-form-urlencoded",
-                data: data,
+                url: Routing.generate('imdc_post_edit', {pid: postId}),
                 success: (function(data) {
                     console.log("%s: %s: %s", Thread.TAG, ".post-edit:click", "success");
 
                     $("#containerPost" + postId).hide();
 
-                    $("#containerEditPost" + postId).html(data.form);
+                    $("#containerEditPost" + postId).html(data.html);
                     $("#containerEditPost" + postId).show();
 
                     var keyPoint = this.getKeyPointForPostId(postId);
@@ -309,19 +273,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
             e.preventDefault();
 
             var postId = $(e.currentTarget).data("pid");
-            var data = {pid: postId};
 
             $(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
 
             $.ajax({
-                url: Routing.generate('imdc_post_reply_ajax', data),
-                type: "POST",
-                contentType: "application/x-www-form-urlencoded",
-                data: data,
+                url: Routing.generate('imdc_post_reply', {pid: postId}),
                 success: function(data) {
                     console.log("%s: %s: %s", Thread.TAG, ".post-reply:click", "success");
 
-                    $("#postContainer" + postId).append(data.form);
+                    $("#containerReplyPost" + postId).html(data.html);
+                    $("#containerReplyPost" + postId).show();
 
                     $(".post-reply[data-pid=" + postId + "]").hide();
                 },
@@ -334,8 +295,48 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });
     };
 
+    Thread.prototype._onClickPostTimelineKeyPoint = function(e) {
+        if (e && e.preventDefault)
+            e.preventDefault();
+
+        var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
+        keyPoint.paintHighlightedTimeout = true;
+        keyPoint.paintHighlighted = true;
+        this.player.seek(keyPoint.startTime);
+        this.player.redrawKeyPoints = true;
+        this.player.repaint();
+
+        // clear the highlighted comment after 3 seconds
+        setTimeout((function() {
+            keyPoint.paintHighlightedTimeout = false;
+            keyPoint.paintHighlighted = false;
+            this.player.redrawKeyPoints = true;
+            this.player.repaint();
+        }).bind(this), 3000);
+    };
+
+    Thread.prototype._onMouseEnterPostTimelineKeyPoint = function(e) {
+        // highlight comment on the density bar
+        var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
+        keyPoint.paintHighlighted = true;
+        this.player.redrawKeyPoints = true;
+        this.player.repaint();
+    };
+
+    Thread.prototype._onMouseLeavePostTimelineKeyPoint = function(e) {
+        var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
+        if (keyPoint.paintHighlightedTimeout == true) {
+            return;
+        }
+        keyPoint.paintHighlighted = false;
+        this.player.redrawKeyPoints = true;
+        this.player.repaint();
+    };
+
     Thread.prototype.createKeyPoints = function() {
         console.log("%s: %s", Thread.TAG, "createKeyPoints");
+
+        this.keyPoints = new Array();
 
         $(".tt-post-container").each((function(key, element) {
             this.keyPoints.push(new KeyPoint(
@@ -353,12 +354,51 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.getKeyPointForPostId = function(postId) {
         console.log("%s: %s- postId=%d", Thread.TAG, "getKeyPointForId", postId);
 
-        for (kp in this.keyPoints) {
+        for (var kp in this.keyPoints) {
             var keyPoint = this.keyPoints[kp];
             if (keyPoint.id == postId) {
                 return keyPoint;
             }
         }
+    };
+
+    Thread.prototype.replaceKeyPoint = function(keyPoint) {
+        console.log("%s: %s- keyPoint=%o", Thread.TAG, "replaceKeyPoint", keyPoint);
+
+        for (var kp in this.keyPoints) {
+            var oldKeyPoint = this.keyPoints[kp];
+            if (oldKeyPoint.id == keyPoint.id) {
+                this.keyPoints[kp] = keyPoint;
+                break;
+            }
+        }
+
+        if (this.player) {
+            this.player.setKeyPoints(this.keyPoints);
+            this.player.repaint();
+            this.renderPostTimelinePoints();
+        }
+
+        $(".post-timeline-keypoint[data-pid=" + keyPoint.id + "]").on("click", this.bind__onClickPostTimelineKeyPoint);
+        $(".post-timeline-keypoint[data-pid=" + keyPoint.id + "]").hover(
+            this.bind__onMouseEnterPostTimelineKeyPoint,
+            this.bind__onMouseLeavePostTimelineKeyPoint);
+    };
+
+    Thread.prototype.renderPostTimelinePoints = function() {
+        console.log("%s: %s", Thread.TAG, "renderPostTimelinePoints");
+
+        $(".tt-post-container").each((function(key, element) {
+            var duration = this.playerOptions.mediaElement[0].duration;
+            var startTimePercentage = ((100 * $(element).data("starttime")) / duration).toFixed(2);
+            var endTimePercentage = ((100 * $(element).data("endtime")) / duration).toFixed(2);
+            var widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
+
+            $(".post-timeline-keypoint[data-pid=" + $(element).data("pid") + "]").css({
+                left: startTimePercentage + "%",
+                width: widthPercentage + "%"
+            });
+        }).bind(this));
     };
 
     /**
@@ -373,20 +413,28 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         this.playerOptions = options;
 
-        this.player = new Player(options.mediaElement, {
+        this.player = new Player(this.playerOptions.mediaElement, {
             areaSelectionEnabled: false,
             updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
             audioBar: false,
             overlayControls: true,
-            playHeadImage: options.playHeadImage,
+            playHeadImage: this.playerOptions.playHeadImage,
             playHeadImageOnClick: (function() {
-                //$(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
-
                 if (this.player) {
                     enableTemporalComment(this.player, true, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
                 }
             }).bind(this)
         });
+
+        this.createKeyPoints();
+
+        this.playerOptions.mediaElement.on("loadedmetadata", (function(e) {
+            this.renderPostTimelinePoints();
+        }).bind(this));
+
+        if (!isNaN(this.playerOptions.mediaElement[0].duration)) {
+            this.playerOptions.mediaElement.trigger("loadedmetadata");
+        }
 
         this.player.setKeyPoints(this.keyPoints);
         this.player.createControls();
@@ -467,43 +515,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 $("#PostFormFromThread_mediatextarea").val("");
                 break;
         }
-    };
-
-    Thread.prototype.setPostTimelinePointForPost = function(mediaElement) {
-        console.log("%s: %s", Thread.TAG, "setPostTimelinePointForPost");
-
-        $(".tt-post-container").each((function(key, element) {
-            var timeline = $("#postTimelinePoint" + $(element).data("pid"));
-
-            mediaElement.on("loadedmetadata", function(e) {
-                var duration = mediaElement[0].duration;
-                var startTimePercentage = ((100 * $(element).data("starttime")) / duration).toFixed(2);
-                var endTimePercentage = ((100 * $(element).data("endtime")) / duration).toFixed(2);
-                var widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
-
-                timeline.css({
-                    left: startTimePercentage + "%",
-                    width: widthPercentage + "%"
-                });
-            });
-
-            if (!isNaN(mediaElement[0].duration)) {
-                mediaElement.trigger("loadedmetadata");
-            }
-
-            timeline.on("click", function(e) {
-                $(".post-goto-timeline-keypoint[data-pid=" + $(this).data("pid") + "]").trigger("click");
-            });
-
-            timeline.hover(
-                function(e) {
-                    $(".post-goto-timeline-keypoint[data-pid=" + $(this).data("pid") + "]").trigger("mouseenter");
-                },
-                function(e) {
-                    $(".post-goto-timeline-keypoint[data-pid=" + $(this).data("pid") + "]").trigger("mouseleave");
-                }
-            );
-        }).bind(this));
     };
 
     /**

@@ -25,11 +25,11 @@ define(['core/mediaManager'], function(MediaManager) {
     MediaChooser.TAG = "MediaChooser";
 
     MediaChooser.Event = {
-        SUCCESS: "success",
-        SUCCESS_AND_POST: "successAndPost",
-        ERROR: "error",
-        RESET: "reset",
-        DIALOG_CLOSE: "dialogClose"
+        SUCCESS: "eventSuccess",
+        SUCCESS_AND_POST: "eventSuccessAndPost",
+        ERROR: "eventError",
+        RESET: "eventReset",
+        DIALOG_CLOSE: "eventDialogClose"
     };
 
     MediaChooser.MEDIA_TYPES = ["audio", "video", "image", "other"];
@@ -50,12 +50,7 @@ define(['core/mediaManager'], function(MediaManager) {
     MediaChooser.prototype.bindUIEvents = function() {
         console.log("%s: %s", MediaChooser.TAG, "bindUIEvents");
 
-        if (this.isPost) {
-            this._bindUIEventsPost();
-            return;
-        }
-
-        $("#recordVideo").on("click", (function(e) {
+        $("#recordVideo" + this.postSuffix).on("click", (function(e) {
             e.preventDefault();
 
             this.chooseFile({
@@ -64,44 +59,16 @@ define(['core/mediaManager'], function(MediaManager) {
         }).bind(this));
 
         this._bindUIEventsUploadFile(
-            $("#uploadForms"),
-            $("#uploadFile"));
+            $("#uploadForms" + this.postSuffix),
+            $("#uploadFile" + this.postSuffix));
 
-        $("#selectFile").on("click", (function(e) {
+        $("#selectFile" + this.postSuffix).on("click", (function(e) {
             e.preventDefault();
 
             this.chooseFile({});
         }).bind(this));
 
-        $("#removeFile").on("click", (function(e) {
-            e.preventDefault();
-
-            this._invokeReset();
-        }).bind(this));
-    };
-
-    MediaChooser.prototype._bindUIEventsPost = function() {
-        console.log("%s: %s", MediaChooser.TAG, "_bindUIEventsPost");
-
-        $("#recordVideoPost" + this.postId).on("click", (function(e) {
-            e.preventDefault();
-
-            this.chooseFile({
-                type: MediaChooser.TYPE_RECORD_VIDEO
-            });
-        }).bind(this));
-
-        $("#selectFilePost" + this.postId).on("click", (function(e) {
-            e.preventDefault();
-
-            this.chooseFile({});
-        }).bind(this));
-
-        this._bindUIEventsUploadFile(
-            $("#uploadFormsPost" + this.postId),
-            $("#uploadFilePost" + this.postId));
-
-        $("#removeFilePost" + this.postId).on("click", (function(e) {
+        $("#removeFile" + this.postSuffix).on("click", (function(e) {
             e.preventDefault();
 
             this._invokeReset();
@@ -557,6 +524,10 @@ define(['core/mediaManager'], function(MediaManager) {
 
     MediaChooser.prototype.previewAudio = function() {
         this.previewVideo();
+    };
+
+    MediaChooser.prototype.reset = function() {
+        this._invokeReset();
     };
 
     MediaChooser.prototype._terminatingFunction = function() {

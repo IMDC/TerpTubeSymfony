@@ -12,12 +12,9 @@
                 //FIXME context
                 context = thread;
 
-                {% if thread.mediaIncluded|length != 0 %}
-                    {% if threadposts|length > 0 %}
-                        thread.createKeyPoints();
-                        thread.setPostTimelinePointForPost($("#{{ thread.mediaIncluded[0].getID }}"));
-                    {% endif %}
+                thread.bindUIEvents($tt.Controller.Thread.Page.VIEW);
 
+                {% if thread.mediaIncluded|length != 0 %}
                     thread.createPlayer({
                         mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),
                         playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
@@ -32,8 +29,6 @@
                         }
                     });
                 {% endif %}
-
-                thread.bindUIEvents($tt.Controller.Thread.Page.VIEW);
 
                 //
                 // following is layout specific. keep it here
@@ -131,7 +126,7 @@
                         {{ form_row(form.content) }}
                         {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
                         <button class="btn btn-success" id="submitReply"><i class="fa fa-check"></i> Reply</button>
-                        <button class="btn btn-danger post-cancel" id="resetReply"><i class="fa fa-times"></i> Reset</button>
+                        <button class="btn btn-danger" id="resetReply"><i class="fa fa-times"></i> Reset</button>
                         {{ form_end(form) }}
                     </div>
                 </div>

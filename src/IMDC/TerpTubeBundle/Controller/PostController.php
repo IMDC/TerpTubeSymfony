@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -23,6 +24,7 @@ use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostReplyToPostFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
 use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Post related actions including creating, deleting, editing and replying
@@ -32,7 +34,7 @@ use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
 class PostController extends Controller
 {
     
-	public function indexAction()
+	public function indexAction() //TODO delete
 	{
 		$em = $this->getDoctrine()->getManager();
 		
@@ -278,226 +280,151 @@ class PostController extends Controller
 		$return = json_encode($return); // json encode the array
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
 	}
+
+    public function replyAction(Request $request, $pid)
+    {
+        // if not ajax, throw an exception
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException('Only Ajax POST calls accepted');
+        }
+
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        if (!$postParent) {
+            throw new Exception('post not found');
+        }
+
+        $post = new Post();
+        $postReplyForm = $this->createForm(
+            new PostReplyToPostFormType(),
+            $post);
+        $postReplyForm->handleRequest($request);
+
+        if ($postReplyForm->isValid()) {
+            $user = $this->getUser();
+
+            $post->setAuthor($user);
+            $post->setCreated(new \DateTime('now'));
+            $post->setParentPost($postParent);
+            $post->setParentThread($postParent->getParentThread());
+
+            if (!$postReplyForm->get('mediatextarea')->isEmpty()) {
+                $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
+                    ->find($postReplyForm->get('mediatextarea')->getData());
+                if (!$mediaFile) {
+                    throw new Exception('media not found');
+                }
+
+                if (!$user->getResourceFiles()->contains($mediaFile)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
+                }
+
+                if (!$post->getAttachedFile()->contains($mediaFile))
+                    $post->addAttachedFile($mediaFile);
+            }
+
+            $postParent->addReplies($post);
+
+            $em->persist($post);
+            $em->persist($postParent);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add(
+                'success', 'Reply created successfully!'
+            );
+
+            $content = array(
+                'wasReplied' => true,
+                'redirectUrl' => $this->generateUrl('imdc_thread_view', array(
+                        'threadid' => $postParent->getParentThread()->getId()))
+            );
+        } else {
+            $content = array(
+                'wasReplied' => false,
+                'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.reply.html.twig', array(
+                        'form' => $postReplyForm->createView(),
+                        'post' => $postParent,
+                        'uploadForms' => MediaChooserGatewayController::getUploadForms($this)))
+            );
+        }
+
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
+    }
 	
-	public function editPostAction(Request $request, $pid)
+	public function editAction(Request $request, $pid)
 	{
-		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-	    
-	    $user = $this->getUser();
-	    $em = $this->getDoctrine()->getManager();
-	    
-	    $postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
-	    $postID = $postToEdit->getId();
-	    if ($postToEdit->getParentThread() == null) {
-	    	$threadid = $postToEdit->getParentPost()->getParentThread()->getId();
-	    } else {
-	    	$threadid = $postToEdit->getParentThread()->getId();
-	    }
-	    
-	    // does the user own this post?
-	    if (!$user->getPosts()->contains($postToEdit)) {
-	        $this->get('session')->getFlashBag()->add(
-                'info',
-                'You do not have permission to edit this post'
-	        );
-	        return $this->redirect($this->generateUrl('imdc_index'));
-	    }
-	    
-	    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, array('user' => $user));
-	    $posteditform->handleRequest($request);
-	    
-	    if ($posteditform->isValid()) {
-	        //$postToEdit->setAuthor($user);
-	        //$postToEdit->setCreated(new \DateTime('now'));
-	        //$postToEdit->setIsDeleted(FALSE);
-	        //$postToEdit->setParentThread($thread);
-	        $postToEdit->setEditedAt(new \DateTime('now'));
-	        $postToEdit->setEditedBy($user);
+        // if not ajax, throw an error
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException('Only Ajax POST calls accepted');
+        }
 
-            //$user->addPost($newpost);
-	    
-	        $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
-	        if (!$posteditform->get('mediatextarea')->isEmpty()) {
-	            $rawmediaID = $posteditform->get('mediatextarea')->getData();
-	            $logger = $this->container->get('logger');
-	            $logger->info('*************media id is ' . $rawmediaID);
-	            $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
-	        
-	            if ($user->getResourceFiles()->contains($mediaFile)) {
-	                $logger = $this->get('logger');
-	                $logger->info('User owns this media file');
-	                $postToEdit->addAttachedFile($mediaFile);
-	            }
-	        }
-
-	        //if ($postToEdit->getStartTime() && $postToEdit->getEndTime()) { // a start time of 0.00 will return false
-            if (is_float($postToEdit->getStartTime()) && is_float($postToEdit->getEndTime()) ) {
-	            $postToEdit->setIsTemporal(TRUE);
-	        } else {
-	            $postToEdit->setIsTemporal(FALSE);
-	        }
-
-	        // request to persist objects to database
-	        //$em->persist($user);
-	        $em->persist($postToEdit);
-	        $em->flush();
-	    
-	        $this->get('session')->getFlashBag()->add(
-                'info',
-	            'Post edited successfully!'
-	        );
-	        
-	        return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid' => $threadid)).'#'.$postID);
-	    }
-	    
-	    // form not valid, show the basic form
-	    return $this->render('IMDCTerpTubeBundle:Post:editPost.html.twig', array(
-            'form' => $posteditform->createView(),
-            'post' => $postToEdit
-	    ));
-	}
-	
-	public function editPostAjaxAction(Request $request, $pid) //TODO merge with editPostAction
-	{
 	    // check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
-		
-		//$request = $this->get('request');
-		//$postid = $request->request->get('pid');
 
-		// if not ajax, throw an error
-		if (!$request->isXmlHttpRequest()) {
-			throw new BadRequestHttpException('Only Ajax POST calls accepted');
-		}
-		
-		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
+		$post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        if (!$post) {
+            throw new Exception('post not found');
+        }
+
+        $user = $this->getUser();
 		
-		$postToEdit = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
-		
-		// if post is not owned by the currently logged in user, redirect
-		if (!$postToEdit->getAuthor() == $user) {
-			$this->get('session')->getFlashBag()->add(
-                'danger',
-                'You do not have permission to edit this post'
-			);
-			//return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
-			// return an ajax fail here
-			$return = array('responseCode' => 400, 'feedback' => 'You do not have permission to edit this post');
-		} else {
-			// post is owned by the user
-		    $posteditform = $this->createForm(new PostEditFormType(), $postToEdit, array('user' => $user));
+		if (!$post->getAuthor() == $user) {
+            throw new AccessDeniedException();
+        }
 
-		    //$formhtml = $this->renderView('IMDCTerpTubeBundle:Post:editPostAjax.html.twig', array(
-            $formhtml = $this->renderView('IMDCTerpTubeBundle:_Post:ajax.edit.html.twig', array(
-                'form' => $posteditform->createView(),
-                'post' => $postToEdit,
-                'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
-            ));
+        $postEditForm = $this->createForm(
+            new PostEditFormType(),
+            $post,
+            array('user' => $user));
+        $postEditForm->handleRequest($request);
 
-			$return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
-		}
+        if ($postEditForm->isValid()) {
+            $post->setEditedAt(new \DateTime('now'));
+            $post->setEditedBy($user);
+            $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
 
-		$return = json_encode($return); // json encode the array
-		return new Response($return, 200, array('Content-Type' => 'application/json'));
-	}
-	
-	public function replyPostAction(Request $request, $pid) 
-	{
-	    // check if user logged in
-	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-	    {
-	        return $this->redirect($this->generateUrl('fos_user_security_login'));
-	    }
-	     
-	    $user = $this->getUser();
-	    $em = $this->getDoctrine()->getManager();
-	     
-	    $postToReplyTo = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
-	    
-	    $replyPost = new Post();
-	    $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
-	     
-	    $postReplyForm->handleRequest($request);
-	     
-	    if ($postReplyForm->isValid()) {
-	        
-	        $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
-	        if (!$postReplyForm->get('mediatextarea')->isEmpty()) {
-	             
-	            $rawmediaID = $postReplyForm->get('mediatextarea')->getData();
-	            $logger = $this->container->get('logger');
-	            $logger->info('*************media id is ' . $rawmediaID);
-	            $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
-	             
-	            if ($user->getResourceFiles()->contains($mediaFile)) {
-	                $logger = $this->get('logger');
-	                $logger->info('User owns this media file');
-	                $replyPost->addAttachedFile($mediaFile);
-	            }
-	             
-	        }
-	        
-	        $replyPost->setAuthor($user);
-	        $replyPost->setCreated(new \DateTime('now'));
-	        $replyPost->setParentPost($postToReplyTo);
-	        $postToReplyTo->addReplies($replyPost);
-	        
-	        $em->persist($replyPost);
-	        $em->flush();
-	         
-	        $this->get('session')->getFlashBag()->add(
-	            'success',
-	            'Reply created successfully!'
-	        );
-	         
-	        return $this->redirect($this->generateUrl('imdc_thread_view', array(
-	            'threadid'=>$postToReplyTo->getParentThread()->getId()
-	        )));
-	    }
-	    
-	}
-	
-	public function replyPostAjaxAction(Request $request, $pid) // $pid is the post you are replying to! //TODO merge with replyPostAction
-	{
-	    // check if user logged in
-	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-	        return $this->redirect($this->generateUrl('fos_user_security_login'));
-	    }
-	    
-	    // if not ajax, throw an exception
-	    if (!$request->isXmlHttpRequest()) {
-	        throw new BadRequestHttpException('Only Ajax POST calls accepted');
-	    }
-	    
-	    $user = $this->getUser();
-	    $em = $this->getDoctrine()->getManager();
-	    
-	    $postToReplyTo = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
-	    
-	    $replyPost = new Post();
-	    $replyPost->setAuthor($user);
-	    $replyPost->setParentPost($postToReplyTo);
-	    $replyPost->setParentThread($postToReplyTo->getParentThread());
-	    
-        $postReplyForm = $this->createForm(new PostReplyToPostFormType(), $replyPost);
+            if (!$postEditForm->get('mediatextarea')->isEmpty()) {
+                $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
+                    ->find($postEditForm->get('mediatextarea')->getData());
+                if (!$mediaFile) {
+                    throw new Exception('media not found');
+                }
 
-        //$formhtml = $this->renderView('IMDCTerpTubeBundle:Post:replyPostAjax.html.twig', array(
-        $formhtml = $this->renderView('IMDCTerpTubeBundle:_Post:ajax.reply.html.twig', array(
-                'form' => $postReplyForm->createView(),
-                'post' => $postToReplyTo,
-                'user' => $user,
-                'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
-        ));
-        
-        $return = array('responseCode' => 200, 'feedback' => 'Form Sent!', 'form' => $formhtml);
-        
-        $return = json_encode($return); // json encode the array
-        return new Response($return, 200, array('Content-Type' => 'application/json'));
+                if (!$user->getResourceFiles()->contains($mediaFile)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
+                }
+
+                if (!$post->getAttachedFile()->contains($mediaFile))
+                    $post->addAttachedFile($mediaFile);
+            }
+
+            $em->persist($post);
+            $em->flush();
+
+            $content = array(
+                'wasEdited' => true,
+                'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.post.html.twig', array(
+                        'post' => $post,
+                        'isAjaxRequest' => true))
+            );
+        } else {
+            $content = array(
+                'wasEdited' => false,
+                'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.edit.html.twig', array(
+                        'form' => $postEditForm->createView(),
+                        'post' => $post,
+                        'uploadForms' => MediaChooserGatewayController::getUploadForms($this)))
+            );
+        }
+
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
 	}
 }

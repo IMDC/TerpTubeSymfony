@@ -431,7 +431,7 @@ class ThreadController extends Controller
         return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
             'form' => $form->createView(),
             'uploadForms' => MediaChooserGatewayController::getUploadForms($this),
-            'newFromMedia' => true,
+            'isNewFromMedia' => true,
             'mediaFile' => $chosenmedia
         ));
     }

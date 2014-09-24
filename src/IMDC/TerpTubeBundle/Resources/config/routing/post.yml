@@ -14,13 +14,7 @@
 
 imdc_post_reply:
   pattern: /{pid}/reply
-  defaults: { _controller: IMDCTerpTubeBundle:Post:replyPost }
-  requirements:
-    pid: \d+
-
-imdc_post_reply_ajax: # load the reply form to make a reply to a post #TODO merge into imdc_post_reply
-  pattern: /{pid}/replyajax
-  defaults: { _controller: IMDCTerpTubeBundle:Post:replyPostAjax }
+  defaults: { _controller: IMDCTerpTubeBundle:Post:reply }
   requirements:
     pid: \d+
   options:
@@ -28,13 +22,7 @@ imdc_post_reply_ajax: # load the reply form to make a reply to a post #TODO merg
 
 imdc_post_edit:
   pattern: /{pid}/edit
-  defaults: { _controller: IMDCTerpTubeBundle:Post:editPost }
-  requirements:
-    pid: \d+
-
-imdc_post_edit_ajax: #TODO merge into imdc_post_edit
-  pattern: /{pid}/editajax
-  defaults: { _controller: IMDCTerpTubeBundle:Post:editPostAjax }
+  defaults: { _controller: IMDCTerpTubeBundle:Post:edit }
   requirements:
     pid: \d+
   options:

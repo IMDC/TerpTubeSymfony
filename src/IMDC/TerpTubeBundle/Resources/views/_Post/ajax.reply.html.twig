@@ -3,23 +3,16 @@ ajaxed by:
 TerpTube.Controller.Thread
 #}
 
-{% trans_default_domain 'IMDCTerpTubeBundle' %}
-
-<div class="col-md-12" id="replyPostContainer{{ post.id }}" style="padding-top: 20px;">
-	<div class="row">
-		<div class="col-md-11 col-md-offset-1">
-            {% set formpath = path('imdc_post_reply', {'pid': post.id}) %}
-            {{ form_start(form, {'action' : "#{formpath}"}) }}
-            {{ form_errors(form) }}
-            {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}
-            {{ form_row(form.content) }}
-            {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-            <button class="btn btn-success" id="submitReplyPost{{ post.id }}"><i class="fa fa-check"></i> Reply</button>
-            <button class="btn btn-danger" id="resetReplyPost{{ post.id }}"><i class="fa fa-times"></i> Reset</button>
-            <button class="btn btn-danger post-cancel" id="cancelReplyPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
-            {{ form_end(form) }}
-		</div>
-	</div>
+<div class="col-md-12" style="padding-top: 20px;">
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}
+    {{ form_row(form.content) }}
+    {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+    <button class="btn btn-success" id="submitReplyPost{{ post.id }}" data-loading-text="Creating reply..."><i class="fa fa-check"></i> Reply</button>
+    <button class="btn btn-danger" id="resetReplyPost{{ post.id }}"><i class="fa fa-times"></i> Reset</button>
+    <button class="btn btn-danger post-cancel" id="cancelReplyPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
+    {{ form_end(form) }}
     {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' with {'isPost': true, 'postId': post.id} %}
 	<script type="text/javascript">
         $(".autosize").autosize();

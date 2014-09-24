@@ -4,8 +4,7 @@ TerpTube.Controller.Thread
 #}
 
 <div class="col-md-12">
-	{% set formpath = path('imdc_post_edit', {'pid': post.id}) %}
-	{{ form_start(form, {'action': "#{formpath}"}) }}
+	{{ form_start(form) }}
     {{ form_errors(form) }}
     {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' with {'isPost': true, 'postId': post.id} %}
     {% if post.attachedFile[0] is defined %}
@@ -23,7 +22,7 @@ TerpTube.Controller.Thread
     {% endif %}
     {{ form_row(form.content) }}
     {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-    <button class="btn btn-success" id="submitEditPost{{ post.id }}"><i class="fa fa-check"></i> Edit</button>
+    <button class="btn btn-success" id="submitEditPost{{ post.id }}" data-loading-text="Editing post..."><i class="fa fa-check"></i> Edit</button>
     <button class="btn btn-danger post-cancel" id="cancelEditPost{{ post.id }}"><i class="fa fa-times"></i> Cancel</button>
 	{{ form_end(form) }}
     {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' with {'isPost': true, 'postId': post.id} %}

@@ -2,8 +2,8 @@
 
 {% block title %}Create a new Topic{% endblock title %}
 
-{% if newFromMedia is not defined %}
-    {% set newFromMedia = false %}
+{% if isNewFromMedia is not defined %}
+    {% set isNewFromMedia = false %}
 {% endif %}
 
 {% block header %}
@@ -38,7 +38,7 @@
             <div class="col-md-8 col-md-offset-2">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-                {% if not newFromMedia %}
+                {% if not isNewFromMedia %}
                     <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
                     {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
                 {% else %}

@@ -309,8 +309,7 @@ class UserGroupController extends Controller
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($usergroupid);
         if (!$group) {
-            //throw new Exception('group not found');
-            return $this->redirect($this->generateUrl('imdc_group_view', array('usergroupid' => $usergroupid)));
+            throw new Exception('group not found');
         }
 
         $securityContext = $this->get('security.context');
