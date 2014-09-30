@@ -118,7 +118,7 @@ class ThreadController extends Controller
             'canTemporal' => $thread->getType() == 1
         ));
         
-        return $this->render('IMDCTerpTubeBundle:_Thread:view.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
             'form' => $postReplyForm->createView(),
             'thread' => $thread,
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
@@ -158,7 +158,7 @@ class ThreadController extends Controller
                 'No valid parent forum found'
             );
 
-            return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
+            return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
                 'form' => $form->createView(),
                 'forumid' => $forumid,
                 'uploadForms' => MyFilesGatewayController::getUploadForms($this)
@@ -248,7 +248,7 @@ class ThreadController extends Controller
             //return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId()));
         }
         
-        return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
             'form' => $form->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
@@ -322,7 +322,7 @@ class ThreadController extends Controller
             return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId())));
         }
 
-        return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
             'form' => $form->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this),
             'isNewFromMedia' => true,
@@ -439,7 +439,7 @@ class ThreadController extends Controller
             return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
         }
          
-        return $this->render('IMDCTerpTubeBundle:_Thread:edit.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Thread:edit.html.twig', array(
             'form' => $threadeditform->createView(),
             'thread' => $threadToEdit
         ));
@@ -486,7 +486,7 @@ class ThreadController extends Controller
                 }
             }
             
-            return $this->render('IMDCTerpTubeBundle:_Thread:delete.html.twig', array(
+            return $this->render('IMDCTerpTubeBundle:Thread:delete.html.twig', array(
                 'form' => $threadDeleteForm->createView(),
                 'thread' => $threadToDelete
             ));

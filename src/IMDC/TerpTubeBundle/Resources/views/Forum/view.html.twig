@@ -1,0 +1,99 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}{{ forum.titleText }}{% endblock title %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('imdc_forum_list') }}">Forums</a></li>
+			<li class="active">{{ forum.getTitleText|truncate(20) }}</li>
+		</ol>
+		<div class="row">
+			<div class="col-md-12">
+				{% if forum.getTitleMedia[0] is defined %}
+					{% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
+				{% else %}
+					<p>No media</p>
+				{% endif %}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h1>{{ forum.titleText }}</h1>
+				<h4>Created: {{ forum.getCreationDate|date('g:ia F j Y') }}</h4>
+				<h5>Topics: {{ threads|length }}</h5>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<p>
+					<a class="btn btn-default" href="{{ path('imdc_thread_new_under_forum', {'forumid': forum.id}) }}"><i class="fa fa-plus"></i> Create New Topic</a>
+					{% if forum in app.user.getForums %}
+						<a class="btn btn-default" href="{{ path('imdc_forum_edit', {'forumid': forum.id}) }}"><i class="fa fa-edit"></i> Edit Forum</a>
+						<a class="btn btn-default" href="{{ path('imdc_forum_delete', {'forumid': forum.id}) }}"><i class="fa fa-times"></i> Delete Forum</a>
+					{% endif %}
+				</p>
+			</div>
+		</div>
+		<!-- recent threads activity -->
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<img class="img-responsive center-block" src="" />
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<hr class="tt-separator-top" />
+				{% if recentThreads|length > 0 %}
+					{% include 'IMDCTerpTubeBundle:Thread:thumbnail.html.twig' with {'threads': recentThreads} %}
+				{% else %}
+					<p class="text-center" style="margin-bottom: 20px;">No recent threads</p>
+				{% endif %}
+				<hr class="tt-separator-bottom" />
+			</div>
+		</div>
+		<!-- all threads -->
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<img class="img-responsive center-block" src="" />
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				<hr class="tt-separator-top" />
+				{% if threads|length > 0 %}
+                    {% set pagParams = threads.getParams %}
+                    <div class="btn-group" style="margin-bottom: 10px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            Sort by
+                            {% if threads.isSorted('t.lastPostAt') %}Last Post
+                            {% elseif threads.isSorted('t.title') %}Title
+                            {% elseif threads.isSorted('t.creationDate') %}Date Created
+                            {% endif %}
+                            {% if 'asc' in pagParams %}(ascending)
+                            {% elseif 'desc' in pagParams %}(descending)
+                            {% endif %}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>{{ knp_pagination_sortable(threads, 'Last Post', 't.lastPostAt') }}</li>
+                            <li>{{ knp_pagination_sortable(threads, 'Title', 't.title') }}</li>
+                            <li>{{ knp_pagination_sortable(threads, 'Date Created', 't.creationDate') }}</li>
+                        </ul>
+                    </div>
+					{% include 'IMDCTerpTubeBundle:Thread:thumbnail.html.twig' %}
+				{% else %}
+					<p class="text-center" style="margin-bottom: 20px;">No threads</p>
+				{% endif %}
+				<hr class="tt-separator-bottom" />
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-offset-1 col-md-10">
+				{{ knp_pagination_render(threads) }}
+			</div>
+		</div>
+	</div>
+{% endblock content %}

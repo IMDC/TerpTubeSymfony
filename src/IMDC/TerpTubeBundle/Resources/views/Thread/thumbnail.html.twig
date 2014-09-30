@@ -1,0 +1,50 @@
+{#
+included by:
+_Forum:view.html.twig
+#}
+
+{% set counter = 1 %}
+{% for thread in threads %}
+	{% if counter % 4 == 1 %}
+		<div class="row">
+			<ul class="list-unstyled">
+	{% endif %}
+	<li>
+		<div class="col-md-3">
+            <div class="thumbnail text-center tt-thread-thumbnail">
+                <div>
+                    <div class="col-md-9 col-md-offset-1 pull-left tt-date" title="{{ thread.creationDate|date('g:ia M j Y') }}">Created: {{ time_diff(thread.creationDate) }}</div>
+                    <div class="col-md-1 pull-right">
+                        {% include 'IMDCTerpTubeBundle:Thread:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}
+                    </div>
+                </div>
+                <div class="tt-media-element">
+                    {% if thread.mediaIncluded[0] is defined %}
+                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
+                    {% else %}
+                        <div style="height: 50px;"></div>
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="col-md-4">
+                        {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': thread.creator} %}
+                        {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': thread.creator} %}
+                    </div>
+                    <div class="col-md-8">
+                        <a href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}">
+                            <h3>{{ thread.title|truncate(50) }}</h3>
+                            <p>{{ thread.content|truncate(50) }}</p>
+                            <p><span class="badge badge-info">{{ thread.getPosts|length }} {{ thread.getPosts|length == 1 ? 'Reply' : 'Replies'}}</span></p>
+                            <p>{% if thread.getLastPostAt is defined %}<span class="toolPop" title="{{ thread.lastPostAt|date('g:ia M j Y') }}">Last post: {{ time_diff(thread.lastPostAt) }}</span>{% endif %}</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</li>
+	{% if (counter != 0 and counter % 4 == 0) or counter == threads|length %}
+			</ul>
+		</div>
+	{% endif %}
+	{% set counter = counter + 1 %}
+{% endfor %}

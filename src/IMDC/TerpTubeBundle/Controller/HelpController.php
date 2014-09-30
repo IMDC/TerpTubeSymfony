@@ -17,7 +17,7 @@ class HelpController extends Controller
      */
 	public function indexAction(Request $request)
 	{
-        return $this->render('IMDCTerpTubeBundle:_Help:index.html.twig');
+        return $this->render('IMDCTerpTubeBundle:Help:index.html.twig');
 	}
 
 }

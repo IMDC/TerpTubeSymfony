@@ -82,7 +82,7 @@ class MessageController extends Controller
 
 		}
 
-		return $this->render('IMDCTerpTubeBundle:_Message:new.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
             'form' => $form->createView()
         ));
 	}
@@ -181,7 +181,7 @@ class MessageController extends Controller
 // 		$messages = $em->getRepository('IMDCTerpTubeBundle:User')->getMostRecentInboxMessages($user, 30);
 		$messages = $user->getReceivedMessages();
 
-        return $this->render('IMDCTerpTubeBundle:_Message:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Message:index.html.twig', array(
             'messages' => $messages,
             'feedback' => $feedbackmsg,
             'tab' => 'inbox'
@@ -303,7 +303,7 @@ class MessageController extends Controller
 
 		$messages = $user->getSentMessages();
 
-		return $this->render('IMDCTerpTubeBundle:_Message:index.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Message:index.html.twig', array(
             'messages' => $messages,
             'tab' => 'sent'
         ));
@@ -322,7 +322,7 @@ class MessageController extends Controller
 		// todo: implement message archive system
 		$messages = $user->getArchivedMessages();
 
-        return $this->render('IMDCTerpTubeBundle:_Message:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Message:index.html.twig', array(
             'messages' => $messages,
             'tab' => 'archive'
         ));
@@ -366,7 +366,7 @@ class MessageController extends Controller
 		        $em->flush();
 		    }
 
-            return $this->render('IMDCTerpTubeBundle:_Message:view.html.twig', array(
+            return $this->render('IMDCTerpTubeBundle:Message:view.html.twig', array(
                 'message' => $message
             ));
 		}
@@ -469,7 +469,7 @@ class MessageController extends Controller
 			return $this->redirect($this->generateUrl('imdc_message_inbox'));
 		}
 
-		return $this->render('IMDCTerpTubeBundle:_Message:new.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
             'form' => $form->createView(),
             'message' => $message,
             'isReply' => true

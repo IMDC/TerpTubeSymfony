@@ -1,0 +1,40 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Confirm Topic Delete{% endblock title %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                {% set postCount = thread.posts|length %}
+                <div class="alert alert-danger" role="alert">
+                    Are you sure you want to delete this topic?<br />
+                    Deleting this topic will delete <strong>all</strong> posts!<br />
+                    This action <strong>cannot</strong> be undone!
+                </div>
+                <div class="alert alert-info" role="alert">
+                    This topic contains <span class="badge">{{ postCount }}</span> post{% if postCount != 1 %}s{% endif %}.<br />
+                </div>
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {% if thread.mediaIncluded[0] is defined %}
+                    <div class="tt-media-element">
+                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
+                    </div>
+                {% endif %}
+                <div><h3>{{ thread.title }}</h3></div>
+                {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+                <a class="btn btn-default" href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <button class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

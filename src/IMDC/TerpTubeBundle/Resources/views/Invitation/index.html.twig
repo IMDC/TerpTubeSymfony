@@ -1,0 +1,147 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Invitations{% endblock title %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <hr class="tt-separator-top" />
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active"><a href="#received" role="tab" data-toggle="tab">Received</a></li>
+                    <li><a href="#sent" role="tab" data-toggle="tab">Sent</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="received">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover tt-invitation-table">
+                                <thead>
+                                    <th>Tools</th>
+                                    <th>Status</th>
+                                    <th>From</th>
+                                    <th>Description</th>
+                                    <th>Sent</th>
+                                </thead>
+                                <tbody>
+                                    {% if app.user.getReceivedInvitations|length > 0 %}
+                                        {% for invitation in app.user.getReceivedInvitations %}
+                                            <tr>
+                                                <td>
+                                                    {% if not invitation.isCancelled and not invitation.isAccepted and not invitation.isDeclined %}
+                                                        <div class="text-center">
+                                                            <a class="btn btn-success btn-xs" href="{{ path('imdc_invitation_accept', {'id': invitation.id}) }}">Accept</a>
+                                                            <a class="btn btn-danger btn-xs" href="{{ path('imdc_invitation_decline', {'id': invitation.id}) }}">Decline</a>
+                                                        </div>
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    <div class="text-center">
+                                                        {% if invitation.isAccepted %}
+                                                            <span class="label label-success">Accepted</span>
+                                                        {% elseif invitation.isDeclined %}
+                                                            <span class="label label-danger">Declined</span>
+                                                        {% elseif invitation.isCancelled %}
+                                                            <span class="label label-warning">Cancelled</span>
+                                                        {% else %}
+                                                            <span class="label label-info">Pending</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                                <td>{{ invitation.creator.getUserName }}</td>
+                                                <td>
+                                                    {% if invitation.type.isMentor %}
+                                                        {{ invitation.getCreator }} would like you to be their mentor!
+                                                    {% elseif invitation.type.isMentee %}
+                                                        {{ invitation.getCreator }} would like to mentor you!
+                                                    {% elseif invitation.type.isGroup %}
+                                                        {% set group = groups[invitation.id] %}
+                                                        {{ invitation.getCreator }} would like you to join the "<a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a>" group!
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ time_diff(invitation.datecreated) }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="text-center">No invitations</div>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="sent">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover tt-invitation-table">
+                                <thead>
+                                    <th>Tools</th>
+                                    <th>Status</th>
+                                    <th>Recipient</th>
+                                    <th>Description</th>
+                                    <th>Sent</th>
+                                </thead>
+                                <tbody>
+                                    {% if app.user.getCreatedInvitations|length > 0 %}
+                                        {% for invitation in app.user.getCreatedInvitations %}
+                                            <tr>
+                                                <td>
+                                                    <div class="text-center">
+                                                        {% if not invitation.isCancelled and not invitation.isAccepted and not invitation.isDeclined %}
+                                                            <a class="btn btn-danger btn-xs" href="{{ path('imdc_invitation_cancel', {'id': invitation.id}) }}"><i class="fa fa-times"></i> Cancel</a>
+                                                        {% elseif not invitation.isAccepted and invitation.isCancelled %}
+                                                            <a class="btn btn-primary btn-xs" href="{{ path('imdc_invitation_reactivate', {'id': invitation.id}) }}"><i class="fa fa-refresh"></i> Re-activate</a>
+                                                        {% endif %}
+                                                     </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-center">
+                                                        {% if invitation.isAccepted %}
+                                                            <span class="label label-success">Accepted</span>
+                                                        {% elseif invitation.isDeclined %}
+                                                            <span class="label label-danger">Declined</span>
+                                                        {% elseif invitation.isCancelled %}
+                                                            <span class="label label-warning">Cancelled</span>
+                                                        {% else %}
+                                                            <span class="label label-info">Pending</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </td>
+                                                <td>{{ invitation.recipient.getUserName }}</td>
+                                                <td>
+                                                    {% if invitation.type.isMentor %}
+                                                        You asked {{ invitation.getRecipient }} to become your mentor
+                                                    {% elseif invitation.type.isMentee %}
+                                                        You asked {{ invitation.getRecipient }} if they would like you as their mentor
+                                                    {% elseif invitation.type.isGroup %}
+                                                        {% set group = groups[invitation.id] %}
+                                                        You asked {{ invitation.getRecipient }} if they would like to join the "<a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a>" group!
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ time_diff(invitation.datecreated) }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5">
+                                                <div class="text-center">No invitations</div>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+

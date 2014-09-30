@@ -32,7 +32,7 @@ class HomeController extends Controller
 		$myForums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getRecentlyCreatedForums(4);
         $myGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($this->getUser(), 4);
 
-		return $this->render('IMDCTerpTubeBundle:_Home:index.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Home:index.html.twig', array(
             'myForums' => $myForums,
             'myGroups' => $myGroups
         ));

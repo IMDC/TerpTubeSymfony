@@ -1,0 +1,29 @@
+{#
+ajaxed by:
+TerpTube.Controller.Post
+#}
+
+<div class="col-md-12">
+	{{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}
+    {% if post.attachedFile[0] is defined %}
+        <div class="row">
+            <div class="col-md-4">
+                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': post.attachedFile[0]} %}
+            </div>
+        </div>
+    {% endif %}
+    {% if form.startTime is defined %}
+        {{ form_widget(form.startTime) }}
+        {{ form_widget(form.endTime) }}
+    {% endif %}
+    {{ form_row(form.content) }}
+    <a class="btn btn-success post-submit" href="#" data-pid="{{ post.id }}" data-loading-text="Editing post..."><i class="fa fa-check"></i> Edit</a>
+    <a class="btn btn-danger post-cancel" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
+	{{ form_end(form) }}
+    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
+	<script type="text/javascript">
+        $(".autosize").autosize();
+	</script>
+</div>

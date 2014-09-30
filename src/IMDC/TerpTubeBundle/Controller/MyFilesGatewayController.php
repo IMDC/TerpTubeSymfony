@@ -56,7 +56,7 @@ class MyFilesGatewayController extends Controller
             $parameters['uploadForms'] = MyFilesGatewayController::getUploadForms($this);
         }
 
-        $response = $this->render('IMDCTerpTubeBundle:_MyFiles:'.($request->isXmlHttpRequest() ? 'ajax.' : '').'index.html.twig', $parameters);
+        $response = $this->render('IMDCTerpTubeBundle:MyFiles:'.($request->isXmlHttpRequest() ? 'ajax.' : '').'index.html.twig', $parameters);
 
         if ($request->isXmlHttpRequest()) {
             $response = new Response(json_encode(array(
@@ -115,7 +115,7 @@ class MyFilesGatewayController extends Controller
 
         // FIXME Should check for file permissions before showing the media to the user
 
-        $template = 'IMDCTerpTubeBundle:_Media:'.($request->isXmlHttpRequest() ? 'ajax.' : '').'preview%s.html.twig';
+        $template = 'IMDCTerpTubeBundle:Media:'.($request->isXmlHttpRequest() ? 'ajax.' : '').'preview%s.html.twig';
         switch ($media->getType()) {
             case Media::TYPE_AUDIO:
                 $template = sprintf($template, 'Audio');
@@ -431,7 +431,7 @@ class MyFilesGatewayController extends Controller
             if ($request->isXmlHttpRequest ()) {
                 $prefix = "ajax.";
             }
-            $response = $this->render ( 'IMDCTerpTubeBundle:_Media:' . $prefix . 'recordVideo.html.twig', array (
+            $response = $this->render ( 'IMDCTerpTubeBundle:Media:' . $prefix . 'recordVideo.html.twig', array (
                 "recorderConfiguration" => $recorderConfiguration,
                 'isPost' => $this->get('request')->get('isPost', false)
             ) );

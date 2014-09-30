@@ -1,0 +1,84 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}{{ message.subject }}{% endblock title %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                var message = new $tt.Controller.Message({page: $tt.Controller.Message.Page.VIEW});
+                message.bindUIEvents();
+            });
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <hr class="tt-separator-top" />
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-4">
+                <p>
+                    <a class="btn btn-danger" href="{{ path('imdc_message_delete', {'messageid': message.id}) }}"><i class="fa fa-trash-o"></i> Delete</a>
+                    <a class="btn btn-default" href="{{ path('imdc_message_archive_message', {'messageid': message.id}) }}"><i class="fa fa-archive"></i> Archive</a>
+                </p>
+            </div>
+            <div class="col-md-4 text-right">
+                <p>
+                    <a class="btn btn-default" href="{{ path('imdc_message_inbox') }}"><i class="fa fa-inbox"></i> Inbox</a>
+                    <a class="btn btn-default" href="{{ path('imdc_message_reply', {'messageid': message.id}) }}"><i class="fa fa-reply"></i> Reply</a>
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <div class="container-fluid tt-message-div" data-mid="{{ message.id }}">
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">Sent</div>
+                        <div class="col-md-10">{{ message.sentDate|date('g:ia F j Y') }}</div>
+                    </div>
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">From</div>
+                        <div class="col-md-10">
+                            {% if message.owner == 'noreply' %}
+                                {{ message.owner }}
+                            {% else %}
+                                <a href="{{ path('imdc_profile_user', {'userName': message.owner }) }}">{{ message.owner }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">To</div>
+                        <div class="col-md-10">{{ message.recipients|join(', ') }}</div>
+                    </div>
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">Subject</div>
+                        <div class="col-md-10">{{ message.subject }}</div>
+                    </div>
+                    {% if message.attachedMedia|length > 0 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="tt-media-element">
+                                    {% for mediaFile in message.attachedMedia %}
+                                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-12">{{ message.content|nl2br }}</div>
+                    </div>
+                </div>
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+{% endblock content %}

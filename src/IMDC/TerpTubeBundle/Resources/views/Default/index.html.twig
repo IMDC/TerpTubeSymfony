@@ -1,0 +1,16 @@
+{% extends 'IMDCTerpTubeBundle:Base:core.html.twig' %}
+
+{% block title %}Welcome!{% endblock title %}
+
+{% block core_content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-9">
+                {% include 'IMDCTerpTubeBundle:Help:intro.html.twig' %}
+            </div>
+            <div class="col-md-3 tt-default-register">
+                {% include 'IMDCTerpTubeBundle:Member:register.html.twig' %}
+            </div>
+        </div>
+    </div>
+{% endblock core_content %}

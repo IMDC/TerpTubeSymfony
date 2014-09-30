@@ -347,7 +347,7 @@ class InvitationController extends Controller
         if ($entity->getIsAccepted()) {
             $this->get('session')->getFlashBag()->add('danger', 'Invitation has already been accepted and cannot be cancelled.');
 
-            return $this->render('IMDCTerpTubeBundle:_Invitation:index.html.twig');
+            return $this->render('IMDCTerpTubeBundle:Invitation:index.html.twig');
         }
         
         $user = $this->getUser();
@@ -361,7 +361,7 @@ class InvitationController extends Controller
         $em->persist($entity);
         $em->flush();
     
-        return $this->render('IMDCTerpTubeBundle:_Invitation:index.html.twig');
+        return $this->render('IMDCTerpTubeBundle:Invitation:index.html.twig');
     }
 
     /**
@@ -416,7 +416,7 @@ class InvitationController extends Controller
             }
         }
 
-        return $this->render('IMDCTerpTubeBundle:_Invitation:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Invitation:index.html.twig', array(
             'invitations' => $invitations,
             'groups' => $groups
         ));

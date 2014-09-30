@@ -1,0 +1,43 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Confirm Forum Delete{% endblock title %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                {% set postCount = 0 %}
+                {% for thread in forum.getThreads %}
+                    {% set postCount = postCount + thread.getPosts|length %}
+                {% endfor %}
+                <div class="alert alert-danger" role="alert">
+                    Are you sure you want to delete this forum?<br />
+                    Deleting this forum will delete <strong>all</strong> topics and <strong>all</strong> posts!<br />
+                    This action <strong>cannot</strong> be undone!
+                </div>
+                <div class="alert alert-info" role="alert">
+                    This forum contains <span class="badge">{{ forum.getThreads|length }}</span> topic{% if forum.getThreads|length != 1 %}s{% endif %} with a total of <span class="badge">{{ postCount }}</span> post{% if postCount != 1 %}s{% endif %}.<br />
+                </div>
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {% if forum.getTitleMedia[0] is defined %}
+                    <div class="tt-media-element">
+                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
+                    </div>
+                {% endif %}
+                {{ form_row(form.titleText) }}
+                {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+                <a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <button class="btn btn-danger"><i class="fa fa-trash-o"></i> Delete</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

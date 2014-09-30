@@ -48,7 +48,7 @@ class UserGroupController extends Controller
         $recentGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups(4);
         $usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups();
 
-		return $this->render('IMDCTerpTubeBundle:_Group:index.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Group:index.html.twig', array(
             'recentGroups' => $recentGroups,
             'groups' => $usergroups
         ));
@@ -72,7 +72,7 @@ class UserGroupController extends Controller
 
         $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
 
-        return $this->render('IMDCTerpTubeBundle:_Group:view.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Group:view.html.twig', array(
             'group' => $usergroup
         ));
 	}
@@ -118,7 +118,7 @@ class UserGroupController extends Controller
 		    return $this->redirect($this->generateUrl('imdc_group_view', array('usergroupid' => $usergroupid)));
 		}
 
-		return $this->render('IMDCTerpTubeBundle:_Group:edit.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Group:edit.html.twig', array(
             'form' => $form->createView(),
             'group' => $usergroup,
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
@@ -234,7 +234,7 @@ class UserGroupController extends Controller
 
 		}
 
-		return $this->render('IMDCTerpTubeBundle:_Group:new.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Group:new.html.twig', array(
             'form' => $form->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
 		));
@@ -287,7 +287,7 @@ class UserGroupController extends Controller
 	    $usergroups = $user->getUserGroups();
 	    //->findAll();
 
-        return $this->render('IMDCTerpTubeBundle:_Group:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Group:index.html.twig', array(
             'groups' => $usergroups,
             'isMyGroups' => true
         ));
@@ -411,7 +411,7 @@ class UserGroupController extends Controller
             8 /*limit per page*/
         );
 
-        return $this->render('IMDCTerpTubeBundle:_Group:addMembers.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Group:addMembers.html.twig', array(
             'group' => $group,
             'nonMembers' => $nonMembers,
             'form' => $form->createView()

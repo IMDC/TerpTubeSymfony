@@ -379,7 +379,7 @@ class PostController extends Controller
         } else {
             $content = array(
                 'wasReplied' => false,
-                'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.reply.html.twig', array(
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                         'form' => $postForm->createView(),
                         'post' => !$isPostReply ? $post : $postParent,
                         'uploadForms' => MyFilesGatewayController::getUploadForms($this)))
@@ -450,13 +450,13 @@ class PostController extends Controller
                 'startTime' => $post->getStartTime(),
                 'endTime' => $post->getEndTime(),
                 'isTemporal' => $post->getIsTemporal(),
-                'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.post.html.twig', array(
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.post.html.twig', array(
                         'post' => $post))
             );
         } else {
             $content = array(
                 'wasEdited' => false,
-                'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.edit.html.twig', array(
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
                         'form' => $postForm->createView(),
                         'post' => $post,
                         'uploadForms' => MyFilesGatewayController::getUploadForms($this)))

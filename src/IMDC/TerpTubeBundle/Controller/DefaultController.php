@@ -38,7 +38,7 @@ class DefaultController extends Controller
         $formFactory = $this->container->get('fos_user.registration.form.factory');
         $form = $formFactory->createForm();
 
-		return $this->render('IMDCTerpTubeBundle:_Default:index.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Default:index.html.twig', array(
             'form' => $form->createView()
         ));
 	}

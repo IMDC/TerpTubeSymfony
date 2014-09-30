@@ -69,7 +69,7 @@ class ProfileController extends Controller
 			throw new NotFoundHttpException("This user does not exist");
 		}
 
-		return $this->render('IMDCTerpTubeBundle:_Profile:view.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Profile:view.html.twig', array(
             'user' => $userObject,
             'profile' => $userObject->getProfile()
         ));
@@ -134,7 +134,7 @@ class ProfileController extends Controller
 			}
 		}
 
-        return $this->render('IMDCTerpTubeBundle:_Profile:editAvatar.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Profile:editAvatar.html.twig', array(
             'form' => $form->createView()
         ));
 	}
@@ -211,7 +211,7 @@ class ProfileController extends Controller
 			}
 		}
 
-		return $this->render('IMDCTerpTubeBundle:_Profile:edit.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Profile:edit.html.twig', array(
             'form' => $form->createView()
         ));
 	}
