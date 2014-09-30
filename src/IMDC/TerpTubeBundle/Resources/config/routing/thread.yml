@@ -1,10 +1,10 @@
 #imdc_thread_show_recent: #TODO delete
-  #pattern: /threads
-  #defaults: { _controller: IMDCTerpTubeBundle:Thread:index }
-
+#  pattern: /threads
+#  defaults: { _controller: IMDCTerpTubeBundle:Thread:index }
+#
 #imdc_thread_new: #TODO delete
-  #pattern: /new
-  #defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
+#  pattern: /new
+#  defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
 
 imdc_thread_new_from_media:
   pattern: /new/myFiles/{resourceid}

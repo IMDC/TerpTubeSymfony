@@ -79,23 +79,43 @@ assetic:
             inputs:
                 - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Resources/public/jquery-1.10.2.js
             output: js/jquery.js
-        jquerymap:
+        jquery_map:
             inputs:
                 - %kernel.root_dir%/../vendor/jquery/jquerymap/jquery-1.10.2.min.map
             output: js/jquery.min.map
-        jqueryui:
+        jquery_ui:
             inputs:
                 - %kernel.root_dir%/../vendor/sonata-project/jquery-bundle/Resources/public/jquery-ui-1.10.4.js
             output: js/jquery-ui.js
-        dustjs:
+        jquery_autosize:
             inputs:
-                - %kernel.root_dir%/../bower_components/dustjs/dist/dust-full-0.3.0.min.js
-            output: js/dust.js
-        requirejs:
+                - %kernel.root_dir%/../bower_components/jquery-autosize/jquery.autosize.min.js
+            output: js/jquery.autosize.min.js
+        tag_it_css:
+            inputs:
+                - %kernel.root_dir%/../bower_components/tag-it/css/jquery.tagit.css
+            output: css/jquery.tagit.css
+        tag_it_js:
+            inputs:
+                - %kernel.root_dir%/../bower_components/tag-it/js/tag-it.min.js
+            output: js/tag-it.min.js
+        recordrtc:
+            inputs:
+                - %kernel.root_dir%/../node_modules/recordrtc/RecordRTC.js
+            output: js/RecordRTC.js
+        html5shiv:
+            inputs:
+                - %kernel.root_dir%/../bower_components/html5shiv/dist/html5shiv.min.js
+            output: js/html5shiv.min.js
+        require_js:
             inputs:
                 - %kernel.root_dir%/../bower_components/requirejs/require.js
             output: js/require.js
-    
+        dust_js:
+            inputs:
+                - %kernel.root_dir%/../bower_components/dustjs/dist/dust-full-0.3.0.min.js
+            output: js/dust-full.min.js
+
 # Doctrine Configuration
 doctrine:
     dbal:

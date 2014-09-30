@@ -157,8 +157,7 @@ class ThreadController extends Controller
                 'danger',
                 'No valid parent forum found'
             );
-            // form not valid, show the basic form
-            //return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
+
             return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
                 'form' => $form->createView(),
                 'forumid' => $forumid,
@@ -249,8 +248,6 @@ class ThreadController extends Controller
             //return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId()));
         }
         
-        // form not valid, show the basic form
-        //return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
             'form' => $form->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
@@ -325,7 +322,6 @@ class ThreadController extends Controller
             return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId())));
         }
 
-        //return $this->render('IMDCTerpTubeBundle:Thread:newfrommedia.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
             'form' => $form->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this),
@@ -443,8 +439,6 @@ class ThreadController extends Controller
             return $this->redirect($this->generateUrl('imdc_thread_view', array('threadid'=>$threadid)));
         }
          
-        // form not valid, show the basic form
-        //return $this->render('IMDCTerpTubeBundle:Thread:editThread.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Thread:edit.html.twig', array(
             'form' => $threadeditform->createView(),
             'thread' => $threadToEdit
@@ -492,8 +486,6 @@ class ThreadController extends Controller
                 }
             }
             
-            // form not valid or not submitted yet, show the basic form
-            //return $this->render('IMDCTerpTubeBundle:Thread:deleteThread.html.twig', array(
             return $this->render('IMDCTerpTubeBundle:_Thread:delete.html.twig', array(
                 'form' => $threadDeleteForm->createView(),
                 'thread' => $threadToDelete

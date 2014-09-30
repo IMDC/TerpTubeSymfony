@@ -68,13 +68,8 @@ class ProfileController extends Controller
 		{
 			throw new NotFoundHttpException("This user does not exist");
 		}
-		//$profile = $userObject->getProfile();
-		/*8return $this->container->get('templating')
-				->renderResponse(
-						'IMDCTerpTubeBundle:Profile:show.html.'
-								. $this->container->getParameter('fos_user.template.engine'),
-						array('user' => $userObject, 'profile' => $profile));*/
-        return $this->render('IMDCTerpTubeBundle:_Profile:view.html.twig', array(
+
+		return $this->render('IMDCTerpTubeBundle:_Profile:view.html.twig', array(
             'user' => $userObject,
             'profile' => $userObject->getProfile()
         ));
@@ -138,12 +133,7 @@ class ProfileController extends Controller
 				return $response;
 			}
 		}
-		// form not valid, show the basic form
-		/*return $this->container->get('templating')
-				->renderResponse(
-						'IMDCTerpTubeBundle:Profile:edit_avatar.html.'
-								. $this->container->getParameter('fos_user.template.engine'),
-						array('form' => $form->createView()));*/
+
         return $this->render('IMDCTerpTubeBundle:_Profile:editAvatar.html.twig', array(
             'form' => $form->createView()
         ));
@@ -221,12 +211,7 @@ class ProfileController extends Controller
 			}
 		}
 
-		/*return $this->container->get('templating')
-				->renderResponse(
-						'IMDCTerpTubeBundle:Profile:edit.html.'
-								. $this->container->getParameter('fos_user.template.engine'),
-						array('form' => $form->createView()));*/
-        return $this->render('IMDCTerpTubeBundle:_Profile:edit.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:_Profile:edit.html.twig', array(
             'form' => $form->createView()
         ));
 	}

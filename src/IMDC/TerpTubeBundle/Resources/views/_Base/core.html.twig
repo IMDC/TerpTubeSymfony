@@ -5,6 +5,11 @@
     <head>
         <title>{% block title %}{% endblock %} | TerpTube</title>
 
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="{{ asset('js/html5shiv.min.js') }}"></script>
+        <![endif]-->
+
         <!--  Bootstrap has to come before font awesome for everything to work right -->
         <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
 
@@ -13,32 +18,23 @@
         <script src="{{ asset('js/jquery.js') }}"></script>
         <script src="{{ asset('js/jquery-ui.js') }}"></script>
 
-        {# <link rel="stylesheet" href="{{ asset('css/jquery-ui.min.css') }}"> #}
         <link rel="stylesheet" type="text/css" href="{{ asset('bundles/sonatajquery/themes/flick/jquery-ui-1.10.4.custom.css') }}">
 
-        <!-- jQuery autosize textboxes script -->
-        <script src="{{ asset('bundles/imdcterptube/js/autosize/jquery.autosize.min.js') }}"></script>
+        <script src="{{ asset('js/jquery.autosize.min.js') }}"></script>
 
         <script src="{{ asset('js/tag-it.min.js') }}"></script>
         <link rel="stylesheet" type="text/css" href="{{ asset('css/jquery.tagit.css') }}">
 
+        <!-- Recorder for web-rtc -->
+        <script src="{{ asset('js/RecordRTC.js') }}"></script>
+
         <script src="{{ asset('js/require.js') }}"></script>
 
-        <!-- Recorder for web-rtc -->
-        <script src="//www.webrtc-experiment.com/RecordRTC.js" />
-        <script type="text/javascript">
-            if (typeof RecordRTC !== 'function')
-                document.write('<script src="{{ asset('js/RecordRTC.js') }}"><\/script>');
-        </script>
+        <script src="{{ asset('js/dust-full.min.js') }}"></script>
 
         <!--  FOS js routing script -->
         <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
         <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
-
-        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-        <!--[if lt IE 9]>
-        <script src="../assets/js/html5shiv.js"></script>
-        <![endif]-->
 
         {% block header %}
             <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}">
@@ -50,12 +46,11 @@
                     requirejs.config({
                         baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
                         paths: {
-                            extra: 'lib/extra',
-                            dust: 'lib/dust-full-0.3.0.min'
+                            extra: 'lib/extra'
                         },
                         shim: {
                             main: {
-                                deps: ['extra', 'dust']
+                                deps: ['extra']
                             }
                         }
                     });
@@ -95,7 +90,7 @@
                                             </li>
                                             <!-- TODO interpretations disabled for now
                                             <li {% block nav_ul_authenticated_my_interpretations %}{% endblock %}>
-                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_myfiles_list_interpretations') }}"><i class="fa fa-film fa-2x"></i></a>
+                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{#{ path('imdc_myfiles_list_interpretations') }#}"><i class="fa fa-film fa-2x"></i></a>
                                             </li>-->
                                             <li {% block nav_ul_authenticated_my_friends %}{% endblock %}>
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_member_friend_list') }}"><i class="fa fa-user fa-2x"></i></a>

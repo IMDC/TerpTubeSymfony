@@ -6,7 +6,3 @@ Function.prototype.extend = function(parentClass) {
 
     return this;
 };
-
-Math.roundPrecise = function(num, dec) {
-    return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
-};

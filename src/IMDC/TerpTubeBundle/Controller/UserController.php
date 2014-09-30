@@ -70,7 +70,6 @@ class UserController extends Controller
             array('distinct' => false)
         );
         
-        //return $this->render('IMDCTerpTubeBundle:Member:index.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Member:index.html.twig', array(
             'members' => $members
         ));

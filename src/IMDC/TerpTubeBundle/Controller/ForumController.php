@@ -52,7 +52,6 @@ class ForumController extends Controller
 			8 /*limit per page*/
 		);
 
-		//return $this->render('IMDCTerpTubeBundle:Forum:index.html.twig', array(
 		return $this->render('IMDCTerpTubeBundle:_Forum:index.html.twig', array(
             'recentForums' => $recentForums,
 			'forums' => $forums
@@ -132,8 +131,6 @@ class ForumController extends Controller
             )));
         }
         
-        // form not valid, show the basic form
-        //return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Forum:new.html.twig', array(
             'form' => $form->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
@@ -186,7 +183,6 @@ class ForumController extends Controller
 	    	array('distinct' => false)
 	    );
 	        
-	    //return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
 	    return $this->render('IMDCTerpTubeBundle:_Forum:view.html.twig', array(
 	    	'forum' => $forum,
 	    	'recentThreads' => $recentThreads,
@@ -263,8 +259,6 @@ class ForumController extends Controller
             )));
         }
 	        
-        // form not valid, show the basic form
-        //return $this->render('IMDCTerpTubeBundle:Forum:edit.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Forum:edit.html.twig', array(
             'form' => $form->createView(),
             'forum' => $forum,
@@ -291,8 +285,7 @@ class ForumController extends Controller
 	            'You are not authorized to delete this forum'
 	        );
 	        
-	        //return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
-            return $this->render('IMDCTerpTubeBundle:_Forum:view.html.twig', array(
+	        return $this->render('IMDCTerpTubeBundle:_Forum:view.html.twig', array(
                 'forum' => $forum
             ));
 	    }
@@ -326,9 +319,7 @@ class ForumController extends Controller
 	        return $this->redirect($this->generateUrl('imdc_forum_list'));
 	    }
 
-	    // form not valid, show the basic form
-	    //return $this->render('IMDCTerpTubeBundle:Forum:delete.html.twig', array(
-        return $this->render('IMDCTerpTubeBundle:_Forum:delete.html.twig', array(
+	    return $this->render('IMDCTerpTubeBundle:_Forum:delete.html.twig', array(
             'form' => $form->createView(),
             'forum' => $forum
         ));

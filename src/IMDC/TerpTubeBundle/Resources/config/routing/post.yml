@@ -1,16 +1,16 @@
 #imdc_post_show_all: #TODO delete
-  #pattern: /all
-  #defaults: { _controller: IMDCTerpTubeBundle:Post:index }
-
+#  pattern: /all
+#  defaults: { _controller: IMDCTerpTubeBundle:Post:index }
+#
 #imdc_post_create_new: #TODO delete
-  #pattern: /new
-  #defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
-
+#  pattern: /new
+#  defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
+#
 #imdc_thread_create_reply_post: #TODO delete
-  #pattern: /reply/thread/{threadid}
-  #defaults: { _controller: IMDCTerpTubeBundle:Post:createReplyPost }
-  #requirements:
-    #threadid: \d+
+#  pattern: /reply/thread/{threadid}
+#  defaults: { _controller: IMDCTerpTubeBundle:Post:createReplyPost }
+#  requirements:
+#    threadid: \d+
 
 imdc_post_reply:
   pattern: /{pid}/reply
@@ -29,11 +29,11 @@ imdc_post_edit:
     expose: true
 
 #imdc_post_delete: #TODO delete
-  #pattern: /delete/{postid}/thread/{threadid}
-  #defaults: { _controller: IMDCTerpTubeBundle:Post:deletePost }
-  #requirements:
-    #postid: \d+
-    #threadid: \d+
+#  pattern: /delete/{postid}/thread/{threadid}
+#  defaults: { _controller: IMDCTerpTubeBundle:Post:deletePost }
+#  requirements:
+#    postid: \d+
+#    threadid: \d+
 
 imdc_post_delete_ajax: #TODO merge into imdc_post_delete
   pattern: /{pid}/deleteajax

@@ -112,7 +112,6 @@ class FriendsListController extends Controller
 
 		$usersFriends = $user->getFriendsList();
 
-        //return $this->render('IMDCTerpTubeBundle:FriendsList:showAll.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Member:index.html.twig', array(
             'members' => $usersFriends,
             'isFriendsList' => true

@@ -431,7 +431,6 @@ class MyFilesGatewayController extends Controller
             if ($request->isXmlHttpRequest ()) {
                 $prefix = "ajax.";
             }
-            //$response = $this->render ( 'IMDCTerpTubeBundle:AddFileGateway:' . $prefix . 'recordVideo.html.twig', array (
             $response = $this->render ( 'IMDCTerpTubeBundle:_Media:' . $prefix . 'recordVideo.html.twig', array (
                 "recorderConfiguration" => $recorderConfiguration,
                 'isPost' => $this->get('request')->get('isPost', false)
@@ -525,8 +524,6 @@ class MyFilesGatewayController extends Controller
         return new Response ( $return, 200, array (
             'Content-Type' => 'application/json'
         ) );
-
-        // return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
     }
 
     public function addSimultaneousRecordingAction(Request $request, $sourceMediaID, $startTime, $url) {
