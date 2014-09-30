@@ -20,7 +20,7 @@ class ImageMediaFormType extends AbstractMediaFormType
 
 	public function getName()
 	{
-		return 'imdc_terptube_image_media';
+		return 'MediaForm_image';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

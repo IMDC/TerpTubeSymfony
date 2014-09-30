@@ -1,25 +1,33 @@
-define(['core/mediaChooser'], function(MediaChooser) {
-    var Thread = function() {
-        this.page = null;
-        this.keyPoints = new Array();
+define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
+    "use strict";
+
+    var Thread = function(options) {
+        console.log("%s: %s- options=%o", Thread.TAG, "constructor", options);
+
+        this.page = options.page;
+        this.tagitOptions = options.tagitOptions;
+        this.threadId = options.threadId;
+        this.posts = new Array();
+        this.mediaChooser = null;
         this.player = null;
         this.playerOptions = null;
-        this.mediaChooser = null;
-        this.forwardButton = "<button class='forwardButton'></button>";
-        this.doneButton = "<button class='doneButton'></button>";
-        this.doneAndPostButton = "<button class='doneAndPostButton'></button>";
-        
+        this.keyPoints = new Array();
         this.videoSpeed = 0;
 
         this.bind__onClickPostTimelineKeyPoint = this._onClickPostTimelineKeyPoint.bind(this);
         this.bind__onMouseEnterPostTimelineKeyPoint = this._onMouseEnterPostTimelineKeyPoint.bind(this);
         this.bind__onMouseLeavePostTimelineKeyPoint = this._onMouseLeavePostTimelineKeyPoint.bind(this);
+        this.bind__onClickPostReply = this._onClickPostReply.bind(this);
+        this.bind__onClickPostEdit = this._onClickPostEdit.bind(this);
+        this.bind__onPostForm = this._onPostForm.bind(this);
+        this.bind__onPostSubmitSuccess = this._onPostSubmitSuccess.bind(this);
+        this.bind__onPostReset = this._onPostReset.bind(this);
+        this.bind__onPostCancel = this._onPostCancel.bind(this);
+        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
-        this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
-        this.bind_forwardFunction = this.forwardFunction.bind(this);
-        this.bind_doneFunction = this.doneFunction.bind(this);
-        this.bind_doneAndPostFunction = this.doneAndPostFunction.bind(this);
+
+        $tt._instances.push(this);
     };
 
     Thread.TAG = "Thread";
@@ -30,40 +38,28 @@ define(['core/mediaChooser'], function(MediaChooser) {
         VIEW: 2
     };
 
-    /**
-     * MediaChooser options for each related page that uses MediaChooser
-     * @param {number} page
-     */
-    Thread.mediaChooserOptions = function(page) {
-        switch (page) {
-            case Thread.Page.NEW:
-            case Thread.Page.EDIT:
-                return {
-                    element: $("#files"),
-                    isPopUp: true
-                };
-            case Thread.Page.VIEW:
-                return {
-                    element: $("#files"),
-                    isPopUp: true,
-			        isNewPost: true
-                };
-        }
+    // this must be the same name defined in {bundle}/Form/Type/Thread[|Edit]FormType
+    Thread.FORM_NAME = "Thread";
+
+    Thread.prototype.getContainer = function() {
+        return $("body");
     };
 
-    /**
-     * ui element event bindings in order of appearance
-     * @param {number} page
-     */
-    Thread.prototype.bindUIEvents = function(page, options) {
-        console.log("%s: %s- page=%d", Thread.TAG, "bindUIEvents", page);
+    Thread.prototype.getForm = function() {
+        return this.getContainer().find("form[name^=" + Thread.FORM_NAME + "]");
+    };
 
-        this.page = page;
+    Thread.prototype.getFormField = function(fieldName) {
+        return this.getContainer().find("[id^=" + Thread.FORM_NAME + "]").filter("[id$=_" + fieldName + "]");
+    };
+
+    Thread.prototype.bindUIEvents = function() {
+        console.log("%s: %s", Thread.TAG, "bindUIEvents");
 
         switch (this.page) {
             case Thread.Page.NEW:
             case Thread.Page.EDIT:
-                this._bindUIEventsNewEdit(this.page == Thread.Page.EDIT, options);
+                this._bindUIEventsNewEdit(this.page == Thread.Page.EDIT);
                 break;
             case Thread.Page.VIEW:
                 this._bindUIEventsView();
@@ -71,32 +67,31 @@ define(['core/mediaChooser'], function(MediaChooser) {
         }
     };
 
-    Thread.prototype._bindUIEventsNewEdit = function(isEdit, options) {
+    Thread.prototype._bindUIEventsNewEdit = function(isEdit) {
         console.log("%s: %s- isEdit=%s", Thread.TAG, "_bindUIEventsNewEdit", isEdit);
 
-        this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.NEW));
+        this.mediaChooser = new MediaChooser();
+        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.setContainer(this.getContainer());
         this.mediaChooser.bindUIEvents();
 
-        var prefix = $("[id^=Thread]");
-
-        prefix.filter("[id$=_permissions_usersWithAccess]").tagit(options);
+        this.getFormField("permissions_usersWithAccess").tagit(this.tagitOptions);
         $("ul.tagit").hide();
 
-        $("#permissionRadioButtons div.radio").on("click", function(e) {
-            if (prefix.filter("[id$=_permissions_accessLevel_2]").is(':checked')) { // specific users
+        $("#permissionRadioButtons div.radio").on("click", (function(e) {
+            if (this.getFormField("permissions_accessLevel_2").is(':checked')) { // specific users
                 $("ul.tagit").show();
-                prefix.filter("[id$=_permissions_userGroupsWithAccess]").hide();
-            } else if (prefix.find("[id$=_permissions_accessLevel_3]").is(':checked')) { // specific groups
-                prefix.filter("[id$=_permissions_userGroupsWithAccess]").show();
+                this.getFormField("permissions_userGroupsWithAccess").hide();
+            } else if (this.getFormField("permissions_accessLevel_3").is(':checked')) { // specific groups
+                this.getFormField("permissions_userGroupsWithAccess").show();
                 $("ul.tagit").hide();
             } else { // hide all
-                prefix.filter("[id$=_permissions_userGroupsWithAccess]").hide();
+                this.getFormField("permissions_userGroupsWithAccess").hide();
                 $("ul.tagit").hide();
             }
-        });
+        }).bind(this));
 
         $("#permissionRadioButtons").trigger("click");
     };
@@ -104,11 +99,14 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype._bindUIEventsView = function() {
         console.log("%s: %s", Thread.TAG, "_bindUIEventsView");
 
-        this.mediaChooser = new MediaChooser(Thread.mediaChooserOptions(Thread.Page.VIEW));
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.bindUIEvents();
+        var post = new Post({
+            page: Post.Page.NEW,
+            id: -1,
+            threadId: this.threadId
+        });
+        this.posts.push(post);
+        $(post).on(Post.Event.RESET, this.bind__onPostReset);
+        post.bindUIEvents();
 
         // change the video speed when the slowdown button is clicked
         $("#videoSpeed").on("click", (function(e) {
@@ -143,29 +141,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
             //$("#closed-caption-button img").attr("src", this.playerOptions.captionImages.on);
         }).bind(this));
 
-        $("#submitReply").on("click", (function(e) {
-            if ($("#PostFormFromThread_startTime").val() == ""
-                && $("#PostFormFromThread_endTime").val() == ""
-                && $("#PostFormFromThread_content").val() == ""
-                && this.mediaChooser.media == null) {
-                e.preventDefault();
-                alert("Your post cannot be blank. You must either make a Sign Link, select a file or write a comment.");
-            }
-        }).bind(this));
-
-        $("#resetReply").on("click", (function(e) {
-            e.preventDefault();
-
-            if (this.player) {
-                enableTemporalComment(this.player, false, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
-            }
-
-            this.mediaChooser.reset();
-            $("#PostFormFromThread_startTime").val("");
-            $("#PostFormFromThread_endTime").val("");
-            $("#PostFormFromThread_content").val("");
-        }).bind(this));
-
         // clicking the clock icon will move the density bar to the comments time
         // and highlight the comment on the density bar
         $(".post-timeline-keypoint").on("click", this.bind__onClickPostTimelineKeyPoint);
@@ -175,43 +150,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             this.bind__onMouseEnterPostTimelineKeyPoint,
             this.bind__onMouseLeavePostTimelineKeyPoint);
 
-        $(".post-edit").on("click", (function(e) {
-            e.preventDefault();
-
-            var postId = $(e.currentTarget).data("pid");
-
-            $(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
-
-            // ajax call to get the edit comment form
-            $.ajax({
-                url: Routing.generate('imdc_post_edit', {pid: postId}),
-                success: (function(data) {
-                    console.log("%s: %s: %s", Thread.TAG, ".post-edit:click", "success");
-
-                    $("#containerPost" + postId).hide();
-
-                    $("#containerEditPost" + postId).html(data.html);
-                    $("#containerEditPost" + postId).show();
-
-                    var keyPoint = this.getKeyPointForPostId(postId);
-                    if (keyPoint != null && keyPoint.options.drawOnTimeLine) { // isTemporal
-                        //TODO modify enableTemporalComment to properly do what these four lines do
-                        this.player.seek(keyPoint.startTime);
-                        this.player.currentMinTimeSelected = keyPoint.startTime;
-                        this.player.currentMaxTimeSelected = keyPoint.endTime;
-                        this.player.currentMinSelected = this.player.getXForTime(this.player.currentMinTimeSelected);
-                        this.player.currentMaxSelected = this.player.getXForTime(this.player.currentMaxTimeSelected);
-
-                        enableTemporalComment(this.player, true, $("#PostEditForm_startTime"), $("#PostEditForm_endTime"));
-                    }
-                }).bind(this),
-                error: function(request) {
-                    console.log("%s: %s: %s", Thread.TAG, ".post-edit:click", "error");
-
-                    console.log(request.statusText);
-                }
-            });
-        }).bind(this));
+        $(".post-edit").on("click", this.bind__onClickPostEdit);
 
         // launch the modal dialog to delete a comment when you click the trash icon
         $(".post-delete").on("click", function(e) {
@@ -238,7 +177,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 success: (function(data) {
                     console.log("%s: %s: %s", Thread.TAG, "#modalDeleteButton:click", "success");
 
-                    var post = $("#postContainer" + postId);
+                    var post = $(".tt-post-container[data-pid=" + postId + "]");
 
                     // create a feedback message
                     //TODO make me better
@@ -248,7 +187,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                     post.fadeOut('slow', function(){$(this).remove();});
 
                     // delete timeline region
-                    this.player.removeKeyPoint(this.getKeyPointForPostId(postId));
+                    this.player.removeKeyPoint(this._getKeyPoint(postId));
 
                     $("#modaldiv").modal('hide');
 
@@ -269,37 +208,26 @@ define(['core/mediaChooser'], function(MediaChooser) {
             });
         }).bind(this));
 
-        $(".post-reply").on("click", function(e) {
-            e.preventDefault();
+        $(".post-reply").on("click", this.bind__onClickPostReply);
+    };
 
-            var postId = $(e.currentTarget).data("pid");
+    Thread.prototype._getPost = function(id) {
+        console.log("%s: %s- id=%d", Thread.TAG, "_getPost", id);
 
-            $(".post-cancel").trigger("click"); // edit and reply simultaneously not allowed. ensure that reply forms are cleared
-
-            $.ajax({
-                url: Routing.generate('imdc_post_reply', {pid: postId}),
-                success: function(data) {
-                    console.log("%s: %s: %s", Thread.TAG, ".post-reply:click", "success");
-
-                    $("#containerReplyPost" + postId).html(data.html);
-                    $("#containerReplyPost" + postId).show();
-
-                    $(".post-reply[data-pid=" + postId + "]").hide();
-                },
-                error: function(request) {
-                    console.log("%s: %s: %s", Thread.TAG, ".post-reply:click", "error");
-
-                    console.log(request.statusText);
-                }
-            });
-        });
+        for (var p in this.posts) {
+            var post = this.posts[p];
+            if (post.id == id) {
+                return post;
+            }
+        }
+        return null;
     };
 
     Thread.prototype._onClickPostTimelineKeyPoint = function(e) {
         if (e && e.preventDefault)
             e.preventDefault();
 
-        var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
+        var keyPoint = this._getKeyPoint($(e.currentTarget).data("pid"));
         keyPoint.paintHighlightedTimeout = true;
         keyPoint.paintHighlighted = true;
         this.player.seek(keyPoint.startTime);
@@ -316,15 +244,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Thread.prototype._onMouseEnterPostTimelineKeyPoint = function(e) {
-        // highlight comment on the density bar
-        var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
+        // highlight the comment
+        var keyPoint = this._getKeyPoint($(e.currentTarget).data("pid"));
         keyPoint.paintHighlighted = true;
         this.player.redrawKeyPoints = true;
         this.player.repaint();
     };
 
     Thread.prototype._onMouseLeavePostTimelineKeyPoint = function(e) {
-        var keyPoint = this.getKeyPointForPostId($(e.currentTarget).data("pid"));
+        var keyPoint = this._getKeyPoint($(e.currentTarget).data("pid"));
         if (keyPoint.paintHighlightedTimeout == true) {
             return;
         }
@@ -333,26 +261,119 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.player.repaint();
     };
 
+    Thread.prototype._onClickPostReply = function(e) {
+        if (e && e.preventDefault)
+            e.preventDefault();
+
+        var postId = $(e.currentTarget).data("pid");
+        var post = this._getPost(postId);
+        if (!post) {
+            post = new Post({
+                page: Post.Page.REPLY,
+                id: postId,
+                threadId: this.threadId
+            });
+            this.posts.push(post);
+        }
+
+        $(post).on(Post.Event.FORM, this.bind__onPostForm);
+        $(post).on(Post.Event.RESET, this.bind__onPostReset);
+        $(post).on(Post.Event.CANCEL, this.bind__onPostCancel);
+
+        post.handlePage();
+    };
+
+    Thread.prototype._onClickPostEdit = function(e) {
+        if (e && e.preventDefault)
+            e.preventDefault();
+
+        var postId = $(e.currentTarget).data("pid");
+        var post = this._getPost(postId);
+        if (!post) {
+            post = new Post({
+                page: Post.Page.EDIT,
+                id: postId,
+                threadId: this.threadId
+            });
+            this.posts.push(post);
+        }
+
+        $(post).on(Post.Event.FORM, this.bind__onPostForm);
+        $(post).on(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
+        $(post).on(Post.Event.CANCEL, this.bind__onPostCancel);
+
+        post.handlePage();
+    };
+
+    Thread.prototype._onPostForm = function(e) {
+        if (e.post.page == Post.Page.EDIT)
+            this._toggleTemporal(this._getKeyPoint(e.post.id), false);
+
+        e.post.bindUIEvents();
+    };
+
+    Thread.prototype._toggleTemporal = function(keyPoint, disabled) {
+        if (!disabled && keyPoint && keyPoint.options.drawOnTimeLine) {
+            this.player.pause();
+            this.player.setPlayHeadImage("");
+            this.player.setVideoTime(keyPoint.startTime);
+            this.player.setAreaSelectionStartTime(keyPoint.startTime);
+            this.player.setAreaSelectionEndTime(keyPoint.endTime);
+            this.player.setAreaSelectionEnabled(true);
+        } else {
+            this.player.pause();
+            this.player.setPlayHeadImage(this.playerOptions.playHeadImage);
+            this.player.setAreaSelectionEnabled(false);
+        }
+    };
+
+    Thread.prototype._onPostSubmitSuccess = function(e) {
+        if (e.post.page == Post.Page.EDIT) {
+            var container = e.post._getElement(Post.Binder.CONTAINER_VIEW);
+            if (container.data('istemporal')) {
+                this.replaceKeyPoint(new KeyPoint(
+                    container.data("pid"),
+                    container.data("starttime"),
+                    container.data("endtime"),
+                    "", {
+                        drawOnTimeLine: container.data("istemporal")
+                    }
+                ));
+            }
+        }
+
+        this._toggleTemporal(this._getKeyPoint(e.post.id), true);
+    };
+
+    Thread.prototype._onPostReset = function(e) {
+        // when editing posts don't disable, just reset the key point
+        var disabled = e.post.page == Post.Page.EDIT ? false : true;
+
+        this._toggleTemporal(this._getKeyPoint(e.post.id), disabled);
+    };
+
+    Thread.prototype._onPostCancel = function(e) {
+        this._toggleTemporal(this._getKeyPoint(e.post.id), true);
+    };
+
     Thread.prototype.createKeyPoints = function() {
         console.log("%s: %s", Thread.TAG, "createKeyPoints");
 
         this.keyPoints = new Array();
-
-        $(".tt-post-container").each((function(key, element) {
+        $(Post.Binder.CONTAINER_VIEW).each((function(key, element) {
             this.keyPoints.push(new KeyPoint(
                 $(element).data("pid"),
                 $(element).data("starttime"),
                 $(element).data("endtime"),
-                "comment",
-                {
+                "", {
                     drawOnTimeLine: $(element).data("istemporal")
                 }
             ));
         }).bind(this));
     };
 
-    Thread.prototype.getKeyPointForPostId = function(postId) {
-        console.log("%s: %s- postId=%d", Thread.TAG, "getKeyPointForId", postId);
+    Thread.prototype._getKeyPoint = function(postId) {
+        console.log("%s: %s- postId=%d", Thread.TAG, "_getKeyPoint", postId);
 
         for (var kp in this.keyPoints) {
             var keyPoint = this.keyPoints[kp];
@@ -360,6 +381,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 return keyPoint;
             }
         }
+        return null;
     };
 
     Thread.prototype.replaceKeyPoint = function(keyPoint) {
@@ -388,7 +410,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Thread.prototype.renderPostTimelinePoints = function() {
         console.log("%s: %s", Thread.TAG, "renderPostTimelinePoints");
 
-        $(".tt-post-container").each((function(key, element) {
+        $(Post.Binder.CONTAINER_VIEW).each((function(key, element) {
             var duration = this.playerOptions.mediaElement[0].duration;
             var startTimePercentage = ((100 * $(element).data("starttime")) / duration).toFixed(2);
             var endTimePercentage = ((100 * $(element).data("endtime")) / duration).toFixed(2);
@@ -420,9 +442,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
             overlayControls: true,
             playHeadImage: this.playerOptions.playHeadImage,
             playHeadImageOnClick: (function() {
-                if (this.player) {
-                    enableTemporalComment(this.player, true, $("#PostFormFromThread_startTime"), $("#PostFormFromThread_endTime"));
-                }
+                var currentTime = this.player.getCurrentTime();
+                this._toggleTemporal(new KeyPoint(-1, currentTime, currentTime, "", {drawOnTimeLine: true}), false)
             }).bind(this)
         });
 
@@ -442,360 +463,69 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.player).on(Player.EVENT_AREA_SELECTION_CHANGED, (function(e) {
             console.log("%s: %s", Thread.TAG, Player.EVENT_AREA_SELECTION_CHANGED);
 
-            //TODO this can be improved
-            $("#PostFormFromThread_startTime").val(this.player.currentMinTimeSelected.toFixed(2));
-            $("#PostFormFromThread_endTime").val(this.player.currentMaxTimeSelected.toFixed(2));
-            $("#PostEditForm_startTime").val(this.player.currentMinTimeSelected.toFixed(2));
-            $("#PostEditForm_endTime").val(this.player.currentMaxTimeSelected.toFixed(2));
+            // set times of all posts
+            for (var p in this.posts) {
+                var post = this.posts[p];
+                var selection = this.player.getAreaSelectionTimes();
+                post.getFormField("startTime").val(selection.minTime.toFixed(2));
+                post.getFormField("endTime").val(selection.maxTime.toFixed(2));
+            }
         }).bind(this));
 
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, function(e, keyPoint, coords) {
-            console.log("%s: %s- keypoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OVER, keyPoint, coords);
+            console.log("%s: %s- keyPoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OVER, keyPoint, coords);
 
-            $("#postContainer" + keyPoint.id).addClass("tt-post-container-highlight");
+            $(".tt-post-container[data-pid=" + keyPoint.id + "]").addClass("tt-post-container-highlight");
 
             // avoid animating when key points are overlapped and multiple invokes of this event are called
             if (!$("#threadReplyContainer").is(':animated')) {
                 $("#threadReplyContainer").animate({
-                    scrollTop: $("#postContainer" + keyPoint.id).position().top
+                    scrollTop: $(".tt-post-container[data-pid=" + keyPoint.id + "]").position().top
                 }, 200);
             }
         });
 
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, function(e, keyPoint) {
-            console.log("%s: %s- keypoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
+            console.log("%s: %s- keyPoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 
-            $("#postContainer" + keyPoint.id).removeClass("tt-post-container-highlight");
+            $(".tt-post-container[data-pid=" + keyPoint.id + "]").removeClass("tt-post-container-highlight");
         });
 
         $(this.player).on(Player.EVENT_KEYPOINT_CLICK, function(e, keyPoint, coords) {
-            console.log("%s: %s- keypoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
+            console.log("%s: %s- keyPoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
         });
 
         $(this.player).on(Player.EVENT_KEYPOINT_BEGIN, function(e, keyPoint) {
-            console.log("%s: %s- keypoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_BEGIN, keyPoint);
+            console.log("%s: %s- keyPoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_BEGIN, keyPoint);
         });
 
         $(this.player).on(Player.EVENT_KEYPOINT_END, function(e, keyPoint) {
-            console.log("%s: %s- keypoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_END, keyPoint);
+            console.log("%s: %s- keyPoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_END, keyPoint);
         });
+    };
+
+    Thread.prototype._onPageLoaded = function() {
+        console.log("%s: %s", Thread.TAG, "_onPageLoaded");
+
+        switch (this.mediaChooser.page) {
+            case MediaChooser.Page.RECORD_VIDEO:
+                this.mediaChooser.createVideoRecorder();
+                break;
+            case MediaChooser.Page.PREVIEW:
+                if (e.data.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+                    this.mediaChooser.createVideoPlayer();
+
+                break;
+        }
     };
 
     Thread.prototype._onSuccess = function(e) {
-        switch (this.page) {
-            case Thread.Page.NEW:
-            case Thread.Page.EDIT:
-                $("[id^=Thread][id$=_mediatextarea]").val(e.media.id);
-                console.log("successNEW/EDIT");
-                break;
-            case Thread.Page.VIEW:
-                $("#PostFormFromThread_mediatextarea").val(e.media.id);
-                console.log("successVIEW");
-                break;
-        }
-    };
-
-    Thread.prototype._onSuccessAndPost = function(e) {
-        switch (this.page) {
-            case Thread.Page.VIEW:
-                $("#PostFormFromThread_mediatextarea").val(e.media.id);
-                console.log("successAndPostVIEW");
-                $("#submitReply").trigger("click");
-                break;
-        }
+        this.getFormField("mediatextarea").val(e.media.id);
     };
 
     Thread.prototype._onReset = function(e) {
-        switch (this.page) {
-            case Thread.Page.NEW:
-            case Thread.Page.EDIT:
-                $("[id^=Thread][id$=_mediatextarea]").val("");
-                break;
-            case Thread.Page.VIEW:
-                $("#PostFormFromThread_mediatextarea").val("");
-                break;
-        }
-    };
-
-    /**
-     * @param {object} videoElement
-     */
-    Thread.prototype.createVideoRecorder = function(videoElement) {
-        console.log("%s: %s", Thread.TAG, "createVideoRecorder");
-
-        var forwardButtons = [this.forwardButton, this.doneButton];
-        var forwardFunctions = [this.bind_forwardFunction, this.bind_doneFunction];
-
-        if (this.page == Thread.Page.VIEW) {
-            forwardButtons.push(this.doneAndPostButton);
-            forwardFunctions.push(this.bind_doneAndPostFunction);
-        }
-
-        this.mediaChooser.createVideoRecorder({
-            videoElement: videoElement,
-            forwardButtons: forwardButtons,
-            forwardFunctions: forwardFunctions
-        });
-    };
-
-    Thread.prototype.forwardFunction = function() {
-        console.log("%s: %s", Thread.TAG, "forwardFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser.previewMedia({
-            type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.mediaChooser.media.id }),
-            mediaId: this.mediaChooser.media.id,
-            recording: true
-        });
-    };
-
-    Thread.prototype.doneFunction = function() {
-        console.log("%s: %s", Thread.TAG, "doneFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser._previewVideoForwardFunctionDone();
-    };
-
-    Thread.prototype.doneAndPostFunction = function() {
-        console.log("%s: %s", Thread.TAG, "doneAndPostFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser._previewVideoForwardFunctionDoneAndPost();
+        this.getFormField("mediatextarea").val("");
     };
 
     return Thread;
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// when the user types in a value into the start time box,
-// activate the temporal comment mode on the player
-// at the time specified in the input start time box
-$("#PostFormFromThread_startTime").on('blur', function() {
-    var startOfComment = $(this).val();
-    if (!startOfComment == '') {
-
-        if (!globalPlayer.options.areaSelectionEnabled) { // if not making a temporal comment
-            enableTemporalComment(globalPlayer, true, globalStartTimeInput, globalEndTimeInput);
-        }
-        globalPlayer.setAreaSelectionStartTime(startOfComment);
-        globalPlayer.seek(startOfComment);
-    }
-});
-
-// when the user types in a value into the end time box,
-// activate the temporal comment mode on the player
-// at the time specified in the input end time box if we aren't
-// already creating a temporal comment
-$("#PostFormFromThread_endTime").on('blur', function() {
-    var endOfComment = $(this).val();
-    var vidDuration = globalPlayer.getDuration();
-    if (!$(this).val() == '') {
-        var startOfComment = $("#PostFormFromThread_startTime").val();
-        if (startOfComment == '') {
-            $("#PostFormFromThread_startTime").val(endOfComment-1);
-            globalPlayer.setAreaSelectionStartTime(endOfComment-1);
-        }
-//			if (endOfComment <= startOfComment) {
-//				endOfComment = parseInt(startOfComment) + 1;
-//			}
-        if (endOfComment > vidDuration) {
-            endOfComment = vidDuration;
-        }
-
-        if (!globalPlayer.options.areaSelectionEnabled) {
-            globalPlayer.seek(Math.max(1, endOfComment-1));
-            enableTemporalComment(globalPlayer, true, globalStartTimeInput, globalEndTimeInput);
-        }
-        else {
-            globalPlayer.seek(Math.max(1, endOfComment));
-        }
-        globalPlayer.setAreaSelectionEndTime(endOfComment);
-    }
-});
-
-
-function startTimeBlurFunction(startTime) {
-
-    var startOfComment = $(startTime).val();
-    if (!startOfComment == '') {
-
-        if (!context.player.options.areaSelectionEnabled) { // if not making a temporal comment
-            enableTemporalComment(context.player, true, globalStartTimeInput, globalEndTimeInput);
-        }
-        context.player.setAreaSelectionStartTime(startOfComment);
-        context.player.seek(startOfComment);
-    }
-
-}
-
-function endTimeBlurFunction(endTime) {
-    var endOfComment = $(endTime).val();
-    if (!$(endTime).val() == '') {
-        var startOfComment = $(endTime).parents().find("#PostFormFromThread_startTime").val();
-        if (startOfComment == '') {
-            $("#PostFormFromThread_startTime").val(endOfComment-1);
-            context.player.setAreaSelectionStartTime(endOfComment-1);
-        }
-//		if (endOfComment <= startOfComment) {
-//			endOfComment = parseInt(startOfComment) + 1;
-//		}
-        if (endOfComment > context.player.getDuration()) {
-            endOfComment = context.player.getDuration();
-        }
-
-        if (!context.player.options.areaSelectionEnabled) {
-            context.player.seek(Math.max(1, endOfComment-1));
-            enableTemporalComment(context.player, true, globalStartTimeInput, globalEndTimeInput);
-        }
-        else {
-            context.player.seek(Math.max(1, endOfComment));
-        }
-        context.player.setAreaSelectionEndTime(endOfComment);
-    }
-}
-
-
-
-
-/**
- *
- * @param player reference to the Player object
- * @param status true/false
- * @param startinput start time input element
- * @param endinput end time input element
- */
-function enableTemporalComment(player, status, startinput, endinput) {
-
-    // save time instead of renaming all the instances of 'control' to player
-    controls = player;
-
-    // save time
-    startTimeInput = startinput;
-    endTimeInput = endinput;
-
-
-    player.pause();
-
-    controls.oldPlayHeadImage = player.options.playHeadImage;
-
-    // if we are enabling the temporal comment
-    if (status) {
-        // change plus icon on play head to nothing
-        controls.playHeadImage = undefined;
-        if (Number(controls.getCurrentTime())+controls.options.minLinkTime>controls.getDuration()) {
-            controls.currentMinTimeSelected = controls.getDuration() - controls.options.minLinkTime;
-        }
-        else {
-            controls.currentMinTimeSelected = controls.getCurrentTime();
-        }
-        controls.currentMinSelected 	  = controls.getXForTime(controls.currentMinTimeSelected);
-        controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected)+controls.options.minLinkTime;
-        controls.currentMaxSelected 	  = controls.getXForTime(controls.currentMaxTimeSelected);
-
-        controls.setAreaSelectionEnabled(true);
-
-        startTimeInput.val( Math.roundPrecise(controls.currentMinTimeSelected, 2));
-        startTimeInput.on("change",function(){
-            if (startTimeInput.val() >= controls.currentMaxTimeSelected - controls.options.minLinkTime)
-            {
-                if (startTimeInput.val() >= controls.getDuration()-controls.options.minLinkTime)
-                {
-                    controls.currentMaxTimeSelected = controls.getDuration();
-                    controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-                    controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-                    controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-                    endTimeInput.val( Math.roundPrecise(controls.currentMaxTimeSelected, 2));
-                    startTimeInput.val(Math.roundPrecise(controls.currentMinTimeSelected, 2));
-                }
-                else
-                {
-                    controls.currentMinTimeSelected = startTimeInput.val();
-                    controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-                    controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
-                    controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-                    endTimeInput.val( Math.roundPrecise(controls.currentMaxTimeSelected, 2));
-                }
-            }
-            else if (startTimeInput.val()<=0)
-            {
-                controls.currentMinTimeSelected = 0;
-                controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-                startTimeInput.val( Math.roundPrecise(controls.currentMinTimeSelected, 2));
-            }
-            else
-            {
-                controls.currentMinTimeSelected = startTimeInput.val();
-                controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-            }
-            controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
-            controls.seek(controls.currentMinTimeSelected);
-        });
-
-        endTimeInput.val( Math.roundPrecise(controls.currentMaxTimeSelected, 2));
-        endTimeInput.on("change", function(){
-            if (endTimeInput.val() <= Number(controls.currentMinTimeSelected) + controls.options.minLinkTime)
-            {
-                if (endTimeInput.val()<controls.options.minLinkTime)
-                {
-                    controls.currentMinTimeSelected = 0;
-                    controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-                    startTimeInput.val( Math.roundPrecise(controls.currentMinTimeSelected, 2));
-                    controls.currentMaxTimeSelected = Number(controls.currentMinTimeSelected) + controls.options.minLinkTime;
-                    controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-                    endTimeInput.val( Math.roundPrecise(controls.currentMaxTimeSelected, 2));
-                }
-                else
-                {
-                    controls.currentMaxTimeSelected = endTimeInput.val();
-                    controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-                    endTimeInput.val( Math.roundPrecise(controls.currentMaxTimeSelected, 2));
-                    controls.currentMinTimeSelected = controls.currentMaxTimeSelected - controls.options.minLinkTime;
-                    controls.currentMinSelected = controls.getXForTime(controls.currentMinTimeSelected);
-                    startTimeInput.val( Math.roundPrecise(controls.currentMinTimeSelected, 2));
-                }
-            }
-            else if (endTimeInput.val()>=controls.getDuration())
-            {
-                controls.currentMaxTimeSelected = controls.getDuration();
-                controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-                endTimeInput.val( Math.roundPrecise(controls.currentMaxTimeSelected, 2));
-            }
-            else
-            {
-                controls.currentMaxTimeSelected = endTimeInput.val();
-                controls.currentMaxSelected = controls.getXForTime(controls.currentMaxTimeSelected);
-            }
-            controls.setHighlightedRegion(controls.currentMinSelected, controls.currentMaxSelected);
-            controls.setVideoTime(controls.currentMaxTimeSelected);
-        });
-        controls.repaint();
-    }
-    // else we are disabling the temporal comment
-    else {
-        controls.setPlayHeadImage(context.playerOptions.playHeadImage);
-        controls.setAreaSelectionEnabled(false);
-        controls.currentMinSelected = controls.minSelected;
-        controls.currentMinTimeSelected = controls.getTimeForX(controls.currentMinSelected);
-        controls.currentMaxSelected = controls.maxSelected;
-        controls.currentMaxTimeSelected = controls.getTimeForX(controls.currentMaxSelected);
-        controls.repaint();
-
-    }
-
-}

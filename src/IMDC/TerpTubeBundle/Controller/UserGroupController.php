@@ -27,7 +27,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Entity\Forum;
-use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
+use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 
 /**
  * Controller for UserGroup's which are essentially 'Groups' but the Group object is taken
@@ -125,7 +125,7 @@ class UserGroupController extends Controller
         return $this->render('IMDCTerpTubeBundle:_Group:edit.html.twig', array(
             'form' => $form->createView(),
             'group' => $usergroup,
-            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
 	
@@ -242,7 +242,7 @@ class UserGroupController extends Controller
 		//return $this->render('IMDCTerpTubeBundle:UserGroup:new.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Group:new.html.twig', array(
             'form' => $form->createView(),
-            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
 		));
 
 	}

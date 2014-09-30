@@ -10,13 +10,10 @@ use Doctrine\ORM\EntityRepository;
 class ForumFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
-	{    
-	    $builder->add('mediatextarea', 'text', array('required' => false, 
-	                                                'mapped' => false,
-	                                                'read_only' => true,
-	                                                'label' => 'File',
-                                                    'attr' => array('cols' => 1,
-                                                                    'rows' => 1)));
+	{
+        $builder->add('mediatextarea', 'hidden', array(
+            'mapped' => false
+        ));
 
 	    $builder->add('titleText', null, array('label' => 'Title Text'));
 		$builder->add('submit', 'submit');

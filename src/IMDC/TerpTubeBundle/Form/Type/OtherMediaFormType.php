@@ -20,7 +20,7 @@ class OtherMediaFormType extends AbstractMediaFormType
 
 	public function getName()
 	{
-		return 'imdc_terptube_other_media';
+		return 'MediaForm_other';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

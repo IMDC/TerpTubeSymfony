@@ -10,11 +10,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                var myFiles = new $tt.Controller.MyFiles();
-                //FIXME context
-                context = myFiles;
-
-                myFiles.bindUIEvents($tt.Controller.MyFiles.Page.INDEX);
+                var myFiles = new $tt.Controller.MyFiles({page: $tt.Controller.MyFiles.Page.INDEX});
+                myFiles.bindUIEvents();
             });
         });
     </script>
@@ -37,7 +34,7 @@
         </div>
         <div class="row">
             <div class="col-md-offset-2 col-md-8">
-                <div id="preview"></div>
+                <div class="mediachooser-container-dialog"></div>
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover tt-myFiles-table">
                         <thead>
@@ -75,7 +72,7 @@
                                                 {% if resourceFile.type == 1 or resourceFile.type == 2 %}
                                                     <!-- TODO interpretations disabled for now
                                                     <a class="btn btn-default btn-xs interpret-button"
-                                                       href="{{ path('imdc_media_simultaneous_record', {'mediaID': resourceFile.id} ) }}">
+                                                       href="{{ path('imdc_myfiles_add_simultaneous_recording', {'sourceMediaID': resourceFile.id} ) }}">
                                                         <i class="fa fa-film"></i> Create Interpretation
                                                     </a>-->
                                                 {% endif %}

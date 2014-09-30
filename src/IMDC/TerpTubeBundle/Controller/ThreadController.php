@@ -1,6 +1,7 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use IMDC\TerpTubeBundle\Form\Type\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,7 +32,7 @@ use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
 use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
-use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
+use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 
 /**
  * Controller for all Thread related actions including edit, delete, create
@@ -88,142 +89,39 @@ class ThreadController extends Controller
         
         return $response;
     }
-    
-    /**
-     * This is a unique action as much of the work involves creating a post object
-     * 
-     * This action creates a new PostFromThread form and embeds it into the page so that
-     * users can create new posts as reply comments to the thread. Upon successful submission of the form
-     * a new Post is created with the parent thread as this thread
-     * 
-     * @param Request $request
-     * @param unknown $threadid
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     */
-    public function viewThreadAction(Request $request, $threadid) 
+
+    public function viewAction(Request $request, $threadid)
     {
         // check if user logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
         
         $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
-        
-        // retrieve thread from storage layer
         $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadid);
-        
+
+        //TODO permissions
         // check if user has permissions to view thread
+        $user = $this->getUser();
         if (!$this->canAccessThread($thread, $user)) {
             $this->get('session')->getFlashBag()->add(
-                'danger',
-                'This topic is private and you are not permitted to view it at this time.'
+                'danger', 'This topic is private and you are not permitted to view it at this time.'
             );
-            return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $thread->getParentForum()->getId())));
+
+            return $this->redirect(
+                $this->generateUrl('imdc_forum_view', array(
+                    'forumid' => $thread->getParentForum()->getId()
+                )));
         }
-        
-        $threadposts = $thread->getPosts();
 
-        //
-        // this action should not be handling new post form submissions. consider moving or using PostController::createReplyPostAction
-        //
-
-        $newpost = new Post();
-        $postform = $this->createForm(new PostFormFromThreadType(), $newpost, array(
-        		'user' => $user,
-        		'em' => $em,
-                'thread' => $thread,
+        $postReplyForm = $this->createForm(new PostType(), new Post(), array(
+            'canTemporal' => $thread->getType() == 1
         ));
-
-        $em = $this->getDoctrine()->getManager();
         
-        $postform->handleRequest($request);
-        
-        if ($postform->isValid()) {
-
-        	$mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
-        	if (!$postform->get('mediatextarea')->isEmpty()) {
-        
-        		$rawmediaID = $postform->get('mediatextarea')->getData();
-        		$logger = $this->container->get('logger');
-        		$logger->info('*************media id is ' . $rawmediaID);
-        		$mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
-        
-        		if ($user->getResourceFiles()->contains($mediaFile)) {
-        			$logger = $this->get('logger');
-        			$logger->info('User owns this media file');
-        			$newpost->addAttachedFile($mediaFile);
-        		}
-        
-        	}
-
-        	// set post temporal-ness
-        	//if (NULL != $newpost->getStartTime() && NULL != $newpost->getEndTime()) { // a start time of 0.00 will return false
-            if (is_float($newpost->getStartTime()) && is_float($newpost->getEndTime()) ) {
-        	    $newpost->setIsTemporal(TRUE);
-        	}
-        	
-        	$newpost->setAuthor($user);
-        	$newpost->setCreated(new \DateTime('now'));
-        	$newpost->setParentThread($thread);
-        	 
-        	$thread->setLastPostAt(new \DateTime('now'));
-        	$user->addPost($newpost);
-        	 
-        	// request to persist user object to database
-        	 
-        	// persist all objects to database
-        	$em->persist($user);
-        	$em->persist($thread);
-        	$em->persist($newpost);
-        	$em->flush();
-        	
-        	// update thread last post
-        	$thread->setLastPostID($newpost->getId());
-        	
-        	// update forum's last activity
-        	$forum = $thread->getParentForum();
-        	$forum->setLastActivity(new \DateTime('now'));
-        	
-        	$em->persist($thread);
-        	$em->persist($forum);
-        	$em->flush();
-        	
-        	$this->get('session')->getFlashBag()->add(
-        			'success',
-        			'Post created successfully!'
-        	);
-        	
-        	// retrieve all posts for this thread
-        	$thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadid);
-        	$threadposts = $thread->getPosts();
-        	
-        	// create a new form
-        	$post = new Post();
-        	$form = $this->createForm(new PostFormFromThreadType(), $post, array(
-        			'user' => $user,
-        			'em' => $em,
-        	        'thread' => $thread,
-        	));
-
-            //return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
-            return $this->render('IMDCTerpTubeBundle:_Thread:view.html.twig', array(
-        			'form' => $form->createView(),
-        			'thread' => $thread,
-        			'threadposts' => $threadposts,
-        	        'threadsjson' => json_encode($threadposts),
-        			'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
-        	));
-        }
-        
-        // form not valid, show the thread
-        //return $this->render('IMDCTerpTubeBundle:Thread:viewthread.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Thread:view.html.twig', array(
-                'form' => $postform->createView(),
-        		'thread' => $thread,
-                'threadposts' => $threadposts,
-        		'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+            'form' => $postReplyForm->createView(),
+            'thread' => $thread,
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
     }
     
@@ -264,7 +162,7 @@ class ThreadController extends Controller
             return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
                 'form' => $form->createView(),
                 'forumid' => $forumid,
-                'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+                'uploadForms' => MyFilesGatewayController::getUploadForms($this)
             ));
         }
         
@@ -355,7 +253,7 @@ class ThreadController extends Controller
         //return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
             'form' => $form->createView(),
-            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
     }
     
@@ -430,7 +328,7 @@ class ThreadController extends Controller
         //return $this->render('IMDCTerpTubeBundle:Thread:newfrommedia.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Thread:new.html.twig', array(
             'form' => $form->createView(),
-            'uploadForms' => MediaChooserGatewayController::getUploadForms($this),
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this),
             'isNewFromMedia' => true,
             'mediaFile' => $chosenmedia
         ));

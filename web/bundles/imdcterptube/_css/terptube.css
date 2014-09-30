@@ -229,8 +229,9 @@ body {
   border-right: 0;
 }
 
-/* line 1, sass/_post.scss */
-.tt-post-container, .tt-post-reply-container-inner {
+/* used as a selector */
+/* line 2, sass/_post.scss */
+.tt-post-container, .tt-post-reply-container, .tt-post-reply-container-inner {
   border: 1px solid #ddd;
   border-collapse: collapse;
   border-radius: 4px;
@@ -240,17 +241,29 @@ body {
   background-color: #fff;
 }
 
-/* line 11, sass/_post.scss */
+/* line 12, sass/_post.scss */
 .tt-post-container-highlight {
   border: 2px solid red !important;
 }
 
-/* line 15, sass/_post.scss */
+/* line 16, sass/_post.scss */
 .tt-post-container-inner {
   margin-bottom: 15px;
 }
 
-/* line 19, sass/_post.scss */
+/* line 20, sass/_post.scss */
+.tt-post-reply-container {
+  /* reset all */
+  border: initial;
+  border-collapse: initial;
+  border-radius: initial;
+  padding-top: initial;
+  padding-bottom: initial;
+  margin: initial;
+  background-color: initial;
+}
+
+/* line 32, sass/_post.scss */
 .tt-post-reply-container-inner {
   /* imitate the primary container */
   border-top: 1px dashed #999;
@@ -258,21 +271,21 @@ body {
   margin-bottom: 0;
 }
 
-/* line 27, sass/_post.scss */
+/* line 40, sass/_post.scss */
 .tt-post-content-container {
   min-height: 180px;
 }
-/* line 30, sass/_post.scss */
+/* line 43, sass/_post.scss */
 .tt-post-content-container div[class*="col-"] > div {
   margin-bottom: 10px;
 }
 
-/* line 35, sass/_post.scss */
+/* line 48, sass/_post.scss */
 .tt-post-timeline-container {
   height: 15px;
 }
 
-/* line 39, sass/_post.scss */
+/* line 52, sass/_post.scss */
 .tt-post-timeline {
   background: #ddd;
   border: 1px solid #bbb;
@@ -280,7 +293,7 @@ body {
   width: 100%;
 }
 
-/* line 46, sass/_post.scss */
+/* line 59, sass/_post.scss */
 .tt-post-timeline-keypoint {
   height: 100%;
   width: 0;

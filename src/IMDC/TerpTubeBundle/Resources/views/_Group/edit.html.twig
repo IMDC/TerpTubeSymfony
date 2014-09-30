@@ -8,11 +8,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                var group = new $tt.Controller.Group();
-                //FIXME context
-                context = group;
-
-                group.bindUIEvents($tt.Controller.Group.Page.EDIT);
+                var group = new $tt.Controller.Group({page: $tt.Controller.Group.Page.EDIT});
+                group.bindUIEvents();
             });
         });
     </script>

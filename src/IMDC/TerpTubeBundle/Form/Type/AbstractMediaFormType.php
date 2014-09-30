@@ -18,7 +18,7 @@ class AbstractMediaFormType extends AbstractType
 
 	public function getName()
 	{
-		return 'imdc_terptube_audio_media';
+		return 'MediaForm_audio';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

@@ -1,13 +1,16 @@
 define(['core/mediaChooser'], function(MediaChooser) {
-    var Forum = function() {
-        this.page = null;
-        this.mediaChooser = null;
-        this.forwardButton = "<button class='forwardButton'></button>";
+    "use strict";
 
+    var Forum = function(options) {
+        this.page = options.page;
+        this.mediaChooser = null;
+
+        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
-        this.bind_forwardFunction = this.forwardFunction.bind(this);
-    }
+
+        $tt._instances.push(this);
+    };
 
     Forum.TAG = "Forum";
 
@@ -17,113 +20,53 @@ define(['core/mediaChooser'], function(MediaChooser) {
         DELETE: 2
     };
 
-    /**
-     * MediaChooser params for each related page that uses MediaChooser
-     */
-    Forum.mediaChooserOptions = function(page) {
-        switch (page) {
-            case Forum.Page.NEW:
-            case Forum.Page.EDIT:
-                return {
-                    element: $("#files"),
-                    isPopUp: true
-                };
-        }
+    // this must be the same name defined in {bundle}/Form/Type/ForumFormType
+    Forum.FORM_NAME = "ForumForm";
+
+    Forum.prototype.getContainer = function() {
+        return $("body");
     };
 
-    /**
-     * ui element event bindings in order of appearance
-     * @param {number} page
-     */
-    Forum.prototype.bindUIEvents = function(page) {
-        console.log("%s: %s- page=%d", Forum.TAG, "bindUIEvents", page);
-
-        this.page = page;
-
-        switch (this.page) {
-            case Forum.Page.NEW:
-            case Forum.Page.EDIT:
-                this._bindUIEventsNewEdit();
-                break;
-            case Forum.Page.DELETE:
-                this._bindUIEventsDelete();
-                break;
-        }
+    Forum.prototype.getForm = function() {
+        return this.getContainer().find("form[name=" + Forum.FORM_NAME + "]");
     };
 
-    Forum.prototype._bindUIEventsNewEdit = function() {
-        console.log("%s: %s", Forum.TAG, "_bindUIEventsNewEdit");
+    Forum.prototype.getFormField = function(fieldName) {
+        return this.getContainer().find("#" + Forum.FORM_NAME + "_" + fieldName);
+    };
 
-        this.mediaChooser = new MediaChooser(Forum.mediaChooserOptions(Forum.Page.NEW));
+    Forum.prototype.bindUIEvents = function() {
+        console.log("%s: %s", Forum.TAG, "bindUIEvents")
+
+        this.mediaChooser = new MediaChooser();
+        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.setContainer(this.getContainer());
         this.mediaChooser.bindUIEvents();
-
-        /*
-         * by paul: since I hid the real 'submit' button to provide a nicely stylized button
-         * I have to click the real button when you click on the fancy one
-         */
-        /*$("#forum-form-submit-button").on("click", function(e) {
-            e.preventDefault();
-
-            $("#ForumForm_submit").click();
-        });*/
     };
 
-    Forum.prototype._bindUIEventsDelete = function() {
-        /*
-         * by paul: since I hid the real 'submit' button to provide a nicely stylized button
-         * I have to click the real button when you click on the fancy one
-         */
-        /*$("#forum-form-submit-button").on("click", function(e) {
-            e.preventDefault();
+    Forum.prototype._onPageLoaded = function(e) {
+        console.log("%s: %s", Forum.TAG, "_onPageLoaded");
 
-            $("#ForumFormDelete_submit").click();
-        });*/
+        switch (this.mediaChooser.page) {
+            case MediaChooser.Page.RECORD_VIDEO:
+                this.mediaChooser.createVideoRecorder();
+                break;
+            case MediaChooser.Page.PREVIEW:
+                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+                    this.mediaChooser.createVideoPlayer();
+
+                break;
+        }
     };
 
     Forum.prototype._onSuccess = function(e) {
-        switch (this.page) {
-            case Forum.Page.NEW:
-            case Forum.Page.EDIT:
-                $("#ForumForm_mediatextarea").val(e.media.id);
-                break;
-        }
+        this.getFormField("mediatextarea").val(e.media.id);
     };
 
     Forum.prototype._onReset = function(e) {
-        switch (this.page) {
-            case Forum.Page.NEW:
-            case Forum.Page.EDIT:
-                $("#ForumForm_mediatextarea").val("");
-                break;
-        }
-    };
-
-    /**
-     * @param {object} videoElement
-     */
-    Forum.prototype.createVideoRecorder = function(videoElement) {
-        console.log("%s: %s", Forum.TAG, "createVideoRecorder");
-
-        this.mediaChooser.createVideoRecorder({
-            videoElement: videoElement,
-            forwardButtons: [this.forwardButton],
-            forwardFunctions: [this.bind_forwardFunction]
-        });
-    };
-
-    Forum.prototype.forwardFunction = function() {
-        console.log("%s: %s", Forum.TAG, "forwardFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser.previewMedia({
-            type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.mediaChooser.media.id }),
-            mediaId: this.mediaChooser.media.id,
-            recording: true
-        });
+        this.getFormField("mediatextarea").val("");
     };
 
     return Forum;

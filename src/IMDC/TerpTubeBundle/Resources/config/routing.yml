@@ -51,24 +51,6 @@ IMDCTerpTubeBundle_help:
 
 
 
-
-
-
-
-
-imdc_media_chooser_by_type:
-  pattern: /myFiles/choose/{type}
-  defaults: { _controller: IMDCTerpTubeBundle:MediaChooserGateway:chooseMediaByType, type: 0 }
-  methods: [GET|POST]
-  options:
-    expose: true
-
-imdc_media_simultaneous_record: 
-    pattern: /media/record/simultaneous/{mediaID}
-    defaults: { _controller: IMDCTerpTubeBundle:Media:simultaneousPreviewAndRecord, url: null }
-    options:
-        expose: true
-
 fos_user_group:
     resource: "@FOSUserBundle/Resources/config/routing/group.xml"
     prefix: /rolegroup

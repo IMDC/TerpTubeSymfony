@@ -1,283 +1,274 @@
 define(['core/mediaChooser'], function(MediaChooser) {
-    var Post = function() {
-        this.page = null;
-        this.postId = null;
-        this.mediaChooser = null;
-        this.forwardButton = "<button class='forwardButton'></button>";
-        this.doneButton = "<button class='doneButton'></button>";
-        this.doneAndPostButton = "<button class='doneAndPostButton'></button>";
+    "use strict";
 
-        this.bind__onClickSubmitEditPost = this._onClickSubmitEditPost.bind(this);
-        this.bind__onClickCancelEditPost = this._onClickCancelEditPost.bind(this);
-        this.bind__onClickSubmitReplyPost = this._onClickSubmitReplyPost.bind(this);
-        this.bind__onClickResetReplyPost = this._onClickResetReplyPost.bind(this);
-        this.bind__onClickCancelReplyPost = this._onClickCancelReplyPost.bind(this);
+    var Post = function(options) {
+        console.log("%s: %s- options=%o", Post.TAG, "constructor", options);
+
+        this.page = options.page;
+        this.id = options.id;
+        this.threadId = options.threadId;
+        this.mediaChooser = null;
+
+        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onSubmitSuccess = this._onSubmitSuccess.bind(this);
+        this.bind__onSubmitError = this._onSubmitError.bind(this);
+        this.bind__onClickCancel = this._onClickCancel.bind(this);
+        this.bind__onClickReset = this._onClickReset.bind(this);
+        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
-        this.bind_forwardFunction = this.forwardFunction.bind(this);
-        this.bind_doneFunction = this.doneFunction.bind(this);
-        this.bind_doneAndPostFunction = this.doneAndPostFunction.bind(this);
-    }
+
+        $tt._instances.push(this);
+    };
 
     Post.TAG = "Post";
 
     Post.Page = {
-        REPLY: 0,
-        EDIT: 1
+        NEW: 0,
+        REPLY: 1,
+        EDIT: 2
     };
 
-    /**
-     * MediaChooser options for each related page that uses MediaChooser
-     * @param {number} page
-     * @param {number} postId
-     */
-    Post.mediaChooserOptions = function(page, postId) {
-        switch (page) {
-            case Post.Page.REPLY:
-            case Post.Page.EDIT:
-                return {
-                    element: $("#filesPost" + postId),
-                    isPopUp: true,
-                    isPost: true,
-                    postId: postId
-                };
-        }
+    Post.Event = {
+        FORM: "eventForm",
+        SUBMIT_SUCCESS: "eventSubmitSuccess",
+        RESET: "eventReset",
+        CANCEL: "eventCancel"
     };
 
-    /**
-     * ui element event bindings in order of appearance
-     * @param {number} page
-     * @param {number} postId
-     */
-    Post.prototype.bindUIEvents = function(page, postId) {
-        console.log("%s: %s- page=%d, postId=%d", Post.TAG, "bindUIEvents", page, postId);
+    Post.Binder = {
+        CONTAINER_VIEW: ".post-container-view",
+        CONTAINER_REPLY: ".post-container-reply",
+        CONTAINER_EDIT: ".post-container-edit",
+        REPLY_LINK: ".post-reply",
+        SUBMIT: ".post-submit",
+        RESET: ".post-reset",
+        CANCEL: ".post-cancel"
+    };
 
-        this.page = page;
-        this.postId = postId;
+    // this must be the same name defined in {bundle}/Form/Type/PostType
+    Post.FORM_NAME = "PostForm";
 
+    Post.prototype._getElement = function(binder) {
+        return $(binder + "[data-pid=" + this.id + "]");
+    };
+
+    Post.prototype.getContainer = function() {
         switch (this.page) {
+            case Post.Page.NEW:
             case Post.Page.REPLY:
-                this._bindUIEventsReply();
-                break;
+                return this._getElement(Post.Binder.CONTAINER_REPLY);
             case Post.Page.EDIT:
-                this._bindUIEventsEdit();
-                break;
+                return this._getElement(Post.Binder.CONTAINER_EDIT);
         }
     };
 
-    Post.prototype._bindUIEventsReply = function() {
-        console.log("%s: %s", Post.TAG, "_bindUIEventsReply");
-
-        this.mediaChooser = new MediaChooser(Post.mediaChooserOptions(Post.Page.REPLY, this.postId));
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.bindUIEvents();
-
-        $("#submitReplyPost" + this.postId).on("click", this.bind__onClickSubmitReplyPost);
-        $("#resetReplyPost" + this.postId).on("click", this.bind__onClickResetReplyPost);
-        $("#cancelReplyPost" + this.postId).on("click", this.bind__onClickCancelReplyPost);
+    Post.prototype.getForm = function() {
+        return this.getContainer().find("form[name=" + Post.FORM_NAME + "]");
     };
 
-    Post.prototype._onClickSubmitReplyPost = function(e) {
-        if (e && e.preventDefault)
-            e.preventDefault();
+    Post.prototype.getFormField = function(fieldName) {
+        return this.getContainer().find("#" + Post.FORM_NAME + "_" + fieldName);
+    };
 
-        if ($("#PostReplyToPostForm_content").val() == "" && this.mediaChooser.media == null) {
-            alert("Your post cannot be blank. You must either select a file or write a comment.");
-            return;
+    Post.prototype._getUrl = function() {
+        switch (this.page) {
+            case Post.Page.NEW:
+                return Routing.generate('imdc_thread_new_post', {threadId: this.threadId});
+            case Post.Page.REPLY:
+                return Routing.generate('imdc_post_reply', {pid: this.id});
+            case Post.Page.EDIT:
+                return Routing.generate('imdc_post_edit', {pid: this.id});
         }
+    };
 
-        this._disableReplyForm(true);
-
+    Post.prototype.handlePage = function() {
         $.ajax({
-            url: Routing.generate('imdc_post_reply', {pid: this.postId}),
-            type: "POST",
-            contentType: false,
-            data: new FormData($("[name=PostReplyToPostForm]")[0]),
-            processData: false,
-            success: (function(data) {
-                console.log("%s: %s: %s", Post.TAG, "_onClickSubmitReplyPost", "success");
+            url: this._getUrl(),
+            success: (function(data, textStatus, jqXHR) {
+                console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
 
-                if (data.wasReplied) {
-                    window.location.replace(data.redirectUrl);
-                } else {
-                    $("#containerReplyPost" + this.postId).html(data.html);
-                    this._disableReplyForm(false);
+                var container = this.getContainer();
+
+                switch (this.page) {
+                    case Post.Page.REPLY:
+                        this._getElement(Post.Binder.REPLY_LINK).hide();
+
+                        container.html(data.html);
+                        container.show();
+                        break;
+                    case Post.Page.EDIT:
+                        this._getElement(Post.Binder.CONTAINER_VIEW).hide();
+
+                        container.html(data.html);
+                        container.show();
+                        break;
                 }
+
+                $(this).trigger($.Event(Post.Event.FORM, {post: this}));
             }).bind(this),
             error: function(request) {
-                console.log("%s: %s: %s", Post.TAG, "_onClickSubmitReplyPost", "error");
+                console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
 
                 console.log(request.statusText);
-                this._disableReplyForm(false);
             }
         });
     };
 
-    Post.prototype._disableReplyForm = function(disable) {
-        $("#submitReplyPost" + this.postId).button(disable ? "loading" : "reset");
-        $("#resetReplyPost" + this.postId).prop("disabled", disable);
-        $("#cancelReplyPost" + this.postId).prop("disabled", disable);
+    Post.prototype.bindUIEvents = function() {
+        console.log("%s: %s", Post.TAG, "bindUIEvents");
+
+        this.mediaChooser = new MediaChooser({enableDoneAndPost: true});
+        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.bindUIEvents();
+
+        this._getElement(Post.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
+        if (this.page != Post.Page.EDIT)
+            this._getElement(Post.Binder.RESET).on("click", this.bind__onClickReset);
+        this._getElement(Post.Binder.CANCEL).on("click", this.bind__onClickCancel);
     };
 
-    Post.prototype._onClickResetReplyPost = function(e) {
+    Post.prototype._onPageLoaded = function(e) {
+        console.log("%s: %s", Post.TAG, "_onPageLoaded");
+
+        switch (this.mediaChooser.page) {
+            case MediaChooser.Page.RECORD_VIDEO:
+                this.mediaChooser.createVideoRecorder();
+                break;
+            case MediaChooser.Page.PREVIEW:
+                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+                    this.mediaChooser.createVideoPlayer();
+
+                break;
+        }
+    };
+
+    Post.prototype._onClickSubmit = function(e) {
+        if (e && e.preventDefault)
+            e.preventDefault();
+
+        if (this.getFormField("content").val() == "" && this.mediaChooser.media == null) {
+            alert("Your post cannot be blank. You must either select a file or write a comment.");
+            return;
+        }
+
+        this._toggleForm(true);
+
+        $.ajax({
+            url: this._getUrl(),
+            type: "POST",
+            contentType: false,
+            data: new FormData(this.getForm()[0]),
+            processData: false,
+            success: this.bind__onSubmitSuccess,
+            error: this.bind__onSubmitError
+        });
+    };
+
+    Post.prototype._toggleForm = function(disabled) {
+        this._getElement(Post.Binder.SUBMIT).button(disabled ? "loading" : "reset");
+        if (this.page != Post.Page.EDIT)
+            this._getElement(Post.Binder.RESET).attr("disabled", disabled);
+        this._getElement(Post.Binder.CANCEL).attr("disabled", disabled);
+    };
+
+    Post.prototype._onSubmitSuccess = function(data, textStatus, jqXHR) {
+        console.log("%s: %s: %s", Post.TAG, "_onSubmitSuccess", "success");
+
+        var container = this.getContainer();
+
+        switch (this.page) {
+            case Post.Page.NEW:
+            case Post.Page.REPLY:
+                if (data.wasReplied) {
+                    window.location.replace(data.redirectUrl);
+                } else {
+                    container.html(data.html);
+                    this.bindUIEvents();
+                    this._toggleForm(false);
+                }
+                break;
+            case Post.Page.EDIT:
+                if (data.wasEdited) {
+                    var viewContainer = this._getElement(Post.Binder.CONTAINER_VIEW);
+                    viewContainer.data("starttime", data.startTime);
+                    viewContainer.data("endtime", data.endTime);
+                    viewContainer.data("istemporal", data.isTemporal);
+                    viewContainer.html(data.html);
+
+                    this._onClickCancel();
+                } else {
+                    container.html(data.html);
+                    this.bindUIEvents();
+                    this._toggleForm(false);
+                }
+                break;
+        }
+
+        $(this).trigger($.Event(Post.Event.SUBMIT_SUCCESS, {post: this, payload: data}));
+    };
+
+    Post.prototype._onSubmitError = function(request) {
+        console.log("%s: %s: %s", Post.TAG, "_onClickSubmit", "error");
+
+        console.log(request.statusText);
+        this._toggleForm(false);
+    };
+
+    Post.prototype._onClickReset = function(e) {
         if (e && e.preventDefault)
             e.preventDefault();
 
         this.mediaChooser.reset();
-        $("#PostReplyToPostForm_content").val("");
+        this.getFormField("content").val("");
+        this.getFormField("startTime").val("");
+        this.getFormField("endTime").val("");
+
+        $(this).trigger($.Event(Post.Event.RESET, {post: this}));
     };
 
-    Post.prototype._onClickCancelReplyPost = function(e) {
+    Post.prototype._onClickCancel = function(e) {
         if (e && e.preventDefault)
             e.preventDefault();
 
-        $("#containerReplyPost" + this.postId).html("");
+        var container = this.getContainer();
 
-        // restore the comment reply link if you click the cancel button
-        $(".post-reply[data-pid=" + this.postId + "]").show();
-    };
+        switch (this.page) {
+            case Post.Page.NEW:
+            case Post.Page.REPLY:
+                container.hide();
+                container.html("");
 
-    Post.prototype._bindUIEventsEdit = function() {
-        console.log("%s: %s", Post.TAG, "_bindUIEventsEdit");
+                // restore the comment reply link if you click the cancel button
+                this._getElement(Post.Binder.REPLY_LINK).show();
+                break;
+            case Post.Page.EDIT:
+                container.hide();
+                container.html("");
 
-        this.mediaChooser = new MediaChooser(Post.mediaChooserOptions(Post.Page.EDIT, this.postId));
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.bindUIEvents();
-
-        $("#submitEditPost" + this.postId).on("click", this.bind__onClickSubmitEditPost);
-        $("#cancelEditPost" + this.postId).on("click", this.bind__onClickCancelEditPost);
-    };
-
-    Post.prototype._onClickSubmitEditPost = function(e) {
-        if (e && e.preventDefault)
-            e.preventDefault();
-
-        if ($("#PostEditForm_content").val() == "" && this.mediaChooser.media == null) {
-            alert("Your post cannot be blank. You must either select a file or write a comment.");
-            return;
+                this._getElement(Post.Binder.CONTAINER_VIEW).show();
+                break;
         }
 
-        this._disableEditForm(true);
-
-        $.ajax({
-            url: Routing.generate('imdc_post_edit', {pid: this.postId}),
-            type: "POST",
-            contentType: false,
-            data: new FormData($("[name=PostEditForm]")[0]),
-            processData: false,
-            success: (function(data) {
-                console.log("%s: %s: %s", Post.TAG, "_onClickSubmitEditPost", "success");
-
-                if (data.wasEdited) {
-                    this._onClickCancelEditPost();
-
-                    $("#containerPost" + this.postId).html(data.html);
-                } else {
-                    $("#containerEditPost" + this.postId).html(data.html);
-                    this._disableEditForm(false);
-                }
-            }).bind(this),
-            error: function(request) {
-                console.log("%s: %s: %s", Post.TAG, "_onClickSubmitEditPost", "error");
-
-                console.log(request.statusText);
-                this._disableEditForm(false);
-            }
-        });
-    };
-
-    Post.prototype._disableEditForm = function(disable) {
-        $("#submitEditPost" + this.postId).button(disable ? "loading" : "reset");
-        $("#cancelEditPost" + this.postId).prop("disabled", disable);
-    };
-
-    Post.prototype._onClickCancelEditPost = function(e) {
-        if (e && e.preventDefault)
-            e.preventDefault();
-
-        $("#containerEditPost" + this.postId).hide();
-        $("#containerEditPost" + this.postId).html("");
-
-        if (context.player) {
-            enableTemporalComment(context.player, false, $("#PostEditForm_startTime"), $("#PostEditForm_endTime"));
-        }
-
-        $("#containerPost" + this.postId).show();
+        $(this).trigger($.Event(Post.Event.CANCEL, {post: this}));
     };
 
     Post.prototype._onSuccess = function(e) {
-        switch (this.page) {
-            case Post.Page.EDIT:
-            case Post.Page.REPLY:
-                $(".mediatextarea-post-" + e.postId).val(e.media.id);
-                break;
-        }
+        this.getFormField("mediatextarea").val(e.media.id);
     };
 
     Post.prototype._onSuccessAndPost = function(e) {
-        switch (this.page) {
-            case Post.Page.EDIT:
-            case Post.Page.REPLY:
-                $(".mediatextarea-post-" + e.postId).val(e.media.id);
-                $("#submitReplyPost" + e.postId).trigger("click");
-                break;
-        }
+        this.getFormField("mediatextarea").val(e.media.id);
+        this._getElement(Post.Binder.SUBMIT).trigger("click");
     };
 
     Post.prototype._onReset = function(e) {
-        switch (this.page) {
-            case Post.Page.EDIT:
-            case Post.Page.REPLY:
-                $(".mediatextarea-post-" + e.postId).val("");
-                break;
-        }
-    };
-
-    /**
-     * @param {object} videoElement
-     */
-    Post.prototype.createVideoRecorder = function(videoElement) {
-        console.log("%s: %s", Post.TAG, "createVideoRecorder");
-
-        this.mediaChooser.createVideoRecorder({
-            videoElement: videoElement,
-            forwardButtons: [this.forwardButton, this.doneButton, this.doneAndPostButton],
-            forwardFunctions: [this.bind_forwardFunction, this.bind_doneFunction, this.bind_doneAndPostFunction]
-        });
-    };
-
-    Post.prototype.forwardFunction = function() {
-        console.log("%s: %s", Post.TAG, "forwardFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser.previewMedia({
-            type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.mediaChooser.media.id }),
-            mediaId: this.mediaChooser.media.id,
-            recording: true
-        });
-    };
-
-    Post.prototype.doneFunction = function() {
-        console.log("%s: %s", Post.TAG, "doneFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser._previewVideoForwardFunctionDone();
-    };
-
-    Post.prototype.doneAndPostFunction = function() {
-        console.log("%s: %s", Post.TAG, "doneAndPostFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser._previewVideoForwardFunctionDoneAndPost();
+        this.getFormField("mediatextarea").val("");
     };
 
     return Post;

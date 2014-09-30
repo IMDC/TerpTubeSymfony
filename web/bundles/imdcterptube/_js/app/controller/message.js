@@ -1,7 +1,13 @@
 define(function() {
-    var Message = function() {
-        this.page = null;
-    }
+    "use strict";
+
+    var Message = function(options) {
+        console.log("%s: %s- options=%o", Message.TAG, "constructor", options);
+
+        this.page = options.page;
+
+        $tt._instances.push(this);
+    };
 
     Message.TAG = "Message";
 
@@ -11,14 +17,8 @@ define(function() {
         VIEW: 2
     };
 
-    /**
-     * ui element event bindings in order of appearance
-     * @param {number} page
-     */
-    Message.prototype.bindUIEvents = function(page) {
-        console.log("%s: %s- page=%d", Message.TAG, "bindUIEvents", page);
-
-        this.page = page;
+    Message.prototype.bindUIEvents = function() {
+        console.log("%s: %s", Message.TAG, "bindUIEvents");
 
         switch (this.page) {
             case Message.Page.NEW:

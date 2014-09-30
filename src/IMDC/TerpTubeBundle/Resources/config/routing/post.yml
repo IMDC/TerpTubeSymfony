@@ -14,7 +14,7 @@
 
 imdc_post_reply:
   pattern: /{pid}/reply
-  defaults: { _controller: IMDCTerpTubeBundle:Post:reply }
+  defaults: { _controller: IMDCTerpTubeBundle:Post:new, threadId: null }
   requirements:
     pid: \d+
   options:

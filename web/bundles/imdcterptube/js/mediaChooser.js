@@ -11,17 +11,17 @@ function MediaChooser(options) {
 	
 	this.media = null;
 	
-	this.bind__previewVideoForwardFunctionCut = this._previewVideoForwardFunctionCut.bind(this);
+	this.bind__forwardFunctionCut = this._forwardFunctionCut.bind(this);
 	this.bind__previewVideoForwardFunctionDone = this._previewVideoForwardFunctionDone.bind(this);
 	this.bind__previewVideoForwardFunctionDoneAndPost = this._previewVideoForwardFunctionDoneAndPost.bind(this);
-	this.bind__previewVideoBackFunction = this._previewVideoBackFunction.bind(this);
+	this.bind__backFunction = this._backFunction.bind(this);
 }
 
 MediaChooser.extend(Media);
 
 MediaChooser.TAG = "MediaChooser";
 
-MediaChooser.TYPE_ALL = 0;
+MediaChooser.TYPE_SELECT = 0;
 MediaChooser.TYPE_UPLOAD_AUDIO = 1;
 MediaChooser.TYPE_UPLOAD_IMAGE = 2;
 MediaChooser.TYPE_UPLOAD_OTHER = 3;
@@ -136,7 +136,7 @@ MediaChooser._dialogTitleForType = function(type) {
 	console.log("%s: %s", MediaChooser.TAG, "_dialogTitleForType");
 	
 	switch (type) {
-	case MediaChooser.TYPE_ALL:
+	case MediaChooser.TYPE_SELECT:
 		return MediaChooser.DIALOG_TITLE_SELECT;
 	case MediaChooser.TYPE_RECORD_VIDEO:
 		return MediaChooser.DIALOG_RECORD_VIDEO;
@@ -163,10 +163,10 @@ MediaChooser._cleanFileNameNoExt = function(fileName) {
 MediaChooser.prototype.chooseFile = function(options) {
 	console.log("%s: %s", MediaChooser.TAG, "chooseFile");
 	
-	var type = (typeof options.type === "undefined") ? MediaChooser.TYPE_ALL : options.type;
+	var type = (typeof options.type === "undefined") ? MediaChooser.TYPE_SELECT : options.type;
 	
 	if (this.isPopUp) {
-		this._popUp(
+		this._showPopupDialog(
 				type,
 				function() {
 					this._loadChooserPage(type, options.data);
@@ -208,7 +208,7 @@ MediaChooser.prototype.previewMedia = function(options) {
 	
 	this.recording = options.recording;
 	if (this.isPopUp && !this.element.dialog("isOpen")) {
-		this._popUp(
+		this._showPopupDialog(
 				options.type,
 				function() {
 					this._loadMediaPage(options.mediaUrl, options.mediaId);
@@ -265,8 +265,8 @@ MediaChooser.prototype.loadNextPage = function(options) {
 	$.ajax(request);
 };
 
-MediaChooser.prototype._popUp = function (type, onOpen) {
-	console.log("%s: %s", MediaChooser.TAG, "_popUp");
+MediaChooser.prototype._showPopupDialog = function (type, onOpen) {
+	console.log("%s: %s", MediaChooser.TAG, "_showPopupDialog");
 	
 	this.element.dialog({
 		autoOpen: false,
@@ -276,18 +276,18 @@ MediaChooser.prototype._popUp = function (type, onOpen) {
 		closeOnEscape: true,
 		dialogClass: "popup-dialog",
 		open: (function(event, ui) {
-			console.log("%s: %s: %s", MediaChooser.TAG, "_popUp", "open");
+			console.log("%s: %s: %s", MediaChooser.TAG, "_showPopupDialog", "open");
 			
 			// $(".ui-dialog-titlebar-close", this.parentNode).hide();
 			onOpen.call(this);
 		}).bind(this),
 		create: function(event, ui) {
-			console.log("%s: %s: %s", MediaChooser.TAG, "_popUp", "create");
+			console.log("%s: %s: %s", MediaChooser.TAG, "_showPopupDialog", "create");
 			
 			//$(event.target).parent().css('position', 'relative'); 
 		},
 		close: (function(event, ui) {
-			console.log("%s: %s: %s", MediaChooser.TAG, "_popUp", "close");
+			console.log("%s: %s: %s", MediaChooser.TAG, "_showPopupDialog", "close");
 			
 			// $(".ui-dialog-titlebar-close", this.parentNode).hide();
 			this.element.html("");
@@ -308,19 +308,19 @@ MediaChooser.prototype._popUp = function (type, onOpen) {
 MediaChooser.prototype.previewVideo = function() {
 	console.log("%s: %s", MediaChooser.TAG, "previewVideo");
 	var forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>"];
-	var forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone];
+	var forwardFunctions = [this.bind__forwardFunctionCut, this.bind__previewVideoForwardFunctionDone];
 	console.log("isPost: %s postID: %s", this.isPost, this.postId);
 	if (this.isPost || this.isNewPost)
 	{
 		forwardButtons = ["<button class='cutButton'></button>", "<button class='doneButton'></button>", "<button class='doneAndPostButton'></button>"];
-		forwardFunctions = [this.bind__previewVideoForwardFunctionCut, this.bind__previewVideoForwardFunctionDone, this.bind__previewVideoForwardFunctionDoneAndPost];
+		forwardFunctions = [this.bind__forwardFunctionCut, this.bind__previewVideoForwardFunctionDone, this.bind__previewVideoForwardFunctionDoneAndPost];
 	}
 	var backButtons;
 	var backFunctions;
 	if (typeof this.recording != 'undefined' && this.recording)
     {
      	backButtons = ["<button class='backButton'></button>"]
-     	backFunctions = [this.bind__previewVideoBackFunction]
+     	backFunctions = [this.bind__backFunction]
  	}
 	this.player = new Player($("#" + this.media.id), {
 		areaSelectionEnabled: true,
@@ -335,8 +335,8 @@ MediaChooser.prototype.previewVideo = function() {
 	this.player.createControls();
 };
 
-MediaChooser.prototype._previewVideoBackFunction = function(data) {
-    console.log("%s: %s", MediaChooser.TAG, "_previewVideoBackFunction");
+MediaChooser.prototype._backFunction = function(data) {
+    console.log("%s: %s", MediaChooser.TAG, "_backFunction");
 
     // delete the current media!
     var mediaManager = new MediaManager();
@@ -348,8 +348,8 @@ MediaChooser.prototype._previewVideoBackFunction = function(data) {
     this._loadChooserPage(MediaChooser.TYPE_RECORD_VIDEO);
 };
 
-MediaChooser.prototype._previewVideoForwardFunctionCut = function(data) {
-	console.log("%s: %s", MediaChooser.TAG, "_previewVideoForwardFunctionCut");
+MediaChooser.prototype._forwardFunctionCut = function(data) {
+	console.log("%s: %s", MediaChooser.TAG, "_forwardFunctionCut");
 	
 	// console.log(recorderConfiguration);
 	// var fn = window[recorderConfiguration.forwardFunction]||null;

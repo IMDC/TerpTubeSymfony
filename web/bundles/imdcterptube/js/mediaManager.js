@@ -11,7 +11,7 @@ function MediaManager()
  * Gateway function to all media choosing functions
  * 
  * @param type -
- *            the type of media to choose, defaults to MediaChooser.TYPE_ALL
+ *            the type of media to choose, defaults to MediaChooser.TYPE_SELECT
  */
 MediaManager.prototype.deleteMedia = function(mediaID, confirmationMessage)
 {

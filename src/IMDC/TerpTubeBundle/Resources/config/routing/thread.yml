@@ -22,7 +22,7 @@ imdc_thread_new_under_forum:
 
 imdc_thread_view:
   pattern: /{threadid}
-  defaults: { _controller: IMDCTerpTubeBundle:Thread:viewThread }
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:view }
   requirements:
     threadid: \d+
 
@@ -37,3 +37,11 @@ imdc_thread_delete:
   defaults: { _controller: IMDCTerpTubeBundle:Thread:deleteThread }
   requirements:
     threadid: \d+
+
+imdc_thread_new_post:
+  pattern: /{threadId}/reply
+  defaults: { _controller: IMDCTerpTubeBundle:Post:new, pid: null }
+  requirements:
+    threadId: \d+
+  options:
+    expose: true

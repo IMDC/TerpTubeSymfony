@@ -26,7 +26,7 @@ use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Permissions;
 use IMDC\TerpTubeBundle\Entity\ForumRepository;
-use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
+use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 
 /**
  * Controller for all Forum object related actions such as new, edit, delete
@@ -136,7 +136,7 @@ class ForumController extends Controller
         //return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig', array(
         return $this->render('IMDCTerpTubeBundle:_Forum:new.html.twig', array(
             'form' => $form->createView(),
-            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
 	
@@ -268,7 +268,7 @@ class ForumController extends Controller
         return $this->render('IMDCTerpTubeBundle:_Forum:edit.html.twig', array(
             'form' => $form->createView(),
             'forum' => $forum,
-            'uploadForms' => MediaChooserGatewayController::getUploadForms($this)
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
 	

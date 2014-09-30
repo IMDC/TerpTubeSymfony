@@ -18,10 +18,9 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                var message = new $tt.Controller.Message();
                 var page = $tt.Controller.Message.Page.{% if isReply %}REPLY{% else %}NEW{% endif %};
-
-                message.bindUIEvents(page);
+                var message = new $tt.Controller.Message({page: page});
+                message.bindUIEvents();
             });
         });
     </script>

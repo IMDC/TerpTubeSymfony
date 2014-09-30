@@ -21,7 +21,7 @@ class VideoMediaFormType extends AbstractMediaFormType
 
 	public function getName()
 	{
-		return 'imdc_terptube_video_media';
+		return 'MediaForm_video';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

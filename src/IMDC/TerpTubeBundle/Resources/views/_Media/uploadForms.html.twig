@@ -15,7 +15,7 @@ _Thread:view.html.twig
     {% set isPost = false %}
 {% endif %}
 
-<div id="uploadForms{% if isPost %}Post{{ postId }}{% endif %}" style="display: none;">
+<div style="display: none;">
     {% for form in uploadForms %}
         {{ form_start(form) }}
         {{ form_widget(form) }}

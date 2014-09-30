@@ -1,4 +1,6 @@
 define(function(require) {
+    "use strict";
+
     var TerpTube = {};
 
     TerpTube.Controller = {};
@@ -15,9 +17,11 @@ define(function(require) {
     TerpTube.Core.MediaManager = require('core/mediaManager');
     TerpTube.Core.Helper = require('core/helper');
 
+    TerpTube._instances = new Array();
+
     window.TerpTube = TerpTube;
 
-    $tt = window.TerpTube;
+    window.$tt = window.TerpTube;
 
     // make all elements with class 'autosize' expand to fit its contents
     $(".autosize").autosize();

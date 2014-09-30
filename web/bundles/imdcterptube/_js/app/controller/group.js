@@ -1,12 +1,17 @@
 define(['core/mediaChooser'], function(MediaChooser) {
-    var Group = function() {
-        this.page = null;
-        this.mediaChooser = null;
-        this.forwardButton = "<button class='forwardButton'></button>";
+    "use strict";
 
+    var Group = function(options) {
+        console.log("%s: %s- options=%o", Group.TAG, "constructor", options);
+
+        this.page = options.page;
+        this.mediaChooser = null;
+
+        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
-        this.bind_forwardFunction = this.forwardFunction.bind(this);
+
+        $tt._instances.push(this);
     };
 
     Group.TAG = "Group";
@@ -17,28 +22,23 @@ define(['core/mediaChooser'], function(MediaChooser) {
         ADD_MEMBERS: 2
     };
 
-    /**
-     * MediaChooser params for each related page that uses MediaChooser
-     */
-    Group.mediaChooserOptions = function(page) {
-        switch (page) {
-            case Group.Page.NEW:
-            case Group.Page.EDIT:
-                return {
-                    element: $("#files"),
-                    isPopUp: true
-                };
-        }
+    // this must be the same name defined in {bundle}/Form/Type/UserGroupType
+    Group.FORM_NAME = "UserGroupForm_userGroupForum";
+
+    Group.prototype.getContainer = function() {
+        return $("body");
     };
 
-    /**
-     * ui element event bindings in order of appearance
-     * @param {number} page
-     */
-    Group.prototype.bindUIEvents = function(page) {
-        console.log("%s: %s- page=%d", Group.TAG, "bindUIEvents", page);
+    Group.prototype.getForm = function() {
+        return this.getContainer().find("form[name=" + Group.FORM_NAME + "]");
+    };
 
-        this.page = page;
+    Group.prototype.getFormField = function(fieldName) {
+        return this.getContainer().find("#" + Group.FORM_NAME + "_" + fieldName);
+    };
+
+    Group.prototype.bindUIEvents = function() {
+        console.log("%s: %s", Group.TAG, "bindUIEvents");
 
         switch (this.page) {
             case Group.Page.NEW:
@@ -54,9 +54,11 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Group.prototype._bindUIEventsNewEdit = function() {
         console.log("%s: %s", Group.TAG, "_bindUIEventsNewEdit");
 
-        this.mediaChooser = new MediaChooser(Group.mediaChooserOptions(Group.Page.NEW));
+        this.mediaChooser = new MediaChooser();
+        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.setContainer(this.getContainer());
         this.mediaChooser.bindUIEvents();
     };
 
@@ -106,48 +108,27 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });
     };
 
-    Group.prototype._onSuccess = function(e) {
-        switch (this.page) {
-            case Group.Page.NEW:
-            case Group.Page.EDIT:
-                $("#UserGroupForm_userGroupForum_mediatextarea").val(e.media.id);
+    Group.prototype._onPageLoaded = function(e) {
+        console.log("%s: %s", Group.TAG, "_onPageLoaded");
+
+        switch (this.mediaChooser.page) {
+            case MediaChooser.Page.RECORD_VIDEO:
+                this.mediaChooser.createVideoRecorder();
+                break;
+            case MediaChooser.Page.PREVIEW:
+                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+                    this.mediaChooser.createVideoPlayer();
+
                 break;
         }
+    };
+
+    Group.prototype._onSuccess = function(e) {
+        this.getFormField("mediatextarea").val(e.media.id);
     };
 
     Group.prototype._onReset = function(e) {
-        switch (this.page) {
-            case Group.Page.NEW:
-            case Group.Page.EDIT:
-                $("#UserGroupForm_userGroupForum_mediatextarea").val("");
-                break;
-        }
-    };
-
-    /**
-     * @param {object} videoElement
-     */
-    Group.prototype.createVideoRecorder = function(videoElement) {
-        console.log("%s: %s", Group.TAG, "createVideoRecorder");
-
-        this.mediaChooser.createVideoRecorder({
-            videoElement: videoElement,
-            forwardButtons: [this.forwardButton],
-            forwardFunctions: [this.bind_forwardFunction]
-        });
-    };
-
-    Group.prototype.forwardFunction = function() {
-        console.log("%s: %s", Group.TAG, "forwardFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser.previewMedia({
-            type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.mediaChooser.media.id }),
-            mediaId: this.mediaChooser.media.id,
-            recording: true
-        });
+        this.getFormField("mediatextarea").val("");
     };
 
     return Group;

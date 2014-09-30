@@ -1,18 +1,23 @@
 define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaManager) {
-    var MyFiles = function() {
-        this.page = null;
+    "use strict";
+
+    var MyFiles = function(options) {
+        console.log("%s: %s- options=%o", MyFiles.TAG, "constructor", options);
+
+        this.page = options.page;
         this.mediaChooser = null;
         this.mediaManager = new MediaManager();
-        this.forwardButton = "<button class='forwardButton'></button>";
 
         this.bind__onPreviewButtonClick = this.onPreviewButtonClick.bind(this);
         this.bind__onDeleteButtonClick = this.onDeleteButtonClick.bind(this);
+        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onDialogClose = this._onDialogClose.bind(this);
-        this.bind_forwardFunction = this.forwardFunction.bind(this);
 
         dust.compileFn($("#mediaRow").html(), "mediaRow");
-    }
+
+        $tt._instances.push(this);
+    };
 
     MyFiles.TAG = "MyFiles";
 
@@ -21,31 +26,12 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
         PREVIEW: 1
     };
 
-    /**
-     * MediaChooser options for each related page that uses MediaChooser
-     * @param {number} page
-     */
-    MyFiles.mediaChooserOptions = function(page) {
-        switch (page) {
-            case MyFiles.Page.INDEX:
-                return {
-                    element: $("#preview"),
-                    isPopUp: true,
-                    isFileSelection: false
-                };
-            case MyFiles.Page.PREVIEW:
-                return {};
-        }
+    MyFiles.prototype.getContainer = function() {
+        return $("body");
     };
 
-    /**
-     * ui element event bindings in order of appearance
-     * @param {number} page
-     */
-    MyFiles.prototype.bindUIEvents = function(page) {
-        console.log("%s: %s- page=%d", MyFiles.TAG, "bindUIEvents", page);
-
-        this.page = page;
+    MyFiles.prototype.bindUIEvents = function() {
+        console.log("%s: %s", MyFiles.TAG, "bindUIEvents");
 
         switch (this.page) {
             case MyFiles.Page.INDEX:
@@ -59,9 +45,11 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
     MyFiles.prototype._bindUIEventsIndex = function() {
         console.log("%s: %s", MyFiles.TAG, "_bindUIEventsIndex");
 
-        this.mediaChooser = new MediaChooser(MyFiles.mediaChooserOptions(MyFiles.Page.INDEX));
+        this.mediaChooser = new MediaChooser({isFileSelection: false});
+        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.DIALOG_CLOSE, this.bind__onDialogClose);
+        this.mediaChooser.setContainer(this.getContainer());
         this.mediaChooser.bindUIEvents();
 
         $(".preview-button").on("click", this.bind__onPreviewButtonClick);
@@ -74,12 +62,9 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
         if ($(e.target).hasClass("disabled")) {
             return false;
         }
-        $('#preview').html('');
         this.page = MyFiles.Page.PREVIEW;
-        this.mediaChooser.previewMedia({
-            mediaUrl: $(e.target).data("url"),
-            mediaId: $(e.target).data("val")
-        });
+        this.mediaChooser.setMedia({id: $(e.target).data("val")});
+        this.mediaChooser.previewMedia();
     };
 
     MyFiles.prototype.onDeleteButtonClick = function(e) {
@@ -129,6 +114,21 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
         });*/
     };
 
+    MyFiles.prototype._onPageLoaded = function(e) {
+        console.log("%s: %s", MyFiles.TAG, "_onPageLoaded");
+
+        switch (this.mediaChooser.page) {
+            case MediaChooser.Page.RECORD_VIDEO:
+                this.mediaChooser.createVideoRecorder();
+                break;
+            case MediaChooser.Page.PREVIEW:
+                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+                    this.mediaChooser.createVideoPlayer();
+
+                break;
+        }
+    };
+
     MyFiles.prototype._onSuccess = function(e) {
         switch (this.page) {
             case MyFiles.Page.INDEX:
@@ -149,32 +149,6 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
                 this._updateMediaRow(e.media);
                 break;
         }
-    };
-
-    /**
-     * @param {object} videoElement
-     */
-    MyFiles.prototype.createVideoRecorder = function(videoElement) {
-        console.log("%s: %s", MyFiles.TAG, "createVideoRecorder");
-
-        this.mediaChooser.createVideoRecorder({
-            videoElement: videoElement,
-            forwardButtons: [this.forwardButton],
-            forwardFunctions: [this.bind_forwardFunction]
-        });
-    };
-
-    MyFiles.prototype.forwardFunction = function() {
-        console.log("%s: %s", MyFiles.TAG, "forwardFunction");
-
-        this.mediaChooser.destroyVideoRecorder();
-
-        this.mediaChooser.previewMedia({
-            type: MediaChooser.TYPE_RECORD_VIDEO,
-            mediaUrl: Routing.generate('imdc_myfiles_preview', { mediaId: this.mediaChooser.media.id }),
-            mediaId: this.mediaChooser.media.id,
-            recording: true
-        });
     };
 
     MyFiles.prototype._addMediaRow = function(media) { //FIXME pagination makes this impractical

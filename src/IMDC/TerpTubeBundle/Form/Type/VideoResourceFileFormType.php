@@ -23,7 +23,7 @@ class VideoResourceFileFormType extends AbstractType
 
 	public function getName()
 	{
-		return 'imdc_terptube_video_resource_file';
+		return 'MediaForm_video_resource_file';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

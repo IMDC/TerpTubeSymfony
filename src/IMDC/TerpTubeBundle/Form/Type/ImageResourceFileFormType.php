@@ -24,7 +24,7 @@ class ImageResourceFileFormType extends AbstractType
 
 	public function getName()
 	{
-		return 'imdc_terptube_image_resource_file';
+		return 'MediaForm_image_resource_file';
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)

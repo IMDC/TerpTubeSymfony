@@ -1,6 +1,12 @@
 define(function() {
-    var Profile = function() {
-        this.page = null;
+    "use strict";
+
+    var Profile = function(options) {
+        console.log("%s: %s- options=%o", Profile.TAG, "constructor", options);
+
+        this.page = options.page;
+
+        $tt._instances.push(this);
     }
 
     Profile.TAG = "Profile";
@@ -9,16 +15,10 @@ define(function() {
         EDIT: 0
     };
 
-    /**
-     * ui element event bindings in order of appearance
-     * @param {number} page
-     */
-    Profile.prototype.bindUIEvents = function(page) {
+    Profile.prototype.bindUIEvents = function() {
         console.log("%s: %s", Profile.TAG, "bindUIEvents");
 
-        this.page = page;
-
-        switch (page) {
+        switch (this.page) {
             case Profile.Page.EDIT:
                 this._bindUIEventsEdit();
                 break;
@@ -52,7 +52,7 @@ define(function() {
         deleteButton = $("<button class=\"btn btn-danger btn-sm tt-delete-language\"></a>").html(deleteLanguageButtonText);
         deleteButton.click(function(e){
             e.preventDefault();
-            Profile.deleteLanguage(this);
+            Profile.deleteLanguage(element);
         });
 
         // replace the "__name__" used in the id and name of the prototype

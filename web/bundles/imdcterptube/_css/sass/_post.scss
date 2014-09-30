@@ -1,3 +1,4 @@
+/* used as a selector */
 .tt-post-container {
   border: 1px solid #ddd;
   border-collapse: collapse;
@@ -14,6 +15,18 @@
 
 .tt-post-container-inner {
   margin-bottom: 15px;
+}
+
+.tt-post-reply-container {
+  @extend .tt-post-container;
+  /* reset all */
+  border: initial;
+  border-collapse: initial;
+  border-radius: initial;
+  padding-top: initial;
+  padding-bottom: initial;
+  margin: initial;
+  background-color: initial;
 }
 
 .tt-post-reply-container-inner {

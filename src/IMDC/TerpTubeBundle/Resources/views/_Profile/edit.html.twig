@@ -10,8 +10,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                var profile = new $tt.Controller.Profile();
-                profile.bindUIEvents($tt.Controller.Profile.Page.EDIT);
+                var profile = new $tt.Controller.Profile({page: $tt.Controller.Profile.Page.EDIT});
+                profile.bindUIEvents();
             });
         });
     </script>

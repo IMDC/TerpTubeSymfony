@@ -41,12 +41,9 @@ class ThreadFormType extends AbstractType
 	                                                'required'=> false, 
 	                                                'attr' => array('data-mid' => 0)));
 	                                                */
-	    $builder->add('mediatextarea', 'text', array('required' => false, 
-	                                                'mapped' => false,
-	                                                'read_only' => true,
-	                                                'label' => 'File',
-                                                    'attr' => array('cols' => 1,
-                                                                    'rows' => 1)));
+        $builder->add('mediatextarea', 'hidden', array(
+            'mapped' => false
+        ));
 	    /*
 	    $builder->add('mediaIncluded', 'entity', array(
 	            'class' => 'IMDCTerpTubeBundle:Media',

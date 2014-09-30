@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use IMDC\TerpTubeBundle\Form\Type\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use IMDC\TerpTubeBundle\Form\Type\PostEditFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostReplyToPostFormType;
 use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
-use IMDC\TerpTubeBundle\Controller\MediaChooserGatewayController;
+use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
@@ -281,7 +282,7 @@ class PostController extends Controller
 		return new Response($return, 200, array('Content-Type' => 'application/json'));
 	}
 
-    public function replyAction(Request $request, $pid)
+    public function newAction(Request $request, $threadId, $pid)
     {
         // if not ajax, throw an exception
         if (!$request->isXmlHttpRequest()) {
@@ -294,28 +295,37 @@ class PostController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
-        if (!$postParent) {
-            throw new Exception('post not found');
+        $thread = null;
+        $postParent = null;
+        if ($threadId) {
+            $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadId);
+        } elseif ($pid) {
+            $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
         }
 
+        if (!$thread && !$postParent) {
+            throw new Exception('thread/post not found');
+        }
+
+        //TODO permissions
+
+        $isPostReply = !$thread;
         $post = new Post();
-        $postReplyForm = $this->createForm(
-            new PostReplyToPostFormType(),
-            $post);
-        $postReplyForm->handleRequest($request);
+        $postForm = $this->createForm(new PostType(), $post, array(
+                'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false
+            ));
+        $postForm->handleRequest($request);
 
-        if ($postReplyForm->isValid()) {
+        if ($postForm->isValid()) {
             $user = $this->getUser();
-
+            $currentDateTime = new \DateTime('now');
             $post->setAuthor($user);
-            $post->setCreated(new \DateTime('now'));
-            $post->setParentPost($postParent);
-            $post->setParentThread($postParent->getParentThread());
+            $post->setCreated($currentDateTime);
+            $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
 
-            if (!$postReplyForm->get('mediatextarea')->isEmpty()) {
+            if (!$postForm->get('mediatextarea')->isEmpty()) {
                 $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
-                    ->find($postReplyForm->get('mediatextarea')->getData());
+                    ->find($postForm->get('mediatextarea')->getData());
                 if (!$mediaFile) {
                     throw new Exception('media not found');
                 }
@@ -328,10 +338,33 @@ class PostController extends Controller
                     $post->addAttachedFile($mediaFile);
             }
 
-            $postParent->addReplies($post);
+            if (!$isPostReply) {
+                $post->setParentThread($thread);
+            } else {
+                $post->setParentPost($postParent);
+                $post->setParentThread($postParent->getParentThread());
+            }
 
             $em->persist($post);
-            $em->persist($postParent);
+            $em->flush();
+
+            if ($isPostReply)
+                $thread = $postParent->getParentThread();
+
+            $thread->setLastPostAt($currentDateTime);
+            $thread->setLastPostID($post->getId());
+
+            $forum = $thread->getParentForum();
+            $forum->setLastActivity($currentDateTime);
+
+            $user->addPost($post);
+
+            $em->persist($post);
+            $em->persist($thread);
+            if ($postParent)
+                $em->persist($postParent);
+            $em->persist($forum);
+            $em->persist($user);
             $em->flush();
 
             $this->get('session')->getFlashBag()->add(
@@ -341,21 +374,21 @@ class PostController extends Controller
             $content = array(
                 'wasReplied' => true,
                 'redirectUrl' => $this->generateUrl('imdc_thread_view', array(
-                        'threadid' => $postParent->getParentThread()->getId()))
+                        'threadid' => $thread->getId()))
             );
         } else {
             $content = array(
                 'wasReplied' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.reply.html.twig', array(
-                        'form' => $postReplyForm->createView(),
-                        'post' => $postParent,
-                        'uploadForms' => MediaChooserGatewayController::getUploadForms($this)))
+                        'form' => $postForm->createView(),
+                        'post' => !$isPostReply ? $post : $postParent,
+                        'uploadForms' => MyFilesGatewayController::getUploadForms($this)))
             );
         }
 
         return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
     }
-	
+
 	public function editAction(Request $request, $pid)
 	{
         // if not ajax, throw an error
@@ -374,26 +407,25 @@ class PostController extends Controller
             throw new Exception('post not found');
         }
 
+        //TODO permissions
         $user = $this->getUser();
-		
 		if (!$post->getAuthor() == $user) {
             throw new AccessDeniedException();
         }
 
-        $postEditForm = $this->createForm(
-            new PostEditFormType(),
-            $post,
-            array('user' => $user));
-        $postEditForm->handleRequest($request);
+        $postForm = $this->createForm(new PostType(), $post, array(
+            'canTemporal' => !$post->getParentPost() ? ($post->getParentThread()->getType() == 1) : false
+        ));
+        $postForm->handleRequest($request);
 
-        if ($postEditForm->isValid()) {
+        if ($postForm->isValid()) {
             $post->setEditedAt(new \DateTime('now'));
             $post->setEditedBy($user);
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
 
-            if (!$postEditForm->get('mediatextarea')->isEmpty()) {
+            if (!$postForm->get('mediatextarea')->isEmpty()) {
                 $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
-                    ->find($postEditForm->get('mediatextarea')->getData());
+                    ->find($postForm->get('mediatextarea')->getData());
                 if (!$mediaFile) {
                     throw new Exception('media not found');
                 }
@@ -406,22 +438,28 @@ class PostController extends Controller
                     $post->addAttachedFile($mediaFile);
             }
 
+            $forum = $post->getParentThread()->getParentForum();
+            $forum->setLastActivity(new \DateTime('now'));
+
             $em->persist($post);
+            $em->persist($forum);
             $em->flush();
 
             $content = array(
                 'wasEdited' => true,
+                'startTime' => $post->getStartTime(),
+                'endTime' => $post->getEndTime(),
+                'isTemporal' => $post->getIsTemporal(),
                 'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.post.html.twig', array(
-                        'post' => $post,
-                        'isAjaxRequest' => true))
+                        'post' => $post))
             );
         } else {
             $content = array(
                 'wasEdited' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:_Post:ajax.edit.html.twig', array(
-                        'form' => $postEditForm->createView(),
+                        'form' => $postForm->createView(),
                         'post' => $post,
-                        'uploadForms' => MediaChooserGatewayController::getUploadForms($this)))
+                        'uploadForms' => MyFilesGatewayController::getUploadForms($this)))
             );
         }
 

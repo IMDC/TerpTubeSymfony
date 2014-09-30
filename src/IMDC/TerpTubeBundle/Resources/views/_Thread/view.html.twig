@@ -8,11 +8,11 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                var thread = new $tt.Controller.Thread();
-                //FIXME context
-                context = thread;
-
-                thread.bindUIEvents($tt.Controller.Thread.Page.VIEW);
+                var thread = new $tt.Controller.Thread({
+                    page: $tt.Controller.Thread.Page.VIEW,
+                    threadId: {{ thread.id }}
+                });
+                thread.bindUIEvents();
 
                 {% if thread.mediaIncluded|length != 0 %}
                     thread.createPlayer({
@@ -112,23 +112,9 @@
 					</div>
 				</div>
                 <!-- post reply form -->
-                <div class="row" id="postReplyForm">
-                    <div class="col-md-12">
-                        {{ form_start(form) }}
-                        {{ form_errors(form) }}
-                        {% include 'IMDCTerpTubeBundle:_Media:chooserForm.html.twig' %}
-                        {% if form.startTime is defined %}
-                            <ul class="list-unstyled list-inline hidden">
-                                <li>{{ form_label(form.startTime) }}</li><li>{{ form_widget(form.startTime) }}</li>
-                                <li>{{ form_label(form.endTime) }}</li><li>{{ form_widget(form.endTime) }}</li>
-                            </ul>
-                        {% endif %}
-                        {{ form_row(form.content) }}
-                        {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
-                        <button class="btn btn-success" id="submitReply"><i class="fa fa-check"></i> Reply</button>
-                        <button class="btn btn-danger" id="resetReply"><i class="fa fa-times"></i> Reset</button>
-                        {{ form_end(form) }}
-                    </div>
+                {% set post = {'id': -1} %}
+                <div class="row post-container-reply" data-pid="{{ post.id }}">
+                    {% include 'IMDCTerpTubeBundle:_Post:ajax.reply.html.twig' with {'post': post} %}
                 </div>
 				<div class="row">
 					<div class="col-md-12">
@@ -143,9 +129,9 @@
 				<div class="row">
 					<div class="col-md-12">
 						<ul class="list-unstyled">
-							<li><span class="tt-date" title="{{ thread.creationDate|date('o-m-d H:i') }}">Created {{ time_diff(thread.creationDate)}}</span></li>
-							{% if thread.editedBy is not null %}
-								<li><span class="tt-date" title="{{ thread.editedAt|date('o-m-d H:i') }}">Edited by {{ thread.editedBy }} {{ time_diff(thread.editedAt) }}</span></li>
+							<li><span class="tt-date" title="{{ thread.creationDate|date('Y-m-d g:i a') }}">Created {{ time_diff(thread.creationDate)}}</span></li>
+							{% if thread.editedBy %}
+								<li><span class="tt-date" title="{{ thread.editedAt|date('Y-m-d g:i a') }}">Edited by {{ thread.editedBy }} {{ time_diff(thread.editedAt) }}</span></li>
 							{% endif %}
 						</ul>
 					</div>
@@ -161,8 +147,8 @@
                 <!-- thread replies -->
 				<div class="row">
 					<div class="col-md-12">
-                        {% if threadposts|length > 0 %}
-                            {% for post in threadposts %}
+                        {% if thread.posts|length > 0 %}
+                            {% for post in thread.posts if not post.parentPost %}
                                 {% include 'IMDCTerpTubeBundle:_Post:post.html.twig' %}
                             {% endfor %}
                         {% else %}
@@ -202,6 +188,4 @@
             </div>
         </div>
     </div>
-
-    {% include 'IMDCTerpTubeBundle:_Media:uploadForms.html.twig' %}
 {% endblock outside_body %}
