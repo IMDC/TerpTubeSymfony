@@ -7,6 +7,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.page = options.page;
         this.mediaChooser = null;
 
+        this.bind__onClickUserSelect = this._onClickUserSelect.bind(this);
+        this.bind__submitSelectedUsersForm = this._submitSelectedUsersForm.bind(this);
         this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -19,7 +21,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Group.Page = {
         NEW: 0,
         EDIT: 1,
-        ADD_MEMBERS: 2
+        ADD_MEMBERS: 2,
+        VIEW: 3
+    };
+
+    Group.Binder = {
+        TOGGLE_MEMBER_SELECT: ".group-toggle-member-select",
+        USER_CONTAINER_SELECT: ".user-container-select", //TODO move to user controller
+        USER_SELECT: ".user-select", //TODO move to user controller
+        USER_SELECTED: ".user-selected" //TODO move to user controller
     };
 
     // this must be the same name defined in {bundle}/Form/Type/UserGroupType
@@ -48,6 +58,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
             case Group.Page.ADD_MEMBERS:
                 this._bindUIEventsAddMembers();
                 break;
+            case Group.Page.VIEW:
+                this._bindUIEventsView();
+                break;
         }
     };
 
@@ -65,47 +78,79 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Group.prototype._bindUIEventsAddMembers = function() {
         console.log("%s: %s", Group.TAG, "_bindUIEventsAddMembers");
 
-        $(".group-member").on("click", function(e) {
-            var elem = $(e.target);
-            var isSelected = elem.html() == elem.data("selected");
+        $(Group.Binder.USER_SELECT).on("click", this.bind__onClickUserSelect);
 
-            elem.html(isSelected
-                    ? elem.data("select")
-                    : elem.data("selected")
-            );
-
-            elem.removeClass(isSelected ? "btn-success group-member-selected" : "btn-default");
-            elem.addClass(isSelected ? "btn-default" : "btn-success group-member-selected");
-        });
-
-        $(".group-member").each(function(key, element) {
+        $(Group.Binder.USER_SELECT).each(function(key, element) {
             $(element).html($(element).data("select"));
         });
 
-        $("#addSelected").on("click", function(e) {
+        $("#addSelected").on("click", this.bind__submitSelectedUsersForm);
+    };
+
+    Group.prototype._bindUIEventsView = function() {
+        console.log("%s: %s", Group.TAG, "_bindUIEventsView");
+
+        $(Group.Binder.USER_SELECT).on("click", this.bind__onClickUserSelect);
+
+        $(Group.Binder.USER_SELECT).each(function(key, element) {
+            $(element).html($(element).data("select"));
+        });
+
+        $(Group.Binder.TOGGLE_MEMBER_SELECT).on("click", function(e) {
             e.preventDefault();
 
-            if ($(".group-member-selected").length == 0) {
-                alert("No members selected.");
-                return;
-            }
-
-            $(e.target).button("loading");
-
-            var userList = $("#addMembersForm .selected-users");
-            var userCount = 0;
-
-            userList.html("");
-            $(".group-member-selected").each(function(key, element) {
-                var newUser = userList.data("prototype");
-                newUser = newUser.replace(/__name__/g, userCount);
-                userList.append(newUser);
-                $("." + userCount + "-id").val($(element).data("uid"));
-                userCount++;
-            });
-
-            $("#addMembersForm form").submit();
+            $(Group.Binder.USER_CONTAINER_SELECT).toggle();
+            $("#deleteSelected").parent().toggleClass("disabled");
         });
+
+        $("#deleteSelected").on("click", this.bind__submitSelectedUsersForm);
+    };
+
+    Group.prototype._onClickUserSelect = function(e) {
+        if (e && e.preventDefault)
+            e.preventDefault();
+
+        var elem = $(e.target);
+        var isSelected = elem.html() == elem.data("selected");
+
+        elem.html(isSelected
+                ? elem.data("select")
+                : elem.data("selected")
+        );
+
+        elem.toggleClass("btn-default btn-success user-selected");
+    };
+
+    Group.prototype._submitSelectedUsersForm = function(e) {
+        if (e && e.preventDefault)
+            e.preventDefault();
+
+        if ($(e.target).parent().hasClass("disabled"))
+            return false;
+
+        if ($(Group.Binder.USER_SELECTED).length == 0) {
+            alert("No members selected.");
+            return true;
+        }
+
+        $(e.target).button("loading");
+        $(e.target).parent().toggleClass("disabled");
+
+        var userList = $("#selectedUsersForm .selected-users");
+        var userCount = 0;
+
+        userList.html("");
+        $(Group.Binder.USER_SELECTED).each(function(key, element) {
+            var newUser = userList.data("prototype");
+            newUser = newUser.replace(/__name__/g, userCount);
+            userList.append(newUser);
+            $("." + userCount + "-id").val($(element).data("uid"));
+            userCount++;
+        });
+
+        $("#selectedUsersForm form").submit();
+
+        return true;
     };
 
     Group.prototype._onPageLoaded = function(e) {

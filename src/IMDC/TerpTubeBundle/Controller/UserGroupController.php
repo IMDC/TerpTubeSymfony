@@ -1,6 +1,7 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr\Join;
 use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
@@ -54,14 +55,7 @@ class UserGroupController extends Controller
         ));
 	}
 
-	/**
-	 * View a specific usergroup
-	 * 
-	 * @param Request $request
-	 * @param integer $usergroupid
-	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-	 */
-	public function viewGroupAction(Request $request, $usergroupid)
+	public function viewAction(Request $request, $usergroupid)
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -69,12 +63,23 @@ class UserGroupController extends Controller
 	    }
 	    
 		$em = $this->getDoctrine()->getManager();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($usergroupid);
+        if (!$group) {
+            throw new Exception('group not found');
+        }
 
-        $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
+        $parameters = array(
+            'group' => $group
+        );
 
-        return $this->render('IMDCTerpTubeBundle:Group:view.html.twig', array(
-            'group' => $usergroup
-        ));
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('EDIT', $group) === true) {
+            $formBuilder = $this->getGenericIdFormBuilder();
+            $formBuilder->setAction($this->generateUrl('imdc_group_delete_members', array('groupId' => $usergroupid)));
+            $parameters['form'] = $formBuilder->getForm()->createView();
+        }
+
+        return $this->render('IMDCTerpTubeBundle:Group:view.html.twig', $parameters);
 	}
 
 	/**
@@ -293,14 +298,14 @@ class UserGroupController extends Controller
         ));
 	}
 
-    public function addMembersAction(Request $request, $usergroupid)
+    public function addMembersAction(Request $request, $groupId)
     {
         if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
         $em = $this->getDoctrine()->getManager();
-        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($usergroupid);
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
             throw new Exception('group not found');
         }
@@ -312,13 +317,7 @@ class UserGroupController extends Controller
 
         $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
 
-        $defaultData = array('users' => new ArrayCollection());
-        $form = $this->createFormBuilder($defaultData)
-            ->add('users', 'collection', array(
-                'type' => new IdType(),
-                'label' => false,
-                'allow_add' => true))
-            ->getForm();
+        $form = $this->getGenericIdFormBuilder()->getForm();
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -395,8 +394,8 @@ class UserGroupController extends Controller
             foreach ($receivedInvites as $receivedInvite) {
                 if ($receivedInvite->getType()->isGroup()
                     && !$receivedInvite->getIsAccepted() && !$receivedInvite->getIsDeclined() && !$receivedInvite->getIsCancelled()) {
-                    $group = InvitationController::getGroupFromInviteData($this, $receivedInvite);
-                    if ($group->getId() == $usergroupid) {
+                    $groupCheck = InvitationController::getGroupFromInviteData($this, $receivedInvite);
+                    if ($groupCheck && $groupCheck->getId() == $group->getId()) {
                         unset($nonMembers[$i]);
                         break; // stop at the first active invite. though more than one active invite should not be present
                     }
@@ -416,5 +415,66 @@ class UserGroupController extends Controller
             'nonMembers' => $nonMembers,
             'form' => $form->createView()
         ));
+    }
+
+    public function deleteMembersAction(Request $request, $groupId)
+    {
+        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+        if (!$group) {
+            throw new Exception('group not found');
+        }
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('EDIT', $group) === false) {
+            throw new AccessDeniedException();
+        }
+
+        $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
+
+        $form = $this->getGenericIdFormBuilder()->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $formUsers = $form->get('users')->getData();
+            $deletedMembers = 0;
+
+            foreach ($formUsers as $formUser) {
+                $member = $userRepo->find($formUser['id']);
+                if (!$member) {
+                    // user not found
+                    continue;
+                }
+
+                if ($group->isUserMemberOfGroup($member)) {
+                    $group->removeMember($member);
+                    $em->persist($group);
+                    $deletedMembers++;
+                }
+            }
+
+            $em->flush();
+
+            if ($deletedMembers > 0) {
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('info', sprintf('Deleted %d members.', $deletedMembers));
+            }
+        }
+
+        return $this->redirect($this->generateUrl('imdc_group_view', array('usergroupid' => $groupId)));
+    }
+
+    private function getGenericIdFormBuilder() {
+        $defaultData = array('users' => new ArrayCollection());
+        return $this->createFormBuilder($defaultData)
+            ->add('users', 'collection', array(
+                'type' => new IdType(),
+                'label' => false,
+                'allow_add' => true));
     }
 }

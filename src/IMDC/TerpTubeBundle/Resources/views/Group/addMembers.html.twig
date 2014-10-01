@@ -18,24 +18,28 @@
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
 {% block content %}
-    <div class="col-md-12">
+    <div class="col-md-offset-1 col-md-10">
         <div class="row">
-            <div class="col-md-12">
-                <p>
-                    {% if app.user == group.userFounder %}
-                        <a class="btn btn-default" href="{{ path('imdc_group_edit', {'usergroupid': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a>
-                        <a class="btn btn-default" href="{{ path('imdc_group_delete', {'usergroupid': group.id}) }}"><i class="fa fa-times"></i> Delete Group</a>
-                    {% endif %}
-                </p>
+            <div class="col-md-12 text-right">
+                {% if app.user == group.userFounder %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle group-action" data-toggle="dropdown" data-loading-text="Working...">Action <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ path('imdc_group_edit', {'usergroupid': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a></li>
+                            <li><a href="{{ path('imdc_group_delete', {'usergroupid': group.id}) }}"><i class="fa fa-times"></i> Delete Group</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
         </div>
         <div class="row">
-            <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-12">
                 <img class="img-responsive center-block" src="" />
             </div>
         </div>
+        <!-- group members -->
         <div class="row">
-            <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-12">
                 <hr class="tt-separator-top" />
                 {% if nonMembers|length > 0 %}
                     {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': nonMembers, 'isSelection': true} %}
@@ -53,7 +57,7 @@
 {% block outside_body %}
     {{ parent() }}
 
-    <div id="addMembersForm" style="display: none;">
+    <div id="selectedUsersForm" style="display: none;">
         {{ form_start(form) }}
         <div class="selected-users" data-prototype="{{ form_widget(form.users.vars.prototype)|e }}"></div>
         {{ form_end(form) }}
