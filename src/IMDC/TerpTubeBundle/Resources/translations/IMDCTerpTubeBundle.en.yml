@@ -82,11 +82,15 @@ resetting:
             the Team.
 
 nav:
+    terptube_home: "Terptube Home"
     my_files: "My Files"
     my_friends: "My Friends" 
     my_groups: "My Groups"
     my_interpretations: "My Interpretations"
     admin: "Admin Dashboard"
+    invitations: "Invitations"
+    inbox: "Inbox"
+    my_profile: "My Profile"
 # Global strings
 layout:
     logout: Logout
