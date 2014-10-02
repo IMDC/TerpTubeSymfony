@@ -1,10 +1,10 @@
 imdc_group_list:
   pattern: /
-  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:index }
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:list }
 
 imdc_group_new:
   pattern: /new
-  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:createNewUserGroup }
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:new }
 
 imdc_group_view:
   pattern: /{usergroupid}

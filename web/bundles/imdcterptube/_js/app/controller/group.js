@@ -72,7 +72,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
-        this.mediaChooser.bindUIEvents();
+        //this.mediaChooser.bindUIEvents();
     };
 
     Group.prototype._bindUIEventsAddMembers = function() {

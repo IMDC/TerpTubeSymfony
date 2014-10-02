@@ -7,7 +7,7 @@ imdc_thread_new_from_media:
     expose: true
 
 imdc_thread_new_under_forum:
-  pattern: /new/forums/{forumid}
+  pattern: /new/forum/{forumid}
   defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
   requirements:
     forumid: \d+

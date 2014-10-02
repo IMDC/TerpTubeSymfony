@@ -1,6 +1,7 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr\Join;
 use IMDC\TerpTubeBundle\Entity\Invitation;
@@ -42,7 +43,7 @@ class UserGroupController extends Controller
      * 
      * @return \Symfony\Component\HttpFoundation\Response
      */
-	public function indexAction()
+	public function listAction()
 	{
 		$em = $this->getDoctrine()->getManager();
 
@@ -54,6 +55,58 @@ class UserGroupController extends Controller
             'groups' => $usergroups
         ));
 	}
+
+    /**
+     * Create a new usergroup and also create a new Forum with the usergroup's name
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function newAction(Request $request)
+    {
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $group = new UserGroup();
+        $form = $this->createForm(new UserGroupType(), $group);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $user = $this->getUser();
+            $user->addUserGroup($group);
+
+            $group->setUserFounder($user);
+            $group->addAdmin($user);
+            $group->addMember($user);
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($group);
+            $em->persist($user);
+            $em->flush();
+
+            $aclProvider = $this->get('security.acl.provider');
+            $objectIdentity = ObjectIdentity::fromDomainObject($group);
+            $acl = $aclProvider->createAcl($objectIdentity);
+
+            $securityIdentity = UserSecurityIdentity::fromAccount($user);
+
+            $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+            $aclProvider->updateAcl($acl);
+
+            $this->get('session')->getFlashBag()->add('info', 'UserGroup created successfully!');
+
+            return $this->redirect($this->generateUrl('imdc_group_view', array(
+                'usergroupid' => $group->getId()
+            )));
+        }
+
+        return $this->render('IMDCTerpTubeBundle:Group:new.html.twig', array(
+            'form' => $form->createView()/*,
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)*/
+        ));
+    }
 
 	public function viewAction(Request $request, $usergroupid)
 	{
@@ -174,76 +227,6 @@ class UserGroupController extends Controller
 	    
 	    $this->get('session')->getFlashBag()->add('info', 'UserGroup deleted!');
 	    return $this->redirect($this->generateUrl('imdc_group_list'));
-	}
-	
-	/**
-	 * Create a new usergroup and also create a new Forum with the usergroup's name
-	 * 
-	 * @param Request $request
-	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-	 */
-	public function createNewUserGroupAction(Request $request)
-	{
-		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-
-		$user = $this->getUser();
-
-		$newusergroup = new UserGroup();
-
-		$form = $this->createForm(new UserGroupType(new Forum()), $newusergroup);
-		
-		$form->handleRequest($request);
-
-		if ($form->isValid())
-		{
-
-			$newusergroup->setUserFounder($user);
-			$newusergroup->addAdmin($user);
-			$newusergroup->addMember($user);
-			$newusergroup->getUserGroupForum()->setTitleText($newusergroup->getName());
-			$newusergroup->getUserGroupForum()->setCreationDate(new \DateTime('now'));
-			$newusergroup->getUserGroupForum()->setLastActivity(new \DateTime('now'));
-			$newusergroup->getUserGroupForum()->setCreator($user);
-			
-			//TODO: make sure to set forum permissions on newly created forum to be 'group only' when permission are used
-			
-			$user->addUserGroup($newusergroup);
-
-			$em = $this->getDoctrine()->getManager();
-
-			// request to persist objects to database
-			$em->persist($newusergroup);
-			$em->persist($user);
-
-			// persist all objects to database
-			$em->flush();
-			
-			// creating the ACL
-			$aclProvider = $this->get('security.acl.provider');
-			$objectIdentity = ObjectIdentity::fromDomainObject($newusergroup);
-			$acl = $aclProvider->createAcl($objectIdentity);
-			
-			// retrieving the security identity of the currently logged-in user
-			$securityIdentity = UserSecurityIdentity::fromAccount($user);
-			
-			// grant owner access
-			$acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-			$aclProvider->updateAcl($acl);
-
-			$this->get('session')->getFlashBag()->add('info', 'UserGroup created successfully!');
-			return $this->redirect($this->generateUrl('imdc_group_list'));
-
-		}
-
-		return $this->render('IMDCTerpTubeBundle:Group:new.html.twig', array(
-            'form' => $form->createView(),
-            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
-		));
-
 	}
 	
 	public function joinUserGroupAction(Request $request, $usergroupid) 

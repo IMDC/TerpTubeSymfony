@@ -18,32 +18,17 @@
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
 {% block content %}
-    <div class="col-md-12">
+    <div class="col-md-offset-2 col-md-8">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-12">
                 <img class="img-responsive center-block" src="" />
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4 col-md-offset-2">
+            <div class="col-md-12">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-                {{ form_row(form.name) }}
-                {{ form_row(form.visibleToPublic) }}
-                {{ form_row(form.visibleToRegisteredUsers) }}
-                {{ form_row(form.openForNewMembers) }}
-                {{ form_row(form.joinByInvitationOnly) }}
-                <div class="hidden">
-                    {{ form_row(form.userGroupForum.titleText, {'required': false}) }}
-                    {{ form_rest(form.userGroupForum) }}
-                    {{ form_widget(form.submit) }}
-                </div>
-                <button class="btn btn-success"><i class="fa fa-check"></i> Save</button>
-                <a class="btn btn-danger" href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}"><i class="fa fa-times"></i> Cancel</a>
-                {{ form_end(form) }}
-            </div>
-            <div class="col-md-4 hidden">
-                {% if group.getUserGroupForum.getTitleMedia[0] is defined %}
+                {#{% if group.getUserGroupForum.getTitleMedia[0] is defined %}
                     <div class="tt-media-element">
                         {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.getUserGroupForum.getTitleMedia[0]} %}
                         <p>Change the media file for the associated forum (image, audio, video):</p>
@@ -51,7 +36,15 @@
                 {% else %}
                     <p>Add a media file to the associated forum (image, audio, video):</p>
                 {% endif %}
-                {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with {'form': form.userGroupForum} %}
+                {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with {'form': form.userGroupForum} %}#}
+                {{ form_row(form.name) }}
+                {{ form_row(form.visibleToPublic) }}
+                {{ form_row(form.visibleToRegisteredUsers) }}
+                {{ form_row(form.openForNewMembers) }}
+                {{ form_row(form.joinByInvitationOnly) }}
+                <button class="btn btn-success"><i class="fa fa-check"></i> Save</button>
+                <a class="btn btn-danger" href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
             </div>
         </div>
     </div>
@@ -60,5 +53,5 @@
 {% block outside_body %}
     {{ parent() }}
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' with {'form': form.userGroupForum} %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' with {'form': form.userGroupForum} %}#}
 {% endblock outside_body %}

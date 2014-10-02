@@ -22,13 +22,6 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
         joinByInvitationOnly:
             type: boolean
             nullable: true
-    oneToOne: #unidirectional
-        userGroupForum:
-            targetEntity: Forum
-            joinColumn:
-                name: userGroupForum_id
-                referencedColumnName: id
-            cascade: ["all"]
     manyToOne:
         userFounder:
             targetEntity: User
