@@ -43,11 +43,6 @@ class User extends BaseUser
 	/**
 	 * @var \Doctrine\Common\Collections\Collection
 	 */
-	private $roleGroups;
-	
-	/**
-	 * @var \Doctrine\Common\Collections\Collection
-	 */
 	private $resourceFiles;
 
 	/**
@@ -130,7 +125,6 @@ class User extends BaseUser
         $this->archivedMessages     = new \Doctrine\Common\Collections\ArrayCollection();
         $this->deletedMessages      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->userGroups           = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->roleGroups           = new \Doctrine\Common\Collections\ArrayCollection();
         $this->resourceFiles        = new \Doctrine\Common\Collections\ArrayCollection();
         $this->friendsList          = new \Doctrine\Common\Collections\ArrayCollection();
         $this->posts                = new \Doctrine\Common\Collections\ArrayCollection();
@@ -745,39 +739,6 @@ class User extends BaseUser
     {
         $string = '"'.implode('", "', $this->getFriendsList()->toArray()).'"';
         return $string;
-    }
-
-    /**
-     * Add roleGroups
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\RoleGroup $roleGroups
-     * @return User
-     */
-    public function addRoleGroup(\IMDC\TerpTubeBundle\Entity\RoleGroup $roleGroups)
-    {
-        $this->roleGroups[] = $roleGroups;
-    
-        return $this;
-    }
-
-    /**
-     * Remove roleGroups
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\RoleGroup $roleGroups
-     */
-    public function removeRoleGroup(\IMDC\TerpTubeBundle\Entity\RoleGroup $roleGroups)
-    {
-        $this->roleGroups->removeElement($roleGroups);
-    }
-
-    /**
-     * Get roleGroups
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getRoleGroups()
-    {
-        return $this->roleGroups;
     }
 
 

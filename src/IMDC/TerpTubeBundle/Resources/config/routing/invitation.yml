@@ -1,20 +1,6 @@
-#invitation: #TODO delete
-#  pattern: /
-#  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:index" }
-
 imdc_invitation_list:
   pattern: /
   defaults: { _controller: IMDCTerpTubeBundle:Invitation:list }
-
-#invitation_new: #TODO delete
-#  pattern: /new
-#  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:new" }
-#
-#invitation_create: #TODO delete
-#  pattern: /create
-#  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:create" }
-#  requirements:
-#    _method: POST
 
 imdc_invitation_mentor:
   pattern: /mentor/{id}
@@ -27,26 +13,6 @@ imdc_invitation_mentee:
   defaults: { _controller: "IMDCTerpTubeBundle:Invitation:createMenteeInvitation" }
   requirements:
     id: \d+
-
-#invitation_show: #TODO delete
-#  pattern: /{id}/show
-#  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:show" }
-#
-#invitation_edit: #TODO delete
-#  pattern: /{id}/edit
-#  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:edit" }
-#
-#invitation_update: #TODO delete
-#  pattern: /{id}/update
-#  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:update" }
-#  requirements:
-#    _method: POST|PUT
-#
-#invitation_delete: #TODO delete
-#  pattern: /{id}/delete
-#  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:delete" }
-#  requirements:
-#    _method: POST|DELETE
 
 imdc_invitation_accept:
   pattern: /{id}/accept

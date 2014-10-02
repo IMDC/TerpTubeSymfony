@@ -2,15 +2,12 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
     type: entity
     repositoryClass: IMDC\TerpTubeBundle\Entity\UserGroupRepository
     table: fos_group
-    fields:
+    id:
         id:
             type: integer
-            id: true
             generator:
                 strategy: AUTO
-        name:
-            type: string
-            length: '255'
+    fields:
         dateCreated:
             type: datetime
         visibleToPublic:

@@ -186,7 +186,7 @@ fos_user:
     firewall_name: main
     user_class: IMDC\TerpTubeBundle\Entity\User
     group:
-          group_class: IMDC\TerpTubeBundle\Entity\RoleGroup
+          group_class: IMDC\TerpTubeBundle\Entity\UserGroup
     registration:
           confirmation:
               enabled: true

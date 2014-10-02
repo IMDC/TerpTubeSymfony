@@ -55,9 +55,9 @@ services:
             - { name: kernel.event_subscriber}
             - { name: 'monolog.logger', channel: 'imdc' }
      
-    imdc_terptube.new_user_intro_email_listener:
-        class: IMDC\TerpTubeBundle\EventListener\NewUserRegistrationListener
-        arguments: ["@logger", "@doctrine", "@fos_user.user_manager"]
+    imdc_terptube.fos_user_listener:
+        class: IMDC\TerpTubeBundle\EventListener\FOSUserListener
+        arguments: ["@logger", "@doctrine", "@router", "@fos_user.user_manager"]
         tags:
             - { name: kernel.event_subscriber }
             - { name: 'monolog.logger', channel: 'imdc' }

@@ -42,11 +42,10 @@ class ProfileController extends Controller
 		{
 			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
 		}
-		$response = new RedirectResponse(
-				$this->container->get('router')
-						->generate('imdc_profile_user', array('userName' => $user->getUsername())));
-		return $response;
 
+        return $this->forward('IMDCTerpTubeBundle:Profile:showSpecific', array(
+            'userName' => $user->getUsername()
+        ));
 	}
 
 	/**
@@ -75,20 +74,20 @@ class ProfileController extends Controller
         ));
 	}
 
-	public function updateAvatarAction(Request $request, $userName)
+	public function updateAvatarAction(Request $request/*, $userName*/)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
 		}
-		if ($user->getUsername() != $userName)
+		/*if ($user->getUsername() != $userName)
 		{
 			$response = new RedirectResponse(
 					$this->container->get('router')
 							->generate('imdc_profile_user', array('userName' => $userName)));
 			return $response;
-		}
+		}*/
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($user->getUsername());
 		/** @var \IMDC\TerpTubeBundle\Entity\UserProfile $profile  */

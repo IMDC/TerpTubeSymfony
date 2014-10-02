@@ -61,6 +61,7 @@
                         {% endif %}
                         {% if app.user == user.userName %}
                             <a class="btn btn-default" href="{{ path('imdc_profile_edit', {'userName': app.user}) }}">Edit Profile</a>
+                            <a class="btn btn-default" href="{{ path('fos_user_change_password') }}">Change Password</a>
                         {% endif %}
                     </div>
                 </div>

@@ -78,7 +78,7 @@ class UserAdmin extends Admin
             ->add('joinDate')
             ->add('roles')
             ->add('userGroups')
-            ->add('roleGroups')
+            //->add('roleGroups')
         ;
     }
 }

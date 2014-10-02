@@ -1,17 +1,3 @@
-#imdc_post_show_all: #TODO delete
-#  pattern: /all
-#  defaults: { _controller: IMDCTerpTubeBundle:Post:index }
-#
-#imdc_post_create_new: #TODO delete
-#  pattern: /new
-#  defaults: { _controller: IMDCTerpTubeBundle:Post:createNewPost }
-#
-#imdc_thread_create_reply_post: #TODO delete
-#  pattern: /reply/thread/{threadid}
-#  defaults: { _controller: IMDCTerpTubeBundle:Post:createReplyPost }
-#  requirements:
-#    threadid: \d+
-
 imdc_post_reply:
   pattern: /{pid}/reply
   defaults: { _controller: IMDCTerpTubeBundle:Post:new, threadId: null }
@@ -28,15 +14,8 @@ imdc_post_edit:
   options:
     expose: true
 
-#imdc_post_delete: #TODO delete
-#  pattern: /delete/{postid}/thread/{threadid}
-#  defaults: { _controller: IMDCTerpTubeBundle:Post:deletePost }
-#  requirements:
-#    postid: \d+
-#    threadid: \d+
-
-imdc_post_delete_ajax: #TODO merge into imdc_post_delete
-  pattern: /{pid}/deleteajax
+imdc_post_delete:
+  pattern: /{pid}/delete
   defaults: { _controller: IMDCTerpTubeBundle:Post:deletePostAjax }
   requirements:
     _method: POST

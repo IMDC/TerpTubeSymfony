@@ -170,7 +170,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             var data = {pid: postId};
 
             $.ajax({
-                url: Routing.generate('imdc_post_delete_ajax', data),
+                url: Routing.generate('imdc_post_delete', data),
                 type: "POST",
                 contentType: "application/x-www-form-urlencoded",
                 data: data,

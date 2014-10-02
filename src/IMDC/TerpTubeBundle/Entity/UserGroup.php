@@ -2,23 +2,15 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use FOS\UserBundle\Model\Group as BaseGroup;
 
 /**
  * UserGroup
  */
-class UserGroup
+class UserGroup extends BaseGroup
 {
-    /**
-     * @var integer
-     */
     protected $id;
-    
-    /**
-     * @var string
-     */
-    private $name;
-    
+
     /**
      * @var \DateTime
      */
@@ -362,33 +354,10 @@ class UserGroup
     {
         return $this->joinByInvitationOnly;
     }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return UserGroup
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
     
     public function __toString()
     {
-        return $this->name;
+        return $this->getName();
     }
 
 

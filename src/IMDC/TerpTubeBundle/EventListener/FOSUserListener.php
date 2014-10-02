@@ -11,6 +11,7 @@ use IMDC\TerpTubeBundle\Entity\User;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Doctrine\UserManager;
+use FOS\UserBundle\Event\FormEvent;
 
 /**
  * Listener for the 'completed' event of user registration.
@@ -20,16 +21,18 @@ use FOS\UserBundle\Doctrine\UserManager;
  * @author paul
  *
  */
-class NewUserRegistrationListener implements EventSubscriberInterface
+class FOSUserListener implements EventSubscriberInterface
 {
 	private $logger;
 	private $doctrine;
 	private $userManager;
+    private $router;
 	
-	public function __construct($logger, $doctrine, $usermanager)
+	public function __construct($logger, $doctrine, UrlGeneratorInterface $router, $usermanager)
 	{
 		$this->logger   = $logger;
 		$this->doctrine = $doctrine;
+        $this->router = $router;
 		$this->userManager = $usermanager;
 	}
 	
@@ -40,6 +43,7 @@ class NewUserRegistrationListener implements EventSubscriberInterface
 	{
 		return array(
             FOSUserEvents::REGISTRATION_CONFIRMED => 'generateIntroductionEmail',
+            FOSUserEvents::CHANGE_PASSWORD_SUCCESS => 'onChangePasswordSuccess'
 		);
 	}
 	
@@ -65,5 +69,12 @@ class NewUserRegistrationListener implements EventSubscriberInterface
     	$em->flush();
     	
     	return;
+    }
+
+    public function onChangePasswordSuccess(FormEvent $event)
+    {
+        $url = $this->router->generate('imdc_profile_me');
+
+        $event->setResponse(new RedirectResponse($url));
     }
 }

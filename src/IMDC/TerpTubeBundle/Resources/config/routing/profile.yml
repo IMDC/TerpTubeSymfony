@@ -3,19 +3,13 @@ imdc_profile_me:
   defaults: { _controller: IMDCTerpTubeBundle:Profile:show }
 
 imdc_profile_user:
-  pattern: /{userName}
+  pattern: /user/{userName}
   defaults: { _controller: IMDCTerpTubeBundle:Profile:showSpecific }
 
 imdc_profile_edit:
-  pattern: /{userName}/edit
+  pattern: /edit
   defaults: { _controller: IMDCTerpTubeBundle:Profile:edit }
 
 imdc_profile_edit_avatar:
-  pattern: /{userName}/edit/avatar
+  pattern: /edit/avatar
   defaults: { _controller: IMDCTerpTubeBundle:Profile:updateAvatar }
-
-imdc_profile_edit_password:
-  pattern: /{userName}/edit/password
-  defaults: { _controller: FOSUserBundle:ChangePassword:changePassword }
-  requirements:
-    _method: GET|POST
