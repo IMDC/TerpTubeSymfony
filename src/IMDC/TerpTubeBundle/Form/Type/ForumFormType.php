@@ -2,22 +2,45 @@
 
 namespace IMDC\TerpTubeBundle\Form\Type;
 
+use IMDC\TerpTubeBundle\Form\DataTransformer\MediaToIdTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 
 class ForumFormType extends AbstractType
 {
-	public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-        $builder->add('mediatextarea', 'hidden', array(
-            'mapped' => false
+        $em = $options['em'];
+        $transformer = new MediaToIdTransformer($em);
+        $groupId = $options['groupId'];
+
+        $builder->add(
+            $builder
+                ->create('mediatextarea', 'hidden', array(
+                    'mapped' => false))
+                ->addModelTransformer($transformer)
+        );
+
+	    $builder->add('titleText', 'text', array(
+            'label' => 'Title Text'
         ));
 
-	    $builder->add('titleText', null, array('label' => 'Title Text'));
-		$builder->add('submit', 'submit');
-	}	
+        $options = array(
+            'class' => 'IMDCTerpTubeBundle:UserGroup',
+            'empty_value' => 'Non-Group Associated Forum',
+            'required' => false
+        );
+
+        if ($groupId) {
+            $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+            if ($group) {
+                $options['data'] = $em->getReference('IMDCTerpTubeBundle:UserGroup', $group->getId());
+            }
+        }
+
+        $builder->add('group', 'entity', $options);
+	}
 
 	public function getName()
 	{
@@ -26,6 +49,13 @@ class ForumFormType extends AbstractType
 	
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
-		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\Forum',));
+		$resolver
+            ->setDefaults(array(
+                'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum',
+                'groupId' => null))
+            ->setRequired(array(
+                'em'))
+            ->setAllowedTypes(array(
+                'em' => 'Doctrine\Common\Persistence\ObjectManager'));
 	}
 }

@@ -3,7 +3,6 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use IMDC\TerpTubeBundle\Entity\Permissions;
 
 /**
  * Forum class, serves as general organization for discussion topics (Threads).
@@ -28,24 +27,29 @@ class Forum
     private $lastActivity;
     
     /**
-     * @var \IMDC\TerpTubeBundle\Entity\User
-     */
-    private $creator;
-    
-    /**
      * @var \DateTime
      */
     private $creationDate;
-    
+
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var \IMDC\TerpTubeBundle\Entity\UserGroup
      */
-    private $titleMedia;
+    private $group;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\User
+     */
+    private $creator;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $threads;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $titleMedia;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -129,8 +133,75 @@ class Forum
         return $this->lastActivity;
     }
 
+    /**
+     * Set creationDate
+     *
+     * @param \DateTime $creationDate
+     * @return Forum
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
 
-    
+        return $this;
+    }
+
+    /**
+     * Get creationDate
+     *
+     * @return \DateTime
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * Set group
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $group
+     * @return Forum
+     */
+    public function setGroup(\IMDC\TerpTubeBundle\Entity\UserGroup $group = null)
+    {
+        $this->group = $group;
+
+        return $this;
+    }
+
+    /**
+     * Get group
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\UserGroup
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * Set creator
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $creator
+     * @return Forum
+     */
+    public function setCreator(\IMDC\TerpTubeBundle\Entity\User $creator = null)
+    {
+        $this->creator = $creator;
+
+        return $this;
+    }
+
+    /**
+     * Get creator
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\User
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
     /**
      * Add threads
      *
@@ -140,7 +211,7 @@ class Forum
     public function addThread(\IMDC\TerpTubeBundle\Entity\Thread $threads)
     {
         $this->threads[] = $threads;
-    
+
         return $this;
     }
 
@@ -157,45 +228,22 @@ class Forum
     /**
      * Get threads
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getThreads()
     {
         return $this->threads;
     }
-    
-    
+
+
     /**
      * Returns all threads for the forum that have public access
-     * 
+     *
      * @return multitype:|boolean
      */
     public function getPublicThreads()
     {
         return array_filter($this->threads->toArray(), function($t) { return $t->getPermissions()->getAccessLevel() == Permissions::ACCESS_PUBLIC; });
-    }
-    
-    /**
-     * Set creator
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\User $creator
-     * @return Forum
-     */
-    public function setCreator(\IMDC\TerpTubeBundle\Entity\User $creator = null)
-    {
-        $this->creator = $creator;
-    
-        return $this;
-    }
-
-    /**
-     * Get creator
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\User 
-     */
-    public function getCreator()
-    {
-        return $this->creator;
     }
 
     /**
@@ -207,7 +255,7 @@ class Forum
     public function addTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
     {
         $this->titleMedia[] = $titleMedia;
-    
+
         return $this;
     }
 
@@ -224,34 +272,11 @@ class Forum
     /**
      * Get titleMedia
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getTitleMedia()
     {
         return $this->titleMedia;
-    }
-
-    /**
-     * Set creationDate
-     *
-     * @param \DateTime $creationDate
-     * @return Forum
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = $creationDate;
-    
-        return $this;
-    }
-
-    /**
-     * Get creationDate
-     *
-     * @return \DateTime 
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
     }
 
     /**

@@ -15,6 +15,13 @@ IMDC\TerpTubeBundle\Entity\Forum:
             type: datetime
         creationDate:
             type: datetime
+    oneToOne:
+        group:
+            targetEntity: UserGroup
+            joinColumn:
+                name: group_id
+                referencedColumnName: id
+            inversedBy: forums
     manyToOne:
         creator:
             targetEntity: User

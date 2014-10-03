@@ -15,6 +15,31 @@ class UserGroup extends BaseGroup
      * @var \DateTime
      */
     private $dateCreated;
+
+    /**
+     * @var boolean
+     */
+    private $visibleToPublic;
+
+    /**
+     * @var boolean
+     */
+    private $visibleToRegisteredUsers;
+
+    /**
+     * @var boolean
+     */
+    private $openForNewMembers;
+
+    /**
+     * @var boolean
+     */
+    private $joinByInvitationOnly;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $forums;
     
     /**
      * @var \IMDC\TerpTubeBundle\Entity\User
@@ -35,26 +60,6 @@ class UserGroup extends BaseGroup
      * @var \Doctrine\Common\Collections\Collection
      */
     private $admins;
-    
-    /**
-     * @var boolean
-     */
-    private $visibleToPublic;
-    
-    /**
-     * @var boolean
-     */
-    private $visibleToRegisteredUsers;
-    
-    /**
-     * @var boolean
-     */
-    private $openForNewMembers;
-    
-    /**
-     * @var boolean
-     */
-    private $joinByInvitationOnly;
     
     /**
      * Constructor
@@ -101,6 +106,131 @@ class UserGroup extends BaseGroup
     }
 
     /**
+     * Set visibleToPublic
+     *
+     * @param boolean $visibleToPublic
+     * @return UserGroup
+     */
+    public function setVisibleToPublic($visibleToPublic)
+    {
+        $this->visibleToPublic = $visibleToPublic;
+
+        return $this;
+    }
+
+    /**
+     * Get visibleToPublic
+     *
+     * @return boolean
+     */
+    public function getVisibleToPublic()
+    {
+        return $this->visibleToPublic;
+    }
+
+    /**
+     * Set visibleToRegisteredUsers
+     *
+     * @param boolean $visibleToRegisteredUsers
+     * @return UserGroup
+     */
+    public function setVisibleToRegisteredUsers($visibleToRegisteredUsers)
+    {
+        $this->visibleToRegisteredUsers = $visibleToRegisteredUsers;
+
+        return $this;
+    }
+
+    /**
+     * Get visibleToRegisteredUsers
+     *
+     * @return boolean
+     */
+    public function getVisibleToRegisteredUsers()
+    {
+        return $this->visibleToRegisteredUsers;
+    }
+
+    /**
+     * Set openForNewMembers
+     *
+     * @param boolean $openForNewMembers
+     * @return UserGroup
+     */
+    public function setOpenForNewMembers($openForNewMembers)
+    {
+        $this->openForNewMembers = $openForNewMembers;
+
+        return $this;
+    }
+
+    /**
+     * Get openForNewMembers
+     *
+     * @return boolean
+     */
+    public function getOpenForNewMembers()
+    {
+        return $this->openForNewMembers;
+    }
+
+    /**
+     * Set joinByInvitationOnly
+     *
+     * @param boolean $joinByInvitationOnly
+     * @return UserGroup
+     */
+    public function setJoinByInvitationOnly($joinByInvitationOnly)
+    {
+        $this->joinByInvitationOnly = $joinByInvitationOnly;
+
+        return $this;
+    }
+
+    /**
+     * Get joinByInvitationOnly
+     *
+     * @return boolean
+     */
+    public function getJoinByInvitationOnly()
+    {
+        return $this->joinByInvitationOnly;
+    }
+
+    /**
+     * Add forums
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Forum $forums
+     * @return UserGroup
+     */
+    public function addForum(\IMDC\TerpTubeBundle\Entity\Forum $forums)
+    {
+        $this->forums[] = $forums;
+
+        return $this;
+    }
+
+    /**
+     * Remove forums
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Forum $forums
+     */
+    public function removeForum(\IMDC\TerpTubeBundle\Entity\Forum $forums)
+    {
+        $this->forums->removeElement($forums);
+    }
+
+    /**
+     * Get forums
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getForums()
+    {
+        return $this->forums;
+    }
+
+    /**
      * Set userFounder
      *
      * @param \IMDC\TerpTubeBundle\Entity\User $userFounder
@@ -121,12 +251,6 @@ class UserGroup extends BaseGroup
     public function getUserFounder()
     {
         return $this->userFounder;
-    }
-    
-    public function setDateCreatedToNow()
-    {
-        $this->dateCreated = new \DateTime('NOW');
-        return $this;
     }
 
     /**
@@ -194,36 +318,6 @@ class UserGroup extends BaseGroup
     {
         return $this->moderators;
     }
-    
-    /**
-     * 
-     * @param \IMDC\TerpTubeBundle\Entity\User $user
-     * @return boolean
-     */
-    public function isUserModerator(\IMDC\TerpTubeBundle\Entity\User $user)
-    {
-        return $this->moderators->contains($user);
-    }
-    
-    /**
-     * 
-     * @param \IMDC\TerpTubeBundle\Entity\User $user
-     * @return boolean
-     */
-    public function isUserMemberOfGroup(\IMDC\TerpTubeBundle\Entity\User $user)
-    {
-        return $this->members->contains($user);
-    }
-    
-    /**
-     * 
-     * @param \IMDC\TerpTubeBundle\Entity\User $user
-     * @return boolean
-     */
-    public function isUserAdmin(\IMDC\TerpTubeBundle\Entity\User $user)
-    {
-        return $this->admins->contains($user);
-    }
 
     /**
      * Add admins
@@ -258,100 +352,45 @@ class UserGroup extends BaseGroup
         return $this->admins;
     }
 
-    /**
-     * Set visibleToPublic
-     *
-     * @param boolean $visibleToPublic
-     * @return UserGroup
-     */
-    public function setVisibleToPublic($visibleToPublic)
+    public function setDateCreatedToNow()
     {
-        $this->visibleToPublic = $visibleToPublic;
-    
+        $this->dateCreated = new \DateTime('NOW');
         return $this;
     }
 
     /**
-     * Get visibleToPublic
      *
-     * @return boolean 
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return boolean
      */
-    public function getVisibleToPublic()
+    public function isUserMemberOfGroup(\IMDC\TerpTubeBundle\Entity\User $user)
     {
-        return $this->visibleToPublic;
+        return $this->members->contains($user);
     }
 
     /**
-     * Set visibleToRegisteredUsers
      *
-     * @param boolean $visibleToRegisteredUsers
-     * @return UserGroup
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return boolean
      */
-    public function setVisibleToRegisteredUsers($visibleToRegisteredUsers)
+    public function isUserModerator(\IMDC\TerpTubeBundle\Entity\User $user)
     {
-        $this->visibleToRegisteredUsers = $visibleToRegisteredUsers;
-    
-        return $this;
+        return $this->moderators->contains($user);
     }
 
     /**
-     * Get visibleToRegisteredUsers
      *
-     * @return boolean 
+     * @param \IMDC\TerpTubeBundle\Entity\User $user
+     * @return boolean
      */
-    public function getVisibleToRegisteredUsers()
+    public function isUserAdmin(\IMDC\TerpTubeBundle\Entity\User $user)
     {
-        return $this->visibleToRegisteredUsers;
-    }
-
-    /**
-     * Set openForNewMembers
-     *
-     * @param boolean $openForNewMembers
-     * @return UserGroup
-     */
-    public function setOpenForNewMembers($openForNewMembers)
-    {
-        $this->openForNewMembers = $openForNewMembers;
-    
-        return $this;
-    }
-
-    /**
-     * Get openForNewMembers
-     *
-     * @return boolean 
-     */
-    public function getOpenForNewMembers()
-    {
-        return $this->openForNewMembers;
-    }
-
-    /**
-     * Set joinByInvitationOnly
-     *
-     * @param boolean $joinByInvitationOnly
-     * @return UserGroup
-     */
-    public function setJoinByInvitationOnly($joinByInvitationOnly)
-    {
-        $this->joinByInvitationOnly = $joinByInvitationOnly;
-    
-        return $this;
-    }
-
-    /**
-     * Get joinByInvitationOnly
-     *
-     * @return boolean 
-     */
-    public function getJoinByInvitationOnly()
-    {
-        return $this->joinByInvitationOnly;
+        return $this->admins->contains($user);
     }
     
     public function __toString()
     {
         return $this->getName();
     }
+
 }

@@ -1,10 +1,12 @@
 imdc_forum_list:
   pattern: /
-  defaults: { _controller: IMDCTerpTubeBundle:Forum:index }
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:list }
 
 imdc_forum_new:
-  pattern: /new
-  defaults: { _controller: IMDCTerpTubeBundle:Forum:new }
+  pattern: /new/{groupId}
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:new, groupId: null }
+  requirements:
+    groupId: \d+
 
 imdc_forum_view:
   pattern: /{forumid}

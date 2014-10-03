@@ -36,7 +36,7 @@ use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
  */
 class ForumController extends Controller
 {
-	public function indexAction(Request $request)
+	public function listAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
 		
@@ -58,81 +58,65 @@ class ForumController extends Controller
 		));
 	}
 	
-	public function newAction(Request $request) 
+	public function newAction(Request $request, $groupId)
 	{
 	    // check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
-        $newforum = new Forum();
-        $form = $this->createForm(new ForumFormType(), $newforum);
+        $em = $this->getDoctrine()->getManager();
 
-        $form->handleRequest($request);
+        $forum = new Forum();
+        $forumForm = $this->createForm(new ForumFormType(), $forum, array(
+            'em' => $em,
+            'groupId' => $groupId
+        ));
+        $forumForm->handleRequest($request);
         
-        if ($form->isValid()) {
+        if ($forumForm->isValid()) {
             $user = $this->getUser();
-            $em = $this->getDoctrine()->getManager();
-        	
-            $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
-            // if the media text area isn't empty, the user has selected a media
-            // file to create a new thread with
-            if (!$form->get('mediatextarea')->isEmpty()) {
-                $rawmediaID = $form->get('mediatextarea')->getData();
-                $logger = $this->container->get('logger');
-                $logger->info('*************media id is ' . $rawmediaID);
-                /** @var $mediaFile IMDC\TerpTubeBundle\Entity\Media */
-                $mediaFile = new Media();
-                $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
-                
-                // check to make sure the user owns this media file
-                if ($user->getResourceFiles()->contains($mediaFile)) {
-                    $logger = $this->get('logger');
-                    $logger->info('User owns this media file');
-                    $newforum->addTitleMedia($mediaFile);
+            $currentDateTime = new \DateTime('now');
+            $forum->setCreator($user);
+            $forum->setLastActivity($currentDateTime);
+            $forum->setCreationDate($currentDateTime);
+
+            $media = $forumForm->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
+
+                if (!$forum->getTitleMedia()->contains($media))
+                    $forum->addTitleMedia($media);
             }
 
-            $newforum->setCreator($user);
-            $newforum->setCreationDate(new \DateTime('now'));
-            //$newforum->setLocked(FALSE); // not currently in model
-            //$newforum->setSticky(FALSE); // not currently in model
-            $newforum->setLastActivity(new \DateTime('now'));
+            $user->addForum($forum);
 
-            $user->addForum($newforum);
-            //$user->increasePostCount(1);
-
-            // request to persist message object to database
-            $em->persist($newforum);
+            $em->persist($forum);
             $em->persist($user);
-
-            // persist all objects to database
             $em->flush();
 
-            // creating the ACL which is not currently used for access restrictions
             $aclProvider = $this->get('security.acl.provider');
-            $objectIdentity = ObjectIdentity::fromDomainObject($newforum);
+            $objectIdentity = ObjectIdentity::fromDomainObject($forum);
             $acl = $aclProvider->createAcl($objectIdentity);
-            
-            // retrieving the security identity of the currently logged-in user
+
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
-            
-            // grant owner access
+
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
             
             $this->get('session')->getFlashBag()->add(
-                'info',
-                'Forum created successfully!'
+                'info', 'Forum created successfully!'
             );
 
             return $this->redirect($this->generateUrl('imdc_forum_view', array(
-                'forumid' => $newforum->getId()
+                'forumid' => $forum->getId()
             )));
         }
         
         return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig', array(
-            'form' => $form->createView(),
+            'form' => $forumForm->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
@@ -198,61 +182,39 @@ class ForumController extends Controller
 	    }
 	    
 	    $securityContext = $this->get('security.context');
-	    
-	    // check for edit access using ACL
 	    if (false === $securityContext->isGranted('EDIT', $forumid)) {
 	        throw new AccessDeniedException();
 	    }
 
         $em = $this->getDoctrine()->getManager();
 
-	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid));
+	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
+	    $forumForm = $this->createForm(new ForumFormType(), $forum, array(
+            'em' => $em
+        ));
+        $forumForm->handleRequest($request);
 	    
-	    $form = $this->createForm(new ForumFormType(), $forum);
-	    $form->handleRequest($request);
-	    
-	    if ($form->isValid()) {
+	    if ($forumForm->isValid()) {
             $user = $this->getUser();
+            $forum->setLastActivity(new \DateTime('now'));
 
-	        $mediarepo = $em->getRepository('IMDCTerpTubeBundle:Media');
-	        // if the media text area isn't empty, the user has selected a new media
-	        // file to use for the forum title
-	        if (!$form->get('mediatextarea')->isEmpty()) {
-	            $rawmediaID = $form->get('mediatextarea')->getData();
-	            $logger = $this->container->get('logger');
-	            $logger->info('*************media id is ' . $rawmediaID);
-	            /** @var $mediaFile IMDC\TerpTubeBundle\Entity\Media */
-	            $mediaFile = new Media();
-	            $mediaFile = $mediarepo->findOneBy(array('id' => $rawmediaID));
-	        
-	            // check to make sure the user owns this media file
-	            if ($user->getResourceFiles()->contains($mediaFile)) {
-	                $logger = $this->get('logger');
-	                $logger->info('User owns this media file');
-	                $forum->addTitleMedia($mediaFile);
-	            }
-	        }
+            $media = $forumForm->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
+                }
 
-	        //$newforum->setCreator($user);
-	        //$newforum->setCreationDate(new \DateTime('now'));
-	        //             $newforum->setLocked(FALSE);
-	        //             $newforum->setSticky(FALSE);
-	        $forum->setLastActivity(new \DateTime('now'));
+                if (!$forum->getTitleMedia()->contains($media))
+                    $forum->addTitleMedia($media);
+            }
 
-	        //$user->addForum($newforum);
-	        //             $user->increasePostCount(1);
-
-	        // request to persist message object to database
 	        $em->persist($forum);
 	        $em->persist($user);
-
-	        // persist all objects to database
 	        $em->flush();
 	        
 	        $this->get('session')->getFlashBag()->add(
-	            'info',
-	            'Forum edited successfully!'
-	        );
+                'info', 'Forum edited successfully!'
+            );
 
 	        return $this->redirect($this->generateUrl('imdc_forum_view', array(
                 'forumid' => $forum->getId()
@@ -260,7 +222,7 @@ class ForumController extends Controller
         }
 	        
         return $this->render('IMDCTerpTubeBundle:Forum:edit.html.twig', array(
-            'form' => $form->createView(),
+            'form' => $forumForm->createView(),
             'forum' => $forum,
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));

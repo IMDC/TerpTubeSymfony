@@ -22,6 +22,11 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
         joinByInvitationOnly:
             type: boolean
             nullable: true
+    oneToMany:
+        forums:
+            targetEntity: Forum
+            mappedBy: group
+            cascade: ["remove"]
     manyToOne:
         userFounder:
             targetEntity: User
