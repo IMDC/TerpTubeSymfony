@@ -23,7 +23,7 @@ class ForumFormType extends AbstractType
         );
 
 	    $builder->add('titleText', 'text', array(
-            'label' => 'Title Text'
+            'label' => 'Title'
         ));
 
         $options = array(

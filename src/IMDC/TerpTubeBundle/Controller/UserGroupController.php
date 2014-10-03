@@ -121,8 +121,16 @@ class UserGroupController extends Controller
             throw new Exception('group not found');
         }
 
+        $paginator = $this->get('knp_paginator');
+        $forums = $paginator->paginate(
+            $group->getForums(),
+            $request->query->get('page', 1), /*page number*/
+            8 /*limit per page*/
+        );
+
         $parameters = array(
-            'group' => $group
+            'group' => $group,
+            'forums' => $forums
         );
 
         $securityContext = $this->get('security.context');

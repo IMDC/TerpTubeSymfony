@@ -5,7 +5,7 @@
 {% block sidebarlinks_pages %}class="active"{% endblock %}
 
 {% block content %}
-	<div class="col-md-12">
+	<div class="col-md-offset-1 col-md-10">
 		{% if is_granted('ROLE_CREATE_FORUMS') %}
 			<!--<div class="row">
 			<div class="col-md-2">
@@ -29,12 +29,12 @@
 		{% endif %}
 		<!-- recent forum activity -->
 		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
+			<div class="col-md-12">
 				<img class="img-responsive center-block" src="" />
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
+			<div class="col-md-12">
 				<hr class="tt-separator-top" />
 				{% if recentForums|length > 0 %}
 					{% include 'IMDCTerpTubeBundle:Forum:thumbnail.html.twig' with {'forums': recentForums} %}
@@ -45,41 +45,6 @@
 			</div>
 		</div>
 		<!-- all forums -->
-		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
-				<img class="img-responsive center-block" src="" />
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
-				<hr class="tt-separator-top" />
-                {% if forums|length > 0 %}
-                    {% set pagParams = forums.getParams %}
-                    <div class="btn-group" style="margin-bottom: 10px;">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                            Sort by
-                            {% if forums.isSorted('f.lastActivity') %}Last Activity
-                            {% elseif forums.isSorted('f.titleText') %}Title
-                            {% elseif forums.isSorted('f.creationDate') %}Date Created
-                            {% endif %}
-                            {% if 'asc' in pagParams %}(ascending)
-                            {% elseif 'desc' in pagParams %}(descending)
-                            {% endif %}
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>{{ knp_pagination_sortable(forums, 'Last Activity', 'f.lastActivity') }}</li>
-                            <li>{{ knp_pagination_sortable(forums, 'Title', 'f.titleText') }}</li>
-                            <li>{{ knp_pagination_sortable(forums, 'Date Created', 'f.creationDate') }}</li>
-                        </ul>
-                    </div>
-					{% include 'IMDCTerpTubeBundle:Forum:thumbnail.html.twig' %}
-				{% else %}
-					<p class="text-center" style="margin-bottom: 20px;">No forums</p>
-				{% endif %}
-                {{ knp_pagination_render(forums) }}
-				<hr class="tt-separator-bottom" />
-			</div>
-		</div>
+        {% include 'IMDCTerpTubeBundle:Forum:list.html.twig' %}
 	</div>
 {% endblock content %}

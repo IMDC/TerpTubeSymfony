@@ -39,15 +39,14 @@ class ForumController extends Controller
 	public function listAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
-		
-		$recentForums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getMostRecentForums(4);
-		
-		$dql = "SELECT f FROM IMDCTerpTubeBundle:Forum f ORDER BY f.lastActivity DESC";
-		$query = $em->createQuery($dql);
+        $repo = $em->getRepository('IMDCTerpTubeBundle:Forum');
+
+		$recentForums = $repo->getMostRecentForums(4); //FIXME
+		$forums = $repo->getViewableToUser($this->getUser());
 		
 		$paginator = $this->get('knp_paginator');
 		$forums = $paginator->paginate(
-			$query,
+            $forums,
 			$this->get('request')->query->get('page', 1), /*page number*/
 			8 /*limit per page*/
 		);

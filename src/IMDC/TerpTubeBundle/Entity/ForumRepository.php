@@ -2,7 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * ForumRepository
@@ -12,6 +14,29 @@ use Doctrine\ORM\EntityRepository;
  */
 class ForumRepository extends EntityRepository
 {
+    public function getViewableToUser($user, $excludeGroups = false, $groupsOnly = false)
+    {
+        $qb = $this->createQueryBuilder('f');
+
+        if ($excludeGroups) {
+            $qb->where($qb->expr()->isNull('f.group'));
+        } else {
+            $qb->leftJoin('f.group', 'g')
+                ->leftJoin('g.members', 'm')
+                ->where($qb->expr()->isNotNull('f.group'))
+                ->where($qb->expr()->in('m.id', array($user->getId())));
+
+            if (!$groupsOnly)
+                $qb->orWhere($qb->expr()->isNull('f.group'));
+        }
+
+        $qb->orderBy('f.lastActivity', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+
+
     public function getMostRecentForums($limit=30)
     {
         $query = $this->getEntityManager()->createQuery(

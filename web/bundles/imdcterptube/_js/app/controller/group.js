@@ -26,6 +26,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Group.Binder = {
+        CONTAINER_FORUMS: ".group-container-forums",
         TOGGLE_MEMBER_SELECT: ".group-toggle-member-select",
         USER_CONTAINER_SELECT: ".user-container-select", //TODO move to user controller
         USER_SELECT: ".user-select", //TODO move to user controller
@@ -99,6 +100,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(Group.Binder.TOGGLE_MEMBER_SELECT).on("click", function(e) {
             e.preventDefault();
 
+            $(Group.Binder.CONTAINER_FORUMS).toggle();
             $(Group.Binder.USER_CONTAINER_SELECT).toggle();
             $("#deleteSelected").parent().toggleClass("disabled");
         });
