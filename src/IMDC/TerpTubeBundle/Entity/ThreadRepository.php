@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,6 +13,53 @@ use Doctrine\ORM\EntityRepository;
  */
 class ThreadRepository extends EntityRepository
 {
+    private function getViewableToUserQB($parentForumId)
+    {
+        return $this->createQueryBuilder('t')
+            ->leftJoin('t.parentForum', 'f')
+            ->where('f.id = :parentForumId')
+            ->setParameters(array(
+                'parentForumId' => $parentForumId));
+    }
+
+    private function filterViewableToUser($securityContext, array $items)
+    {
+        $viewable = array();
+        foreach ($items as $item) {
+            if ($securityContext->isGranted('VIEW', $item) === true) {
+                $viewable[] = $item;
+            }
+        }
+
+        return $viewable;
+    }
+
+    public function getViewableToUser($securityContext, $parentForumId)
+    {
+        $threads = $this->getViewableToUserQB($parentForumId)
+            ->getQuery()->getResult();
+
+        return $this->filterViewableToUser($securityContext, $threads);
+    }
+
+    public function getRecent($securityContext, $parentForumId, $limit = 4)
+    {
+        $threads = $this->getViewableToUserQB($parentForumId)
+            ->orderBy('t.lastPostAt', 'DESC')
+            ->getQuery()->getResult();
+
+        $filtered = $this->filterViewableToUser($securityContext, $threads);
+
+        return array_slice($filtered, 0, $limit);
+    }
+
+
+
+
+
+
+
+
     public function getMostRecentThreads($limit=30)
     {
         $query = $this->getEntityManager()

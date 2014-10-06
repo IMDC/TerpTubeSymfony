@@ -47,13 +47,7 @@
                 {% endif %}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
-                <div id="permissionRadioButtons">
-                    {{ form_row(form.permissions.accessLevel) }}
-                    {#{ form_widget(form.permissions.userFriendsWithAccess) }#}
-                    {{ form_widget(form.permissions.usersWithAccess) }}
-                    {{ form_widget(form.permissions.userGroupsWithAccess) }}
-                </div>
-                {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+                {{ form_row(form.accessType) }}
                 <button class="btn btn-success"><i class="fa fa-check"></i> Create</button>
                 <a class="btn btn-danger" href="#" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}

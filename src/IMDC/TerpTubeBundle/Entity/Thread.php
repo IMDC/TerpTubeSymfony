@@ -58,12 +58,6 @@ class Thread {
 	
 	/**
 	 *
-	 * @var \IMDC\TerpTubeBundle\Entity\User
-	 */
-	private $editedBy;
-	
-	/**
-	 *
 	 * @var string
 	 */
 	private $title;
@@ -76,53 +70,58 @@ class Thread {
 	
 	/**
 	 *
-	 * @var \IMDC\TerpTubeBundle\Entity\User
-	 */
-	private $creator;
-	
-	/**
-	 *
 	 * @var array
 	 */
 	private $tags;
-	
-	/**
-	 *
-	 * @var \IMDC\TerpTubeBundle\Entity\Permissions
-	 */
-	private $permissions;
-	
-	/**
-	 *
-	 * @var \IMDC\TerpTubeBundle\Entity\Forum
-	 */
-	private $parentForum;
-	
-	/**
-	 *
-	 * @var \Doctrine\Common\Collections\Collection
-	 */
-	private $usersFollowing;
-	
-	/**
-	 *
-	 * @var \Doctrine\Common\Collections\Collection
-	 */
-	private $posts;
-	
-	/**
-	 *
-	 * @var \Doctrine\Common\Collections\Collection
-	 */
-	private $mediaIncluded;
+
+    /**
+     *
+     * @var \IMDC\TerpTubeBundle\Entity\User
+     */
+    private $creator;
+
+    /**
+     *
+     * @var \IMDC\TerpTubeBundle\Entity\User
+     */
+    private $editedBy;
+
+    /**
+     *
+     * @var \IMDC\TerpTubeBundle\Entity\Forum
+     */
+    private $parentForum;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\AccessType
+     */
+    private $accessType;
+
+    /**
+     *
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $usersFollowing;
+
+    /**
+     *
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $mediaIncluded;
+
+    /**
+     *
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $posts;
 	
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		$this->usersFollowing = new \Doctrine\Common\Collections\ArrayCollection ();
-		$this->posts = new \Doctrine\Common\Collections\ArrayCollection ();
-		$this->mediaIncluded = new \Doctrine\Common\Collections\ArrayCollection ();
+		$this->usersFollowing   = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->mediaIncluded    = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 	
 	/**
@@ -259,6 +258,27 @@ class Thread {
 	public function getLastPostAt() {
 		return $this->lastPostAt;
 	}
+
+    /**
+     * Set editedAt
+     *
+     * @param \DateTime $editedAt
+     * @return Thread
+     */
+    public function setEditedAt($editedAt) {
+        $this->editedAt = $editedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get editedAt
+     *
+     * @return \DateTime
+     */
+    public function getEditedAt() {
+        return $this->editedAt;
+    }
 	
 	/**
 	 * Set title
@@ -301,6 +321,27 @@ class Thread {
 	public function getType() {
 		return $this->type;
 	}
+
+    /**
+     * Set tags
+     *
+     * @param array $tags
+     * @return Thread
+     */
+    public function setTags($tags) {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Get tags
+     *
+     * @return array
+     */
+    public function getTags() {
+        return $this->tags;
+    }
 	
 	/**
 	 * Set creator
@@ -322,27 +363,71 @@ class Thread {
 	public function getCreator() {
 		return $this->creator;
 	}
-	
-	/**
-	 * Set tags
-	 *
-	 * @param array $tags        	
-	 * @return Thread
-	 */
-	public function setTags($tags) {
-		$this->tags = $tags;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get tags
-	 *
-	 * @return array
-	 */
-	public function getTags() {
-		return $this->tags;
-	}
+
+    /**
+     * Set editedBy
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\User $editedBy
+     * @return Thread
+     */
+    public function setEditedBy(\IMDC\TerpTubeBundle\Entity\User $editedBy = null) {
+        $this->editedBy = $editedBy;
+
+        return $this;
+    }
+
+    /**
+     * Get editedBy
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\User
+     */
+    public function getEditedBy() {
+        return $this->editedBy;
+    }
+
+    /**
+     * Set parentForum
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Forum $parentForum
+     * @return Thread
+     */
+    public function setParentForum(\IMDC\TerpTubeBundle\Entity\Forum $parentForum = null) {
+        $this->parentForum = $parentForum;
+
+        return $this;
+    }
+
+    /**
+     * Get parentForum
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Forum
+     */
+    public function getParentForum() {
+        return $this->parentForum;
+    }
+
+    /**
+     * Set accessType
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\AccessType $accessType
+     * @return Thread
+     */
+    public function setAccessType(\IMDC\TerpTubeBundle\Entity\AccessType $accessType = null)
+    {
+        $this->accessType = $accessType;
+
+        return $this;
+    }
+
+    /**
+     * Get accessType
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\AccessType
+     */
+    public function getAccessType()
+    {
+        return $this->accessType;
+    }
 	
 	/**
 	 * Add usersFollowing
@@ -373,6 +458,36 @@ class Thread {
 	public function getUsersFollowing() {
 		return $this->usersFollowing;
 	}
+
+    /**
+     * Add mediaIncluded
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $mediaIncluded
+     * @return Thread
+     */
+    public function addMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
+        $this->mediaIncluded[] = $mediaIncluded;
+
+        return $this;
+    }
+
+    /**
+     * Remove mediaIncluded
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $mediaIncluded
+     */
+    public function removeMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
+        $this->mediaIncluded->removeElement ( $mediaIncluded );
+    }
+
+    /**
+     * Get mediaIncluded
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMediaIncluded() {
+        return $this->mediaIncluded;
+    }
 	
 	/**
 	 * Add posts
@@ -403,184 +518,10 @@ class Thread {
 	public function getPosts() {
 		return $this->posts;
 	}
-	
-	/**
-	 * Add mediaIncluded
-	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\Media $mediaIncluded        	
-	 * @return Thread
-	 */
-	public function addMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
-		$this->mediaIncluded[] = $mediaIncluded;
-		
-		return $this;
-	}
-	
-	/**
-	 * Remove mediaIncluded
-	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\Media $mediaIncluded        	
-	 */
-	public function removeMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
-		$this->mediaIncluded->removeElement ( $mediaIncluded );
-	}
-	
-	/**
-	 * Get mediaIncluded
-	 *
-	 * @return \Doctrine\Common\Collections\Collection
-	 */
-	public function getMediaIncluded() {
-		return $this->mediaIncluded;
-	}
-	public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
-		$this->mediaIncluded[] = $mediaIncluded;
-		
-		return $this;
-	}
-	
-	/**
-	 * Set editedAt
-	 *
-	 * @param \DateTime $editedAt
-	 * @return Thread
-	 */
-	public function setEditedAt($editedAt) {
-		$this->editedAt = $editedAt;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get editedAt
-	 *
-	 * @return \DateTime
-	 */
-	public function getEditedAt() {
-		return $this->editedAt;
-	}
-	
-	/**
-	 * Set editedBy
-	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\User $editedBy
-	 * @return Thread
-	 */
-	public function setEditedBy(\IMDC\TerpTubeBundle\Entity\User $editedBy = null) {
-		$this->editedBy = $editedBy;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get editedBy
-	 *
-	 * @return \IMDC\TerpTubeBundle\Entity\User
-	 */
-	public function getEditedBy() {
-		return $this->editedBy;
-	}
-	
-	/**
-	 * Set parentForum
-	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\Forum $parentForum
-	 * @return Thread
-	 */
-	public function setParentForum(\IMDC\TerpTubeBundle\Entity\Forum $parentForum = null) {
-		$this->parentForum = $parentForum;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get parentForum
-	 *
-	 * @return \IMDC\TerpTubeBundle\Entity\Forum
-	 */
-	public function getParentForum() {
-		return $this->parentForum;
-	}
-	
-	/**
-	 * Set permissions
-	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\Permissions $permissions
-	 * @return Thread
-	 */
-	public function setPermissions(\IMDC\TerpTubeBundle\Entity\Permissions $permissions = null) {
-		$this->permissions = $permissions;
-		
-		return $this;
-	}
-	
-	/**
-	 * Get permissions, or create new default private permissions if a thread doesn't have any.
-	 * New default permissions are created with ACCESS_CREATOR permission
-	 * @return \IMDC\TerpTubeBundle\Entity\Permissions
-	 */
-	public function getPermissions() {
-		if ( !$this->permissions ) {
-			// create new Permissions because this thread doesn't have any
-			$newPermissions = new Permissions();
-			$newPermissions->setAccessLevel( Permissions::ACCESS_CREATOR );
-			$this->setPermissions( $newPermissions );
-		}
-		return $this->permissions;
-	}
-	
-	/**
-	 * Determines if the given user has accesss to this thread
-	 * based on the permissions
-	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\User $user        	
-	 * @return boolean
-	 */
-	public function userHasAccess($user) {
-		$tPerm = $this->getPermissions();
-		
-		$accessLevel = $tPerm->getAccessLevel();
-		
-		if ($accessLevel == Permissions::ACCESS_PUBLIC)
-			return true;
-		else if ($accessLevel == Permissions::ACCESS_CREATOR && $user === $this->getCreator())
-			return true;
-		else if ($accessLevel == Permissions::ACCESS_CREATORS_FRIENDS && ($user === $this->getCreator() || $this->getCreator()->getFriendsList()->contains ( $user )))
-			return true;
-		else if ($accessLevel == Permissions::ACCESS_WITH_LINK)
-			return true;
-		else if ($accessLevel == Permissions::ACCESS_USER_LIST && ($user === $this->getCreator() || $tPerm->getUsersWithAccess()->contains( $user )))
-			return true;
-		else {
-			$intersection = array_intersect( $tPerm->getuserGroupsWithAccess()->toArray(), $user->getUserGroups()->toArray() );
-			if ($accessLevel == Permissions::ACCESS_GROUP_LIST && ($user === $this->getCreator()) || !empty( $intersection ))
-				return true;
-			else if ($accessLevel == Permissions::ACCESS_REGISTERED_MEMBERS && $user)
-				return true;
-			else
-				return false;
-		}
-	}
-	
-	/**
-	 * Determines if a thread is visible to a user while browsing forums
-	 *
-	 * @param \IMDC\TerpTubeBundle\Entity\User $user        	
-	 * @return boolean
-	 */
-	public function visibleToUser($user) {
-		$tPerm = $this->getPermissions();
-		$accessLevel = $tPerm->getAccessLevel();
-		
-		switch ($accessLevel) {
-			case Permissions::ACCESS_WITH_LINK :
-				if ($user === $this->getCreator())
-					return true;
-				break;
-			
-			default :
-				return $this->userHasAccess( $user );
-				break;
-		}
-	}
+
+    public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
+        $this->mediaIncluded[] = $mediaIncluded;
+
+        return $this;
+    }
 }

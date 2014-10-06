@@ -40,15 +40,9 @@
                         {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
                     </div>
                 {% endif %}
-                {{ form_row(form.title, {'attr': {'class': 'autosize'}}) }}
-                {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
-                <div id="permissionRadioButtons">
-                    {{ form_row(form.permissions.accessLevel) }}
-                    {#{ form_widget(form.permissions.userFriendsWithAccess) }#}
-                    {{ form_widget(form.permissions.usersWithAccess) }}
-                    {{ form_widget(form.permissions.userGroupsWithAccess) }}
-                </div>
-                {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
+                {{ form_row(form.title) }}
+                {{ form_row(form.content) }}
+                {{ form_row(form.accessType) }}
                 <button class="btn btn-success" id="submitForm"><i class="fa fa-check"></i> Edit</button>
                 <a class="btn btn-danger" href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}

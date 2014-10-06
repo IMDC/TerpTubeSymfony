@@ -91,7 +91,7 @@
 								<li><a href="{{ path('imdc_thread_edit', {'threadid': thread.id}) }}"><i class="fa fa-scissors"></i> Edit</a></li>
 								<li><a href="{{ path('imdc_thread_delete', {'threadid': thread.id}) }}"><i class="fa fa-minus-circle"></i> Delete</a></li>
 							{% endif %}
-							<li>{% include 'IMDCTerpTubeBundle:Thread:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}</li>
+							<li>{% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': thread} %}</li>
 						</ul>
 					</div>
 					<!-- post controls -->

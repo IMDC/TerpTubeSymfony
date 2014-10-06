@@ -15,13 +15,6 @@ IMDC\TerpTubeBundle\Entity\Forum:
             type: datetime
         creationDate:
             type: datetime
-    oneToOne:
-        group:
-            targetEntity: UserGroup
-            joinColumn:
-                name: group_id
-                referencedColumnName: id
-            inversedBy: forums
     manyToOne:
         creator:
             targetEntity: User
@@ -29,10 +22,22 @@ IMDC\TerpTubeBundle\Entity\Forum:
             joinColumn: 
                 name: user_id
                 referencedColumnName: id
+        group:
+            targetEntity: UserGroup
+            joinColumn:
+                name: group_id
+                referencedColumnName: id
+            inversedBy: forums
+        accessType:
+            targetEntity: AccessType
+            joinColumn:
+                name: access_type_id
+                referencedColumnName: id
     oneToMany:
         threads:
             targetEntity: Thread
             mappedBy: parentForum
+            cascade: ["remove"]
     manyToMany:
         titleMedia:
             targetEntity: Media

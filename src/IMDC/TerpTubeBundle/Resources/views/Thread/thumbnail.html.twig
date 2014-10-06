@@ -15,7 +15,7 @@ _Forum:view.html.twig
                 <div>
                     <div class="col-md-9 col-md-offset-1 pull-left tt-date" title="{{ thread.creationDate|date('g:ia M j Y') }}">Created: {{ time_diff(thread.creationDate) }}</div>
                     <div class="col-md-1 pull-right">
-                        {% include 'IMDCTerpTubeBundle:Thread:permissionIcons.html.twig' with {'threadPermission': thread.getPermissions.accessLevel} %}
+                        {% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': thread} %}
                     </div>
                 </div>
                 <div class="tt-media-element">

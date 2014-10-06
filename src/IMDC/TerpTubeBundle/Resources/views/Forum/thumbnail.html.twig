@@ -23,7 +23,7 @@ _Home:index.html.twig
                 <a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}">
                     <h3>{{ forum.titleText|truncate(20) }}</h3>
                     {# <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p> #}
-                    <p><span class="badge badge-info">Topics: {{ forum.getPublicThreads|length }}</span></p>
+                    <p><span class="badge badge-info">Topics: {{ forums|length }}</span></p>
                     {# <p>Last post: {{ forum.getLastActivity|date('g:ia M j, Y') }}</p> #}
                     <p>Last activity: <span class="toolPop" title="{{ forum.getLastActivity|date('g:ia M j, Y') }}">{{ time_diff(forum.getLastActivity) }}</span></p>
                     <p><span class="tt-date">Created: {{ forum.creationDate|date('g:ia M j, Y') }}</span></p>

@@ -11,9 +11,9 @@ class ForumFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+        //TODO move to own form type
         $em = $options['em'];
         $transformer = new MediaToIdTransformer($em);
-        $groupId = $options['groupId'];
 
         $builder->add(
             $builder
@@ -26,36 +26,33 @@ class ForumFormType extends AbstractType
             'label' => 'Title'
         ));
 
-        $options = array(
+        $builder->add('accessType', 'access_type', array(
+            'class' => 'IMDC\TerpTubeBundle\Entity\Forum'
+        ));
+
+        $attr = array('style' => 'display: none;');
+        $builder->add('group', 'entity', array(
             'class' => 'IMDCTerpTubeBundle:UserGroup',
-            'empty_value' => 'Non-Group Associated Forum',
-            'required' => false
-        );
-
-        if ($groupId) {
-            $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-            if ($group) {
-                $options['data'] = $em->getReference('IMDCTerpTubeBundle:UserGroup', $group->getId());
-            }
-        }
-
-        $builder->add('group', 'entity', $options);
+            'empty_value' => 'Choose a Group',
+            'required' => false,
+            'label_attr' => $attr,
+            'attr' => $attr
+        ));
 	}
 
-	public function getName()
-	{
-		return 'ForumForm';
-	}
-	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{
-		$resolver
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver
             ->setDefaults(array(
-                'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum',
-                'groupId' => null))
+                'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum'))
             ->setRequired(array(
                 'em'))
             ->setAllowedTypes(array(
                 'em' => 'Doctrine\Common\Persistence\ObjectManager'));
+    }
+
+	public function getName()
+	{
+		return 'ForumForm';
 	}
 }

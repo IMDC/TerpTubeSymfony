@@ -14,7 +14,7 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
  */
 class ForumRepository extends EntityRepository
 {
-    public function getViewableToUser($user, $excludeGroups = false, $groupsOnly = false)
+    private function getViewableToUserQB($user, $excludeGroups = false, $groupsOnly = false)
     {
         $qb = $this->createQueryBuilder('f');
 
@@ -24,30 +24,52 @@ class ForumRepository extends EntityRepository
             $qb->leftJoin('f.group', 'g')
                 ->leftJoin('g.members', 'm')
                 ->where($qb->expr()->isNotNull('f.group'))
-                ->where($qb->expr()->in('m.id', array($user->getId())));
+                ->andWhere($qb->expr()->in('m.id', array($user->getId())));
 
             if (!$groupsOnly)
                 $qb->orWhere($qb->expr()->isNull('f.group'));
         }
 
-        $qb->orderBy('f.lastActivity', 'DESC');
-
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 
-
-
-    public function getMostRecentForums($limit=30)
+    private function filterViewableToUser($securityContext, array $items)
     {
-        $query = $this->getEntityManager()->createQuery(
-                            'SELECT f
-                            FROM IMDCTerpTubeBundle:Forum f
-                            ORDER BY f.lastActivity DESC'
-        );
-        $query->setMaxResults($limit);
-         
-        return $query->getResult();
+        $viewable = array();
+        foreach ($items as $item) {
+            if ($securityContext->isGranted('VIEW', $item) === true) {
+                $viewable[] = $item;
+            }
+        }
+
+        return $viewable;
     }
+
+    public function getViewableToUser($securityContext, $user, $excludeGroups = false, $groupsOnly = false)
+    {
+        $forums = $this->getViewableToUserQB($user, $excludeGroups, $groupsOnly)
+            ->getQuery()->getResult();
+
+        return $this->filterViewableToUser($securityContext, $forums);
+    }
+
+    public function getRecent($securityContext, $user, $excludeGroups = false, $groupsOnly = false, $limit = 4)
+    {
+        $forums = $this->getViewableToUserQB($user, $excludeGroups, $groupsOnly)
+            ->orderBy('f.lastActivity', 'DESC')
+            ->getQuery()->getResult();
+
+        $filtered = $this->filterViewableToUser($securityContext, $forums);
+
+        return array_slice($filtered, 0, $limit);
+    }
+
+
+
+
+
+
+
     
     public function getRecentlyCreatedForums($limit=30)
     {

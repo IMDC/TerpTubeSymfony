@@ -6,9 +6,9 @@ imdc_thread_new_from_media:
   options:
     expose: true
 
-imdc_thread_new_under_forum:
-  pattern: /new/forum/{forumid}
-  defaults: { _controller: IMDCTerpTubeBundle:Thread:createNewThread }
+imdc_thread_new:
+  pattern: /new/{forumid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:new }
   requirements:
     forumid: \d+
 
@@ -20,13 +20,13 @@ imdc_thread_view:
 
 imdc_thread_edit:
   pattern: /{threadid}/edit
-  defaults: { _controller: IMDCTerpTubeBundle:Thread:editThread }
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:edit }
   requirements:
     threadid: \d+
 
 imdc_thread_delete:
   pattern: /{threadid}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:Thread:deleteThread }
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:delete }
   requirements:
     threadid: \d+
 

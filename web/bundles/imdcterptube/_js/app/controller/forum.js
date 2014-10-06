@@ -36,7 +36,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Forum.prototype.bindUIEvents = function() {
-        console.log("%s: %s", Forum.TAG, "bindUIEvents")
+        console.log("%s: %s", Forum.TAG, "bindUIEvents");
 
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
@@ -44,6 +44,23 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
         this.mediaChooser.bindUIEvents();
+
+        this.getForm().find("input:radio").on("change", (function(e) {
+            var group = this.getFormField("group");
+            var parent = group.parent();
+
+            if ($(e.target).attr("id") == this.getForm().find("input:radio[value=6]").attr("id")) {
+                parent.find("label").addClass("required");
+                group.attr("required", "required")
+                parent.children().show();
+            } else {
+                parent.find("label").removeClass("required");
+                group.removeAttr("required");
+                parent.children().hide();
+            }
+        }).bind(this));
+
+        this.getForm().find("input:radio:checked").trigger("change");
     };
 
     Forum.prototype._onPageLoaded = function(e) {

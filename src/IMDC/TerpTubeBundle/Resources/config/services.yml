@@ -132,3 +132,20 @@ services:
         class: IMDC\TerpTubeBundle\Extensions\Twig\maxUploadSizeHelper
         tags:
             - {name: twig.extension }
+
+    imdc_terptube.security.acl.access_provider:
+        class: IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider
+        arguments: [@doctrine.orm.entity_manager, @security.acl.provider]
+
+    imdc_terptube.security.acl.access_voter:
+        class: IMDC\TerpTubeBundle\Security\Acl\Voter\AccessVoter
+        arguments: [@imdc_terptube.security.acl.access_provider]
+        public: false
+        tags:
+            - { name: security.voter }
+
+    imdc_terptube.form.type.access_type:
+        class: IMDC\TerpTubeBundle\Form\Type\AccessTypeType
+        arguments: [@doctrine.orm.entity_manager, ]
+        tags:
+            - { name: form.type, alias: access_type }

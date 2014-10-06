@@ -304,7 +304,7 @@ class PostController extends Controller
         }
 
         if (!$thread && !$postParent) {
-            throw new Exception('thread/post not found');
+            throw new \Exception('thread/post not found');
         }
 
         //TODO permissions
@@ -327,7 +327,7 @@ class PostController extends Controller
                 $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
                     ->find($postForm->get('mediatextarea')->getData());
                 if (!$mediaFile) {
-                    throw new Exception('media not found');
+                    throw new \Exception('media not found');
                 }
 
                 if (!$user->getResourceFiles()->contains($mediaFile)) {
@@ -404,7 +404,7 @@ class PostController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		$post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
         if (!$post) {
-            throw new Exception('post not found');
+            throw new \Exception('post not found');
         }
 
         //TODO permissions
@@ -427,7 +427,7 @@ class PostController extends Controller
                 $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
                     ->find($postForm->get('mediatextarea')->getData());
                 if (!$mediaFile) {
-                    throw new Exception('media not found');
+                    throw new \Exception('media not found');
                 }
 
                 if (!$user->getResourceFiles()->contains($mediaFile)) {

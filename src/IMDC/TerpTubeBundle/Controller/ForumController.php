@@ -2,6 +2,8 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use IMDC\TerpTubeBundle\Entity\AccessType;
+use IMDC\TerpTubeBundle\Security\Acl\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -40,14 +42,16 @@ class ForumController extends Controller
 	{
 		$em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('IMDCTerpTubeBundle:Forum');
+        $securityContext = $this->get('security.context');
+        $user = $this->getUser();
 
-		$recentForums = $repo->getMostRecentForums(4); //FIXME
-		$forums = $repo->getViewableToUser($this->getUser());
+		$recentForums = $repo->getRecent($securityContext, $user);
+		$forums = $repo->getViewableToUser($securityContext, $user);
 		
 		$paginator = $this->get('knp_paginator');
 		$forums = $paginator->paginate(
             $forums,
-			$this->get('request')->query->get('page', 1), /*page number*/
+			$request->query->get('page', 1), /*page number*/
 			8 /*limit per page*/
 		);
 
@@ -67,20 +71,27 @@ class ForumController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $forum = new Forum();
-        $forumForm = $this->createForm(new ForumFormType(), $forum, array(
-            'em' => $em,
-            'groupId' => $groupId
+        $form = $this->createForm(new ForumFormType(), $forum, array(
+            'em' => $em
         ));
-        $forumForm->handleRequest($request);
+        $form->handleRequest($request);
+
+        if ($groupId) {
+            $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+            if ($group) {
+                $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP));
+                $form->get('group')->setData($group);
+            }
+        }
         
-        if ($forumForm->isValid()) {
+        if ($form->isValid()) {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $forum->setCreator($user);
             $forum->setLastActivity($currentDateTime);
             $forum->setCreationDate($currentDateTime);
 
-            $media = $forumForm->get('mediatextarea')->getData();
+            $media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
@@ -96,15 +107,19 @@ class ForumController extends Controller
             $em->persist($user);
             $em->flush();
 
-            $aclProvider = $this->get('security.acl.provider');
-            $objectIdentity = ObjectIdentity::fromDomainObject($forum);
-            $acl = $aclProvider->createAcl($objectIdentity);
-
+            //$aclProvider = $this->get('security.acl.provider');
+            $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+            //$objectIdentity = ObjectIdentity::fromDomainObject($forum);
+            $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
-            $aclProvider->updateAcl($acl);
-            
+            //$acl = $aclProvider->createAcl($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity);
+            //$acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+            $access->insertEntries($securityIdentity);
+            //$aclProvider->updateAcl($acl);
+            $accessProvider->updateAccess($access);
+
             $this->get('session')->getFlashBag()->add(
                 'info', 'Forum created successfully!'
             );
@@ -115,7 +130,7 @@ class ForumController extends Controller
         }
         
         return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig', array(
-            'form' => $forumForm->createView(),
+            'form' => $form->createView(),
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
@@ -126,46 +141,30 @@ class ForumController extends Controller
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
-	    
-	    // setup necessary vars
-	    $em = $this->getDoctrine()->getManager();
-	    $user = $this->getUser();
-	    $forumRepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
-	    
-	    // retrieve forum from storage layer
-	    $forum = $forumRepo->findOneBy(array('id' => $forumid));
-	    
-	    if (!$forum) {
-	        $this->get('session')->getFlashBag()->add(
-	            'info',
-	            'A forum with this identification does not exist!'
-	        );
 
-	        return $this->redirect($this->generateUrl('imdc_forum_list'));
-	    }
-	    
-	    //FIXME: implement forum permissions check here when permissions enabled for forums
-	    
-	    $recentThreads = $em->getRepository('IMDCTerpTubeBundle:Thread')->findRecentThreadsForForum($forum->getId(), 4);
-	    
-	    $threads = $forumRepo->getTopLevelThreadsForForum($forum->getId());
-	    $filteredThreads = array();
-	    
-	    foreach ($threads as $thread) {
-            // check for the correct permissions access
-            if ($thread->visibleToUser($user)) {
-                $filteredThreads[] = $thread; // push onto end of array
-            }
-	    }
-	    
+	    $em = $this->getDoctrine()->getManager();
+        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
+        if (!$forum) {
+            throw new \Exception('forum not found');
+        }
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('VIEW', $forum) === false) {
+            throw new AccessDeniedException();
+        }
+
+        $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
+
+        $recentThreads = $threadRepo->getRecent($securityContext, $forum->getId(), 4);
+        $threads = $threadRepo->getViewableToUser($securityContext, $forum->getId());
+
 	    $paginator = $this->get('knp_paginator');
 	    $threads = $paginator->paginate(
-	    	$filteredThreads,
-	    	$this->get('request')->query->get('page', 1) /* page number */,
-	    	8, /* limit per page */
-	    	array('distinct' => false)
+            $threads,
+            $request->query->get('page', 1) /* page number */,
+	    	8 /* limit per page */
 	    );
-	        
+
 	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
 	    	'forum' => $forum,
 	    	'recentThreads' => $recentThreads,
@@ -179,25 +178,28 @@ class ForumController extends Controller
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
-	    
-	    $securityContext = $this->get('security.context');
-	    if (false === $securityContext->isGranted('EDIT', $forumid)) {
-	        throw new AccessDeniedException();
-	    }
 
         $em = $this->getDoctrine()->getManager();
-
 	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
-	    $forumForm = $this->createForm(new ForumFormType(), $forum, array(
+        if (!$forum) {
+            throw new \Exception('forum not found');
+        }
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('EDIT', $forum) === false) {
+            throw new AccessDeniedException();
+        }
+
+	    $form = $this->createForm(new ForumFormType(), $forum, array(
             'em' => $em
         ));
-        $forumForm->handleRequest($request);
+        $form->handleRequest($request);
 	    
-	    if ($forumForm->isValid()) {
+	    if ($form->isValid()) {
             $user = $this->getUser();
             $forum->setLastActivity(new \DateTime('now'));
 
-            $media = $forumForm->get('mediatextarea')->getData();
+            $media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
@@ -207,9 +209,19 @@ class ForumController extends Controller
                     $forum->addTitleMedia($media);
             }
 
-	        $em->persist($forum);
+            $em->persist($forum);
 	        $em->persist($user);
 	        $em->flush();
+
+            $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+            $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
+            $securityIdentity = UserSecurityIdentity::fromAccount($user);
+
+            // for consistency recreate the underlying acl
+            $accessProvider->deleteAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity);
+            $access->insertEntries($securityIdentity);
+            $accessProvider->updateAccess($access);
 	        
 	        $this->get('session')->getFlashBag()->add(
                 'info', 'Forum edited successfully!'
@@ -221,7 +233,7 @@ class ForumController extends Controller
         }
 	        
         return $this->render('IMDCTerpTubeBundle:Forum:edit.html.twig', array(
-            'form' => $forumForm->createView(),
+            'form' => $form->createView(),
             'forum' => $forum,
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
@@ -235,46 +247,44 @@ class ForumController extends Controller
 	    }
 
 	    $em = $this->getDoctrine()->getManager();
-	    $user = $this->getUser();
-	    
-	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->findOneBy(array('id' => $forumid));
+        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
+        if (!$forum) {
+            throw new \Exception('forum not found');
+        }
 
-	    // check if user is the creator of the forum
-	    if ($user !== $forum->getCreator()) {
-	        $this->get('session')->getFlashBag()->add(
-	            'danger',
-	            'You are not authorized to delete this forum'
-	        );
-	        
-	        return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
-                'forum' => $forum
-            ));
-	    }
-	    
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('DELETE', $forum) === false) {
+            throw new AccessDeniedException();
+        }
+
 	    $form = $this->createForm(new ForumFormDeleteType(), $forum);
 	    $form->handleRequest($request);
 
 	    if ($form->isValid()) {
-	        $threads = $forum->getThreads();
-	        foreach ($threads as $thread) {
-	            $threadposts = $thread->getPosts();
-	            foreach ($threadposts as $threadpost) {
-	                $threadpost->getAuthor()->removePost($threadpost);
-	                $em->remove($threadpost);
-	            }
-	            $thread->getCreator()->removeThread($thread);
-	            $em->remove($thread);
-	        }
+            $user = $this->getUser();
+            /*$threads = $forum->getThreads();
+            foreach ($threads as $thread) {
+                $threadposts = $thread->getPosts();
+                foreach ($threadposts as $threadpost) {
+                    $threadpost->getAuthor()->removePost($threadpost);
+                    $em->remove($threadpost);
+                }
+                $thread->getCreator()->removeThread($thread);
+                $em->remove($thread);
+            }*/
 	        $user->removeForum($forum);
-	        $em->persist($user);
-	        $em->remove($forum);
 
-	        // complete all deletions and persist user object to database
+            $em->remove($forum);
+	        $em->persist($user);
+
+            $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+            $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
+            $accessProvider->deleteAccess($objectIdentity);
+
 	        $em->flush();
 
 	        $this->get('session')->getFlashBag()->add(
-	            'info',
-	            'Forum deleted successfully!'
+	            'info', 'Forum deleted successfully!'
 	        );
 
 	        return $this->redirect($this->generateUrl('imdc_forum_list'));

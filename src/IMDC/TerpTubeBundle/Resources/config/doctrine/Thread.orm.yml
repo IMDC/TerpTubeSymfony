@@ -47,6 +47,11 @@ IMDC\TerpTubeBundle\Entity\Thread:
             targetEntity: Forum
             inversedBy: threads
             nullable: true
+        accessType:
+            targetEntity: AccessType
+            joinColumn:
+                name: access_type_id
+                referencedColumnName: id
     manyToMany:
         usersFollowing:
             targetEntity: User
@@ -73,11 +78,4 @@ IMDC\TerpTubeBundle\Entity\Thread:
             targetEntity: Post
             mappedBy: parentThread
             cascade: ["remove"]
-    oneToOne: 
-        permissions: # one to one unidirectional
-            targetEntity: Permissions
-            joinColumn:
-                name: permissions_id
-                referencedColumnName: id
-            cascade: ["all"]
     lifecycleCallbacks: {  }

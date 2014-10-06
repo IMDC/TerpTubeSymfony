@@ -12,6 +12,7 @@ class PostType extends AbstractType
 	{
         $canTemporal = $options['canTemporal'];
 
+        //TODO move to own form type
 	    $builder->add('mediatextarea', 'hidden', array(
             'mapped' => false
         ));
@@ -41,19 +42,19 @@ class PostType extends AbstractType
         ));
 	}
 
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'data_class' => 'IMDC\TerpTubeBundle\Entity\Post'
+        ));
+
+        $resolver->setRequired(array(
+            'canTemporal'
+        ));
+    }
+
 	public function getName()
 	{
 		return 'PostForm';
-	}
-	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{
-		$resolver->setDefaults(array(
-            'data_class' => 'IMDC\TerpTubeBundle\Entity\Post'
-        ));
-		
-		$resolver->setRequired(array(
-            'canTemporal'
-        ));
 	}
 }

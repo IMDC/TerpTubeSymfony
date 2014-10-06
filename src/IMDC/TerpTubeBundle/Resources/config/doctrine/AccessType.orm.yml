@@ -1,10 +1,10 @@
-IMDC\TerpTubeBundle\Entity\InvitationType:
+IMDC\TerpTubeBundle\Entity\AccessType:
     type: entity
-    table: invitation_type
+    table: access_type
     id:
         id:
             type: integer
     fields:
-        name:
+        description:
             type: string
     lifecycleCallbacks: {  }

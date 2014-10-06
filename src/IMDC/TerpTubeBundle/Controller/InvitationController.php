@@ -570,13 +570,13 @@ class InvitationController extends Controller
     public static function getGroupFromInviteData(Controller $controller, Invitation $invitation) {
         $data = $invitation->getData();
         if (!$data || !isset($data['groupId'])) {
-            throw new Exception('invalid invitation data');
+            throw new \Exception('invalid invitation data');
         }
 
         $em = $controller->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find(intval($data['groupId']));
         if (!$group) {
-            //throw new Exception('group not found');
+            //throw new \Exception('group not found');
             return null;
         }
 

@@ -32,11 +32,6 @@ class Forum
     private $creationDate;
 
     /**
-     * @var \IMDC\TerpTubeBundle\Entity\UserGroup
-     */
-    private $group;
-
-    /**
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $creator;
@@ -60,6 +55,16 @@ class Forum
      * @var \Doctrine\Common\Collections\Collection
      */
     private $forumModerators;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\UserGroup
+     */
+    private $group;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\AccessType
+     */
+    private $accessType;
 
     /**
      * Constructor
@@ -157,29 +162,6 @@ class Forum
     }
 
     /**
-     * Set group
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $group
-     * @return Forum
-     */
-    public function setGroup(\IMDC\TerpTubeBundle\Entity\UserGroup $group = null)
-    {
-        $this->group = $group;
-
-        return $this;
-    }
-
-    /**
-     * Get group
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\UserGroup
-     */
-    public function getGroup()
-    {
-        return $this->group;
-    }
-
-    /**
      * Set creator
      *
      * @param \IMDC\TerpTubeBundle\Entity\User $creator
@@ -233,17 +215,6 @@ class Forum
     public function getThreads()
     {
         return $this->threads;
-    }
-
-
-    /**
-     * Returns all threads for the forum that have public access
-     *
-     * @return multitype:|boolean
-     */
-    public function getPublicThreads()
-    {
-        return array_filter($this->threads->toArray(), function($t) { return $t->getPermissions()->getAccessLevel() == Permissions::ACCESS_PUBLIC; });
     }
 
     /**
@@ -343,5 +314,51 @@ class Forum
     public function getForumModerators()
     {
         return $this->forumModerators;
+    }
+
+    /**
+     * Set group
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $group
+     * @return Forum
+     */
+    public function setGroup(\IMDC\TerpTubeBundle\Entity\UserGroup $group = null)
+    {
+        $this->group = $group;
+
+        return $this;
+    }
+
+    /**
+     * Get group
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\UserGroup
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * Set accessType
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\AccessType $accessType
+     * @return Forum
+     */
+    public function setAccessType(\IMDC\TerpTubeBundle\Entity\AccessType $accessType = null)
+    {
+        $this->accessType = $accessType;
+
+        return $this;
+    }
+
+    /**
+     * Get accessType
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\AccessType
+     */
+    public function getAccessType()
+    {
+        return $this->accessType;
     }
 }

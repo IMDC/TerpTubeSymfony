@@ -118,7 +118,7 @@ class UserGroupController extends Controller
 		$em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($usergroupid);
         if (!$group) {
-            throw new Exception('group not found');
+            throw new \Exception('group not found');
         }
 
         $paginator = $this->get('knp_paginator');
@@ -298,7 +298,7 @@ class UserGroupController extends Controller
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
-            throw new Exception('group not found');
+            throw new \Exception('group not found');
         }
 
         $securityContext = $this->get('security.context');
@@ -417,7 +417,7 @@ class UserGroupController extends Controller
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
-            throw new Exception('group not found');
+            throw new \Exception('group not found');
         }
 
         $securityContext = $this->get('security.context');
