@@ -6,7 +6,7 @@
   	margin: 10px 0 10px;
 
     .tt-media-img, .tt-media-video, .tt-media-audio {
-      max-height: 180px;
+      /* max-height: 180px; */ /* bug 142 */
     }
   }
 }

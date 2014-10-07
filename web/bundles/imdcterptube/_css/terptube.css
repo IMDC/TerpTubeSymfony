@@ -157,7 +157,8 @@ body {
 }
 /* line 8, sass/_forum.scss */
 .tt-forum-thumbnail .tt-media-element .tt-media-img, .tt-thread-thumbnail .tt-media-element .tt-media-img, .tt-forum-thumbnail .tt-media-element .tt-media-video, .tt-thread-thumbnail .tt-media-element .tt-media-video, .tt-forum-thumbnail .tt-media-element .tt-media-audio, .tt-thread-thumbnail .tt-media-element .tt-media-audio {
-  max-height: 180px;
+  /* max-height: 180px; */
+  /* bug 142 */
 }
 
 /* line 1, sass/_help.scss */
