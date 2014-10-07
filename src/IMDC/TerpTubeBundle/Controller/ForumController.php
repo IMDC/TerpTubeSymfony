@@ -55,9 +55,22 @@ class ForumController extends Controller
 			8 /*limit per page*/
 		);
 
+        //FIXME this seems too costly just for the result of numeric convenience
+        $recentForumThreadCount = array();
+        $forumThreadCount = array();
+        $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
+        foreach ($recentForums as $recentForum) {
+            $recentForumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $recentForum->getId()));
+        }
+        foreach ($forums as $forum) {
+            $forumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $forum->getId()));
+        }
+
 		return $this->render('IMDCTerpTubeBundle:Forum:index.html.twig', array(
             'recentForums' => $recentForums,
-			'forums' => $forums
+			'forums' => $forums,
+            'recentForumThreadCount' => $recentForumThreadCount,
+            'forumThreadCount' => $forumThreadCount
 		));
 	}
 	
