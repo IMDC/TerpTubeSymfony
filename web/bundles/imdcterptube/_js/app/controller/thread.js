@@ -467,8 +467,8 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             for (var p in this.posts) {
                 var post = this.posts[p];
                 var selection = this.player.getAreaSelectionTimes();
-                post.getFormField("startTime").val(selection.minTime.toFixed(2));
-                post.getFormField("endTime").val(selection.maxTime.toFixed(2));
+                post.getFormField("startTime").val(parseFloat(selection.minTime).toFixed(2));
+                post.getFormField("endTime").val(parseFloat(selection.maxTime).toFixed(2));
             }
         }).bind(this));
 
