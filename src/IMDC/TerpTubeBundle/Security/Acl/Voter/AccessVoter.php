@@ -6,7 +6,6 @@ use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class AccessVoter
@@ -41,16 +40,12 @@ class AccessVoter implements VoterInterface
 
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        $class = get_class($object);
-
-        if (!$this->supportsClass($class)) {
+        if (!$this->supportsClass(get_class($object))) {
             return VoterInterface::ACCESS_ABSTAIN;
         }
 
         if(count($attributes) !== 1) {
-            throw new \InvalidArgumentException(
-                'Only one attribute is allowed for VIEW'
-            );
+            throw new \InvalidArgumentException('Only one attribute is allowed for VIEW');
         }
 
         $attribute = $attributes[0];

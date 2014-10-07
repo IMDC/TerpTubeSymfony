@@ -24,7 +24,7 @@ class AccessChoiceList extends ObjectChoiceList
             $qb->where('a.id != :accessType')
                 ->setParameter('accessType', AccessType::TYPE_GROUP);
         }
-        //TODO access type not yet supported
+        //TODO AccessType::TYPE_USERS not yet supported
         $qb->andWhere('a.id != :accessType2')
             ->setParameter('accessType2', AccessType::TYPE_USERS);
 

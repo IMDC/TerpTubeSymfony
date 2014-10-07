@@ -14,36 +14,48 @@ use Symfony\Component\Security\Core\Util\ClassUtils;
  */
 class GroupSecurityIdentity implements SecurityIdentityInterface
 {
-    private $name;
+    private $id;
     private $class;
 
-    public function __construct($name, $class)
+    public function __construct($id, $class)
     {
-        if (empty($name)) {
-            throw new \InvalidArgumentException('$name must not be empty.');
+        if (empty($id)) {
+            throw new \InvalidArgumentException('$id must not be empty.');
         }
 
         if (empty($class)) {
             throw new \InvalidArgumentException('$class must not be empty.');
         }
 
-        $this->name = $name;
+        $this->id = intval($id);
         $this->class = $class;
     }
 
     public static function fromGroup(UserGroup $group)
     {
-        return new self($group->getName(), ClassUtils::getRealClass($group));
+        return new self($group->getId(), ClassUtils::getRealClass($group));
     }
 
-    public static function fromSecurityIdentity(SecurityIdentityInterface $identity)
+    public static function fromRoleSecurityIdentity(SecurityIdentityInterface $identity)
     {
-        if ($identity instanceof RoleSecurityIdentity) {
-            $securityIdentifier = $identity->getRole();
-            return new self(
-                substr($securityIdentifier, 1 + $pos = strpos($securityIdentifier, '-')),
-                substr($securityIdentifier, 0, $pos));
+        if (!$identity instanceof RoleSecurityIdentity) {
+            throw new \InvalidArgumentException('');
         }
+
+        $securityIdentifier = $identity->getRole();
+
+        $id = substr($securityIdentifier, 1 + $pos = strpos($securityIdentifier, '-'));
+        if (!is_numeric($id))
+            $id = -1;
+
+        return new self(
+            $id,
+            substr($securityIdentifier, 0, $pos));
+    }
+
+    public function toRoleSecurityIdentity()
+    {
+        return new RoleSecurityIdentity($this->getClass().'-'.$this->getId());
     }
 
     /**
@@ -55,7 +67,7 @@ class GroupSecurityIdentity implements SecurityIdentityInterface
             return false;
         }
 
-        return $this->class === $identity->getClass() && $this->name === $identity->getName();
+        return $this->class === $identity->getClass() && $this->id === $identity->getId();
     }
 
     public function getClass()
@@ -64,10 +76,10 @@ class GroupSecurityIdentity implements SecurityIdentityInterface
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getName()
+    public function getId()
     {
-        return $this->name;
+        return $this->id;
     }
 }

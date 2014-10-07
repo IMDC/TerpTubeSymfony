@@ -286,7 +286,8 @@ class ThreadController extends Controller
 
             // get existing underlying acl
             $access = $accessProvider->getAccess($objectIdentity);
-            $access->insertEntries($securityIdentity);
+            //$access->insertEntries($securityIdentity);
+            $access->updateEntries($securityIdentity);
             $accessProvider->updateAccess($access);
 
             $this->get('session')->getFlashBag()->add(

@@ -379,7 +379,8 @@ class UserGroupController extends Controller
             ->getQuery()->getResult();
 
         // exclude users that have a pending invitation for the group
-        for ($i=0; $i<count($nonMembers); $i++) {
+        $numNonMembers = count($nonMembers);
+        for ($i=0; $i<$numNonMembers; $i++) {
             $member = $nonMembers[$i];
             $receivedInvites = $member->getReceivedInvitations();
             foreach ($receivedInvites as $receivedInvite) {
