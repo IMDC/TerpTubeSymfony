@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Form\Type;
 
+use IMDC\TerpTubeBundle\Form\DataTransformer\MediaToIdTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;

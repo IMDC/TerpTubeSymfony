@@ -68,6 +68,7 @@ security:
 
     acl:
         connection: default
+        provider: imdc_terptube.security.acl.access_provider
 
     access_decision_manager:
           strategy: consensus

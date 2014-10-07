@@ -3,7 +3,9 @@
 namespace IMDC\TerpTubeBundle\Security\Acl\Domain;
 
 use IMDC\TerpTubeBundle\Entity\UserGroup;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
+use Symfony\Component\Security\Core\Util\ClassUtils;
 
 /**
  * Class GroupSecurityIdentity
@@ -13,19 +15,35 @@ use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 class GroupSecurityIdentity implements SecurityIdentityInterface
 {
     private $name;
+    private $class;
 
-    public function __construct($name)
+    public function __construct($name, $class)
     {
         if (empty($name)) {
             throw new \InvalidArgumentException('$name must not be empty.');
         }
 
+        if (empty($class)) {
+            throw new \InvalidArgumentException('$class must not be empty.');
+        }
+
         $this->name = $name;
+        $this->class = $class;
     }
 
     public static function fromGroup(UserGroup $group)
     {
-        return new self($group->getName());
+        return new self($group->getName(), ClassUtils::getRealClass($group));
+    }
+
+    public static function fromSecurityIdentity(SecurityIdentityInterface $identity)
+    {
+        if ($identity instanceof RoleSecurityIdentity) {
+            $securityIdentifier = $identity->getRole();
+            return new self(
+                substr($securityIdentifier, 1 + $pos = strpos($securityIdentifier, '-')),
+                substr($securityIdentifier, 0, $pos));
+        }
     }
 
     /**
@@ -37,11 +55,16 @@ class GroupSecurityIdentity implements SecurityIdentityInterface
             return false;
         }
 
-        return $this->name === $identity->getName();
+        return $this->class === $identity->getClass() && $this->name === $identity->getName();
+    }
+
+    public function getClass()
+    {
+        return $this->class;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {

@@ -1,7 +1,9 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+
 use IMDC\TerpTubeBundle\Form\Type\PostType;
+use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -77,10 +79,13 @@ class ThreadController extends Controller
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
-                if (!$thread->getMediaIncluded()->contains($media)) {
+                /*if (!$thread->getMediaIncluded()->contains($media)) {
                     $thread->addMediaIncluded($media);
                     $thread->setType($media->getType());
-                }
+                }*/
+                //FIXME override for now. at some point multiple media may be used
+                $thread->setMediaIncluded($media);
+                $thread->setType($media->getType());
             }
 
             $forum->setLastActivity($currentDateTime);
@@ -241,7 +246,7 @@ class ThreadController extends Controller
 
         $form = $this->createForm(new ThreadFormType(), $thread, array(
             'em' => $em,
-            'canChooseMedia' => false
+            'canChooseMedia' => false //FIXME changing media not allowed?
         ));
         $form->handleRequest($request);
 
@@ -251,7 +256,7 @@ class ThreadController extends Controller
             $thread->setEditedAt($currentDateTime);
             $thread->setEditedBy($user);
 
-
+            //FIXME changing media not allowed?
             /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
@@ -276,8 +281,11 @@ class ThreadController extends Controller
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             // for consistency recreate the underlying acl
-            $accessProvider->deleteAccess($objectIdentity);
-            $access = $accessProvider->createAccess($objectIdentity);
+            //$accessProvider->deleteAccess($objectIdentity);
+            //$access = $accessProvider->createAccess($objectIdentity);
+
+            // get existing underlying acl
+            $access = $accessProvider->getAccess($objectIdentity);
             $access->insertEntries($securityIdentity);
             $accessProvider->updateAccess($access);
 

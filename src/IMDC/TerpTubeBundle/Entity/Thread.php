@@ -118,7 +118,8 @@ class Thread {
 	/**
 	 * Constructor
 	 */
-	public function __construct() {
+	public function __construct()
+    {
 		$this->usersFollowing   = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->mediaIncluded    = new \Doctrine\Common\Collections\ArrayCollection();
@@ -129,7 +130,8 @@ class Thread {
 	 *
 	 * @return integer
 	 */
-	public function getId() {
+	public function getId()
+    {
 		return $this->id;
 	}
 	
@@ -139,7 +141,8 @@ class Thread {
 	 * @param \DateTime $creationDate        	
 	 * @return Thread
 	 */
-	public function setCreationDate($creationDate) {
+	public function setCreationDate($creationDate)
+    {
 		$this->creationDate = $creationDate;
 		
 		return $this;
@@ -150,7 +153,8 @@ class Thread {
 	 *
 	 * @return \DateTime
 	 */
-	public function getCreationDate() {
+	public function getCreationDate()
+    {
 		return $this->creationDate;
 	}
 	
@@ -160,7 +164,8 @@ class Thread {
 	 * @param boolean $locked        	
 	 * @return Thread
 	 */
-	public function setLocked($locked) {
+	public function setLocked($locked)
+    {
 		$this->locked = $locked;
 		
 		return $this;
@@ -171,7 +176,8 @@ class Thread {
 	 *
 	 * @return boolean
 	 */
-	public function getLocked() {
+	public function getLocked()
+    {
 		return $this->locked;
 	}
 	
@@ -181,7 +187,8 @@ class Thread {
 	 * @param boolean $sticky        	
 	 * @return Thread
 	 */
-	public function setSticky($sticky) {
+	public function setSticky($sticky)
+    {
 		$this->sticky = $sticky;
 		
 		return $this;
@@ -192,7 +199,8 @@ class Thread {
 	 *
 	 * @return boolean
 	 */
-	public function getSticky() {
+	public function getSticky()
+    {
 		return $this->sticky;
 	}
 	
@@ -202,7 +210,8 @@ class Thread {
 	 * @param string $content        	
 	 * @return Thread
 	 */
-	public function setContent($content) {
+	public function setContent($content)
+    {
 		$this->content = $content;
 		
 		return $this;
@@ -213,7 +222,8 @@ class Thread {
 	 *
 	 * @return string
 	 */
-	public function getContent() {
+	public function getContent()
+    {
 		return $this->content;
 	}
 	
@@ -223,7 +233,8 @@ class Thread {
 	 * @param integer $lastPostID        	
 	 * @return Thread
 	 */
-	public function setLastPostID($lastPostID) {
+	public function setLastPostID($lastPostID)
+    {
 		$this->lastPostID = $lastPostID;
 		
 		return $this;
@@ -234,7 +245,8 @@ class Thread {
 	 *
 	 * @return integer
 	 */
-	public function getLastPostID() {
+	public function getLastPostID()
+    {
 		return $this->lastPostID;
 	}
 	
@@ -244,7 +256,8 @@ class Thread {
 	 * @param \DateTime $lastPostAt        	
 	 * @return Thread
 	 */
-	public function setLastPostAt($lastPostAt) {
+	public function setLastPostAt($lastPostAt)
+    {
 		$this->lastPostAt = $lastPostAt;
 		
 		return $this;
@@ -255,7 +268,8 @@ class Thread {
 	 *
 	 * @return \DateTime
 	 */
-	public function getLastPostAt() {
+	public function getLastPostAt()
+    {
 		return $this->lastPostAt;
 	}
 
@@ -265,7 +279,8 @@ class Thread {
      * @param \DateTime $editedAt
      * @return Thread
      */
-    public function setEditedAt($editedAt) {
+    public function setEditedAt($editedAt)
+    {
         $this->editedAt = $editedAt;
 
         return $this;
@@ -276,7 +291,8 @@ class Thread {
      *
      * @return \DateTime
      */
-    public function getEditedAt() {
+    public function getEditedAt()
+    {
         return $this->editedAt;
     }
 	
@@ -286,7 +302,8 @@ class Thread {
 	 * @param string $title        	
 	 * @return Thread
 	 */
-	public function setTitle($title) {
+	public function setTitle($title)
+    {
 		$this->title = $title;
 		
 		return $this;
@@ -297,7 +314,8 @@ class Thread {
 	 *
 	 * @return string
 	 */
-	public function getTitle() {
+	public function getTitle()
+    {
 		return $this->title;
 	}
 	
@@ -307,7 +325,8 @@ class Thread {
 	 * @param integer $type        	
 	 * @return Thread
 	 */
-	public function setType($type) {
+	public function setType($type)
+    {
 		$this->type = $type;
 		
 		return $this;
@@ -318,7 +337,8 @@ class Thread {
 	 *
 	 * @return integer
 	 */
-	public function getType() {
+	public function getType()
+    {
 		return $this->type;
 	}
 
@@ -328,7 +348,8 @@ class Thread {
      * @param array $tags
      * @return Thread
      */
-    public function setTags($tags) {
+    public function setTags($tags)
+    {
         $this->tags = $tags;
 
         return $this;
@@ -339,7 +360,8 @@ class Thread {
      *
      * @return array
      */
-    public function getTags() {
+    public function getTags()
+    {
         return $this->tags;
     }
 	
@@ -349,7 +371,8 @@ class Thread {
 	 * @param \IMDC\TerpTubeBundle\Entity\User $creator        	
 	 * @return Thread
 	 */
-	public function setCreator(\IMDC\TerpTubeBundle\Entity\User $creator = null) {
+	public function setCreator(\IMDC\TerpTubeBundle\Entity\User $creator = null)
+    {
 		$this->creator = $creator;
 		
 		return $this;
@@ -360,7 +383,8 @@ class Thread {
 	 *
 	 * @return \IMDC\TerpTubeBundle\Entity\User
 	 */
-	public function getCreator() {
+	public function getCreator()
+    {
 		return $this->creator;
 	}
 
@@ -370,7 +394,8 @@ class Thread {
      * @param \IMDC\TerpTubeBundle\Entity\User $editedBy
      * @return Thread
      */
-    public function setEditedBy(\IMDC\TerpTubeBundle\Entity\User $editedBy = null) {
+    public function setEditedBy(\IMDC\TerpTubeBundle\Entity\User $editedBy = null)
+    {
         $this->editedBy = $editedBy;
 
         return $this;
@@ -381,7 +406,8 @@ class Thread {
      *
      * @return \IMDC\TerpTubeBundle\Entity\User
      */
-    public function getEditedBy() {
+    public function getEditedBy()
+    {
         return $this->editedBy;
     }
 
@@ -391,7 +417,8 @@ class Thread {
      * @param \IMDC\TerpTubeBundle\Entity\Forum $parentForum
      * @return Thread
      */
-    public function setParentForum(\IMDC\TerpTubeBundle\Entity\Forum $parentForum = null) {
+    public function setParentForum(\IMDC\TerpTubeBundle\Entity\Forum $parentForum = null)
+    {
         $this->parentForum = $parentForum;
 
         return $this;
@@ -402,7 +429,8 @@ class Thread {
      *
      * @return \IMDC\TerpTubeBundle\Entity\Forum
      */
-    public function getParentForum() {
+    public function getParentForum()
+    {
         return $this->parentForum;
     }
 
@@ -435,7 +463,8 @@ class Thread {
 	 * @param \IMDC\TerpTubeBundle\Entity\User $usersFollowing        	
 	 * @return Thread
 	 */
-	public function addUsersFollowing(\IMDC\TerpTubeBundle\Entity\User $usersFollowing) {
+	public function addUsersFollowing(\IMDC\TerpTubeBundle\Entity\User $usersFollowing)
+    {
 		$this->usersFollowing[] = $usersFollowing;
 		
 		return $this;
@@ -446,8 +475,9 @@ class Thread {
 	 *
 	 * @param \IMDC\TerpTubeBundle\Entity\User $usersFollowing        	
 	 */
-	public function removeUsersFollowing(\IMDC\TerpTubeBundle\Entity\User $usersFollowing) {
-		$this->usersFollowing->removeElement( $usersFollowing );
+	public function removeUsersFollowing(\IMDC\TerpTubeBundle\Entity\User $usersFollowing)
+    {
+		$this->usersFollowing->removeElement($usersFollowing);
 	}
 	
 	/**
@@ -476,8 +506,9 @@ class Thread {
      *
      * @param \IMDC\TerpTubeBundle\Entity\Media $mediaIncluded
      */
-    public function removeMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
-        $this->mediaIncluded->removeElement ( $mediaIncluded );
+    public function removeMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
+    {
+        $this->mediaIncluded->removeElement($mediaIncluded);
     }
 
     /**
@@ -485,7 +516,8 @@ class Thread {
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getMediaIncluded() {
+    public function getMediaIncluded()
+    {
         return $this->mediaIncluded;
     }
 	
@@ -495,7 +527,8 @@ class Thread {
 	 * @param \IMDC\TerpTubeBundle\Entity\Post $posts        	
 	 * @return Thread
 	 */
-	public function addPost(\IMDC\TerpTubeBundle\Entity\Post $posts) {
+	public function addPost(\IMDC\TerpTubeBundle\Entity\Post $posts)
+    {
 		$this->posts[] = $posts;
 		
 		return $this;
@@ -506,8 +539,9 @@ class Thread {
 	 *
 	 * @param \IMDC\TerpTubeBundle\Entity\Post $posts        	
 	 */
-	public function removePost(\IMDC\TerpTubeBundle\Entity\Post $posts) {
-		$this->posts->removeElement ( $posts );
+	public function removePost(\IMDC\TerpTubeBundle\Entity\Post $posts)
+    {
+		$this->posts->removeElement($posts);
 	}
 	
 	/**
@@ -515,11 +549,14 @@ class Thread {
 	 *
 	 * @return \Doctrine\Common\Collections\Collection
 	 */
-	public function getPosts() {
+	public function getPosts()
+    {
 		return $this->posts;
 	}
 
-    public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded) {
+    public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
+    {
+        $this->mediaIncluded = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mediaIncluded[] = $mediaIncluded;
 
         return $this;

@@ -135,7 +135,10 @@ services:
 
     imdc_terptube.security.acl.access_provider:
         class: IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider
-        arguments: [@doctrine.orm.entity_manager, @security.acl.provider]
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @security.acl.permission_granting_strategy
+            - { class_table_name: acl_classes, entry_table_name: acl_entries, oid_table_name: acl_object_identities, oid_ancestors_table_name: acl_object_identity_ancestors, sid_table_name: acl_security_identities }
 
     imdc_terptube.security.acl.access_voter:
         class: IMDC\TerpTubeBundle\Security\Acl\Voter\AccessVoter
@@ -146,6 +149,6 @@ services:
 
     imdc_terptube.form.type.access_type:
         class: IMDC\TerpTubeBundle\Form\Type\AccessTypeType
-        arguments: [@doctrine.orm.entity_manager, ]
+        arguments: [@doctrine.orm.entity_manager]
         tags:
             - { name: form.type, alias: access_type }

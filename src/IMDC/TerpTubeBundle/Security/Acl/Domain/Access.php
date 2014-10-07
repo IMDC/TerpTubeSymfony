@@ -5,8 +5,8 @@ namespace IMDC\TerpTubeBundle\Security\Acl\Domain;
 use Doctrine\ORM\EntityManager;
 use FOS\UserBundle\Model\UserInterface;
 use IMDC\TerpTubeBundle\Entity\AccessType;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Exception\AclNotFoundException;
-use Symfony\Component\Security\Acl\Model\MutableAclProviderInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
@@ -18,42 +18,41 @@ use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 class Access
 {
     private $entityManager;
-    private $aclProvider;
+    private $accessProvider;
     private $objectIdentity;
-    private $acl;
+    //private $acl;
 
-    public function __construct(EntityManager $entityManager, MutableAclProviderInterface $aclProvider, AccessObjectIdentity $objectIdentity)
+    public function __construct(EntityManager $entityManager, AccessProvider $accessProvider, AccessObjectIdentity $objectIdentity)
     {
         $this->entityManager = $entityManager;
-        $this->aclProvider = $aclProvider;
+        $this->accessProvider = $accessProvider;
         $this->objectIdentity = $objectIdentity;
     }
 
-    public function loadAcl()
+    /*public function loadAcl()
     {
         $this->acl = null;
         try {
-            $this->acl = $this->aclProvider->findAcl($this->objectIdentity->getObjectIdentity());
+            $this->acl = $this->accessProvider->findAcl($this->objectIdentity->getObjectIdentity());
         } catch (AclNotFoundException $ex) {
-            $this->acl = $this->aclProvider->createAcl($this->objectIdentity->getObjectIdentity());
+            $this->acl = $this->accessProvider->createAcl($this->objectIdentity->getObjectIdentity());
         }
-    }
+    }*/
 
-    public function updateAcl()
+    /*public function updateAcl()
     {
-        $this->aclProvider->updateAcl($this->acl);
-    }
+        $this->accessProvider->updateAcl($this->acl);
+    }*/
 
-    public function deleteAcl()
+    /*public function deleteAcl()
     {
-        $this->aclProvider->deleteAcl($this->objectIdentity->getObjectIdentity());
-    }
+        $this->accessProvider->deleteAcl($this->objectIdentity->getObjectIdentity());
+    }*/
 
     public function insertEntries(SecurityIdentityInterface $securityIdentity)
     {
-        $this->loadAcl();
-
-        $this->acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
+        $acl = $this->accessProvider->getAcl();
+        $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
 
         switch ($this->objectIdentity->getAccessType()->getId()) {
             case AccessType::TYPE_PUBLIC:
@@ -65,7 +64,7 @@ class Access
             case AccessType::TYPE_USERS:
             case AccessType::TYPE_FRIENDS:
                 foreach ($this->objectIdentity->getSecurityIdentities() as $securityIdentity) {
-                    $this->acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_VIEW);
+                    $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_VIEW);
                 }
 
                 break;
@@ -73,14 +72,21 @@ class Access
                 $securityIdentities = $this->objectIdentity->getSecurityIdentities();
                 $securityIdentity = $securityIdentities[0];
 
-                $this->acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_VIEW);
+                $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_VIEW);
 
                 break;
         }
     }
 
+    public function updateEntries()
+    {
+
+    }
+
     public function isGranted(UserInterface $user)
     {
+        $acl = $this->accessProvider->getAcl();
+
         switch ($this->objectIdentity->getAccessType()->getId()) {
             case AccessType::TYPE_PUBLIC:
             case AccessType::TYPE_LINK_ONLY:
@@ -92,7 +98,32 @@ class Access
                 }
             case AccessType::TYPE_USERS:
             case AccessType::TYPE_FRIENDS:
+                // handled by AclVoter
+                return false;
             case AccessType::TYPE_GROUP:
+                $aces = $acl->getObjectAces();
+                if (!$aces) {
+                    throw new NoAceFoundException();
+                }
+
+                $securityIdentities = $this->objectIdentity->getSecurityIdentities();
+                $securityIdentity = $securityIdentities[0];
+
+                foreach ($aces as $ace) {
+                    $sid = null;
+                    if ($ace->getSecurityIdentity() instanceof RoleSecurityIdentity) {
+                        $sid = GroupSecurityIdentity::fromSecurityIdentity($ace->getSecurityIdentity());
+                    }
+
+                    if ($sid && $sid->equals($securityIdentity)) {
+                        $group = $this->entityManager->getRepository('IMDCTerpTubeBundle:UserGroup')->findByName($sid->getName());
+                        if ($group && $group->getMembers()->contains($user)) {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
             case AccessType::TYPE_PRIVATE:
                 // handled by AclVoter
                 return false;
@@ -130,7 +161,5 @@ class Access
 
                 break;*/
         }
-
-        return false;
     }
 }

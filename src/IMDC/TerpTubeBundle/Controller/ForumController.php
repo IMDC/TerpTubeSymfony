@@ -3,7 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use IMDC\TerpTubeBundle\Entity\AccessType;
-use IMDC\TerpTubeBundle\Security\Acl\AccessObjectIdentity;
+use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -76,15 +76,13 @@ class ForumController extends Controller
         ));
         $form->handleRequest($request);
 
-        if ($groupId) {
+        if (!$form->isValid() && $groupId) {
             $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
             if ($group) {
                 $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP));
                 $form->get('group')->setData($group);
             }
-        }
-        
-        if ($form->isValid()) {
+        } else {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $forum->setCreator($user);
@@ -97,8 +95,10 @@ class ForumController extends Controller
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
-                if (!$forum->getTitleMedia()->contains($media))
-                    $forum->addTitleMedia($media);
+                /*if (!$forum->getTitleMedia()->contains($media))
+                    $forum->addTitleMedia($media);*/
+                //FIXME override for now. at some point multiple media may be used
+                $forum->setTitleMedia($media);
             }
 
             $user->addForum($forum);
@@ -205,8 +205,10 @@ class ForumController extends Controller
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
-                if (!$forum->getTitleMedia()->contains($media))
-                    $forum->addTitleMedia($media);
+                /*if (!$forum->getTitleMedia()->contains($media))
+                    $forum->addTitleMedia($media);*/
+                //FIXME override for now. at some point multiple media may be used
+                $forum->setTitleMedia($media);
             }
 
             $em->persist($forum);
@@ -218,8 +220,11 @@ class ForumController extends Controller
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             // for consistency recreate the underlying acl
-            $accessProvider->deleteAccess($objectIdentity);
-            $access = $accessProvider->createAccess($objectIdentity);
+            //$accessProvider->deleteAccess($objectIdentity);
+            //$access = $accessProvider->createAccess($objectIdentity);
+
+            // get existing underlying acl
+            $access = $accessProvider->getAccess($objectIdentity);
             $access->insertEntries($securityIdentity);
             $accessProvider->updateAccess($access);
 	        

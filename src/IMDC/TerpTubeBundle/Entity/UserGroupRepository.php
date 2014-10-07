@@ -13,6 +13,12 @@ use IMDC\TerpTubeBundle\Entity\User;
  */
 class UserGroupRepository extends EntityRepository
 {
+    public function findByName($name)
+    {
+        return $this->findOneBy(array('name' => $name));
+    }
+
+
 	public function getPublicallyVisibleGroups($limit=0)
 	{
 		$query = $this->getEntityManager()
