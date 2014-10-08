@@ -11,12 +11,8 @@ imdc_message_archive:
   defaults: { _controller: IMDCTerpTubeBundle:Message:viewArchivedMessages }
 
 imdc_message_new:
-  pattern: /new
-  defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage }
-
-imdc_message_new_user:
   pattern: /new/{username}
-  defaults: { _controller: IMDCTerpTubeBundle:Message:createMessage, username:null }
+  defaults: { _controller: IMDCTerpTubeBundle:Message:new, username: null }
 
 imdc_message_view:
   pattern: /{messageid}

@@ -50,10 +50,8 @@
                         {% endif %}
                         {{ form_row(form.subject) }}
                     {% endif %}
-                    <p><a class="btn btn-default" id="showMediaButton" href="#">Attach media to message</a></p>
-                    <div style="display: none;" id="attachedMediaContainer">
-                        {{ form_row(form.attachedMedia, {'required': false}) }}
-                    </div>
+                    <p>Attach media to message</p>
+                    {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}
                     {% if isReply %}
                         {{ form_row(form.content,
                             {'value': "\n\n\n\n" ~
@@ -75,9 +73,8 @@
                             </div>
                         {% endif %}
                     {% else %}
-                        {{ form_row(form.content, {'attr': {'class': 'autosize'}}) }}
+                        {{ form_row(form.content) }}
                     {% endif %}
-                    {{ form_widget(form.submit, {'attr': {'style': 'display: none;'}}) }}
                     <button class="btn btn-success"><i class="fa fa-envelope"></i> Send</button>
                     <a class="btn btn-danger" href="{{ app.request.headers.get('referer') }}"><i class="fa fa-times"></i> Cancel</a>
                     {{ form_end(form) }}
@@ -87,3 +84,9 @@
         </div>
     </div>
 {% endblock content %}
+
+{% block outside_body %}
+    {{ parent() }}
+
+    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
+{% endblock outside_body %}

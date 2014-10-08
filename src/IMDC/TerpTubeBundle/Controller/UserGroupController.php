@@ -318,6 +318,31 @@ class UserGroupController extends Controller
         ));
 	}
 
+    public function messageAction(Request $request, $groupId)
+    {
+        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+        if (!$group) {
+            throw new \Exception('group not found');
+        }
+
+        $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('VIEW', $group) === false) {
+            throw new AccessDeniedException();
+        }
+
+        $group->removeMember($this->getUser()); // this is fine. not persisted
+
+        return $this->forward('IMDCTerpTubeBundle:Message:new', array(
+            'request' => $request,
+            'recipients' => $group->getMembers()
+        ));
+    }
+
     public function addMembersAction(Request $request, $groupId)
     {
         if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -455,8 +480,6 @@ class UserGroupController extends Controller
             throw new AccessDeniedException();
         }
 
-        $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
-
         $form = $this->getGenericIdFormBuilder()->getForm();
         $form->handleRequest($request);
 
@@ -465,7 +488,7 @@ class UserGroupController extends Controller
             $deletedMembers = 0;
 
             foreach ($formUsers as $formUser) {
-                $member = $userRepo->find($formUser['id']);
+                $member = $em->getRepository('IMDCTerpTubeBundle:User')->find($formUser['id']);
                 if (!$member) {
                     // user not found
                     continue;

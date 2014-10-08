@@ -26,6 +26,7 @@
                 {% endif %}
             </div>
             <div class="col-md-6 text-right">
+                <a class="btn btn-default" href="{{ path('imdc_group_message', {'groupId': group.id}) }}"><i class="fa fa-plus-circle"></i> Send a Group Message</a>
                 {% if app.user == group.userFounder %}
                     <a class="btn btn-default group-toggle-member-select" href="#" data-toggle="button"><i class="fa fa-wrench"></i> Manage Members</a>
                     <div class="btn-group">

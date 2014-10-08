@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use FOS\UserBundle\Model\UserManager;
 use IMDC\TerpTubeBundle\Entity\Message;
 use IMDC\TerpTubeBundle\Form\Type\PrivateMessageType;
-use IMDC\TerpTubeBundle\Form\Type\PrivateMessageReplyType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -32,138 +32,70 @@ class MessageController extends Controller
      * @param string $userid
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-	public function createMessageAction(Request $request, $userid = null)
+	public function newAction(Request $request, $username = null, $recipients = null)
 	{
 		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
 		$em = $this->getDoctrine()->getManager();
-		$user = $this->getUser();
 		
 		$message = new Message();
-	
 		$form = $this->createForm(new PrivateMessageType(), $message, array(
-		        'em' => $em,
-		        'user' => $user,
+            'em' => $em
 		));
-		
 		$form->handleRequest($request);
 
-		if ($form->isValid())
-		{
+        if (!$form->isValid()) {
+            if ($username) {
+                $user = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('username' => $username));
+                if ($user) {
+                    $form->get('recipients')->setData(array($user));
+                }
+            }
 
-			// set sentDate of message to be when form request received
-			// this is automatically set again when the object is inserted into the database anyway
+            if ($recipients) {
+                $form->get('recipients')->setData($recipients);
+            }
+        } else {
+            $user = $this->getUser();
+
 			$message->setSentDate(new \DateTime('now'));
+			$message->setOwner($user);
 
-			// set owner/author of the message to be the currently logged in user
-			$message->setOwner($this->getUser());
-
-			$user = $this->getUser();
-			$user->addSentMessage($message);
-			$em->persist($user);
-			
 			foreach ($message->getRecipients() as $recipient) {
 			    $recipient->addReceivedMessage($message);
 			    $em->persist($recipient);
 			}
 
-			// request to persist message object to database
-			$em->persist($message);
+            $media = $form->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
+                }
 
-			// persist all objects to database
+                if (!$message->getAttachedMedia()->contains($media))
+                    $message->addAttachedMedia($media);
+            }
+
+            $user->addSentMessage($message);
+
+			$em->persist($message);
+            $em->persist($user);
 			$em->flush();
 
-			$this->get('session')->getFlashBag()->add('success', 'Message sent successfully!');
-			return $this->redirect($this->generateUrl('imdc_message_inbox'));
+			$this->get('session')->getFlashBag()->add(
+                'success', 'Message sent successfully!'
+            );
 
+			return $this->redirect($this->generateUrl('imdc_message_inbox'));
 		}
 
 		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
-	}
-
-	/**
-	 * Create a new private message to another specific user
-	 * NOT SURE IF THIS IS USED ANYWHERE
-	 * 
-	 * @param Request $request
-	 * @param string $username
-	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @deprecated
-	 */
-	public function createMessageToAction(Request $request, $username) //TODO delete
-	{
-		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-		
-		$em = $this->getDoctrine()->getManager();
-		
-		$message = new Message();
-		$user = $this->getUser();
-
-		//$form = $this->createForm(new PrivateMessageType(), $message);
-
-		$form = $this->createForm(new PrivateMessageType(), $message, array(
-		    'em' => $em,
-		    'user' => $user,
-		));
-		
-		$form->handleRequest($request);
-
-		if ($form->isValid())
-		{
-			// set sentDate of message to be when form request received
-			// this is automatically set again when the object is inserted into the database anyway
-			$message->setSentDate(new \DateTime('now'));
-
-			// set owner/author of the message to be the currently logged in user
-			$message->setOwner($this->getUser());
-
-			$user->addSentMessage($message);
-			$em->persist($user);
-
-			$existingUsers = new \Doctrine\Common\Collections\ArrayCollection();
-			$userManager = $this->container->get('fos_user.user_manager');
-
-			// split up the recipients by whitespace
-			$rawrecips = explode(' ', $form->get('to')->getData());
-			foreach ($rawrecips as $possuser) {
-				try {
-					$theuser = $userManager->loadUserByUsername($possuser);
-					$existingUsers[] = $theuser;
-					$message->addRecipient($theuser);
-				}
-				catch (UsernameNotFoundException $e) {
-					//FIXME: create message to user about recip not found
-				}
-			}
-
-			foreach ($existingUsers as $euser) {
-				$euser->addReceivedMessage($message);
-				$em->persist($euser);
-			}
-
-			// request to persist message object to database
-			$em->persist($message);
-
-			// persist all objects to database
-			$em->flush();
-
-			$this->get('session')->getFlashBag()->add('info', 'Message sent successfully!');
-			return $this->redirect($this->generateUrl('imdc_message_inbox'));
-		}
-
-		// form not valid, show the basic form
-		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array('form' => $form->createView(),));
-
 	}
 
 	public function viewAllPrivateMessagesAction(Request $request, $feedbackmsg = NULL)
@@ -217,6 +149,8 @@ class MessageController extends Controller
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
+
+        //FIXME ensure that the message is only removed from the users sent/received/archived list
 
 		$user = $this->getUser();
 
@@ -405,66 +339,70 @@ class MessageController extends Controller
 	public function replyToMessageAction(Request $request, $messageid)
 	{
 		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
-		$user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+		$origMessage = $this->getDoctrine()->getRepository('IMDCTerpTubeBundle:Message')->find($messageid);
+        if (!$origMessage) {
+            throw new \Exception('message not found');
+        }
 
-		$message = $this->getDoctrine()->getRepository('IMDCTerpTubeBundle:Message')
-				->findOneBy(array('id' => $messageid));
+        $user = $this->getUser();
+        if (!$origMessage->getRecipients()->contains($user)) {
+            throw new AccessDeniedException();
+        }
 
-		// todo: make sure the user is a recipient of the message?
+        //TODO maybe create a message copy function?
+        $message = new Message();
+        $message->setSubject($origMessage->getSubject());
+        $message->setContent($origMessage->getContent());
+        foreach ($origMessage->getRecipients() as $recipient) {
+            $message->addRecipient($recipient);
+        }
+        foreach ($origMessage->getAttachedMedia() as $media) {
+            $message->addAttachedMedia($media);
+        }
 
-		$form = $this->createForm(new PrivateMessageReplyType(), $message, array(
-		    'em' => $this->getDoctrine()->getManager(),
-		    'user' => $user,
+        $message->removeRecipient($user);
+        if ($origMessage->getOwner()->getId() != $user->getId()) {
+            $message->addRecipient($origMessage->getOwner());
+        }
+
+		$form = $this->createForm(new PrivateMessageType(), $message, array(
+		    'em' => $em
 		));
-		
-		$form->setData($message);
-
 		$form->handleRequest($request);
 
-		if ($form->isValid())
-		{ // if the form is successfully submitted
+		if ($form->isValid()) {
+            $message->setSentDate(new \DateTime('now'));
+            $message->setOwner($user);
 
-			$messagereply = new Message();
-			// set sentDate of message to be when form request received
-			// this is automatically set again when the object is inserted into the database anyway
-			$messagereply->setSentDate(new \DateTime('now'));
-
-			$messagereply->setSubject($message->getSubject());
-			$messagereply->setContent($message->getContent());
-			$messagereply->setOwner($this->getUser());
-
-			// set owner/author of the message to be the currently logged in user
-			$messagereply->setOwner($this->getUser());
-
-			$em = $this->getDoctrine()->getManager();
-
-			$user = $this->getUser();
-			$user->addSentMessage($messagereply);
-
-			foreach ($message->getRecipients() as $recp) {
-			    $recp->addReceivedMessage($messagereply);
-			    // request persistence of user object to database
-			    $em->persist($recp);
-			}
-			
-			foreach ($message->getAttachedMedia() as $possMedia) {
-			    if ($possMedia === null) {
-			        $message->getAttachedMedia()->removeElement($possMedia);
-			    }
+            foreach ($message->getRecipients() as $recipient) {
+                $recipient->addReceivedMessage($message);
+			    $em->persist($recipient);
 			}
 
-			// request to persist message object to database
-			$em->persist($messagereply);
+			$media = $form->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
+                }
 
-			// persist all objects to database
+                if (!$message->getAttachedMedia()->contains($media))
+                    $message->addAttachedMedia($media);
+            }
+
+            $user->addSentMessage($message);
+
+			$em->persist($message);
+            $em->persist($user);
 			$em->flush();
 
-			$this->get('session')->getFlashBag()->add('info', 'Message sent successfully!');
+			$this->get('session')->getFlashBag()->add(
+                'info', 'Message sent successfully!'
+            );
 			
 			return $this->redirect($this->generateUrl('imdc_message_inbox'));
 		}
@@ -472,7 +410,8 @@ class MessageController extends Controller
 		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
             'form' => $form->createView(),
             'message' => $message,
-            'isReply' => true
+            'isReply' => true,
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
 }

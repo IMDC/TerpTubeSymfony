@@ -45,7 +45,7 @@ class ForumController extends Controller
         $securityContext = $this->get('security.context');
         $user = $this->getUser();
 
-		$recentForums = $repo->getRecent($securityContext, $user);
+		$recentForums = $repo->getRecent($securityContext, $user); //TODO try doctrine criteria
 		$forums = $repo->getViewableToUser($securityContext, $user);
 		
 		$paginator = $this->get('knp_paginator');
@@ -82,19 +82,22 @@ class ForumController extends Controller
 		}
 
         $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
 
         $forum = new Forum();
-        $form = $this->createForm(new ForumFormType(), $forum);
+        $form = $this->createForm(new ForumFormType(), $forum, array(
+            'user' => $user
+        ));
         $form->handleRequest($request);
 
         if (!$form->isValid() && $groupId) {
+            $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP));
+
             $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-            if ($group) {
-                $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP));
+            if ($group && $group->getUserFounder()->getId() == $user->getId()) {
                 $form->get('group')->setData($group);
             }
         } else {
-            $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $forum->setCreator($user);
             $forum->setLastActivity($currentDateTime);
