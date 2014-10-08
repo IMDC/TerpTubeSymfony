@@ -10,6 +10,9 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
     fields:
         dateCreated:
             type: datetime
+        description:
+            type: text
+            nullable: true
         visibleToPublic:
             type: boolean
             nullable: true
@@ -63,6 +66,16 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
                         referencedColumnName: id
                 inverseJoinColumns:
                     user_id:
+                        referencedColumnName: id
+        media:
+            targetEntity: Media
+            joinTable:
+                name: usergroup_media
+                joinColumns:
+                    group_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    media_id:
                         referencedColumnName: id
     lifecycleCallbacks: 
         prePersist: [setDateCreatedToNow]

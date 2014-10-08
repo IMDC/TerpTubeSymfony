@@ -26,6 +26,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Group.Binder = {
+        CONTAINER_MEDIA: ".group-container-media",
+        CONTAINER_INFO: ".group-container-info",
         CONTAINER_FORUMS: ".group-container-forums",
         TOGGLE_MEMBER_SELECT: ".group-toggle-member-select",
         USER_CONTAINER_SELECT: ".user-container-select", //TODO move to user controller
@@ -34,7 +36,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     // this must be the same name defined in {bundle}/Form/Type/UserGroupType
-    Group.FORM_NAME = "UserGroupForm_userGroupForum";
+    Group.FORM_NAME = "UserGroupForm";
 
     Group.prototype.getContainer = function() {
         return $("body");
@@ -73,7 +75,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
-        //this.mediaChooser.bindUIEvents();
+        this.mediaChooser.bindUIEvents();
     };
 
     Group.prototype._bindUIEventsAddMembers = function() {
@@ -100,6 +102,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(Group.Binder.TOGGLE_MEMBER_SELECT).on("click", function(e) {
             e.preventDefault();
 
+            $(Group.Binder.CONTAINER_MEDIA).toggle();
+            $(Group.Binder.CONTAINER_INFO).toggle();
             $(Group.Binder.CONTAINER_FORUMS).toggle();
             $(Group.Binder.USER_CONTAINER_SELECT).toggle();
             $("#deleteSelected").parent().toggleClass("disabled");

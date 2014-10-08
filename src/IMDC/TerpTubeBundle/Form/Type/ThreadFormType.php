@@ -2,7 +2,6 @@
 
 namespace IMDC\TerpTubeBundle\Form\Type;
 
-use IMDC\TerpTubeBundle\Form\DataTransformer\MediaToIdTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -13,16 +12,7 @@ class ThreadFormType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
         if ($options['canChooseMedia']) {
-            //TODO move to own form type
-            $em = $options['em'];
-            $transformer = new MediaToIdTransformer($em);
-
-            $builder->add(
-                $builder
-                    ->create('mediatextarea', 'hidden', array(
-                        'mapped' => false))
-                    ->addModelTransformer($transformer)
-            );
+            $builder->add('mediatextarea', 'media');
         }
 	    
 	    $builder->add('title', 'text', array(
@@ -46,14 +36,10 @@ class ThreadFormType extends AbstractType
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver
-            ->setDefaults(array(
-                'canChooseMedia' => true,
-                'data_class' => 'IMDC\TerpTubeBundle\Entity\Thread'))
-            ->setRequired(array(
-                'em'))
-            ->setAllowedTypes(array(
-                'em' => 'Doctrine\Common\Persistence\ObjectManager'));
+        $resolver->setDefaults(array(
+            'canChooseMedia' => true,
+            'data_class' => 'IMDC\TerpTubeBundle\Entity\Thread'
+        ));
     }
 
 	public function getName()

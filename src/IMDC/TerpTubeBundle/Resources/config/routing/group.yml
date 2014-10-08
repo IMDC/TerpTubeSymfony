@@ -14,7 +14,7 @@ imdc_group_view:
 
 imdc_group_edit:
   pattern: /{usergroupid}/edit
-  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:editUserGroup }
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:edit }
   requirements:
     usergroupid: \d+
 

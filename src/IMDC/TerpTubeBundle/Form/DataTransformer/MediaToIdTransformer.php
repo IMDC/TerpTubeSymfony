@@ -39,7 +39,7 @@ class MediaToIdTransformer implements DataTransformerInterface
 
         $media = $this->om->getRepository('IMDCTerpTubeBundle:Media')->find($id);
 
-        // commented out allow nulls
+        // commented out to allow nulls
         /*if (!$media) {
             throw new TransformationFailedException(sprintf(
                 'media id %d not found', $id

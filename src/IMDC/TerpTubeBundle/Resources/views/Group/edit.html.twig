@@ -28,16 +28,17 @@
             <div class="col-md-12">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-                {#{% if group.getUserGroupForum.getTitleMedia[0] is defined %}
+                {% if group.media[0] is defined %}
                     <div class="tt-media-element">
-                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.getUserGroupForum.getTitleMedia[0]} %}
+                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.media[0]} %}
                         <p>Change the media file for the associated forum (image, audio, video):</p>
                     </div>
                 {% else %}
                     <p>Add a media file to the associated forum (image, audio, video):</p>
                 {% endif %}
-                {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with {'form': form.userGroupForum} %}#}
+                {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}
                 {{ form_row(form.name) }}
+                {{ form_row(form.description) }}
                 {{ form_row(form.visibleToPublic) }}
                 {{ form_row(form.visibleToRegisteredUsers) }}
                 {{ form_row(form.openForNewMembers) }}
@@ -53,5 +54,5 @@
 {% block outside_body %}
     {{ parent() }}
 
-    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' with {'form': form.userGroupForum} %}#}
+    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
 {% endblock outside_body %}

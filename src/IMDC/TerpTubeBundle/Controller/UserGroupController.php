@@ -56,12 +56,6 @@ class UserGroupController extends Controller
         ));
 	}
 
-    /**
-     * Create a new usergroup and also create a new Forum with the usergroup's name
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     */
     public function newAction(Request $request)
     {
         // check if user logged in
@@ -75,11 +69,23 @@ class UserGroupController extends Controller
 
         if ($form->isValid()) {
             $user = $this->getUser();
-            $user->addUserGroup($group);
-
             $group->setUserFounder($user);
             $group->addAdmin($user);
             $group->addMember($user);
+
+            $media = $form->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
+                }
+
+                /*if (!$group->getMedia()->contains($media))
+                    $group->addMedia($media);*/
+                //FIXME override for now. at some point multiple media may be used
+                $group->setMedia($media);
+            }
+
+            $user->addUserGroup($group);
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($group);
@@ -88,10 +94,9 @@ class UserGroupController extends Controller
 
             $aclProvider = $this->get('security.acl.provider');
             $objectIdentity = ObjectIdentity::fromDomainObject($group);
-            $acl = $aclProvider->createAcl($objectIdentity);
-
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
+            $acl = $aclProvider->createAcl($objectIdentity);
             $acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $aclProvider->updateAcl($acl);
 
@@ -103,8 +108,8 @@ class UserGroupController extends Controller
         }
 
         return $this->render('IMDCTerpTubeBundle:Group:new.html.twig', array(
-            'form' => $form->createView()/*,
-            'uploadForms' => MyFilesGatewayController::getUploadForms($this)*/
+            'form' => $form->createView(),
+            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
     }
 
@@ -121,6 +126,8 @@ class UserGroupController extends Controller
             throw new \Exception('group not found');
         }
 
+        $securityContext = $this->get('security.context');
+
         $paginator = $this->get('knp_paginator');
         $forums = $paginator->paginate(
             $group->getForums(),
@@ -128,12 +135,19 @@ class UserGroupController extends Controller
             8 /*limit per page*/
         );
 
+        //FIXME this seems too costly just for the result of numeric convenience
+        $forumThreadCount = array();
+        $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
+        foreach ($forums as $forum) {
+            $forumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $forum->getId()));
+        }
+
         $parameters = array(
             'group' => $group,
-            'forums' => $forums
+            'forums' => $forums,
+            'forumThreadCount' => $forumThreadCount
         );
 
-        $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('EDIT', $group) === true) {
             $formBuilder = $this->getGenericIdFormBuilder();
             $formBuilder->setAction($this->generateUrl('imdc_group_delete_members', array('groupId' => $usergroupid)));
@@ -143,50 +157,65 @@ class UserGroupController extends Controller
         return $this->render('IMDCTerpTubeBundle:Group:view.html.twig', $parameters);
 	}
 
-	/**
-	 * Edit a specific usergroup
-	 * 
-	 * @param Request $request
-	 * @param unknown $usergroupid
-	 * @throws AccessDeniedException
-	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-	 */
-	public function editUserGroupAction(Request $request, $usergroupid)
+    /**
+     * Edit a specific usergroup
+     *
+     * @param Request $request
+     * @param unknown $usergroupid
+     * @throws AccessDeniedException
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+	public function editAction(Request $request, $usergroupid)
 	{
 	    // check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
 
-		$user = $this->getUser();
 		$em = $this->getDoctrine()->getManager();
-        $usergroup = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->findOneBy(array('id' => $usergroupid));
-		
-		// check if user has permission to edit based on ACL
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($usergroupid);
+        if (!$group) {
+            throw new \Exception('group not found');
+        }
+
 		$securityContext = $this->get('security.context');
-		 
-		// check for edit access using ACL
-		if (false === $securityContext->isGranted('EDIT', $usergroup)) {
+		if (false === $securityContext->isGranted('EDIT', $group)) {
 		    throw new AccessDeniedException();
 		}
 
-		$form = $this->createForm(new UserGroupType(), $usergroup);
-		
+		$form = $this->createForm(new UserGroupType(), $group);
 		$form->handleRequest($request);
 		
 		if ($form->isValid()) {
-		    $em->persist($usergroup);
-		    
+            $user = $this->getUser();
+
+            $media = $form->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
+                    throw new AccessDeniedException(); //TODO more appropriate exception?
+                }
+
+                /*if (!$group->getMedia()->contains($media))
+                    $group->addMedia($media);*/
+                //FIXME override for now. at some point multiple media may be used
+                $group->setMedia($media);
+            }
+
+		    $em->persist($group);
 		    $em->flush();
 		    
-		    $this->get('session')->getFlashBag()->add('info', 'UserGroup edited successfully!');
-		    return $this->redirect($this->generateUrl('imdc_group_view', array('usergroupid' => $usergroupid)));
+		    $this->get('session')->getFlashBag()->add(
+                'info', 'UserGroup edited successfully!'
+            );
+
+		    return $this->redirect($this->generateUrl('imdc_group_view', array(
+                'usergroupid' => $group->getId()
+            )));
 		}
 
 		return $this->render('IMDCTerpTubeBundle:Group:edit.html.twig', array(
             'form' => $form->createView(),
-            'group' => $usergroup,
+            'group' => $group,
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}

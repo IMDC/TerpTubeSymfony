@@ -11,8 +11,16 @@ class UserGroupType extends AbstractType
     
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add('mediatextarea', 'media');
+
     	$builder->add('name', 'text', array(
             'label' => 'Group name'
+        ));
+
+        $builder->add('description', 'textarea', array(
+            'required' => false,
+            'attr' => array(
+                'class' => 'autosize')
         ));
 
     	$builder->add('visibleToPublic', 'checkbox', array('data' => true, 'required' => false));
@@ -20,16 +28,16 @@ class UserGroupType extends AbstractType
     	$builder->add('openForNewMembers', 'checkbox', array('data' => true, 'required' => false));
     	$builder->add('joinByInvitationOnly', 'checkbox', array('required' => false));
     }
-    
-    public function getName()
-    {
-        return 'UserGroupForm';
-    }
-    
+
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'IMDC\TerpTubeBundle\Entity\UserGroup'
         ));
+    }
+    
+    public function getName()
+    {
+        return 'UserGroupForm';
     }
 }

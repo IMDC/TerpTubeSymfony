@@ -84,9 +84,7 @@ class ForumController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $forum = new Forum();
-        $form = $this->createForm(new ForumFormType(), $forum, array(
-            'em' => $em
-        ));
+        $form = $this->createForm(new ForumFormType(), $forum);
         $form->handleRequest($request);
 
         if (!$form->isValid() && $groupId) {
@@ -203,9 +201,7 @@ class ForumController extends Controller
             throw new AccessDeniedException();
         }
 
-	    $form = $this->createForm(new ForumFormType(), $forum, array(
-            'em' => $em
-        ));
+	    $form = $this->createForm(new ForumFormType(), $forum);
         $form->handleRequest($request);
 	    
 	    if ($form->isValid()) {

@@ -12,6 +12,9 @@ _Home:index.html.twig
 	<li>
 		<div class="col-md-3">
             <div class="thumbnail text-center tt-forum-thumbnail">
+                <div class="col-md-1 pull-right">
+                    {% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': forum} %}
+                </div>
                 <div class="tt-media-element">
                     {% if forum.getTitleMedia[0] is defined %}
                         {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}

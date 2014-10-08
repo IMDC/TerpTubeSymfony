@@ -12,10 +12,7 @@ class PostType extends AbstractType
 	{
         $canTemporal = $options['canTemporal'];
 
-        //TODO move to own form type
-	    $builder->add('mediatextarea', 'hidden', array(
-            'mapped' => false
-        ));
+        $builder->add('mediatextarea', 'media');
 
         if ($canTemporal) {
             $builder->add('startTime', 'number', array(

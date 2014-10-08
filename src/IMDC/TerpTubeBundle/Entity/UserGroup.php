@@ -17,6 +17,11 @@ class UserGroup extends BaseGroup
     private $dateCreated;
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * @var boolean
      */
     private $visibleToPublic;
@@ -60,6 +65,11 @@ class UserGroup extends BaseGroup
      * @var \Doctrine\Common\Collections\Collection
      */
     private $admins;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $media;
     
     /**
      * Constructor
@@ -69,6 +79,7 @@ class UserGroup extends BaseGroup
         $this->members     = new \Doctrine\Common\Collections\ArrayCollection();
         $this->moderators  = new \Doctrine\Common\Collections\ArrayCollection();
         $this->admins      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->media      = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -103,6 +114,29 @@ class UserGroup extends BaseGroup
     public function getDateCreated()
     {
         return $this->dateCreated;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return UserGroup
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
@@ -352,6 +386,39 @@ class UserGroup extends BaseGroup
         return $this->admins;
     }
 
+    /**
+     * Add media
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $media
+     * @return UserGroup
+     */
+    public function addMedia(\IMDC\TerpTubeBundle\Entity\Media $media)
+    {
+        $this->media[] = $media;
+
+        return $this;
+    }
+
+    /**
+     * Remove media
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $media
+     */
+    public function removeMedia(\IMDC\TerpTubeBundle\Entity\Media $media)
+    {
+        $this->media->removeElement($media);
+    }
+
+    /**
+     * Get media
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMedia()
+    {
+        return $this->media;
+    }
+
     public function setDateCreatedToNow()
     {
         $this->dateCreated = new \DateTime('NOW');
@@ -387,10 +454,17 @@ class UserGroup extends BaseGroup
     {
         return $this->admins->contains($user);
     }
+
+    public function setMedia(\IMDC\TerpTubeBundle\Entity\Media $media)
+    {
+        $this->media = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->media[] = $media;
+
+        return $this;
+    }
     
     public function __toString()
     {
         return $this->getName();
     }
-
 }

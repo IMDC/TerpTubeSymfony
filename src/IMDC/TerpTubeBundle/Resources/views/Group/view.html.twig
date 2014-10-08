@@ -19,7 +19,7 @@
 
 {% block content %}
     <div class="col-md-offset-1 col-md-10">
-        <div class="row">
+        <div class="row" style="margin-bottom: 20px;">
             <div class="col-md-6">
                 {% if group.openForNewMembers and group not in app.user.getUserGroups %}
                     <a class="btn btn-default" href="{{ path('imdc_group_join', {'usergroupid': group.id}) }}"><i class="fa fa-plus-circle"></i> Join Group</a>
@@ -41,9 +41,39 @@
                 {% endif %}
             </div>
         </div>
-        <div class="row">
+        <div class="row group-container-media">
             <div class="col-md-12">
-                <h4>Members: {{ group.members|length }}</h4>
+                {% if group.media[0] is defined %}
+                    {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.media[0]} %}
+                {% else %}
+                    <p>No media</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row group-container-info">
+            <div class="col-md-12">
+                <h1>{{ group.name }}</h1>
+                <div class="row">
+                    <div class="col-xs-3">
+                        <table class="table" style="width: 0;">
+                            <tbody>
+                                <tr>
+                                    <td>Members</td>
+                                    <td>{{ group.members|length }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Created</td>
+                                    <td>{{ group.dateCreated|date('g:ia F j Y') }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-xs-9" style="border-left: 1px solid #dddddd;">
+                        {% if group.description %}
+                            <p>{{ group.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
                 {% if app.user is not null and group in app.user.getUserGroups %}
                     <p><span class="label label-info">You are currently a member of this group</span></p>
                 {% endif %}

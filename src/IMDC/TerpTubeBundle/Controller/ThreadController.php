@@ -58,9 +58,7 @@ class ThreadController extends Controller
         }
 
         $thread = new Thread();
-        $form = $this->createForm(new ThreadFormType(), $thread, array(
-            'em' => $em
-        ));
+        $form = $this->createForm(new ThreadFormType(), $thread);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -245,7 +243,6 @@ class ThreadController extends Controller
         }
 
         $form = $this->createForm(new ThreadFormType(), $thread, array(
-            'em' => $em,
             'canChooseMedia' => false //FIXME changing media not allowed?
         ));
         $form->handleRequest($request);

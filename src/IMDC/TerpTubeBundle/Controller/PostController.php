@@ -64,7 +64,7 @@ class PostController extends Controller
 		
 		$newpost = new Post();
 		$form = $this->createForm(new PostFormType(), $newpost);
-		
+
 		$form->handleRequest($request);
 		
 		if ($form->isValid()) {
@@ -128,7 +128,7 @@ class PostController extends Controller
 	                    'user' => $user,
 	                    'thread' => $thread,
 	    ));
-	    
+
 	    $form->handleRequest($request);
 	    
 	    $validator = $this->get('validator');
@@ -312,8 +312,8 @@ class PostController extends Controller
         $isPostReply = !$thread;
         $post = new Post();
         $postForm = $this->createForm(new PostType(), $post, array(
-                'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false
-            ));
+            'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false
+        ));
         $postForm->handleRequest($request);
 
         if ($postForm->isValid()) {
