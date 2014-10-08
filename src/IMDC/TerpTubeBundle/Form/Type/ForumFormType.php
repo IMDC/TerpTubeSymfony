@@ -26,7 +26,7 @@ class ForumFormType extends AbstractType
         $queryBuilder = function (EntityRepository $repo) use ($user) {
             //TODO filter all groups by ace instead of founder. user may not be founder of other groups, but may have an owner ace
             return $repo->createQueryBuilder('g')
-                ->leftJoin('IMDCTerpTubeBundle:User', 'u')
+                ->leftJoin('g.userFounder', 'u')
                 ->where('u.id = :userId')
                 ->setParameter('userId', $user->getId());
         };
@@ -36,6 +36,7 @@ class ForumFormType extends AbstractType
             'query_builder' => $queryBuilder,
             'empty_value' => 'Choose a Group',
             'required' => false,
+            'label' => 'My Groups',
             'label_attr' => $attr,
             'attr' => $attr
         ));
