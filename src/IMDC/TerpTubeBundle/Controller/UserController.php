@@ -60,6 +60,7 @@ class UserController extends Controller
                 AND u.profile = p
                 AND p.profileVisibleToPublic = 1";
         
+        //Count Hint is ignored in newer version of paginator.
         $query = $em->createQuery($dql)->setHint('knp_paginator.count', $count);
         
         $paginator = $this->get('knp_paginator');

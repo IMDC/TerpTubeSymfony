@@ -44,13 +44,17 @@
 		"ac/transcoding-bundle" : "dev-master",
 		"videlalvaro/php-amqplib" : "*",
 		"php-ffmpeg/php-ffmpeg" : "0.4.*@dev",
-		"knplabs/knp-paginator-bundle" : "2.4.*",
+		"knplabs/knp-paginator-bundle" : "2.3.*",
 		"knplabs/knp-time-bundle" : "1.1.*@dev",
+		"knplabs/knp-components" : "1.2.5",
 		"pimple/pimple" : "dev-master",
 		"ext-curl" : "*",
 		"jquery/jquerymap" : "1.10.2"
 	},
 	"scripts" : {
+ 		"post-root-package-install": [
+            "SymfonyStandard\\Composer::hookRootPackageInstall"
+        ],	    
 		"post-install-cmd" : [
 			"Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
 			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",

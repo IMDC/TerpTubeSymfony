@@ -1,5 +1,5 @@
 <?php
-NAMESPACE IMDC\TERPTUBEBUNDLE\EVENTLISTENER;
+namespace IMDC\TerpTubeBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
