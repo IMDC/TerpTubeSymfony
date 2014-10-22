@@ -490,7 +490,7 @@ Player.prototype.drawKeyPoint = function(keyPoint)
     context.strokeStyle = 'black';
     if (this.options.areaSelectionEnabled)
     {
-	context.globalAlpha = 0.2;
+	context.globalAlpha = 0.3;
 	context.fillStyle = keyPoint.options.color;
     }
     else
@@ -1169,8 +1169,10 @@ Player.prototype.setHighlightedRegion = function(startX, endX)
     {
 	this.drawLeftTriangle(startX, context);
 	this.drawRightTriangle(endX, context);
+	context.globalAlpha = 0.4;
 	context.fillStyle = this.options.selectedRegionColor;
 	context.fillRect(startX, this.trackPadding, endX - startX, densityBarElement.height() - 2 * this.trackPadding);
+	context.globalAlpha = 1;
     }
     else
     {
