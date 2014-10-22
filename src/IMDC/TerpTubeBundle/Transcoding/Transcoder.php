@@ -67,15 +67,20 @@ class Transcoder {
 					$audioFilePath,
 					"-i",
 					$videoFilePath,
+					"-map",
+					"0:0",
+					"-map",
+					"1:0",
 					"-acodec",
 					"libvorbis",
 					"-vcodec",
 					"copy",
 					"-y",
+					'-ab',
+					'128k',
 					$outputFileWebm 
 			) );
 			chdir ( $dir );
-			
 			$this->fs->remove ( $tempFileName );
 			$this->logger->info ( "Transcoding complete!" );
 			$this->fs->rename ( $outputFileWebm, $videoFilePath, true );
@@ -93,6 +98,66 @@ class Transcoder {
 			else
 				$this->logger->info ( "Uploaded file invalid " );
 			// $uploadedFile->move('/tmp','test.webm');
+		} catch ( Exception $e ) {
+			$this->logger->error ( $e->getTraceAsString () );
+		}
+		return $videoFile;
+	}
+	
+	public function removeFirstFrame(File $videoFile) {
+		// Process video merging.
+		$this->logger->info ( "Removing first frame");
+		try {
+			$videoFilePath = $videoFile->getRealPath ();
+				
+			$tempDir = '/tmp/terptube-recordings';
+			$umask = umask ();
+			umask ( 0000 );
+			if (! file_exists ( $tempDir ))
+				mkdir ( $tempDir );
+			$tempFileName = tempnam ( $tempDir, "MergedVideo" );
+				
+			// //Will this fix the problem on the server with executing the command?
+			// $audioFile->move($tempDir, $audioFile->getFilename());
+			// $videoFile->move($tempDir, $videoFile->getFilename());
+				
+			// $audioFilePath = $tempDir . '/' . $audioFile->getFilename();
+			// $videoFilePath = $tempDir . '/' . $videoFile->getFilename();
+				
+			umask ( $umask );
+			$dir = getcwd ();
+			chdir ( $tempDir );
+			// Convert to webm
+			$outputFileWebm = $tempFileName . '.webm';
+			$this->logger->info ( "Removing first frame from " . $videoFilePath . " to: " . $outputFileWebm );
+// 			$videoRate = $this->ffprobe->streams ( $videoFilePath )->videos ()->first ()->get ( 'avg_frame_rate' );
+			//Assume the video rate is 25fps
+			$videoRate = 25;
+			$this->logger->info ( "Frame rate: " . $videoRate );
+			$videoStartTime = 1/$videoRate;	
+			$this->ffmpeg->getFFMpegDriver ()->command ( array (
+					"-i",
+					$videoFilePath,
+					"-ss",
+					$videoStartTime,
+					"-acodec",
+					"copy",
+					"-vcodec",
+					"copy",
+					"-y",
+					$outputFileWebm 
+			) );
+			chdir ( $dir );
+				
+			$this->fs->remove ( $tempFileName );
+			$this->logger->info ( "Transcoding complete!" );
+			$this->fs->rename ( $outputFileWebm, $videoFilePath, true );
+				
+			//set correct permissions
+			$old = umask ( 0 );
+			chmod ( $videoFilePath, 0664 );
+			umask ( $old );
+				
 		} catch ( Exception $e ) {
 			$this->logger->error ( $e->getTraceAsString () );
 		}

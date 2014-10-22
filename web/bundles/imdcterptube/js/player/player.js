@@ -1573,8 +1573,8 @@ Player.prototype.setupVideoRecording = function()
 		{
 		    minHeight : 480,
 		    minWidth : 640,
-		    maxWidth : 1024,
-		    maxHeight : 640
+		    maxWidth : 1280,
+		    maxHeight : 720
 		}
 	    },
 	    audio : true
@@ -1722,7 +1722,15 @@ Player.prototype.recording_startRecording = function()
 
     this.recordVideo = RecordRTC(this.stream,
     {
-	type : 'video'
+	type : 'video',
+	video: {
+	    width: 640,
+	    height: 480
+	},
+	canvas: {
+	    width: 640,
+	    height: 480
+	}
     });
     this.recordAudio.startRecording();
     // this.recordVideo.startRecording();

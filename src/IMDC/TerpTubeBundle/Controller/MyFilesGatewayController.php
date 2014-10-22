@@ -479,7 +479,7 @@ class MyFilesGatewayController extends Controller
 
         $isFirefox = $request->request->get ( "isFirefox" );
         $finalFile = $isFirefox == 'false' ? $transcoder->mergeAudioVideo ( $audioFile, $videoFile ) : $transcoder->remuxWebM ( $audioFile );
-
+		$finalFile = $transcoder->removeFirstFrame($finalFile);
         $resourceFile = new ResourceFile ();
         $resourceFile->setMedia ( $media );
         $resourceFile->setWebmExtension ( "webm" );
