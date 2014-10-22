@@ -395,7 +395,10 @@ define(['core/mediaManager'], function(MediaManager) {
         console.log("%s: %s", MediaChooser.TAG, "_doneFunction");
 
         this.destroyVideoRecorder();
-
+        if (this.page == MediaChooser.Page.PREVIEW)
+        {
+            this._forwardFunctionCut();
+        }
         if (this.media)
             this._invokeSuccess();
         this._terminatingFunction();
@@ -405,7 +408,10 @@ define(['core/mediaManager'], function(MediaManager) {
         console.log("%s: %s", MediaChooser.TAG, "_doneAndPostFunction");
 
         this.destroyVideoRecorder();
-
+        if (this.page == MediaChooser.Page.PREVIEW)
+        {
+            this._forwardFunctionCut();
+        }
         if (this.media)
             this._invokeSuccess(true);
         this._terminatingFunction();
@@ -413,8 +419,9 @@ define(['core/mediaManager'], function(MediaManager) {
 
     MediaChooser.prototype.destroyVideoRecorder = function() {
         console.log("%s: %s", MediaChooser.TAG, "destroyVideoRecorder");
-
-        this.recorder.destroyRecorder();
+        
+        if (this.recorder !== null)
+            this.recorder.destroyRecorder();
     };
 
     MediaChooser._updateUploadProgress = function(element, percentComplete) {
@@ -441,8 +448,8 @@ define(['core/mediaManager'], function(MediaManager) {
     MediaChooser.prototype.createVideoPlayer = function() {
         console.log("%s: %s", MediaChooser.TAG, "createVideoPlayer");
 
-        var forwardButtons = [this.forwardButton, this.doneButton];
-        var forwardFunctions = [this.bind__forwardFunctionCut, this.bind__doneFunction];
+        var forwardButtons = [this.doneButton];
+        var forwardFunctions = [ this.bind__doneFunction];
         if (this.enableDoneAndPost) {
             forwardButtons.push(this.doneAndPostButton);
             forwardFunctions.push(this.bind__doneAndPostFunction);
