@@ -5,6 +5,8 @@ _Thread:view.html.twig
 #}
 
 {% if object.accessType is defined %}
+    {% set style = '' %}
+
     {% if is_granted('VIEW', object) %}
         {% set style = 'style="color: green;"' %}
     {% endif %}

@@ -28,13 +28,22 @@ class HomeController extends Controller
 		}
 
 		$em = $this->getDoctrine()->getManager();
+        $securityContext = $this->get('security.context');
 
 		$myForums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getRecentlyCreatedForums(4);
         $myGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($this->getUser(), 4);
 
+        //FIXME this seems too costly just for the result of numeric convenience
+        $forumThreadCount = array();
+        $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
+        foreach ($myForums as $forum) {
+            $forumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $forum->getId()));
+        }
+
 		return $this->render('IMDCTerpTubeBundle:Home:index.html.twig', array(
             'myForums' => $myForums,
-            'myGroups' => $myGroups
+            'myGroups' => $myGroups,
+            'forumThreadCount' => $forumThreadCount
         ));
 	}
 }
