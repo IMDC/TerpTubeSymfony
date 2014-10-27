@@ -90,12 +90,16 @@ class ForumController extends Controller
         ));
         $form->handleRequest($request);
 
-        if (!$form->isValid() && $groupId) {
-            $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP));
+        if (!$form->isValid()) {
+            if ($groupId) {
+                $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP));
 
-            $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-            if ($group && $group->getUserFounder()->getId() == $user->getId()) {
-                $form->get('group')->setData($group);
+                $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+                if ($group && $group->getUserFounder()->getId() == $user->getId()) {
+                    $form->get('group')->setData($group);
+                }
+            } else {
+                $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC));
             }
         } else {
             $currentDateTime = new \DateTime('now');
@@ -221,6 +225,10 @@ class ForumController extends Controller
                     $forum->addTitleMedia($media);*/
                 //FIXME override for now. at some point multiple media may be used
                 $forum->setTitleMedia($media);
+            }
+
+            if ($forum->getAccessType() !== AccessType::TYPE_GROUP) {
+                $forum->setGroup(null);
             }
 
             $em->persist($forum);

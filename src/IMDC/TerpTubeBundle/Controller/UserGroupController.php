@@ -330,8 +330,7 @@ class UserGroupController extends Controller
             throw new \Exception('group not found');
         }
 
-        $securityContext = $this->get('security.context');
-        if ($securityContext->isGranted('VIEW', $group) === false) {
+        if (!$group->getMembers()->contains($this->getUser())) {
             throw new AccessDeniedException();
         }
 

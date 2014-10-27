@@ -76,10 +76,11 @@ class UserGroup extends BaseGroup
      */
     public function __construct()
     {
-        $this->members     = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->moderators  = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->admins      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->media      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forums       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->members      = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->moderators   = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->admins       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->media        = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
