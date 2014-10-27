@@ -150,6 +150,7 @@ body {
 .tt-forum-thumbnail, .tt-thread-thumbnail {
   min-height: 420px;
   word-wrap: break-word;
+  overflow: hidden;
 }
 /* line 5, sass/_forum.scss */
 .tt-forum-thumbnail .tt-media-element, .tt-thread-thumbnail .tt-media-element {
