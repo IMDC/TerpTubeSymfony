@@ -227,7 +227,7 @@ class ForumController extends Controller
                 $forum->setTitleMedia($media);
             }
 
-            if ($forum->getAccessType() !== AccessType::TYPE_GROUP) {
+            if ($forum->getAccessType()->getId() !== AccessType::TYPE_GROUP) {
                 $forum->setGroup(null);
             }
 

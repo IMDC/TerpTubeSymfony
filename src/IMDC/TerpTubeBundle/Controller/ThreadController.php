@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -63,7 +64,9 @@ class ThreadController extends Controller
         $form = $this->createForm(new ThreadFormType(), $thread);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if (!$form->isValid()) {
+            $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC));
+        } else {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $thread->setCreator($user);
@@ -139,12 +142,12 @@ class ThreadController extends Controller
             throw new AccessDeniedException();
         }
 
-        $postForm = $this->createForm(new PostType(), new Post(), array(
+        $form = $this->createForm(new PostType(), new Post(), array(
             'canTemporal' => $thread->getType() == 1
         ));
         
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
-            'form' => $postForm->createView(),
+            'form' => $form->createView(),
             'thread' => $thread,
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
@@ -249,7 +252,7 @@ class ThreadController extends Controller
         ));
         $form->handleRequest($request);
 
-        if ($thread->isValid()) {
+        if ($form->isValid()) {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $thread->setEditedAt($currentDateTime);

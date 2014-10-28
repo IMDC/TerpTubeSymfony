@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Command;
 
+use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -45,6 +46,11 @@ class GenerateAclsCommand extends ContainerAwareCommand
         $output->writeln('Inserting forum ACEs');
         $forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->findAll();
         foreach ($forums as $forum) {
+            if ($forum->getAccessType()->getId() !== AccessType::TYPE_GROUP) {
+                $forum->setGroup(null);
+                $em->flush();
+            }
+
             $output->writeln(sprintf('id: %d, title: %s, owner: %s', $forum->getId(), $forum->getTitleText(), $forum->getCreator()->getUsername()));
             $insertAces($forum, $forum->getCreator());
         }
