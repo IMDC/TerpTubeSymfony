@@ -201,7 +201,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                     viewContainer.data("istemporal", data.isTemporal);
                     viewContainer.html(data.html);
 
-                    this._onClickCancel();
+                    this._onClickCancel(); // simulate cancelling
                 } else {
                     container.html(data.html);
                     this.bindUIEvents();

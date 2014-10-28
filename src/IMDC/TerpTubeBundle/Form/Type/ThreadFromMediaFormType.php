@@ -11,7 +11,7 @@ class ThreadFromMediaFormType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-	    
+	    //TODO FIXME
 	    // User type
 	    $user = $options['user'];
 	    $userid = $user->getId();

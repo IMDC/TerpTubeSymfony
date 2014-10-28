@@ -261,6 +261,22 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         this.player.repaint();
     };
 
+    Thread.prototype._postEventBind = function(post, isEdit, on) {
+        if (on) {
+            $(post).on(Post.Event.FORM, this.bind__onPostForm);
+            !isEdit
+                ? $(post).on(Post.Event.RESET, this.bind__onPostReset)
+                : $(post).on(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
+            $(post).on(Post.Event.CANCEL, this.bind__onPostCancel);
+        } else {
+            $(post).off(Post.Event.FORM, this.bind__onPostForm);
+            !isEdit
+                ? $(post).off(Post.Event.RESET, this.bind__onPostReset)
+                : $(post).off(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
+            $(post).off(Post.Event.CANCEL, this.bind__onPostCancel);
+        }
+    };
+
     Thread.prototype._onClickPostReply = function(e) {
         if (e && e.preventDefault)
             e.preventDefault();
@@ -276,9 +292,8 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             this.posts.push(post);
         }
 
-        $(post).on(Post.Event.FORM, this.bind__onPostForm);
-        $(post).on(Post.Event.RESET, this.bind__onPostReset);
-        $(post).on(Post.Event.CANCEL, this.bind__onPostCancel);
+        this._postEventBind(post, false, false); // ensure its off to prevent double binding
+        this._postEventBind(post, false, true);
 
         post.handlePage();
     };
@@ -298,9 +313,8 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             this.posts.push(post);
         }
 
-        $(post).on(Post.Event.FORM, this.bind__onPostForm);
-        $(post).on(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
-        $(post).on(Post.Event.CANCEL, this.bind__onPostCancel);
+        this._postEventBind(post, true, false);
+        this._postEventBind(post, true, true);
 
         post.handlePage();
     };

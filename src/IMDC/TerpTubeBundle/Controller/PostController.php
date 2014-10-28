@@ -311,31 +311,28 @@ class PostController extends Controller
 
         $isPostReply = !$thread;
         $post = new Post();
-        $postForm = $this->createForm(new PostType(), $post, array(
+        $form = $this->createForm(new PostType(), $post, array(
             'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false
         ));
-        $postForm->handleRequest($request);
+        $form->handleRequest($request);
 
-        if ($postForm->isValid()) {
+        if ($form->isValid()) {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $post->setAuthor($user);
             $post->setCreated($currentDateTime);
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
 
-            if (!$postForm->get('mediatextarea')->isEmpty()) {
-                $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
-                    ->find($postForm->get('mediatextarea')->getData());
-                if (!$mediaFile) {
-                    throw new \Exception('media not found');
-                }
-
-                if (!$user->getResourceFiles()->contains($mediaFile)) {
+            $media = $form->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
-                if (!$post->getAttachedFile()->contains($mediaFile))
-                    $post->addAttachedFile($mediaFile);
+                /*if (!$post->getAttachedFile()->contains($media))
+                    $post->addAttachedFile($media);*/
+                //FIXME override for now. at some point multiple media may be used
+                $post->setAttachedFile($media);
             }
 
             if (!$isPostReply) {
@@ -380,7 +377,7 @@ class PostController extends Controller
             $content = array(
                 'wasReplied' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
-                        'form' => $postForm->createView(),
+                        'form' => $form->createView(),
                         'post' => !$isPostReply ? $post : $postParent,
                         'uploadForms' => MyFilesGatewayController::getUploadForms($this)))
             );
@@ -413,29 +410,26 @@ class PostController extends Controller
             throw new AccessDeniedException();
         }
 
-        $postForm = $this->createForm(new PostType(), $post, array(
+        $form = $this->createForm(new PostType(), $post, array(
             'canTemporal' => !$post->getParentPost() ? ($post->getParentThread()->getType() == 1) : false
         ));
-        $postForm->handleRequest($request);
+        $form->handleRequest($request);
 
-        if ($postForm->isValid()) {
+        if ($form->isValid()) {
             $post->setEditedAt(new \DateTime('now'));
             $post->setEditedBy($user);
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
 
-            if (!$postForm->get('mediatextarea')->isEmpty()) {
-                $mediaFile = $em->getRepository('IMDCTerpTubeBundle:Media')
-                    ->find($postForm->get('mediatextarea')->getData());
-                if (!$mediaFile) {
-                    throw new \Exception('media not found');
-                }
-
-                if (!$user->getResourceFiles()->contains($mediaFile)) {
+            $media = $form->get('mediatextarea')->getData();
+            if ($media) {
+                if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
-                if (!$post->getAttachedFile()->contains($mediaFile))
-                    $post->addAttachedFile($mediaFile);
+                /*if (!$post->getAttachedFile()->contains($media))
+                    $post->addAttachedFile($media);*/
+                //FIXME override for now. at some point multiple media may be used
+                $post->setAttachedFile($media);
             }
 
             $forum = $post->getParentThread()->getParentForum();
@@ -457,7 +451,7 @@ class PostController extends Controller
             $content = array(
                 'wasEdited' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
-                        'form' => $postForm->createView(),
+                        'form' => $form->createView(),
                         'post' => $post,
                         'uploadForms' => MyFilesGatewayController::getUploadForms($this)))
             );

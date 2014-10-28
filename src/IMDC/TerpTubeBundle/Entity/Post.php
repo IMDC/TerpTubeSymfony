@@ -446,4 +446,12 @@ class Post
     {
         $this->replies->removeElement($replies);
     }
+
+    public function setAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
+    {
+        $this->attachedFile = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->attachedFile[] = $attachedFile;
+
+        return $this;
+    }
 }
