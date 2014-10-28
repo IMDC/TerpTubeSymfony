@@ -26,8 +26,8 @@ _Member:index.html.twig
                     <div class="col-md-8">
                         <h3>{% include 'IMDCTerpTubeBundle:Member:username.html.twig' %}</h3>
                         <ul class="list-unstyled">
-                            <li class="text-muted"><strong>{{ 'member.infoBlock.joined'|trans }}:</strong> {{ member.getJoinDate|date('M j Y') }}</li>
-                            <li class="text-muted"><strong>{{ 'member.infoBlock.postCount'|trans }}:</strong> {{ member.getPostCount }}</li>
+                            <li class="text-muted"><strong>{{ 'member.infoBlock.joined'|trans }}:</strong> {{ member.joinDate|date('M j Y') }}</li>
+                            <li class="text-muted"><strong>{{ 'member.infoBlock.postCount'|trans }}:</strong> {{ member.postCount }}</li>
                         </ul>
                     </div>
                 </div>
@@ -37,7 +37,7 @@ _Member:index.html.twig
                             {% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' with {'faSize': 'fa-2x'} %}
                         </div>
                         <div class="user-container-select" style="{% if not isSelection %}display: none;{% endif %}">
-                            <button class="btn btn-default user-select" data-toggle="button" data-select="Select" data-selected="Selected" data-uid="{{ member.getId }}"></button>
+                            <button class="btn btn-default user-select" data-toggle="button" data-select="Select" data-selected="Selected" data-uid="{{ member.id }}"></button>
                         </div>
                     </div>
                 </div>

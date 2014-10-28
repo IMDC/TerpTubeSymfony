@@ -44,7 +44,7 @@
                 {{ form_row(form.openForNewMembers) }}
                 {{ form_row(form.joinByInvitationOnly) }}
                 <button class="btn btn-success"><i class="fa fa-check"></i> Save</button>
-                <a class="btn btn-danger" href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-danger" href="{{ path('imdc_group_view', {'groupId': group.id}) }}"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>

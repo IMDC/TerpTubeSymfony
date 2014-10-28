@@ -60,7 +60,7 @@
                                                         {{ invitation.getCreator }} would like to mentor you!
                                                     {% elseif invitation.type.isGroup %}
                                                         {% set group = groups[invitation.id] %}
-                                                        {{ invitation.getCreator }} would like you to join the "<a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a>" group!
+                                                        {{ invitation.getCreator }} would like you to join the "<a href="{{ path('imdc_group_view', {'groupId': group.id}) }}">{{ group.name }}</a>" group!
                                                     {% endif %}
                                                 </td>
                                                 <td>{{ time_diff(invitation.datecreated) }}</td>
@@ -121,7 +121,7 @@
                                                         You asked {{ invitation.getRecipient }} if they would like you as their mentor
                                                     {% elseif invitation.type.isGroup %}
                                                         {% set group = groups[invitation.id] %}
-                                                        You asked {{ invitation.getRecipient }} if they would like to join the "<a href="{{ path('imdc_group_view', {'usergroupid': group.id}) }}">{{ group.name }}</a>" group!
+                                                        You asked {{ invitation.getRecipient }} if they would like to join the "<a href="{{ path('imdc_group_view', {'groupId': group.id}) }}">{{ group.name }}</a>" group!
                                                     {% endif %}
                                                 </td>
                                                 <td>{{ time_diff(invitation.datecreated) }}</td>

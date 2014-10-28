@@ -7,32 +7,38 @@ imdc_group_new:
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:new }
 
 imdc_group_view:
-  pattern: /{usergroupid}
+  pattern: /{groupId}
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:view }
   requirements:
-    usergroupid: \d+
+    groupId: \d+
 
 imdc_group_edit:
-  pattern: /{usergroupid}/edit
+  pattern: /{groupId}/edit
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:edit }
   requirements:
-    usergroupid: \d+
+    groupId: \d+
 
 imdc_group_delete:
-  pattern: /{usergroupid}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:deleteUserGroup }
+  pattern: /{groupId}/delete
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:delete }
   requirements:
-    usergroupid: \d+
+    groupId: \d+
 
 imdc_group_my_groups:
   pattern: /myGroups
-  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:myGroupShow }
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:listMyGroups }
 
 imdc_group_join:
-  pattern: /{usergroupid}/join
-  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:joinUserGroup }
+  pattern: /{groupId}/join
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:join }
   requirements:
-    usergroupid: \d+
+    groupId: \d+
+
+imdc_group_leave:
+  pattern: /{groupId}/leave
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:leave }
+  requirements:
+    groupId: \d+
 
 imdc_group_message:
   pattern: /{groupId}/message
