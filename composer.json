@@ -11,15 +11,15 @@
 	"require" : {
 		"php" : ">=5.3.3",
 		"symfony/symfony" : "2.3.*",
-        "symfony/assetic-bundle" : "2.3.*",
-        "symfony/swiftmailer-bundle" : "2.3.*",
-        "symfony/monolog-bundle" : "2.3.*",
-        "symfony/filesystem" : "dev-master",
+		"symfony/assetic-bundle" : "2.3.*",
+		"symfony/swiftmailer-bundle" : "2.3.*",
+		"symfony/monolog-bundle" : "2.3.*",
+		"symfony/filesystem" : "dev-master",
 		"doctrine/orm" : "~2.2, >=2.3.5",
 		"doctrine/doctrine-bundle" : "1.2.*",
-        "doctrine/doctrine-fixtures-bundle" : "2.2.*",
-        "doctrine/migrations": "1.0.*@dev",
-        "doctrine/doctrine-migrations-bundle": "2.1.*@dev",
+		"doctrine/doctrine-fixtures-bundle" : "2.2.*",
+		"doctrine/migrations" : "1.0.*@dev",
+		"doctrine/doctrine-migrations-bundle" : "2.1.*@dev",
 		"twig/extensions" : "1.0.*",
 		"sensio/distribution-bundle" : "2.3.*",
 		"sensio/framework-extra-bundle" : "2.3.*",
@@ -29,6 +29,7 @@
 		"friendsofsymfony/user-bundle" : "~2.0@dev",
 		"friendsofsymfony/jsrouting-bundle" : "1.1.*@dev",
 		"braincrafted/bootstrap-bundle" : "2.1.*@dev",
+		"ibrows/xeditable-bundle": "dev-master",
 		"twitter/bootstrap" : "3.2.*",
 		"oyejorge/less.php" : "dev-master",
 		"sonata-project/admin-bundle" : "~2.3@dev",
@@ -52,9 +53,6 @@
 		"jquery/jquerymap" : "1.10.2"
 	},
 	"scripts" : {
- 		"post-root-package-install": [
-            "SymfonyStandard\\Composer::hookRootPackageInstall"
-        ],	    
 		"post-install-cmd" : [
 			"Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
 			"Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
@@ -87,17 +85,16 @@
 			"dev-master" : "2.3-dev"
 		}
 	},
-	"repositories" : [
-	    {
-            "type": "package",
-            "package": {
-			    "name": "jquery/jquerymap",
-			    "version": "1.10.2",
-			    "dist": {
-			        "url": "http://code.jquery.com/jquery-1.10.2.min.map",
-			        "type": "file"
-			    }
-            }
-        }
+	"repositories" : [{
+			"type" : "package",
+			"package" : {
+				"name" : "jquery/jquerymap",
+				"version" : "1.10.2",
+				"dist" : {
+					"url" : "http://code.jquery.com/jquery-1.10.2.min.map",
+					"type" : "file"
+				}
+			}
+		}
 	]
 }

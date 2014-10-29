@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "764d2f41d266eedf5f9d1c9aab368fab",
+    "hash": "d380e5a6622f0129c22e1816df46ab88",
     "packages": [
         {
             "name": "ac/transcoding",
@@ -266,6 +266,63 @@
                 "bootstrap"
             ],
             "time": "2014-08-31 10:47:30"
+        },
+        {
+            "name": "cocur/slugify",
+            "version": "v0.10.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cocur/slugify.git",
+                "reference": "b9518567cefdb9ca1e8f9b6bfb81fc5b023bd24e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cocur/slugify/zipball/b9518567cefdb9ca1e8f9b6bfb81fc5b023bd24e",
+                "reference": "b9518567cefdb9ca1e8f9b6bfb81fc5b023bd24e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "dev-master",
+                "laravel/framework": "~4.1",
+                "mockery/mockery": "~0.9",
+                "phpunit/phpunit": "~3.7",
+                "sami/sami": "~1.3",
+                "satooshi/php-coveralls": "0.6.*",
+                "silex/silex": "~1.2",
+                "symfony/dependency-injection": "~2.4",
+                "symfony/http-kernel": "~2.4",
+                "twig/twig": "~1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Cocur\\Slugify\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ivo Bathke",
+                    "email": "ivo.bathke@gmail.com"
+                },
+                {
+                    "name": "Florian Eckerstorfer",
+                    "email": "florian@eckerstorfer.co",
+                    "homepage": "https://florian.ec"
+                }
+            ],
+            "description": "Converts a string into a slug.",
+            "keywords": [
+                "slug",
+                "slugify"
+            ],
+            "time": "2014-10-18 17:20:59"
         },
         {
             "name": "doctrine/annotations",
@@ -608,16 +665,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.4.2",
+            "version": "v2.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "fec965d330c958e175c39e61c3f6751955af32d0"
+                "reference": "0368bc031976126e5d36d37d2c56155092b6575b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/fec965d330c958e175c39e61c3f6751955af32d0",
-                "reference": "fec965d330c958e175c39e61c3f6751955af32d0",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/0368bc031976126e5d36d37d2c56155092b6575b",
+                "reference": "0368bc031976126e5d36d37d2c56155092b6575b",
                 "shasum": ""
             },
             "require": {
@@ -629,7 +686,7 @@
                 "symfony/console": "~2.0"
             },
             "suggest": {
-                "symfony/console": "Allows use of the command line interface"
+                "symfony/console": "For helpful console commands such as SQL execution and import of files."
             },
             "type": "library",
             "autoload": {
@@ -643,23 +700,20 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com",
-                    "homepage": "http://www.jwage.com/",
-                    "role": "Creator"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com",
-                    "homepage": "http://www.instaclick.com"
-                },
-                {
                     "name": "Roman Borschel",
                     "email": "roman@code-factory.org"
                 },
                 {
                     "name": "Benjamin Eberlei",
                     "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
                 }
             ],
             "description": "Database Abstraction Layer",
@@ -670,7 +724,7 @@
                 "persistence",
                 "queryobject"
             ],
-            "time": "2014-01-01 16:43:57"
+            "time": "2014-10-16 11:56:49"
         },
         {
             "name": "doctrine/doctrine-bundle",
@@ -1210,12 +1264,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle.git",
-                "reference": "3be6e7b86a397be785efee5490a7fc19aeae0381"
+                "reference": "9714a92e968f7e12431ccf5fecb1346f0d5adc65"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/3be6e7b86a397be785efee5490a7fc19aeae0381",
-                "reference": "3be6e7b86a397be785efee5490a7fc19aeae0381",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/9714a92e968f7e12431ccf5fecb1346f0d5adc65",
+                "reference": "9714a92e968f7e12431ccf5fecb1346f0d5adc65",
                 "shasum": ""
             },
             "require": {
@@ -1269,7 +1323,7 @@
             "keywords": [
                 "User management"
             ],
-            "time": "2014-10-04 17:10:16"
+            "time": "2014-10-20 09:15:23"
         },
         {
             "name": "gregwar/captcha",
@@ -1374,6 +1428,51 @@
                 "visual"
             ],
             "time": "2014-09-26 19:07:06"
+        },
+        {
+            "name": "ibrows/xeditable-bundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ibrows/IbrowsXeditableBundle.git",
+                "reference": "4b1049a858c71dfaf7a2f8dcf8c2c4644497b181"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ibrows/IbrowsXeditableBundle/zipball/4b1049a858c71dfaf7a2f8dcf8c2c4644497b181",
+                "reference": "4b1049a858c71dfaf7a2f8dcf8c2c4644497b181",
+                "shasum": ""
+            },
+            "require": {
+                "symfony/symfony": "~2.1"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Ibrows\\XeditableBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marc Steiner",
+                    "homepage": "https://github.com/ibrows"
+                }
+            ],
+            "description": "bootstrap x-editable symfony2 forms integration",
+            "homepage": "http://www.ibrows.ch",
+            "keywords": [
+                "Symfony2",
+                "XeditableBundle",
+                "bootstrap",
+                "form",
+                "inline-edit",
+                "x-editable"
+            ],
+            "time": "2014-08-25 12:27:22"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -2290,12 +2389,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/RabbitMqBundle.git",
-                "reference": "93a721fe873e43e01c1ea1a15bb07db140d20759"
+                "reference": "30f15f3b64f0155c3603eb20d1e490f3b502ea36"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/93a721fe873e43e01c1ea1a15bb07db140d20759",
-                "reference": "93a721fe873e43e01c1ea1a15bb07db140d20759",
+                "url": "https://api.github.com/repos/videlalvaro/RabbitMqBundle/zipball/30f15f3b64f0155c3603eb20d1e490f3b502ea36",
+                "reference": "30f15f3b64f0155c3603eb20d1e490f3b502ea36",
                 "shasum": ""
             },
             "require": {
@@ -2334,7 +2433,7 @@
                 "queue",
                 "rabbitmq"
             ],
-            "time": "2014-10-06 11:16:50"
+            "time": "2014-10-20 11:37:04"
         },
         {
             "name": "oyejorge/less.php",
@@ -2748,12 +2847,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataAdminBundle.git",
-                "reference": "e6ce0a612a4f9a8d6212c5bac9b958d7d754bfdb"
+                "reference": "069e610d4d729608bd8fcb03647529cb252993ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/e6ce0a612a4f9a8d6212c5bac9b958d7d754bfdb",
-                "reference": "e6ce0a612a4f9a8d6212c5bac9b958d7d754bfdb",
+                "url": "https://api.github.com/repos/sonata-project/SonataAdminBundle/zipball/069e610d4d729608bd8fcb03647529cb252993ef",
+                "reference": "069e610d4d729608bd8fcb03647529cb252993ef",
                 "shasum": ""
             },
             "require": {
@@ -2819,7 +2918,7 @@
                 "bootstrap",
                 "sonata"
             ],
-            "time": "2014-10-09 09:19:38"
+            "time": "2014-10-22 16:33:22"
         },
         {
             "name": "sonata-project/block-bundle",
@@ -3021,15 +3120,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataCoreBundle.git",
-                "reference": "6883f1fa0efbaa05cf670ee009514fd2d88d8ee8"
+                "reference": "9bbbbc0df4f1c489bfaf93cabe497326e5fdf318"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataCoreBundle/zipball/6883f1fa0efbaa05cf670ee009514fd2d88d8ee8",
-                "reference": "6883f1fa0efbaa05cf670ee009514fd2d88d8ee8",
+                "url": "https://api.github.com/repos/sonata-project/SonataCoreBundle/zipball/9bbbbc0df4f1c489bfaf93cabe497326e5fdf318",
+                "reference": "9bbbbc0df4f1c489bfaf93cabe497326e5fdf318",
                 "shasum": ""
             },
             "require": {
+                "cocur/slugify": "*",
                 "symfony/config": "~2.3",
                 "symfony/form": "~2.3",
                 "symfony/http-foundation": "~2.3",
@@ -3075,7 +3175,7 @@
             "keywords": [
                 "sonata"
             ],
-            "time": "2014-10-06 13:03:25"
+            "time": "2014-10-22 14:47:43"
         },
         {
             "name": "sonata-project/doctrine-orm-admin-bundle",
@@ -3083,12 +3183,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sonata-project/SonataDoctrineORMAdminBundle.git",
-                "reference": "090c4a4b233b3e1af21b6ca54e2eb7be19233d9d"
+                "reference": "b29af6623543a47f7950f27697e08e0dcba82173"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sonata-project/SonataDoctrineORMAdminBundle/zipball/090c4a4b233b3e1af21b6ca54e2eb7be19233d9d",
-                "reference": "090c4a4b233b3e1af21b6ca54e2eb7be19233d9d",
+                "url": "https://api.github.com/repos/sonata-project/SonataDoctrineORMAdminBundle/zipball/b29af6623543a47f7950f27697e08e0dcba82173",
+                "reference": "b29af6623543a47f7950f27697e08e0dcba82173",
                 "shasum": ""
             },
             "require": {
@@ -3145,7 +3245,7 @@
                 "generator",
                 "sonata"
             ],
-            "time": "2014-10-04 22:02:48"
+            "time": "2014-10-16 09:00:50"
         },
         {
             "name": "sonata-project/exporter",
@@ -3375,21 +3475,21 @@
         },
         {
             "name": "symfony/assetic-bundle",
-            "version": "v2.3.0",
+            "version": "v2.3.1",
             "target-dir": "Symfony/Bundle/AsseticBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/AsseticBundle.git",
-                "reference": "146dd3cb46b302bd471560471c6aaa930483dac1"
+                "reference": "099e0bb5d80e7039af20db384a41017fde521f21"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/AsseticBundle/zipball/146dd3cb46b302bd471560471c6aaa930483dac1",
-                "reference": "146dd3cb46b302bd471560471c6aaa930483dac1",
+                "url": "https://api.github.com/repos/symfony/AsseticBundle/zipball/099e0bb5d80e7039af20db384a41017fde521f21",
+                "reference": "099e0bb5d80e7039af20db384a41017fde521f21",
                 "shasum": ""
             },
             "require": {
-                "kriswallsmith/assetic": "~1.1",
+                "kriswallsmith/assetic": "1.1.x",
                 "php": ">=5.3.0",
                 "symfony/framework-bundle": "~2.1"
             },
@@ -3408,7 +3508,7 @@
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.1.x-dev"
+                    "dev-master": "2.3-dev"
                 }
             },
             "autoload": {
@@ -3434,7 +3534,7 @@
                 "compression",
                 "minification"
             ],
-            "time": "2013-05-16 05:32:23"
+            "time": "2013-11-25 16:34:50"
         },
         {
             "name": "symfony/filesystem",
@@ -3808,16 +3908,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.16.0",
+            "version": "v1.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fabpot/Twig.git",
-                "reference": "8ce37115802e257a984a82d38254884085060024"
+                "reference": "42f758d9fe2146d1f0470604fc05ee43580873fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fabpot/Twig/zipball/8ce37115802e257a984a82d38254884085060024",
-                "reference": "8ce37115802e257a984a82d38254884085060024",
+                "url": "https://api.github.com/repos/fabpot/Twig/zipball/42f758d9fe2146d1f0470604fc05ee43580873fc",
+                "reference": "42f758d9fe2146d1f0470604fc05ee43580873fc",
                 "shasum": ""
             },
             "require": {
@@ -3861,7 +3961,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2014-07-05 12:19:05"
+            "time": "2014-10-17 12:53:44"
         },
         {
             "name": "twitter/bootstrap",
@@ -3916,16 +4016,16 @@
         },
         {
             "name": "videlalvaro/php-amqplib",
-            "version": "v2.4.0",
+            "version": "v2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/videlalvaro/php-amqplib.git",
-                "reference": "d8294736e47340e8d96f37d788b15f578bfc084f"
+                "reference": "58044157b30853a1a425e26e9ff9895247668ac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/d8294736e47340e8d96f37d788b15f578bfc084f",
-                "reference": "d8294736e47340e8d96f37d788b15f578bfc084f",
+                "url": "https://api.github.com/repos/videlalvaro/php-amqplib/zipball/58044157b30853a1a425e26e9ff9895247668ac3",
+                "reference": "58044157b30853a1a425e26e9ff9895247668ac3",
                 "shasum": ""
             },
             "require": {
@@ -3939,6 +4039,11 @@
                 "ext-sockets": "Use AMQPSocketConnection"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.4-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "PhpAmqpLib": ""
@@ -3960,7 +4065,7 @@
                 "queue",
                 "rabbitmq"
             ],
-            "time": "2014-06-21 09:27:57"
+            "time": "2014-10-06 11:00:55"
         }
     ],
     "packages-dev": [],
@@ -3973,6 +4078,7 @@
         "friendsofsymfony/user-bundle": 20,
         "friendsofsymfony/jsrouting-bundle": 20,
         "braincrafted/bootstrap-bundle": 20,
+        "ibrows/xeditable-bundle": 20,
         "oyejorge/less.php": 20,
         "sonata-project/admin-bundle": 20,
         "sonata-project/doctrine-orm-admin-bundle": 20,
