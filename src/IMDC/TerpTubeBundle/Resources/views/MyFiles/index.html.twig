@@ -70,7 +70,10 @@
                 	{/canInterpret}
 				</div>
             </td>
-            <td>{media.title}</td>
+            <td>
+				<span class="edit-title" data-type="text" data-val="{media.id}" data-title="{{ 'form.media.title'|trans }}" >{media.title}</span>
+                <a href="#" class="pull-right edit-title" ><i class="fa fa-pencil"></i></a>	
+			</td>
             <td><i class="fa {icon}"></i> {mediaType}</td>
             <td>{dateString}</td>
             <td>

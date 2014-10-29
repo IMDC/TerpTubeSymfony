@@ -54,6 +54,26 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
 
         $(".preview-button").on("click", this.bind__onPreviewButtonClick);
         $(".delete-button").on("click", this.bind__onDeleteButtonClick);
+        
+        var instance = this;
+        $("span.edit-title").editable({
+	    toggle : 'manual',
+	    unsavedclass : null,
+	    success : function(response, newValue)
+	    {
+		instance.mediaManager.updateMedia({
+		    id : $(this).data('val'),
+		    title : newValue
+		});
+	    }
+	});
+
+        $("a.edit-title").on("click", function(e)
+	{
+	    e.stopPropagation();
+	    e.preventDefault();
+	    $(this).prev().editable('toggle');
+	});
     };
 
     MyFiles.prototype.onPreviewButtonClick = function(e) {
@@ -210,6 +230,24 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
 
         $(".preview-button:last").on("click", this.bind__onPreviewButtonClick);
         $(".delete-button:last").on("click", this.bind__onDeleteButtonClick);
+        $("span.edit-title:last").editable({
+	    toggle : 'manual',
+	    unsavedclass : null,
+	    success : function(response, newValue)
+	    {
+		instance.mediaManager.updateMedia({
+		    id : $(this).data('val'),
+		    title : newValue
+		});
+	    }
+	});
+        $("a.edit-title:last").on("click", function(e)
+	{
+	    e.stopPropagation();
+	    e.preventDefault();
+	    $(this).prev().editable('toggle');
+	});
+        
     };
 
     MyFiles.prototype._updateMediaRow = function(media) {

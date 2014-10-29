@@ -39,6 +39,7 @@ class AppKernel extends Kernel
             new Sonata\AdminBundle\SonataAdminBundle(),
             new Sonata\CoreBundle\SonataCoreBundle(),
             new Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
+        	new Ibrows\XeditableBundle\IbrowsXeditableBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

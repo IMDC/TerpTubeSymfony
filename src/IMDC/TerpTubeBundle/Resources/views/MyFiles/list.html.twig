@@ -63,7 +63,10 @@ _MyFiles:ajax.index.html.twig
                                     </div>
                                 </td>
                                 <!-- name -->
-                                <td>{{ resourceFile.title }}</td>
+                                <td>
+                                	<span class="edit-title" data-type="text" data-val="{{ resourceFile.id }}" data-title="{{ 'form.media.title'|trans }}" >{{ resourceFile.title }}</span>
+                                	<a href="#" class="pull-right edit-title" ><i class="fa fa-pencil"></i></a>	
+                                </td>
                                 <!-- type -->
                                 <td>
                                     {% if resourceFile.type == 0 %}
