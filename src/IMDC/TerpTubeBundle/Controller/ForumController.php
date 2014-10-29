@@ -198,6 +198,8 @@ class ForumController extends Controller
 	    }
 
         $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+
 	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
         if (!$forum) {
             throw new \Exception('forum not found');
@@ -208,11 +210,12 @@ class ForumController extends Controller
             throw new AccessDeniedException();
         }
 
-	    $form = $this->createForm(new ForumFormType(), $forum);
+	    $form = $this->createForm(new ForumFormType(), $forum, array(
+            'user' => $user
+        ));
         $form->handleRequest($request);
 	    
 	    if ($form->isValid()) {
-            $user = $this->getUser();
             $forum->setLastActivity(new \DateTime('now'));
 
             $media = $form->get('mediatextarea')->getData();
