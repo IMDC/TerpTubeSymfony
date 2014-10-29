@@ -102,7 +102,7 @@ class ThreadController extends Controller
             $em->flush();
 
             $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
-            $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
+            $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             $access = $accessProvider->createAccess($objectIdentity);
