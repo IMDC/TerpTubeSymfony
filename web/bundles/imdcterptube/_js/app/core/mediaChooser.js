@@ -210,6 +210,18 @@ define(['core/mediaManager'], function(MediaManager) {
             this._invokeSuccess();
             this._terminatingFunction();
         }).bind(this));
+
+        // KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig
+        // override pagination urls
+        container.find("ul.pagination li a").on("click", (function(e) {
+            e.preventDefault();
+
+            this._loadPage({
+                showPopup: true,
+                url: $(e.target).attr("href"),
+                method: "GET"
+            });
+        }).bind(this));
     };
 
     MediaChooser.prototype._bindUIEventsPreview = function() {

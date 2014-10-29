@@ -39,14 +39,12 @@ class MyFilesGatewayController extends Controller
 
         $resourceFiles = $this->getUser()->getResourceFiles();
 
-        if (!$request->isXmlHttpRequest()) {
-            $paginator = $this->get('knp_paginator');
-            $resourceFiles = $paginator->paginate(
-                $resourceFiles,
-                $this->get('request')->query->get('page', 1), /*page number*/
-                25 /*limit per page*/
-            );
-        }
+        $paginator = $this->get('knp_paginator');
+        $resourceFiles = $paginator->paginate(
+            $resourceFiles,
+            $this->get('request')->query->get('page', 1), /*page number*/
+            !$request->isXmlHttpRequest() ? 25 : 10 /*limit per page*/
+        );
 
         $parameters = array(
             'resourceFiles' => $resourceFiles
