@@ -34,6 +34,7 @@ define(['core/mediaManager'], function(MediaManager) {
         this.bind__doneAndPostFunction = this._doneAndPostFunction.bind(this);
         this.bind__forwardFunctionCut = this._forwardFunctionCut.bind(this);
         this.bind__backFunction = this._backFunction.bind(this);
+        this.bind__loadSelectFromMyFilesFunction = this.loadSelectFromMyFilesFunction.bind(this);
     };
 
     MediaChooser.TAG = "MediaChooser";
@@ -169,13 +170,13 @@ define(['core/mediaManager'], function(MediaManager) {
 
         this._getElement(MediaChooser.Binder.SELECT).on("click", (function(e) {
             e.preventDefault();
-
-            this.page = MediaChooser.Page.SELECT;
-            this._loadPage({
-                showPopup: true,
-                url: Routing.generate("imdc_myfiles_list"),
-                method: "GET"
-            });
+            this.bind__loadSelectFromMyFilesFunction();
+//            this.page = MediaChooser.Page.SELECT;
+//            this._loadPage({
+//                showPopup: true,
+//                url: Routing.generate("imdc_myfiles_list"),
+//                method: "GET"
+//            });
         }).bind(this));
 
         this._getElement(MediaChooser.Binder.REMOVE).on("click", (function(e) {
@@ -195,7 +196,7 @@ define(['core/mediaManager'], function(MediaManager) {
 
             if ($(e.target).hasClass("disabled"))
                 return false;
-
+            
             this.setMedia({id: $(e.target).data("val")});
             this.previewMedia();
         }).bind(this));
@@ -314,7 +315,7 @@ define(['core/mediaManager'], function(MediaManager) {
             }).bind(this),
             show: "blind",
             hide: "blind",
-            minWidth: 740,
+            minWidth: 800,
             position: {
                 at: "top",
                 my: "top"
@@ -456,20 +457,37 @@ define(['core/mediaManager'], function(MediaManager) {
             method: "GET"
         });
     };
-
+    
+    MediaChooser.prototype.loadSelectFromMyFilesFunction = function() {
+	this.page = MediaChooser.Page.SELECT;
+        this._loadPage({
+            showPopup: true,
+            url: Routing.generate("imdc_myfiles_list"),
+            method: "GET"
+        });
+    }
+    
     MediaChooser.prototype.createVideoPlayer = function() {
         console.log("%s: %s", MediaChooser.TAG, "createVideoPlayer");
 
         var forwardButtons = [this.doneButton];
         var forwardFunctions = [ this.bind__doneFunction];
+        var backButtons;
+        var backFunctions;
+        
         if (this.enableDoneAndPost) {
             forwardButtons.push(this.doneAndPostButton);
             forwardFunctions.push(this.bind__doneAndPostFunction);
         }
 
-        var backButtons;
-        var backFunctions;
-        if (this.wasRecording) {
+       
+        if (this.isFileSelection)
+        {
+            backButtons = [this.backButton];
+            backFunctions = [this.bind__loadSelectFromMyFilesFunction]
+            
+        }
+        else if (this.wasRecording) {
             backButtons = [this.backButton];
             backFunctions = [this.bind__backFunction];
         }

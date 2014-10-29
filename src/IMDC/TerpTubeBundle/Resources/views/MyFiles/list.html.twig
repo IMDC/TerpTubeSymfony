@@ -28,13 +28,13 @@ _MyFiles:ajax.index.html.twig
                                 <!-- tools -->
                                 <td>
                                     <div class="text-center">
-                                        {% if not isSelect %}
+{#                                         {% if not isSelect %}#}
                                             <a class="btn btn-danger btn-xs delete-button"
                                                href="#"
                                                data-val="{{ resourceFile.id }}">
                                                 <i class="fa fa-trash-o"></i> {{ 'filesGateway.deleteLink'|trans }}
                                             </a>
-                                        {% endif %}
+{#                                         {% endif %}#}
                                         <a class="btn btn-default btn-xs preview-button{% if resourceFile.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') %} disabled{% endif %}"
                                            href="#"
                                            data-type="{{ resourceFile.type }}"
