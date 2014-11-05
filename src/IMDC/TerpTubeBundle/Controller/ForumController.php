@@ -2,43 +2,32 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
+use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
+use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
-// these import the "@Route" and "@Template" annotations
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
-
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use IMDC\TerpTubeBundle\Entity\ResourceFile;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use IMDC\TerpTubeBundle\Entity\Forum;
-use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
-use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
-use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Entity\Permissions;
-use IMDC\TerpTubeBundle\Entity\ForumRepository;
-use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
-
 /**
  * Controller for all Forum object related actions such as new, edit, delete
- * 
  * @author paul
  *
  */
 class ForumController extends Controller
 {
-	public function listAction(Request $request)
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    public function listAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('IMDCTerpTubeBundle:Forum');
@@ -73,8 +62,14 @@ class ForumController extends Controller
             'forumThreadCount' => $forumThreadCount
 		));
 	}
-	
-	public function newAction(Request $request, $groupId)
+
+    /**
+     * @param Request $request
+     * @param $groupId
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
+    public function newAction(Request $request, $groupId)
 	{
 	    // check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -125,17 +120,12 @@ class ForumController extends Controller
             $em->persist($user);
             $em->flush();
 
-            //$aclProvider = $this->get('security.acl.provider');
             $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
-            //$objectIdentity = ObjectIdentity::fromDomainObject($forum);
             $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            //$acl = $aclProvider->createAcl($objectIdentity);
             $access = $accessProvider->createAccess($objectIdentity);
-            //$acl->insertObjectAce($securityIdentity, MaskBuilder::MASK_OWNER);
             $access->insertEntries($securityIdentity);
-            //$aclProvider->updateAcl($acl);
             $accessProvider->updateAccess($access);
 
             $this->get('session')->getFlashBag()->add(
@@ -152,8 +142,15 @@ class ForumController extends Controller
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
-	
-	public function viewAction(Request $request, $forumid)
+
+    /**
+     * @param Request $request
+     * @param $forumid
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Exception
+     */
+    public function viewAction(Request $request, $forumid)
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -189,8 +186,15 @@ class ForumController extends Controller
 	    	'threads' => $threads
 	    ));
 	}
-	
-	public function editAction(Request $request, $forumid)
+
+    /**
+     * @param Request $request
+     * @param $forumid
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Exception
+     */
+    public function editAction(Request $request, $forumid)
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -242,13 +246,7 @@ class ForumController extends Controller
             $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            // for consistency recreate the underlying acl
-            //$accessProvider->deleteAccess($objectIdentity);
-            //$access = $accessProvider->createAccess($objectIdentity);
-
-            // get existing underlying acl
             $access = $accessProvider->getAccess($objectIdentity);
-            //$access->insertEntries($securityIdentity);
             $access->updateEntries($securityIdentity);
             $accessProvider->updateAccess($access);
 	        
@@ -267,8 +265,15 @@ class ForumController extends Controller
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
 	}
-	
-	public function deleteAction(Request $request, $forumid)
+
+    /**
+     * @param Request $request
+     * @param $forumid
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Exception
+     */
+    public function deleteAction(Request $request, $forumid)
 	{
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {

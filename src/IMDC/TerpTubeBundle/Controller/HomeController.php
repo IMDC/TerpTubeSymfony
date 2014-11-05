@@ -2,25 +2,23 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-// these import the "@Route" and "@Template" annotations
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
+/**
+ * Class HomeController
+ * @package IMDC\TerpTubeBundle\Controller
+ * @author Jamal Edey <jamal.edey@ryerson.ca>
+ */
 class HomeController extends Controller
 {
     /**
-     * The 'homepage' controller, shows recent activity in 3 areas: Forums, Threads, and Posts
-     * 
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @return RedirectResponse|Response
      */
-	public function indexAction(Request $request)
+    public function indexAction(Request $request)
 	{
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {

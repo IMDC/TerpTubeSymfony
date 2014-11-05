@@ -18,6 +18,12 @@ final class AccessObjectIdentity
     private $objectIdentity;
     private $securityIdentities;
 
+    /**
+     * @param AccessType $accessType
+     * @param $objectIdentity
+     * @param array $securityIdentities
+     * @throws \InvalidArgumentException
+     */
     public function __construct(AccessType $accessType, $objectIdentity, array $securityIdentities = array())
     {
         if (empty($accessType)) {
@@ -33,6 +39,12 @@ final class AccessObjectIdentity
         $this->securityIdentities = $securityIdentities;
     }
 
+    /**
+     * @param $object
+     * @param array $users
+     * @return AccessObjectIdentity
+     * @throws \InvalidArgumentException
+     */
     public static function fromAccessObject($object, array $users = array())
     {
         if ($object instanceof Forum || $object instanceof Thread) {

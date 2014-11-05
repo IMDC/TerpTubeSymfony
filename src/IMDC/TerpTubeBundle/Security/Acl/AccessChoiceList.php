@@ -12,11 +12,19 @@ use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
  */
 class AccessChoiceList extends ObjectChoiceList
 {
+    /**
+     * @param array $choices
+     */
     public function __construct(array $choices)
     {
         parent::__construct($choices, null, array(), null, 'id');
     }
 
+    /**
+     * @param $entityManager
+     * @param $class
+     * @return AccessChoiceList
+     */
     public static function fromEntityManager($entityManager, $class)
     {
         $qb = $entityManager->getRepository('IMDCTerpTubeBundle:AccessType')->createQueryBuilder('a');

@@ -17,6 +17,11 @@ class GroupSecurityIdentity implements SecurityIdentityInterface
     private $id;
     private $class;
 
+    /**
+     * @param $id
+     * @param $class
+     * @throws \InvalidArgumentException
+     */
     public function __construct($id, $class)
     {
         if (empty($id)) {
@@ -31,11 +36,20 @@ class GroupSecurityIdentity implements SecurityIdentityInterface
         $this->class = $class;
     }
 
+    /**
+     * @param UserGroup $group
+     * @return GroupSecurityIdentity
+     */
     public static function fromGroup(UserGroup $group)
     {
         return new self($group->getId(), ClassUtils::getRealClass($group));
     }
 
+    /**
+     * @param SecurityIdentityInterface $identity
+     * @return GroupSecurityIdentity
+     * @throws \InvalidArgumentException
+     */
     public static function fromRoleSecurityIdentity(SecurityIdentityInterface $identity)
     {
         if (!$identity instanceof RoleSecurityIdentity) {
@@ -53,9 +67,13 @@ class GroupSecurityIdentity implements SecurityIdentityInterface
             substr($securityIdentifier, 0, $pos));
     }
 
-    public function toRoleSecurityIdentity()
+    /**
+     * @param GroupSecurityIdentity $identity
+     * @return RoleSecurityIdentity
+     */
+    public static function toRoleSecurityIdentity(GroupSecurityIdentity $identity)
     {
-        return new RoleSecurityIdentity($this->getClass().'-'.$this->getId());
+        return new RoleSecurityIdentity($identity->getClass().'-'.$identity->getId());
     }
 
     /**
@@ -70,6 +88,9 @@ class GroupSecurityIdentity implements SecurityIdentityInterface
         return $this->class === $identity->getClass() && $this->id === $identity->getId();
     }
 
+    /**
+     * @return string
+     */
     public function getClass()
     {
         return $this->class;

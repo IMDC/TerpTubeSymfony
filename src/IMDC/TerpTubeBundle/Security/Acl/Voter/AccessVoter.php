@@ -18,11 +18,18 @@ class AccessVoter implements VoterInterface
 
     private $accessProvider;
 
+    /**
+     * @param AccessProvider $accessProvider
+     */
     public function __construct(AccessProvider $accessProvider)
     {
         $this->accessProvider = $accessProvider;
     }
 
+    /**
+     * @param string $attribute
+     * @return bool
+     */
     public function supportsAttribute($attribute)
     {
         return in_array(strtolower($attribute), array(
@@ -30,6 +37,10 @@ class AccessVoter implements VoterInterface
         ));
     }
 
+    /**
+     * @param string $class
+     * @return bool
+     */
     public function supportsClass($class)
     {
         return in_array($class, array(
@@ -38,6 +49,13 @@ class AccessVoter implements VoterInterface
         ));
     }
 
+    /**
+     * @param TokenInterface $token
+     * @param null|object $object
+     * @param array $attributes
+     * @return int
+     * @throws \InvalidArgumentException
+     */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
         if (!$this->supportsClass(get_class($object))) {
