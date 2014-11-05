@@ -8,7 +8,7 @@ _Thread:view.html.twig
     {% set isPostReply = false %}
 {% endif %}
 
-<div class="row tt-post-container{% if isPostReply %} tt-post-reply-container{% endif %}" data-pid="{{ post.id }}">
+<div class="row post-container tt-post-container{% if isPostReply %} tt-post-reply-container{% endif %}" data-pid="{{ post.id }}">
     <div class="{% if isPostReply %}col-md-11 col-md-offset-1{% else %}col-md-12{% endif %}">
         <div class="row tt-post-container-inner{% if isPostReply %} tt-post-reply-container-inner{% endif %}">
             <!-- user info -->

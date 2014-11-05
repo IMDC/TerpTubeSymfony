@@ -27,7 +27,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Post.Page = {
         NEW: 0,
         REPLY: 1,
-        EDIT: 2
+        EDIT: 2,
+        DELETE: 3
     };
 
     Post.Event = {
@@ -38,9 +39,11 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Post.Binder = {
+        CONTAINER: ".post-container",
         CONTAINER_VIEW: ".post-container-view",
         CONTAINER_REPLY: ".post-container-reply",
         CONTAINER_EDIT: ".post-container-edit",
+        CONTAINER_DELETE: ".post-container-delete",
         REPLY_LINK: ".post-reply",
         SUBMIT: ".post-submit",
         RESET: ".post-reset",
@@ -61,6 +64,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 return this._getElement(Post.Binder.CONTAINER_REPLY);
             case Post.Page.EDIT:
                 return this._getElement(Post.Binder.CONTAINER_EDIT);
+            case Post.Page.DELETE:
+                return this._getElement(Post.Binder.CONTAINER);
         }
     };
 
@@ -80,6 +85,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 return Routing.generate('imdc_post_reply', {pid: this.id});
             case Post.Page.EDIT:
                 return Routing.generate('imdc_post_edit', {pid: this.id});
+            case Post.Page.DELETE:
+                return Routing.generate('imdc_post_delete', {pid: this.id});
         }
     };
 
@@ -128,7 +135,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.mediaChooser.bindUIEvents();
 
         this._getElement(Post.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
-        if (this.page != Post.Page.EDIT)
+        if (this.page != Post.Page.EDIT && this.page != Post.Page.DELETE)
             this._getElement(Post.Binder.RESET).on("click", this.bind__onClickReset);
         this._getElement(Post.Binder.CANCEL).on("click", this.bind__onClickCancel);
     };
@@ -152,7 +159,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         if (e && e.preventDefault)
             e.preventDefault();
 
-        if (this.getFormField("content").val() == "" && this.mediaChooser.media == null) {
+        if (this.page != Post.Page.DELETE &&
+            this.getFormField("content").val() == "" && this.mediaChooser.media == null) {
             alert("Your post cannot be blank. You must either select a file or write a comment.");
             return;
         }
@@ -172,7 +180,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
     Post.prototype._toggleForm = function(disabled) {
         this._getElement(Post.Binder.SUBMIT).button(disabled ? "loading" : "reset");
-        if (this.page != Post.Page.EDIT)
+        if (this.page != Post.Page.EDIT && this.page != Post.Page.DELETE)
             this._getElement(Post.Binder.RESET).attr("disabled", disabled);
         this._getElement(Post.Binder.CANCEL).attr("disabled", disabled);
     };
@@ -206,6 +214,25 @@ define(['core/mediaChooser'], function(MediaChooser) {
                     container.html(data.html);
                     this.bindUIEvents();
                     this._toggleForm(false);
+                }
+                break;
+            case Post.Page.DELETE:
+                if (data.wasDeleted) {
+                    container.after(data.html);
+
+                    // fade out the original comment
+                    container.fadeOut("slow", function(e) {
+                        $(this).remove();
+                    });
+
+                    // remove the feedback message after 5 seconds
+                    setTimeout((function() {
+                        this._getElement(Post.Binder.CONTAINER_DELETE).fadeOut("slow", function(e) {
+                            $(this).remove();
+                        });
+                    }).bind(this), 5000);
+                } else {
+                    //TODO
                 }
                 break;
         }

@@ -19,6 +19,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         this.bind__onMouseLeavePostTimelineKeyPoint = this._onMouseLeavePostTimelineKeyPoint.bind(this);
         this.bind__onClickPostReply = this._onClickPostReply.bind(this);
         this.bind__onClickPostEdit = this._onClickPostEdit.bind(this);
+        this.bind__onClickPostDelete = this._onClickPostDelete.bind(this);
         this.bind__onPostForm = this._onPostForm.bind(this);
         this.bind__onPostSubmitSuccess = this._onPostSubmitSuccess.bind(this);
         this.bind__onPostReset = this._onPostReset.bind(this);
@@ -153,60 +154,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         $(".post-edit").on("click", this.bind__onClickPostEdit);
 
         // launch the modal dialog to delete a comment when you click the trash icon
-        $(".post-delete").on("click", function(e) {
-            e.preventDefault();
-
-            var postId = $(this).data("pid");
-
-            $("#modalDeleteButton").data("pid", postId);
-            $("#modalCancelButton").data("pid", postId);
-            $("#modaldiv").modal("toggle");
-        });
-
-        $("#modalDeleteButton").on("click", (function(e) {
-            e.preventDefault();
-
-            var postId = $("#modalDeleteButton").data("pid");
-            var data = {pid: postId};
-
-            $.ajax({
-                url: Routing.generate('imdc_post_delete', data),
-                type: "POST",
-                contentType: "application/x-www-form-urlencoded",
-                data: data,
-                success: (function(data) {
-                    console.log("%s: %s: %s", Thread.TAG, "#modalDeleteButton:click", "success");
-
-                    var post = $(".tt-post-container[data-pid=" + postId + "]");
-
-                    // create a feedback message
-                    //TODO make me better
-                    post.after('<div id="postDeleteSuccess" class="row"><div class="col-md-12"><p class="text-success"><i class="fa fa-check"></i> ' + data.feedback + '</p></div></div>');
-
-                    // fade out the original comment
-                    post.fadeOut('slow', function(){$(this).remove();});
-
-                    // delete timeline region
-                    this.player.removeKeyPoint(this._getKeyPoint(postId));
-
-                    $("#modaldiv").modal('hide');
-
-                    // wipe out the feedback message after 5 seconds
-                    setTimeout(function(){
-                        $("#postDeleteSuccess").fadeOut("slow", function(e) {
-                            $(this).remove();
-                        });
-                    }, 5000);
-                }).bind(this),
-                error: function(request) {
-                    console.log("%s: %s: %s", Thread.TAG, "#modalDeleteButton:click", "error");
-
-                    console.log(request.statusText);
-
-                    $("#modaldiv").modal('hide');
-                }
-            });
-        }).bind(this));
+        $(".post-delete").on("click", this.bind__onClickPostDelete);
 
         $(".post-reply").on("click", this.bind__onClickPostReply);
     };
@@ -221,6 +169,18 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             }
         }
         return null;
+    };
+
+    Thread.prototype._deletePost = function(id) {
+        console.log("%s: %s- id=%d", Thread.TAG, "_deletePost", id);
+
+        for (var p in this.posts) {
+            var post = this.posts[p];
+            if (post.id == id) {
+                this.posts.splice(p, 1);
+                break;
+            }
+        }
     };
 
     Thread.prototype._onClickPostTimelineKeyPoint = function(e) {
@@ -261,18 +221,16 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         this.player.repaint();
     };
 
-    Thread.prototype._postEventBind = function(post, isEdit, on) {
+    Thread.prototype._postEventBind = function(post, on) {
         if (on) {
             $(post).on(Post.Event.FORM, this.bind__onPostForm);
-            !isEdit
-                ? $(post).on(Post.Event.RESET, this.bind__onPostReset)
-                : $(post).on(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
+            if (post.page == Post.Page.REPLY) $(post).on(Post.Event.RESET, this.bind__onPostReset);
+            $(post).on(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
             $(post).on(Post.Event.CANCEL, this.bind__onPostCancel);
         } else {
             $(post).off(Post.Event.FORM, this.bind__onPostForm);
-            !isEdit
-                ? $(post).off(Post.Event.RESET, this.bind__onPostReset)
-                : $(post).off(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
+            if (post.page == Post.Page.REPLY) $(post).off(Post.Event.RESET, this.bind__onPostReset);
+            $(post).off(Post.Event.SUBMIT_SUCCESS, this.bind__onPostSubmitSuccess);
             $(post).off(Post.Event.CANCEL, this.bind__onPostCancel);
         }
     };
@@ -291,9 +249,10 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             });
             this.posts.push(post);
         }
+        post.page = Post.Page.REPLY;
 
-        this._postEventBind(post, false, false); // ensure its off to prevent double binding
-        this._postEventBind(post, false, true);
+        this._postEventBind(post, false); // ensure its off to prevent double binding
+        this._postEventBind(post, true);
 
         post.handlePage();
     };
@@ -312,11 +271,40 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             });
             this.posts.push(post);
         }
+        post.page = Post.Page.EDIT;
 
-        this._postEventBind(post, true, false);
-        this._postEventBind(post, true, true);
+        this._postEventBind(post, false); // ensure its off to prevent double binding
+        this._postEventBind(post, true);
 
         post.handlePage();
+    };
+
+    Thread.prototype._onClickPostDelete = function(e) {
+        if (e && e.preventDefault)
+            e.preventDefault();
+
+        var postId = $(e.currentTarget).data("pid");
+        var post = this._getPost(postId);
+        if (!post) {
+            post = new Post({
+                page: Post.Page.DELETE,
+                id: postId,
+                threadId: this.threadId
+            });
+            this.posts.push(post);
+        }
+        post.page = Post.Page.DELETE;
+
+        this._postEventBind(post, false); // ensure its off to prevent double binding
+        this._postEventBind(post, true);
+
+        $("#modalCancelButton").off("click", post.bind__onClickCancel);
+        $("#modalDeleteButton").off("click", post.bind__onClickSubmit);
+
+        $("#modalCancelButton").on("click", post.bind__onClickCancel);
+        $("#modalDeleteButton").on("click", post.bind__onClickSubmit);
+
+        $("#modaldiv").modal("toggle");
     };
 
     Thread.prototype._onPostForm = function(e) {
@@ -342,21 +330,27 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     };
 
     Thread.prototype._onPostSubmitSuccess = function(e) {
-        if (e.post.page == Post.Page.EDIT) {
-            var container = e.post._getElement(Post.Binder.CONTAINER_VIEW);
-            if (container.data('istemporal')) {
-                this.replaceKeyPoint(new KeyPoint(
-                    container.data("pid"),
-                    container.data("starttime"),
-                    container.data("endtime"),
-                    "", {
-                        drawOnTimeLine: container.data("istemporal")
-                    }
-                ));
-            }
-        }
+        switch (e.post.page) {
+            case Post.Page.EDIT:
+                var container = e.post._getElement(Post.Binder.CONTAINER_VIEW);
+                if (container.data('istemporal')) {
+                    this._replaceKeyPoint(new KeyPoint(
+                        container.data("pid"),
+                        container.data("starttime"),
+                        container.data("endtime"),
+                        "", {
+                            drawOnTimeLine: container.data("istemporal")
+                        }
+                    ));
+                }
+                break;
+            case Post.Page.DELETE:
+                this._deleteKeyPoint(e.post.id);
+                this._deletePost(e.post.id);
 
-        this._toggleTemporal(this._getKeyPoint(e.post.id), true);
+                $("#modaldiv").modal("hide");
+                break;
+        }
     };
 
     Thread.prototype._onPostReset = function(e) {
@@ -370,8 +364,8 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         this._toggleTemporal(this._getKeyPoint(e.post.id), true);
     };
 
-    Thread.prototype.createKeyPoints = function() {
-        console.log("%s: %s", Thread.TAG, "createKeyPoints");
+    Thread.prototype._createKeyPoints = function() {
+        console.log("%s: %s", Thread.TAG, "_createKeyPoints");
 
         this.keyPoints = new Array();
         $(Post.Binder.CONTAINER_VIEW).each((function(key, element) {
@@ -398,8 +392,8 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         return null;
     };
 
-    Thread.prototype.replaceKeyPoint = function(keyPoint) {
-        console.log("%s: %s- keyPoint=%o", Thread.TAG, "replaceKeyPoint", keyPoint);
+    Thread.prototype._replaceKeyPoint = function(keyPoint) {
+        console.log("%s: %s- keyPoint=%o", Thread.TAG, "_replaceKeyPoint", keyPoint);
 
         for (var kp in this.keyPoints) {
             var oldKeyPoint = this.keyPoints[kp];
@@ -412,7 +406,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         if (this.player) {
             this.player.setKeyPoints(this.keyPoints);
             this.player.repaint();
-            this.renderPostTimelinePoints();
+            this._renderPostTimelinePoints();
         }
 
         $(".post-timeline-keypoint[data-pid=" + keyPoint.id + "]").on("click", this.bind__onClickPostTimelineKeyPoint);
@@ -421,8 +415,26 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             this.bind__onMouseLeavePostTimelineKeyPoint);
     };
 
-    Thread.prototype.renderPostTimelinePoints = function() {
-        console.log("%s: %s", Thread.TAG, "renderPostTimelinePoints");
+    Thread.prototype._deleteKeyPoint = function(postId) {
+        console.log("%s: %s- postId=%d", Thread.TAG, "_deleteKeyPoint", postId);
+
+        for (var kp in this.keyPoints) {
+            var keyPoint = this.keyPoints[kp];
+            if (keyPoint.id == postId) {
+                this.keyPoints.splice(kp, 1);
+                break;
+            }
+        }
+
+        if (this.player) {
+            this.player.setKeyPoints(this.keyPoints);
+            this.player.repaint();
+            this._renderPostTimelinePoints();
+        }
+    };
+
+    Thread.prototype._renderPostTimelinePoints = function() {
+        console.log("%s: %s", Thread.TAG, "_renderPostTimelinePoints");
 
         $(Post.Binder.CONTAINER_VIEW).each((function(key, element) {
             var duration = this.playerOptions.mediaElement[0].duration;
@@ -461,10 +473,10 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             }).bind(this)
         });
 
-        this.createKeyPoints();
+        this._createKeyPoints();
 
         this.playerOptions.mediaElement.on("loadedmetadata", (function(e) {
-            this.renderPostTimelinePoints();
+            this._renderPostTimelinePoints();
         }).bind(this));
 
         if (!isNaN(this.playerOptions.mediaElement[0].duration)) {
