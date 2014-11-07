@@ -13,17 +13,21 @@ use FFMpeg\FFMpeg;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 	private $logger;
 	private $doctrine;
 	private $ffprobe;
 	private $transcoder;
+	private $fs;
+	
 	public function __construct($logger, $doctrine, $transcoder) {
 		$this->logger = $logger;
 		$this->doctrine = $doctrine;
 		$this->transcoder = $transcoder;
 		$this->ffprobe = FFProbe::create ();
+		$this->fs = new Filesystem();
 	}
 	
 	public function checkForPendingOperations($mediaId)
@@ -153,6 +157,21 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			chmod ( $mp4File->getRealPath (), 0664 );
 			chmod ( $webmFile->getRealPath (), 0664 );
 			umask ( $old );
+			
+			try
+			{
+			    // Get a thumbnail
+			    $thumbnailTempFile = $this->transcoder->createThumbnail(
+			            $media->getResource()
+			            ->getAbsolutePath(), $media->getType());
+			    $thumbnailFile = $media->getThumbnailRootDir() . "/" . $media->getResource()->getId() . ".png";
+			    $this->fs->rename($thumbnailTempFile, $thumbnailFile, true);
+			    $media->setThumbnailPath($media->getResource()->getId() . ".png");
+			}
+			catch (IOException $e)
+			{
+			    $this->logger->error($e->getTraceAsString());
+			}
 			
 			if ($resourceFile->getRealPath () != $mp4File->getRealPath () && $resourceFile->getRealPath () != $webmFile->getRealPath ())
 				unlink ( $resourceFile->getRealPath () );

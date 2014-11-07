@@ -198,11 +198,11 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         container.find(".preview-button").on("click", (function(e) {
             e.preventDefault();
 
-            if ($(e.target).hasClass("disabled"))
+            if ($(e.currentTarget).hasClass("disabled"))
                 return false;
 
             this.setMedia({
-                id: $(e.target).data("val")
+                id: $(e.currentTarget).data("val")
             });
             this.previewMedia();
         }).bind(this));

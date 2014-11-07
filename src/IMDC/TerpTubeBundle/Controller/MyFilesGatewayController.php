@@ -341,7 +341,7 @@ class MyFilesGatewayController extends Controller
                 $em->flush();
                 $return = array (
                     'responseCode' => 200,
-                    'feedback' => 'Successfully removed media!'
+                    'feedback' => 'Successfully updated media!'
                 );
             }
             else

@@ -1,13 +1,9 @@
-{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %} {%
+trans_default_domain 'IMDCTerpTubeBundle' %} {% block title %}{{
+'filesGateway.title'|trans }}{% endblock title %} {% block header %} {{
+parent() }}
 
-{% trans_default_domain 'IMDCTerpTubeBundle' %}
-
-{% block title %}{{ 'filesGateway.title'|trans }}{% endblock title %}
-
-{% block header %}
-    {{ parent() }}
-
-    <script type="text/javascript">
+<script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
                 var myFiles = new $tt.Controller.MyFiles({page: $tt.Controller.MyFiles.Page.INDEX});
@@ -15,49 +11,40 @@
             });
         });
     </script>
-{% endblock header %}
+{% endblock header %} {% block nav_ul_authenticated_my_files
+%}class="active"{% endblock %} {% block content %}
+<div class="col-md-12">
+	<div class="row">
+		<div class="col-md-offset-2 col-md-8">
+			<hr class="tt-separator-top" />
+			<img class="img-responsive center-block" src="" />
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-offset-2 col-md-8">{% include
+			'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with
+			{'isFileSelection': false} %}</div>
+	</div>
+	<div class="row">
+		<div class="mediachooser-container-dialog"></div>
+		<div class="col-md-offset-2 col-md-8">{% include
+			'IMDCTerpTubeBundle:MyFiles:list.html.twig' %}</div>
+	</div>
+	<div class="row">
+		<div class="col-md-offset-2 col-md-8">
+			<hr class="tt-separator-bottom" />
+		</div>
+	</div>
+</div>
+{% endblock content %} {% block outside_body %} {{ parent() }}
 
-{% block nav_ul_authenticated_my_files %}class="active"{% endblock %}
-
-{% block content %}
-    <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-offset-2 col-md-8">
-                <hr class="tt-separator-top" />
-                <img class="img-responsive center-block" src="" />
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-offset-2 col-md-8">
-                {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with {'isFileSelection': false} %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="mediachooser-container-dialog"></div>
-            <div class="col-md-offset-2 col-md-8">
-                {% include 'IMDCTerpTubeBundle:MyFiles:list.html.twig' %}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-offset-2 col-md-8">
-                <hr class="tt-separator-bottom" />
-            </div>
-        </div>
-    </div>
-{% endblock content %}
-
-{% block outside_body %}
-    {{ parent() }}
-
-    <script type="text/html" id="mediaRow">
+<script type="text/html" id="mediaRow">
         <tr>
             <td>
  				<div class="text-center">
                 	<a class="btn btn-danger btn-xs delete-button" href="#" data-val="{media.id}">
                 	    <i class="fa fa-trash-o"></i> {{ 'filesGateway.deleteLink'|trans }}
                 	</a> 
-                	<a class="btn btn-default btn-xs preview-button{{ '{#previewDisabled} disabled{/previewDisabled}' }}" href="#" data-type="{media.type}" data-url="{previewUrl}" data-val="{media.id}">
-                	    <i class="fa fa-play-circle"></i> {{ 'filesGateway.previewLink'|trans }}
                 	</a> 
                 	<a class="btn btn-default btn-xs share-button" href="{newThreadUrl}" data-type="{media.type}" data-val="{media.id}">
                 	    <i class="fa fa-share-square-o"></i> {{ 'filesGateway.shareLink'|trans }}
@@ -70,7 +57,26 @@
                 	{/canInterpret}
 				</div>
             </td>
-            <td>
+            <td class="tt-myFiles-previewColumn">
+                                
+                <div class="tt-myFiles-mediaThumbnail text-center"> 
+                    <a class="btn btn-default btn-xs preview-button{{ '{#previewDisabled} disabled{/previewDisabled}' }}"
+                                         href="#"
+                                         data-type="{media.type}"
+                                         data-url="{previewUrl}"
+                                         title="{{ 'filesGateway.previewLink'|trans }}"
+                                         data-val="{media.id}">
+                    {{ '{#thumbnail}' }}
+                        <img src="{{asset('web/..')}}/{thumbnail}" /> 
+                    {:else}
+                    <span class="fa-stack fa-lg">
+                        <i class="fa fa-file-o fa-stack-2x"></i>
+                        <i class="fa fa-play-circle fa-stack-1x"></i>
+                    </span>
+                   {/thumbnail}
+                    </a>
+                </div>  
+            <td class="tt-myFiles-nameColumn">
 				<span class="edit-title" data-type="text" data-val="{media.id}" data-title="{{ 'form.media.title'|trans }}" >{media.title}</span>
                 <a href="#" class="pull-right edit-title" ><i class="fa fa-pencil"></i></a>	
 			</td>
@@ -86,9 +92,9 @@
         </tr>
     </script>
 
-    <script type="text/html" id="mediaDeleteConfirmMessage">
+<script type="text/html" id="mediaDeleteConfirmMessage">
         {{ 'filesGateway.deleteConfirmMessage'|trans }}
     </script>
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
-{% endblock outside_body %}
+{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %} {%
+endblock outside_body %}

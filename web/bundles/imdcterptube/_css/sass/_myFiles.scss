@@ -1,3 +1,29 @@
 .tt-myFiles-table {
   @extend .tt-table;
 }
+
+.tt-myFiles-previewColumn
+{
+	padding: 0 !important;
+	width: 50px !important;
+}
+
+.tt-myFiles-nameColumn
+{
+	width: 30%;
+}
+
+tbody tr td
+{
+	vertical-align: middle !important;
+}
+
+.tt-myFiles-mediaThumbnail a img
+{
+	max-width: 100%;
+}
+
+.tt-myFiles-mediaThumbnail a
+{
+	width: 100%;
+}

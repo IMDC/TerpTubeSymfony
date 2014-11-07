@@ -79,11 +79,11 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
     MyFiles.prototype.onPreviewButtonClick = function(e) {
         e.preventDefault();
         console.log("Preview");
-        if ($(e.target).hasClass("disabled")) {
+        if ($(e.currentTarget).hasClass("disabled")) {
             return false;
         }
         this.page = MyFiles.Page.PREVIEW;
-        this.mediaChooser.setMedia({id: $(e.target).data("val")});
+        this.mediaChooser.setMedia({id: $(e.currentTarget).data("val")});
         this.mediaChooser.previewMedia();
     };
 
@@ -199,7 +199,7 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
             data.canInterpret = true;
             break;
         default:
-            data.icon = "fa-film";
+            data.icon = "fa-file-o";
             data.mediaType = "Other";
             break;
         }
@@ -223,6 +223,7 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
         data.previewUrl = Routing.generate('imdc_myfiles_preview', { mediaId: media.id });
         data.newThreadUrl = Routing.generate('imdc_thread_new_from_media', { resourceid: media.id });
         data.simulRecordUrl = ""; //Routing.generate('imdc_media_simultaneous_record', { mediaID: media.id });
+        data.thumbnail = media.thumbnail
 
         dust.render("mediaRow", data, function(err, out) {
             $(".tt-myFiles-table").append(out);
@@ -264,8 +265,8 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
         data.title = media.title;
         var row = $('a[data-val|='+data.media.id+']').eq(0).parents('tr').eq(0);
         console.log(row);
-        row.children().eq(1).text(data.title);
-        row.children().eq(4).text(data.mediaSize);
+        row.children().eq(2).children().eq(0).text(data.title);
+        row.children().eq(5).text(data.mediaSize);
         var instance = this;
 
     };

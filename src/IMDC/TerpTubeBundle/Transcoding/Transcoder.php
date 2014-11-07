@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Transcoding;
 
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
+use IMDC\TerpTubeBundle\Entity\Media;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use IMDC\TerpTubeBundle\Utils\Utils;
@@ -17,6 +18,10 @@ class Transcoder {
 	private $ffmpeg;
 	private $ffprobe;
 	private $transcoder;
+	
+	const TEMPORARY_DIRECTORY_TRANSCODING = '/tmp/terptube-transcoding';
+	const TEMPORARY_DIRECTORY_RECORDING = '/tmp/terptube-recordings';
+	
 	public function __construct($logger, $transcoder, $ffmpegConfiguration) {
 		$this->logger = $logger;
 		$this->ffmpeg = FFMpeg::create ( $ffmpegConfiguration, $logger );
@@ -41,12 +46,12 @@ class Transcoder {
 			$audioFilePath = $audioFile->getRealPath ();
 			$videoFilePath = $videoFile->getRealPath ();
 			
-			$tempDir = '/tmp/terptube-recordings';
+// 			$tempDir = '/tmp/terptube-recordings';
 			$umask = umask ();
 			umask ( 0000 );
-			if (! file_exists ( $tempDir ))
-				mkdir ( $tempDir );
-			$tempFileName = tempnam ( $tempDir, "MergedVideo" );
+			if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_RECORDING ))
+				mkdir ( Transcoder::TEMPORARY_DIRECTORY_RECORDING );
+			$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_RECORDING, "MergedVideo" );
 			
 			// //Will this fix the problem on the server with executing the command?
 			// $audioFile->move($tempDir, $audioFile->getFilename());
@@ -57,7 +62,7 @@ class Transcoder {
 			
 			umask ( $umask );
 			$dir = getcwd ();
-			chdir ( $tempDir );
+			chdir ( Transcoder::TEMPORARY_DIRECTORY_RECORDING );
 			// Convert to webm
 			$outputFileWebm = $tempFileName . '.webm';
 			$this->logger->info ( "Merging " . $audioFilePath . " and " . $videoFilePath . " to: " . $outputFileWebm );
@@ -104,18 +109,78 @@ class Transcoder {
 		return $videoFile;
 	}
 	
+	public function createThumbnail($mediaFilePath, $type)
+	{
+		$this->logger->info ( "Creating a thumbnail");
+		
+		$umask = umask ();
+		umask ( 0000 );
+		if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING ))
+			mkdir ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING );
+		$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "thumbnail" );
+		
+		$dir = getcwd ();
+		chdir ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING );
+		$outputFile = $tempFileName . '.png';
+		
+		if ($type == Media::TYPE_VIDEO)
+		{
+			
+			$thumbnailTime = $this->parseSecondsToFFMPEGTime(1.0);
+			
+			$this->ffmpeg->getFFMpegDriver ()->command ( array (
+					"-i",
+					$mediaFilePath,
+					"-ss",
+					$thumbnailTime,
+					"-filter:v",
+					"scale=80:-1",
+					"-vframes",
+					"1",
+					$outputFile
+			) );
+		}
+		else if ($type == Media::TYPE_IMAGE)
+		{
+			$this->ffmpeg->getFFMpegDriver ()->command ( array (
+					"-i",
+					$mediaFilePath,
+					"-filter:v",
+					"scale=80:-1",
+					"-vframes",
+					"1",
+					$outputFile
+			) );
+		}
+		else
+		{
+			$outputFile = NULL;
+		}
+		if ($outputFile!=NULL)
+		{
+			chmod ( $outputFile, 0664 );
+		}
+		umask ( $umask );
+		chdir ( $dir );
+		
+		$this->fs->remove ( $tempFileName );
+		$this->logger->info ( "Transcoding complete!" );
+		
+		return $outputFile;
+	}
+	
 	public function removeFirstFrame(File $videoFile) {
 		// Process video merging.
 		$this->logger->info ( "Removing first frame");
 		try {
 			$videoFilePath = $videoFile->getRealPath ();
 				
-			$tempDir = '/tmp/terptube-recordings';
+// 			$tempDir = '/tmp/terptube-recordings';
 			$umask = umask ();
 			umask ( 0000 );
-			if (! file_exists ( $tempDir ))
-				mkdir ( $tempDir );
-			$tempFileName = tempnam ( $tempDir, "MergedVideo" );
+			if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_RECORDING ))
+				mkdir ( Transcoder::TEMPORARY_DIRECTORY_RECORDING );
+			$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_RECORDING, "MergedVideo" );
 				
 			// //Will this fix the problem on the server with executing the command?
 			// $audioFile->move($tempDir, $audioFile->getFilename());
@@ -126,7 +191,7 @@ class Transcoder {
 				
 			umask ( $umask );
 			$dir = getcwd ();
-			chdir ( $tempDir );
+			chdir ( Transcoder::TEMPORARY_DIRECTORY_RECORDING );
 			// Convert to webm
 			$outputFileWebm = $tempFileName . '.webm';
 			$this->logger->info ( "Removing first frame from " . $videoFilePath . " to: " . $outputFileWebm );
@@ -185,17 +250,17 @@ class Transcoder {
 			$videoFilePath = $inputFile;
 			
 			$extension = substr($videoFilePath, strrpos($videoFilePath, ".")+1);
-			$tempDir = '/tmp/terptube-transcoding';
+// 			$tempDir = '/tmp/terptube-transcoding';
 			//FIXME assumes / as path separator
-			$workingDir = $tempDir . '/' . substr($videoFilePath, strrpos($videoFilePath, "/")+1);
+			$workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . substr($videoFilePath, strrpos($videoFilePath, "/")+1);
 			$umask = umask ();
 			umask ( 0000 );
-			if (! file_exists ( $tempDir ))
-				mkdir ( $tempDir );
+			if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING ))
+				mkdir ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING );
 			
 			if (! file_exists ( $workingDir ))
 				mkdir ( $workingDir );
-			$tempFileName = tempnam ( $tempDir, $extension . "Video" );
+			$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, $extension . "Video" );
 			
 			umask ( $umask );
 			$dir = getcwd ();
@@ -245,16 +310,16 @@ class Transcoder {
 	 * @return File $file - The converted file. Needs to be moved to a permanent directory.
 	 */
 	public function transcodeToWebM(File $inputFile, $preset) {
-		$tempDir = '/tmp/terptube-transcoding';
-		$workingDir = $tempDir . '/' . $inputFile->getFilename ();
+// 		$tempDir = '/tmp/terptube-transcoding';
+		$workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename ();
 		$umask = umask ();
 		umask ( 0000 );
-		if (! file_exists ( $tempDir ))
-			mkdir ( $tempDir );
+		if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING ))
+			mkdir ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING );
 		
 		if (! file_exists ( $workingDir ))
 			mkdir ( $workingDir );
-		$tempFileName = tempnam ( $tempDir, "WebMVideo" );
+		$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "WebMVideo" );
 		
 		umask ( $umask );
 		$dir = getcwd ();
@@ -282,16 +347,16 @@ class Transcoder {
 	 * @return File $file - The converted file. Needs to be moved to a permanent directory.
 	 */
 	public function transcodeAudioToWebM(File $inputFile, $preset) {
-		$tempDir = '/tmp/terptube-transcoding';
-		$workingDir = $tempDir . '/' . $inputFile->getFilename ();
+// 		$tempDir = '/tmp/terptube-transcoding';
+		$workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename ();
 		$umask = umask ();
 		umask ( 0000 );
-		if (! file_exists ( $tempDir ))
-			mkdir ( $tempDir );
+		if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING ))
+			mkdir ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING );
 	
 		if (! file_exists ( $workingDir ))
 			mkdir ( $workingDir );
-		$tempFileName = tempnam ( $tempDir, "WebMAudio" );
+		$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "WebMAudio" );
 	
 		umask ( $umask );
 		$dir = getcwd ();
@@ -319,16 +384,16 @@ class Transcoder {
 	 * @return File $file - The converted file. Needs to be moved to a permanent directory.
 	 */
 	public function transcodeToX264(File $inputFile, $preset) {
-		$tempDir = '/tmp/terptube-transcoding';
-		$workingDir = $tempDir . '/' . $inputFile->getFilename ();
+// 		$tempDir = '/tmp/terptube-transcoding';
+		$workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename ();
 		$umask = umask ();
 		umask ( 0000 );
-		if (! file_exists ( $tempDir ))
-			mkdir ( $tempDir );
+		if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING ))
+			mkdir ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING );
 		
 		if (! file_exists ( $workingDir ))
 			mkdir ( $workingDir );
-		$tempFileName = tempnam ( $tempDir, "X264Video" );
+		$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "X264Video" );
 		
 		umask ( $umask );
 		$dir = getcwd ();
@@ -356,16 +421,16 @@ class Transcoder {
 	 * @return File $file - The converted file. Needs to be moved to a permanent directory.
 	 */
 	public function transcodeAudioToX264(File $inputFile, $preset) {
-		$tempDir = '/tmp/terptube-transcoding';
-		$workingDir = $tempDir . '/' . $inputFile->getFilename ();
+// 		$tempDir = '/tmp/terptube-transcoding';
+		$workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename ();
 		$umask = umask ();
 		umask ( 0000 );
-		if (! file_exists ( $tempDir ))
-			mkdir ( $tempDir );
+		if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING ))
+			mkdir ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING );
 	
 		if (! file_exists ( $workingDir ))
 			mkdir ( $workingDir );
-		$tempFileName = tempnam ( $tempDir, "X264Audio" );
+		$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "X264Audio" );
 	
 		umask ( $umask );
 		$dir = getcwd ();
@@ -394,16 +459,16 @@ class Transcoder {
 		try {
 			$filePath = $file->getRealPath ();
 				
-			$tempDir = '/tmp/terptube-recordings';
+// 			$tempDir = '/tmp/terptube-recordings';
 			$umask = umask ();
 			umask ( 0000 );
-			if (! file_exists ( $tempDir ))
-				mkdir ( $tempDir );
-			$tempFileName = tempnam ( $tempDir, "RemuxedFile" );
+			if (! file_exists ( Transcoder::TEMPORARY_DIRECTORY_RECORDING ))
+				mkdir ( Transcoder::TEMPORARY_DIRECTORY_RECORDING );
+			$tempFileName = tempnam ( Transcoder::TEMPORARY_DIRECTORY_RECORDING, "RemuxedFile" );
 			
 			umask ( $umask );
 			$dir = getcwd ();
-			chdir ( $tempDir );
+			chdir ( Transcoder::TEMPORARY_DIRECTORY_RECORDING );
 			
 			$outputFileWebm = $tempFileName . '.webm';
 			$this->logger->info ( "Remuxing " . $filePath . " to: " . $outputFileWebm );
