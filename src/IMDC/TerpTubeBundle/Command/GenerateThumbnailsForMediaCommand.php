@@ -7,6 +7,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use IMDC\TerpTubeBundle\Entity\Media;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Alchemy\BinaryDriver\Exception\ExecutionFailureException;
 
 class GenerateThumbnailsForMediaCommand extends ContainerAwareCommand
 {
@@ -28,12 +29,18 @@ class GenerateThumbnailsForMediaCommand extends ContainerAwareCommand
         
         $fs = new Filesystem();
         
+       
         $doFlush = $input->getOption('flush');
         if ($doFlush)
         {
             $output->writeln('Thumbnails will be recreated');
         }
         $mediaElements = $em->getRepository('IMDCTerpTubeBundle:Media')->findAll();
+        $umask = umask ();
+        umask ( 0000 );
+        if (! file_exists ( $mediaElements[0]->getThumbnailRootDir()))
+            mkdir ( $mediaElements[0]->getThumbnailRootDir() );
+        umask($umask);
         $count = 0;
         foreach ($mediaElements as $media)
         {
@@ -60,6 +67,10 @@ class GenerateThumbnailsForMediaCommand extends ContainerAwareCommand
                             ->getId() . ".png");
                     }
                     catch (IOException $e)
+                    {
+                        $output->writeln("ERROR: " . $e->getTraceAsString());
+                    }
+                    catch (ExecutionFailureException $e)
                     {
                         $output->writeln("ERROR: " . $e->getTraceAsString());
                     }
