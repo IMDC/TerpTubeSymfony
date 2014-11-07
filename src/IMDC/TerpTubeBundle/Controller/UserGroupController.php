@@ -28,10 +28,16 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class UserGroupController extends Controller
 {
     /**
+     * @param Request $request
      * @return Response
      */
-    public function listAction()
+    public function listAction(Request $request)
 	{
+		// check if user logged in
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		}
+		
 		$em = $this->getDoctrine()->getManager();
 
         $recentGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups(4); //TODO revise

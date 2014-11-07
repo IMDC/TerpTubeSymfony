@@ -17,7 +17,11 @@ class HelpController extends Controller
      */
 	public function indexAction(Request $request)
 	{
-        return $this->render('IMDCTerpTubeBundle:Help:index.html.twig');
+		// check if user logged in
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		}
+		return $this->render('IMDCTerpTubeBundle:Help:index.html.twig');
 	}
 
 }

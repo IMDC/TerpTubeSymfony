@@ -29,6 +29,12 @@ class ForumController extends Controller
      */
     public function listAction(Request $request)
 	{
+		
+		// check if user logged in
+		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+			return $this->redirect($this->generateUrl('fos_user_security_login'));
+		}
+		
 		$em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('IMDCTerpTubeBundle:Forum');
         $securityContext = $this->get('security.context');
