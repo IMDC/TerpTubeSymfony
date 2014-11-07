@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
+use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
