@@ -35,9 +35,9 @@ class ForumFormType extends AbstractType
             'class' => 'IMDCTerpTubeBundle:UserGroup',
             'query_builder' => $queryBuilder,
             'empty_value' => 'Choose a Group',
-            'required' => false,
             'label' => 'My Groups',
             'label_attr' => $attr,
+            'required' => false,
             'attr' => $attr
         ));
 	}
@@ -50,8 +50,7 @@ class ForumFormType extends AbstractType
             ->setRequired(array(
                 'user'))
             ->setAllowedTypes(array(
-                'user' => 'Symfony\Component\Security\Core\User\UserInterface'
-            ));
+                'user' => 'Symfony\Component\Security\Core\User\UserInterface'));
     }
 
 	public function getName()

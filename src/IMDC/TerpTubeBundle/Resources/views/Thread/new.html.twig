@@ -2,10 +2,6 @@
 
 {% block title %}Create a new Topic{% endblock title %}
 
-{% if isNewFromMedia is not defined %}
-    {% set isNewFromMedia = false %}
-{% endif %}
-
 {% block header %}
     {{ parent() }}
 
@@ -37,14 +33,11 @@
             <div class="col-md-8 col-md-offset-2">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-                {% if not isNewFromMedia %}
-                    <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
-                    {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}
-                {% else %}
-                    {{ form_row(form.parentForum) }}
-                    {{ form_row(form.mediaIncluded) }}
-                    {% include 'IMDCTerpTubeBundle:Media:element.html.twig' %}
+                {% if form.forum is defined %}
+                    {{ form_row(form.forum) }}
                 {% endif %}
+                <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
+                {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
                 {{ form_row(form.accessType) }}

@@ -2,42 +2,21 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
-// these import the "@Route" and "@Template" annotations
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
-use FOS\UserBundle\Model\UserManager;
-use Doctrine\Common\Collections\ArrayCollection;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormType;
-use IMDC\TerpTubeBundle\Form\Type\ThreadEditFormType;
-use IMDC\TerpTubeBundle\Form\Type\ThreadFromMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\PostFormType;
-use IMDC\TerpTubeBundle\Form\Type\PostFormFromThreadType;
-use IMDC\TerpTubeBundle\Entity\ResourceFile;
-use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Entity\Permissions;
-use IMDC\TerpTubeBundle\IMDCTerpTubeBundle;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormDeleteType;
-use IMDC\TerpTubeBundle\Entity\User;
-use Symfony\Component\Form\Form;
-use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
-use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 
 /**
  * Controller for all Thread related actions including edit, delete, create
@@ -47,7 +26,15 @@ use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
  */
 class ThreadController extends Controller
 {
-    public function newAction(Request $request, $forumid)
+    /**
+     * @param Request $request
+     * @param $forumid
+     * @param $mediaId
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Exception
+     */
+    public function newAction(Request $request, $forumid, $mediaId)
     {
         // check if user logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -55,19 +42,48 @@ class ThreadController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
-        if (!$forum) {
-            throw new \Exception('forum not found');
+        $forum = null;
+        $media = null;
+        if ($forumid) {
+            $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
+        } elseif ($mediaId) {
+            $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        }
+
+        if (!$forum && !$media) {
+            throw new \Exception('forum/media not found');
+        }
+
+        $isNewFromMedia = !$forum;
+        $user = $this->getUser();
+        $formOptions = array();
+
+        if ($isNewFromMedia) {
+            if (!$user->getResourceFiles()->contains($media)) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
+            }
+
+            $formOptions['canChooseForum'] = true;
+            $formOptions['user'] = $user;
+            $formOptions['em'] = $em;
         }
 
         $thread = new Thread();
-        $form = $this->createForm(new ThreadFormType(), $thread);
+        $securityContext = $this->get('security.context');
+        $form = $this->createForm(new ThreadFormType($securityContext), $thread, $formOptions);
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
+            if ($isNewFromMedia) {
+                $form->get('mediatextarea')->setData($media);
+            }
+
             $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC));
         } else {
-            $user = $this->getUser();
+            if ($isNewFromMedia) {
+                $forum = $form->get('forum')->getData();
+            }
+
             $currentDateTime = new \DateTime('now');
             $thread->setCreator($user);
             $thread->setCreationDate($currentDateTime);
@@ -124,6 +140,13 @@ class ThreadController extends Controller
         ));
     }
 
+    /**
+     * @param Request $request
+     * @param $threadid
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Exception
+     */
     public function viewAction(Request $request, $threadid)
     {
         // check if user logged in
@@ -152,83 +175,14 @@ class ThreadController extends Controller
             'uploadForms' => MyFilesGatewayController::getUploadForms($this)
         ));
     }
-    
-    /**
-     * This action is called from the My Files section or similar.
-     * Given a resource id, creates a new Thread object. Requires the user
-     * to select a given forum to create the thread under.
-     * @param Request $request
-     * @param unknown $resourceid
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     */
-    public function createNewThreadFromMediaAction(Request $request, $resourceid)
-    {
-        
-    	// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-         
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $newthread = new Thread();
-         
-        $chosenmedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($resourceid);
-        
-        // does the user own the resource?
-        // todo: turn this into an access check instead of an ownership check
-        if ($chosenmedia->getOwner() !== $user) {
-            $this->get('session')->getFlashBag()->add(
-                'danger',
-                'You do not have access to this resource'
-            );
-            return $this->redirect($this->generateUrl('imdc_myfiles_list'));
-        }
-        
-        //$newthread->setMediaIncluded($chosenmedia);
-         
-        $form = $this->createForm(new ThreadFromMediaFormType(), $newthread, array(
-                'user' => $this->getUser(),
-                'resource' => $chosenmedia,
-                'em' => $em,
-        ));
-         
-        $form->handleRequest($request);
-         
-        if ($form->isValid()) {
-        
-            $newthread->setCreator($user);
-            $newthread->setCreationDate(new \DateTime('now'));
-            $newthread->setLocked(FALSE);
-            $newthread->setSticky(FALSE);
-            $newthread->setLastPostAt(new \DateTime('now'));
-            $newthread->setType($chosenmedia->getType());
-        
-            $user->addThread($newthread);
-        
-            // request to persist object to database
-            $em->persist($newthread);
-            $em->persist($user);
-        
-            // persist all objects to database
-            $em->flush();
-             
-            $this->get('session')->getFlashBag()->add(
-                    'info',
-                    'Thread created successfully!'
-            );
-            return $this->redirect($this->generateUrl('imdc_forum_view', array('forumid' => $newthread->getParentForum()->getId())));
-        }
 
-        return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
-            'form' => $form->createView(),
-            'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'isNewFromMedia' => true,
-            'mediaFile' => $chosenmedia
-        ));
-    }
-    
+    /**
+     * @param Request $request
+     * @param $threadid
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Exception
+     */
     public function editAction(Request $request, $threadid)
     {
         // check if user logged in
@@ -306,8 +260,14 @@ class ThreadController extends Controller
             'thread' => $thread
         ));
     }
-    
-    
+
+    /**
+     * @param Request $request
+     * @param $threadid
+     * @return RedirectResponse|Response
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Exception
+     */
     public function deleteAction(Request $request, $threadid)
     {
         // check if user logged in

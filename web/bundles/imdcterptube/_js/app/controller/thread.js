@@ -39,7 +39,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         VIEW: 2
     };
 
-    // this must be the same name defined in {bundle}/Form/Type/Thread[|Edit]FormType
+    // this must be the same name defined in {bundle}/Form/Type/ThreadFormType
     Thread.FORM_NAME = "Thread";
 
     Thread.prototype.getContainer = function() {
@@ -71,7 +71,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     Thread.prototype._bindUIEventsNewEdit = function(isEdit) {
         console.log("%s: %s- isEdit=%s", Thread.TAG, "_bindUIEventsNewEdit", isEdit);
 
-        this.mediaChooser = new MediaChooser();
+        this.mediaChooser = new MediaChooser({media: {id: this.getFormField("mediatextarea").val()}});
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);

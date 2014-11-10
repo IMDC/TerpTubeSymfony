@@ -940,6 +940,34 @@ class MyFilesGatewayController extends Controller
         return $response;
     }
 
+    public function getInfoAction(Request $request, $mediaId) {
+        // if not ajax, throw an exception
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException('Only Ajax POST calls accepted');
+        }
+
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        if (!$media) {
+            throw new \Exception('forum not found');
+        }
+
+        if (!$this->getUser()->getResourceFiles()->contains($media)) {
+            throw new AccessDeniedException(); //TODO more appropriate exception?
+        }
+
+        $content = array(
+            'media' => JSEntities::getMediaObject($media)
+        );
+
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
+    }
+
     public static function getUploadForms(Controller $controller) {
         $formAudio = $controller->createForm(new AudioMediaFormType(), new Media());
         $formVideo = $controller->createForm(new VideoMediaFormType(), new Media());

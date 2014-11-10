@@ -86,3 +86,11 @@ imdc_myfiles_add_other:
   defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addOther, url: null }
   options:
     expose: true
+
+imdc_myfiles_get_info:
+  pattern: /{mediaId}
+  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:getInfo }
+  requirements:
+    mediaId: \d+
+  options:
+    expose: true

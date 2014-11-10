@@ -4,7 +4,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     var MediaChooser = function(options) {
         var defaults = {
             isFileSelection: true,
-            enableDoneAndPost: false
+            enableDoneAndPost: false,
+            media: null
         };
 
         if (typeof options == "undefined")
@@ -14,6 +15,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             : defaults.isFileSelection;
         this.enableDoneAndPost = typeof options.enableDoneAndPost != "undefined" ? options.enableDoneAndPost
             : defaults.enableDoneAndPost;
+        this.media = typeof options.media != "undefined" ? options.media
+            : defaults.media;
 
         this.forwardButton = "<button class='forwardButton'></button>";
         this.doneButton = "<button class='doneButton'></button>";
@@ -25,7 +28,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.recorder = null;
         this.player = null;
         this.mediaManager = new MediaManager();
-        this.media = null;
         this.wasRecording = false;
 
         this.bind__onLoadPageSuccess = this._onLoadPageSuccess.bind(this);
@@ -37,6 +39,44 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.bind__forwardFunctionCut = this._forwardFunctionCut.bind(this);
         this.bind__backFunction = this._backFunction.bind(this);
         this.bind__loadSelectFromMyFilesFunction = this.loadSelectFromMyFilesFunction.bind(this);
+
+        this.bindBlocked = false;
+        this.bindRequested = false;
+
+        //TODO chooser form should be hidden (or replaced by a loader) until this completes
+        if (this.media != null) {
+            var loadInfo = (function() {
+                this._invokeSuccess();
+
+                if (this.bindRequested) {
+                    this.bindUIEvents();
+                }
+            }).bind(this);
+
+            if (typeof this.media.title != "undefined") {
+                loadInfo();
+            } else {
+                this.bindBlocked = true;
+
+                $.ajax({
+                    url: Routing.generate("imdc_myfiles_get_info", {mediaId: this.media.id}),
+                    success: (function(data, textStatus, jqXHR) {
+                        //console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
+
+                        this.setMedia(data.media);
+                        this.bindBlocked = false;
+                        loadInfo();
+                    }).bind(this),
+                    error: (function(request) {
+                        //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
+
+                        console.log(request.statusText);
+
+                        this.bindBlocked = false;
+                    }).bind(this)
+                });
+            }
+        }
     };
 
     MediaChooser.TAG = "MediaChooser";
@@ -109,6 +149,11 @@ define([ 'core/mediaManager' ], function(MediaManager) {
 
     MediaChooser.prototype.bindUIEvents = function() {
         console.log("%s: %s", MediaChooser.TAG, "bindUIEvents");
+
+        if (this.bindBlocked) {
+            this.bindRequested = true;
+            return;
+        }
 
         this.popupDialog = this._getElement(MediaChooser.Binder.CONTAINER_DIALOG).dialog({
             autoOpen: false
@@ -387,7 +432,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         }
 
         $(this).trigger($.Event(MediaChooser.Event.PAGE_LOADED, {
-            payload: data
+            payload: data //FIXME some event listeners my still use 'data' instead of 'payload'. 'data' is reserved by jquery
         }));
     };
 

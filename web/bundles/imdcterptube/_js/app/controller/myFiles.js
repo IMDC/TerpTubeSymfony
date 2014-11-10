@@ -221,7 +221,7 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
 
         data.deleteUrl = Routing.generate('imdc_myfiles_delete', { mediaId: media.id });
         data.previewUrl = Routing.generate('imdc_myfiles_preview', { mediaId: media.id });
-        data.newThreadUrl = Routing.generate('imdc_thread_new_from_media', { resourceid: media.id });
+        data.newThreadUrl = Routing.generate('imdc_thread_new_from_media', { mediaId: media.id });
         data.simulRecordUrl = ""; //Routing.generate('imdc_media_simultaneous_record', { mediaID: media.id });
         data.thumbnail = media.thumbnail
 
