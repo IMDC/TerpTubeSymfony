@@ -11,15 +11,15 @@
 			<li class="active">{{ forum.getTitleText|truncate(20) }}</li>
 		</ol>
 		<div class="row">
-		    <div class="col-md-2"></div>
-			<div class="col-md-8">
+		    <div class="col-md-4"></div>
+			<div class="col-md-4">
 				{% if forum.getTitleMedia[0] is defined %}
 					{% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
 				{% else %}
 					<p>No media</p>
 				{% endif %}
 			</div>
-			<div class="col-md-2"></div>
+			<div class="col-md-4"></div>
 		</div>
 		<div class="row">
 			<div class="col-md-12">
