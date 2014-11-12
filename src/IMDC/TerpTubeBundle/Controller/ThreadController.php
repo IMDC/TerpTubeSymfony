@@ -206,7 +206,11 @@ class ThreadController extends Controller
         ));
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if (!$form->isValid()) {
+            if (count($thread->getMediaIncluded()) > 0) {
+                $form->get('mediatextarea')->setData($thread->getMediaIncluded()->get(0));
+            }
+        } else {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $thread->setEditedAt($currentDateTime);

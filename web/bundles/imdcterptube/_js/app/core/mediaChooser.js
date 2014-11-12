@@ -45,16 +45,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
 
         //TODO chooser form should be hidden (or replaced by a loader) until this completes
         if (this.media != null) {
-            var loadInfo = (function() {
-                this._invokeSuccess();
-
-                if (this.bindRequested) {
-                    this.bindUIEvents();
-                }
-            }).bind(this);
-
             if (typeof this.media.title != "undefined") {
-                loadInfo();
+                this._invokeSuccess();
             } else {
                 this.bindBlocked = true;
 
@@ -64,8 +56,11 @@ define([ 'core/mediaManager' ], function(MediaManager) {
                         //console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
 
                         this.setMedia(data.media);
+                        this._invokeSuccess();
                         this.bindBlocked = false;
-                        loadInfo();
+                        if (this.bindRequested) {
+                            this.bindUIEvents();
+                        }
                     }).bind(this),
                     error: (function(request) {
                         //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
@@ -73,6 +68,9 @@ define([ 'core/mediaManager' ], function(MediaManager) {
                         console.log(request.statusText);
 
                         this.bindBlocked = false;
+                        if (this.bindRequested) {
+                            this.bindUIEvents();
+                        }
                     }).bind(this)
                 });
             }

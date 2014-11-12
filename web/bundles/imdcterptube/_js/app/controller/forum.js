@@ -38,7 +38,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum.prototype.bindUIEvents = function() {
         console.log("%s: %s", Forum.TAG, "bindUIEvents");
 
-        this.mediaChooser = new MediaChooser();
+        this.mediaChooser = new MediaChooser({media: {id: this.getFormField("mediatextarea").val()}});
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);

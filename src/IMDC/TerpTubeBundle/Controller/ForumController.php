@@ -225,8 +225,12 @@ class ForumController extends Controller
             'user' => $user
         ));
         $form->handleRequest($request);
-	    
-	    if ($form->isValid()) {
+
+        if (!$form->isValid()) {
+            if (count($forum->getTitleMedia()) > 0) {
+                $form->get('mediatextarea')->setData($forum->getTitleMedia()->get(0));
+            }
+        } else {
             $forum->setLastActivity(new \DateTime('now'));
 
             $media = $form->get('mediatextarea')->getData();
