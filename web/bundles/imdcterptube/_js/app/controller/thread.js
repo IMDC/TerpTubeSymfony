@@ -32,6 +32,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     };
 
     Thread.TAG = "Thread";
+    Thread.DEFAULT_TEMPORAL_COMMENT_LENGTH = 3;
 
     Thread.Page = {
         NEW: 0,
@@ -469,7 +470,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             playHeadImage: this.playerOptions.playHeadImage,
             playHeadImageOnClick: (function() {
                 var currentTime = this.player.getCurrentTime();
-                this._toggleTemporal(new KeyPoint(-1, currentTime, currentTime, "", {drawOnTimeLine: true}), false)
+                this._toggleTemporal(new KeyPoint(-1, currentTime, currentTime + Thread.DEFAULT_TEMPORAL_COMMENT_LENGTH, "", {drawOnTimeLine: true}), false)
             }).bind(this)
         });
 
