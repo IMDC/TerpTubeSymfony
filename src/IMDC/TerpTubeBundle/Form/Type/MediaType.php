@@ -45,7 +45,7 @@ class MediaType extends AbstractType
      */
     public function getParent()
     {
-        return 'hidden';
+        return 'form';
     }
 
     /**

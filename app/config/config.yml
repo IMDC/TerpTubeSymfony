@@ -28,6 +28,9 @@ framework:
 twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
+    form:
+        resources:
+            - 'IMDCTerpTubeBundle:Form:fields.html.twig'
 
 braincrafted_bootstrap:
     less_filter: lessphp

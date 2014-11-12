@@ -1,0 +1,76 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{#
+used by:
+_Forum:edit.html.twig
+_Forum:new.html.twig
+_Group:edit.html.twig
+_Group:new.html.twig
+_MyFiles:index.html.twig
+_Post:ajax.edit.html.twig
+_Post:ajax.reply.html.twig
+_Thread:new.html.twig
+_Thread:view.html.twig
+#}
+{% block media_widget %}
+    {% set isFileSelection = isFileSelection is defined ? isFileSelection : true %}
+
+    <div class="row mediachooser-container-choose">
+        <div class="col-md-12">
+            <div class="form-group">
+                <a class="btn btn-primary mediachooser-record-video" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="mediachooser-upload-video"><a href="#"><i class="fa fa-film"></i> {{ 'filesGateway.buttons.video'|trans }}</a></li>
+                        <li class="mediachooser-upload-audio"><a href="#"><i class="fa fa-music"></i> {{ 'filesGateway.buttons.audio'|trans }}</a></li>
+                        <li class="mediachooser-upload-image"><a href="#"><i class="fa fa-picture-o"></i> {{ 'filesGateway.buttons.image'|trans }}</a></li>
+                        <li class="mediachooser-upload-other"><a href="#"><i class="fa fa-file-text"></i> {{ 'filesGateway.buttons.other'|trans }}</a></li>
+                    </ul>
+                </div>
+                {% if isFileSelection %}
+                    <a class="btn btn-primary mediachooser-select" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="modal fade mediachooser-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mediachooser-container-upload" style="display: none;">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label>Uploading: <span class="mediachooser-upload-title"></span></label>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                        0%
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if isFileSelection %}
+        <div class="row mediachooser-container-selected" style="display: none;">
+            <div class="col-md-12">
+                {{ block('hidden_widget') }}
+                <div class="form-group">
+                    <label>Selected File</label>
+                    <div><span class="mediachooser-selected" style="margin-right: 5px;"></span><a class="mediachooser-remove" title="Remove File"><i class="fa fa-times-circle"></i></a></div>
+                </div>
+            </div>
+        </div>
+        <div class="mediachooser-container-dialog"></div>
+    {% endif %}
+{% endblock media_widget %}

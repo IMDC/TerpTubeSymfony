@@ -940,6 +940,20 @@ class MyFilesGatewayController extends Controller
         return $response;
     }
 
+    public function addMediaAction(Request $request) {
+        // if not ajax, throw an error
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException('Only Ajax POST calls accepted');
+        }
+
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+
+    }
+
     public function getInfoAction(Request $request, $mediaId) {
         // if not ajax, throw an exception
         if (!$request->isXmlHttpRequest()) {
