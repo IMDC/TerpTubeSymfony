@@ -257,3 +257,7 @@ sonata_block:
         sonata.block.service.text: ~
         sonata.block.service.linkbox: ~
         
+
+bazinga_js_translation:
+    locale_fallback:  en
+    default_domain:   IMDCTerpTubeBundle 

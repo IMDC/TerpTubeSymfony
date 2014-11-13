@@ -258,6 +258,17 @@ profile:
         generic:
             cancel: "Cancel"
 
+player:
+    recording: 
+        recordingButton: "Record"
+        forwardButton: "Crop Recorded video"
+        doneButton: "Finish recording"
+        doneAndPostButton: "Finish recording and submit" 
+    previewing:
+        backToRecordingButton: "Back To Recording"
+        doneButton: "Crop"
+        doneAndPostButton: "Crop and submit"
+
 member:
     infoBlock:
         joined: "Joined"

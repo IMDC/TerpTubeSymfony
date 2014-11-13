@@ -484,6 +484,22 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         });
 
         this.recorder.createControls();
+        $(this.recorder.elementID).find(
+	".videoControlsContainer.controlsBar.videoControls.recordButton")
+	.eq(0).attr("title", Translator.trans('player.recording.recordingButton'));
+        
+        $(this.recorder.elementID).find(
+	".videoControlsContainer.controlsBar.doneButton")
+	.eq(0).attr("title", Translator.trans('player.recording.doneButton'))
+	
+	$(this.recorder.elementID).find(
+	".videoControlsContainer.controlsBar.doneAndPostButton")
+	.eq(0).attr("title", Translator.trans('player.recording.doneAndPostButton'))
+	
+	$(this.recorder.elementID).find(
+	".videoControlsContainer.controlsBar.forwardButton")
+	.eq(0).attr("title", Translator.trans('player.recording.forwardButton'))
+	
     };
 
     MediaChooser.prototype._onRecordingSuccess = function(data) {
@@ -581,15 +597,16 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             forwardFunctions.push(this.bind__doneAndPostFunction);
         }
 
-        if (this.isFileSelection) {
+        if (this.wasRecording) {
+            backButtons = [ this.backButton ];
+            backFunctions = [ this.bind__backFunction ];
+        }
+        else if (this.isFileSelection) {
             backButtons = [ this.backButton ];
             backFunctions = [ this.bind__loadSelectFromMyFilesFunction ]
 
         }
-        else if (this.wasRecording) {
-            backButtons = [ this.backButton ];
-            backFunctions = [ this.bind__backFunction ];
-        }
+         
 
         this.player = new Player($("#" + this.media.id), {
             areaSelectionEnabled: true,
@@ -603,6 +620,18 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         });
 
         this.player.createControls();
+        
+        $(this.player.elementID).find(
+	".videoControlsContainer.controlsBar.doneButton")
+	.eq(0).attr("title", Translator.trans('player.previewing.doneButton'))
+	
+	$(this.player.elementID).find(
+	".videoControlsContainer.controlsBar.doneAndPostButton")
+	.eq(0).attr("title", Translator.trans('player.previewing.doneAndPostButton'))
+	
+	$(this.player.elementID).find(
+	".videoControlsContainer.controlsBar.backButton")
+	.eq(0).attr("title", Translator.trans('player.previewing.backToRecordingButton'))
     };
 
     MediaChooser.prototype._backFunction = function() {
