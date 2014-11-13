@@ -37,8 +37,8 @@
                     {{ form_row(form.forum) }}
                 {% endif %}
                 <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
-                {#% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %#}
-                {{ form_widget(form.mediatextarea) }}
+                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+                {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
                 {{ form_row(form.accessType) }}
@@ -50,8 +50,8 @@
     </div>
 {% endblock content %}
 
-{% block outside_body %}
-    {{ parent() }}
+{#{% block outside_body %}#}
+    {#{{ parent() }}#}
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
-{% endblock outside_body %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}
+{#{% endblock outside_body %}#}

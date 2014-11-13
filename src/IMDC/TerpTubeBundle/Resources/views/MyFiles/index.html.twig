@@ -31,9 +31,9 @@
         </div>
         <div class="row">
             <div class="col-md-offset-2 col-md-8">
-                {#% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with {'isFileSelection': false} %#}
+                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with {'isFileSelection': false} %}#}
                 {% set isFileSelection = false %}
-                {{ block('media_widget') }}
+                {{ block('media_chooser_widget') }}
             </div>
         </div>
         <div class="row">
@@ -111,5 +111,5 @@
         {{ 'filesGateway.deleteConfirmMessage'|trans }}
     </script>
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}
 {% endblock outside_body %}

@@ -39,7 +39,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.bind__doneAndPostFunction = this._doneAndPostFunction.bind(this);
         this.bind__forwardFunctionCut = this._forwardFunctionCut.bind(this);
         this.bind__backFunction = this._backFunction.bind(this);
-        this.bind__loadSelectFromMyFilesFunction = this.loadSelectFromMyFilesFunction.bind(this);
+        this.bind__loadSelectFromMyFilesFunction = this._loadSelectFromMyFilesFunction.bind(this);
         this.bind__terminatingFunction = this._terminatingFunction.bind(this);
 
         this.bindBlocked = false;
@@ -106,7 +106,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         CONTAINER_RECORD_VIDEO: ".mediachooser-container-record-video",
         RECORD_VIDEO: ".mediachooser-record-video",
         CONTAINER_UPLOAD_VIDEO_RECORDING: ".mediachooser-container-upload-video-recording",
-        UPLOAD_: ".mediachooser-upload-",
+        //UPLOAD_: ".mediachooser-upload-",
+        UPLOAD_FILE: ".mediachooser-upload-file",
         SELECT: ".mediachooser-select",
         CONTAINER_UPLOAD: ".mediachooser-container-upload",
         UPLOAD_TITLE: ".mediachooser-upload-title",
@@ -117,8 +118,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         CONTAINER_DIALOG: ".mediachooser-container-dialog"
     };
 
-    // this must be the same name defined in {bundle}/Form/Type/{type}MediaFormType
-    MediaChooser.FORM_NAME = "MediaForm";
+    // this must be the same name defined in {bundle}/Form/Type/MediaType
+    MediaChooser.FORM_NAME = "Media";
 
     // int constants from Entity\Media
     MediaChooser.MEDIA_TYPE = {
@@ -140,12 +141,15 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         return this.container;
     };
 
-    MediaChooser.prototype.getForm = function(mediaType) {
-        return this.getContainer().find("form[name=" + MediaChooser.FORM_NAME + "_" + mediaType + "]");
+    MediaChooser.prototype.getForm = function() {
+        if (typeof this.uploadForm === "undefined")
+            this.uploadForm = $(this._getElement(MediaChooser.Binder.CONTAINER_UPLOAD).data("form"));
+
+        return this.uploadForm;
     };
 
-    MediaChooser.prototype.getFormField = function(mediaType, fieldName) {
-        return this.getContainer().find("#" + MediaChooser.FORM_NAME + "_" + mediaType + "_" + fieldName);
+    MediaChooser.prototype.getFormField = function(fieldName) {
+        return this.getForm().find("#" + MediaChooser.FORM_NAME + "_" + fieldName);
     };
 
     MediaChooser.prototype.bindUIEvents = function() {
@@ -155,10 +159,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             this.bindRequested = true;
             return;
         }
-
-        /*this.popupDialog = this._getElement(MediaChooser.Binder.CONTAINER_DIALOG).dialog({
-            autoOpen: false
-        });*/
 
         this.modalDialog = this._getElement(MediaChooser.Binder.MODAL_DIALOG).modal({show: false});
         this.modalDialog.on("hidden.bs.modal", this.bind__terminatingFunction);
@@ -174,7 +174,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             });
         }).bind(this));
 
-        $.each(MediaChooser.MEDIA_TYPE, (function(index, value) {
+        /*$.each(MediaChooser.MEDIA_TYPE, (function(index, value) {
             var link = this._getElement(MediaChooser.Binder.UPLOAD_ + value.str);
             var resourceFile = this.getFormField(value.str, "resource_file");
 
@@ -183,9 +183,15 @@ define([ 'core/mediaManager' ], function(MediaManager) {
 
                 resourceFile.click();
             });
+        }).bind(this));*/
+
+        this._getElement(MediaChooser.Binder.UPLOAD_FILE).on("click", (function(e) {
+            e.preventDefault();
+
+            this.getFormField("resource_file").click();
         }).bind(this));
 
-        $.each(MediaChooser.MEDIA_TYPE, (function(index, value) {
+        /*$.each(MediaChooser.MEDIA_TYPE, (function(index, value) {
             var resourceFile = this.getFormField(value.str, "resource_file");
             var title = this.getFormField(value.str, "title");
             var form = this.getForm(value.str);
@@ -219,17 +225,26 @@ define([ 'core/mediaManager' ], function(MediaManager) {
                 resourceFile.val("");
                 title.val("");
             }).bind(this));
+        }).bind(this));*/
+
+        this.getFormField("resource_file").on("change", (function(e) {
+            e.preventDefault();
+
+            this._loadPage({
+                showPopup: false,
+                url: Routing.generate("imdc_myfiles_add"),
+                method: "POST",
+                data: new FormData(this.getForm()[0]),
+                uploadProgress: true
+            });
+
+            this.getFormField("resource_file").val("")
         }).bind(this));
 
         this._getElement(MediaChooser.Binder.SELECT).on("click", (function(e) {
             e.preventDefault();
+
             this.bind__loadSelectFromMyFilesFunction();
-            // this.page = MediaChooser.Page.SELECT;
-            // this._loadPage({
-            // showPopup: true,
-            // url: Routing.generate("imdc_myfiles_list"),
-            // method: "GET"
-            // });
         }).bind(this));
 
         this._getElement(MediaChooser.Binder.REMOVE).on("click", (function(e) {
@@ -334,12 +349,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     MediaChooser.prototype._loadPage = function(options) {
         console.log("%s: %s", MediaChooser.TAG, "_loadPage");
 
-        /*if (options.showPopup && !this.popupDialog.dialog("isOpen"))
-            this._showPopupDialog();
-
-        this.popupDialog.dialog("option", "title", this._getPopupDialogTitle());
-        this.popupDialog.html("");*/
-
         this.modalDialog.modal(options.showPopup ? "show" : "hide");
         this.modalDialog.find(".modal-title").html(this._getPopupDialogTitle());
         this.modalDialog.find(".modal-body").html("");
@@ -392,33 +401,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         }
     };
 
-    /*MediaChooser.prototype._showPopupDialog = function(type) {
-        console.log("%s: %s", MediaChooser.TAG, "_showPopupDialog");
-
-        this.popupDialog.dialog({
-            autoOpen: false,
-            resizable: false,
-            modal: true,
-            draggable: false,
-            closeOnEscape: true,
-            dialogClass: "tt-popup-dialog",
-            close: (function(event, ui) {
-                console.log("%s: %s: %s", MediaChooser.TAG, "_showPopupDialog", "close");
-
-                this._terminatingFunction();
-            }).bind(this),
-            show: "blind",
-            hide: "blind",
-            minWidth: 800,
-            position: {
-                at: "top",
-                my: "top"
-            }
-        });
-
-        this.popupDialog.dialog("open");
-    };*/
-
     MediaChooser.prototype._onLoadPageSuccess = function(data, textStatus, jqXHR) {
         console.log("%s: %s- finished=%s", MediaChooser.TAG, "_onLoadPageSuccess", data.finished);
 
@@ -426,9 +408,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             this.setMedia(data.media);
             this._invokeSuccess();
             this._terminatingFunction();
-        }
-        else {
-            //this.popupDialog.html(data.page);
+        } else {
             this.modalDialog.find(".modal-body").html(data.page);
 
             if (this.page == MediaChooser.Page.SELECT)
@@ -575,14 +555,14 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         });
     };
 
-    MediaChooser.prototype.loadSelectFromMyFilesFunction = function() {
+    MediaChooser.prototype._loadSelectFromMyFilesFunction = function() {
         this.page = MediaChooser.Page.SELECT;
         this._loadPage({
             showPopup: true,
             url: Routing.generate("imdc_myfiles_list"),
             method: "GET"
         });
-    }
+    };
 
     MediaChooser.prototype.createVideoPlayer = function() {
         console.log("%s: %s", MediaChooser.TAG, "createVideoPlayer");
@@ -672,13 +652,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     MediaChooser.prototype._terminatingFunction = function() {
         console.log("%s: %s", MediaChooser.TAG, "_terminatingFunction");
 
-        //this.popupDialog.html("");
         this.modalDialog.find(".modal-body").html("");
-
-        /*if (this.popupDialog.dialog("isOpen")) {
-            this.popupDialog.off("dialogclose");
-            this.popupDialog.dialog("close");
-        }*/
 
         if (this.modalDialog.data("bs.modal").isShown) {
             this.modalDialog.off("hidden.bs.modal");

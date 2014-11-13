@@ -8,6 +8,7 @@ use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\IdType;
+use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormBuilder;
@@ -107,7 +108,8 @@ class UserGroupController extends Controller
 
         return $this->render('IMDCTerpTubeBundle:Group:new.html.twig', array(
             'form' => $form->createView(),
-            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
+            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
+            'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
     }
 
@@ -217,7 +219,8 @@ class UserGroupController extends Controller
 		return $this->render('IMDCTerpTubeBundle:Group:edit.html.twig', array(
             'form' => $form->createView(),
             'group' => $group,
-            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
+            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
+            'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 

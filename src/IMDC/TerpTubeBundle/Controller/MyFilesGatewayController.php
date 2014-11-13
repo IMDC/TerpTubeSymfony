@@ -4,6 +4,9 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\ORM\EntityNotFoundException;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Form\Type\MediaType;
+use IMDC\TerpTubeBundle\Form\Type\ResourceFileFormType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
@@ -51,7 +54,8 @@ class MyFilesGatewayController extends Controller
         );
 
         if (!$request->isXmlHttpRequest()) {
-            $parameters['uploadForms'] = MyFilesGatewayController::getUploadForms($this);
+            //$parameters['uploadForms'] = MyFilesGatewayController::getUploadForms($this);
+            $parameters['uploadForm'] = $this->createForm(new MediaType())->createView();
         }
 
         $response = $this->render('IMDCTerpTubeBundle:MyFiles:'.($request->isXmlHttpRequest() ? 'ajax.' : '').'index.html.twig', $parameters);
@@ -940,7 +944,7 @@ class MyFilesGatewayController extends Controller
         return $response;
     }
 
-    public function addMediaAction(Request $request) {
+    public function addAction(Request $request) {
         // if not ajax, throw an error
         if (!$request->isXmlHttpRequest()) {
             throw new BadRequestHttpException('Only Ajax POST calls accepted');
@@ -951,7 +955,51 @@ class MyFilesGatewayController extends Controller
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
+        $media = new Media();
+        $form = $this->createForm(new MediaType(), $media);
+        $form->handleRequest($request);
 
+        if ($form->isValid()) {
+            $user = $this->getUser();
+            $em = $this->getDoctrine()->getManager();
+
+            $uploadedFile = $media->getResource()->getFile();
+            $media->setTitle($uploadedFile->getClientOriginalName()); //TODO clean this filename
+            $media->setOwner($user);
+
+            $mimeType = $uploadedFile->getMimeType();
+            $media->setType(
+                preg_match("/^video\/.*/", $mimeType)
+                    ? Media::TYPE_VIDEO
+                    : preg_match("/^audio\/.*/", $mimeType)
+                    ? Media::TYPE_AUDIO
+                    : preg_match("/^image\/.*/", $mimeType)
+                        ? Media::TYPE_IMAGE
+                        : Media::TYPE_OTHER
+            );
+
+            $user->addResourceFile($media);
+
+            $em->persist($media);
+            $em->persist($user);
+            $em->flush();
+
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD, new UploadEvent($media));
+
+            $content = array(
+                'wasUploaded' => true,
+                'finished' => true, //TODO remove
+                'media' => JSEntities::getMediaObject($media)
+            );
+        } else {
+            $content = array(
+                'wasUploaded' => false,
+                'finished' => false //TODO remove
+            );
+        }
+
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
     }
 
     public function getInfoAction(Request $request, $mediaId) {

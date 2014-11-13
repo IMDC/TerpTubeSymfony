@@ -29,8 +29,8 @@
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
                 <p>Add a media file (audio, video, image) to this forum:</p>
-                {{ form_widget(form.mediatextarea) }}
-{#                 {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+                {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
                 {{ form_row(form.titleText) }}
                 {{ form_row(form.accessType) }}
                 {{ form_row(form.group) }}
@@ -42,8 +42,8 @@
     </div>
 {% endblock content %}
 
-{% block outside_body %}
-    {{ parent() }}
+{#{% block outside_body %}#}
+    {#{{ parent() }}#}
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
-{% endblock outside_body %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}
+{#{% endblock outside_body %}#}

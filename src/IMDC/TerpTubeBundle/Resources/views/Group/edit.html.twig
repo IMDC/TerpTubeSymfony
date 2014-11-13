@@ -36,8 +36,8 @@
                 {% else %}
                     <p>Add a media file to the associated forum (image, audio, video):</p>
                 {% endif %}
-{#                 {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
- 				{{ form_widget(form.mediatextarea) }}
+                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+                {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
                 {{ form_row(form.name) }}
                 {{ form_row(form.description) }}
                 {{ form_row(form.visibleToPublic) }}
@@ -52,8 +52,8 @@
     </div>
 {% endblock %}
 
-{% block outside_body %}
-    {{ parent() }}
+{#{% block outside_body %}#}
+    {#{{ parent() }}#}
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
-{% endblock outside_body %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}
+{#{% endblock outside_body %}#}

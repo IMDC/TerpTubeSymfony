@@ -28,8 +28,8 @@
             <div class="col-md-12">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-{#                 {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
-				{{ form_widget(form.mediatextarea) }}
+                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+                {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
                 {{ form_row(form.name) }}
                 {{ form_row(form.description) }}
                 {{ form_row(form.visibleToPublic) }}
@@ -44,8 +44,8 @@
     </div>
 {% endblock content %}
 
-{% block outside_body %}
-    {{ parent() }}
+{#{% block outside_body %}#}
+    {#{{ parent() }}#}
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
-{% endblock outside_body %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}
+{#{% endblock outside_body %}#}

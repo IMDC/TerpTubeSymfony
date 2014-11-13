@@ -151,7 +151,7 @@ services:
             - { name: form.type, alias: access_type }
 
     imdc_terptube.form.type.media:
-        class: IMDC\TerpTubeBundle\Form\Type\MediaType
+        class: IMDC\TerpTubeBundle\Form\Type\MediaChooserType
         arguments: [@doctrine.orm.entity_manager]
         tags:
-            - { name: form.type, alias: media }
+            - { name: form.type, alias: media_chooser }

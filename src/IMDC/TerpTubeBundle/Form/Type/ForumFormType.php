@@ -13,7 +13,7 @@ class ForumFormType extends AbstractType
 	{
         $user = $options['user'];
 
-        $builder->add('mediatextarea', 'media');
+        $builder->add('mediatextarea', 'media_chooser');
 
 	    $builder->add('titleText', 'text', array(
             'label' => 'Title'

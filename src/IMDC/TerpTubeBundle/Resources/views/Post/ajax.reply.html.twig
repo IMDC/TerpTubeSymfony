@@ -10,8 +10,8 @@ TerpTube.Controller.Post
 <div class="col-md-12 " style="padding-top: 20px;">
     {{ form_start(form) }}
     {{ form_errors(form) }}
-{#     {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
-    {{ form_widget(form.mediatextarea) }}
+    {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+    {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
     {% if form.startTime is defined %}
         {{ form_widget(form.startTime) }}
         {{ form_widget(form.endTime) }}
@@ -23,7 +23,7 @@ TerpTube.Controller.Post
         <a class="btn btn-danger post-cancel" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
     {% endif %}
     {{ form_end(form) }}
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}
     <script type="text/javascript">
         $(".autosize").autosize();
     </script>

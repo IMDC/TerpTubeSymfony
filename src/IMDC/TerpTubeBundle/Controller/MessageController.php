@@ -1,6 +1,7 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\Controller;
+use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -94,7 +95,8 @@ class MessageController extends Controller
 
 		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
             'form' => $form->createView(),
-            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
+            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
+            'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 
@@ -411,7 +413,8 @@ class MessageController extends Controller
             'form' => $form->createView(),
             'message' => $message,
             'isReply' => true,
-            'uploadForms' => MyFilesGatewayController::getUploadForms($this)
+            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
+            'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 }

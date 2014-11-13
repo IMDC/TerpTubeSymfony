@@ -63,27 +63,33 @@ imdc_myfiles_add_recording:
 #  options:
 #    expose: true
 
-imdc_myfiles_add_audio:
-  pattern: /add/audio
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addAudio, url: null }
-  options:
-    expose: true
+#imdc_myfiles_add_audio:
+#  pattern: /add/audio
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addAudio, url: null }
+#  options:
+#    expose: true
+#
+#imdc_myfiles_add_video:
+#  pattern: /add/video
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addVideo, url: null }
+#  options:
+#    expose: true
+#
+#imdc_myfiles_add_image:
+#  pattern: /add/image
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addImage, url: null }
+#  options:
+#    expose: true
+#
+#imdc_myfiles_add_other:
+#  pattern: /add/other
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addOther, url: null }
+#  options:
+#    expose: true
 
-imdc_myfiles_add_video:
-  pattern: /add/video
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addVideo, url: null }
-  options:
-    expose: true
-
-imdc_myfiles_add_image:
-  pattern: /add/image
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addImage, url: null }
-  options:
-    expose: true
-
-imdc_myfiles_add_other:
-  pattern: /add/other
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addOther, url: null }
+imdc_myfiles_add:
+  pattern: /add
+  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:add }
   options:
     expose: true
 

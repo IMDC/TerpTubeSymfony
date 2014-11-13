@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\Post;
+use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -126,7 +127,8 @@ class PostController extends Controller
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                         'form' => $form->createView(),
                         'post' => !$isPostReply ? $post : $postParent,
-                        'uploadForms' => MyFilesGatewayController::getUploadForms($this)))
+                        //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
+                        'fileUploadForm' => $this->createForm(new MediaType())->createView()))
             );
         }
 
@@ -208,7 +210,8 @@ class PostController extends Controller
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
                         'form' => $form->createView(),
                         'post' => $post,
-                        'uploadForms' => MyFilesGatewayController::getUploadForms($this)))
+                        //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
+                        'fileUploadForm' => $this->createForm(new MediaType())->createView()))
             );
         }
 
