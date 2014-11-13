@@ -36,7 +36,8 @@
                 {% else %}
                     <p>Add a media file to this forum (image, audio, video):</p>
                 {% endif %}
-                {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}
+{#                 {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+				{{ form_widget(form.mediatextarea) }}
                 {{ form_row(form.titleText) }}
                 {{ form_row(form.accessType) }}
                 {{ form_row(form.group) }}

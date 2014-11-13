@@ -36,7 +36,8 @@ class MediaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'mapped' => false
+            'mapped' => false,
+        	'invalid_message' => 'The media is invalid',
         ));
     }
 
@@ -45,7 +46,8 @@ class MediaType extends AbstractType
      */
     public function getParent()
     {
-        return 'form';
+//         return 'form';
+		return 'hidden';
     }
 
     /**

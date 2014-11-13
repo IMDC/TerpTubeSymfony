@@ -51,7 +51,8 @@
                         {{ form_row(form.subject) }}
                     {% endif %}
                     <p>Attach media to message</p>
-                    {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}
+{#                     {% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
+					{{ form_widget(form.mediatextarea) }}
                     {% if isReply %}
                         {{ form_row(form.content,
                             {'value': "\n\n\n\n" ~
