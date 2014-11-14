@@ -43,6 +43,14 @@ class MediaChooserType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function getParent()
+    {
+        return 'hidden';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return 'media_chooser';
