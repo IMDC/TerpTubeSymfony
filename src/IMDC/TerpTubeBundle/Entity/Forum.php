@@ -362,10 +362,17 @@ class Forum
         return $this->accessType;
     }
 
-    public function setTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
+    /*public function setTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
     {
         $this->titleMedia = new \Doctrine\Common\Collections\ArrayCollection();
         $this->titleMedia[] = $titleMedia;
+
+        return $this;
+    }*/
+
+    public function setTitleMedia($titleMedia)
+    {
+        $this->titleMedia = $titleMedia;
 
         return $this;
     }

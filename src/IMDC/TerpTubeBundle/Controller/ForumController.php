@@ -110,16 +110,26 @@ class ForumController extends Controller
             $forum->setLastActivity($currentDateTime);
             $forum->setCreationDate($currentDateTime);
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
                 /*if (!$forum->getTitleMedia()->contains($media))
-                    $forum->addTitleMedia($media);*/
+                    $forum->addTitleMedia($media);*
                 //FIXME override for now. at some point multiple media may be used
                 $forum->setTitleMedia($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            $mediaCollection = $form->get('titleMedia')->getData();
+            if ($mediaCollection) {
+                foreach ($mediaCollection as $media) {
+                    if (!$user->getResourceFiles()->contains($media)) {
+                        throw new AccessDeniedException(); //TODO more appropriate exception?
+                    }
+                }
             }
 
             $user->addForum($forum);
@@ -148,7 +158,7 @@ class ForumController extends Controller
         return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig', array(
             'form' => $form->createView(),
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 
@@ -229,22 +239,32 @@ class ForumController extends Controller
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
-            if (count($forum->getTitleMedia()) > 0) {
+            /*if (count($forum->getTitleMedia()) > 0) {
                 $form->get('mediatextarea')->setData($forum->getTitleMedia()->get(0));
-            }
+            }*/
         } else {
             $forum->setLastActivity(new \DateTime('now'));
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
                 /*if (!$forum->getTitleMedia()->contains($media))
-                    $forum->addTitleMedia($media);*/
+                    $forum->addTitleMedia($media);*
                 //FIXME override for now. at some point multiple media may be used
                 $forum->setTitleMedia($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            $mediaCollection = $form->get('titleMedia')->getData();
+            if ($mediaCollection) {
+                foreach ($mediaCollection as $media) {
+                    if (!$user->getResourceFiles()->contains($media)) {
+                        throw new AccessDeniedException(); //TODO more appropriate exception?
+                    }
+                }
             }
 
             if ($forum->getAccessType()->getId() !== AccessType::TYPE_GROUP) {
@@ -276,7 +296,7 @@ class ForumController extends Controller
             'form' => $form->createView(),
             'forum' => $forum,
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 

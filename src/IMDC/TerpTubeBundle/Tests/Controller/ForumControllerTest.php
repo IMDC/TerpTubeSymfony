@@ -37,11 +37,14 @@ class ForumControllerTest extends WebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
         $form = $crawler->filter('button:contains("Create")')->eq(0)->form(array(
-            'ForumForm[mediatextarea]' => '1',
             'ForumForm[titleText]' => 'testNew'
         ));
 
-        $this->client->submit($form);
+        $values = $form->getPhpValues();
+        $values['ForumForm']['titleMedia'] = array(1);
+
+        //$this->client->submit($form);
+        $this->client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
 
@@ -60,11 +63,14 @@ class ForumControllerTest extends WebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
         $form = $crawler->filter('button:contains("Save")')->eq(0)->form(array(
-            'ForumForm[mediatextarea]' => '4',
             'ForumForm[titleText]' => 'testEdit'
         ));
 
-        $this->client->submit($form);
+        $values = $form->getPhpValues();
+        $values['ForumForm']['titleMedia'] = array(4);
+
+        //$this->client->submit($form);
+        $this->client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
 
