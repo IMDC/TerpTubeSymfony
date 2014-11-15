@@ -5,7 +5,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         var defaults = {
             isFileSelection: true,
             enableDoneAndPost: false,
-            media: null
+            media: new Array()
         };
 
         if (typeof options == "undefined")
@@ -24,8 +24,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.backButton = "<button class='backButton'></button>";
 
         this.container = null;
-        //this.popupDialog = null;
         this.modalDialog = null;
+        this.activeMedia = null;
         this.recorder = null;
         this.player = null;
         this.mediaManager = new MediaManager();
@@ -46,36 +46,41 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.bindRequested = false;
 
         //TODO chooser form should be hidden (or replaced by a loader) until this completes
-        if (this.media != null) {
-            if (typeof this.media.title != "undefined") {
-                this._invokeSuccess();
-            } else {
-                this.bindBlocked = true;
+        if (this.media.length > 0) {
+            this.bindBlocked = true;
 
-                $.ajax({
-                    url: Routing.generate("imdc_myfiles_get_info", {mediaId: this.media.id}),
-                    success: (function(data, textStatus, jqXHR) {
-                        //console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
+            var mediaIds = new Array();
+            $.each(this.media, function(index, element) {
+                mediaIds.push(element.id);
+            });
 
-                        this.setMedia(data.media);
-                        this._invokeSuccess();
-                        this.bindBlocked = false;
-                        if (this.bindRequested) {
-                            this.bindUIEvents();
-                        }
-                    }).bind(this),
-                    error: (function(request) {
-                        //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
+            $.ajax({
+                url: Routing.generate("imdc_myfiles_get_info"),
+                data: {mediaIds: mediaIds},
+                type: 'POST',
+                success: (function(data, textStatus, jqXHR) {
+                    //console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
 
-                        console.log(request.statusText);
+                    this.setMedia(data.media);
+                    $.each(this.media, (function(index, element) {
+                        this._addSelectedMedia(element);
+                    }).bind(this));
+                    this.bindBlocked = false;
+                    if (this.bindRequested) {
+                        this.bindUIEvents();
+                    }
+                }).bind(this),
+                error: (function(request) {
+                    //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
 
-                        this.bindBlocked = false;
-                        if (this.bindRequested) {
-                            this.bindUIEvents();
-                        }
-                    }).bind(this)
-                });
-            }
+                    console.log(request.statusText);
+
+                    this.bindBlocked = false;
+                    if (this.bindRequested) {
+                        this.bindUIEvents();
+                    }
+                }).bind(this)
+            });
         }
     };
 
@@ -106,7 +111,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         CONTAINER_RECORD_VIDEO: ".mediachooser-container-record-video",
         RECORD_VIDEO: ".mediachooser-record-video",
         CONTAINER_UPLOAD_VIDEO_RECORDING: ".mediachooser-container-upload-video-recording",
-        //UPLOAD_: ".mediachooser-upload-",
         UPLOAD_FILE: ".mediachooser-upload-file",
         SELECT: ".mediachooser-select",
         CONTAINER_UPLOAD: ".mediachooser-container-upload",
@@ -114,8 +118,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         CONTAINER_SELECT: ".mediachooser-container-select",
         CONTAINER_SELECTED: ".mediachooser-container-selected",
         SELECTED: ".mediachooser-selected",
-        REMOVE: ".mediachooser-remove",
-        CONTAINER_DIALOG: ".mediachooser-container-dialog"
+        SELECTED_MEDIA: ".mediachooser-selected-media",
+        REMOVE: ".mediachooser-remove"
     };
 
     // this must be the same name defined in {bundle}/Form/Type/MediaType
@@ -174,58 +178,11 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             });
         }).bind(this));
 
-        /*$.each(MediaChooser.MEDIA_TYPE, (function(index, value) {
-            var link = this._getElement(MediaChooser.Binder.UPLOAD_ + value.str);
-            var resourceFile = this.getFormField(value.str, "resource_file");
-
-            link.on("click", function(e) {
-                e.preventDefault();
-
-                resourceFile.click();
-            });
-        }).bind(this));*/
-
         this._getElement(MediaChooser.Binder.UPLOAD_FILE).on("click", (function(e) {
             e.preventDefault();
 
             this.getFormField("resource_file").click();
         }).bind(this));
-
-        /*$.each(MediaChooser.MEDIA_TYPE, (function(index, value) {
-            var resourceFile = this.getFormField(value.str, "resource_file");
-            var title = this.getFormField(value.str, "title");
-            var form = this.getForm(value.str);
-
-            resourceFile.on("change", (function(e) {
-                if (resourceFile.val() == "")
-                    return;
-
-                title.val(MediaChooser._cleanFileNameNoExt(resourceFile.val()));
-
-                this._getElement(MediaChooser.Binder.UPLOAD_TITLE).html(title.val());
-                this._getElement(MediaChooser.Binder.CONTAINER_CHOOSE).hide();
-
-                if (value.id == MediaChooser.MEDIA_TYPE.AUDIO.id)
-                    this.page = MediaChooser.Page.UPLOAD_AUDIO;
-                else if (value.id == MediaChooser.MEDIA_TYPE.VIDEO.id)
-                    this.page = MediaChooser.Page.UPLOAD_VIDEO;
-                else if (value.id == MediaChooser.MEDIA_TYPE.IMAGE.id)
-                    this.page = MediaChooser.Page.UPLOAD_IMAGE;
-                else if (value.id == MediaChooser.MEDIA_TYPE.OTHER.id)
-                    this.page = MediaChooser.Page.UPLOAD_OTHER;
-
-                this._loadPage({
-                    showPopup: false,
-                    url: Routing.generate("imdc_myfiles_add_" + value.str),
-                    method: "POST",
-                    data: new FormData(form[0]),
-                    uploadProgress: true
-                });
-
-                resourceFile.val("");
-                title.val("");
-            }).bind(this));
-        }).bind(this));*/
 
         this.getFormField("resource_file").on("change", (function(e) {
             e.preventDefault();
@@ -247,11 +204,13 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             this.bind__loadSelectFromMyFilesFunction();
         }).bind(this));
 
-        this._getElement(MediaChooser.Binder.REMOVE).on("click", (function(e) {
+        this._getElement(MediaChooser.Binder.SELECTED).sortable();
+
+        /*this._getElement(MediaChooser.Binder.REMOVE).on("click", (function(e) {
             e.preventDefault();
 
             this._invokeReset();
-        }).bind(this));
+        }).bind(this));*/
     };
 
     MediaChooser.prototype._bindUIEventsSelectFromMyFiles = function() {
@@ -265,9 +224,9 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             if ($(e.currentTarget).hasClass("disabled"))
                 return false;
 
-            this.setMedia({
+            this.activeMedia = {
                 id: $(e.currentTarget).data("val")
-            });
+            };
             this.previewMedia();
         }).bind(this));
 
@@ -308,11 +267,21 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         container.find(".select-button").on("click", (function(e) {
             e.preventDefault();
 
-            this.setMedia({
-                id: $(e.target).data("val"),
-                title: $(e.target).data("title")
-            });
-            this._invokeSuccess();
+            var isSelected = $.grep(this.media, function(elementOfArray, indexInArray) {
+                return elementOfArray.id == $(e.target).data("val");
+            }).length > 0;
+
+            if (!isSelected) {
+                this.activeMedia = {
+                    id: $(e.target).data("val"),
+                    title: $(e.target).data("title"),
+                    resource: {
+                        pathMPEG: $(e.target).data("resourcewebpath")
+                    }
+                };
+                this._invokeSuccess();
+            }
+
             this._terminatingFunction();
         }).bind(this));
 
@@ -334,16 +303,9 @@ define([ 'core/mediaManager' ], function(MediaManager) {
 
         $('#mediaPreviewTitle').blur((function(e) {
             console.log('updated title');
-            this.media.title = $('#mediaPreviewTitle').val();
-            this.mediaManager.updateMedia(this.media);
+            this.activeMedia.title = $('#mediaPreviewTitle').val();
+            this.mediaManager.updateMedia(this.activeMedia);
         }).bind(this));
-    };
-
-    MediaChooser._cleanFileNameNoExt = function(fileName) {
-        // FIXME extract proper file name
-        fileName = fileName.split(/(\\|\/)/g).pop();
-        return (fileName.substr(0, fileName.lastIndexOf('.')) || fileName).replace(/[^a-z0-9\s]/gi, '').replace(
-            /[_\s]/g, '-');
     };
 
     MediaChooser.prototype._loadPage = function(options) {
@@ -405,7 +367,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         console.log("%s: %s- finished=%s", MediaChooser.TAG, "_onLoadPageSuccess", data.finished);
 
         if (data.finished) {
-            this.setMedia(data.media);
+            this.activeMedia = data.media;
             this._invokeSuccess();
             this._terminatingFunction();
         } else {
@@ -415,7 +377,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
                 this._bindUIEventsSelectFromMyFiles();
 
             if (this.page == MediaChooser.Page.PREVIEW) {
-                this.setMedia(data.media);
+                this.activeMedia(data.media);
                 this._bindUIEventsPreview();
             }
         }
@@ -485,7 +447,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     MediaChooser.prototype._onRecordingSuccess = function(data) {
         console.log("%s: %s- mediaId=%d", MediaChooser.TAG, "_onRecordingSuccess", data.media.id);
 
-        this.setMedia(data.media);
+        this.activeMedia = data.media;
     };
 
     MediaChooser.prototype._onRecordingError = function(e) {
@@ -508,7 +470,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         if (this.page == MediaChooser.Page.PREVIEW) {
             this._forwardFunctionCut();
         }
-        if (this.media)
+        if (this.activeMedia)
             this._invokeSuccess();
         this._terminatingFunction();
     };
@@ -520,7 +482,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         if (this.page == MediaChooser.Page.PREVIEW) {
             this._forwardFunctionCut();
         }
-        if (this.media)
+        if (this.activeMedia)
             this._invokeSuccess(true);
         this._terminatingFunction();
     };
@@ -549,7 +511,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this._loadPage({
             showPopup: true,
             url: Routing.generate('imdc_myfiles_preview', {
-                mediaId: this.media.id
+                mediaId: this.activeMedia.id
             }),
             method: "GET"
         });
@@ -588,7 +550,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         }
          
 
-        this.player = new Player($("#" + this.media.id), {
+        this.player = new Player($("#" + this.activeMedia.id), {
             areaSelectionEnabled: true,
             audioBar: false,
             updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE,
@@ -618,10 +580,10 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         console.log("%s: %s", MediaChooser.TAG, "_backFunction");
 
         // delete the current media!
-        this.mediaManager.deleteMedia(this.media.id);
+        this.mediaManager.deleteMedia(this.activeMedia.id);
 
         // Go back to recording
-        this.setMedia(null);
+        this.activeMedia = null;
         this.page = MediaChooser.Page.RECORD_VIDEO;
         this._loadPage({
             showPopup: true,
@@ -641,7 +603,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         console.log("Cutting to Min/Max Times %s %s", currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
                 currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 
-        this.mediaManager.trimMedia(this.media.id, currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
+        this.mediaManager.trimMedia(this.activeMedia.id, currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
                 currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
     };
 
@@ -663,7 +625,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             this.recorder.destroyRecorder();
 
         $(this).trigger($.Event(MediaChooser.Event.DIALOG_CLOSE, {
-            media: this.media
+            media: this.activeMedia
         }));
     };
 
@@ -671,27 +633,54 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         console.log("%s: %s", MediaChooser.TAG, "_invokeSuccess");
 
         var event = {
-            media: this.media
+            media: this.activeMedia
         };
 
         this._getElement(MediaChooser.Binder.UPLOAD_TITLE).html("");
         this._getElement(MediaChooser.Binder.CONTAINER_UPLOAD).hide();
 
-        if (this.isFileSelection) {
+        /*if (this.isFileSelection) {
             this._getElement(MediaChooser.Binder.CONTAINER_CHOOSE).hide();
             this._getElement(MediaChooser.Binder.SELECTED).html(this.media.title);
             this._getElement(MediaChooser.Binder.CONTAINER_SELECTED).show();
-        }
-        else {
+        } else {
             this._getElement(MediaChooser.Binder.CONTAINER_CHOOSE).show();
+        }*/
+
+        if (this._getElement(MediaChooser.Binder.SELECTED_MEDIA)
+            .filter("[data-mid='" + this.activeMedia.id + "']")
+            .length == 0) {
+
+            this.addMedia(this.activeMedia);
+            this._addSelectedMedia(this.activeMedia);
         }
 
         if (typeof doPost != "undefined" && doPost == true) {
             $(this).trigger($.Event(MediaChooser.Event.SUCCESS_AND_POST, event));
-        }
-        else {
+        } else {
             $(this).trigger($.Event(MediaChooser.Event.SUCCESS, event));
         }
+    };
+
+    MediaChooser.prototype._addSelectedMedia = function(media) {
+        var container = this._getElement(MediaChooser.Binder.SELECTED);
+        var newSelectedMedia = container.data("prototype");
+        newSelectedMedia = newSelectedMedia.replace(/__id__/g, media.id);
+        newSelectedMedia = newSelectedMedia.replace(/__title__/g, media.title);
+        newSelectedMedia = newSelectedMedia.replace(/__resource_webPath__/g, media.resource.pathMPEG);
+        container.append(newSelectedMedia);
+
+        this._getElement(MediaChooser.Binder.SELECTED_MEDIA)
+            .filter("[data-mid='" + media.id + "']")
+            .find(MediaChooser.Binder.REMOVE).on("click", (function(e) {
+            e.preventDefault();
+
+            var mediaId = $(e.currentTarget).data("mid");
+            this._getElement(MediaChooser.Binder.SELECTED_MEDIA)
+                .filter("[data-mid='" + mediaId + "']")
+                .remove();
+            this.removeMedia(mediaId);
+        }).bind(this));
     };
 
     MediaChooser.prototype._invokeError = function(jqXHR) {
@@ -699,12 +688,12 @@ define([ 'core/mediaManager' ], function(MediaManager) {
 
         this._getElement(MediaChooser.Binder.UPLOAD_TITLE).html("");
         this._getElement(MediaChooser.Binder.CONTAINER_UPLOAD).hide();
-        this._getElement(MediaChooser.Binder.CONTAINER_CHOOSE).show();
+        //this._getElement(MediaChooser.Binder.CONTAINER_CHOOSE).show();
 
-        if (this.isFileSelection) {
+        /*if (this.isFileSelection) {
             this._getElement(MediaChooser.Binder.CONTAINER_SELECTED).hide();
             this._getElement(MediaChooser.Binder.SELECTED).html("");
-        }
+        }*/
 
         $(this).trigger($.Event(MediaChooser.Event.ERROR, {
             jqXHR: jqXHR
@@ -716,14 +705,15 @@ define([ 'core/mediaManager' ], function(MediaManager) {
 
         this._getElement(MediaChooser.Binder.UPLOAD_TITLE).html("");
         this._getElement(MediaChooser.Binder.CONTAINER_UPLOAD).hide();
-        this._getElement(MediaChooser.Binder.CONTAINER_CHOOSE).show();
+        //this._getElement(MediaChooser.Binder.CONTAINER_CHOOSE).show();
 
-        if (this.isFileSelection) {
+       /* if (this.isFileSelection) {
             this._getElement(MediaChooser.Binder.CONTAINER_SELECTED).hide();
             this._getElement(MediaChooser.Binder.SELECTED).html("");
-        }
+        }*/
 
-        this.setMedia(null);
+        this.activeMedia = null;
+        this.setMedia(new Array());
 
         $(this).trigger($.Event(MediaChooser.Event.RESET, {}));
     };
@@ -734,10 +724,30 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.container = typeof container != "undefined" ? container : this.container;
     };
 
+    MediaChooser.prototype.addMedia = function(media) {
+        console.log("%s: %s", MediaChooser.TAG, "addMedia");
+
+        if (typeof media != "undefined")
+            this.media.push(media);
+    };
+
+    MediaChooser.prototype.removeMedia = function(id) {
+        console.log("%s: %s", MediaChooser.TAG, "removeMedia");
+
+        for (var m in this.media) {
+            var media = this.media[m];
+            if (media.id == id) {
+                this.media.splice(m, 1);
+                break;
+            }
+        }
+    };
+
     MediaChooser.prototype.setMedia = function(media) {
         console.log("%s: %s", MediaChooser.TAG, "setMedia");
 
-        this.media = typeof media != "undefined" ? media : this.media;
+        if (typeof media != "undefined")
+            this.media = media;
     };
 
     return MediaChooser;

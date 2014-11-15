@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\ORM\EntityNotFoundException;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIdArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Form\Type\ResourceFileFormType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -1002,7 +1003,7 @@ class MyFilesGatewayController extends Controller
         return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
     }
 
-    public function getInfoAction(Request $request, $mediaId) {
+    public function getInfoAction(Request $request) {
         // if not ajax, throw an exception
         if (!$request->isXmlHttpRequest()) {
             throw new BadRequestHttpException('Only Ajax POST calls accepted');
@@ -1014,17 +1015,21 @@ class MyFilesGatewayController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        /*$media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
             throw new \Exception('forum not found');
-        }
+        }*/
 
-        if (!$this->getUser()->getResourceFiles()->contains($media)) {
-            throw new AccessDeniedException(); //TODO more appropriate exception?
+        $transformer = new MediaCollectionToIdArrayTransformer($em);
+        $mediaCollection = $transformer->reverseTransform($request->get('mediaIds'));
+
+        $mediaJson = array();
+        foreach ($mediaCollection as $media) {
+            $mediaJson[] = JSEntities::getMediaObject($media);
         }
 
         $content = array(
-            'media' => JSEntities::getMediaObject($media)
+            'media' => $mediaJson
         );
 
         return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));

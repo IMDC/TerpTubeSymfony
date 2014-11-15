@@ -63,3 +63,15 @@ _Thread:view.html.twig
         </div>
     </div>
 </div>
+{% if isFileSelection %}
+	<div class="row mediachooser-container-selected" style="display: none;">
+		<div class="col-md-12">
+			{{ form_widget(form.mediatextarea) }}
+			<div class="form-group">
+				<label>Selected File</label>
+				<div><span class="mediachooser-selected" style="margin-right: 5px;"></span><a class="mediachooser-remove" title="Remove File"><i class="fa fa-times-circle"></i></a></div>
+			</div>
+		</div>
+	</div>
+	<div class="mediachooser-container-dialog"></div>
+{% endif %}

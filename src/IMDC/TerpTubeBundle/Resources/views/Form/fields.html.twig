@@ -50,15 +50,25 @@ _Thread:view.html.twig
         </div>
     </div>
     {% if isFileSelection %}
-        <div class="row mediachooser-container-selected" style="display: none;">
+        <div class="row mediachooser-container-selected">
             <div class="col-md-12">
                 {{ block('collection_widget') }}
-                <div class="form-group">
-                    <label>Selected File</label>
-                    <div><span class="mediachooser-selected" style="margin-right: 5px;"></span><a class="mediachooser-remove" title="Remove File"><i class="fa fa-times-circle"></i></a></div>
-                </div>
+                {% set selected_media = '
+                    <div class="col-md-3 thumbnail mediachooser-selected-media" data-mid="__id__">
+                        <div class="row">
+                            <div class="col-md-offset-2 col-md-8 text-center">
+                                <a href="' ~ asset('') ~ '__resource_webPath__">
+                                    <p><i class="fa fa-file fa-5x"></i></p>
+                                    <div>__title__</div>
+                                </a>
+                            </div>
+                            <div class="col-md-2 pull-right">
+                                <span class="btn btn-danger btn-xs mediachooser-remove" title="Remove File" data-mid="__id__"><i class="fa fa-times-circle"></i></span>
+                            </div>
+                        </div>
+                    </div>' %}
+                <div class="mediachooser-selected" data-prototype="{{ selected_media|e }}"></div>
             </div>
         </div>
-        <div class="mediachooser-container-dialog"></div>
     {% endif %}
 {% endblock media_chooser_widget %}

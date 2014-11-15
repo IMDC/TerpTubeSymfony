@@ -41,7 +41,7 @@ class ForumControllerTest extends WebTestCase
         ));
 
         $values = $form->getPhpValues();
-        $values['ForumForm']['titleMedia'] = array(1);
+        $values['ForumForm']['titleMedia'] = array(8, 1);
 
         //$this->client->submit($form);
         $this->client->request($form->getMethod(), $form->getUri(), $values);

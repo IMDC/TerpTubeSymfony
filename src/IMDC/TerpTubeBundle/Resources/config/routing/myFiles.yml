@@ -94,9 +94,7 @@ imdc_myfiles_add:
     expose: true
 
 imdc_myfiles_get_info:
-  pattern: /{mediaId}
+  pattern: /info
   defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:getInfo }
-  requirements:
-    mediaId: \d+
   options:
     expose: true

@@ -52,7 +52,7 @@ _MyFiles:ajax.index.html.twig
                                             {% endif %}
                                         {% endif %}
                                         {% if isSelect %}
-                                            <a class="btn btn-default btn-xs select-button" href="#" data-val="{{ resourceFile.id }}" data-title="{{ resourceFile.title }}"><i class="fa fa-share"></i> Select</a>
+                                            <a class="btn btn-default btn-xs select-button" href="#" data-val="{{ resourceFile.id }}" data-title="{{ resourceFile.title }}" data-resourcewebpath="{{ resourceFile.resource.webPath }}"><i class="fa fa-share"></i> Select</a>
                                         {% endif %}
                                     </div>
                                 </td>
