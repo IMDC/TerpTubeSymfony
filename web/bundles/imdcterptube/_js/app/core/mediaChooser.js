@@ -28,6 +28,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.player = null;
         this.mediaManager = new MediaManager();
         this.wasRecording = false;
+        this.bindBlocked = false;
+        this.bindRequested = false;
 
         this.bind__onLoadPageSuccess = this._onLoadPageSuccess.bind(this);
         this.bind__onRecordingSuccess = this._onRecordingSuccess.bind(this);
@@ -39,11 +41,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.bind__backFunction = this._backFunction.bind(this);
         this.bind__loadSelectFromMyFilesFunction = this._loadSelectFromMyFilesFunction.bind(this);
         this.bind__terminatingFunction = this._terminatingFunction.bind(this);
-
-        this.bindBlocked = false;
-        this.bindRequested = false;
-
-
     };
 
     MediaChooser.TAG = "MediaChooser";
@@ -99,12 +96,12 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     MediaChooser.DIALOG_TITLE_SELECT = "Select from My Files";
     MediaChooser.DIALOG_TITLE_PREVIEW = "Preview";
 
-    MediaChooser.prototype._getElement = function(binder) {
-        return this.container.find(binder);
-    };
-
     MediaChooser.prototype.getContainer = function() {
         return this.container;
+    };
+
+    MediaChooser.prototype._getElement = function(binder) {
+        return this.getContainer().find(binder);
     };
 
     MediaChooser.prototype.getForm = function() {

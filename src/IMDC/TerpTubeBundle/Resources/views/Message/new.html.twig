@@ -76,7 +76,7 @@
                     {% else %}
                         {{ form_row(form.content) }}
                     {% endif %}
-                    <button class="btn btn-success"><i class="fa fa-envelope"></i> Send</button>
+                    <button class="btn btn-success message-submit"><i class="fa fa-envelope"></i> Send</button>
                     <a class="btn btn-danger" href="{{ app.request.headers.get('referer') }}"><i class="fa fa-times"></i> Cancel</a>
                     {{ form_end(form) }}
                 </div>

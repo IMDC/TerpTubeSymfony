@@ -22,6 +22,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
         VIEW: 2
     };
 
+    Message.Binder = {
+        SUBMIT: ".message-submit"
+    };
+
     // this must be the same name defined in {bundle}/Form/Type/PrivateMessageType
     Message.FORM_NAME = "PrivateMessageForm";
 
@@ -29,12 +33,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
         return $("body");
     };
 
+    Message.prototype._getElement = function(binder) {
+        return this.getContainer().find(binder);
+    };
+
     Message.prototype.getForm = function() {
         return this.getContainer().find("form[name=" + Message.FORM_NAME + "]");
     };
 
     Message.prototype.getFormField = function(fieldName) {
-        return this.getContainer().find("#" + Message.FORM_NAME + "_" + fieldName);
+        return this.getForm().find("#" + Message.FORM_NAME + "_" + fieldName);
     };
 
     Message.prototype.bindUIEvents = function() {
@@ -54,14 +62,33 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Message.prototype._bindUIEventsNewReply = function(isReply) {
         console.log("%s: %s- isReply=%s", Message.TAG, "_bindUIEventsNewReply", isReply);
 
+        var mediaIds = new Array();
+        this.getFormField("attachedMedia").children().each(function(index, element) {
+            mediaIds.push($(element).val());
+        });
+
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.setMedia(mediaIds);
         this.mediaChooser.bindUIEvents();
 
         this.getFormField("recipients").tagit();
+
+        this._getElement(Message.Binder.SUBMIT).on("click", (function(e) {
+            e.preventDefault();
+
+            var formField = this.getFormField("attachedMedia");
+            formField.html(
+                this.mediaChooser.generateFormData(
+                    formField.data("prototype")
+                )
+            );
+
+            this.getForm().submit();
+        }).bind(this));
     };
 
     Message.prototype._bindUIEventsView = function() {

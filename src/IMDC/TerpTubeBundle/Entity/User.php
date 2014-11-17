@@ -923,7 +923,8 @@ class User extends BaseUser
     public function ownsMediaInCollection($mediaCollection)
     {
         if (empty($mediaCollection)) {
-            throw new \InvalidArgumentException('$mediaCollection must not be empty.');
+            //throw new \InvalidArgumentException('$mediaCollection must not be empty.');
+            return true;
         }
 
         foreach ($mediaCollection as $media) {

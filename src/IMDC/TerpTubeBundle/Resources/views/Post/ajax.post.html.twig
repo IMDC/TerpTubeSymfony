@@ -23,7 +23,7 @@ _Thread:view.html.twig
     {% if post.attachedFile|length != 0 %}
         <div class="row">
             <div class="col-md-offset-2 col-md-8">
-                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': post.attachedFile[0]} %}
+                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': post.attachedFile.get(0)} %}
             </div>
         </div>
     {% endif %}

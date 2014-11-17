@@ -111,10 +111,12 @@
 						{% endif %}
 					</div>
 				</div>
-                <!-- post reply form -->
                 {% set post = {'id': -1} %}
-                <div class="row post-container-reply" data-pid="{{ post.id }}">
-                    {% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'post': post} %}
+                <div class="post-container" data-pid="{{ post.id }}">
+                    <!-- post reply form -->
+                    <div class="row post-container-reply" data-pid="{{ post.id }}">
+                        {% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'post': post} %}
+                    </div>
                 </div>
 				<div class="row">
 					<div class="col-md-12">

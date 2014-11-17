@@ -40,6 +40,10 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         VIEW: 2
     };
 
+    Thread.Binder = {
+        SUBMIT: ".thread-submit"
+    };
+
     // this must be the same name defined in {bundle}/Form/Type/ThreadFormType
     Thread.FORM_NAME = "Thread";
 
@@ -47,12 +51,16 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         return $("body");
     };
 
+    Thread.prototype._getElement = function(binder) {
+        return this.getContainer().find(binder);
+    };
+
     Thread.prototype.getForm = function() {
         return this.getContainer().find("form[name^=" + Thread.FORM_NAME + "]");
     };
 
     Thread.prototype.getFormField = function(fieldName) {
-        return this.getContainer().find("[id^=" + Thread.FORM_NAME + "]").filter("[id$=_" + fieldName + "]");
+        return this.getForm().find("[id^=" + Thread.FORM_NAME + "]").filter("[id$=_" + fieldName + "]");
     };
 
     Thread.prototype.bindUIEvents = function() {
@@ -72,11 +80,17 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     Thread.prototype._bindUIEventsNewEdit = function(isEdit) {
         console.log("%s: %s- isEdit=%s", Thread.TAG, "_bindUIEventsNewEdit", isEdit);
 
-        this.mediaChooser = new MediaChooser({media: {id: this.getFormField("mediatextarea").val()}});
+        var mediaIds = new Array();
+        this.getFormField("mediaIncluded").children().each(function(index, element) {
+            mediaIds.push($(element).val());
+        });
+
+        this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.setMedia(mediaIds);
         this.mediaChooser.bindUIEvents();
 
         this.getFormField("permissions_usersWithAccess").tagit(this.tagitOptions);
@@ -96,6 +110,19 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         }).bind(this));
 
         $("#permissionRadioButtons").trigger("click");
+
+        this._getElement(Thread.Binder.SUBMIT).on("click", (function(e) {
+            e.preventDefault();
+
+            var formField = this.getFormField("mediaIncluded");
+            formField.html(
+                this.mediaChooser.generateFormData(
+                    formField.data("prototype")
+                )
+            );
+
+            this.getForm().submit();
+        }).bind(this));
     };
 
     Thread.prototype._bindUIEventsView = function() {

@@ -53,12 +53,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
     // this must be the same name defined in {bundle}/Form/Type/PostType
     Post.FORM_NAME = "PostForm";
 
-    Post.prototype._getElement = function(binder) {
-        return $(binder + "[data-pid=" + this.id + "]");
-    };
-
     Post.prototype.getContainer = function() {
-        switch (this.page) {
+        return $(Post.Binder.CONTAINER + "[data-pid=" + this.id + "]");
+
+        /*switch (this.page) {
             case Post.Page.NEW:
             case Post.Page.REPLY:
                 return this._getElement(Post.Binder.CONTAINER_REPLY);
@@ -66,7 +64,12 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 return this._getElement(Post.Binder.CONTAINER_EDIT);
             case Post.Page.DELETE:
                 return this._getElement(Post.Binder.CONTAINER);
-        }
+        }*/
+    };
+
+    Post.prototype._getElement = function(binder) {
+        //return $(binder + "[data-pid=" + this.id + "]");
+        return this.getContainer().find(binder);
     };
 
     Post.prototype.getForm = function() {
@@ -74,7 +77,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Post.prototype.getFormField = function(fieldName) {
-        return this.getContainer().find("#" + Post.FORM_NAME + "_" + fieldName);
+        return this.getForm().find("#" + Post.FORM_NAME + "_" + fieldName);
     };
 
     Post.prototype._getUrl = function() {
@@ -96,18 +99,20 @@ define(['core/mediaChooser'], function(MediaChooser) {
             success: (function(data, textStatus, jqXHR) {
                 console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
 
-                var container = this.getContainer();
+                //var container = this.getContainer();
 
                 switch (this.page) {
                     case Post.Page.REPLY:
                         this._getElement(Post.Binder.REPLY_LINK).hide();
 
+                        var container = this._getElement(Post.Binder.CONTAINER_REPLY);
                         container.html(data.html);
                         container.show();
                         break;
                     case Post.Page.EDIT:
                         this._getElement(Post.Binder.CONTAINER_VIEW).hide();
 
+                        var container = this._getElement(Post.Binder.CONTAINER_EDIT);
                         container.html(data.html);
                         container.show();
                         break;
@@ -126,12 +131,18 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Post.prototype.bindUIEvents = function() {
         console.log("%s: %s", Post.TAG, "bindUIEvents");
 
+        var mediaIds = new Array();
+        this.getFormField("attachedFile").children().each(function(index, element) {
+            mediaIds.push($(element).val());
+        });
+
         this.mediaChooser = new MediaChooser({enableDoneAndPost: true});
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.setMedia(mediaIds);
         this.mediaChooser.bindUIEvents();
 
         this._getElement(Post.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
@@ -167,6 +178,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         this._toggleForm(true);
 
+        if (this.page != Post.Page.DELETE) {
+            var formField = this.getFormField("attachedFile");
+            formField.html(
+                this.mediaChooser.generateFormData(
+                    formField.data("prototype")
+                )
+            );
+        }
+
         $.ajax({
             url: this._getUrl(),
             type: "POST",
@@ -188,7 +208,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Post.prototype._onSubmitSuccess = function(data, textStatus, jqXHR) {
         console.log("%s: %s: %s", Post.TAG, "_onSubmitSuccess", "success");
 
-        var container = this.getContainer();
+        //var container = this.getContainer();
 
         switch (this.page) {
             case Post.Page.NEW:
@@ -196,7 +216,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 if (data.wasReplied) {
                     window.location.replace(data.redirectUrl);
                 } else {
-                    container.html(data.html);
+                    //container.html(data.html);
+                    this._getElement(Post.Binder.CONTAINER_REPLY).html(data.html);
                     this.bindUIEvents();
                     this._toggleForm(false);
                 }
@@ -211,13 +232,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
                     this._onClickCancel(); // simulate cancelling
                 } else {
-                    container.html(data.html);
+                    //container.html(data.html);
+                    this._getElement(Post.Binder.CONTAINER_EDIT).html(data.html);
                     this.bindUIEvents();
                     this._toggleForm(false);
                 }
                 break;
             case Post.Page.DELETE:
                 if (data.wasDeleted) {
+                    var container = this.getContainer();
                     container.after(data.html);
 
                     // fade out the original comment
@@ -227,7 +250,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
                     // remove the feedback message after 5 seconds
                     setTimeout((function() {
-                        this._getElement(Post.Binder.CONTAINER_DELETE).fadeOut("slow", function(e) {
+                        $(Post.Binder.CONTAINER_DELETE + "[data-pid=" + this.id + "]").fadeOut("slow", function(e) {
                             $(this).remove();
                         });
                     }).bind(this), 5000);
@@ -263,11 +286,12 @@ define(['core/mediaChooser'], function(MediaChooser) {
         if (e && e.preventDefault)
             e.preventDefault();
 
-        var container = this.getContainer();
+        //var container = this.getContainer();
 
         switch (this.page) {
             case Post.Page.NEW:
             case Post.Page.REPLY:
+                var container = this._getElement(Post.Binder.CONTAINER_REPLY);
                 container.hide();
                 container.html("");
 
@@ -275,6 +299,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 this._getElement(Post.Binder.REPLY_LINK).show();
                 break;
             case Post.Page.EDIT:
+                var container = this._getElement(Post.Binder.CONTAINER_EDIT);
                 container.hide();
                 container.html("");
 
@@ -290,7 +315,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Post.prototype._onSuccessAndPost = function(e) {
-        this.getFormField("mediatextarea").val(e.media.id);
+        //this.getFormField("mediatextarea").val(e.media.id);
         this._getElement(Post.Binder.SUBMIT).trigger("click");
     };
 

@@ -32,7 +32,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         TOGGLE_MEMBER_SELECT: ".group-toggle-member-select",
         USER_CONTAINER_SELECT: ".user-container-select", //TODO move to user controller
         USER_SELECT: ".user-select", //TODO move to user controller
-        USER_SELECTED: ".user-selected" //TODO move to user controller
+        USER_SELECTED: ".user-selected", //TODO move to user controller
+        SUBMIT: ".group-submit"
     };
 
     // this must be the same name defined in {bundle}/Form/Type/UserGroupType
@@ -42,12 +43,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
         return $("body");
     };
 
+    Group.prototype._getElement = function(binder) {
+        return this.getContainer().find(binder);
+    };
+
     Group.prototype.getForm = function() {
         return this.getContainer().find("form[name=" + Group.FORM_NAME + "]");
     };
 
     Group.prototype.getFormField = function(fieldName) {
-        return this.getContainer().find("#" + Group.FORM_NAME + "_" + fieldName);
+        return this.getForm().find("#" + Group.FORM_NAME + "_" + fieldName);
     };
 
     Group.prototype.bindUIEvents = function() {
@@ -70,12 +75,31 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Group.prototype._bindUIEventsNewEdit = function() {
         console.log("%s: %s", Group.TAG, "_bindUIEventsNewEdit");
 
+        var mediaIds = new Array();
+        this.getFormField("media").children().each(function(index, element) {
+            mediaIds.push($(element).val());
+        });
+
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.setMedia(mediaIds);
         this.mediaChooser.bindUIEvents();
+
+        this._getElement(Group.Binder.SUBMIT).on("click", (function(e) {
+            e.preventDefault();
+
+            var formField = this.getFormField("media");
+            formField.html(
+                this.mediaChooser.generateFormData(
+                    formField.data("prototype")
+                )
+            );
+
+            this.getForm().submit();
+        }).bind(this));
     };
 
     Group.prototype._bindUIEventsAddMembers = function() {

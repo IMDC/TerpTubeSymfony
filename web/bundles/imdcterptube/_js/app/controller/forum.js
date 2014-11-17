@@ -20,6 +20,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
         DELETE: 2
     };
 
+    Forum.Binder = {
+        SUBMIT: ".forum-submit"
+    };
+
     // this must be the same name defined in {bundle}/Form/Type/ForumFormType
     Forum.FORM_NAME = "ForumForm";
 
@@ -72,12 +76,13 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         this.getForm().find("input:radio:checked").trigger("change");
 
-        this._getElement(".forum-submit").on("click", (function(e) {
+        this._getElement(Forum.Binder.SUBMIT).on("click", (function(e) {
             e.preventDefault();
 
-            this.getFormField("titleMedia").html(
+            var formField = this.getFormField("titleMedia");
+            formField.html(
                 this.mediaChooser.generateFormData(
-                    this.getFormField("titleMedia").data("prototype")
+                    formField.data("prototype")
                 )
             );
 
