@@ -8,7 +8,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use IMDC\TerpTubeBundle\Entity\Media;
 
-class OtherMediaFormType extends AbstractMediaFormType
+/**
+ * @deprecated
+ */
+class OtherMediaFormType extends AbstractMediaFormType //TODO delete
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{

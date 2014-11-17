@@ -71,16 +71,21 @@ class PostController extends Controller
             $post->setCreated($currentDateTime);
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
                 /*if (!$post->getAttachedFile()->contains($media))
-                    $post->addAttachedFile($media);*/
+                    $post->addAttachedFile($media);*
                 //FIXME override for now. at some point multiple media may be used
                 $post->setAttachedFile($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('attachedFile')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             if (!$isPostReply) {
@@ -126,9 +131,9 @@ class PostController extends Controller
                 'wasReplied' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                         'form' => $form->createView(),
-                        'post' => !$isPostReply ? $post : $postParent,
+                        'post' => !$isPostReply ? $post : $postParent))
                         //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-                        'fileUploadForm' => $this->createForm(new MediaType())->createView()))
+                        //'fileUploadForm' => $this->createForm(new MediaType())->createView()))
             );
         }
 
@@ -177,16 +182,21 @@ class PostController extends Controller
             $post->setEditedBy($user);
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
                 /*if (!$post->getAttachedFile()->contains($media))
-                    $post->addAttachedFile($media);*/
+                    $post->addAttachedFile($media);*
                 //FIXME override for now. at some point multiple media may be used
                 $post->setAttachedFile($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('attachedFile')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             $forum = $post->getParentThread()->getParentForum();
@@ -209,9 +219,9 @@ class PostController extends Controller
                 'wasEdited' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
                         'form' => $form->createView(),
-                        'post' => $post,
+                        'post' => $post))
                         //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-                        'fileUploadForm' => $this->createForm(new MediaType())->createView()))
+                        //'fileUploadForm' => $this->createForm(new MediaType())->createView()))
             );
         }
 

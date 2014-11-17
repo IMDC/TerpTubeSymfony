@@ -7,7 +7,7 @@ TerpTube.Controller.Post
 	{{ form_start(form) }}
     {{ form_errors(form) }}
     {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
-    {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
+    {{ form_widget(form.attachedFile) }}
     {% if post.attachedFile[0] is defined %}
         <div class="row">
             <div class="col-md-4">

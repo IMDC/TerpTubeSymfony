@@ -14,7 +14,7 @@ class PrivateMessageType extends AbstractType
     	$entityManager = $options['em'];
     	$transformer = new UsersToStringsTransformer($entityManager);
 
-        $builder->add('mediatextarea', 'media_chooser');
+        $builder->add('attachedMedia', 'media_chooser');
     	
         $builder->add(
             $builder

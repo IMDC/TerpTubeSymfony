@@ -123,13 +123,8 @@ class ForumController extends Controller
             }*/
 
             //TODO 'currently' only your own media should be here, but check anyway
-            $mediaCollection = $form->get('titleMedia')->getData();
-            if ($mediaCollection) {
-                foreach ($mediaCollection as $media) {
-                    if (!$user->getResourceFiles()->contains($media)) {
-                        throw new AccessDeniedException(); //TODO more appropriate exception?
-                    }
-                }
+            if (!$user->ownsMediaInCollection($form->get('titleMedia')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             $user->addForum($forum);
@@ -258,13 +253,8 @@ class ForumController extends Controller
             }*/
 
             //TODO 'currently' only your own media should be here, but check anyway
-            $mediaCollection = $form->get('titleMedia')->getData();
-            if ($mediaCollection) {
-                foreach ($mediaCollection as $media) {
-                    if (!$user->getResourceFiles()->contains($media)) {
-                        throw new AccessDeniedException(); //TODO more appropriate exception?
-                    }
-                }
+            if (!$user->ownsMediaInCollection($form->get('titleMedia')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             if ($forum->getAccessType()->getId() !== AccessType::TYPE_GROUP) {

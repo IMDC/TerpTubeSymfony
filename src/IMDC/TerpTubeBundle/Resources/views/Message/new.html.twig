@@ -52,7 +52,7 @@
                     {% endif %}
                     <p>Attach media to message</p>
                     {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
-                    {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
+                    {{ form_widget(form.attachedMedia) }}
                     {% if isReply %}
                         {{ form_row(form.content,
                             {'value': "\n\n\n\n" ~
@@ -86,8 +86,8 @@
     </div>
 {% endblock content %}
 
-{% block outside_body %}
-    {{ parent() }}
+{#{% block outside_body %}#}
+    {#{{ parent() }}#}
 
-    {% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}
-{% endblock outside_body %}
+    {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}
+{#{% endblock outside_body %}#}

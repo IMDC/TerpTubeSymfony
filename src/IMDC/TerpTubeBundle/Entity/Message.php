@@ -244,10 +244,18 @@ class Message
         return $this->attachedMedia;
     }
 
-    public function setAttachedMedia(\IMDC\TerpTubeBundle\Entity\Media $attachedMedia)
+    //TODO delete
+    /*public function setAttachedMedia(\IMDC\TerpTubeBundle\Entity\Media $attachedMedia)
     {
         $this->attachedMedia = new \Doctrine\Common\Collections\ArrayCollection();
         $this->attachedMedia[] = $attachedMedia;
+
+        return $this;
+    }*/
+
+    public function setAttachedMedia($attachedMedia)
+    {
+        $this->attachedMedia = $attachedMedia;
 
         return $this;
     }

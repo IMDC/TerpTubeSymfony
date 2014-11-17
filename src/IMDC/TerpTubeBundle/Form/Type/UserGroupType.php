@@ -11,7 +11,7 @@ class UserGroupType extends AbstractType
     
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('mediatextarea', 'media_chooser');
+        $builder->add('media', 'media_chooser');
 
     	$builder->add('name', 'text', array(
             'label' => 'Group name'

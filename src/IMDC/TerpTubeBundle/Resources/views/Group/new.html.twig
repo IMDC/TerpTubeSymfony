@@ -29,7 +29,7 @@
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
                 {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
-                {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
+                {{ form_widget(form.media) }}
                 {{ form_row(form.name) }}
                 {{ form_row(form.description) }}
                 {{ form_row(form.visibleToPublic) }}

@@ -54,7 +54,7 @@ class MediaChooserType extends AbstractType
             'allow_add' => true,
             'allow_delete' => true,
             'type' => 'hidden',
-            'mapped' => false,
+            //'mapped' => false,
             'required' => false
         ));
     }

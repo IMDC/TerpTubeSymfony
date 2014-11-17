@@ -632,7 +632,10 @@ class MyFilesGatewayController extends Controller
         // return $this->render('IMDCTerpTubeBundle:MyFilesGateway:recordVideo.html.twig');
     }
 
-    public function addAudioAction(Request $request, $url) {
+    /**
+     * @deprecated
+     */
+    public function addAudioAction(Request $request, $url) { //TODO delete
         if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request )) {
             return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
         }
@@ -711,7 +714,10 @@ class MyFilesGatewayController extends Controller
         return $response;
     }
 
-    public function addVideoAction(Request $request, $url) {
+    /**
+     * @deprecated
+     */
+    public function addVideoAction(Request $request, $url) { //TODO delete
         $user = $this->getUser ();
         if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request )) {
             return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
@@ -789,7 +795,10 @@ class MyFilesGatewayController extends Controller
         return $response;
     }
 
-    public function addImageAction(Request $request, $url) {
+    /**
+     * @deprecated
+     */
+    public function addImageAction(Request $request, $url) { //TODO delete
         $user = $this->getUser ();
         if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request )) {
             return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
@@ -867,7 +876,10 @@ class MyFilesGatewayController extends Controller
         return $response;
     }
 
-    public function addOtherAction(Request $request, $url) {
+    /**
+     * @deprecated
+     */
+    public function addOtherAction(Request $request, $url) { //TODO delete
         $user = $this->getUser ();
         if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request )) {
             return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
@@ -1035,7 +1047,10 @@ class MyFilesGatewayController extends Controller
         return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
     }
 
-    public static function getUploadForms(Controller $controller) {
+    /**
+     * @deprecated
+     */
+    public static function getUploadForms(Controller $controller) { //TODO delete
         $formAudio = $controller->createForm(new AudioMediaFormType(), new Media());
         $formVideo = $controller->createForm(new VideoMediaFormType(), new Media());
         $formImage = $controller->createForm(new ImageMediaFormType(), new Media());

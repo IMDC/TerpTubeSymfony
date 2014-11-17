@@ -4,8 +4,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     var MediaChooser = function(options) {
         var defaults = {
             isFileSelection: true,
-            enableDoneAndPost: false,
-            media: new Array()
+            enableDoneAndPost: false
         };
 
         if (typeof options == "undefined")
@@ -15,8 +14,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             : defaults.isFileSelection;
         this.enableDoneAndPost = typeof options.enableDoneAndPost != "undefined" ? options.enableDoneAndPost
             : defaults.enableDoneAndPost;
-        this.media = typeof options.media != "undefined" ? options.media
-            : defaults.media;
 
         this.forwardButton = "<button class='forwardButton'></button>";
         this.doneButton = "<button class='doneButton'></button>";
@@ -24,6 +21,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.backButton = "<button class='backButton'></button>";
 
         this.container = null;
+        this.media = new Array();
         this.modalDialog = null;
         this.activeMedia = null;
         this.recorder = null;
@@ -45,43 +43,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.bindBlocked = false;
         this.bindRequested = false;
 
-        //TODO chooser form should be hidden (or replaced by a loader) until this completes
-        if (this.media.length > 0) {
-            this.bindBlocked = true;
 
-            var mediaIds = new Array();
-            $.each(this.media, function(index, element) {
-                mediaIds.push(element.id);
-            });
-
-            $.ajax({
-                url: Routing.generate("imdc_myfiles_get_info"),
-                data: {mediaIds: mediaIds},
-                type: 'POST',
-                success: (function(data, textStatus, jqXHR) {
-                    //console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
-
-                    this.setMedia(data.media);
-                    $.each(this.media, (function(index, element) {
-                        this._addSelectedMedia(element);
-                    }).bind(this));
-                    this.bindBlocked = false;
-                    if (this.bindRequested) {
-                        this.bindUIEvents();
-                    }
-                }).bind(this),
-                error: (function(request) {
-                    //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
-
-                    console.log(request.statusText);
-
-                    this.bindBlocked = false;
-                    if (this.bindRequested) {
-                        this.bindUIEvents();
-                    }
-                }).bind(this)
-            });
-        }
     };
 
     MediaChooser.TAG = "MediaChooser";
@@ -160,6 +122,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         console.log("%s: %s", MediaChooser.TAG, "bindUIEvents");
 
         if (this.bindBlocked) {
+            console.log("%s: %s- bindBlocked=true", MediaChooser.TAG, "bindUIEvents");
             this.bindRequested = true;
             return;
         }
@@ -224,10 +187,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             if ($(e.currentTarget).hasClass("disabled"))
                 return false;
 
-            this.activeMedia = {
-                id: $(e.currentTarget).data("val")
-            };
-            this.previewMedia();
+            this.previewMedia($(e.currentTarget).data("val"));
         }).bind(this));
 
         container.find("span.edit-title").editable({
@@ -377,7 +337,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
                 this._bindUIEventsSelectFromMyFiles();
 
             if (this.page == MediaChooser.Page.PREVIEW) {
-                this.activeMedia(data.media);
+                this.activeMedia = data.media;
                 this._bindUIEventsPreview();
             }
         }
@@ -460,7 +420,7 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.destroyVideoRecorder();
 
         this.wasRecording = true;
-        this.previewMedia();
+        this.previewMedia(this.activeMedia.id);
     };
 
     MediaChooser.prototype._doneFunction = function() {
@@ -504,14 +464,14 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         progressBar.html(percentComplete + "%");
     };
 
-    MediaChooser.prototype.previewMedia = function() {
+    MediaChooser.prototype.previewMedia = function(mediaId) {
         console.log("%s: %s", MediaChooser.TAG, "previewMedia");
 
         this.page = MediaChooser.Page.PREVIEW;
         this._loadPage({
             showPopup: true,
             url: Routing.generate('imdc_myfiles_preview', {
-                mediaId: this.activeMedia.id
+                mediaId: mediaId
             }),
             method: "GET"
         });
@@ -652,7 +612,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
             .length == 0) {
 
             this.addMedia(this.activeMedia);
-            this._addSelectedMedia(this.activeMedia);
+            if (this.isFileSelection)
+                this._addSelectedMedia(this.activeMedia);
         }
 
         if (typeof doPost != "undefined" && doPost == true) {
@@ -713,9 +674,22 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         }*/
 
         this.activeMedia = null;
-        this.setMedia(new Array());
+        this.media = new Array();
 
         $(this).trigger($.Event(MediaChooser.Event.RESET, {}));
+    };
+
+    MediaChooser.prototype.generateFormData = function(prototype) {
+        var media = "";
+
+        $.each(this.media, function(index, element) {
+            var newMedia = $(prototype.replace(/__name__/g, index));
+            newMedia.val(element.id);
+
+            media += newMedia[0].outerHTML;
+        });
+
+        return media;
     };
 
     MediaChooser.prototype.setContainer = function(container) {
@@ -727,27 +701,65 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     MediaChooser.prototype.addMedia = function(media) {
         console.log("%s: %s", MediaChooser.TAG, "addMedia");
 
-        if (typeof media != "undefined")
-            this.media.push(media);
+        if (typeof media === "undefined")
+            return;
+
+        this.media.push(media);
     };
 
-    MediaChooser.prototype.removeMedia = function(id) {
+    MediaChooser.prototype.removeMedia = function(mediaId) {
         console.log("%s: %s", MediaChooser.TAG, "removeMedia");
 
         for (var m in this.media) {
             var media = this.media[m];
-            if (media.id == id) {
+            if (media.id == mediaId) {
                 this.media.splice(m, 1);
                 break;
             }
         }
     };
 
-    MediaChooser.prototype.setMedia = function(media) {
+    MediaChooser.prototype.setMedia = function(mediaIds) {
         console.log("%s: %s", MediaChooser.TAG, "setMedia");
 
-        if (typeof media != "undefined")
-            this.media = media;
+        if (typeof mediaIds === "undefined")
+            return;
+
+        //TODO chooser form should be hidden (or replaced by a loader) until this completes
+        if (mediaIds.length > 0) {
+            this.bindBlocked = true;
+
+            $.ajax({
+                url: Routing.generate("imdc_myfiles_get_info"),
+                data: {mediaIds: mediaIds},
+                type: 'POST',
+                success: (function(data, textStatus, jqXHR) {
+                    //console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
+
+                    this.media = data.media;
+                    if (this.isFileSelection) {
+                        $.each(this.media, (function(index, element) {
+                            this._addSelectedMedia(element);
+                        }).bind(this));
+                    }
+
+                    this.bindBlocked = false;
+                    if (this.bindRequested) {
+                        this.bindUIEvents();
+                    }
+                }).bind(this),
+                error: (function(request) {
+                    //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
+
+                    console.log(request.statusText);
+
+                    this.bindBlocked = false;
+                    if (this.bindRequested) {
+                        this.bindUIEvents();
+                    }
+                }).bind(this)
+            });
+        }
     };
 
     return MediaChooser;

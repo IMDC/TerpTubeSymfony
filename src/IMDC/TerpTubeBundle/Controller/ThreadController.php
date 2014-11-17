@@ -77,7 +77,7 @@ class ThreadController extends Controller
 
         if (!$form->isValid() && !$form->isSubmitted()) {
             if ($isNewFromMedia) {
-                $form->get('mediatextarea')->setData($media);
+                $form->get('mediaIncluded')->setData(array($media));
             }
 
             $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC));
@@ -94,7 +94,7 @@ class ThreadController extends Controller
             $thread->setLastPostAt($currentDateTime);
             $thread->setParentForum($forum);
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
@@ -103,10 +103,15 @@ class ThreadController extends Controller
                 /*if (!$thread->getMediaIncluded()->contains($media)) {
                     $thread->addMediaIncluded($media);
                     $thread->setType($media->getType());
-                }*/
+                }*
                 //FIXME override for now. at some point multiple media may be used
                 $thread->setMediaIncluded($media);
                 $thread->setType($media->getType());
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('mediaIncluded')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             $forum->setLastActivity($currentDateTime);
@@ -139,7 +144,7 @@ class ThreadController extends Controller
         return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
             'form' => $form->createView(),
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
     }
 
@@ -176,7 +181,7 @@ class ThreadController extends Controller
             'form' => $form->createView(),
             'thread' => $thread,
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
     }
 
@@ -211,9 +216,9 @@ class ThreadController extends Controller
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
-            if (count($thread->getMediaIncluded()) > 0) {
+            /*if (count($thread->getMediaIncluded()) > 0) {
                 $form->get('mediatextarea')->setData($thread->getMediaIncluded()->get(0));
-            }
+            }*/
         } else {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');

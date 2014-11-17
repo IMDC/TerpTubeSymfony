@@ -72,16 +72,21 @@ class UserGroupController extends Controller
             $group->addAdmin($user);
             $group->addMember($user);
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
                 /*if (!$group->getMedia()->contains($media))
-                    $group->addMedia($media);*/
+                    $group->addMedia($media);*
                 //FIXME override for now. at some point multiple media may be used
                 $group->setMedia($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('media')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             $user->addUserGroup($group);
@@ -109,7 +114,7 @@ class UserGroupController extends Controller
         return $this->render('IMDCTerpTubeBundle:Group:new.html.twig', array(
             'form' => $form->createView(),
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
     }
 
@@ -194,16 +199,21 @@ class UserGroupController extends Controller
 		if ($form->isValid()) {
             $user = $this->getUser();
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
                 }
 
                 /*if (!$group->getMedia()->contains($media))
-                    $group->addMedia($media);*/
+                    $group->addMedia($media);*
                 //FIXME override for now. at some point multiple media may be used
                 $group->setMedia($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('media')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
 		    $em->persist($group);
@@ -220,7 +230,7 @@ class UserGroupController extends Controller
             'form' => $form->createView(),
             'group' => $group,
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 
@@ -566,6 +576,7 @@ class UserGroupController extends Controller
      * @return FormBuilder
      */
     private function getGenericIdFormBuilder() {
+        //TODO replace with standard form type with user data transformer
         $defaultData = array('users' => new ArrayCollection());
         return $this->createFormBuilder($defaultData)
             ->add('users', 'collection', array(

@@ -70,7 +70,7 @@ class MessageController extends Controller
 			    $em->persist($recipient);
 			}
 
-            $media = $form->get('mediatextarea')->getData();
+            /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
@@ -78,6 +78,11 @@ class MessageController extends Controller
 
                 if (!$message->getAttachedMedia()->contains($media))
                     $message->addAttachedMedia($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('attachedMedia')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             $user->addSentMessage($message);
@@ -96,7 +101,7 @@ class MessageController extends Controller
 		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
             'form' => $form->createView(),
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 
@@ -386,7 +391,7 @@ class MessageController extends Controller
 			    $em->persist($recipient);
 			}
 
-			$media = $form->get('mediatextarea')->getData();
+			/*$media = $form->get('mediatextarea')->getData();
             if ($media) {
                 if (!$user->getResourceFiles()->contains($media)) {
                     throw new AccessDeniedException(); //TODO more appropriate exception?
@@ -394,6 +399,11 @@ class MessageController extends Controller
 
                 if (!$message->getAttachedMedia()->contains($media))
                     $message->addAttachedMedia($media);
+            }*/
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('attachedMedia')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
             $user->addSentMessage($message);
@@ -414,7 +424,7 @@ class MessageController extends Controller
             'message' => $message,
             'isReply' => true,
             //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
         ));
 	}
 }

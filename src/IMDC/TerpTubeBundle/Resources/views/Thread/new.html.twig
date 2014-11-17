@@ -38,7 +38,7 @@
                 {% endif %}
                 <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
                 {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
-                {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
+                {{ form_widget(form.mediaIncluded) }}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
                 {{ form_row(form.accessType) }}

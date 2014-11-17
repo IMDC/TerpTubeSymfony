@@ -42,24 +42,17 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum.prototype.bindUIEvents = function() {
         console.log("%s: %s", Forum.TAG, "bindUIEvents");
 
-        //[{media: {id: this.getFormField("mediatextarea").val()}}]
-
-        var media = new Array();
+        var mediaIds = new Array();
         this.getFormField("titleMedia").children().each(function(index, element) {
-            media.push({
-                id: $(element).val(),
-                title: "",
-                resource: {
-                    pathMPEG: ""
-                }
-            });
+            mediaIds.push($(element).val());
         });
 
-        this.mediaChooser = new MediaChooser({media: media});
+        this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.setMedia(mediaIds);
         this.mediaChooser.bindUIEvents();
 
         this.getForm().find("input:radio").on("change", (function(e) {
@@ -82,17 +75,11 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this._getElement(".forum-submit").on("click", (function(e) {
             e.preventDefault();
 
-            var media = this.getFormField("titleMedia");
-            var count = 0;
-
-            media.html("");
-            $(MediaChooser.Binder.SELECTED_MEDIA).each((function(key, element) {
-                var newMedia = media.data("prototype");
-                newMedia = newMedia.replace(/__name__/g, key);
-                media.append(newMedia);
-                this.getFormField("titleMedia_" + key).val($(element).data("mid"));
-                count++;
-            }).bind(this));
+            this.getFormField("titleMedia").html(
+                this.mediaChooser.generateFormData(
+                    this.getFormField("titleMedia").data("prototype")
+                )
+            );
 
             this.getForm().submit();
         }).bind(this));

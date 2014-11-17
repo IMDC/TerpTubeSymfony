@@ -83,8 +83,8 @@ define(['core/mediaChooser', 'core/mediaManager'], function(MediaChooser, MediaM
             return false;
         }
         this.page = MyFiles.Page.PREVIEW;
-        this.mediaChooser.setMedia({id: $(e.currentTarget).data("val")});
-        this.mediaChooser.previewMedia();
+        //this.mediaChooser.setMedia({id: $(e.currentTarget).data("val")});
+        this.mediaChooser.previewMedia($(e.currentTarget).data("val"));
     };
 
     MyFiles.prototype.onDeleteButtonClick = function(e) {

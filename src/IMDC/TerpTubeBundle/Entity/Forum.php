@@ -362,6 +362,7 @@ class Forum
         return $this->accessType;
     }
 
+    //TODO delete
     /*public function setTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
     {
         $this->titleMedia = new \Doctrine\Common\Collections\ArrayCollection();

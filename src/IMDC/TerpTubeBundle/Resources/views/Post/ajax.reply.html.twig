@@ -11,7 +11,7 @@ TerpTube.Controller.Post
     {{ form_start(form) }}
     {{ form_errors(form) }}
     {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
-    {{ form_widget(form.mediatextarea, {'uploadForm': fileUploadForm}) }}
+    {{ form_widget(form.attachedFile) }}
     {% if form.startTime is defined %}
         {{ form_widget(form.startTime) }}
         {{ form_widget(form.endTime) }}

@@ -456,10 +456,18 @@ class UserGroup extends BaseGroup
         return $this->admins->contains($user);
     }
 
-    public function setMedia(\IMDC\TerpTubeBundle\Entity\Media $media)
+    //TODO delete
+    /*public function setMedia(\IMDC\TerpTubeBundle\Entity\Media $media)
     {
         $this->media = new \Doctrine\Common\Collections\ArrayCollection();
         $this->media[] = $media;
+
+        return $this;
+    }*/
+
+    public function setMedia($media)
+    {
+        $this->media = $media;
 
         return $this;
     }

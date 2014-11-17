@@ -919,4 +919,19 @@ class User extends BaseUser
         
         return $message;
     }
+
+    public function ownsMediaInCollection($mediaCollection)
+    {
+        if (empty($mediaCollection)) {
+            throw new \InvalidArgumentException('$mediaCollection must not be empty.');
+        }
+
+        foreach ($mediaCollection as $media) {
+            if (!$this->getResourceFiles()->contains($media)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

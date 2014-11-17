@@ -10,7 +10,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\AbstractType;
 use IMDC\TerpTubeBundle\Entity\Media;
 
-class VideoResourceFileFormType extends AbstractType
+/**
+ * @deprecated
+ */
+class VideoResourceFileFormType extends AbstractType //TODO delete
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{

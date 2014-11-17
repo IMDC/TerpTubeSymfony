@@ -19,7 +19,7 @@ class ThreadFormType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
         if ($options['canChooseMedia']) {
-            $builder->add('mediatextarea', 'media_chooser');
+            $builder->add('mediaIncluded', 'media_chooser');
         }
 
         if ($options['canChooseForum']) {

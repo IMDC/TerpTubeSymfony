@@ -12,7 +12,7 @@ class PostType extends AbstractType
 	{
         $canTemporal = $options['canTemporal'];
 
-        $builder->add('mediatextarea', 'media_chooser');
+        $builder->add('attachedFile', 'media_chooser');
 
         if ($canTemporal) {
             $builder->add('startTime', 'number', array(

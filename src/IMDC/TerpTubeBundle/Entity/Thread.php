@@ -554,10 +554,18 @@ class Thread {
 		return $this->posts;
 	}
 
-    public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
+    //TODO delete
+    /*public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
     {
         $this->mediaIncluded = new \Doctrine\Common\Collections\ArrayCollection();
         $this->mediaIncluded[] = $mediaIncluded;
+
+        return $this;
+    }*/
+
+    public function setMediaIncluded($mediaIncluded)
+    {
+        $this->mediaIncluded = $mediaIncluded;
 
         return $this;
     }
