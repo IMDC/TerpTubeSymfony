@@ -6,10 +6,8 @@
 
 {% block content %}
     <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-offset-2 col-md-8">
-                <p class="lead">{{ profile.firstName }} {{ profile.middleName }} {{ profile.lastName }}</p>
-            </div>
+        <div style="height:30px;" class="row">
+           <!--  added to seperate the top bar and the content -->
         </div>
         <div class="row">
             <div class="col-md-offset-2 col-md-4">
@@ -21,9 +19,14 @@
                         {% endif %}
                     </div>
                     <div class="col-md-8">
+                         <p class="lead">User Information</p>
                         <div class="table-responsive">
                             <table class="table table-condensed">
                                 <tbody>
+                                    <tr>
+                                        <th>Full Name</th>
+                                        <td>{{ profile.firstName }} {{ profile.middleName }} {{ profile.lastName }}</td>
+                                    </tr>
                                     <tr>
                                         <th>{{ 'profile.show.userName'|trans }}</th>
                                         <td>{{ user.username }}</td>

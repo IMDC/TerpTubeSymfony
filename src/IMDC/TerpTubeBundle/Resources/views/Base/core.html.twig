@@ -48,11 +48,11 @@
         <!--  FOS js routing script -->
         <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
         <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
-        
+
         <!-- JS Translator bundle -->
         <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
         <script src="{{ url('bazinga_jstranslation_js', { 'domain': 'IMDCTerpTubeBundle' }) }}"></script>
-
+        
         {% block header %}
             <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube.css') }}">
@@ -94,7 +94,7 @@
                                         <span class="icon-bar"></span>
                                     </button>
                                     <a href="{{ path('imdc_home_user_home') }}" title="{{ 'nav.terptube_home' | trans  }}">
-                                        <img class="img-responsive center-block tt-navbar-logo" src="{{ asset('bundles/imdcterptube/img/tt_logo_68wx51h.png') }}">
+                                        <img class="img-responsive center-block tt-navbar-logo" src="{{ asset('bundles/imdcterptube/img/logo_inverse.png') }}">
                                     </a>
                                 </div>
                             </div>
