@@ -29,8 +29,9 @@ define({
         { browserName: 'chrome', version: '34', platform: [ 'OS X 10.9', 'Windows 7', 'Linux' ] },
         { browserName: 'safari', version: '6', platform: 'OS X 10.8' },
         { browserName: 'safari', version: '7', platform: 'OS X 10.9' }*/
-		//{ browserName: 'firefox' },
-        { browserName: 'chrome' }
+		{ browserName: 'firefox' }
+        //{ browserName: 'chrome' }
+        //{ browserName: 'internet explorer' }
 	],
 
 	// Maximum number of simultaneous integration tests that should be executed on the remote WebDriver service
@@ -62,7 +63,10 @@ define({
 
 	// Functional test suite(s) to run in each browser once non-functional tests are completed
     //functionalSuites: [ /* 'myPackage/tests/functional' */ ],
-	functionalSuites: [ 'app/tests/core/mediaChooser' ],
+	functionalSuites: [
+        'app/tests/controller/forum',
+        //'app/tests/controller/post'
+    ],
 
 	// A regular expression matching URLs to files that should not be included in code coverage analysis
 	excludeInstrumentation: /^(?:tests|node_modules)\//

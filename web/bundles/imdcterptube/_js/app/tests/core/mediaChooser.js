@@ -32,7 +32,7 @@ define([
         },
 
         'threadReply': function() {
-            this.timeout = pageLoadTimeout * 3;
+            this.timeout = pageLoadTimeout * 4;
 
             var remote = this.remote;
             var moveIntoView = function(element) {
@@ -73,13 +73,22 @@ define([
                 .click()
                 .end()
                 .end()
-                .then(pollUntil(function() {
-                    return window.ready;
-                }))
-                .getPageTitle()
+                .sleep(pageLoadTimeout)
+                .findAllByCssSelector('.post-container-view > div:nth-child(2)')
+                .then(function(elements, setContext) {
+                    setContext(elements.slice(-1)[0]);
+                })
+                .findAllByCssSelector('[src^="/uploads/media/"]')
+                .then(function(elements) {
+                    assert.strictEqual(elements.length, 1,
+                        'post media not found');
+                })
+                .end()
+                .findByCssSelector('div:nth-child(2) > p')
+                .getVisibleText()
                 .then(function(text) {
-                    assert.strictEqual(text, 'test:threadReply | TerpTube',
-                        'title does not match');
+                    assert.strictEqual(text, 'test:threadReply',
+                        'post content not found');
                 });
         }
     });
