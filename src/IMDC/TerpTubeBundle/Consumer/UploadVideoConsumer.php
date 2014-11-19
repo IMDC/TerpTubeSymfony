@@ -15,73 +15,72 @@ use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 
-class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
+class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
+{
 	private $logger;
 	private $doctrine;
 	private $ffprobe;
 	private $transcoder;
 	private $fs;
-	
-	public function __construct($logger, $doctrine, $transcoder) {
+	public function __construct($logger, $doctrine, $transcoder)
+	{
 		$this->logger = $logger;
 		$this->doctrine = $doctrine;
 		$this->transcoder = $transcoder;
 		$this->ffprobe = FFProbe::create ();
-		$this->fs = new Filesystem();
+		$this->fs = new Filesystem ();
 	}
-	
 	public function checkForPendingOperations($mediaId)
 	{
 		$em = $this->doctrine->getManager ();
 		$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
-		if ($media->getPendingOperations()!=null && count($media->getPendingOperations()) > 0 )
+		if ($media->getPendingOperations () != null && count ( $media->getPendingOperations () ) > 0)
 			return true;
-		else 
+		else
 			return false;
 	}
-	
 	public function executePendingOperations($mediaId)
 	{
 		$em = $this->doctrine->getManager ();
 		$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
-		$pendingOperations = $media->getPendingOperations();
-		foreach ($pendingOperations as $pendingOperation)
+		$pendingOperations = $media->getPendingOperations ();
+		foreach ( $pendingOperations as $pendingOperation )
 		{
-			$operation = explode(",",$pendingOperation);
-			$operationType = $operation[0];
+			$operation = explode ( ",", $pendingOperation );
+			$operationType = $operation [0];
 			if ($operationType == "trim")
 			{
-				$operationMediaType = $operation[1];
+				$operationMediaType = $operation [1];
 				$resource = $media->getResource ();
 				if ($operationMediaType == "mp4")
 				{
-					$inputFile = $resource->getAbsolutePath();
+					$inputFile = $resource->getAbsolutePath ();
 				}
 				else if ($operationMediaType == "webm")
 				{
-					$inputFile = $resource->getAbsolutePathWebm();
+					$inputFile = $resource->getAbsolutePathWebm ();
 				}
-				$startTime = $operation[2];
-				$endTime = $operation[3];
+				$startTime = $operation [2];
+				$endTime = $operation [3];
 				$this->transcoder->trimVideo ( $inputFile, $startTime, $endTime );
-				$this->logger->info ( "Transcoding operation ".$pendingOperation." completed!" );
+				$this->logger->info ( "Transcoding operation " . $pendingOperation . " completed!" );
 			}
-			else 
+			else
 			{
-				$this->logger->error ( "Unknown operation ".$pendingOperation."!" );
+				$this->logger->error ( "Unknown operation " . $pendingOperation . "!" );
 			}
-			
 		}
-		//FIXME may have a race condition if pending operations are updated elsewhere
-		$pendingOperations = array();
-		$media->setPendingOperations($pendingOperations);
-		$em->flush();
+		// FIXME may have a race condition if pending operations are updated elsewhere
+		$pendingOperations = array ();
+		$media->setPendingOperations ( $pendingOperations );
+		$em->flush ();
 	}
-	
-	public function execute(AMQPMessage $msg) {
+	public function execute(AMQPMessage $msg)
+	{
 		// Process video upload.
 		// $msg will be an instance of `PhpAmqpLib\Message\AMQPMessage` with the $msg->body being the data sent over RabbitMQ.
-		try {
+		try
+		{
 			$message = unserialize ( $msg->body );
 			$mediaId = $message ['media_id'];
 			$em = $this->doctrine->getManager ();
@@ -90,9 +89,9 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			 * @var $media IMDC\TerpTubeBundle\Entity\Media
 			 */
 			$media = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->find ( $mediaId );
-			if (empty($media))
+			if (empty ( $media ))
 			{
-				//Can happen if media is deleted before transcoding can be executed
+				// Can happen if media is deleted before transcoding can be executed
 				$this->logger->info ( "Media with ID=$mediaId does not exist and cannot be transcoded!" );
 				return true;
 			}
@@ -103,25 +102,29 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			// Grab the width/height first to convert to the nearest standard resolution.
 			
 			$transcodingType = $media->getIsReady ();
-			if ($transcodingType == Media::READY_NO) {
+			if ($transcodingType == Media::READY_NO)
+			{
 				$this->logger->info ( "Transcoding " . $resourceFile->getRealPath () );
 				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video' );
 				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video' );
-			} else if ($transcodingType == Media::READY_MPEG) {
+			}
+			else if ($transcodingType == Media::READY_MPEG)
+			{
 				$this->logger->info ( "Transcoding " . $resourceFile->getRealPath () );
 				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video' );
 				$mp4File = $resourceFile;
-			} else if ($transcodingType == Media::READY_WEBM) {
+			}
+			else if ($transcodingType == Media::READY_WEBM)
+			{
 				$this->logger->info ( "Transcoding " . $resourceFile->getRealPath () );
 				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video' );
 				$webmFile = $resourceFile;
 			}
-			else 
+			else
 			{
-				//Already Transcoded should not be here
+				// Already Transcoded should not be here
 				$this->logger->error ( "Should not be in this place of transcoding when everything is already completed!" );
-				$webmFile = $resourceFile;
-				$mp4File = $resourceFile;
+				return true;
 			}
 			// Create a thumbnail
 			
@@ -130,22 +133,11 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			
 			if ($this->ffprobe->format ( $webmFile->getRealPath () )->has ( 'duration' ))
 				$videoDuration = $this->ffprobe->format ( $webmFile->getRealPath () )->get ( 'duration' );
-			else 
+			else
 				$videoDuration = 0;
 			
 			$mp4DestinationFile = $resource->getUploadRootDir () . '/' . $resource->getId () . '.mp4';
 			
-			// Why is this check here
-			if (file_exists ( $mp4DestinationFile )) {
-				if ($this->ffprobe->format ( $mp4DestinationFile )->has ( 'duration' ))
-					$destinationVideoDuration = $this->ffprobe->format ( $mp4DestinationFile )->get ( 'duration' );
-				else
-					$destinationVideoDuration = 0;
-				if ($videoDuration > $destinationVideoDuration) {
-					$mp4File = new File ( $mp4DestinationFile );
-					$videoDuration = $destinationVideoDuration;
-				}
-			}
 			$fileSize = filesize ( $webmFile->getRealPath () );
 			$metaData->setWidth ( $videoWidth );
 			$metaData->setHeight ( $videoHeight );
@@ -160,26 +152,37 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			
 			try
 			{
-			    // Get a thumbnail
-			    $thumbnailTempFile = $this->transcoder->createThumbnail(
-			            $media->getResource()
-			            ->getAbsolutePath(), $media->getType());
-			    $thumbnailFile = $media->getThumbnailRootDir() . "/" . $media->getResource()->getId() . ".png";
-			    $this->fs->rename($thumbnailTempFile, $thumbnailFile, true);
-			    $media->setThumbnailPath($media->getResource()->getId() . ".png");
+				// Get a thumbnail
+				$thumbnailTempFile = $this->transcoder->createThumbnail ( $media->getResource ()->getAbsolutePath (), $media->getType () );
+				$thumbnailFile = $media->getThumbnailRootDir () . "/" . $media->getResource ()->getId () . ".png";
+				$this->fs->rename ( $thumbnailTempFile, $thumbnailFile, true );
+				$media->setThumbnailPath ( $media->getResource ()->getId () . ".png" );
 			}
-			catch (IOException $e)
+			catch ( IOException $e )
 			{
-			    $this->logger->error($e->getTraceAsString());
+				$this->logger->error ( $e->getTraceAsString () );
 			}
 			
 			if ($resourceFile->getRealPath () != $mp4File->getRealPath () && $resourceFile->getRealPath () != $webmFile->getRealPath ())
 				unlink ( $resourceFile->getRealPath () );
 			$fs = new Filesystem ();
-			if ($resourceFile->getRealPath () != $webmFile->getRealPath ())
-				$fs->rename ( $webmFile, $resource->getUploadRootDir () . '/' . $resource->getId () . '.webm' );
-			if ($resourceFile->getRealPath () != $mp4File->getRealPath ())
-				$fs->rename ( $mp4File, $resource->getUploadRootDir () . '/' . $resource->getId () . '.mp4' );
+			if ($transcodingType == Media::READY_NO)
+			{
+				$this->logger->info ( "Resource webm does not exist" );
+				$fs->rename ( $webmFile, $resource->getUploadRootDir () . '/' . $resource->getId () . '.webm', true );
+				$this->logger->info ( "Resource mp4 does not exist" );
+				$fs->rename ( $mp4File, $resource->getUploadRootDir () . '/' . $resource->getId () . '.mp4', true );
+			}
+			else if ($transcodingType == Media::READY_MPEG)
+			{
+				$this->logger->info ( "Resource webm does not exist" );
+				$fs->rename ( $webmFile, $resource->getUploadRootDir () . '/' . $resource->getId () . '.webm', true );
+			}
+			else if ($transcodingType == Media::READY_WEBM)
+			{
+				$this->logger->info ( "Resource mp4 does not exist" );
+				$fs->rename ( $mp4File, $resource->getUploadRootDir () . '/' . $resource->getId () . '.mp4', true );
+			}
 			
 			$resource->setPath ( 'mp4' );
 			$resource->setWebmExtension ( 'webm' );
@@ -187,13 +190,15 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface {
 			
 			$em->flush ();
 			
-			if ($this->checkForPendingOperations($mediaId))
+			if ($this->checkForPendingOperations ( $mediaId ))
 			{
-				$this->executePendingOperations($mediaId);
+				$this->executePendingOperations ( $mediaId );
 			}
 			
 			$this->logger->info ( "Transcoding complete!" );
-		} catch ( Exception $e ) {
+		}
+		catch ( Exception $e )
+		{
 			$this->logger->error ( $e->getTraceAsString () );
 			return false;
 		}

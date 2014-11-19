@@ -32,8 +32,8 @@ class X264VideoVGAPreset extends BasePreset
                         
                         // '-vf' => 'scale=iw*min($width/iw\,$height/ih):ih*min($width/iw\,$height/ih),
                         // pad=$width:$height:($width-iw*min($width/iw\,$height/ih))/2:($height-ih*min($width/iw\,$height/ih))/2',
-                        // '-vf' => "scale=iw*min($width/iw\,$height/ih):ih*min($width/iw\,$height/ih)",
-                        '-vf' => "scale=-1:$height, scale=trunc(in_w/2)*2:trunc(in_h/2)*2",
+                        '-vf' => "scale=iw*min($width/iw\,$height/ih):ih*min($width/iw\,$height/ih), scale=trunc(in_w/2)*2:trunc(in_h/2)*2",
+//                         '-vf' => "scale=-1:$height, scale=trunc(in_w/2)*2:trunc(in_h/2)*2",
                         '-strict' => 'experimental',
                         '-maxrate' => '500k',
                         '-cutoff' => '15000',
