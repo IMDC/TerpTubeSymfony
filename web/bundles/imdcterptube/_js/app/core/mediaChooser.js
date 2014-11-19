@@ -28,8 +28,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.player = null;
         this.mediaManager = new MediaManager();
         this.wasRecording = false;
-        this.bindBlocked = false;
-        this.bindRequested = false;
+        //this.bindBlocked = false;
+        //this.bindRequested = false;
 
         this.bind__onLoadPageSuccess = this._onLoadPageSuccess.bind(this);
         this.bind__onRecordingSuccess = this._onRecordingSuccess.bind(this);
@@ -78,7 +78,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         CONTAINER_SELECTED: ".mediachooser-container-selected",
         SELECTED: ".mediachooser-selected",
         SELECTED_MEDIA: ".mediachooser-selected-media",
-        REMOVE: ".mediachooser-remove"
+        REMOVE: ".mediachooser-remove",
+        WORKING: ".mediachooser-working"
     };
 
     // this must be the same name defined in {bundle}/Form/Type/MediaType
@@ -118,11 +119,11 @@ define([ 'core/mediaManager' ], function(MediaManager) {
     MediaChooser.prototype.bindUIEvents = function() {
         console.log("%s: %s", MediaChooser.TAG, "bindUIEvents");
 
-        if (this.bindBlocked) {
+        /*if (this.bindBlocked) {
             console.log("%s: %s- bindBlocked=true", MediaChooser.TAG, "bindUIEvents");
             this.bindRequested = true;
             return;
-        }
+        }*/
 
         this.modalDialog = this._getElement(MediaChooser.Binder.MODAL_DIALOG).modal({show: false});
         this.modalDialog.on("hidden.bs.modal", this.bind__terminatingFunction);
@@ -676,6 +677,12 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         $(this).trigger($.Event(MediaChooser.Event.RESET, {}));
     };
 
+    MediaChooser.prototype._toggleForm = function(disabled) {
+        this._getElement(MediaChooser.Binder.RECORD_VIDEO).attr('disabled', disabled);
+        this._getElement(MediaChooser.Binder.UPLOAD_FILE).attr('disabled', disabled);
+        this._getElement(MediaChooser.Binder.SELECT).attr('disabled', disabled);
+    };
+
     MediaChooser.prototype.generateFormData = function(prototype) {
         var media = "";
 
@@ -722,9 +729,12 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         if (typeof mediaIds === "undefined")
             return;
 
-        //TODO chooser form should be hidden (or replaced by a loader) until this completes
         if (mediaIds.length > 0) {
-            this.bindBlocked = true;
+            //this.bindBlocked = true;
+
+            this._toggleForm(true);
+            this._getElement(MediaChooser.Binder.WORKING).show();
+            this._getElement(MediaChooser.Binder.SELECTED_MEDIA).html("");
 
             $.ajax({
                 url: Routing.generate("imdc_myfiles_get_info"),
@@ -740,20 +750,28 @@ define([ 'core/mediaManager' ], function(MediaManager) {
                         }).bind(this));
                     }
 
-                    this.bindBlocked = false;
+                    this._getElement(MediaChooser.Binder.WORKING).hide();
+                    this._toggleForm(false);
+
+                    /*this.bindBlocked = false;
                     if (this.bindRequested) {
                         this.bindUIEvents();
-                    }
+                    }*/
+
+                    $(this).trigger($.Event(MediaChooser.Event.SUCCESS, {}));
                 }).bind(this),
                 error: (function(request) {
                     //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
 
                     console.log(request.statusText);
 
-                    this.bindBlocked = false;
+                    this._getElement(MediaChooser.Binder.WORKING).hide();
+                    this._toggleForm(false);
+
+                    /*this.bindBlocked = false;
                     if (this.bindRequested) {
                         this.bindUIEvents();
-                    }
+                    }*/
                 }).bind(this)
             });
         }

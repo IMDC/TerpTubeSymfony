@@ -12,27 +12,20 @@ define([
         },
 
         'new': function() {
-            this.timeout = _common.PAGE_LOAD_TIMEOUT * 4;
+            this.timeout = _common.PAGE_LOAD_TIMEOUT;
 
             return this.remote
                 .setPageLoadTimeout(_common.PAGE_LOAD_TIMEOUT)
                 .get(require.toUrl(_common.BASE_URL + '/thread/2'))
                 .getPageTitle()
                 .then(function (text) {
-                    assert.strictEqual(text, 'testing testing | TerpTube',
-                        'title does not match');
+                    assert.match(text, /^testing testing/,
+                        'title matches');
                 })
-                .execute(function() {
-                    $.fx.off = true;
-                    $('.modal.fade').removeClass('fade');
-                    $('.tt-navbar-bottom').remove();
-                    $('.sf-toolbar').remove();
-                })
-                .findByCssSelector('.post-container[data-pid="-1"]')
+                .execute(_common.stripUI)
+                .findByCssSelector('.post-container[data-pid="-1"] .mediachooser-select')
                 .then(_common.moveIntoView(this.remote))
-                    .findByCssSelector('.mediachooser-select')
-                        .click()
-                    .end()
+                    .click()
                 .end()
                 .setFindTimeout(_common.PAGE_LOAD_TIMEOUT)
                 .findByCssSelector('.mediachooser-container-select .select-button')
@@ -45,27 +38,28 @@ define([
                         .click()
                         .type('test:new')
                     .end()
-                    .findByCssSelector('.post-submit')
+                    /*.findByCssSelector('.post-submit')
                         .click()
-                    .end()
+                    .end()*/
+                .submit()
                 .end()
-                .sleep(_common.PAGE_LOAD_TIMEOUT)
-                .findAllByCssSelector('.post-container-view > div:nth-child(2)')
+                //.sleep(_common.PAGE_LOAD_TIMEOUT)
+                .findAllByCssSelector('.post-container-view')
                 .then(function(elements, setContext) {
                     setContext(elements.slice(-1)[0]);
                 })
                     .findAllByCssSelector('[src^="/uploads/media/"]')
                     .then(function(elements) {
                         assert.strictEqual(elements.length, 1,
-                            'post media not found');
+                            'media count is strictly equal');
                     })
-                .end()
-                .findByCssSelector('div:nth-child(2) > p')
-                .getVisibleText()
-                .then(function(text) {
-                    assert.strictEqual(text, 'test:new',
-                        'post content not found');
-                });
+                    .end()
+                    .findByCssSelector('p')
+                    .getVisibleText()
+                    .then(function(text) {
+                        assert.strictEqual(text, 'test:new',
+                            'content is strictly equal');
+                    });
         }
     });
 });

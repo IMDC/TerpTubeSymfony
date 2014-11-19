@@ -87,10 +87,13 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
 
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
-        this.mediaChooser.setMedia(mediaIds);
+        if (mediaIds.length > 0) {
+            this._getElement(Thread.Binder.SUBMIT).attr("disabled", true);
+            this.mediaChooser.setMedia(mediaIds);
+        }
         this.mediaChooser.bindUIEvents();
 
         this.getFormField("permissions_usersWithAccess").tagit(this.tagitOptions);
@@ -111,7 +114,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
 
         $("#permissionRadioButtons").trigger("click");
 
-        this._getElement(Thread.Binder.SUBMIT).on("click", (function(e) {
+        /*this._getElement(Thread.Binder.SUBMIT).on("click", (function(e) {
             e.preventDefault();
 
             var formField = this.getFormField("mediaIncluded");
@@ -122,7 +125,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             );
 
             this.getForm().submit();
-        }).bind(this));
+        }).bind(this));*/
     };
 
     Thread.prototype._bindUIEventsView = function() {
@@ -574,7 +577,16 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     };
 
     Thread.prototype._onSuccess = function(e) {
-        this.getFormField("mediatextarea").val(e.media.id);
+        //this.getFormField("mediatextarea").val(e.media.id);
+
+        this._getElement(Thread.Binder.SUBMIT).attr("disabled", false);
+
+        var formField = this.getFormField("mediaIncluded");
+        formField.html(
+            this.mediaChooser.generateFormData(
+                formField.data("prototype")
+            )
+        );
     };
 
     Thread.prototype._onReset = function(e) {

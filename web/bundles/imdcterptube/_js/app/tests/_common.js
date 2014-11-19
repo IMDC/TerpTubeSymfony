@@ -26,7 +26,7 @@ define([
             .getPageTitle()
             .then(function(text) {
                 assert.strictEqual(text, 'Home | TerpTube',
-                    'title does not match');
+                    'title is strictly equal');
             });
     };
 
@@ -34,6 +34,13 @@ define([
         return function(element) {
             remote.moveMouseTo(element);
         };
+    };
+
+    _Common.stripUI = function() {
+        $.fx.off = true;
+        $('.modal.fade').removeClass('fade');
+        $('.tt-navbar-bottom').remove();
+        $('.sf-toolbar').remove();
     };
 
     return _Common;

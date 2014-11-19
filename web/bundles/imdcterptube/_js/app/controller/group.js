@@ -82,13 +82,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
-        this.mediaChooser.setMedia(mediaIds);
+        if (mediaIds.length > 0) {
+            this._getElement(Group.Binder.SUBMIT).attr("disabled", true);
+            this.mediaChooser.setMedia(mediaIds);
+        }
         this.mediaChooser.bindUIEvents();
 
-        this._getElement(Group.Binder.SUBMIT).on("click", (function(e) {
+        /*this._getElement(Group.Binder.SUBMIT).on("click", (function(e) {
             e.preventDefault();
 
             var formField = this.getFormField("media");
@@ -99,7 +102,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             );
 
             this.getForm().submit();
-        }).bind(this));
+        }).bind(this));*/
     };
 
     Group.prototype._bindUIEventsAddMembers = function() {
@@ -199,7 +202,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Group.prototype._onSuccess = function(e) {
-        this.getFormField("mediatextarea").val(e.media.id);
+        //this.getFormField("mediatextarea").val(e.media.id);
+
+        this._getElement(Group.Binder.SUBMIT).attr("disabled", false);
+
+        var formField = this.getFormField("media");
+        formField.html(
+            this.mediaChooser.generateFormData(
+                formField.data("prototype")
+            )
+        );
     };
 
     Group.prototype._onReset = function(e) {

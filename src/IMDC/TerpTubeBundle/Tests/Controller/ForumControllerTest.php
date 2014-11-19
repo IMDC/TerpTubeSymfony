@@ -37,11 +37,11 @@ class ForumControllerTest extends WebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
         $form = $crawler->filter('button:contains("Create")')->eq(0)->form(array(
-            'ForumForm[titleText]' => 'testNew'
+            'ForumForm[titleText]' => 'test:new'
         ));
 
         $values = $form->getPhpValues();
-        $values['ForumForm']['titleMedia'] = array(8, 1);
+        $values['ForumForm']['titleMedia'] = array(1);
 
         //$this->client->submit($form);
         $this->client->request($form->getMethod(), $form->getUri(), $values);
@@ -52,8 +52,8 @@ class ForumControllerTest extends WebTestCase
 
         //echo $this->client->getResponse()->getContent(); die;
 
-        $this->assertGreaterThan(0, $crawler->filter('[src^="/uploads/media/1."]')->count());
-        $this->assertCount(1, $crawler->filter('title:contains("testNew")'));
+        $this->assertCount(1, $crawler->filter('title:contains("test:new")'));
+        $this->assertCount(1, $crawler->filter('body > div.container-fluid > div:nth-child(2) > div > div > div.col-lg-offset-1.col-lg-11 > div > div > div:nth-child(2) > div:nth-child(2) [src^="/uploads/media/"]'));
     }
 
     public function testEdit()
@@ -63,7 +63,7 @@ class ForumControllerTest extends WebTestCase
         $this->assertTrue($this->client->getResponse()->isSuccessful());
 
         $form = $crawler->filter('button:contains("Save")')->eq(0)->form(array(
-            'ForumForm[titleText]' => 'testEdit'
+            'ForumForm[titleText]' => 'test:edit'
         ));
 
         $values = $form->getPhpValues();
@@ -78,7 +78,7 @@ class ForumControllerTest extends WebTestCase
 
         //echo $this->client->getResponse()->getContent(); die;
 
-        $this->assertGreaterThan(0, $crawler->filter('[src^="/uploads/media/4."]')->count());
-        $this->assertCount(1, $crawler->filter('title:contains("testEdit")'));
+        $this->assertCount(1, $crawler->filter('title:contains("test:edit")'));
+        $this->assertCount(2, $crawler->filter('body > div.container-fluid > div:nth-child(2) > div > div > div.col-lg-offset-1.col-lg-11 > div > div > div:nth-child(2) > div:nth-child(2) [src^="/uploads/media/"]'));
     }
 }
