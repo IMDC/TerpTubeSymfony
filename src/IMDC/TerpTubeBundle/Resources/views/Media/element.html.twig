@@ -24,7 +24,7 @@ _Thread:thumbnail.html.twig
         {% endblock mediaimagetype %}
     {% elseif mediaFile.type == 1 %}
         {% block mediavideotype %}
-            <video class="tt-media-video" id="{{ mediaFile.getID }}" {% if enableControls %}controls{% endif %} preload="auto">
+            <video class="tt-media-video" id="{{ mediaFile.getID }}" {% if enableControls %}controls{% endif %} poster="{{ asset(mediaFile.getThumbnailPath) }}" preload="metadata">
                 <source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}" />
                 <source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
             </video>
