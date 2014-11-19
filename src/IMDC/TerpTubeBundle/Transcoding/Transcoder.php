@@ -134,7 +134,7 @@ class Transcoder {
 					"-ss",
 					$thumbnailTime,
 					"-filter:v",
-					"scale=80:-1",
+					"scale=-1:".Media::THUMBNAIL_HEIGHT,
 					"-vframes",
 					"1",
 					$outputFile
@@ -146,7 +146,7 @@ class Transcoder {
 					"-i",
 					$mediaFilePath,
 					"-filter:v",
-					"scale=80:-1",
+					"scale=-1:".Media::THUMBNAIL_HEIGHT,
 					"-vframes",
 					"1",
 					$outputFile

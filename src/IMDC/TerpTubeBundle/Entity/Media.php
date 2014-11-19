@@ -26,6 +26,8 @@ class Media
     const READY_MPEG = 2;
 
     const READY_YES = 3;
+    
+    const THUMBNAIL_HEIGHT = 240;
 
     /**
      *
