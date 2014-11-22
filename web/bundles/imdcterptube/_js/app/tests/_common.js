@@ -26,7 +26,7 @@ define([
             .getPageTitle()
             .then(function(text) {
                 assert.strictEqual(text, 'Home | TerpTube',
-                    'title is strictly equal');
+                    'title should be strictly equal');
             });
     };
 

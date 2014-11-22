@@ -18,10 +18,6 @@ class ThreadFormType extends AbstractType
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-        if ($options['canChooseMedia']) {
-            $builder->add('mediaIncluded', 'media_chooser');
-        }
-
         if ($options['canChooseForum']) {
             $user = $options['user'];
             $em = $options['em'];
@@ -38,12 +34,15 @@ class ThreadFormType extends AbstractType
                 'choices' => $forums,
                 'empty_value' => 'Choose a Forum',
                 'label' => 'Forum',
-                'mapped' => false,
-                'required' => true
+                'mapped' => false
             ));
         }
 
-	    $builder->add('title', 'text', array(
+        if ($options['canChooseMedia']) {
+            $builder->add('mediaIncluded', 'media_chooser');
+        }
+
+        $builder->add('title', 'text', array(
             'label' => 'Text Title'
         ));
 

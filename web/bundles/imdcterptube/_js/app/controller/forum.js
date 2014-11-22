@@ -46,21 +46,21 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum.prototype.bindUIEvents = function() {
         console.log("%s: %s", Forum.TAG, "bindUIEvents");
 
-        var mediaIds = new Array();
-        this.getFormField("titleMedia").children().each(function(index, element) {
-            mediaIds.push($(element).val());
-        });
-
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.bindUIEvents();
+
+        var mediaIds = [];
+        this.getFormField("titleMedia").children().each(function(index, element) {
+            mediaIds.push($(element).val());
+        });
         if (mediaIds.length > 0) {
             this._getElement(Forum.Binder.SUBMIT).attr("disabled", true);
             this.mediaChooser.setMedia(mediaIds);
         }
-        this.mediaChooser.bindUIEvents();
 
         this.getForm().find("input:radio").on("change", (function(e) {
             var group = this.getFormField("group");
@@ -68,29 +68,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
             if ($(e.target).attr("id") == this.getForm().find("input:radio[value=6]").attr("id")) {
                 parent.find("label").addClass("required");
-                group.attr("required", "required")
+                group.attr("required", true);
                 parent.children().show();
             } else {
                 parent.find("label").removeClass("required");
-                group.removeAttr("required");
+                group.attr("required", false);
                 parent.children().hide();
             }
         }).bind(this));
 
         this.getForm().find("input:radio:checked").trigger("change");
-
-        /*this._getElement(Forum.Binder.SUBMIT).on("click", (function(e) {
-            e.preventDefault();
-
-            var formField = this.getFormField("titleMedia");
-            formField.html(
-                this.mediaChooser.generateFormData(
-                    formField.data("prototype")
-                )
-            );
-
-            this.getForm().submit();
-        }).bind(this));*/
     };
 
     Forum.prototype._onPageLoaded = function(e) {
@@ -109,9 +96,13 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Forum.prototype._onSuccess = function(e) {
-        //this.getFormField("mediatextarea").val(e.media.id);
-
         this._getElement(Forum.Binder.SUBMIT).attr("disabled", false);
+
+        this.getFormField("titleText")
+            .attr("required", false)
+            .parent()
+            .find("label")
+            .removeClass("required");
 
         var formField = this.getFormField("titleMedia");
         formField.html(
@@ -122,7 +113,12 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Forum.prototype._onReset = function(e) {
-        this.getFormField("mediatextarea").val("");
+        if (this.mediaChooser.media.length == 0)
+            this.getFormField("titleText")
+                .attr("required", true)
+                .parent()
+                .find("label")
+                .addClass("required");
     };
 
     return Forum;

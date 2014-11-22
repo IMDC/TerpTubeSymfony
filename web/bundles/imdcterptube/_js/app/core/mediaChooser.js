@@ -41,6 +41,8 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         this.bind__backFunction = this._backFunction.bind(this);
         this.bind__loadSelectFromMyFilesFunction = this._loadSelectFromMyFilesFunction.bind(this);
         this.bind__terminatingFunction = this._terminatingFunction.bind(this);
+
+        this.bind__onClickRemoveSelectedMedia = this._onClickRemoveSelectedMedia.bind(this);
     };
 
     MediaChooser.TAG = "MediaChooser";
@@ -166,12 +168,6 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         }).bind(this));
 
         this._getElement(MediaChooser.Binder.SELECTED).sortable();
-
-        /*this._getElement(MediaChooser.Binder.REMOVE).on("click", (function(e) {
-            e.preventDefault();
-
-            this._invokeReset();
-        }).bind(this));*/
     };
 
     MediaChooser.prototype._bindUIEventsSelectFromMyFiles = function() {
@@ -621,6 +617,16 @@ define([ 'core/mediaManager' ], function(MediaManager) {
         }
     };
 
+    MediaChooser.prototype._onClickRemoveSelectedMedia = function(e) {
+        e.preventDefault();
+
+        var mediaId = $(e.currentTarget).data("mid");
+        this._removeSelectedMedia(mediaId);
+        this.removeMedia(mediaId);
+
+        $(this).trigger($.Event(MediaChooser.Event.RESET, {}));
+    };
+
     MediaChooser.prototype._addSelectedMedia = function(media) {
         var container = this._getElement(MediaChooser.Binder.SELECTED);
         var newSelectedMedia = container.data("prototype");
@@ -631,15 +637,14 @@ define([ 'core/mediaManager' ], function(MediaManager) {
 
         this._getElement(MediaChooser.Binder.SELECTED_MEDIA)
             .filter("[data-mid='" + media.id + "']")
-            .find(MediaChooser.Binder.REMOVE).on("click", (function(e) {
-            e.preventDefault();
+            .find(MediaChooser.Binder.REMOVE)
+            .on("click", this.bind__onClickRemoveSelectedMedia);
+    };
 
-            var mediaId = $(e.currentTarget).data("mid");
-            this._getElement(MediaChooser.Binder.SELECTED_MEDIA)
-                .filter("[data-mid='" + mediaId + "']")
-                .remove();
-            this.removeMedia(mediaId);
-        }).bind(this));
+    MediaChooser.prototype._removeSelectedMedia = function(mediaId) {
+        this._getElement(MediaChooser.Binder.SELECTED_MEDIA)
+            .filter("[data-mid='" + mediaId + "']")
+            .remove();
     };
 
     MediaChooser.prototype._invokeError = function(jqXHR) {

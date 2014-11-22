@@ -18,9 +18,9 @@ define([
                 .setPageLoadTimeout(_common.PAGE_LOAD_TIMEOUT)
                 .get(require.toUrl(_common.BASE_URL + '/forum/new'))
                 .getPageTitle()
-                .then(function (text) {
+                .then(function(text) {
                     assert.match(text, /^Create a new Forum/,
-                        'title matches');
+                        'title should match');
                 })
                 .execute(_common.stripUI)
                 .findByCssSelector('form .mediachooser-select')
@@ -45,14 +45,14 @@ define([
                 .end()
                 //.sleep(_common.PAGE_LOAD_TIMEOUT)
                 .getPageTitle()
-                .then(function (text) {
+                .then(function(text) {
                     assert.match(text, /^test:new/,
-                        'title matches');
+                        'title should match');
                 })
                 .findAllByCssSelector('body > div.container-fluid > div:nth-child(2) > div > div > div.col-lg-offset-1.col-lg-11 > div > div > div:nth-child(2) > div:nth-child(2) [src^="/uploads/media/"]')
                 .then(function(elements) {
                     assert.strictEqual(elements.length, 1,
-                        'media count is strictly equal');
+                        'media count should be strictly equal');
                 })
         },
 
@@ -63,9 +63,9 @@ define([
                 .setPageLoadTimeout(_common.PAGE_LOAD_TIMEOUT)
                 .get(require.toUrl(_common.BASE_URL + '/forum/26/edit'))
                 .getPageTitle()
-                .then(function (text) {
+                .then(function(text) {
                     assert.match(text, /^Edit Forum/,
-                        'title matches');
+                        'title should match');
                 })
                 .execute(_common.stripUI)
                 .sleep(_common.PAGE_LOAD_TIMEOUT)
@@ -101,14 +101,14 @@ define([
                 .end()
                 //.sleep(_common.PAGE_LOAD_TIMEOUT)
                 .getPageTitle()
-                .then(function (text) {
+                .then(function(text) {
                     assert.match(text, /^test:edit/,
-                        'title matches');
+                        'title should match');
                 })
                 .findAllByCssSelector('body > div.container-fluid > div:nth-child(2) > div > div > div.col-lg-offset-1.col-lg-11 > div > div > div:nth-child(2) > div:nth-child(2) [src^="/uploads/media/"]')
                 .then(function(elements) {
                     assert.strictEqual(elements.length, 2,
-                        'media count is strictly equal');
+                        'media count should be strictly equal');
                 })
         }
     });

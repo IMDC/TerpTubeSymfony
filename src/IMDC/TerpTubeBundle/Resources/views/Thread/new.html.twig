@@ -8,12 +8,7 @@
     <script type="text/javascript">
         $(document).ready(function() {
             require(['main'], function() {
-                var thread = new $tt.Controller.Thread({
-                    page: $tt.Controller.Thread.Page.NEW,
-                    tagitOptions: {
-                        showAutocompleteOnFocus: {% if app.user.getFriendsList|length >= 1 %}true{% else %}false{% endif %},
-                        availableTags: [{{ app.user.getFriendsListAsUsernameString|raw }}]}
-                });
+                var thread = new $tt.Controller.Thread({page: $tt.Controller.Thread.Page.NEW});
                 thread.bindUIEvents();
             });
         });

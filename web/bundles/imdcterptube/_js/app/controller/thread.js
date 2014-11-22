@@ -5,7 +5,6 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         console.log("%s: %s- options=%o", Thread.TAG, "constructor", options);
 
         this.page = options.page;
-        this.tagitOptions = options.tagitOptions;
         this.threadId = options.threadId;
         this.posts = new Array();
         this.mediaChooser = null;
@@ -80,52 +79,21 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     Thread.prototype._bindUIEventsNewEdit = function(isEdit) {
         console.log("%s: %s- isEdit=%s", Thread.TAG, "_bindUIEventsNewEdit", isEdit);
 
-        var mediaIds = new Array();
-        this.getFormField("mediaIncluded").children().each(function(index, element) {
-            mediaIds.push($(element).val());
-        });
-
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.bindUIEvents();
+
+        var mediaIds = [];
+        this.getFormField("mediaIncluded").children().each(function(index, element) {
+            mediaIds.push($(element).val());
+        });
         if (mediaIds.length > 0) {
             this._getElement(Thread.Binder.SUBMIT).attr("disabled", true);
             this.mediaChooser.setMedia(mediaIds);
         }
-        this.mediaChooser.bindUIEvents();
-
-        this.getFormField("permissions_usersWithAccess").tagit(this.tagitOptions);
-        $("ul.tagit").hide();
-
-        $("#permissionRadioButtons div.radio").on("click", (function(e) {
-            if (this.getFormField("permissions_accessLevel_2").is(':checked')) { // specific users
-                $("ul.tagit").show();
-                this.getFormField("permissions_userGroupsWithAccess").hide();
-            } else if (this.getFormField("permissions_accessLevel_3").is(':checked')) { // specific groups
-                this.getFormField("permissions_userGroupsWithAccess").show();
-                $("ul.tagit").hide();
-            } else { // hide all
-                this.getFormField("permissions_userGroupsWithAccess").hide();
-                $("ul.tagit").hide();
-            }
-        }).bind(this));
-
-        $("#permissionRadioButtons").trigger("click");
-
-        /*this._getElement(Thread.Binder.SUBMIT).on("click", (function(e) {
-            e.preventDefault();
-
-            var formField = this.getFormField("mediaIncluded");
-            formField.html(
-                this.mediaChooser.generateFormData(
-                    formField.data("prototype")
-                )
-            );
-
-            this.getForm().submit();
-        }).bind(this));*/
     };
 
     Thread.prototype._bindUIEventsView = function() {
@@ -577,9 +545,13 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     };
 
     Thread.prototype._onSuccess = function(e) {
-        //this.getFormField("mediatextarea").val(e.media.id);
-
         this._getElement(Thread.Binder.SUBMIT).attr("disabled", false);
+
+        this.getFormField("title")
+            .attr("required", false)
+            .parent()
+            .find("label")
+            .removeClass("required");
 
         var formField = this.getFormField("mediaIncluded");
         formField.html(
@@ -590,7 +562,12 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     };
 
     Thread.prototype._onReset = function(e) {
-        this.getFormField("mediatextarea").val("");
+        if (this.mediaChooser.media.length == 0)
+            this.getFormField("title")
+                .attr("required", true)
+                .parent()
+                .find("label")
+                .addClass("required");
     };
 
     return Thread;

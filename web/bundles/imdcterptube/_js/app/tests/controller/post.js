@@ -18,9 +18,9 @@ define([
                 .setPageLoadTimeout(_common.PAGE_LOAD_TIMEOUT)
                 .get(require.toUrl(_common.BASE_URL + '/thread/2'))
                 .getPageTitle()
-                .then(function (text) {
+                .then(function(text) {
                     assert.match(text, /^testing testing/,
-                        'title matches');
+                        'title should match');
                 })
                 .execute(_common.stripUI)
                 .findByCssSelector('.post-container[data-pid="-1"] .mediachooser-select')
@@ -51,14 +51,14 @@ define([
                     .findAllByCssSelector('[src^="/uploads/media/"]')
                     .then(function(elements) {
                         assert.strictEqual(elements.length, 1,
-                            'media count is strictly equal');
+                            'media count should be strictly equal');
                     })
                     .end()
                     .findByCssSelector('p')
                     .getVisibleText()
                     .then(function(text) {
                         assert.strictEqual(text, 'test:new',
-                            'content is strictly equal');
+                            'content should be strictly equal');
                     });
         }
     });

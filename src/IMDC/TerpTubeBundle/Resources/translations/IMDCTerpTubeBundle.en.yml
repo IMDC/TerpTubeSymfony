@@ -110,12 +110,12 @@ filesGateway:
     add:
         title: "Select from My Files"
     buttons:
-        upload: "Upload a new file"
+        upload: "Upload a file"
         audio: "Audio"
         video: "Video"
         image: "Image"
         other: "Other"
-        record: "Record a new video"
+        record: "Record a comment"
     type:
         0: "Image"
         1: "Video"

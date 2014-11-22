@@ -64,7 +64,7 @@ define({
 	// Functional test suite(s) to run in each browser once non-functional tests are completed
     //functionalSuites: [ /* 'myPackage/tests/functional' */ ],
 	functionalSuites: [
-        'app/tests/controller/forum',
+        'app/tests/controller/forum'
         //'app/tests/controller/post'
     ],
 

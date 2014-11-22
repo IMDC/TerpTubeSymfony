@@ -29,6 +29,7 @@ IMDC\TerpTubeBundle\Entity\Thread:
         title:
             type: string
             length: '255'
+            nullable: true
         type:
             type: smallint
             nullable: true
