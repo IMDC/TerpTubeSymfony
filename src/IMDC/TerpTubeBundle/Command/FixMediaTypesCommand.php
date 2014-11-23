@@ -25,6 +25,7 @@ class FixMediaTypesCommand extends ContainerAwareCommand
 		
 		$mediaElements = $em->getRepository ( 'IMDCTerpTubeBundle:Media' )->findAll ();
 		$count = 0;
+		$fs = new Filesystem ();
 		foreach ( $mediaElements as $media )
 		{
 			if ($media->getType () == Media::TYPE_IMAGE || $media->getType () == Media::TYPE_OTHER)
@@ -42,16 +43,17 @@ class FixMediaTypesCommand extends ContainerAwareCommand
 				
 				if ($mimeType == 'application/octet-stream')
 				{
-					$process = new Process('file --mime-type ' . escapeshellarg($resourcePath));
-					$process->run();
+					$process = new Process ( 'file --mime-type ' . escapeshellarg ( $resourcePath ) );
+					$process->run ();
 					
 					// executes after the command finishes
-					if (!$process->isSuccessful()) {
-						throw new \RuntimeException($process->getErrorOutput());
+					if (! $process->isSuccessful ())
+					{
+						throw new \RuntimeException ( $process->getErrorOutput () );
 					}
 					
-					$processOutput = $process->getOutput();
-					$mimeType = substr($processOutput, strrpos($processOutput, ":")+2);
+					$processOutput = $process->getOutput ();
+					$mimeType = substr ( $processOutput, strrpos ( $processOutput, ":" ) + 2 );
 				}
 				
 				$output->writeln ( "media id: " . $media->getId () . ". Mime-type is: " . $mimeType );
@@ -63,8 +65,22 @@ class FixMediaTypesCommand extends ContainerAwareCommand
 					$em->flush ();
 				$type = Media::TYPE_VIDEO;
 				$output->writeln ( "It is a wrongfully uploaded video" );
+				
 				$media->setType ( $type );
 				$media->setIsReady ( Media::READY_NO );
+				try
+				{
+					$fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".avi", true );
+					$resource->setPath ( "avi" );
+				}
+				catch ( IOException $e )
+				{
+					$output->writeln ( "ERROR: " . $e->getTraceAsString () );
+				}
+				catch ( ExecutionFailureException $e )
+				{
+					$output->writeln ( "ERROR: " . $e->getTraceAsString () );
+				}
 				
 				$dispatcher = $this->getContainer ()->get ( 'event_dispatcher' );
 				$dispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, new UploadEvent ( $media ) );
