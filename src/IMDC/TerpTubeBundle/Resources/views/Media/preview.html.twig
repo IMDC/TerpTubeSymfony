@@ -5,7 +5,7 @@
         <input type="text" id="mediaPreviewTitle" value="{{ mediaFile.title }}" />
     </div>
 
-    {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'enableControls': false} %}
+    {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'enableControls': false, 'preloadMedia': true} %}
 
     {% block preview %}
     {% endblock preview %}

@@ -105,7 +105,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						{% if thread.mediaIncluded|length != 0 %}
-							{% include 'IMDCTerpTubeBundle:Thread:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
+							{% include 'IMDCTerpTubeBundle:Thread:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0], 'preloadMedia': true} %}
 						{% else %}
 							<div class="lead text-center" style="padding-top: 30px;">No Media</div>
 						{% endif %}
