@@ -1099,7 +1099,7 @@ class MyFilesGatewayController extends Controller
 			$media->setType ( $type );
 			
 			// FFMPEG does not like the .bin extension, therefore rename it to an extension in the appropriate group type which FFMPEG can handle.
-			if ($resourcePath == "bin")
+			if ($media->getResource ()->getPath () == "bin")
 			{
 				// if ($type == Media::TYPE_VIDEO)
 				// {
