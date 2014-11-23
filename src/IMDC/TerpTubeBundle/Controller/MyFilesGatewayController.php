@@ -28,6 +28,7 @@ use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
+use Symfony\Component\Process\Process;
 
 class MyFilesGatewayController extends Controller
 {
