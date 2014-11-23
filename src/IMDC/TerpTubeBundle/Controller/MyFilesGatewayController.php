@@ -1070,6 +1070,7 @@ class MyFilesGatewayController extends Controller
 			// finfo_close($finfo);
 			
 			$mimeType = $uploadedFile->getMimeType ();
+			$resourcePath = $uploadedFile->getRealPath();
 			
 			if ($mimeType == 'application/octet-stream')
 			{
@@ -1098,7 +1099,7 @@ class MyFilesGatewayController extends Controller
 			$media->setType ( $type );
 			
 			// FFMPEG does not like the .bin extension, therefore rename it to an extension in the appropriate group type which FFMPEG can handle.
-			if ($media->getResource ()->getPath () == "bin")
+			if ($resourcePath == "bin")
 			{
 				// if ($type == Media::TYPE_VIDEO)
 				// {
