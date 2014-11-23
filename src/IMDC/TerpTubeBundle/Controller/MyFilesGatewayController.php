@@ -655,6 +655,7 @@ class MyFilesGatewayController extends Controller
 	 *
 	 *
 	 *
+	 *
 	 */
 	public function addAudioAction(Request $request, $url)
 	{ // TODO delete
@@ -750,6 +751,7 @@ class MyFilesGatewayController extends Controller
 	/**
 	 *
 	 * @deprecated
+	 *
 	 *
 	 *
 	 *
@@ -850,6 +852,7 @@ class MyFilesGatewayController extends Controller
 	 *
 	 *
 	 *
+	 *
 	 */
 	public function addImageAction(Request $request, $url)
 	{ // TODO delete
@@ -944,6 +947,7 @@ class MyFilesGatewayController extends Controller
 	/**
 	 *
 	 * @deprecated
+	 *
 	 *
 	 *
 	 *
@@ -1070,7 +1074,8 @@ class MyFilesGatewayController extends Controller
 			// finfo_close($finfo);
 			
 			$mimeType = $uploadedFile->getMimeType ();
-			$resourcePath = $uploadedFile->getRealPath();
+			$resourcePath = $uploadedFile->getRealPath ();
+			$fs = new Filesystem ();
 			
 			if ($mimeType == 'application/octet-stream')
 			{
@@ -1097,33 +1102,43 @@ class MyFilesGatewayController extends Controller
 				$type = Media::TYPE_IMAGE;
 			$this->get ( 'logger' )->info ( 'Mime-Type: ' . $type );
 			$media->setType ( $type );
-			
+			$this->get ( 'logger' )->info ( 'Extension: ' . $uploadedFile->guessExtension () );
+			$this->get ( 'logger' )->info ( 'Client Extension: ' . $uploadedFile->getClientOriginalExtension () );
+			$originalExtension = $uploadedFile->getClientOriginalExtension ();
 			// FFMPEG does not like the .bin extension, therefore rename it to an extension in the appropriate group type which FFMPEG can handle.
-			if ($media->getResource ()->getPath () == "bin")
-			{
-				// if ($type == Media::TYPE_VIDEO)
-				// {
-				// $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".avi", true );
-				// $resource->setPath ( "avi" );
-				// }
-				// else if ($type == Media::TYPE_AUDIO)
-				// {
-				// $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".mp3", true );
-				// $resource->setPath ( "mp3" );
-				// }
-				// else if ($type == Media::TYPE_IMAGE)
-				// {
-				// $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".jpg", true );
-				// $resource->setPath ( "jpg" );
-				// }
-				$fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . "." . $uploadedFile->getClientOriginalExtension (), true );
-				$resource->setPath ( $uploadedFile->getClientOriginalExtension () );
-			}
+// 			if ($uploadedFile->guessExtension () == "bin")
+// 			{
+// 				// if ($type == Media::TYPE_VIDEO)
+// 				// {
+// 				// $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".avi", true );
+// 				// $resource->setPath ( "avi" );
+// 				// }
+// 				// else if ($type == Media::TYPE_AUDIO)
+// 				// {
+// 				// $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".mp3", true );
+// 				// $resource->setPath ( "mp3" );
+// 				// }
+// 				// else if ($type == Media::TYPE_IMAGE)
+// 				// {
+// 				// $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".jpg", true );
+// 				// $resource->setPath ( "jpg" );
+// 				// }
+// 				$fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . "." . $uploadedFile->getClientOriginalExtension (), true );
+// 				$resource->setPath ( $uploadedFile->getClientOriginalExtension () );
+// 			}
 			
 			$user->addResourceFile ( $media );
 			
 			$em->persist ( $media );
 			$em->persist ( $user );
+			$em->flush ();
+			
+			$resourcePath = $media->getResource()->getAbsolutePath();
+			if ($media->getResource()->getPath() == "bin")
+			{
+				$fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . "." . $originalExtension, true );
+				$media->getResource()->setPath ( $originalExtension );
+			}
 			$em->flush ();
 			
 			$dispatcher = $this->get ( 'event_dispatcher' );
@@ -1187,6 +1202,7 @@ class MyFilesGatewayController extends Controller
 	/**
 	 *
 	 * @deprecated
+	 *
 	 *
 	 *
 	 *
