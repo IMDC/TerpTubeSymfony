@@ -11,6 +11,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Alchemy\BinaryDriver\Exception\ExecutionFailureException;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
+use Symfony\Component\Process\Process;
 
 class FixMediaTypesCommand extends ContainerAwareCommand
 {
@@ -41,12 +42,16 @@ class FixMediaTypesCommand extends ContainerAwareCommand
 				
 				if ($mimeType == 'application/octet-stream')
 				{
-					$finfo = finfo_open ( FILEINFO_MIME_TYPE, '/usr/share/file/magic' );
-					if ($finfo)
-					{
-						$mimeType = finfo_file ( $finfo, $resourcePath );
-						finfo_close ( $finfo );
+					$process = new Process('file --mime-type ' . escapeshellarg($resourcePath));
+					$process->run();
+					
+					// executes after the command finishes
+					if (!$process->isSuccessful()) {
+						throw new \RuntimeException($process->getErrorOutput());
 					}
+					
+					$processOutput = $process->getOutput();
+					$mimeType = substr($processOutput, strrpos($processOutput, ":")+2);
 				}
 				
 				$output->writeln ( "media id: " . $media->getId () . ". Mime-type is: " . $mimeType );

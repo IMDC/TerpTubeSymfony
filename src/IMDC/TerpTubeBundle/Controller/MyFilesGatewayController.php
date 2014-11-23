@@ -1117,6 +1117,21 @@ class MyFilesGatewayController extends Controller
 //             finfo_close($finfo);
             
             $mimeType = $uploadedFile->getMimeType();
+            
+            if ($mimeType == 'application/octet-stream')
+            {
+            	$process = new Process('file --mime-type ' . escapeshellarg($resourcePath));
+            	$process->run();
+            		
+            	// executes after the command finishes
+            	if (!$process->isSuccessful()) {
+            		throw new \RuntimeException($process->getErrorOutput());
+            	}
+            		
+            	$processOutput = $process->getOutput();
+            	$mimeType = substr($processOutput, strrpos($processOutput, ":")+2);
+            }
+            
             $this->get('logger')->info('Mime-Type: ' . $mimeType);
             $type = Media::TYPE_OTHER;
             if (preg_match("/^video\/.*/", $mimeType))
