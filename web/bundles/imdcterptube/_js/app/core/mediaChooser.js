@@ -98,6 +98,8 @@ define(['core/mediaManager'], function(MediaManager) {
     MediaChooser.DIALOG_TITLE_RECORD_VIDEO = "Record a new video";
     MediaChooser.DIALOG_TITLE_SELECT = "Select from My Files";
     MediaChooser.DIALOG_TITLE_PREVIEW = "Preview";
+    
+    MediaChooser.MAX_RECORDING_TIME = 720 ; // 12 Minutes
 
     MediaChooser.prototype.getContainer = function() {
         return this.container;
@@ -385,6 +387,7 @@ define(['core/mediaManager'], function(MediaManager) {
             type: Player.DENSITY_BAR_TYPE_RECORDER,
             audioBar: false,
             volumeControl: false,
+            maxRecordingTime : MediaChooser.MAX_RECORDING_TIME,
             recordingSuccessFunction: this.bind__onRecordingSuccess,
             recordingErrorFunction: this.bind__onRecordingError,
             recordingPostURL: Routing.generate('imdc_myfiles_add_recording'),
