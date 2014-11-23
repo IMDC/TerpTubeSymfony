@@ -39,7 +39,7 @@ class FixMediaTypesCommand extends ContainerAwareCommand
 					finfo_close ( $finfo );
 				}
 				
-				if ($mimetype == 'application/octet-stream')
+				if ($mimeType == 'application/octet-stream')
 				{
 					$finfo = finfo_open ( FILEINFO_MIME, '/usr/share/file/magic' );
 					if ($finfo)
