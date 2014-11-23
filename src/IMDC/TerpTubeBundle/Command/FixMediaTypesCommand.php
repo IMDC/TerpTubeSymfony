@@ -28,7 +28,7 @@ class FixMediaTypesCommand extends ContainerAwareCommand
         $count = 0;
         foreach ($mediaElements as $media)
         {
-            if ($media->getType() == Media::TYPE_IMAGE)
+            if ($media->getType() == Media::TYPE_IMAGE || $media->getType() == Media::TYPE_OTHER)
             {
                 $resource = $media->getResource();
                 $resourcePath = $resource->getAbsolutePath();
