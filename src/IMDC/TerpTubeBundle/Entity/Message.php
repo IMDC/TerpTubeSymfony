@@ -259,4 +259,32 @@ class Message
 
         return $this;
     }
+    /**
+     * @var array
+     */
+    private $mediaDisplayOrder;
+
+
+    /**
+     * Set mediaDisplayOrder
+     *
+     * @param array $mediaDisplayOrder
+     * @return Message
+     */
+    public function setMediaDisplayOrder($mediaDisplayOrder)
+    {
+        $this->mediaDisplayOrder = $mediaDisplayOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get mediaDisplayOrder
+     *
+     * @return array 
+     */
+    public function getMediaDisplayOrder()
+    {
+        return $this->mediaDisplayOrder;
+    }
 }

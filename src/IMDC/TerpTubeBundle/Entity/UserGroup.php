@@ -476,4 +476,32 @@ class UserGroup extends BaseGroup
     {
         return $this->getName();
     }
+    /**
+     * @var array
+     */
+    private $mediaDisplayOrder;
+
+
+    /**
+     * Set mediaDisplayOrder
+     *
+     * @param array $mediaDisplayOrder
+     * @return UserGroup
+     */
+    public function setMediaDisplayOrder($mediaDisplayOrder)
+    {
+        $this->mediaDisplayOrder = $mediaDisplayOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get mediaDisplayOrder
+     *
+     * @return array 
+     */
+    public function getMediaDisplayOrder()
+    {
+        return $this->mediaDisplayOrder;
+    }
 }

@@ -16,6 +16,8 @@ IMDC\TerpTubeBundle\Entity\Forum:
             type: datetime
         creationDate:
             type: datetime
+        mediaDisplayOrder:
+            type: array
     manyToOne:
         creator:
             targetEntity: User

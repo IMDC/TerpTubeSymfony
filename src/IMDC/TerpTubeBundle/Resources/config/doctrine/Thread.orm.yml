@@ -36,6 +36,8 @@ IMDC\TerpTubeBundle\Entity\Thread:
         tags:
             type: array
             nullable: true
+        mediaDisplayOrder:
+            type: array
     manyToOne:
         creator:
             targetEntity: User

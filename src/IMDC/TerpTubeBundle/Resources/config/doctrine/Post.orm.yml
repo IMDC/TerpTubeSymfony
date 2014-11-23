@@ -30,6 +30,8 @@ IMDC\TerpTubeBundle\Entity\Post:
             nullable: true
         isTemporal:
             type: boolean
+        mediaDisplayOrder:
+            type: array
     manyToMany: 
         attachedFile:  #many-to-many relationship
             targetEntity: Media

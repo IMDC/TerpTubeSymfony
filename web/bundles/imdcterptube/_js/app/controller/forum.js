@@ -17,7 +17,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum.Page = {
         NEW: 0,
         EDIT: 1,
-        DELETE: 2
+        DELETE: 2,
+        VIEW: 3
     };
 
     Forum.Binder = {
@@ -45,6 +46,20 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
     Forum.prototype.bindUIEvents = function() {
         console.log("%s: %s", Forum.TAG, "bindUIEvents");
+
+        switch (this.page) {
+            case Forum.Page.NEW:
+            case Forum.Page.EDIT:
+                this._bindUIEventsNewEdit();
+                break;
+            case Forum.Page.VIEW:
+                this._bindUIEventsView();
+                break;
+        }
+    };
+
+    Forum.prototype._bindUIEventsNewEdit = function() {
+        console.log("%s: %s", Forum.TAG, "_bindUIEventsNewEdit");
 
         this.mediaChooser = new MediaChooser();
         $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
@@ -78,6 +93,13 @@ define(['core/mediaChooser'], function(MediaChooser) {
         }).bind(this));
 
         this.getForm().find("input:radio:checked").trigger("change");
+    };
+
+    Forum.prototype._bindUIEventsView = function() {
+        console.log("%s: %s", Forum.TAG, "_bindUIEventsView");
+
+        this.gallery = new $tt.Core.Gallery({container: $(".gallery-container")});
+        this.gallery.bindUIEvents();
     };
 
     Forum.prototype._onPageLoaded = function(e) {

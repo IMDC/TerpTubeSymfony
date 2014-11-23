@@ -9,6 +9,7 @@ use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
+use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -127,6 +128,8 @@ class ForumController extends Controller
                 throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
+            $forum->setMediaDisplayOrder($form->get('titleMedia')->getViewData());
+
             $user->addForum($forum);
 
             $em->persist($forum);
@@ -196,6 +199,9 @@ class ForumController extends Controller
 
 	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
 	    	'forum' => $forum,
+            'orderedMedia' => Utils::orderMedia(
+                    $forum->getTitleMedia(),
+                    $forum->getMediaDisplayOrder()),
 	    	'recentThreads' => $recentThreads,
 	    	'threads' => $threads
 	    ));
@@ -237,6 +243,21 @@ class ForumController extends Controller
             /*if (count($forum->getTitleMedia()) > 0) {
                 $form->get('mediatextarea')->setData($forum->getTitleMedia()->get(0));
             }*/
+
+            /*$ordered = array();
+            foreach ($forum->getTitleMedia() as $media) {
+                foreach ($forum->getMediaDisplayOrder() as $index => $mediaId) {
+                    if ($media->getId() == $mediaId) {
+                        $ordered[$index] = $media;
+                    }
+                }
+            }
+            ksort($ordered);*/
+
+            $form->get('titleMedia')->setData(
+                Utils::orderMedia(
+                    $forum->getTitleMedia(),
+                    $forum->getMediaDisplayOrder()));
         } else {
             $forum->setLastActivity(new \DateTime('now'));
 
@@ -256,6 +277,8 @@ class ForumController extends Controller
             if (!$user->ownsMediaInCollection($form->get('titleMedia')->getData())) {
                 throw new AccessDeniedException(); //TODO more appropriate exception?
             }
+
+            $forum->setMediaDisplayOrder($form->get('titleMedia')->getViewData());
 
             if ($forum->getAccessType()->getId() !== AccessType::TYPE_GROUP) {
                 $forum->setGroup(null);

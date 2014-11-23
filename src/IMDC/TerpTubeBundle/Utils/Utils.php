@@ -1,4 +1,5 @@
 <?php
+
 namespace IMDC\TerpTubeBundle\Utils;
 
 class Utils
@@ -44,5 +45,23 @@ class Utils
 		return $iValue;
 	}
 
+    public static function orderMedia($mediaCollection, array $displayOrder)
+    {
+        if (empty($displayOrder)) {
+            return $mediaCollection;
+        }
+
+        $ordered = array();
+        foreach ($mediaCollection as $media) {
+            foreach ($displayOrder as $index => $mediaId) {
+                if ($media->getId() == $mediaId) {
+                    $ordered[$index] = $media;
+                    break;
+                }
+            }
+        }
+        ksort($ordered);
+
+        return $ordered;
+    }
 }
-?>
