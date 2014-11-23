@@ -203,6 +203,9 @@ form:
         null: 'Not set'
         cancel: "Cancel"
         submit: "Submit"
+        
+    upload:
+        maxFileSizeExceeded: 'The file you are trying to upload is too big (%fileSize%). Please select a different file. The maximum allowed upload size is (%maxUploadSize%).' 
     
 profile:
     show:
