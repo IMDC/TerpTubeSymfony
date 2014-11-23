@@ -1112,11 +1112,11 @@ class MyFilesGatewayController extends Controller
             $media->setOwner($user);
             
             //Get Mime Type
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mimeType = finfo_file($finfo, $media->getResource()->getAbsolutePath());
-            finfo_close($finfo);
+//             $finfo = finfo_open(FILEINFO_MIME_TYPE);
+//             $mimeType = finfo_file($finfo, $uploadedFile->getRealPath());
+//             finfo_close($finfo);
             
-//             $mimeType = $uploadedFile->getMimeType();
+            $mimeType = $uploadedFile->getMimeType();
             $this->get('logger')->info('Mime-Type: ' . $mimeType);
             $type = Media::TYPE_OTHER;
             if (preg_match("/^video\/.*/", $mimeType))
