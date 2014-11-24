@@ -18,16 +18,13 @@
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
 {% block content %}
-    <div class="col-md-offset-1 col-md-10">
+    <div class="col-md-12">
         <div class="row">
-            <div class="col-md-6">
-                <a class="btn btn-default" onclick="history.back();"><i class="fa fa-arrow-left"></i> Back</a>
-            </div>
-            <div class="col-md-6 text-right">
+            <div class="col-md-12 text-right">
                 {% if is_granted('EDIT', group) %}
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle group-action" data-toggle="dropdown" data-loading-text="Working...">Action <span class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu">
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
                             <li><a href="{{ path('imdc_group_edit', {'groupId': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a></li>
                             <li><a href="{{ path('imdc_group_delete', {'groupId': group.id}) }}"><i class="fa fa-times"></i> Delete Group</a></li>
                             <li class="divider"></li>
@@ -48,12 +45,13 @@
                 <hr class="tt-separator-top" />
                 {% if nonMembers|length > 0 %}
                     {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': nonMembers, 'isSelection': true} %}
-                    <button class="btn btn-success" id="addSelected" style="margin-bottom: 15px;" data-loading-text="Adding members...">Add Selected</button>
                     {{ knp_pagination_render(nonMembers) }}
+                    <button class="btn btn-success" id="addSelected" data-loading-text="Adding members..."><i class="fa fa-plus"></i> Add Selected</button>
                 {% else %}
                     <p class="text-center" style="margin-bottom: 20px;">No members to add</p>
                 {% endif %}
-                <hr class="tt-separator-bottom" />
+                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
+                <hr class="tt-separator-bottom" style="margin-top: 15px;" />
             </div>
         </div>
     </div>

@@ -25,12 +25,12 @@
         {% if not isMyGroups %}
             <!-- recently created groups -->
             <div class="row">
-                <div class="col-md-offset-1 col-md-10">
+                <div class="col-md-12">
                     <img class="img-responsive center-block" src="" />
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-offset-1 col-md-10">
+                <div class="col-md-12">
                     <hr class="tt-separator-top" />
                     {% if recentGroups|length > 0 %}
                         {% include 'IMDCTerpTubeBundle:Group:thumbnail.html.twig' with {'groups': recentGroups} %}
@@ -43,12 +43,12 @@
         {% endif %}
         <!-- all groups -->
         <div class="row">
-            <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-12">
                 <img class="img-responsive center-block" src="" />
             </div>
         </div>
         <div class="row">
-            <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-12">
                 <hr class="tt-separator-top" />
                 {% if groups|length > 0 %}
                     {% include 'IMDCTerpTubeBundle:Group:thumbnail.html.twig' %}

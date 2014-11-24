@@ -18,7 +18,7 @@
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
 {% block content %}
-    <div class="col-md-offset-1 col-md-10">
+    <div class="col-md-12">
         <div class="row" style="margin-bottom: 20px;">
             <div class="col-md-6">
                 {% if group.openForNewMembers and app.user not in group.members %}
@@ -35,13 +35,13 @@
                     <a class="btn btn-default group-toggle-member-select" href="#" data-toggle="button"><i class="fa fa-wrench"></i> Manage Members</a>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle group-action" data-toggle="dropdown">Action <span class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu">
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
                             <li><a href="{{ path('imdc_group_edit', {'groupId': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a></li>
                             <li><a href="{{ path('imdc_group_delete', {'groupId': group.id}) }}"><i class="fa fa-times"></i> Delete Group</a></li>
                             <li class="divider"></li>
                             <li><a href="{{ path('imdc_forum_new', {'groupId': group.id}) }}"><i class="fa fa-plus"></i> Create Forum</a></li>
                             <li class="divider"></li>
-                            <li><a href="{{ path('imdc_group_add_members', {'groupId': group.id}) }}"><i class="fa fa-plus"></i> Add Members</a></li>
+                            <li><a href="{{ path('imdc_group_add_members', {'groupId': group.id}) }}"><i class="fa fa-check"></i> Add Members</a></li>
                             <li class="disabled"><a href="#" id="deleteSelected" data-loading-text="Deleting members..."><i class="fa fa-minus"></i> Delete Selected</a></li>
                         </ul>
                     </div>
@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="row group-container-media">
-            <div class="col-md-offset-2 col-md-8">
+            <div class="col-md-12">
                 {% if group.media[0] is defined %}
                     {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.media[0]} %}
                 {% endif %}

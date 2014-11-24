@@ -18,14 +18,14 @@
 {% block sidebarlinks_pages %}class="active"{% endblock %}
 
 {% block content %}
-    <div class="col-md-12">
+    <div class="col-md-offset-2 col-md-8">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-12">
                 <img class="img-responsive center-block" src="" />
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-md-12">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
                 {{ form_widget(form.titleMedia) }}
@@ -33,7 +33,7 @@
                 {{ form_row(form.accessType) }}
                 {{ form_row(form.group) }}
                 <button class="btn btn-success forum-submit"><i class="fa fa-check"></i> Create</button>
-                <a class="btn btn-danger" href="{{ path('imdc_forum_list') }}"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>

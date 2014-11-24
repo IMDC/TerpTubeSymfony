@@ -79,7 +79,10 @@ class Forum
     
     public function __toString() 
     {
-        return $this->getTitleText();
+        //FIXME title being optional causes nulls (ex. new from media)
+        //return $this->getTitleText();
+
+        return $this->getId().':'.$this->getTitleText();
     }
         
     /**

@@ -19,7 +19,7 @@ TerpTube.Controller.Post
     <a class="btn btn-success post-submit" href="#" data-pid="{{ post.id }}" data-loading-text="Creating reply..."><i class="fa fa-check"></i> Reply</a>
     <a class="btn btn-danger post-reset" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Reset</a>
     {% if not notPostReply %}
-        <a class="btn btn-danger post-cancel" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
+        <a class="btn btn-danger post-cancel" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
     {% endif %}
     {{ form_end(form) }}
     {#{% include 'IMDCTerpTubeBundle:Media:uploadForms.html.twig' %}#}

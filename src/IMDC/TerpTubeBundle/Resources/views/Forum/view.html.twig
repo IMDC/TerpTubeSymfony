@@ -54,12 +54,12 @@
 		</div>
 		<!-- recent threads activity -->
 		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
+			<div class="col-md-12">
 				<img class="img-responsive center-block" src="" />
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
+			<div class="col-md-12">
 				<hr class="tt-separator-top" />
 				{% if recentThreads|length > 0 %}
 					{% include 'IMDCTerpTubeBundle:Thread:thumbnail.html.twig' with {'threads': recentThreads} %}
@@ -71,12 +71,12 @@
 		</div>
 		<!-- all threads -->
 		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
+			<div class="col-md-12">
 				<img class="img-responsive center-block" src="" />
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
+			<div class="col-md-12">
 				<hr class="tt-separator-top" />
 				{% if threads|length > 0 %}
                     {% set pagParams = threads.getParams %}
@@ -106,7 +106,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-md-offset-1 col-md-10">
+			<div class="col-md-12">
 				{{ knp_pagination_render(threads) }}
 			</div>
 		</div>

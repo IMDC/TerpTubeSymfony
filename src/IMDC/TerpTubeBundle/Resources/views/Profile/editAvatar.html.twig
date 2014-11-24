@@ -12,7 +12,7 @@
                 {{ form_errors(form) }}
                 {{ form_widget(form) }}
                 <button class="btn btn-success"><i class="fa fa-check"></i> Upload</button>
-                <a class="btn btn-danger" href="{{ path('imdc_profile_me') }}"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
             </div>
         </div>

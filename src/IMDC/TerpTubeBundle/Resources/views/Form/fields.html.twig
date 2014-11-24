@@ -15,61 +15,64 @@ _Thread:view.html.twig
 {% block media_chooser_widget %}
     {% set isFileSelection = isFileSelection is defined ? isFileSelection : true %}
 
-    <div class="row mediachooser-container-choose">
-        <div class="col-md-12">
-            <div class="form-group">
-                <a class="btn btn-primary mediachooser-record-video" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
-                <a class="btn btn-primary mediachooser-upload-file" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a>
-                {% if isFileSelection %}
-                    <a class="btn btn-primary mediachooser-select" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
-                {% endif %}
-            </div>
-        </div>
-        <div class="modal fade mediachooser-modal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title"></h4>
-                    </div>
-                    <div class="modal-body"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mediachooser-container-upload" style="display: none;" data-form="{{ form(uploadForm)|e }}">
-        <div class="col-md-12">
-            <div class="form-group">
-                <label>Uploading: <span class="mediachooser-upload-title"></span></label>
-                <div class="progress">
-                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                        0%
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% if isFileSelection %}
-        <div class="row mediachooser-container-selected">
+    <div class="form-group">
+        {{ block('form_label') }}
+        <div class="row mediachooser-container-choose">
             <div class="col-md-12">
-                <div class="text-center mediachooser-working" style="display: none;"><i class="fa fa-spinner fa-4x fa-spin"></i></div>
-                {{ block('collection_widget') }}
-                {% set selected_media = '
-                    <div class="col-md-3 thumbnail mediachooser-selected-media" data-mid="__id__">
-                        <div class="row">
-                            <div class="col-md-offset-2 col-md-8 text-center">
-                                <a href="' ~ asset('') ~ '__resource_webPath__">
-                                    <p><i class="fa fa-file fa-5x"></i></p>
-                                    <div>__title__</div>
-                                </a>
-                            </div>
-                            <div class="col-md-2 pull-right">
-                                <span class="btn btn-danger btn-xs mediachooser-remove" title="Remove File" data-mid="__id__"><i class="fa fa-times-circle"></i></span>
-                            </div>
+                <div class="form-group">
+                    <a class="btn btn-primary mediachooser-record-video" href="#"><i class="fa fa-video-camera"></i> {{ 'filesGateway.buttons.record'|trans }}</a>
+                    <a class="btn btn-primary mediachooser-upload-file" href="#"><i class="fa fa-upload"></i> {{ 'filesGateway.buttons.upload'|trans }}</a>
+                    {% if isFileSelection %}
+                        <a class="btn btn-primary mediachooser-select" href="#"><i class="fa fa-folder-open"></i> {{ 'filesGateway.add.title'|trans }}</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal fade mediachooser-modal">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title"></h4>
                         </div>
-                    </div>' %}
-                <div class="mediachooser-selected" data-prototype="{{ selected_media|e }}"></div>
+                        <div class="modal-body"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    {% endif %}
+        <div class="row mediachooser-container-upload" style="display: none;" data-form="{{ form(uploadForm)|e }}">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>Uploading: <span class="mediachooser-upload-title"></span></label>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                            0%
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if isFileSelection %}
+            <div class="row mediachooser-container-selected">
+                <div class="col-md-12">
+                    <div class="text-center mediachooser-working" style="display: none;"><i class="fa fa-spinner fa-4x fa-spin"></i></div>
+                    {{ block('collection_widget') }}
+                    {% set selected_media = '
+                        <div class="col-md-3 thumbnail mediachooser-selected-media" style="margin-bottom: 5px; margin-right: 5px;" data-mid="__id__">
+                            <div class="row">
+                                <div class="col-md-offset-2 col-md-8 text-center">
+                                    <a href="' ~ asset('') ~ '__resource_webPath__">
+                                        <p><i class="fa fa-file fa-5x"></i></p>
+                                        <div>__title__</div>
+                                    </a>
+                                </div>
+                                <div class="col-md-2 pull-right">
+                                    <span class="btn btn-danger btn-xs mediachooser-remove" title="Remove File" data-mid="__id__"><i class="fa fa-times-circle"></i></span>
+                                </div>
+                            </div>
+                        </div>' %}
+                    <div class="mediachooser-selected" data-prototype="{{ selected_media|e }}"></div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock media_chooser_widget %}
