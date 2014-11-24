@@ -12,20 +12,25 @@ define(function() {
 	 * Used to ajax delete a media by its ID and provides a confirmation message
 	 * to use
 	 */
-	MediaManager.prototype.deleteMedia = function(mediaID, confirmationMessage) {
+	MediaManager.prototype.deleteMedia = function(mediaID, confirmationMessage, confirmed) {
 		var instance = this;
-		if (typeof confirmationMessage !== "undefined") {
+		if (typeof confirmationMessage !== "undefined" && confirmationMessage !== false) {
 
 			var response = confirm(confirmationMessage);
 			if (!response)
 				return false;
 		}
+		if (typeof confirmed == "undefined") {
+		    confirmed = false;
+		}
 
 		var address = Routing.generate('imdc_myfiles_delete', {
-			'mediaId' : mediaID
+			'mediaId' : mediaID,
+			'confirm' : confirmed
 		});
 		var data = {
-			'mediaId' : mediaID
+			'mediaId' : mediaID,
+			'confirm' : confirmed
 		};
 		$.ajax({
 			url : address,
@@ -36,8 +41,32 @@ define(function() {
 				if (data.responseCode == 200) {
 					$(instance).trigger(MediaManager.EVENT_DELETE_SUCCESS);
 				} else if (data.responseCode == 400) { // bad request
-					$(instance).trigger(MediaManager.EVENT_DELETE_ERROR,
-							data.feedback);
+				    
+				    var confirmText = "";
+				    data.mediaInUse
+						.forEach(function(element,
+							index, array)
+						{
+						    if (index > 0)
+							confirmText += ", ";
+						    confirmText += Translator
+							    .trans('filesGateway.deleteMediaInUseConfirmation.'
+								    + element);
+						});
+					confirmText = Translator
+						.trans(
+							'filesGateway.deleteMediaInUseConfirmation.finalMessage',
+							{
+							    'mediaUsedLocations' : confirmText
+							});
+					console.log(data);
+					if (confirm(confirmText))
+					{
+					    instance.deleteMedia(mediaID, false,  true);
+					}
+					
+//					$(instance).trigger(MediaManager.EVENT_DELETE_ERROR,
+//							{'feedback':data.feedback, 'mediaInUse': data.mediaInUse});
 					console.log('Error: ' + data.feedback);
 				} else {
 					$(instance).trigger(MediaManager.EVENT_DELETE_ERROR,

@@ -125,6 +125,14 @@ filesGateway:
     converting: "Processing..."
     deleteLink: "Delete"
     deleteConfirmMessage: "Are you sure you want to delete this file?"
+    deleteMediaInUseConfirmation:
+        finalMessage: "This media is being used in %mediaUsedLocations%. Deleting it will remove it from there as well. Confirm delete?"
+        forum: "a forum"
+        message: "a message"
+        post: "a post"
+        thread: "a thread"
+        avatar: "your profile avatar"
+    
     previewLink: "Preview"
     shareLink: "Post this"
 # Form field labels

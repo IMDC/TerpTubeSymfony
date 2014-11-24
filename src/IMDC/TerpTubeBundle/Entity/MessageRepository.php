@@ -71,4 +71,15 @@ class MessageRepository extends EntityRepository
                     ->setParameter('uid', $user->getId())
                     ->getResult();
     }
+    
+    
+    public function getMessagesForMedia(Media $media)
+    {
+    	$dql = "SELECT i
+	            FROM IMDCTerpTubeBundle:Message i
+	            JOIN i.attachedMedia m
+    			WHERE :mid = m.id";
+    	$query = $this->getEntityManager ()->createQuery ( $dql )->setParameter ( 'mid', $media->getId () );
+    	return $query->getResult ();
+    }
 }

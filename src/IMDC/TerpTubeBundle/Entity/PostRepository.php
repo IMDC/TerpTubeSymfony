@@ -37,4 +37,14 @@ class PostRepository extends EntityRepository
 		 
 		return $query->getResult();
 	}
+	
+	public function getPostsForMedia(Media $media)
+	{
+		$dql = "SELECT p
+	            FROM IMDCTerpTubeBundle:Post p
+	            JOIN p.attachedFile m
+    			WHERE :mid = m.id";
+    	$query = $this->getEntityManager ()->createQuery ( $dql )->setParameter ( 'mid', $media->getId () );
+    	return $query->getResult ();
+	}
 }

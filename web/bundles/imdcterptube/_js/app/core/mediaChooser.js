@@ -241,7 +241,7 @@ define(['core/mediaManager'], function(MediaManager) {
                 }
             });
 
-            return this.mediaManager.deleteMedia(file.data("val"), $("#mediaDeleteConfirmMessage").html());
+            return this.mediaManager.deleteMedia(file.data("val"), Translator.trans('filesGateway.deleteConfirmMessage'));
         }).bind(this));
 
         container.find(".select-button").on("click", (function(e) {

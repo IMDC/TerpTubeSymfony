@@ -111,4 +111,14 @@ class ThreadRepository extends EntityRepository
 
         return $results;
     }
+    
+    public function getThreadsForMedia(Media $media)
+    {
+    	$dql = "SELECT t
+	            FROM IMDCTerpTubeBundle:Thread t
+	            JOIN t.mediaIncluded m
+    			WHERE :mid = m.id";
+    	$query = $this->getEntityManager ()->createQuery ( $dql )->setParameter ( 'mid', $media->getId () );
+    	return $query->getResult ();
+    }
 }

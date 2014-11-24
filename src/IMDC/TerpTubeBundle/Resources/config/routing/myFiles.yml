@@ -44,7 +44,7 @@ imdc_myfiles_update:
 
 imdc_myfiles_delete:
   pattern: /{mediaId}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia }
+  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia}
   requirements:
     _method:  POST
     mediaId: \d+
