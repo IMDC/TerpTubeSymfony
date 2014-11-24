@@ -6,15 +6,7 @@ TerpTube.Controller.Post
 <div class="col-md-12">
 	{{ form_start(form) }}
     {{ form_errors(form) }}
-    {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
     {{ form_widget(form.attachedFile) }}
-    {% if post.attachedFile[0] is defined %}
-        <div class="row">
-            <div class="col-md-4">
-                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': post.attachedFile[0]} %}
-            </div>
-        </div>
-    {% endif %}
     {% if form.startTime is defined %}
         {{ form_widget(form.startTime) }}
         {{ form_widget(form.endTime) }}

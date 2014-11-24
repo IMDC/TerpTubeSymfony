@@ -4,7 +4,7 @@
 
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-{% block title %}{{ 'filesGateway.title'|trans }}{% endblock title %}
+{% block title %}{{ 'filesGateway.title'|trans }}{% endblock %}
 
 {% block header %}
     {{ parent() }}
@@ -31,7 +31,6 @@
         </div>
         <div class="row">
             <div class="col-md-offset-2 col-md-8">
-                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' with {'isFileSelection': false} %}#}
                 {% set isFileSelection = false %}
                 {{ block('media_chooser_widget') }}
             </div>

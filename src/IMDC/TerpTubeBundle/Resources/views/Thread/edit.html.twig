@@ -1,6 +1,6 @@
 {% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
 
-{% block title %}Edit Topic{% endblock title %}
+{% block title %}Edit Topic{% endblock %}
 
 {% block header %}
     {{ parent() }}
@@ -28,11 +28,6 @@
             <div class="col-md-8 col-md-offset-2">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-                {% if thread.mediaIncluded[0] is defined %}
-                    <div class="tt-media-element">
-                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
-                    </div>
-                {% endif %}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
                 {{ form_row(form.accessType) }}

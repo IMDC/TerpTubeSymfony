@@ -82,7 +82,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         };
 
         dust.render(typeToDustTemplate(media.type), {media: media}, (function(err, out) {
-            this._getElement(Gallery.Binder.CONTENT).html(out);
+            this._getElement(Gallery.Binder.CONTENT).html(out); //TODO append instead and add slider so that media is loaded on demand but only once
         }).bind(this));
     };
 

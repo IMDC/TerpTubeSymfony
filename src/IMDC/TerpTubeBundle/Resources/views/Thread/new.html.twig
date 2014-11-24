@@ -1,6 +1,6 @@
 {% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
 
-{% block title %}Create a new Topic{% endblock title %}
+{% block title %}Create a new Topic{% endblock %}
 
 {% block header %}
     {{ parent() }}
@@ -31,8 +31,6 @@
                 {% if form.forum is defined %}
                     {{ form_row(form.forum) }}
                 {% endif %}
-                <p>Select a file (video, image, or audio) to be used as the title for your new Topic:</p>
-                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
                 {{ form_widget(form.mediaIncluded) }}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}

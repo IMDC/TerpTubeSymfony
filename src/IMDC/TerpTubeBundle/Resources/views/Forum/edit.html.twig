@@ -1,6 +1,6 @@
 {% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
 
-{% block title %}Edit Forum{% endblock title %}
+{% block title %}Edit Forum{% endblock %}
 
 {% block header %}
     {{ parent() }}
@@ -28,15 +28,6 @@
             <div class="col-md-offset-2 col-md-8">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
-                {% if forum.getTitleMedia[0] is defined %}
-                    <div class="tt-media-element">
-                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
-                        <p>Change the media file for this forum (image, audio, video):</p>
-                    </div>
-                {% else %}
-                    <p>Add a media file to this forum (image, audio, video):</p>
-                {% endif %}
-                {#{% include 'IMDCTerpTubeBundle:Media:chooserForm.html.twig' %}#}
                 {{ form_widget(form.titleMedia) }}
                 {{ form_row(form.titleText) }}
                 {{ form_row(form.accessType) }}

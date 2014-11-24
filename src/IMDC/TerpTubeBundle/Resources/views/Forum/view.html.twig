@@ -1,6 +1,8 @@
 {% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
 
-{% block title %}{{ forum.titleText }}{% endblock title %}
+{% use 'IMDCTerpTubeBundle:Media:blocks.html.twig' %}
+
+{% block title %}{{ forum.titleText }}{% endblock %}
 
 {% block header %}
     {{ parent() }}
@@ -9,7 +11,6 @@
         $(document).ready(function() {
             require(['main'], function() {
                 var forum = new $tt.Controller.Forum({page: $tt.Controller.Forum.Page.VIEW});
-
                 forum.bindUIEvents();
             });
         });
@@ -27,23 +28,7 @@
 		<div class="row">
 			<div class="col-md-offset-4 col-md-4">
 				{% if orderedMedia is defined and orderedMedia|length > 0 %}
-                    <div class="gallery-container" style="position: relative;">
-                        <div class="text-center gallery-working" style="display: none;"><i class="fa fa-spinner fa-4x fa-spin"></i></div>
-                        <div class="gallery-container-inner" style="display: none;">
-                            <div class="gallery-content"></div>
-                            <div class="gallery-arrow-left" style="left: 0; position: absolute; bottom: 0; line-height: 60px; cursor: pointer;"><i class="fa fa-chevron-left fa-3x"></i></div>
-                            <div class="gallery-container-thumbs" style="overflow: hidden; position: relative; height: 90px; margin-left: 35px; margin-right: 35px;">
-                                <ol style="width: 10000px; list-style: none; position: absolute; overflow: hidden; padding: 0px; left: 0;">
-                                    {% for media in orderedMedia %}
-                                        <li style="float: left; margin: 0; padding-right: 5px; cursor: pointer;" data-mid="{{ media.id }}"><img src="{{ asset(media.thumbnailPath) }}" style="width: 90px; height: 90px;"><li>
-                                    {% endfor %}
-                                </ol>
-                            </div>
-                            <div class="gallery-arrow-right" style="position: absolute; right: 0; bottom: 0; line-height: 60px; cursor: pointer;"><i class="fa fa-chevron-right fa-3x"></i></div>
-                        </div>
-                    </div>
-
-					{#{% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': orderedMedia[0]} %}#}
+                    {{ block('media_gallery') }}
 				{% else %}
 					<p>No media</p>
 				{% endif %}
@@ -131,36 +116,5 @@
 {% block outside_body %}
     {{ parent() }}
 
-    {% if enableControls is not defined %}
-        {% set enableControls = true %}
-    {% endif %}
-
-    <script type="text/html" id="mediaElementVideo">
-        <video class="tt-media-video" id="{media.id}" {% if enableControls %}controls{% endif %} poster="{{ asset('') }}{media.thumbnail}" preload="none">
-            <source src="{{ asset('') }}{media.resource.pathMPEG}" />
-            <source src="{{ asset('') }}{media.resource.pathWebm}" />
-        </video>
-    </script>
-
-    <script type="text/html" id="mediaElementAudio">
-        <audio class="tt-media-audio" {% if enableControls %}controls{% endif %}>
-            <source src="{{ asset('') }}{media.resource.pathMPEG}" />
-            Your browser does not support the audio element, please upgrade to Google Chrome
-        </audio>
-    </script>
-
-    <script type="text/html" id="mediaElementImage">
-        <img class="img-responsive center-block tt-media-img" src="{{ asset('') }}{media.resource.pathMPEG}" alt="{media.title}" title="{media.title}" />
-    </script>
-
-    <script type="text/html" id="mediaElementOther">
-        <div class="row">
-            <div class="col-md-3 thumbnail text-center">
-                <a href="{{ asset('') }}{media.resource.pathMPEG}">
-                    <p><i class="fa fa-file fa-5x"></i></p>
-                    <div>{media.title}</div>
-                </a>
-            </div>
-        </div>
-    </script>
+    {{ block('media_gallery_dust') }}
 {% endblock %}
