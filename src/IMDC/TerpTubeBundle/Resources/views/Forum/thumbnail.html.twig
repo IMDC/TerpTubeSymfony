@@ -22,7 +22,7 @@ _Home:index.html.twig
                         <div style="height: 50px;"></div>
                     {% endif %}
                 </div>
-                <a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}">
+                <a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}" title="{{ forum.titleText}}">
                     <h3>{{ forum.titleText|truncate(20) }}</h3>
                     {# <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p> #}
                     <p><span class="badge badge-info">Topics: {{ forumThreadCount[loop.index0] }}</span></p>

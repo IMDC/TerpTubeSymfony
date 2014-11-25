@@ -13,7 +13,7 @@ _Home:index.html.twig
     <li>
         <div class="col-md-3">
             <div class="thumbnail text-center">
-                <h3><a href="{{ path('imdc_group_view', {'groupId': group.id}) }}">{{ group.name }}</a></h3>
+                <h3><a href="{{ path('imdc_group_view', {'groupId': group.id}) }}" title="{{ group.name }}">{{ group.name }}</a></h3>
                 <p class="text-muted"><strong>Created:</strong> {{ group.dateCreated|date('g:ia F j Y') }}</p>
                 <p class="text-muted"><strong>Members:</strong> {{ group.getMembers|length }}</p>
                 <p class="text-muted"><strong>Founder:</strong> {{ group.getUserFounder.getUserName }}</p>
