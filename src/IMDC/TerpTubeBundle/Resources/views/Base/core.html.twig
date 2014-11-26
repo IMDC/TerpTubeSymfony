@@ -74,6 +74,24 @@
                     });
 
                     require(['main']);
+
+                    require(['core/recorder'], function(Recorder) {
+                        $("a.navbar-link.main-recorder").on("click", (function(e) {
+                            $tt._recorder = new Recorder({
+                                container: $("div.main-recorder"),
+                                page: Recorder.Page.NORMAL
+                            });
+                            $($tt._recorder).on(Recorder.Event.READY, (function(e) {
+                                $tt._recorder.show();
+                            }).bind(this));
+                            $($tt._recorder).on(Recorder.Event.DONE, (function(e) {
+                                $tt._recorder.hide();
+                                //$tt._recorder = null;
+                                //$("div.main-recorder");
+                            }).bind(this));
+                            $tt._recorder.render();
+                        }).bind(this));
+                    });
                 </script>
             {% else %}
                 <script src="{{ asset('bundles/imdcterptube/_js/terptube.js') }}"></script>
@@ -81,6 +99,7 @@
         {% endblock header %}
     </head>
     <body>
+        <div class="main-recorder"></div>
         <div class="container-fluid">
             <div class="row">
                 <div class="navbar navbar-inverse navbar-fixed-top tt-navbar-top">
@@ -115,6 +134,9 @@
                                             </li>
                                             <li {% block nav_ul_authenticated_my_groups %}{% endblock %}>
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}" title="{{ 'nav.my_groups' | trans  }}"><i class="fa fa-users fa-2x"></i></a>
+                                            </li>
+                                            <li>
+                                                <a class="navbar-link main-recorder" href="#" title="Record a video"><i class="fa fa-video-camera fa-2x"></i></a>
                                             </li>
                                             {% if is_granted('ROLE_SUPER_ADMIN') %}
                                                 <li {% block nav_ul_authenticated_admin %}{% endblock %}>
