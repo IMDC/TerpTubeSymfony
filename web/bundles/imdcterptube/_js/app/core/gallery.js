@@ -1,4 +1,4 @@
-define(['core/mediaChooser'], function(MediaChooser) {
+define(['core/mediaChooser', 'core/recorder'], function(MediaChooser, Recorder) {
     var Gallery = function(options) {
         this.container = options.container;
 
@@ -27,7 +27,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         CONTENT: ".gallery-content",
         ARROW_LEFT: ".gallery-arrow-left",
         ARROW_RIGHT: ".gallery-arrow-right",
-        CONTAINER_THUMBS: ".gallery-container-thumbs"
+        CONTAINER_THUMBS: ".gallery-container-thumbs",
+        RECORDER: ".gallery-recorder"
     };
 
     Gallery.prototype.getContainer = function() {
@@ -82,7 +83,31 @@ define(['core/mediaChooser'], function(MediaChooser) {
         };
 
         dust.render(typeToDustTemplate(media.type), {media: media}, (function(err, out) {
-            this._getElement(Gallery.Binder.CONTENT).html(out); //TODO append instead and add slider so that media is loaded on demand but only once
+            var container = this._getElement(Gallery.Binder.CONTENT);
+            container.html(out); //TODO append instead and add slider so that media is loaded on demand but only once
+
+            if (media.type == MediaChooser.MEDIA_TYPE.VIDEO.id) {
+                container.find("button").on("click", (function(e) {
+                    this.recorder = new Recorder({
+                        container: this._getElement(Gallery.Binder.RECORDER),
+                        page: Recorder.Page.INTERPRETATION,
+                        enableDoneAndPost: true
+                    });
+                    $(this.recorder).on(Recorder.Event.READY, (function(e) {
+                        this.recorder.setSourceMedia(media);
+                        this.recorder.show();
+                    }).bind(this));
+                    $(this.recorder).on(Recorder.Event.DONE, (function(e) {
+                        this.recorder.hide();
+                        //this.recorder = null;
+                        //this._getElement(Gallery.Binder.RECORDER).html("");
+
+                        if (e.doPost)
+                            window.location.assign(Routing.generate("imdc_thread_new_from_media", {mediaId: e.media.id}));
+                    }).bind(this));
+                    this.recorder.render();
+                }).bind(this));
+            }
         }).bind(this));
     };
 

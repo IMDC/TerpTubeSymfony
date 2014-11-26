@@ -1,3 +1,5 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
 {#
 used by:
 _Forum:view.html.twig
@@ -17,6 +19,7 @@ _Forum:view.html.twig
             </div>
             <div class="gallery-arrow-right" style="position: absolute; right: 0; bottom: 0; line-height: 60px; cursor: pointer;"><i class="fa fa-chevron-right fa-3x"></i></div>
         </div>
+        <div class="gallery-recorder"></div>
     </div>
 {% endblock media_gallery %}
 
@@ -33,6 +36,7 @@ _Forum:view.html.twig
             <source src="{{ asset('') }}{media.resource.pathMPEG}" />
             <source src="{{ asset('') }}{media.resource.pathWebm}" />
         </video>
+        <button class="btn btn-primary">Interpret this video</button>
     </script>
 
     <script type="text/html" id="mediaElementAudio">
@@ -57,3 +61,65 @@ _Forum:view.html.twig
         </div>
     </script>
 {% endblock media_gallery_dust %}
+
+{% block recorder_dust %}
+    <script type="text/html" id="recorder">
+        <div class="modal fade recorder-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title">Recorder</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="recorder-container-record">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="active"><a href=".recorder-normal" role="tab" data-toggle="tab">Normal</a></li>
+                                <li><a href=".recorder-interp" role="tab" data-toggle="tab">Interpretation</a></li>
+                            </ul>
+                            <div class="tab-content" style="padding-top: 15px;">
+                                <div class="tab-pane active recorder-normal">
+                                    <div class="tt-media-preview-title">
+                                        <input class="recorder-normal-title" style="display: none;" type="text" value="" />
+                                    </div>
+                                    <video class="recorder-normal-video" width="100%" preload="auto" muted="muted">
+                                        <source src="" data-baseurl="{{ asset('') }}" />
+                                    </video>
+                                </div>
+                                <div class="tab-pane recorder-interp">
+                                    <div style="border: 2px dashed #ccc; line-height: 200px; height: 200px; text-align: center; display: none;">
+                                        <button class="btn btn-primary recorder-interp-select">Select a video to interpret</button>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <video class="recorder-interp-video-p" style="display: none;" width="100%" preload="auto" muted="muted">
+                                                <source src="" data-baseurl="{{ asset('') }}" />
+                                            </video>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="tt-media-preview-title">
+                                                <input class="recorder-interp-title" style="display: none;" type="text" value="" />
+                                            </div>
+                                            <video class="recorder-interp-video-r" style="display: none;" width="100%" preload="auto" muted="muted">
+                                                <source src="" data-baseurl="{{ asset('') }}" />
+                                            </video>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recorder-controls"></div>
+                        </div>
+                        <div class="recorder-container-upload" style="display: none;">
+                            <label>Uploading...</label>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                                    0%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
+{% endblock recorder_dust %}

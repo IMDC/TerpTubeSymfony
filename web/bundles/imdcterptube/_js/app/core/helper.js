@@ -39,5 +39,12 @@ define(function() {
         }
     };
 
+    Helper.updateProgressBar = function(element, percentComplete) {
+        var progressBar = element.find(".progress-bar");
+        progressBar.attr("aria-valuenow", percentComplete);
+        progressBar.css("width", percentComplete + "%");
+        progressBar.html(percentComplete + "%");
+    };
+
     return Helper;
 });
