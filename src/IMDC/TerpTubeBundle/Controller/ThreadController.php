@@ -311,7 +311,9 @@ class ThreadController extends Controller
         $em->persist($forum);
         $em->persist($user);
 
-        //TODO delete aces
+        $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+        $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
+        $accessProvider->deleteAccess($objectIdentity);
 
         $em->flush();
 

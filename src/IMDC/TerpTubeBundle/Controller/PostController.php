@@ -55,8 +55,6 @@ class PostController extends Controller
             throw new \Exception('thread/post not found');
         }
 
-        //TODO permissions
-
         $isPostReply = !$thread;
         $post = new Post();
         $form = $this->createForm(new PostType(), $post, array(
@@ -164,7 +162,6 @@ class PostController extends Controller
             throw new \Exception('post not found');
         }
 
-        //TODO permissions
         $user = $this->getUser();
 		if (!$post->getAuthor() == $user) {
             throw new AccessDeniedException();
@@ -249,7 +246,6 @@ class PostController extends Controller
             throw new \Exception('post not found');
         }
 
-        //TODO permissions
         $user = $this->getUser();
         if (!$post->getAuthor() == $user) {
             throw new AccessDeniedException();
