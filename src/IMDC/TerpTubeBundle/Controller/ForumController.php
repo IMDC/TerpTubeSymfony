@@ -317,11 +317,17 @@ class ForumController extends Controller
      * @param Request $request
      * @param $forumid
      * @return RedirectResponse|Response
+     * @throws BadRequestHttpException
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function deleteAction(Request $request, $forumid)
 	{
+        // if not ajax, throw an error
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException('Only Ajax POST calls accepted');
+        }
+
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -338,42 +344,33 @@ class ForumController extends Controller
             throw new AccessDeniedException();
         }
 
-	    $form = $this->createForm(new ForumFormDeleteType(), $forum);
-	    $form->handleRequest($request);
+        $user = $this->getUser();
+        /*$threads = $forum->getThreads();
+        foreach ($threads as $thread) {
+            $threadposts = $thread->getPosts();
+            foreach ($threadposts as $threadpost) {
+                $threadpost->getAuthor()->removePost($threadpost);
+                $em->remove($threadpost);
+            }
+            $thread->getCreator()->removeThread($thread);
+            $em->remove($thread);
+        }*/
+        $user->removeForum($forum);
 
-	    if ($form->isValid()) {
-            $user = $this->getUser();
-            /*$threads = $forum->getThreads();
-            foreach ($threads as $thread) {
-                $threadposts = $thread->getPosts();
-                foreach ($threadposts as $threadpost) {
-                    $threadpost->getAuthor()->removePost($threadpost);
-                    $em->remove($threadpost);
-                }
-                $thread->getCreator()->removeThread($thread);
-                $em->remove($thread);
-            }*/
-	        $user->removeForum($forum);
+        $em->remove($forum);
+        $em->persist($user);
 
-            $em->remove($forum);
-	        $em->persist($user);
+        $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+        $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
+        $accessProvider->deleteAccess($objectIdentity);
 
-            $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
-            $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
-            $accessProvider->deleteAccess($objectIdentity);
+        $em->flush();
 
-	        $em->flush();
+        $content = array(
+            'wasDeleted' => true,
+            'redirectUrl' => $this->generateUrl('imdc_forum_list')
+        );
 
-	        $this->get('session')->getFlashBag()->add(
-	            'info', 'Forum deleted successfully!'
-	        );
-
-	        return $this->redirect($this->generateUrl('imdc_forum_list'));
-	    }
-
-	    return $this->render('IMDCTerpTubeBundle:Forum:delete.html.twig', array(
-            'form' => $form->createView(),
-            'forum' => $forum
-        ));
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
 	}
 }

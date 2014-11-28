@@ -47,7 +47,6 @@
 					<a class="btn btn-default" href="{{ path('imdc_thread_new', {'forumid': forum.id}) }}"><i class="fa fa-plus"></i> Create New Topic</a>
 					{% if forum in app.user.getForums %}
 						<a class="btn btn-default" href="{{ path('imdc_forum_edit', {'forumid': forum.id}) }}"><i class="fa fa-edit"></i> Edit Forum</a>
-						<a class="btn btn-default" href="{{ path('imdc_forum_delete', {'forumid': forum.id}) }}"><i class="fa fa-times"></i> Delete Forum</a>
 					{% endif %}
 				</p>
 			</div>

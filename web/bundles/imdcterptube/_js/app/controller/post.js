@@ -47,7 +47,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
         REPLY_LINK: ".post-reply",
         SUBMIT: ".post-submit",
         RESET: ".post-reset",
-        CANCEL: ".post-cancel"
+        CANCEL: ".post-cancel",
+
+        DELETE_MODAL: ".post-delete-modal",
+        DELETE: ".post-delete"
     };
 
     // this must be the same name defined in {bundle}/Form/Type/PostType
@@ -187,6 +190,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
             );
         }
 
+        if (this.page == Post.Page.DELETE) {
+            $(e.target).button("loading");
+        }
+
         $.ajax({
             url: this._getUrl(),
             type: "POST",
@@ -239,24 +246,20 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 }
                 break;
             case Post.Page.DELETE:
-                if (data.wasDeleted) {
-                    var container = this.getContainer();
-                    container.after(data.html);
+                $(Post.Binder.DELETE).button("reset");
 
-                    // fade out the original comment
-                    container.fadeOut("slow", function(e) {
-                        $(this).remove();
-                    });
+                $(Post.Binder.DELETE).off("click", this.bind__onClickSubmit); //FIXME temp fix
 
-                    // remove the feedback message after 5 seconds
-                    setTimeout((function() {
-                        $(Post.Binder.CONTAINER_DELETE + "[data-pid=" + this.id + "]").fadeOut("slow", function(e) {
-                            $(this).remove();
-                        });
-                    }).bind(this), 5000);
-                } else {
-                    //TODO
+                if (!data.wasDeleted) {
+                    break;
                 }
+
+                $(Post.Binder.DELETE_MODAL).modal("hide");
+
+                this.getContainer().fadeOut("slow", function(e) {
+                    $(this).remove();
+                });
+
                 break;
         }
 
@@ -268,6 +271,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         console.log(request.statusText);
         this._toggleForm(false);
+
+        if (this.page == Post.Page.DELETE) {
+            $(Post.Binder.DELETE).button("reset");
+        }
     };
 
     Post.prototype._onClickReset = function(e) {

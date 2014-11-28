@@ -43,7 +43,7 @@ _Thread:view.html.twig
                     {% endif %}
                     {% if post.author.id == app.user.id %}
                         <li><a class="post-edit" href="#" title="Edit this post" data-pid="{{ post.id }}"><i class="fa fa-pencil"></i></a></li>
-                        <li><a class="post-delete" href="#" title="Delete this post" data-pid="{{ post.id }}"><i class="fa fa-trash-o"></i></a></li>
+                        <li><a class="post-delete-A" href="#" title="Delete this post" data-pid="{{ post.id }}" data-toggle="modal" data-target=".post-delete-modal"><i class="fa fa-trash-o"></i></a></li>
                     {% endif %}
                 </ul>
             </div>

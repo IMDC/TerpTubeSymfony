@@ -7,6 +7,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
 
+/**
+ * Class ForumFormDeleteType
+ * @package IMDC\TerpTubeBundle\Form\Type
+ * @deprecated
+ */
 class ForumFormDeleteType extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)

@@ -3,8 +3,15 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
     var Forum = function(options) {
         this.page = options.page;
+        this.id = options.id;
+
         this.mediaChooser = null;
 
+        this.bind__onChangeAccessType = this._onChangeAccessType.bind(this);
+        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onClickDelete = this._onClickDelete.bind(this);
+        this.bind__onDeleteSuccess = this._onDeleteSuccess.bind(this);
+        this.bind__onDeleteError = this._onDeleteError.bind(this);
         this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -22,7 +29,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Forum.Binder = {
-        SUBMIT: ".forum-submit"
+        SUBMIT: ".forum-submit",
+        DELETE_MODAL: ".forum-delete-modal",
+        DELETE: ".forum-delete"
     };
 
     // this must be the same name defined in {bundle}/Form/Type/ForumFormType
@@ -77,20 +86,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
             this.mediaChooser.setMedia(mediaIds);
         }
 
-        this.getForm().find("input:radio").on("change", (function(e) {
-            var group = this.getFormField("group");
-            var parent = group.parent();
-
-            if ($(e.target).attr("id") == this.getForm().find("input:radio[value=6]").attr("id")) {
-                parent.find("label").addClass("required");
-                group.attr("required", true);
-                parent.children().show();
-            } else {
-                parent.find("label").removeClass("required");
-                group.attr("required", false);
-                parent.children().hide();
-            }
-        }).bind(this));
+        this.getForm().find("input:radio").on("change", this.bind__onChangeAccessType);
+        this._getElement(Forum.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
+        this._getElement(Forum.Binder.DELETE).on("click", this.bind__onClickDelete);
 
         this.getForm().find("input:radio:checked").trigger("change");
     };
@@ -100,6 +98,57 @@ define(['core/mediaChooser'], function(MediaChooser) {
 
         this.gallery = new $tt.Core.Gallery({container: $(".gallery-container")});
         this.gallery.bindUIEvents();
+    };
+
+    Forum.prototype._onChangeAccessType = function(e) {
+        var group = this.getFormField("group");
+        var parent = group.parent();
+
+        if ($(e.target).attr("id") == this.getForm().find("input:radio[value=6]").attr("id")) {
+            parent.find("label").addClass("required");
+            group.attr("required", true);
+            parent.children().show();
+        } else {
+            parent.find("label").removeClass("required");
+            group.attr("required", false);
+            parent.children().hide();
+        }
+    };
+
+    Forum.prototype._onClickSubmit = function(e) {
+        $(e.target).button("loading");
+    };
+
+    Forum.prototype._onClickDelete = function(e) {
+        $(e.target).button("loading");
+
+        $.ajax({
+            url: Routing.generate("imdc_forum_delete", {forumid: this.id}),
+            type: "POST",
+            success: this.bind__onDeleteSuccess,
+            error: this.bind__onDeleteError
+        });
+    };
+
+    Forum.prototype._onDeleteSuccess = function(data, textStatus, jqXHR) {
+        if (!data.wasDeleted) {
+            this._onDeleteError(jqXHR, textStatus, null);
+            return;
+        }
+
+        this._getElement(Forum.Binder.DELETE_MODAL)
+            .find(".modal-body")
+            .html("Forum deleted successfully.");
+
+        window.location.assign(data.redirectUrl);
+    };
+
+    Forum.prototype._onDeleteError = function(jqXHR, textStatus, errorThrown) {
+        this._getElement(Forum.Binder.DELETE_MODAL)
+            .find(".modal-body")
+            .prepend("Something went wrong. Try again.");
+
+        this._getElement(Forum.Binder.DELETE).button("reset");
     };
 
     Forum.prototype._onPageLoaded = function(e) {

@@ -89,7 +89,6 @@
 						<ul class="list-unstyled list-inline">
 							{% if app.user == thread.creator %}
 								<li><a href="{{ path('imdc_thread_edit', {'threadid': thread.id}) }}"><i class="fa fa-scissors"></i> Edit</a></li>
-								<li><a href="{{ path('imdc_thread_delete', {'threadid': thread.id}) }}"><i class="fa fa-minus-circle"></i> Delete</a></li>
 							{% endif %}
 							<li>{% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': thread} %}</li>
 						</ul>
@@ -153,6 +152,27 @@
                             {% for post in thread.posts if not post.parentPost %}
                                 {% include 'IMDCTerpTubeBundle:Post:post.html.twig' %}
                             {% endfor %}
+                            <div class="modal fade post-delete-modal">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">Delete this post</h4>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <p>
+                                                This post will be permanently deleted.<br />
+                                                This action cannot be undone.<br />
+                                                Are you sure?
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
+                                            <a class="btn btn-danger post-delete" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         {% else %}
                             <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
                         {% endif %}
@@ -162,32 +182,3 @@
 		</div>
 	</div>
 {% endblock content %}
-
-{% block outside_body %}
-    {{ parent() }}
-
-    <div class="modal fade" id="modaldiv">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Delete Post</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger text-center" role="alert">
-                        <i class="fa fa-exclamation-triangle fa-5x"></i>
-                        <p>
-                            This post will be permanently deleted.<br />
-                            This action cannot be undone.<br />
-                            Are you sure?
-                        </p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a class="btn btn-default post-cancel" id="modalCancelButton" href="#" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
-                    <a class="btn btn-danger post-submit" id="modalDeleteButton" href="#"><i class="fa fa-trash-o"></i> Delete</a>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endblock outside_body %}

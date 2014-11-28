@@ -256,29 +256,19 @@ class PostController extends Controller
         //TODO permissions
         $user = $this->getUser();
         if (!$post->getAuthor() == $user) {
-            $content = array(
-                'wasDeleted' => false,
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.delete.html.twig', array(
-                        'postId' => $post->getId(),
-                        'message' => 'You do not have permission to delete this post'))
-            );
-        } else {
-            $postId = $post->getId();
-
-            $user->removePost($post);
-            $user->decreasePostCount(1);
-
-            $em->persist($user);
-            $em->remove($post);
-            $em->flush();
-
-            $content = array(
-                'wasDeleted' => true,
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.delete.html.twig', array(
-                        'postId' => $postId,
-                        'message' => 'Post deleted!'))
-            );
+            throw new AccessDeniedException();
         }
+
+        $user->removePost($post);
+        $user->decreasePostCount(1);
+
+        $em->persist($user);
+        $em->remove($post);
+        $em->flush();
+
+        $content = array(
+            'wasDeleted' => true
+        );
 
         return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
     }

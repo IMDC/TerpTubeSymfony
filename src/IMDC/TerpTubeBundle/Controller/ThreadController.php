@@ -278,11 +278,17 @@ class ThreadController extends Controller
      * @param Request $request
      * @param $threadid
      * @return RedirectResponse|Response
+     * @throws BadRequestHttpException
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function deleteAction(Request $request, $threadid)
     {
+        // if not ajax, throw an error
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException('Only Ajax POST calls accepted');
+        }
+
         // check if user logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -299,33 +305,26 @@ class ThreadController extends Controller
             throw new AccessDeniedException();
         }
 
-        $form = $this->createForm(new ThreadFormDeleteType(), $thread);
-        $form->handleRequest($request);
-             
-        if ($form->isValid()) {
-            $user = $this->getUser();
-            $user->removeThread($thread);
+        $user = $this->getUser();
+        $user->removeThread($thread);
 
-            $forum = $thread->getParentForum();
-            $forum->setLastActivity(new \DateTime('now'));
+        $forum = $thread->getParentForum();
+        $forum->setLastActivity(new \DateTime('now'));
 
-            $em->remove($thread);
-            $em->persist($forum);
-            $em->persist($user);
-            $em->flush();
+        $em->remove($thread);
+        $em->persist($forum);
+        $em->persist($user);
 
-            $this->get('session')->getFlashBag()->add(
-                'success', 'Post successfully deleted!'
-            );
+        //TODO delete aces
 
-            return $this->redirect($this->generateUrl('imdc_forum_view', array(
-                'forumid' => $forum->getId()
-            )));
-        }
+        $em->flush();
 
-        return $this->render('IMDCTerpTubeBundle:Thread:delete.html.twig', array(
-            'form' => $form->createView(),
-            'thread' => $thread
-        ));
+        $content = array(
+            'wasDeleted' => true,
+            'redirectUrl' => $this->generateUrl('imdc_forum_view', array(
+                    'forumid' => $forum->getId()))
+        );
+
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
     }
 }

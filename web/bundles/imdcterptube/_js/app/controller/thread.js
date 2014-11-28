@@ -13,6 +13,10 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         this.keyPoints = new Array();
         this.videoSpeed = 0;
 
+        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onClickDelete = this._onClickDelete.bind(this);
+        this.bind__onDeleteSuccess = this._onDeleteSuccess.bind(this);
+        this.bind__onDeleteError = this._onDeleteError.bind(this);
         this.bind__onClickPostTimelineKeyPoint = this._onClickPostTimelineKeyPoint.bind(this);
         this.bind__onMouseEnterPostTimelineKeyPoint = this._onMouseEnterPostTimelineKeyPoint.bind(this);
         this.bind__onMouseLeavePostTimelineKeyPoint = this._onMouseLeavePostTimelineKeyPoint.bind(this);
@@ -40,7 +44,9 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
     };
 
     Thread.Binder = {
-        SUBMIT: ".thread-submit"
+        SUBMIT: ".thread-submit",
+        DELETE_MODAL: ".thread-delete-modal",
+        DELETE: ".thread-delete"
     };
 
     // this must be the same name defined in {bundle}/Form/Type/ThreadFormType
@@ -94,6 +100,9 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             this._getElement(Thread.Binder.SUBMIT).attr("disabled", true);
             this.mediaChooser.setMedia(mediaIds);
         }
+
+        this._getElement(Thread.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
+        this._getElement(Thread.Binder.DELETE).on("click", this.bind__onClickDelete);
     };
 
     Thread.prototype._bindUIEventsView = function() {
@@ -153,9 +162,45 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         $(".post-edit").on("click", this.bind__onClickPostEdit);
 
         // launch the modal dialog to delete a comment when you click the trash icon
-        $(".post-delete").on("click", this.bind__onClickPostDelete);
+        $(".post-delete-A").on("click", this.bind__onClickPostDelete);
 
         $(".post-reply").on("click", this.bind__onClickPostReply);
+    };
+
+    Thread.prototype._onClickSubmit = function(e) {
+        $(e.target).button("loading");
+    };
+
+    Thread.prototype._onClickDelete = function(e) {
+        $(e.target).button("loading");
+
+        $.ajax({
+            url: Routing.generate("imdc_thread_delete", {threadid: this.threadId}),
+            type: "POST",
+            success: this.bind__onDeleteSuccess,
+            error: this.bind__onDeleteError
+        });
+    };
+
+    Thread.prototype._onDeleteSuccess = function(data, textStatus, jqXHR) {
+        if (!data.wasDeleted) {
+            this._onDeleteError(jqXHR, textStatus, null);
+            return;
+        }
+
+        this._getElement(Thread.Binder.DELETE_MODAL)
+            .find(".modal-body")
+            .html("Topic deleted successfully.");
+
+        window.location.assign(data.redirectUrl);
+    };
+
+    Thread.prototype._onDeleteError = function(jqXHR, textStatus, errorThrown) {
+        this._getElement(Thread.Binder.DELETE_MODAL)
+            .find(".modal-body")
+            .prepend("Something went wrong. Try again.");
+
+        this._getElement(Thread.Binder.DELETE).button("reset");
     };
 
     Thread.prototype._getPost = function(id) {
@@ -297,13 +342,13 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         this._postEventBind(post, false); // ensure its off to prevent double binding
         this._postEventBind(post, true);
 
-        $("#modalCancelButton").off("click", post.bind__onClickCancel);
-        $("#modalDeleteButton").off("click", post.bind__onClickSubmit);
+        //$("#modalCancelButton").off("click", post.bind__onClickCancel);
+        $(Post.Binder.DELETE).off("click", post.bind__onClickSubmit);
 
-        $("#modalCancelButton").on("click", post.bind__onClickCancel);
-        $("#modalDeleteButton").on("click", post.bind__onClickSubmit);
+        //$("#modalCancelButton").on("click", post.bind__onClickCancel);
+        $(Post.Binder.DELETE).on("click", post.bind__onClickSubmit);
 
-        $("#modaldiv").modal("toggle");
+        //$("#modaldiv").modal("toggle");
     };
 
     Thread.prototype._onPostForm = function(e) {

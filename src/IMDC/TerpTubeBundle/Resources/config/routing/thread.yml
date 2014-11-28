@@ -28,7 +28,10 @@ imdc_thread_delete:
   pattern: /{threadid}/delete
   defaults: { _controller: IMDCTerpTubeBundle:Thread:delete }
   requirements:
+    _method: POST
     threadid: \d+
+  options:
+    expose: true
 
 imdc_thread_new_post:
   pattern: /{threadId}/reply
