@@ -142,9 +142,7 @@ class ThreadController extends Controller
         }
 
         return $this->render('IMDCTerpTubeBundle:Thread:new.html.twig', array(
-            'form' => $form->createView(),
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'form' => $form->createView()
         ));
     }
 
@@ -179,9 +177,7 @@ class ThreadController extends Controller
         
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
             'form' => $form->createView(),
-            'thread' => $thread,
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'thread' => $thread
         ));
     }
 

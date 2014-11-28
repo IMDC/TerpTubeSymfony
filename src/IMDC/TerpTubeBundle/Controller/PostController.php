@@ -132,8 +132,6 @@ class PostController extends Controller
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                         'form' => $form->createView(),
                         'post' => !$isPostReply ? $post : $postParent))
-                        //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-                        //'fileUploadForm' => $this->createForm(new MediaType())->createView()))
             );
         }
 
@@ -220,8 +218,6 @@ class PostController extends Controller
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
                         'form' => $form->createView(),
                         'post' => $post))
-                        //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-                        //'fileUploadForm' => $this->createForm(new MediaType())->createView()))
             );
         }
 

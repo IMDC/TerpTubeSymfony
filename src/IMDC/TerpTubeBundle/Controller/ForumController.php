@@ -154,9 +154,7 @@ class ForumController extends Controller
         }
         
         return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig', array(
-            'form' => $form->createView(),
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'form' => $form->createView()
         ));
 	}
 
@@ -307,9 +305,7 @@ class ForumController extends Controller
 	        
         return $this->render('IMDCTerpTubeBundle:Forum:edit.html.twig', array(
             'form' => $form->createView(),
-            'forum' => $forum,
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'forum' => $forum
         ));
 	}
 

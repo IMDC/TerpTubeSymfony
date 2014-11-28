@@ -99,9 +99,7 @@ class MessageController extends Controller
 		}
 
 		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
-            'form' => $form->createView(),
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'form' => $form->createView()
         ));
 	}
 
@@ -422,9 +420,7 @@ class MessageController extends Controller
 		return $this->render('IMDCTerpTubeBundle:Message:new.html.twig', array(
             'form' => $form->createView(),
             'message' => $message,
-            'isReply' => true,
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'isReply' => true
         ));
 	}
 }

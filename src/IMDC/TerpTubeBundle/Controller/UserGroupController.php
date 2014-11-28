@@ -112,9 +112,7 @@ class UserGroupController extends Controller
         }
 
         return $this->render('IMDCTerpTubeBundle:Group:new.html.twig', array(
-            'form' => $form->createView(),
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'form' => $form->createView()
         ));
     }
 
@@ -228,9 +226,7 @@ class UserGroupController extends Controller
 
 		return $this->render('IMDCTerpTubeBundle:Group:edit.html.twig', array(
             'form' => $form->createView(),
-            'group' => $group,
-            //'uploadForms' => MyFilesGatewayController::getUploadForms($this),
-            //'fileUploadForm' => $this->createForm(new MediaType())->createView()
+            'group' => $group
         ));
 	}
 
