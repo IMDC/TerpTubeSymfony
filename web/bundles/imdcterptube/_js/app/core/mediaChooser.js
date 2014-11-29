@@ -85,7 +85,7 @@ define(['core/mediaManager', 'core/recorder', 'core/helper'], function(MediaMana
     };
 
     // this must be the same name defined in {bundle}/Form/Type/MediaType
-    MediaChooser.FORM_NAME = "Media";
+    MediaChooser.FORM_NAME = "media";
 
     // int constants from Entity\Media
     MediaChooser.MEDIA_TYPE = {

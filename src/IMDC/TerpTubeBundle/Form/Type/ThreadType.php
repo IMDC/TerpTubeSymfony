@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Security\Core\SecurityContext;
 
-class ThreadFormType extends AbstractType
+class ThreadType extends AbstractType
 {
     private $securityContext;
 
@@ -75,6 +75,6 @@ class ThreadFormType extends AbstractType
 
 	public function getName()
 	{
-		return 'ThreadForm';
+		return 'thread';
 	}
 }

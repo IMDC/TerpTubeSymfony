@@ -675,7 +675,7 @@ class MyFilesGatewayController extends Controller
     public function addAction(Request $request)
     {
         // if not ajax, throw an error
-        if (!$request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest() || !$request->isMethod('POST')) {
             throw new BadRequestHttpException ('Only Ajax POST calls accepted');
         }
 
@@ -790,7 +790,7 @@ class MyFilesGatewayController extends Controller
     {
         // if not ajax, throw an exception
         if (!$request->isXmlHttpRequest()) {
-            throw new BadRequestHttpException ('Only Ajax POST calls accepted');
+            throw new BadRequestHttpException ('Only Ajax calls accepted');
         }
 
         // check if user logged in

@@ -38,6 +38,6 @@ class UserGroupType extends AbstractType
     
     public function getName()
     {
-        return 'UserGroupForm';
+        return 'user_group';
     }
 }

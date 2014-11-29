@@ -34,8 +34,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         DELETE: ".forum-delete"
     };
 
-    // this must be the same name defined in {bundle}/Form/Type/ForumFormType
-    Forum.FORM_NAME = "ForumForm";
+    // this must be the same name defined in {bundle}/Form/Type/ForumType
+    Forum.FORM_NAME = "forum";
 
     Forum.prototype.getContainer = function() {
         return $("body");

@@ -49,8 +49,8 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         DELETE: ".thread-delete"
     };
 
-    // this must be the same name defined in {bundle}/Form/Type/ThreadFormType
-    Thread.FORM_NAME = "Thread";
+    // this must be the same name defined in {bundle}/Form/Type/ThreadType
+    Thread.FORM_NAME = "thread";
 
     Thread.prototype.getContainer = function() {
         return $("body");

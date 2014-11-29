@@ -54,7 +54,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     // this must be the same name defined in {bundle}/Form/Type/PostType
-    Post.FORM_NAME = "PostForm";
+    Post.FORM_NAME = "post";
 
     Post.prototype.getContainer = function() {
         return $(Post.Binder.CONTAINER + "[data-pid=" + this.id + "]");

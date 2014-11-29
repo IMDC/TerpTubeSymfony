@@ -45,7 +45,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     // this must be the same name defined in {bundle}/Form/Type/UserGroupType
-    Group.FORM_NAME = "UserGroupForm";
+    Group.FORM_NAME = "user_group";
 
     Group.prototype.getContainer = function() {
         return $("body");
@@ -236,8 +236,6 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Group.prototype._onSuccess = function(e) {
-        //this.getFormField("mediatextarea").val(e.media.id);
-
         this._getElement(Group.Binder.SUBMIT).attr("disabled", false);
 
         var formField = this.getFormField("media");
@@ -249,7 +247,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Group.prototype._onReset = function(e) {
-        this.getFormField("mediatextarea").val("");
+
     };
 
     return Group;

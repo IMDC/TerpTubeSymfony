@@ -52,6 +52,6 @@ class PostType extends AbstractType
 
 	public function getName()
 	{
-		return 'PostForm';
+		return 'post';
 	}
 }

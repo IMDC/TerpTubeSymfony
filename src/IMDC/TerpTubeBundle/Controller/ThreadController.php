@@ -17,7 +17,7 @@ use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Entity\Post;
-use IMDC\TerpTubeBundle\Form\Type\ThreadFormType;
+use IMDC\TerpTubeBundle\Form\Type\ThreadType;
 use IMDC\TerpTubeBundle\Form\Type\ThreadFormDeleteType;
 
 /**
@@ -72,7 +72,7 @@ class ThreadController extends Controller
 
         $thread = new Thread();
         $securityContext = $this->get('security.context');
-        $form = $this->createForm(new ThreadFormType($securityContext), $thread, $formOptions);
+        $form = $this->createForm(new ThreadType($securityContext), $thread, $formOptions);
         $form->handleRequest($request);
 
         if (!$form->isValid() && !$form->isSubmitted()) {
@@ -206,7 +206,7 @@ class ThreadController extends Controller
             throw new AccessDeniedException();
         }
 
-        $form = $this->createForm(new ThreadFormType(), $thread, array(
+        $form = $this->createForm(new ThreadType(), $thread, array(
             'canChooseMedia' => false //FIXME changing media not allowed?
         ));
         $form->handleRequest($request);

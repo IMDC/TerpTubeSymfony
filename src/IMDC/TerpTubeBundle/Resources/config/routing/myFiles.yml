@@ -66,6 +66,8 @@ imdc_myfiles_add_recording:
 imdc_myfiles_add:
   pattern: /add
   defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:add }
+  requirements:
+    _method:  POST
   options:
     expose: true
 

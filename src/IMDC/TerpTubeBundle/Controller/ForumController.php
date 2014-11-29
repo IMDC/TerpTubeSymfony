@@ -5,7 +5,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
-use IMDC\TerpTubeBundle\Form\Type\ForumFormType;
+use IMDC\TerpTubeBundle\Form\Type\ForumType;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
@@ -89,7 +89,7 @@ class ForumController extends Controller
         $user = $this->getUser();
 
         $forum = new Forum();
-        $form = $this->createForm(new ForumFormType(), $forum, array(
+        $form = $this->createForm(new ForumType(), $forum, array(
             'user' => $user
         ));
         $form->handleRequest($request);
@@ -232,7 +232,7 @@ class ForumController extends Controller
             throw new AccessDeniedException();
         }
 
-	    $form = $this->createForm(new ForumFormType(), $forum, array(
+	    $form = $this->createForm(new ForumType(), $forum, array(
             'user' => $user
         ));
         $form->handleRequest($request);
