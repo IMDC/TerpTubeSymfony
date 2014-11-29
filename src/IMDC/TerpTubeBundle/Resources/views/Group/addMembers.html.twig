@@ -26,7 +26,6 @@
                         <button type="button" class="btn btn-default dropdown-toggle group-action" data-toggle="dropdown" data-loading-text="Working...">Action <span class="caret"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right" role="menu">
                             <li><a href="{{ path('imdc_group_edit', {'groupId': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a></li>
-                            <li><a href="{{ path('imdc_group_delete', {'groupId': group.id}) }}"><i class="fa fa-times"></i> Delete Group</a></li>
                             <li class="divider"></li>
                             <li><a href="{{ path('imdc_forum_new', {'groupId': group.id}) }}"><i class="fa fa-plus"></i> Create Forum</a></li>
                         </ul>

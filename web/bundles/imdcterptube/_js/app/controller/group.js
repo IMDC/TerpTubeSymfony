@@ -5,8 +5,14 @@ define(['core/mediaChooser'], function(MediaChooser) {
         console.log("%s: %s- options=%o", Group.TAG, "constructor", options);
 
         this.page = options.page;
+        this.id = options.id;
+
         this.mediaChooser = null;
 
+        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onClickDelete = this._onClickDelete.bind(this);
+        this.bind__onDeleteSuccess = this._onDeleteSuccess.bind(this);
+        this.bind__onDeleteError = this._onDeleteError.bind(this);
         this.bind__onClickUserSelect = this._onClickUserSelect.bind(this);
         this.bind__submitSelectedUsersForm = this._submitSelectedUsersForm.bind(this);
         this.bind__onPageLoaded = this._onPageLoaded.bind(this);
@@ -33,7 +39,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
         USER_CONTAINER_SELECT: ".user-container-select", //TODO move to user controller
         USER_SELECT: ".user-select", //TODO move to user controller
         USER_SELECTED: ".user-selected", //TODO move to user controller
-        SUBMIT: ".group-submit"
+        SUBMIT: ".group-submit",
+        DELETE_MODAL: ".group-delete-modal",
+        DELETE: ".group-delete"
     };
 
     // this must be the same name defined in {bundle}/Form/Type/UserGroupType
@@ -91,18 +99,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
         }
         this.mediaChooser.bindUIEvents();
 
-        /*this._getElement(Group.Binder.SUBMIT).on("click", (function(e) {
-            e.preventDefault();
-
-            var formField = this.getFormField("media");
-            formField.html(
-                this.mediaChooser.generateFormData(
-                    formField.data("prototype")
-                )
-            );
-
-            this.getForm().submit();
-        }).bind(this));*/
+        this._getElement(Group.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
+        this._getElement(Group.Binder.DELETE).on("click", this.bind__onClickDelete);
     };
 
     Group.prototype._bindUIEventsAddMembers = function() {
@@ -137,6 +135,42 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });
 
         $("#deleteSelected").on("click", this.bind__submitSelectedUsersForm);
+    };
+
+    Group.prototype._onClickSubmit = function(e) {
+        $(e.target).button("loading");
+    };
+
+    Group.prototype._onClickDelete = function(e) {
+        $(e.target).button("loading");
+
+        $.ajax({
+            url: Routing.generate("imdc_group_delete", {groupId: this.id}),
+            type: "POST",
+            success: this.bind__onDeleteSuccess,
+            error: this.bind__onDeleteError
+        });
+    };
+
+    Group.prototype._onDeleteSuccess = function(data, textStatus, jqXHR) {
+        if (!data.wasDeleted) {
+            this._onDeleteError(jqXHR, textStatus, null);
+            return;
+        }
+
+        this._getElement(Group.Binder.DELETE_MODAL)
+            .find(".modal-body")
+            .html("Group deleted successfully.");
+
+        window.location.assign(data.redirectUrl);
+    };
+
+    Group.prototype._onDeleteError = function(jqXHR, textStatus, errorThrown) {
+        this._getElement(Group.Binder.DELETE_MODAL)
+            .find(".modal-body")
+            .prepend("Something went wrong. Try again.");
+
+        this._getElement(Group.Binder.DELETE).button("reset");
     };
 
     Group.prototype._onClickUserSelect = function(e) {

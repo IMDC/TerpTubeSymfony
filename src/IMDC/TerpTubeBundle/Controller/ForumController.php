@@ -320,7 +320,7 @@ class ForumController extends Controller
     public function deleteAction(Request $request, $forumid)
 	{
         // if not ajax, throw an error
-        if (!$request->isXmlHttpRequest()) {
+        if (!$request->isXmlHttpRequest() || !$request->isMethod('POST')) {
             throw new BadRequestHttpException('Only Ajax POST calls accepted');
         }
 

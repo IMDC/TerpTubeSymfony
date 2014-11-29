@@ -233,12 +233,18 @@ class UserGroupController extends Controller
     /**
      * @param Request $request
      * @param $groupId
-     * @return RedirectResponse
+     * @return RedirectResponse|Response
+     * @throws BadRequestHttpException
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function deleteAction(Request $request, $groupId)
 	{
+        // if not ajax, throw an error
+        if (!$request->isXmlHttpRequest() || !$request->isMethod('POST')) {
+            throw new BadRequestHttpException('Only Ajax POST calls accepted');
+        }
+
 	    // check if user logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -261,16 +267,20 @@ class UserGroupController extends Controller
 	    }
 
         $em->remove($group);
+
+        $aclProvider = $this->get('security.acl.provider');
+        $objectIdentity = ObjectIdentity::fromDomainObject($group);
+        $aclProvider->deleteAcl($objectIdentity);
+
         $em->flush();
 
-	    $aclProvider = $this->get('security.acl.provider');
-	    $objectIdentity = ObjectIdentity::fromDomainObject($group);
-	    $aclProvider->deleteAcl($objectIdentity);
+        $content = array(
+            'wasDeleted' => true,
+            'redirectUrl' => $this->generateUrl('imdc_group_my_groups')
+        );
 
-	    $this->get('session')->getFlashBag()->add('info', 'Group deleted!');
-
-	    return $this->redirect($this->generateUrl('imdc_group_list'));
-	}
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
+    }
 
     /**
      * @param Request $request
