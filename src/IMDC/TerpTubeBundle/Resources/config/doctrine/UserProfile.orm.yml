@@ -78,7 +78,6 @@ IMDC\TerpTubeBundle\Entity\UserProfile:
             nullable: true
         profileVisibleToPublic:
             type: boolean
-            nullable: true
         #can be greyed out until video bio is updated
         textBio:
             type: text

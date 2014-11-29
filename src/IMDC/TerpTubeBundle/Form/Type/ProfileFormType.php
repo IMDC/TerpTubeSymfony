@@ -26,7 +26,11 @@ class ProfileFormType extends BaseType
 		$builder->add('interestedInMentoringSignLanguage', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoringSignLanguage.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('interestedInMentoringInterpreter', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoredingInterpreter.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
 		$builder->add('interestedInMentoringMentor', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.interestedInMentoringMentor.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
-		$builder->add('profileVisibleToPublic', 'choice', array('empty_value' => 'form.generic.empty', 'choices'=>array(true => 'form.generic.yes', false => 'form.generic.no'), 'required'=>false, 'expanded' => true, 'multiple' => false, 'label' => 'form.profile.profileVisibleToPublic.title', 'translation_domain' => 'IMDCTerpTubeBundle'));
+
+        $builder->add('profileVisibleToPublic', 'checkbox', array(
+            'label' => 'form.profile.profileVisibleToPublic.title',
+            'required' => false
+        ));
 	}
 	
 
@@ -37,7 +41,10 @@ class ProfileFormType extends BaseType
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
-		$resolver->setDefaults(array('data_class' => 'IMDC\TerpTubeBundle\Entity\UserProfile',));
+		$resolver->setDefaults(array(
+            'data_class' => 'IMDC\TerpTubeBundle\Entity\UserProfile',
+            'translation_domain' => 'IMDCTerpTubeBundle'
+        ));
 	}
 }
 ?>

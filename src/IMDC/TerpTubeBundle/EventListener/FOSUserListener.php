@@ -1,9 +1,10 @@
 <?php
 
 namespace IMDC\TerpTubeBundle\EventListener;
-	
+
 use IMDC\TerpTubeBundle\Entity\Message;
 use FOS\UserBundle\FOSUserEvents;
+use IMDC\TerpTubeBundle\Entity\UserProfile;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -42,10 +43,23 @@ class FOSUserListener implements EventSubscriberInterface
 	public static function getSubscribedEvents()
 	{
 		return array(
+            FOSUserEvents::REGISTRATION_INITIALIZE => 'onRegistrationInitialize',
             FOSUserEvents::REGISTRATION_CONFIRMED => 'generateIntroductionEmail',
             FOSUserEvents::CHANGE_PASSWORD_SUCCESS => 'onChangePasswordSuccess'
 		);
 	}
+
+    public function onRegistrationInitialize(GetResponseUserEvent $event)
+    {
+        if (!$event->getUser() instanceof User) {
+            return;
+        }
+
+        $profile = new UserProfile();
+        $profile->setProfileVisibleToPublic(true);
+
+        $event->getUser()->setProfile($profile);
+    }
 	
 	public function generateIntroductionEmail(FilterUserResponseEvent $event)
     {
