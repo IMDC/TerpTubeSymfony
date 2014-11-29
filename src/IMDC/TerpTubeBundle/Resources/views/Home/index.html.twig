@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="col-md-12">
-        <!-- my forums -->
+        <!-- forums -->
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <img class="img-responsive center-block" src="" />
@@ -15,15 +15,15 @@
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <hr class="tt-separator-top" />
-                {% if myForums|length > 0 %}
-                    {% include 'IMDCTerpTubeBundle:Forum:thumbnail.html.twig' with {'forums': myForums} %}
+                {% if forums|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:Forum:thumbnail.html.twig' %}
                 {% else %}
-                    <p class="text-center" style="margin-bottom: 20px;">You don't belong to any forums</p>
+                    <p class="text-center" style="margin-bottom: 20px;">No forums</p>
                 {% endif %}
                 <hr class="tt-separator-bottom" />
             </div>
         </div>
-        <!-- my groups -->
+        <!-- groups -->
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <img class="img-responsive center-block" src="" />
@@ -32,10 +32,10 @@
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <hr class="tt-separator-top" />
-                {% if myGroups|length > 0 %}
-                    {% include 'IMDCTerpTubeBundle:Group:thumbnail.html.twig' with {'groups': myGroups} %}
+                {% if groups|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:Group:thumbnail.html.twig' %}
                 {% else %}
-                    <p class="text-center" style="margin-bottom: 20px;">You don't belong to any groups</p>
+                    <p class="text-center" style="margin-bottom: 20px;">No groups</p>
                 {% endif %}
                 <hr class="tt-separator-bottom" />
             </div>

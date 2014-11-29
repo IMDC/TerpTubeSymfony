@@ -26,22 +26,29 @@ class HomeController extends Controller
 		}
 
 		$em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
         $securityContext = $this->get('security.context');
+        $limit = 4;
 
-		$myForums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getRecentlyCreatedForums(4);
-        $myGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getGroupsForUser($this->getUser(), 4);
+        $forums = $em->getRepository('IMDCTerpTubeBundle:Forum')
+            ->getViewableToUser($user, $securityContext, array(
+                'sort' => 'f.lastActivity',
+                'direction' => 'desc',
+                'limit' => $limit
+            ));
 
-        //FIXME this seems too costly just for the result of numeric convenience
-        $forumThreadCount = array();
-        $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
-        foreach ($myForums as $forum) {
-            $forumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $forum->getId()));
-        }
+        $groups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')
+            ->getViewableToUser($user, $securityContext, array(
+                'sort' => 'g.dateCreated',
+                'direction' => 'desc',
+                'limit' => $limit
+            ));
 
 		return $this->render('IMDCTerpTubeBundle:Home:index.html.twig', array(
-            'myForums' => $myForums,
-            'myGroups' => $myGroups,
-            'forumThreadCount' => $forumThreadCount
+            'forums' => $forums,
+            'forumThreadCount' => $em->getRepository('IMDCTerpTubeBundle:Thread')
+                    ->getViewableCountForForums($forums, $securityContext),
+            'groups' => $groups
         ));
 	}
 }

@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
+use IMDC\TerpTubeBundle\Entity\ForumRepository;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
@@ -32,7 +33,10 @@ class ForumController extends Controller
      */
     public function listAction(Request $request)
 	{
-		
+        /**
+         * @var $repo ForumRepository
+         */
+
 		// check if user logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -40,35 +44,29 @@ class ForumController extends Controller
 		
 		$em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('IMDCTerpTubeBundle:Forum');
-        $securityContext = $this->get('security.context');
         $user = $this->getUser();
+        $securityContext = $this->get('security.context');
 
-		$recentForums = $repo->getRecent($securityContext, $user); //TODO try doctrine criteria
-		$forums = $repo->getViewableToUser($securityContext, $user);
-		
-		$paginator = $this->get('knp_paginator');
-		$forums = $paginator->paginate(
-            $forums,
+		$sortParams = array(
+            'sort' => $request->query->get('sort', 'f.lastActivity'),
+            'direction' => $request->query->get('direction', 'desc')
+        );
+
+        $paginator = $this->get('knp_paginator');
+        $forums = $paginator->paginate(
+            $repo->getViewableToUser($user, $securityContext, $sortParams),
 			$request->query->get('page', 1), /*page number*/
 			8 /*limit per page*/
 		);
 
-        //FIXME this seems too costly just for the result of numeric convenience
-        $recentForumThreadCount = array();
-        $forumThreadCount = array();
-        $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
-        foreach ($recentForums as $recentForum) {
-            $recentForumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $recentForum->getId()));
-        }
-        foreach ($forums as $forum) {
-            $forumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $forum->getId()));
+        foreach ($sortParams as $key => $value) {
+            $forums->setParam($key, $value);
         }
 
 		return $this->render('IMDCTerpTubeBundle:Forum:index.html.twig', array(
-            'recentForums' => $recentForums,
-			'forums' => $forums,
-            'recentForumThreadCount' => $recentForumThreadCount,
-            'forumThreadCount' => $forumThreadCount
+            'forums' => $forums,
+            'forumThreadCount' => $em->getRepository('IMDCTerpTubeBundle:Thread')
+                    ->getViewableCountForForums($forums, $securityContext)
 		));
 	}
 
@@ -184,23 +182,27 @@ class ForumController extends Controller
         }
 
         $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
+        $sortParams = array(
+            'sort' => $request->query->get('sort', 't.lastPostAt'),
+            'direction' => $request->query->get('direction', 'desc')
+        );
 
-        $recentThreads = $threadRepo->getRecent($securityContext, $forum->getId(), 4);
-        $threads = $threadRepo->getViewableToUser($securityContext, $forum->getId());
-
-	    $paginator = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
 	    $threads = $paginator->paginate(
-            $threads,
+            $threadRepo->getViewableToUser($forum->getId(), $securityContext, $sortParams),
             $request->query->get('page', 1) /* page number */,
 	    	8 /* limit per page */
 	    );
+
+        foreach ($sortParams as $key => $value) {
+            $threads->setParam($key, $value);
+        }
 
 	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
 	    	'forum' => $forum,
             'orderedMedia' => Utils::orderMedia(
                     $forum->getTitleMedia(),
                     $forum->getMediaDisplayOrder()),
-	    	'recentThreads' => $recentThreads,
 	    	'threads' => $threads
 	    ));
 	}

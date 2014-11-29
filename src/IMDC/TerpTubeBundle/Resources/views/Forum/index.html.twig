@@ -27,24 +27,7 @@
 				</div>
 			</div>
 		{% endif %}
-		<!-- recent forum activity -->
-		<div class="row">
-			<div class="col-md-12">
-				<img class="img-responsive center-block" src="" />
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<hr class="tt-separator-top" />
-				{% if recentForums|length > 0 %}
-					{% include 'IMDCTerpTubeBundle:Forum:thumbnail.html.twig' with {'forums': recentForums, 'forumThreadCount': recentForumThreadCount} %}
-				{% else %}
-					<p class="text-center" style="margin-bottom: 20px;">No recent forums</p>
-				{% endif %}
-				<hr class="tt-separator-bottom" />
-			</div>
-		</div>
-		<!-- all forums -->
+		<!-- forums -->
         {% include 'IMDCTerpTubeBundle:Forum:list.html.twig' %}
 	</div>
 {% endblock content %}

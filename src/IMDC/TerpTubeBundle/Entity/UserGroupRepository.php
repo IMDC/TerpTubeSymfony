@@ -3,7 +3,8 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use IMDC\TerpTubeBundle\Entity\User;
+use IMDC\TerpTubeBundle\Utils\Utils;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * UserGroupRepository
@@ -13,37 +14,37 @@ use IMDC\TerpTubeBundle\Entity\User;
  */
 class UserGroupRepository extends EntityRepository
 {
-    public function getPublicallyVisibleGroups($limit=0)
-	{
-		$query = $this->getEntityManager()
-						->createQuery('
-                            SELECT g
-                            FROM IMDCTerpTubeBundle:UserGroup g
-                            WHERE g.visibleToPublic = TRUE
-                            ORDER BY g.dateCreated DESC');
-
-        if ($limit > 0) {
-            $query->setMaxResults($limit);
-        }
-
-		return $query->getResult();
-	}
-	
-	public function getGroupsForUser(User $user, $limit=0)
+    /**
+     * @param $user
+     * @param array $sortParams
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getViewableToUserQB($user, $sortParams = array())
     {
-        $query = $this->getEntityManager()
-                ->createQuery('
-                    SELECT g
-                    FROM IMDCTerpTubeBundle:UserGroup g
-                    JOIN IMDCTerpTubeBundle:User u
-                    WHERE u.id = :uid
-                ')
-                ->setParameter('uid', $user->getId());
+        $qb = $this->createQueryBuilder('g')
+            ->leftJoin('g.members', 'm');
 
-        if ($limit > 0) {
-            $query->setMaxResults($limit);
-        }
+        //FIXME: treat 'visibleToPublic' as 'isPrivate'
+        $qb->where($qb->expr()->eq('g.visibleToPublic', ':visibleToPublic'))
+            //FIXME: contradicts 'isPrivate'. needed? only registered members will get here anyway
+            //->orWhere($qb->expr()->eq('g.visibleToRegisteredUsers', ':visibleToRegisteredUsers'))
+            ->orWhere($qb->expr()->in('m.id', array(
+                $user->getId()
+            )))
+            ->setParameters(array(
+                'visibleToPublic' => true,
+                //'visibleToRegisteredUsers' => true
+            ));
 
-        return $query->getResult();
+        return Utils::applySortParams($qb, $sortParams);
+    }
+
+    public function getViewableToUser($user, SecurityContext $securityContext, $sortParams = array())
+    {
+        $groups = $this->getViewableToUserQB($user, $sortParams)->getQuery()->getResult();
+
+        //FIXME: groups don't use AccessType restrictions
+        //return Utils::filterViewableToUser($securityContext, $groups);
+        return $groups;
     }
 }

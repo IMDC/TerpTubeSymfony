@@ -2,8 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
+use IMDC\TerpTubeBundle\Utils\Utils;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * ThreadRepository
@@ -13,105 +14,40 @@ use Doctrine\ORM\EntityRepository;
  */
 class ThreadRepository extends EntityRepository
 {
-    private function getViewableToUserQB($parentForumId)
+    /**
+     * @param $parentForumId
+     * @param array $sortParams
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getViewableToUserQB($parentForumId, $sortParams = array())
     {
-        return $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
             ->leftJoin('t.parentForum', 'f')
             ->where('f.id = :parentForumId')
             ->setParameters(array(
                 'parentForumId' => $parentForumId));
+
+        return Utils::applySortParams($qb, $sortParams);
     }
 
-    private function filterViewableToUser($securityContext, array $items)
+    public function getViewableToUser($parentForumId, SecurityContext $securityContext, $sortParams = array())
     {
-        $viewable = array();
-        foreach ($items as $item) {
-            if ($securityContext->isGranted('VIEW', $item) === true) {
-                $viewable[] = $item;
-            }
-        }
-
-        return $viewable;
-    }
-
-    public function getViewableToUser($securityContext, $parentForumId)
-    {
-        $threads = $this->getViewableToUserQB($parentForumId)
+        $threads = $this->getViewableToUserQB($parentForumId, $sortParams)
             ->getQuery()->getResult();
 
-        return $this->filterViewableToUser($securityContext, $threads);
+        return Utils::filterViewableToUser($securityContext, $threads);
     }
 
-    public function getRecent($securityContext, $parentForumId, $limit = 4)
-    {
-        $threads = $this->getViewableToUserQB($parentForumId)
-            ->orderBy('t.lastPostAt', 'DESC')
-            ->getQuery()->getResult();
-
-        $filtered = $this->filterViewableToUser($securityContext, $threads);
-
-        return array_slice($filtered, 0, $limit);
-    }
-
-
-
-
-
-
-
-
-    public function getMostRecentThreads($limit=30)
-    {
-        $query = $this->getEntityManager()
-                      ->createQuery
-                      ('SELECT t
-                        FROM IMDCTerpTubeBundle:Thread t
-                        JOIN IMDCTerpTubeBundle:Permissions p
-                        WHERE p.accessLevel = (-1)
-                        ORDER BY t.creationDate DESC
-                       ');
-        $query->setMaxResults($limit);
-         
-        return $query->getResult();
-    }
-    
-    public function findRecentThreadsForForum($fid, $limit=4)
-    {
-        return $this->getEntityManager()
-        		->createQuery('
-        				SELECT t
-        				FROM IMDCTerpTubeBundle:Thread t
-        				WHERE t.parentForum = :fid
-        				ORDER BY t.creationDate DESC')
-        		->setParameter('fid', $fid)
-        		->setMaxResults($limit)
-        		->getResult();
-    }
-    
-    /**
-     * Iterates through all threads and returns an array of Thread objects
-     * that the given user can access based on the thread permissions and 
-     * the 'userHasAccess' method for a Thread object.
-     * 
-     * @param IMDCTerpTubeBundle:User $user
-     * @return multitype:Ambigous <multitype:, \Doctrine\ORM\mixed, \Doctrine\ORM\Internal\Hydration\mixed, \Doctrine\DBAL\Driver\Statement, \Doctrine\Common\Cache\mixed>
-     */
-    public function findThreadsUserHasAccessTo($user)
-    {
-        $query = $this->getEntityManager()->createQuery('
-            SELECT t FROM IMDCTerpTubeBundle:Thread t
-        ');
-        $allThreads = $query->getResult();
-        $results = array();
-        foreach ($allThreads as $athread) {
-        	if ($athread->userHasAccess($user)) {
-        	    $results[] = $athread;
-        	}
+    //FIXME this seems too costly just for the result of numeric convenience
+    public function getViewableCountForForums($forums, SecurityContext $securityContext) {
+        $count = array();
+        foreach ($forums as $forum) {
+            $count[] = count($this->getViewableToUser($forum->getId(), $securityContext));
         }
 
-        return $results;
+        return $count;
     }
-    
+
     public function getThreadsForMedia(Media $media)
     {
     	$dql = "SELECT t

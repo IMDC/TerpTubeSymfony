@@ -40,13 +40,14 @@ class UserGroupController extends Controller
 		}
 		
 		$em = $this->getDoctrine()->getManager();
+        $repo = $em->getRepository('IMDCTerpTubeBundle:UserGroup');
+        $user = $this->getUser();
+        $securityContext = $this->get('security.context');
 
-        $recentGroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups(4); //TODO revise
-        $usergroups = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->getPublicallyVisibleGroups(); //TODO revise
+        $groups = $repo->getViewableToUser($user, $securityContext);
 
 		return $this->render('IMDCTerpTubeBundle:Group:index.html.twig', array(
-            'recentGroups' => $recentGroups,
-            'groups' => $usergroups
+            'groups' => $groups
         ));
 	}
 
@@ -137,24 +138,29 @@ class UserGroupController extends Controller
 
         $securityContext = $this->get('security.context');
 
+        $user = $this->getUser();
+        $forumRepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
+        $sortParams = array(
+            'sort' => $request->query->get('sort', 'f.lastActivity'),
+            'direction' => $request->query->get('direction', 'desc')
+        );
+
         $paginator = $this->get('knp_paginator');
         $forums = $paginator->paginate(
-            $group->getForums(),
+            $forumRepo->getViewableToUser($user, $securityContext, $sortParams, false, true, $group->getId()),
             $request->query->get('page', 1), /*page number*/
             8 /*limit per page*/
         );
 
-        //FIXME this seems too costly just for the result of numeric convenience
-        $forumThreadCount = array();
-        $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');
-        foreach ($forums as $forum) {
-            $forumThreadCount[] = count($threadRepo->getViewableToUser($securityContext, $forum->getId()));
+        foreach ($sortParams as $key => $value) {
+            $forums->setParam($key, $value);
         }
 
         $parameters = array(
             'group' => $group,
             'forums' => $forums,
-            'forumThreadCount' => $forumThreadCount
+            'forumThreadCount' => $em->getRepository('IMDCTerpTubeBundle:Thread')
+                    ->getViewableCountForForums($forums, $securityContext)
         );
 
         if ($securityContext->isGranted('EDIT', $group) === true) {

@@ -2,6 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Utils;
 
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Security\Core\SecurityContext;
+
 class Utils
 {
 	public static function delTree($dir)
@@ -63,5 +66,29 @@ class Utils
         ksort($ordered);
 
         return $ordered;
+    }
+
+    public static function filterViewableToUser(SecurityContext $securityContext, array $items)
+    {
+        $viewable = array();
+        foreach ($items as $item) {
+            if ($securityContext->isGranted('VIEW', $item) === true) {
+                $viewable[] = $item;
+            }
+        }
+
+        return $viewable;
+    }
+
+    //TODO: this may not be the best place. move me
+    public static function applySortParams(QueryBuilder $qb, array $sortParams) {
+        if (isset($sortParams['sort']) && isset($sortParams['direction'])) {
+            $qb->orderBy($sortParams['sort'], $sortParams['direction']);
+        }
+
+        if (isset($sortParams['limit']))
+            $qb->setMaxResults($sortParams['limit']);
+
+        return $qb;
     }
 }

@@ -51,24 +51,7 @@
 				</p>
 			</div>
 		</div>
-		<!-- recent threads activity -->
-		<div class="row">
-			<div class="col-md-12">
-				<img class="img-responsive center-block" src="" />
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<hr class="tt-separator-top" />
-				{% if recentThreads|length > 0 %}
-					{% include 'IMDCTerpTubeBundle:Thread:thumbnail.html.twig' with {'threads': recentThreads} %}
-				{% else %}
-					<p class="text-center" style="margin-bottom: 20px;">No recent threads</p>
-				{% endif %}
-				<hr class="tt-separator-bottom" />
-			</div>
-		</div>
-		<!-- all threads -->
+		<!-- threads -->
 		<div class="row">
 			<div class="col-md-12">
 				<img class="img-responsive center-block" src="" />
@@ -99,7 +82,7 @@
                     </div>
 					{% include 'IMDCTerpTubeBundle:Thread:thumbnail.html.twig' %}
 				{% else %}
-					<p class="text-center" style="margin-bottom: 20px;">No threads</p>
+					<p class="text-center" style="margin-bottom: 20px;">No topics</p>
 				{% endif %}
 				<hr class="tt-separator-bottom" />
 			</div>
