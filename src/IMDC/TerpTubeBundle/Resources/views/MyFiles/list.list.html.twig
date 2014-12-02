@@ -1,0 +1,48 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as media %}
+
+<div class="text-center">
+    {{ knp_pagination_render(resourceFiles) }}
+</div>
+{{ media.controls('list') }}
+<div class="table-responsive">
+    <table class="table table-hover tt-myFiles-table">
+        <thead>
+            <th style="width: 1%; vertical-align: middle;"><input type="checkbox" class="my-files-selector-toggle-selection" style="-webkit-appearance: none; width: 18px; height: 18px; border: 1px solid #ccc;" disabled="disabled" /></th>
+            <th style="width: 60%; line-height: 45px;">Name</th>
+            <th style="line-height: 45px;">Date uploaded</th>
+            <th style="line-height: 45px;">Size</th>
+        </thead>
+        <tbody class="my-files-selector-files-list">
+            {% if resourceFiles|length > 0 %}
+                {% for resourceFile in resourceFiles %}
+                    <tr class="my-files-selector-file">
+                        <td style="vertical-align: middle;"><input type="checkbox" style="-webkit-appearance: none; width: 18px; height: 18px; border: 1px solid #ccc;" data-mid="{{ resourceFile.id }}" /></td>
+                        <td class="tt-myFiles-nameColumn" style="line-height: 45px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="edit-title" style="cursor: pointer;" title="{{ 'filesGateway.previewLink'|trans }}" data-type="text" data-val="{{ resourceFile.id }}" data-title="{{ 'form.media.title'|trans }}">
+                                {{ media.typeToIcon(resourceFile.type) }}{{ resourceFile.title }}
+                            </span>
+                            <span style="position: relative; float: right;">
+                                <span class="css-hover" style="display: none; position: absolute; right: 0px; top: -1px;">
+                                    <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+                                    <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': resourceFile.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                                </span>
+                            </span>
+                        </td>
+                        <td style="line-height: 45px;">{{ resourceFile.getMetaData.getTimeUploaded|date('M m Y h:i a') }}</td>
+                        <td style="line-height: 45px;">{{ media.formatSize(resourceFile.metaData.size) }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr colspan="4">
+                    <div class="text-center">{{ 'filesGateway.noFiles'|trans }}</div>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{{ media.controls('list') }}
+<div class="text-center">
+    {{ knp_pagination_render(resourceFiles) }}
+</div>

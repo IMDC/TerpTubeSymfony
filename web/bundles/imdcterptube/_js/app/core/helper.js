@@ -1,4 +1,6 @@
 define(function() {
+    "use strict";
+
     var Helper = function() {
 
     };
@@ -44,6 +46,14 @@ define(function() {
         progressBar.attr("aria-valuenow", percentComplete);
         progressBar.css("width", percentComplete + "%");
         progressBar.html(percentComplete + "%");
+    };
+
+    Helper.generateUrl = function(path, root) {
+        var root = typeof root !== "undefined" ? root : false;
+        var baseUrl = Routing.getBaseUrl();
+        return root
+            ? baseUrl + path
+            : baseUrl.replace(/\w+\.php$/gi, "")  + path;
     };
 
     return Helper;

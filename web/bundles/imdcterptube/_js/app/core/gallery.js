@@ -1,4 +1,6 @@
 define(['core/mediaChooser', 'core/recorder'], function(MediaChooser, Recorder) {
+    "use strict";
+
     var Gallery = function(options) {
         this.container = options.container;
 
@@ -71,13 +73,14 @@ define(['core/mediaChooser', 'core/recorder'], function(MediaChooser, Recorder) 
 
         var typeToDustTemplate = function(type) {
             switch (type) {
-                case MediaChooser.MEDIA_TYPE.VIDEO.id:
+                //FIXME
+                case $tt.Core.MediaChooser.MEDIA_TYPE.VIDEO.id:
                     return "mediaElementVideo";
-                case MediaChooser.MEDIA_TYPE.AUDIO.id:
+                case $tt.Core.MediaChooser.MEDIA_TYPE.AUDIO.id:
                     return "mediaElementAudio";
-                case MediaChooser.MEDIA_TYPE.IMAGE.id:
+                case $tt.Core.MediaChooser.MEDIA_TYPE.IMAGE.id:
                     return "mediaElementImage";
-                case MediaChooser.MEDIA_TYPE.OTHER.id:
+                case $tt.Core.MediaChooser.MEDIA_TYPE.OTHER.id:
                     return "mediaElementOther";
             }
         };
@@ -86,18 +89,18 @@ define(['core/mediaChooser', 'core/recorder'], function(MediaChooser, Recorder) 
             var container = this._getElement(Gallery.Binder.CONTENT);
             container.html(out); //TODO append instead and add slider so that media is loaded on demand but only once
 
-            if (media.type == MediaChooser.MEDIA_TYPE.VIDEO.id) {
+            if (media.type == $tt.Core.MediaChooser.MEDIA_TYPE.VIDEO.id) { //FIXME
                 container.find("button").on("click", (function(e) {
-                    this.recorder = new Recorder({
+                    this.recorder = new $tt.Core.Recorder({
                         container: this._getElement(Gallery.Binder.RECORDER),
-                        page: Recorder.Page.INTERPRETATION,
+                        page: $tt.Core.Recorder.Page.INTERPRETATION,
                         enableDoneAndPost: true
                     });
-                    $(this.recorder).on(Recorder.Event.READY, (function(e) {
+                    $(this.recorder).on($tt.Core.Recorder.Event.READY, (function(e) {
                         this.recorder.setSourceMedia(media);
                         this.recorder.show();
                     }).bind(this));
-                    $(this.recorder).on(Recorder.Event.DONE, (function(e) {
+                    $(this.recorder).on($tt.Core.Recorder.Event.DONE, (function(e) {
                         this.recorder.hide();
                         //this.recorder = null;
                         //this._getElement(Gallery.Binder.RECORDER).html("");

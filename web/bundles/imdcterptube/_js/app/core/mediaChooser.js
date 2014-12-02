@@ -10,7 +10,7 @@ define(['core/mediaManager', 'core/recorder', 'core/helper'], function(MediaMana
         if (typeof options == "undefined") {
             options = defaults;
         } else {
-            for (var o in options) {
+            for (var o in defaults) {
                 this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
             }
         }

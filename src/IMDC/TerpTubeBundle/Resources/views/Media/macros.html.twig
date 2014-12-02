@@ -1,0 +1,50 @@
+{% macro controls(style) %}
+    {% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <button class="btn btn-danger my-files-selector-bulk-action" title="{{ 'filesGateway.deleteLink'|trans }}" data-action="1"><i class="fa fa-trash-o"></i></button>
+            {% if style == 'grid' %}
+                {% set style = 'list' %}
+                {% set styleIcon = 'fa-th-list' %}
+                <button class="btn btn-default my-files-selector-toggle-selection" title="Toggle selection" disabled="disabled"><i class="fa fa-check-square-o"></i></button>
+            {% else %}
+                {% set style = 'grid' %}
+                {% set styleIcon = 'fa-th-large' %}
+            {% endif %}
+            <a class="btn btn-default my-files-selector-toggle-style" href="{{ path('imdc_myfiles_list', {'style': style}) }}"><i class="fa {{ styleIcon }}"></i></a>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro typeToIcon(type) %}
+    {% if type == 1 %}
+        {% set icon = 'fa-file-video-o' %}
+    {% elseif type == 2 %}
+        {% set icon = 'fa-file-audio-o' %}
+    {% elseif type == 0 %}
+        {% set icon = 'fa-file-photo-o' %}
+    {% elseif type == 9 %}
+        {% set icon = 'fa-file-o' %}
+    {% endif %}
+    <i class="fa {{ icon }} fa-2x" style="vertical-align: middle; padding-right: 8px;"></i>
+{% endmacro %}
+
+{% macro formatSize(size) %}
+    {% if size == -1 %}
+        <i class="fa fa-spinner fa-spin fa-large"> </i>
+    {% else %}
+        {{ '%.2f'|format(size / 1024 / 1024) }} MB
+    {% endif %}
+{% endmacro %}
+
+{% macro thumbnail(thumbnailPath) %}
+    {% if thumbnailPath is not null %}
+        <img style="vertical-align: middle; width: 100%; max-height: 175px;" src="{{ asset(thumbnailPath) }}" />
+    {% else %}
+        <span class="fa-stack fa-lg" style="width: 100%;">
+            <i class="fa fa-file-o fa-stack-2x"></i>
+            <i class="fa fa-play-circle fa-stack-1x"></i>
+        </span>
+    {% endif %}
+{% endmacro %}

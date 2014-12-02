@@ -64,11 +64,12 @@
                     requirejs.config({
                         baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
                         paths: {
+                            templates: 'views/templates',
                             extra: 'lib/extra'
                         },
                         shim: {
                             main: {
-                                deps: ['extra']
+                                deps: ['templates', 'extra']
                             }
                         }
                     });
@@ -197,6 +198,7 @@
         {% endblock javascripts %}
     </body>
     {% block outside_body %}
-        {{ block('recorder_dust') }}
+        {#{{ block('recorder_dust') }}
+        {{ block('my_files_selector_dust') }}#}
     {% endblock outside_body %}
 </html>

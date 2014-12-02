@@ -27,7 +27,7 @@ class ThreadType extends AbstractType
             }
 
             //TODO change to get forums where the user has permission to create threads
-            $forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getViewableToUser($this->securityContext, $user);
+            $forums = $em->getRepository('IMDCTerpTubeBundle:Forum')->getViewableToUser($user, $this->securityContext);
 
             $builder->add('forum', 'entity', array(
                 'class' => 'IMDCTerpTubeBundle:Forum',

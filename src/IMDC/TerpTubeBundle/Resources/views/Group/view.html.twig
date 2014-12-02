@@ -34,7 +34,9 @@
                 {% if is_granted('EDIT', group) %}
                     <a class="btn btn-default group-toggle-member-select" href="#" data-toggle="button"><i class="fa fa-wrench"></i> Manage Members</a>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle group-action" data-toggle="dropdown">Action <span class="caret"></span></button>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            Action <span class="caret"></span>
+                        </button>
                         <ul class="dropdown-menu dropdown-menu-right" role="menu">
                             <li><a href="{{ path('imdc_group_edit', {'groupId': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a></li>
                             <li class="divider"></li>

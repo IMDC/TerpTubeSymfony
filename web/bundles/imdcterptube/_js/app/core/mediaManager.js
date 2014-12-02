@@ -7,6 +7,11 @@ define(function() {
 	MediaManager.EVENT_DELETE_ERROR = "delete_media_error";
 	MediaManager.EVENT_UPDATE_SUCCESS = "update_media_success";
 	MediaManager.EVENT_UPDATE_ERROR = "update_media_error";
+
+    MediaManager.Event = {
+        GET_INFO_SUCCESS: "eventGetInfoSuccess",
+        GET_INFO_ERROR: "eventGetInfoError"
+    };
 	
 	/**
 	 * Used to ajax delete a media by its ID and provides a confirmation message
@@ -170,6 +175,24 @@ define(function() {
 			}
 		});
 	};
+
+    MediaManager.prototype.getInfo = function(mediaIds) {
+        $.ajax({
+            url: Routing.generate("imdc_myfiles_get_info"),
+            data: {mediaIds: mediaIds},
+            type: 'POST',
+            success: (function(data, textStatus, jqXHR) {
+                //console.log("%s: %s: %s", Post.TAG, "handlePage", "success");
+
+                $(this).trigger($.Event(MediaManager.Event.GET_INFO_SUCCESS, {payload: data}));
+            }).bind(this),
+            error: (function(jqXHR, textStatus, errorThrown) {
+                //console.log("%s: %s: %s", Post.TAG, "handlePage", "error");
+
+                $(this).trigger($.Event(MediaManager.Event.GET_INFO_ERROR, {jqXHR: jqXHR}));
+            }).bind(this)
+        });
+    };
 	
 	return MediaManager;
 });

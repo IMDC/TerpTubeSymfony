@@ -17,6 +17,7 @@ define(function(require) {
     TerpTube.Core.MediaManager = require('core/mediaManager');
     TerpTube.Core.Gallery = require('core/gallery');
     TerpTube.Core.Recorder = require('core/recorder');
+    TerpTube.Core.MyFilesSelector = require('core/myFilesSelector');
     TerpTube.Core.Helper = require('core/helper');
 
     TerpTube._instances = [];

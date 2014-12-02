@@ -23,7 +23,9 @@
             <div class="col-md-12 text-right">
                 {% if is_granted('EDIT', group) %}
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle group-action" data-toggle="dropdown" data-loading-text="Working...">Action <span class="caret"></span></button>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-loading-text="Working..." aria-expanded="false">
+                            Action <span class="caret"></span>
+                        </button>
                         <ul class="dropdown-menu dropdown-menu-right" role="menu">
                             <li><a href="{{ path('imdc_group_edit', {'groupId': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a></li>
                             <li class="divider"></li>

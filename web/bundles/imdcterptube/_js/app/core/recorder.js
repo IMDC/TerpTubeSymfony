@@ -1,4 +1,6 @@
-define(['core/helper', 'core/mediaManager'], function(Helper, MediaManager) {
+define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(Helper, MediaManager, MyFilesSelector) {
+    "use strict";
+
     var Recorder = function(options) {
         var defaults = {
             enableDoneAndPost: false
@@ -7,7 +9,7 @@ define(['core/helper', 'core/mediaManager'], function(Helper, MediaManager) {
         if (typeof options == "undefined") {
             options = defaults;
         } else {
-            for (var o in options) {
+            for (var o in defaults) {
                 this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
             }
         }
@@ -47,7 +49,7 @@ define(['core/helper', 'core/mediaManager'], function(Helper, MediaManager) {
         this.bind__done = this._done.bind(this);
         this.bind__doneAndPost = this._doneAndPost.bind(this);
 
-        dust.compileFn($("#recorder").html(), "recorder");
+        //dust.compileFn($("#recorder").html(), "recorder");
     };
 
     Recorder.TAG = "Recorder";
@@ -73,6 +75,7 @@ define(['core/helper', 'core/mediaManager'], function(Helper, MediaManager) {
         NORMAL_TITLE: ".recorder-normal-title",
         NORMAL_VIDEO: ".recorder-normal-video",
         INTERP_SELECT: ".recorder-interp-select",
+        INTERP_MY_FILES_SELECTOR: ".recorder-interp-my-files-selector",
         INTERP_VIDEO_P: ".recorder-interp-video-p",
         INTERP_TITLE: ".recorder-interp-title",
         INTERP_VIDEO_R: ".recorder-interp-video-r",
@@ -407,20 +410,28 @@ define(['core/helper', 'core/mediaManager'], function(Helper, MediaManager) {
     Recorder.prototype._onClickInterpSelect = function(e) {
         e.preventDefault();
 
-        //TODO
-        alert("Not implemented.");
+        this.myFilesSelector = new MyFilesSelector({
+            container: this._getElement(Recorder.Binder.INTERP_MY_FILES_SELECTOR),
+            multiSelect: false
+        });
+        $(this.myFilesSelector).on(MyFilesSelector.Event.READY, (function(e) {
+            this.hide();
+            this.myFilesSelector.show();
+        }).bind(this));
+        $(this.myFilesSelector).on(MyFilesSelector.Event.DONE, (function(e) {
+            this.myFilesSelector.hide();
+            this.show();
+            this.setSourceMedia(e.media[0]);
+        }).bind(this));
+        $(this.myFilesSelector).on(MyFilesSelector.Event.HIDDEN, (function(e) {
+            this.show();
+        }).bind(this));
+        this.myFilesSelector.render();
     };
 
     Recorder.prototype._bindUIEvents = function() {
         var modal = this._getElement(Recorder.Binder.MODAL_DIALOG);
         modal.modal({backdrop: "static", show: false});
-        modal.on("show.bs.modal", function(e) {
-            var zIndex = 1040 + (10 * $(".modal:visible").length);
-            $(this).css("z-index", zIndex);
-            setTimeout(function() {
-                $(".modal-backdrop").not(".modal-stack").css("z-index", zIndex - 1).addClass("modal-stack");
-            }, 0);
-        });
         modal.on("shown.bs.modal", this.bind__onShownModal);
         modal.on("hidden.bs.modal", this.bind__onHiddenModal);
 
@@ -464,15 +475,18 @@ define(['core/helper', 'core/mediaManager'], function(Helper, MediaManager) {
     Recorder.prototype._injectMedia = function(binder, media) {
         var video = this._getElement(binder);
         var source = video.find("source");
-        var baseUrl = source.data("baseurl");
         video.removeAttr("src");
-        source.attr("src", media != null ? baseUrl + media.resource.pathMPEG : "");
+        source.attr("src", Helper.generateUrl(media.resource.pathMPEG));
     };
 
     Recorder.prototype.setSourceMedia = function(media) {
         this.sourceMedia = media;
 
-        this._injectMedia(Recorder.Binder.INTERP_VIDEO_P, this.sourceMedia);
+        if (this.sourceMedia != null) {
+            this._injectMedia(Recorder.Binder.INTERP_VIDEO_P, this.sourceMedia);
+        }
+        this._destroyPlayers();
+        this._loadPage();
     };
 
     Recorder.prototype._togglePlayerTitle = function() {
@@ -492,10 +506,12 @@ define(['core/helper', 'core/mediaManager'], function(Helper, MediaManager) {
     Recorder.prototype.setRecordedMedia = function(media) {
         this.recordedMedia = media;
 
-        this._injectMedia(this.page == Recorder.Page.NORMAL
-                ? Recorder.Binder.NORMAL_VIDEO
-                : Recorder.Binder.INTERP_VIDEO_R,
-            this.recordedMedia);
+        if (this.recordedMedia != null) {
+            this._injectMedia(this.page == Recorder.Page.NORMAL
+                    ? Recorder.Binder.NORMAL_VIDEO
+                    : Recorder.Binder.INTERP_VIDEO_R,
+                this.recordedMedia);
+        }
         this._togglePlayerTitle();
     };
 
