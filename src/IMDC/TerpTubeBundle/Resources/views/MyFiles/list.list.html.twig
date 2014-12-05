@@ -9,18 +9,19 @@
 <div class="table-responsive">
     <table class="table table-hover tt-myFiles-table">
         <thead>
-            <th style="width: 1%; vertical-align: middle;"><input type="checkbox" class="my-files-selector-toggle-selection" style="-webkit-appearance: none; width: 18px; height: 18px; border: 1px solid #ccc;" disabled="disabled" /></th>
-            <th style="width: 60%; line-height: 45px;">Name</th>
-            <th style="line-height: 45px;">Date uploaded</th>
-            <th style="line-height: 45px;">Size</th>
+            <th style="width: 1%; vertical-align: middle;"><input type="checkbox" class="my-files-selector-toggle-selection" disabled="disabled" /></th>
+            <th style="width: 60%; line-height: 34px;">Name</th>
+            <th style="line-height: 34px;">Date uploaded</th>
+            <th style="line-height: 34px;">Size</th>
         </thead>
         <tbody class="my-files-selector-files-list">
             {% if resourceFiles|length > 0 %}
                 {% for resourceFile in resourceFiles %}
-                    <tr class="my-files-selector-file">
-                        <td style="vertical-align: middle;"><input type="checkbox" style="-webkit-appearance: none; width: 18px; height: 18px; border: 1px solid #ccc;" data-mid="{{ resourceFile.id }}" /></td>
-                        <td class="tt-myFiles-nameColumn" style="line-height: 45px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            <span class="edit-title" style="cursor: pointer;" title="{{ 'filesGateway.previewLink'|trans }}" data-type="text" data-val="{{ resourceFile.id }}" data-title="{{ 'form.media.title'|trans }}">
+                    {% set previewDisabled = resourceFile.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
+                    <tr>
+                        <td style="vertical-align: middle;"><input type="checkbox" data-mid="{{ resourceFile.id }}" /></td>
+                        <td class="tt-myFiles-nameColumn {{ previewDisabled }}" style="line-height: 34px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            <span class="edit-title my-files-selector-file" style="cursor: pointer;" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resourceFile.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
                                 {{ media.typeToIcon(resourceFile.type) }}{{ resourceFile.title }}
                             </span>
                             <span style="position: relative; float: right;">
@@ -30,8 +31,8 @@
                                 </span>
                             </span>
                         </td>
-                        <td style="line-height: 45px;">{{ resourceFile.getMetaData.getTimeUploaded|date('M m Y h:i a') }}</td>
-                        <td style="line-height: 45px;">{{ media.formatSize(resourceFile.metaData.size) }}</td>
+                        <td style="line-height: 34px;">{{ resourceFile.getMetaData.getTimeUploaded|date('M m Y h:i a') }}</td>
+                        <td style="line-height: 34px;">{{ media.formatSize(resourceFile.metaData.size) }}</td>
                     </tr>
                 {% endfor %}
             {% else %}
@@ -42,7 +43,7 @@
         </tbody>
     </table>
 </div>
-{{ media.controls('list') }}
-<div class="text-center">
-    {{ knp_pagination_render(resourceFiles) }}
-</div>
+{#{{ media.controls('list') }}#}
+{#<div class="text-center">#}
+    {#{{ knp_pagination_render(resourceFiles) }}#}
+{#</div>#}

@@ -7,7 +7,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.page = options.page;
         this.mediaChooser = null;
 
-        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
+//        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
 
@@ -62,21 +62,21 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Message.prototype._bindUIEventsNewReply = function(isReply) {
         console.log("%s: %s- isReply=%s", Message.TAG, "_bindUIEventsNewReply", isReply);
 
-        var mediaIds = new Array();
+        this.mediaChooser = new MediaChooser();
+//        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.bindUIEvents();
+
+        var mediaIds = [];
         this.getFormField("attachedMedia").children().each(function(index, element) {
             mediaIds.push($(element).val());
         });
-
-        this.mediaChooser = new MediaChooser();
-        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.setContainer(this.getContainer());
         if (mediaIds.length > 0) {
             this._getElement(Message.Binder.SUBMIT).attr("disabled", true);
             this.mediaChooser.setMedia(mediaIds);
         }
-        this.mediaChooser.bindUIEvents();
 
         this.getFormField("recipients").tagit();
 
@@ -110,26 +110,23 @@ define(['core/mediaChooser'], function(MediaChooser) {
         );
     };
 
-    Message.prototype._onPageLoaded = function(e) {
-        console.log("%s: %s", Message.TAG, "_onPageLoaded");
+    //thought this would of been useful at some point between page loads. guess not
+//    Message.prototype._onPageLoaded = function(e) {
+//        console.log("%s: %s", Message.TAG, "_onPageLoaded");
+//
+//        switch (this.mediaChooser.page) {
+//            case MediaChooser.Page.RECORD_VIDEO:
+//                this.mediaChooser.createVideoRecorder();
+//                break;
+//            case MediaChooser.Page.PREVIEW:
+//                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+//                    this.mediaChooser.createVideoPlayer();
+//
+//                break;
+//        }
+//    };
 
-        switch (this.mediaChooser.page) {
-            case MediaChooser.Page.RECORD_VIDEO:
-                this.mediaChooser.createVideoRecorder();
-                break;
-            case MediaChooser.Page.PREVIEW:
-                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
-                    this.mediaChooser.createVideoPlayer();
-
-                break;
-        }
-    };
-
-    Message.prototype._onSuccess = function(e) {
-        //this.getFormField("mediatextarea").val(e.media.id);
-
-        this._getElement(Message.Binder.SUBMIT).attr("disabled", false);
-
+    Message.prototype._updateForm = function() {
         var formField = this.getFormField("attachedMedia");
         formField.html(
             this.mediaChooser.generateFormData(
@@ -138,8 +135,14 @@ define(['core/mediaChooser'], function(MediaChooser) {
         );
     };
 
+    Message.prototype._onSuccess = function(e) {
+        this._getElement(Message.Binder.SUBMIT).attr("disabled", false);
+
+        this._updateForm();
+    };
+
     Message.prototype._onReset = function(e) {
-        this.getFormField("mediatextarea").val("");
+        this._updateForm();
     };
 
     return Message;

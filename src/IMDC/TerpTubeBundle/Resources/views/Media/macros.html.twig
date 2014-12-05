@@ -40,7 +40,7 @@
 
 {% macro thumbnail(thumbnailPath) %}
     {% if thumbnailPath is not null %}
-        <img style="vertical-align: middle; width: 100%; max-height: 175px;" src="{{ asset(thumbnailPath) }}" />
+        <img style="width: 100%; max-height: 175px;" src="{{ asset(thumbnailPath) }}" />
     {% else %}
         <span class="fa-stack fa-lg" style="width: 100%;">
             <i class="fa fa-file-o fa-stack-2x"></i>

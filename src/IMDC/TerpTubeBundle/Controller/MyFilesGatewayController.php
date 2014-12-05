@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityNotFoundException;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIdArrayTransformer;
@@ -46,22 +47,34 @@ class MyFilesGatewayController extends Controller
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
-        $resourceFiles = $this->getUser()->getResourceFiles();
+        $criteria = Criteria::create();
+        $type = $this->get('request')->query->get('type', false);
+        $style = $this->get('request')->query->get('style', 'grid');
+
+        if ($type !== false) {
+            $criteria->andWhere(Criteria::expr()->eq('type', $type));
+        }
+
+        $resourceFiles = $this->getUser()->getResourceFiles()->matching($criteria);
 
         $paginator = $this->get('knp_paginator');
-        $resourceFiles = $paginator->paginate($resourceFiles, $this->get('request')->query->get('page', 1), /*page number*/
-            !$request->isXmlHttpRequest() ? 25 : 10 /*limit per page*/
+        $resourceFiles = $paginator->paginate(
+            $resourceFiles,
+            $this->get('request')->query->get('page', 1), /*page number*/
+            !$request->isXmlHttpRequest() ? 24 : 12 /*limit per page*/
         );
 
         $parameters = array(
-            'resourceFiles' => $resourceFiles
+            'resourceFiles' => $resourceFiles,
+            'style' => $style
         );
 
         if (!$request->isXmlHttpRequest()) {
-            $parameters ['uploadForm'] = $this->createForm(new MediaType ())->createView();
+            $parameters ['uploadForm'] = $this->createForm(new MediaType())->createView();
         }
 
-        $response = $this->render('IMDCTerpTubeBundle:MyFiles:' . ($request->isXmlHttpRequest() ? 'ajax.' : '') . 'index.html.twig', $parameters);
+        $response = $this->render('IMDCTerpTubeBundle:MyFiles:' .
+            ($request->isXmlHttpRequest() ? 'list.' . $style : 'index') . '.html.twig', $parameters);
 
         if ($request->isXmlHttpRequest()) {
             $response = new Response (json_encode(array(

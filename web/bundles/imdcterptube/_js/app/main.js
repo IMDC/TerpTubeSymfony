@@ -13,13 +13,12 @@ define(function(require) {
     TerpTube.Controller.Profile = require('controller/profile');
 
     TerpTube.Core = {};
-    TerpTube.Core.MediaChooser = require('core/mediaChooser');
-    TerpTube.Core.MediaManager = require('core/mediaManager');
-    TerpTube.Core.Gallery = require('core/gallery');
-    TerpTube.Core.Recorder = require('core/recorder');
-    TerpTube.Core.MyFilesSelector = require('core/myFilesSelector');
     TerpTube.Core.Helper = require('core/helper');
-
+    TerpTube.Core.MediaManager = require('core/mediaManager');
+    TerpTube.Core.MyFilesSelector = require('core/myFilesSelector');
+    TerpTube.Core.Recorder = require('core/recorder');
+    TerpTube.Core.MediaChooser = require('core/mediaChooser');
+    TerpTube.Core.Gallery = require('core/gallery');
     TerpTube._instances = [];
 
     window.TerpTube = TerpTube;
@@ -28,4 +27,8 @@ define(function(require) {
 
     // make all elements with class 'autosize' expand to fit its contents
     $(".autosize").autosize();
+
+    dust.helpers.generateUrl = function(chunk, context, bodies, params) {
+        return chunk.write($tt.Core.Helper.generateUrl(params.path));
+    };
 });

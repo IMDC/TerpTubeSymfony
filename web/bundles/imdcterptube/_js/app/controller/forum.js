@@ -2,8 +2,19 @@ define(['core/mediaChooser'], function(MediaChooser) {
     "use strict";
 
     var Forum = function(options) {
+        console.log("%s: %s- options=%o", Forum.TAG, "constructor", options);
+
+        var defaults = {
+            id: -1,
+            media: []
+        };
+
+        options = options || defaults;
+        for (var o in defaults) {
+            this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
+        }
+
         this.page = options.page;
-        this.id = options.id;
 
         this.mediaChooser = null;
 
@@ -12,7 +23,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.bind__onClickDelete = this._onClickDelete.bind(this);
         this.bind__onDeleteSuccess = this._onDeleteSuccess.bind(this);
         this.bind__onDeleteError = this._onDeleteError.bind(this);
-        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
+//        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
 
@@ -71,7 +82,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         console.log("%s: %s", Forum.TAG, "_bindUIEventsNewEdit");
 
         this.mediaChooser = new MediaChooser();
-        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
+//        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
@@ -96,8 +107,13 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Forum.prototype._bindUIEventsView = function() {
         console.log("%s: %s", Forum.TAG, "_bindUIEventsView");
 
-        this.gallery = new $tt.Core.Gallery({container: $(".gallery-container")});
-        this.gallery.bindUIEvents();
+        this.gallery = new $tt.Core.Gallery({
+            container: $(".gallery-container")
+        });
+        $(this.gallery).on($tt.Core.Gallery.Event.READY, (function(e) {
+            this.gallery.setMedia(this.media);
+        }).bind(this));
+        this.gallery.render();
     };
 
     Forum.prototype._onChangeAccessType = function(e) {
@@ -151,19 +167,29 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this._getElement(Forum.Binder.DELETE).button("reset");
     };
 
-    Forum.prototype._onPageLoaded = function(e) {
-        console.log("%s: %s", Forum.TAG, "_onPageLoaded");
+    //thought this would of been useful at some point between page loads. guess not
+//    Forum.prototype._onPageLoaded = function(e) {
+//        console.log("%s: %s", Forum.TAG, "_onPageLoaded");
+//
+//        switch (this.mediaChooser.page) {
+//            case MediaChooser.Page.RECORD_VIDEO:
+//                this.mediaChooser.createVideoRecorder();
+//                break;
+//            case MediaChooser.Page.PREVIEW:
+//                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+//                    this.mediaChooser.createVideoPlayer();
+//
+//                break;
+//        }
+//    };
 
-        switch (this.mediaChooser.page) {
-            case MediaChooser.Page.RECORD_VIDEO:
-                this.mediaChooser.createVideoRecorder();
-                break;
-            case MediaChooser.Page.PREVIEW:
-                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
-                    this.mediaChooser.createVideoPlayer();
-
-                break;
-        }
+    Forum.prototype._updateForm = function() {
+        var formField = this.getFormField("titleMedia");
+        formField.html(
+            this.mediaChooser.generateFormData(
+                formField.data("prototype")
+            )
+        );
     };
 
     Forum.prototype._onSuccess = function(e) {
@@ -175,12 +201,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
             .find("label")
             .removeClass("required");
 
-        var formField = this.getFormField("titleMedia");
-        formField.html(
-            this.mediaChooser.generateFormData(
-                formField.data("prototype")
-            )
-        );
+        this._updateForm();
     };
 
     Forum.prototype._onReset = function(e) {
@@ -190,6 +211,8 @@ define(['core/mediaChooser'], function(MediaChooser) {
                 .parent()
                 .find("label")
                 .addClass("required");
+
+        this._updateForm();
     };
 
     return Forum;

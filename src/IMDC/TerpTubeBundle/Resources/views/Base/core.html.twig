@@ -44,7 +44,7 @@
 
         <script src="{{ asset('js/require.js') }}"></script>
 
-        <script src="{{ asset('js/dust-full.min.js') }}"></script>
+        {#<script src="{{ asset('js/dust-full.min.js') }}"></script>#}
 
         <!--  FOS js routing script -->
         <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
@@ -64,10 +64,18 @@
                     requirejs.config({
                         baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
                         paths: {
+                            dust: 'lib/dust-full.min',
+                            'dust-helpers': 'lib/dust-helpers.min',
                             templates: 'views/templates',
                             extra: 'lib/extra'
                         },
                         shim: {
+                            'dust-helpers': {
+                                deps: ['dust']
+                            },
+                            templates: {
+                                deps: ['dust-helpers']
+                            },
                             main: {
                                 deps: ['templates', 'extra']
                             }
@@ -79,7 +87,6 @@
                     require(['core/recorder'], function(Recorder) {
                         $("a.navbar-link.main-recorder").on("click", (function(e) {
                             $tt._recorder = new Recorder({
-                                container: $("div.main-recorder"),
                                 page: Recorder.Page.NORMAL
                             });
                             $($tt._recorder).on(Recorder.Event.READY, (function(e) {
@@ -87,8 +94,9 @@
                             }).bind(this));
                             $($tt._recorder).on(Recorder.Event.DONE, (function(e) {
                                 $tt._recorder.hide();
-                                //$tt._recorder = null;
-                                //$("div.main-recorder");
+                            }).bind(this));
+                            $($tt._recorder).on(Recorder.Event.HIDDEN, (function(e) {
+                                $tt._recorder.destroy();
                             }).bind(this));
                             $tt._recorder.render();
                         }).bind(this));
@@ -100,7 +108,6 @@
         {% endblock header %}
     </head>
     <body>
-        <div class="main-recorder"></div>
         <div class="container-fluid">
             <div class="row">
                 <div class="navbar navbar-inverse navbar-fixed-top tt-navbar-top">
@@ -200,5 +207,6 @@
     {% block outside_body %}
         {#{{ block('recorder_dust') }}
         {{ block('my_files_selector_dust') }}#}
+        {{ block('media_gallery_dust') }}
     {% endblock outside_body %}
 </html>

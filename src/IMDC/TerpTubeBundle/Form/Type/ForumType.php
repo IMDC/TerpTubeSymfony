@@ -55,6 +55,6 @@ class ForumType extends AbstractType
 
 	public function getName()
 	{
-		return 'ForumForm';
+		return 'forum';
 	}
 }

@@ -1,20 +1,18 @@
-define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
+define(['core/mediaManager'], function(MediaManager) {
     "use strict";
 
     var MyFilesSelector = function(options) {
         var defaults = {
-            multiSelect: true
+            multiSelect: true,
+            filter: {}
         };
 
-        if (typeof options == "undefined") {
-            options = defaults;
-        } else {
-            for (var o in defaults) {
-                this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
-            }
+        options = options || defaults;
+        for (var o in defaults) {
+            this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
         }
 
-        this.container = options.container;
+        //this.container = options.container;
 
         this.mediaManager = new MediaManager();
 
@@ -49,12 +47,12 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
         TOGGLE_SELECTION: ".my-files-selector-toggle-selection",
         TOGGLE_STYLE: ".my-files-selector-toggle-style",
         FILES_LIST: ".my-files-selector-files-list",
-        SELECT_SELECTED: ".my-files-selector-select-selected",
-        GALLERY: ".my-files-selector-gallery"
+        FILE: ".my-files-selector-file",
+        SELECT_SELECTED: ".my-files-selector-select-selected"
     };
 
     MyFilesSelector.prototype.getContainer = function() {
-        return this.container;
+        return $("body");
     };
 
     MyFilesSelector.prototype._getElement = function(binder) {
@@ -67,9 +65,24 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
 
         switch (action) {
             case 1:
+//                var file = $(e.target);
+//
+//                $(this.mediaManager).one(MediaManager.EVENT_DELETE_SUCCESS, function() {
+//                    file.parent().parent().parent().remove();
+//                });
+//                $(this.mediaManager).one(MediaManager.EVENT_DELETE_ERROR, function(error, e) {
+//                    if (e.status == 500) {
+//                        alert(e.statusText);
+//                    } else {
+//                        alert('Error: ' + error);
+//                    }
+//                });
+//
+//                return this.mediaManager.deleteMedia(file.data("val"), Translator.trans('filesGateway.deleteConfirmMessage'));
+
+                //FIXME multi confirmation
                 $.each(selectedFiles, (function(index, element) {
-                    //FIXME confirmation for 'in use' media
-                    this.mediaManager.deleteMedia($(element).data("mid"));
+                    this.mediaManager.deleteMedia($(element).data("mid")/*, Translator.trans('filesGateway.deleteConfirmMessage')*/);
                 }).bind(this));
 
                 //FIXME: make me better
@@ -81,17 +94,18 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
     };
 
     MyFilesSelector.prototype._onClickFile = function(e) {
-        this.gallery = new Gallery({
-            container: this._getElement(MyFilesSelector.Binder.GALLERY),
-            mode: Gallery.Mode.PREVIEW
+        e.stopPropagation();
+
+        this.gallery = new $tt.Core.Gallery({
+            mode: $tt.Core.Gallery.Mode.PREVIEW
         });
-        $(this.gallery).on(Gallery.Event.READY, (function(e) {
+        $(this.gallery).on($tt.Core.Gallery.Event.READY, (function(e) {
             this.gallery.show();
         }).bind(this));
-        $(this.gallery).on(Gallery.Event.HIDDEN, (function(e) {
-            this.gallery.hide();
+        $(this.gallery).on($tt.Core.Gallery.Event.HIDDEN, (function(e) {
+            this.gallery.destroy();
         }).bind(this));
-        this.gallery.render();
+        this.gallery.render([$(e.currentTarget).data("mid")]);
     };
 
     MyFilesSelector.prototype._bindUIEventsFilesList = function() {
@@ -119,13 +133,12 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
             $(e.target).prop("checked", checked);
 
             this._getElement(MyFilesSelector.Binder.SELECT_SELECTED)
-                .attr("disabled", container.find("input:checked").length == 0);
+                .attr("disabled", this._getSelectedFiles().length == 0);
         }).bind(this));
 
         checkBoxes.trigger("change");
 
-        container.find("tr td:nth-of-type(2)").on("click", this.bind__onClickFile);
-        container.find("div > div").on("click", this.bind__onClickFile);
+        this._getElement(MyFilesSelector.Binder.FILE).not("disabled").on("click", this.bind__onClickFile);
 
         var instance = this;
         container.find("span.edit-title").editable({
@@ -133,7 +146,7 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
             unsavedclass: null,
             success: function(response, newValue) {
                 instance.mediaManager.updateMedia({
-                    id: $(this).data('val'),
+                    id: $(this).data('mid'),
                     title: newValue
                 });
             }
@@ -162,8 +175,9 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
         //FIXME change to css :hover
         var show = function() {$(this).find('.css-hover').css("display", "inline-block");};
         var hide = function() {$(this).find('.css-hover').hide()};
-        this._getElement(MyFilesSelector.Binder.FILES_LIST).find("tr td:nth-of-type(2)").hover(show, hide);
-        this._getElement(MyFilesSelector.Binder.FILES_LIST).find("div > div:nth-child(2)").hover(show, hide);
+        this._getElement(MyFilesSelector.Binder.FILES_LIST)
+            .find("tr > td:nth-of-type(2), div > div > div:nth-child(3)")
+            .hover(show, hide);
     };
 
     MyFilesSelector.prototype._onLoadPageSuccess = function(data, textStatus, jqXHR) {
@@ -177,9 +191,20 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
         console.log(jqXHR);
     };
 
+    MyFilesSelector.prototype._makeUrl = function(url) {
+        if (typeof url === "undefined")
+            return Routing.generate("imdc_myfiles_list", this.filter);
+
+        for (var key in this.filter) {
+            url += (url.substr("?") ? "&" : "?") + key + "=" + this.filter[key];
+        }
+
+        return url;
+    };
+
     MyFilesSelector.prototype._loadPage = function(url) {
         $.ajax({
-            url: typeof url !== "undefined" ? url : Routing.generate("imdc_myfiles_list"),
+            url: this._makeUrl(url),
             success: this.bind__onLoadPageSuccess,
             error: this.bind__onLoadPageError
         });
@@ -238,7 +263,7 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
     };
 
     MyFilesSelector.prototype._onRender = function(err, out) {
-        this.container.html(out);
+        this.getContainer().append(out);
         this._bindUIEvents();
 
         $(this).trigger($.Event(MyFilesSelector.Event.READY, {}));
@@ -254,6 +279,10 @@ define(['core/mediaManager', 'core/gallery'], function(MediaManager, Gallery) {
 
     MyFilesSelector.prototype.hide = function() {
         this._getElement(MyFilesSelector.Binder.MODAL_DIALOG).modal("hide");
+    };
+
+    MyFilesSelector.prototype.destroy = function() {
+        this._getElement(MyFilesSelector.Binder.MODAL_DIALOG).remove();
     };
 
     MyFilesSelector.prototype.bindUIEvents = function() {

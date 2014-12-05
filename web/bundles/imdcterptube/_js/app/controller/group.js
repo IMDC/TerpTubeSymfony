@@ -4,8 +4,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
     var Group = function(options) {
         console.log("%s: %s- options=%o", Group.TAG, "constructor", options);
 
+        var defaults = {
+            id: -1
+        };
+
+        options = options || defaults;
+        for (var o in defaults) {
+            this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
+        }
+
         this.page = options.page;
-        this.id = options.id;
 
         this.mediaChooser = null;
 
@@ -15,7 +23,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.bind__onDeleteError = this._onDeleteError.bind(this);
         this.bind__onClickUserSelect = this._onClickUserSelect.bind(this);
         this.bind__submitSelectedUsersForm = this._submitSelectedUsersForm.bind(this);
-        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
+//        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
 
@@ -83,21 +91,21 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Group.prototype._bindUIEventsNewEdit = function() {
         console.log("%s: %s", Group.TAG, "_bindUIEventsNewEdit");
 
-        var mediaIds = new Array();
+        this.mediaChooser = new MediaChooser();
+//        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.bindUIEvents();
+
+        var mediaIds = [];
         this.getFormField("media").children().each(function(index, element) {
             mediaIds.push($(element).val());
         });
-
-        this.mediaChooser = new MediaChooser();
-        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.setContainer(this.getContainer());
         if (mediaIds.length > 0) {
             this._getElement(Group.Binder.SUBMIT).attr("disabled", true);
             this.mediaChooser.setMedia(mediaIds);
         }
-        this.mediaChooser.bindUIEvents();
 
         this._getElement(Group.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
         this._getElement(Group.Binder.DELETE).on("click", this.bind__onClickDelete);
@@ -220,24 +228,23 @@ define(['core/mediaChooser'], function(MediaChooser) {
         return true;
     };
 
-    Group.prototype._onPageLoaded = function(e) {
-        console.log("%s: %s", Group.TAG, "_onPageLoaded");
+    //thought this would of been useful at some point between page loads. guess not
+//    Group.prototype._onPageLoaded = function(e) {
+//        console.log("%s: %s", Group.TAG, "_onPageLoaded");
+//
+//        switch (this.mediaChooser.page) {
+//            case MediaChooser.Page.RECORD_VIDEO:
+//                this.mediaChooser.createVideoRecorder();
+//                break;
+//            case MediaChooser.Page.PREVIEW:
+//                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+//                    this.mediaChooser.createVideoPlayer();
+//
+//                break;
+//        }
+//    };
 
-        switch (this.mediaChooser.page) {
-            case MediaChooser.Page.RECORD_VIDEO:
-                this.mediaChooser.createVideoRecorder();
-                break;
-            case MediaChooser.Page.PREVIEW:
-                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
-                    this.mediaChooser.createVideoPlayer();
-
-                break;
-        }
-    };
-
-    Group.prototype._onSuccess = function(e) {
-        this._getElement(Group.Binder.SUBMIT).attr("disabled", false);
-
+    Group.prototype._updateForm = function() {
         var formField = this.getFormField("media");
         formField.html(
             this.mediaChooser.generateFormData(
@@ -246,8 +253,14 @@ define(['core/mediaChooser'], function(MediaChooser) {
         );
     };
 
-    Group.prototype._onReset = function(e) {
+    Group.prototype._onSuccess = function(e) {
+        this._getElement(Group.Binder.SUBMIT).attr("disabled", false);
 
+        this._updateForm();
+    };
+
+    Group.prototype._onReset = function(e) {
+        this._updateForm();
     };
 
     return Group;

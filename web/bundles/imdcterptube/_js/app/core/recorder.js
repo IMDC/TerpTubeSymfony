@@ -3,21 +3,19 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
 
     var Recorder = function(options) {
         var defaults = {
+            mode: Recorder.Mode.RECORD,
             enableDoneAndPost: false
         };
 
-        if (typeof options == "undefined") {
-            options = defaults;
-        } else {
-            for (var o in defaults) {
-                this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
-            }
+        options = options || defaults;
+        for (var o in defaults) {
+            this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
         }
 
-        this.container = options.container;
+        //this.container = options.container;
         this.page = options.page;
 
-        this.inPreviewMode = false;
+        //this.inPreviewMode = false;
         this.player = null;
         this.recorder = null;
         this.sourceMedia = null;
@@ -57,13 +55,19 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
     Recorder.MAX_RECORDING_TIME = 720; // 12 Minutes
 
     Recorder.Page = {
-        NORMAL: "normal",
-        INTERPRETATION: "interpretation"
+        NORMAL: 0,
+        INTERPRETATION: 1
+    };
+
+    Recorder.Mode = {
+        RECORD: 0,
+        PREVIEW: 1
     };
 
     Recorder.Event = {
         READY: "eventReady",
-        DONE: "eventDone"
+        DONE: "eventDone",
+        HIDDEN: "eventHidden"
     };
 
     Recorder.Binder = {
@@ -85,42 +89,42 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
     };
 
     Recorder.prototype.getContainer = function() {
-        return this.container;
+        return $("body");
     };
 
     Recorder.prototype._getElement = function(binder) {
         return this.getContainer().find(binder);
     };
 
-    Recorder.prototype._createPlayer = function() {
+    Recorder.prototype._createPlayer = function(inPreviewMode) {
         console.log("%s: %s", Recorder.TAG, "_createPlayer");
 
-        //inPreviewMode = typeof inPreviewMode != "undefined" ? inPreviewMode : false;
+        inPreviewMode = typeof inPreviewMode != "undefined" ? inPreviewMode : false;
 
         var forwardButtons = [];
         var forwardFunctions = [];
-        if (this.page == Recorder.Page.NORMAL || this.inPreviewMode) {
+        if (this.page == Recorder.Page.NORMAL || inPreviewMode) {
             forwardButtons.push(this.doneButton);
-            forwardFunctions.push(this.inPreviewMode ? this.bind__done : this.bind__cut);
+            forwardFunctions.push(inPreviewMode ? this.bind__cut : this.bind__done);
         }
-        if (this.enableDoneAndPost && this.inPreviewMode) {
+        if (this.enableDoneAndPost && inPreviewMode) {
             forwardButtons.push(this.doneAndPostButton);
             forwardFunctions.push(this.bind__doneAndPost);
         }
 
         var backButtons;
         var backFunctions;
-        if (this.inPreviewMode) {
+        if (inPreviewMode && this.wasRecording) {
             backButtons = [this.backButton];
             backFunctions = [this.bind__back];
         }
 
         var container = this._getElement(this.page == Recorder.Page.NORMAL
             ? Recorder.Binder.NORMAL_VIDEO
-            : this.inPreviewMode ? Recorder.Binder.INTERP_VIDEO_R : Recorder.Binder.INTERP_VIDEO_P);
+            : inPreviewMode ? Recorder.Binder.INTERP_VIDEO_R : Recorder.Binder.INTERP_VIDEO_P);
 
         var player = new Player(container, {
-            areaSelectionEnabled: this.inPreviewMode,
+            areaSelectionEnabled: inPreviewMode,
             audioBar: false,
             updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_RELATIVE,
             controlBarElement: this._getElement(Recorder.Binder.CONTROLS),
@@ -144,7 +148,7 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
             .find(".videoControlsContainer.controlsBar.backButton").eq(0)
             .attr("title", Translator.trans('player.previewing.backToRecordingButton'));
 
-        if (this.inPreviewMode) {
+        if (inPreviewMode) {
             this.recorder = player;
         } else {
             this.player = player;
@@ -155,15 +159,15 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         console.log("%s: %s", Recorder.TAG, "_cut");
         e.preventDefault();
 
-        var previousMinMaxTimes = this.player.getCurrentMinMaxTime();
-        var currentMinMaxTimes = this.player.getAreaSelectionTimes();
-        this.player.setCurrentMinMaxTime(currentMinMaxTimes.minTime, currentMinMaxTimes.maxTime);
+        var previousMinMaxTimes = this.recorder.getCurrentMinMaxTime();
+        var currentMinMaxTimes = this.recorder.getAreaSelectionTimes();
+        this.recorder.setCurrentMinMaxTime(currentMinMaxTimes.minTime, currentMinMaxTimes.maxTime);
 
         console.log("Current Min/Max Times %s %s", currentMinMaxTimes.minTime, currentMinMaxTimes.maxTime);
         console.log("Cutting to Min/Max Times %s %s", currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
                 currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 
-        this.mediaManager.trimMedia(this.activeMedia.id, currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
+        this.mediaManager.trimMedia(this.recordedMedia.id, currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
                 currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
     };
 
@@ -178,7 +182,9 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
 
         // Go back to recording
         this.setRecordedMedia(null);
-        this.inPreviewMode = false;
+        this.wasRecording = false;
+        this.mode = Recorder.Mode.RECORD;
+        //this.inPreviewMode = false;
         if (this.page == Recorder.Page.INTERPRETATION)
             this._createPlayer();
         this._createRecorder();
@@ -287,8 +293,10 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         //this.setRecordedMedia(this.tempMedia);
         if (this.page == Recorder.Page.INTERPRETATION)
             this._createPlayer();
-        this.inPreviewMode = true;
-        this._createPlayer();
+        this.wasRecording = true;
+        this.mode = Recorder.Mode.PREVIEW;
+        //this.inPreviewMode = true;
+        this._createPlayer(true);
     };
 
     Recorder.prototype._done = function(e) {
@@ -344,15 +352,19 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
 
     Recorder.prototype._onPageAnimate = function() {
         try {
-            if (this.page == Recorder.Page.INTERPRETATION) {
-                if (this.sourceMedia != null) {
-                    this._createPlayer();
-                } else {
-                    return; // don't create the recorder
+            if (this.mode == Recorder.Mode.PREVIEW && this.recordedMedia != null) {
+                this._createPlayer(true);
+            } else {
+                if (this.page == Recorder.Page.INTERPRETATION) {
+                    if (this.sourceMedia != null) {
+                        this._createPlayer();
+                    } else {
+                        return; // don't create the recorder
+                    }
                 }
-            }
 
-            this._createRecorder();
+                this._createRecorder();
+            }
         } catch (err) {
             console.error("%s: %s- err=%o", Recorder.TAG, "_loadPage", err);
         }
@@ -385,6 +397,11 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
 
     Recorder.prototype._onHiddenModal = function(e) {
         this._destroyPlayers();
+
+        if (this.paused)
+            return;
+
+        $(this).trigger($.Event(Recorder.Event.HIDDEN, {}));
     };
 
     Recorder.prototype._onShowTab = function(e) {
@@ -411,20 +428,22 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         e.preventDefault();
 
         this.myFilesSelector = new MyFilesSelector({
-            container: this._getElement(Recorder.Binder.INTERP_MY_FILES_SELECTOR),
-            multiSelect: false
+            multiSelect: false,
+            filter: {type: 1} //FIXME media type
         });
         $(this.myFilesSelector).on(MyFilesSelector.Event.READY, (function(e) {
+            this.paused = true;
             this.hide();
             this.myFilesSelector.show();
         }).bind(this));
         $(this.myFilesSelector).on(MyFilesSelector.Event.DONE, (function(e) {
             this.myFilesSelector.hide();
-            this.show();
             this.setSourceMedia(e.media[0]);
         }).bind(this));
         $(this.myFilesSelector).on(MyFilesSelector.Event.HIDDEN, (function(e) {
+            this.myFilesSelector.destroy();
             this.show();
+            this.paused = false;
         }).bind(this));
         this.myFilesSelector.render();
     };
@@ -446,7 +465,7 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
     };
 
     Recorder.prototype._onRender = function(err, out) {
-        this.container.html(out);
+        this.getContainer().append(out);
 
         var tab = this.page == Recorder.Page.NORMAL ? Recorder.Binder.NORMAL : Recorder.Binder.INTERP;
         var modal = this._getElement(Recorder.Binder.MODAL_DIALOG);
@@ -470,6 +489,10 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
 
     Recorder.prototype.hide = function() {
         this._getElement(Recorder.Binder.MODAL_DIALOG).modal("hide");
+    };
+
+    Recorder.prototype.destroy = function() {
+        this._getElement(Recorder.Binder.MODAL_DIALOG).remove();
     };
 
     Recorder.prototype._injectMedia = function(binder, media) {

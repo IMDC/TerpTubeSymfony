@@ -4,8 +4,16 @@ define(['core/mediaChooser'], function(MediaChooser) {
     var Post = function(options) {
         console.log("%s: %s- options=%o", Post.TAG, "constructor", options);
 
+        var defaults = {
+            id: -1
+        };
+
+        options = options || defaults;
+        for (var o in defaults) {
+            this[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
+        }
+
         this.page = options.page;
-        this.id = options.id;
         this.threadId = options.threadId;
         this.mediaChooser = null;
 
@@ -14,7 +22,7 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this.bind__onSubmitError = this._onSubmitError.bind(this);
         this.bind__onClickCancel = this._onClickCancel.bind(this);
         this.bind__onClickReset = this._onClickReset.bind(this);
-        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
+//        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -134,19 +142,22 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Post.prototype.bindUIEvents = function() {
         console.log("%s: %s", Post.TAG, "bindUIEvents");
 
-        var mediaIds = new Array();
+        this.mediaChooser = new MediaChooser({enableDoneAndPost: true});
+//        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
+        this.mediaChooser.setContainer(this.getContainer());
+        this.mediaChooser.bindUIEvents();
+
+        var mediaIds = [];
         this.getFormField("attachedFile").children().each(function(index, element) {
             mediaIds.push($(element).val());
         });
-
-        this.mediaChooser = new MediaChooser({enableDoneAndPost: true});
-        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        //$(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
-        //$(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.setContainer(this.getContainer());
-        this.mediaChooser.setMedia(mediaIds);
-        this.mediaChooser.bindUIEvents();
+        if (mediaIds.length > 0) {
+            this._toggleForm(true);
+            this.mediaChooser.setMedia(mediaIds);
+        }
 
         this._getElement(Post.Binder.SUBMIT).on("click", this.bind__onClickSubmit);
         if (this.page != Post.Page.EDIT && this.page != Post.Page.DELETE)
@@ -154,20 +165,21 @@ define(['core/mediaChooser'], function(MediaChooser) {
         this._getElement(Post.Binder.CANCEL).on("click", this.bind__onClickCancel);
     };
 
-    Post.prototype._onPageLoaded = function(e) {
-        console.log("%s: %s", Post.TAG, "_onPageLoaded");
-
-        switch (this.mediaChooser.page) {
-            case MediaChooser.Page.RECORD_VIDEO:
-                this.mediaChooser.createVideoRecorder();
-                break;
-            case MediaChooser.Page.PREVIEW:
-                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
-                    this.mediaChooser.createVideoPlayer();
-
-                break;
-        }
-    };
+    //thought this would of been useful at some point between page loads. guess not
+//    Post.prototype._onPageLoaded = function(e) {
+//        console.log("%s: %s", Post.TAG, "_onPageLoaded");
+//
+//        switch (this.mediaChooser.page) {
+//            case MediaChooser.Page.RECORD_VIDEO:
+//                this.mediaChooser.createVideoRecorder();
+//                break;
+//            case MediaChooser.Page.PREVIEW:
+//                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+//                    this.mediaChooser.createVideoPlayer();
+//
+//                break;
+//        }
+//    };
 
     Post.prototype._onClickSubmit = function(e) {
         if (e && e.preventDefault)
@@ -317,17 +329,29 @@ define(['core/mediaChooser'], function(MediaChooser) {
         $(this).trigger($.Event(Post.Event.CANCEL, {post: this}));
     };
 
+    Post.prototype._updateForm = function() {
+        var formField = this.getFormField("attachedFile");
+        formField.html(
+            this.mediaChooser.generateFormData(
+                formField.data("prototype")
+            )
+        );
+    };
+
     Post.prototype._onSuccess = function(e) {
-        this.getFormField("mediatextarea").val(e.media.id);
+        this._toggleForm(false);
+
+        this._updateForm();
     };
 
     Post.prototype._onSuccessAndPost = function(e) {
-        //this.getFormField("mediatextarea").val(e.media.id);
+        this._updateForm();
+
         this._getElement(Post.Binder.SUBMIT).trigger("click");
     };
 
     Post.prototype._onReset = function(e) {
-        this.getFormField("mediatextarea").val("");
+        this._updateForm();
     };
 
     return Post;

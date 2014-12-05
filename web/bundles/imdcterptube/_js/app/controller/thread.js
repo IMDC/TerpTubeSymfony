@@ -27,7 +27,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         this.bind__onPostSubmitSuccess = this._onPostSubmitSuccess.bind(this);
         this.bind__onPostReset = this._onPostReset.bind(this);
         this.bind__onPostCancel = this._onPostCancel.bind(this);
-        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
+//        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
 
@@ -86,7 +86,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         console.log("%s: %s- isEdit=%s", Thread.TAG, "_bindUIEventsNewEdit", isEdit);
 
         this.mediaChooser = new MediaChooser();
-        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
+//        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
         $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
         $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.getContainer());
@@ -574,19 +574,29 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
         });
     };
 
-    Thread.prototype._onPageLoaded = function() {
-        console.log("%s: %s", Thread.TAG, "_onPageLoaded");
+    //thought this would of been useful at some point between page loads. guess not
+//    Thread.prototype._onPageLoaded = function() {
+//        console.log("%s: %s", Thread.TAG, "_onPageLoaded");
+//
+//        switch (this.mediaChooser.page) {
+//            case MediaChooser.Page.RECORD_VIDEO:
+//                this.mediaChooser.createVideoRecorder();
+//                break;
+//            case MediaChooser.Page.PREVIEW:
+//                if (e.data.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
+//                    this.mediaChooser.createVideoPlayer();
+//
+//                break;
+//        }
+//    };
 
-        switch (this.mediaChooser.page) {
-            case MediaChooser.Page.RECORD_VIDEO:
-                this.mediaChooser.createVideoRecorder();
-                break;
-            case MediaChooser.Page.PREVIEW:
-                if (e.data.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
-                    this.mediaChooser.createVideoPlayer();
-
-                break;
-        }
+    Thread.prototype._updateForm = function() {
+        var formField = this.getFormField("mediaIncluded");
+        formField.html(
+            this.mediaChooser.generateFormData(
+                formField.data("prototype")
+            )
+        );
     };
 
     Thread.prototype._onSuccess = function(e) {
@@ -598,12 +608,7 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
             .find("label")
             .removeClass("required");
 
-        var formField = this.getFormField("mediaIncluded");
-        formField.html(
-            this.mediaChooser.generateFormData(
-                formField.data("prototype")
-            )
-        );
+        this._updateForm();
     };
 
     Thread.prototype._onReset = function(e) {
@@ -613,6 +618,8 @@ define(['core/mediaChooser', 'controller/post'], function(MediaChooser, Post) {
                 .parent()
                 .find("label")
                 .addClass("required");
+
+        this._updateForm();
     };
 
     return Thread;

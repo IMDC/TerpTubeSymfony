@@ -9,6 +9,7 @@ use IMDC\TerpTubeBundle\Entity\ForumRepository;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
 use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
+use IMDC\TerpTubeBundle\Model\JSEntities;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -198,11 +199,15 @@ class ForumController extends Controller
             $threads->setParam($key, $value);
         }
 
+        $ordered = Utils::orderMedia($forum->getTitleMedia(), $forum->getMediaDisplayOrder());
+        $mediaJson = array();
+        foreach ($ordered as $media) {
+            $mediaJson[] = JSEntities::getMediaObject($media);
+        }
+
 	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
 	    	'forum' => $forum,
-            'orderedMedia' => Utils::orderMedia(
-                    $forum->getTitleMedia(),
-                    $forum->getMediaDisplayOrder()),
+            'mediaJson' => $mediaJson,
 	    	'threads' => $threads
 	    ));
 	}
