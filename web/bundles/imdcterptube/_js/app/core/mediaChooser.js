@@ -205,6 +205,7 @@ define([
                 $.each(e.media, (function(index, element) {
                     this._addSelectedMedia(element);
                 }).bind(this));
+                this._invokeSuccess();
             }).bind(this));
             $(this.myFilesSelector).on(MyFilesSelector.Event.HIDDEN, (function(e) {
                 this.myFilesSelector.destroy();

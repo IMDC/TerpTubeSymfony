@@ -7,6 +7,7 @@ use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
+use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -112,6 +113,13 @@ class ThreadController extends Controller
             //TODO 'currently' only your own media should be here, but check anyway
             if (!$user->ownsMediaInCollection($form->get('mediaIncluded')->getData())) {
                 throw new AccessDeniedException(); //TODO more appropriate exception?
+            }
+
+            $thread->setMediaDisplayOrder($form->get('mediaIncluded')->getViewData());
+
+            if (count($thread->getMediaIncluded()) > 0) {
+                $ordered = Utils::orderMedia($thread->getMediaIncluded(), $thread->getMediaDisplayOrder());
+                $thread->setType($ordered[0]->getType()); // thread type is determined by the first associated media
             }
 
             $forum->setLastActivity($currentDateTime);
