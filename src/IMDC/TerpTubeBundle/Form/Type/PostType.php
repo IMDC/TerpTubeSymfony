@@ -12,7 +12,9 @@ class PostType extends AbstractType
 	{
         $canTemporal = $options['canTemporal'];
 
-        $builder->add('attachedFile', 'media_chooser');
+        $builder->add('attachedFile', 'media_chooser', array(
+            'label' => false
+        ));
 
         if ($canTemporal) {
             $builder->add('startTime', 'number', array(
@@ -35,7 +37,8 @@ class PostType extends AbstractType
             'required' => false,
             'attr' => array(
                 'class' => 'autosize',
-                'placeholder' => 'Write a comment...')
+                'style' => 'height: 35px;', //FIXME css me
+                'placeholder' => 'Write a reply...')
         ));
 	}
 

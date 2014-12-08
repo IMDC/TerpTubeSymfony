@@ -47,7 +47,8 @@ class PostController extends Controller
         $postParent = null;
         if ($threadId) {
             $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadId);
-        } elseif ($pid) {
+        }
+        if ($pid) {
             $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
         }
 
@@ -55,7 +56,8 @@ class PostController extends Controller
             throw new \Exception('thread/post not found');
         }
 
-        $isPostReply = !$thread;
+        //$isPostReply = !$thread;
+        $isPostReply = !!$postParent;
         $post = new Post();
         $form = $this->createForm(new PostType(), $post, array(
             'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false
@@ -96,7 +98,8 @@ class PostController extends Controller
             $em->persist($post);
             $em->flush();
 
-            if ($isPostReply)
+            //if ($isPostReply)
+            if ($isPostReply && !$thread)
                 $thread = $postParent->getParentThread();
 
             $thread->setLastPostAt($currentDateTime);
@@ -125,13 +128,46 @@ class PostController extends Controller
                         'threadid' => $thread->getId()))
             );
         } else {
-            $content = array(
+            /*$content = array(
                 'wasReplied' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                         'form' => $form->createView(),
                         'post' => !$isPostReply ? $post : $postParent))
+            );*/
+
+            $content = array(
+                'wasReplied' => false,
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.new.html.twig', array(
+                        'form' => $form->createView(),
+                        'post' => $postParent))
             );
         }
+
+        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
+    }
+
+    public function viewAction(Request $request, $pid)
+    {
+        // if not ajax, throw an error
+        if (!$request->isXmlHttpRequest()) {
+            throw new BadRequestHttpException('Only Ajax calls accepted');
+        }
+
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        if (!$post) {
+            throw new \Exception('post not found');
+        }
+
+        $content = array(
+            'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
+                    'post' => $post))
+        );
 
         return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
     }
@@ -201,18 +237,37 @@ class PostController extends Controller
             $em->persist($forum);
             $em->flush();
 
-            $content = array(
+            /*$content = array(
                 'wasEdited' => true,
                 'startTime' => $post->getStartTime(),
                 'endTime' => $post->getEndTime(),
                 'isTemporal' => $post->getIsTemporal(),
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.post.html.twig', array(
                         'post' => $post))
+            };*/
+
+            $content = array(
+                'wasEdited' => true,
+                'post' => array(
+                    'startTime' => $post->getStartTime(),
+                    'endTime' => $post->getEndTime(),
+                    'isTemporal' => $post->getIsTemporal()
+                ),
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
+                        'post' => $post,
+                        /*'isPostReply' => !!$post->getParentPost()*/))
             );
         } else {
-            $content = array(
+            /*$content = array(
                 'wasEdited' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
+                        'form' => $form->createView(),
+                        'post' => $post))
+            );*/
+
+            $content = array(
+                'wasEdited' => false,
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.new.html.twig', array(
                         'form' => $form->createView(),
                         'post' => $post))
             );

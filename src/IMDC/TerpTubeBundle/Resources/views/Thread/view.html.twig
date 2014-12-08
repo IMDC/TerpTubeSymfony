@@ -7,65 +7,96 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            require(['main'], function() {
-                var thread = new $tt.Controller.Thread({
-                    page: $tt.Controller.Thread.Page.VIEW,
-                    threadId: {{ thread.id }}
-                });
-                thread.bindUIEvents();
+            {#require(['main'], function() {#}
+                {#var thread = new $tt.Controller.Thread({#}
+                    {#page: $tt.Controller.Thread.Page.VIEW,#}
+                    {#threadId: {{ thread.id }}#}
+                {#});#}
+                {#thread.bindUIEvents();#}
 
-                {% if thread.mediaIncluded|length != 0 %}
-                    thread.createPlayer({
-                        mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),
-                        playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
-                        speedImages: {
-                            normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",
-                            fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",
-                            slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"
-                        },
-                        captionImages: {
-                            off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",
-                            on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"
-                        }
+                {#{% if thread.mediaIncluded|length != 0 %}#}
+                    {#thread.createPlayer({#}
+                        {#mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),#}
+                        {#playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",#}
+                        {#speedImages: {#}
+                            {#normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",#}
+                            {#fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",#}
+                            {#slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"#}
+                        {#},#}
+                        {#captionImages: {#}
+                            {#off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",#}
+                            {#on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"#}
+                        {#}#}
+                    {#});#}
+                {#{% endif %}#}
+            {#});#}
+
+            //
+            // following is layout specific. keep it here
+            //
+            var bodyPaddingTop = parseInt($("body").css("padding-top"), 10);
+            var bodyPaddingBottom = parseInt($("body").css("padding-bottom"), 10);
+
+            var replyContainerHeight;
+            var plusHeight;
+            var scrollTop = $("#threadOpContainer").offset().top - bodyPaddingTop;
+            var lastReplyHeight = $("#threadReplyContainer div.tt-post-container").last().height();
+            $("#threadReplyContainer div div").first().append("<div id=\"replyContainerSpacer\"></div>");
+
+            $(window).on("scroll", function(e) {
+                if ($(window).scrollTop() > scrollTop) {
+                    $("#threadReplyContainer").css({
+                        "top": $(window).scrollTop() - scrollTop,
+                        "height": replyContainerHeight + scrollTop
                     });
-                {% endif %}
+                    $("#replyContainerSpacer").height(plusHeight);
+                } else {
+                    $("#threadReplyContainer").css({
+                        "top": 0,
+                        "height": replyContainerHeight + $(window).scrollTop()
+                    });
+                    $("#replyContainerSpacer").height(plusHeight - scrollTop);
+                }
+            });
 
-                //
-                // following is layout specific. keep it here
-                //
-                var bodyPaddingTop = parseInt($("body").css("padding-top"), 10);
-                var bodyPaddingBottom = parseInt($("body").css("padding-bottom"), 10);
+            $(window).on("resize", function(e) {
+                replyContainerHeight = $(window).height() - $("#threadOpContainer").offset().top - bodyPaddingBottom;
+                plusHeight = replyContainerHeight - lastReplyHeight;
 
-                var replyContainerHeight;
-                var plusHeight;
-                var scrollTop = $("#threadOpContainer").offset().top - bodyPaddingTop;
-                var lastReplyHeight = $("#threadReplyContainer div.tt-post-container").last().height();
-                $("#threadReplyContainer div div").first().append("<div id=\"replyContainerSpacer\"></div>");
+                $(window).trigger("scroll");
+            });
 
-                $(window).on("scroll", function(e) {
-                    if ($(window).scrollTop() > scrollTop) {
-                        $("#threadReplyContainer").css({
-                            "top": $(window).scrollTop() - scrollTop,
-                            "height": replyContainerHeight + scrollTop
-                        });
-                        $("#replyContainerSpacer").height(plusHeight);
-                    } else {
-                        $("#threadReplyContainer").css({
-                            "top": 0,
-                            "height": replyContainerHeight + $(window).scrollTop()
-                        });
-                        $("#replyContainerSpacer").height(plusHeight - scrollTop);
+            $(window).trigger("resize");
+        });
+
+        require(['views/thread', 'views/post', 'main'], function(ThreadView, PostView) {
+            new ThreadView({
+                id: {{ thread.id }}
+            }, {
+                container: $("#threadOpContainer"),
+                player: {
+                    mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),
+                    playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
+                    speedImages: {
+                        normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",
+                        fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",
+                        slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"
+                    },
+                    captionImages: {
+                        off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",
+                        on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"
                     }
-                });
+                }
+            });
 
-                $(window).on("resize", function(e) {
-                    replyContainerHeight = $(window).height() - $("#threadOpContainer").offset().top - bodyPaddingBottom;
-                    plusHeight = replyContainerHeight - lastReplyHeight;
-
-                    $(window).trigger("scroll");
-                });
-
-                $(window).trigger("resize");
+            $(PostView.Binder.CONTAINER).each(function(index, element) {
+                new PostView({
+                    id: $(element).data("pid"),
+                    startTime: $(element).data("starttime"),
+                    endTime: $(element).data("endtime"),
+                    isTemporal: $(element).data("istemporal"),
+                    threadId: {{ thread.id }}
+                }, {});
             });
         });
     </script>
@@ -110,13 +141,15 @@
 						{% endif %}
 					</div>
 				</div>
-                {% set post = {'id': -1} %}
-                <div class="post-container" data-pid="{{ post.id }}">
+                {#{% set post = {'id': -1} %}#}
+                {#<div class="post-container" data-pid="{{ post.id }}">#}
                     <!-- post reply form -->
-                    <div class="row post-container-reply" data-pid="{{ post.id }}">
-                        {% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'post': post} %}
-                    </div>
-                </div>
+                    {#<div class="row post-container-reply" data-pid="{{ post.id }}">#}
+                        {#{% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'post': post} %}#}
+                        {% set newPost = {id: random()} %}
+                        {% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
+                    {#</div>#}
+                {#</div>#}
 				<div class="row">
 					<div class="col-md-12">
 						<h1>{{ thread.title }}</h1>
@@ -150,29 +183,35 @@
 					<div class="col-md-12">
                         {% if thread.posts|length > 0 %}
                             {% for post in thread.posts if not post.parentPost %}
-                                {% include 'IMDCTerpTubeBundle:Post:post.html.twig' %}
+                                {#<div style="border: 1px solid #ddd; border-collapse: collapse; border-radius: 4px; margin-bottom: 15px; padding-bottom: 15px;">#}
+                                    {% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
+                                    <!-- replies to post -->
+                                    {% for postReply in post.replies %}
+                                        {% include 'IMDCTerpTubeBundle:Post:view.html.twig' with {'post': postReply} %}
+                                    {% endfor %}
+                                {#</div>#}
                             {% endfor %}
-                            <div class="modal fade post-delete-modal">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                            <h4 class="modal-title">Delete this post</h4>
-                                        </div>
-                                        <div class="modal-body text-center">
-                                            <p>
-                                                This post will be permanently deleted.<br />
-                                                This action cannot be undone.<br />
-                                                Are you sure?
-                                            </p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
-                                            <a class="btn btn-danger post-delete" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {#<div class="modal fade post-delete-modal">#}
+                                {#<div class="modal-dialog">#}
+                                    {#<div class="modal-content">#}
+                                        {#<div class="modal-header">#}
+                                            {#<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>#}
+                                            {#<h4 class="modal-title">Delete this post</h4>#}
+                                        {#</div>#}
+                                        {#<div class="modal-body text-center">#}
+                                            {#<p>#}
+                                                {#This post will be permanently deleted.<br />#}
+                                                {#This action cannot be undone.<br />#}
+                                                {#Are you sure?#}
+                                            {#</p>#}
+                                        {#</div>#}
+                                        {#<div class="modal-footer">#}
+                                            {#<a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>#}
+                                            {#<a class="btn btn-danger post-delete" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>#}
+                                        {#</div>#}
+                                    {#</div>#}
+                                {#</div>#}
+                            {#</div>#}
                         {% else %}
                             <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
                         {% endif %}

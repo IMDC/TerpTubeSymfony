@@ -56,5 +56,10 @@ define(function() {
             : baseUrl.replace(/\w+\.php$/gi, "")  + path;
     };
 
+    Helper.autoSize = function() {
+        // make all elements with class 'autosize' expand to fit its contents
+        $(".autosize").autosize({append: ''});
+    };
+
     return Helper;
 });

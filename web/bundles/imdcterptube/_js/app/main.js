@@ -6,8 +6,8 @@ define(function(require) {
     TerpTube.Controller = {};
     TerpTube.Controller.MyFiles = require('controller/myFiles');
     TerpTube.Controller.Forum = require('controller/forum');
-    TerpTube.Controller.Thread = require('controller/thread');
-    TerpTube.Controller.Post = require('controller/post');
+    TerpTube.Controller.Thread = require('controller/thread_');
+    TerpTube.Controller.Post = require('controller/post_');
     TerpTube.Controller.Group = require('controller/group');
     TerpTube.Controller.Message = require('controller/message');
     TerpTube.Controller.Profile = require('controller/profile');
@@ -19,14 +19,18 @@ define(function(require) {
     TerpTube.Core.Recorder = require('core/recorder');
     TerpTube.Core.MediaChooser = require('core/mediaChooser');
     TerpTube.Core.Gallery = require('core/gallery');
+
+    TerpTube.Views = {};
+    TerpTube.Views.Post = require('views/post');
+
     TerpTube._instances = [];
 
     window.TerpTube = TerpTube;
-
     window.$tt = window.TerpTube;
 
-    // make all elements with class 'autosize' expand to fit its contents
-    $(".autosize").autosize();
+    ///////////////////////////////
+
+    $tt.Core.Helper.autoSize();
 
     dust.helpers.generateUrl = function(chunk, context, bodies, params) {
         return chunk.write($tt.Core.Helper.generateUrl(params.path));

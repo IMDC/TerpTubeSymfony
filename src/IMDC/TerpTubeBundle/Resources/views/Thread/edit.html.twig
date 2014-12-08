@@ -6,13 +6,21 @@
     {{ parent() }}
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            require(['main'], function() {
-                var thread = new $tt.Controller.Thread({
-                    page: $tt.Controller.Thread.Page.EDIT,
-                    threadId: {{ thread.id }}
-                });
-                thread.bindUIEvents();
+        {#$(document).ready(function() {#}
+            {#require(['main'], function() {#}
+                {#var thread = new $tt.Controller.Thread({#}
+                    {#page: $tt.Controller.Thread.Page.EDIT,#}
+                    {#threadId: {{ thread.id }}#}
+                {#});#}
+                {#thread.bindUIEvents();#}
+            {#});#}
+        {#});#}
+
+        require(['views/thread', 'main'], function(ThreadView) {
+            new ThreadView({
+                id: {{ thread.id }}
+            }, {
+                container: $("body")
             });
         });
     </script>

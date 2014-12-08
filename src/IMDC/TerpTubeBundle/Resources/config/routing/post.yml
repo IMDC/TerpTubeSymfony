@@ -1,6 +1,23 @@
+imdc_post_new:
+  pattern: /new/{threadId}/{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:new, threadId: null, pid: null }
+  requirements:
+    threadId: \d+
+    pid: \d+
+  options:
+    expose: true
+
 imdc_post_reply:
   pattern: /{pid}/reply
   defaults: { _controller: IMDCTerpTubeBundle:Post:new, threadId: null }
+  requirements:
+    pid: \d+
+  options:
+    expose: true
+
+imdc_post_view:
+  pattern: /{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:view }
   requirements:
     pid: \d+
   options:
