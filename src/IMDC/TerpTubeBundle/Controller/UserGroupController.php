@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr\Join;
 use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
+use IMDC\TerpTubeBundle\Entity\Message;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\IdType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
@@ -324,19 +325,59 @@ class UserGroupController extends Controller
             throw new \Exception('group not found');
         }
 
+        if (!$group->getOpenForNewMembers()) {
+            throw new AccessDeniedException();
+        }
+
         $user = $this->getUser();
-        if (!$user->getUserGroups()->contains($group)) {
-            $user->addUserGroup($group);
-        }
-        if (!$group->getMembers()->contains($user)) {
-            $group->addMember($user);
+
+        if ($group->getJoinByInvitationOnly()) {
+            //TODO move to MessageController?
+            $message = new Message();
+            $message->addRecipient($group->getUserFounder());
+            $message->setSubject('Request to join "' . $group->getName() . '"');
+            $message->setContent('
+                ' . $user->getUsername() . ' would like to join your group: ' . $group->getName() . '.\n
+                \n
+                <a href="' . $this->generateUrl('imdc_group_invite_member', array(
+                    'groupId' => $group->getId(),
+                    'userId' => $user->getId()
+                )) . '">Click here</a> to accept their request and send an invitation.\n
+                \n
+                Note: If this user is on your mentor, mentee or friends lists, they will be instantly added to the group.
+            ');
+            $message->setOwner($user);
+            $message->setSentDate(new \DateTime('now'));
+
+            $user->addSentMessage($message);
+
+            $em->persist($message);
+            $em->persist($user);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add(
+                'success', 'A request to join this group has been sent to the founder.'
+            );
+        } else {
+            if (!$group->getMembers()->contains($user)) {
+                $group->addMember($user);
+            }
+            if (!$user->getUserGroups()->contains($group)) {
+                $user->addUserGroup($group);
+            }
+
+            $em->persist($group);
+            $em->persist($user);
+            $em->flush();
+
+            $this->get('session')->getFlashBag()->add(
+                'success', 'You\'re now a member of this group.'
+            );
         }
 
-	    $em->persist($group);
-	    $em->persist($user);
-	    $em->flush();
-
-        return $this->redirect($this->generateUrl('imdc_group_list'));
+        return $this->redirect($this->generateUrl('imdc_group_view', array(
+            'groupId' => $group->getId()
+        )));
 	}
 
     /**
@@ -400,6 +441,51 @@ class UserGroupController extends Controller
         ));
     }
 
+    public function inviteMemberAction(Request $request, $groupId, $userId)
+    {
+        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+        $newMember = $em->getRepository('IMDCTerpTubeBundle:User')->find($userId);
+        if (!$group || !$newMember) {
+            throw new \Exception('group/user not found');
+        }
+
+        if ($group->getMembers()->contains($newMember)) {
+            $this->get('session')->getFlashBag()->add(
+                'info', $newMember->getUsername() . ' is already a member of the ' . $group->getName() . ' group.'
+            );
+        } else {
+            $user = $this->getUser();
+            if (!$group->getJoinByInvitationOnly() // is invitation only no longer flagged on the group?
+                || $user->isUserOnMentorList($newMember)
+                || $user->isUserOnMenteeList($newMember)
+                || $user->isUserOnFriendsList($newMember)) {
+                // by pass invitation step and add users directly
+                $group->addMember($newMember);
+                $newMember->addUserGroup($group);
+                $em->persist($group);
+                $em->persist($newMember);
+                $em->flush();
+
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Added ' . $newMember->getUsername() . ' to the ' . $group->getName() . ' group.'
+                );
+            } else {
+                $this->sendGroupInvitation($user, $newMember, $group);
+
+                $this->get('session')->getFlashBag()->add(
+                    'success', 'Invited ' . $newMember->getUsername() . ' to join the ' . $group->getName() . ' group.'
+                );
+            }
+        }
+
+        return $this->redirect($request->headers->get('referer'));
+    }
+
     /**
      * @param Request $request
      * @param $groupId
@@ -447,26 +533,12 @@ class UserGroupController extends Controller
                     || $user->isUserOnFriendsList($newMember)) {
                     // by pass invitation step and add users directly
                     $group->addMember($newMember);
+                    $newMember->addUserGroup($group);
                     $em->persist($group);
+                    $em->persist($newMember);
                     $addedMembers++;
                 } else {
-                    // send an invitation
-                    //TODO move to InvitationController
-                    $invitation = new Invitation();
-                    $invitation->setCreator($user);
-                    $invitation->setRecipient($newMember);
-                    $invitation->setType($em->getRepository('IMDCTerpTubeBundle:InvitationType')->find(InvitationType::TYPE_GROUP));
-                    $invitation->setData(array(
-                        'groupId' => $group->getId()
-                    ));
-
-                    $user->addCreatedInvitation($invitation);
-                    $newMember->addReceivedInvitation($invitation);
-
-                    $em->persist($invitation);
-                    $em->persist($user);
-                    $em->persist($newMember);
-
+                    $this->sendGroupInvitation($user, $newMember, $group);
                     $invitedMembers++;
                 }
             }
@@ -595,5 +667,27 @@ class UserGroupController extends Controller
                 'type' => new IdType(),
                 'label' => false,
                 'allow_add' => true));
+    }
+
+    private function sendGroupInvitation($sender, $recipient, $group)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        //TODO move to InvitationController?
+        $invitation = new Invitation();
+        $invitation->setCreator($sender);
+        $invitation->setRecipient($recipient);
+        $invitation->setType($em->getRepository('IMDCTerpTubeBundle:InvitationType')->find(InvitationType::TYPE_GROUP));
+        $invitation->setData(array(
+            'groupId' => $group->getId()
+        ));
+
+        $sender->addCreatedInvitation($invitation);
+        $recipient->addReceivedInvitation($invitation);
+
+        $em->persist($invitation);
+        $em->persist($sender);
+        $em->persist($recipient);
+        $em->flush();
     }
 }
