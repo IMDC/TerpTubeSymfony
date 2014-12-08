@@ -1,0 +1,19 @@
+{% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
+
+{% set newPost = {id: random()} %}
+{% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
+
+<script type="text/javascript">
+    require(['views/post', 'core/helper', 'main'], function(PostView, Helper) {
+        var $newPost = $(PostView.Binder.CONTAINER + "[data-pid={{ newPost.id }}]");
+        new PostView({
+            id: $newPost.data("pid"),
+            startTime: $newPost.data("starttime"),
+            endTime: $newPost.data("endtime"),
+            isTemporal: $newPost.data("istemporal"),
+            threadId: {{ post.parentThread.id }}
+        }, {});
+
+        Helper.autoSize();
+    });
+</script>
