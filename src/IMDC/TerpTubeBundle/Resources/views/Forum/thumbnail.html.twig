@@ -12,24 +12,46 @@ _Home:index.html.twig
 	<li>
 		<div class="col-md-3">
             <div class="thumbnail text-center tt-forum-thumbnail">
-                <div class="col-md-1 pull-right">
-                    {% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': forum} %}
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        {% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': forum} %}
+                    </div>
                 </div>
-                <div class="tt-media-element">
-                    {% if forum.getTitleMedia[0] is defined %}
-                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.getTitleMedia[0]} %}
-                    {% else %}
-                        <div style="height: 50px;"></div>
-                    {% endif %}
+                <div class="row">
+                    {#TODO CSS ME#}
+                    <div class="col-md-12 tt-media-element" style="height: 270px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
+                        <div style="position: relative; top: 50%; transform: translateY(-50%);">
+                            {% if forum.titleMedia[0] is defined %}
+                                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.titleMedia[0]} %}
+                            {% else %}
+                                <i class="fa fa-question fa-3x"></i><br />
+                                <em>no media</em>
+                            {% endif %}
+                        </div>
+                        {#TODO CSS ME#}
+                        <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "270px");</script>
+                    </div>
                 </div>
-                <a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}" title="{{ forum.titleText}}">
-                    <h3>{{ forum.titleText|truncate(20) }}</h3>
-                    {# <p><i class="fa fa-caret-right"></i> {{ forum.creator }}</p> #}
-                    <p><span class="badge badge-info">Topics: {{ forumThreadCount[loop.index0] }}</span></p>
-                    {# <p>Last post: {{ forum.getLastActivity|date('g:ia M j, Y') }}</p> #}
-                    <p>Last activity: <span class="toolPop" title="{{ forum.getLastActivity|date('g:ia M j, Y') }}">{{ time_diff(forum.getLastActivity) }}</span></p>
-                    <p><span class="tt-date">Created: {{ forum.creationDate|date('g:ia M j, Y') }}</span></p>
-                </a>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}" title="{{ forum.titleText}}">
+                            <p style="font-size: 24px;">
+                                {% if forum.titleText %}
+                                    {{ forum.titleText|truncate(20) }}
+                                {% else %}
+                                    {{ '<em>no title</em>'|raw }}
+                                {% endif %}
+                            </p>
+                            <p class="text-muted">
+                                <i class="fa fa-user" title="Creator"></i> {{ forum.creator }}&ensp;
+                                <i class="fa fa-pencil-square-o" title="Topic count"></i> {{ forumThreadCount[loop.index0] }} topics<br />
+                                <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(forum.getLastActivity) }}
+                            </p>
+                            {#TODO remove#}
+                            {#<p><a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.id}) }}">View</a></p>#}
+                        </a>
+                    </div>
+                </div>
             </div>
 		</div>
 	</li>

@@ -4,33 +4,42 @@ _Group:index.html.twig
 _Home:index.html.twig
 #}
 
-{% set counter = 1 %}
 {% for group in groups %}
-    {% if counter % 4 == 1 %}
+    {% if loop.index % 4 == 1 %}
         <div class="row">
             <ul class="list-unstyled">
     {% endif %}
     <li>
         <div class="col-md-3">
-            <div class="thumbnail text-center">
-                <h3><a href="{{ path('imdc_group_view', {'groupId': group.id}) }}" title="{{ group.name }}">{{ group.name }}</a></h3>
-                <p class="text-muted"><strong>Created:</strong> {{ group.dateCreated|date('g:ia F j Y') }}</p>
-                <p class="text-muted"><strong>Members:</strong> {{ group.getMembers|length }}</p>
-                <p class="text-muted"><strong>Founder:</strong> {{ group.getUserFounder.getUserName }}</p>
-                <p>
-                    <ul class="list-unstyled list-inline">
-                        <li><a class="btn btn-info" href="{{ path('imdc_group_view', {'groupId': group.id}) }}">View Group Info</a></li>
-                        {% if app.user == group.getUserFounder %}
-                            <li><a class="btn btn-default" href="{{ path('imdc_group_edit', {'groupId': group.id}) }}">Edit Group</a></li>
+            <div class="thumbnail text-center tt-forum-thumbnail" style="min-height: 400px;">
+                {#TODO CSS ME#}
+                <div class="tt-media-element" style="height: 270px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
+                    <div style="position: relative; top: 50%; transform: translateY(-50%);">
+                        {% if group.media[0] is defined %}
+                            {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.media[0]} %}
+                        {% else %}
+                            <i class="fa fa-question fa-3x"></i><br />
+                            <em>no media</em>
                         {% endif %}
-                    </ul>
-                </p>
+                    </div>
+                    {#TODO CSS ME#}
+                    <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "270px");</script>
+                </div>
+                <a href="{{ path('imdc_group_view', {'groupId': group.id}) }}" title="{{ group.name }}">
+                    <p style="font-size: 24px;">{{ group.name }}</p>
+                    <p class="text-muted">
+                        <i class="fa fa-user" title="Founder"></i> {{ group.userFounder.userName }}&ensp;
+                        <i class="fa fa-users" title="Member count"></i> {{ group.members|length }} members<br />
+                        <i class="fa fa-clock-o" title="Date created"></i> {{ group.dateCreated|date('Y-m-d g:i a') }}
+                    </p>
+                    {#TODO remove#}
+                    {#<p><a class="btn btn-default" href="{{ path('imdc_group_view', {'groupId': group.id}) }}">View</a></p>#}
+                </a>
             </div>
         </div>
     </li>
-    {% if (counter != 0 and counter % 4 == 0) or counter == groups|length %}
+    {% if loop.index % 4 == 0 or loop.last %}
             </ul>
         </div>
     {% endif %}
-    {% set counter = counter + 1 %}
 {% endfor %}

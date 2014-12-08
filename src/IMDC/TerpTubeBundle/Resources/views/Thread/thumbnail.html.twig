@@ -11,30 +11,46 @@ _Forum:view.html.twig
 	<li>
 		<div class="col-md-3">
             <div class="thumbnail text-center tt-thread-thumbnail">
-                <div>
-                    <div class="col-md-9 col-md-offset-1 pull-left tt-date" title="{{ thread.creationDate|date('g:ia M j Y') }}">Created: {{ time_diff(thread.creationDate) }}</div>
-                    <div class="col-md-1 pull-right">
+                <div class="row">
+                    <div class="col-md-12 text-right">
                         {% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': thread} %}
                     </div>
                 </div>
-                <div class="tt-media-element">
-                    {% if thread.mediaIncluded[0] is defined %}
-                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
-                    {% else %}
-                        <div style="height: 50px;"></div>
-                    {% endif %}
-                </div>
-                <div>
-                    <div class="col-md-4">
-                        {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': thread.creator} %}
-                        {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': thread.creator} %}
+                <div class="row">
+                    {#TODO CSS ME#}
+                    <div class="col-md-12 tt-media-element" style="height: 270px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
+                        <div style="position: relative; top: 50%; transform: translateY(-50%);">
+                            {% if thread.mediaIncluded[0] is defined %}
+                                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
+                            {% else %}
+                                <i class="fa fa-question fa-3x"></i><br />
+                                <em>no media</em>
+                            {% endif %}
+                        </div>
+                        {#TODO CSS ME#}
+                        <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "270px");</script>
                     </div>
-                    <div class="col-md-8">
-                        <a href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}">
-                            <h3 class="thread_title">{{ thread.title|truncate(50) }}</h3>
-                            <p>{{ thread.content|truncate(50) }}</p>
-                            <p><span class="badge badge-info">{{ thread.getPosts|length }} {{ thread.getPosts|length == 1 ? 'Reply' : 'Replies'}}</span></p>
-                            <p>{% if thread.getLastPostAt is defined %}<span class="tt-date" title="{{ thread.lastPostAt|date('g:ia M j Y') }}">Last post: {{ time_diff(thread.lastPostAt) }}</span>{% endif %}</p>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p>
+                            {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': thread.creator} %}
+                            {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': thread.creator} %}
+                        </p>
+                    </div>
+                    <div class="col-md-8" style="border-left: 1px solid #dddddd;">
+                        <a href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}" title="{{ thread.title }}">
+                            <p style="font-size: 24px;">
+                                {% if thread.title %}
+                                    {{ thread.title|truncate(20) }}
+                                {% else %}
+                                    {{ '<em>no title</em>'|raw }}
+                                {% endif %}
+                            </p>
+                            <p class="text-muted">
+                                <i class="fa fa-pencil-square-o" title="Reply count"></i> {{ thread.posts|length }} replies<br />
+                                <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(thread.lastPostAt) }}
+                            </p>
                         </a>
                     </div>
                 </div>
