@@ -72,7 +72,7 @@ class UserGroupController extends Controller
             $user = $this->getUser();
             $group->setUserFounder($user);
             $group->addAdmin($user);
-            $group->addMember($user);
+            //$group->addMember($user);
 
             /*$media = $form->get('mediatextarea')->getData();
             if ($media) {
@@ -362,14 +362,14 @@ class UserGroupController extends Controller
                 'success', 'A request to join this group has been sent to the founder.'
             );
         } else {
-            if (!$group->getMembers()->contains($user)) {
+            /*if (!$group->getMembers()->contains($user)) {
                 $group->addMember($user);
-            }
+            }*/
             if (!$user->getUserGroups()->contains($group)) {
                 $user->addUserGroup($group);
             }
 
-            $em->persist($group);
+            //$em->persist($group);
             $em->persist($user);
             $em->flush();
 
@@ -463,14 +463,14 @@ class UserGroupController extends Controller
             );
         } else {
             $user = $this->getUser();
-            if (!$group->getJoinByInvitationOnly() // is invitation only no longer flagged on the group?
-                || $user->isUserOnMentorList($newMember)
+            if (/*!$group->getJoinByInvitationOnly() // is invitation only no longer flagged on the group?
+                ||*/ $user->isUserOnMentorList($newMember)
                 || $user->isUserOnMenteeList($newMember)
                 || $user->isUserOnFriendsList($newMember)) {
                 // by pass invitation step and add users directly
-                $group->addMember($newMember);
+                //$group->addMember($newMember);
                 $newMember->addUserGroup($group);
-                $em->persist($group);
+                //$em->persist($group);
                 $em->persist($newMember);
                 $em->flush();
 
@@ -535,9 +535,9 @@ class UserGroupController extends Controller
                     || $user->isUserOnMenteeList($newMember)
                     || $user->isUserOnFriendsList($newMember)) {
                     // by pass invitation step and add users directly
-                    $group->addMember($newMember);
+                    //$group->addMember($newMember);
                     $newMember->addUserGroup($group);
-                    $em->persist($group);
+                    //$em->persist($group);
                     $em->persist($newMember);
                     $addedMembers++;
                 } else {

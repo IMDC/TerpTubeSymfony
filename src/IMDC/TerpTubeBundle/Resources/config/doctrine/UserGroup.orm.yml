@@ -44,14 +44,7 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
     manyToMany:
         members:
             targetEntity: User
-            joinTable:
-                name: usergroup_members_users
-                joinColumns:
-                    usergroup_id:
-                        referencedColumnName: id
-                inverseJoinColumns:
-                    user_id:
-                        referencedColumnName: id
+            mappedBy: userGroups
         moderators:
             targetEntity: User
             joinTable:

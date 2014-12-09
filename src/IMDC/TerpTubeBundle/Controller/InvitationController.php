@@ -191,9 +191,9 @@ class InvitationController extends Controller
             $group = InvitationController::getGroupFromInviteData($this, $entity);
 
             $user->addUserGroup($group);
-            $group->addMember($user);
+            //$group->addMember($user);
 
-            $em->persist($group);
+            //$em->persist($group);
         }
 
         // send message to invitation creator?
