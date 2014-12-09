@@ -26,20 +26,21 @@ class ForumType extends AbstractType
 
         $queryBuilder = function (EntityRepository $repo) use ($user, $group) {
             //TODO filter all groups by ace instead of founder. user may not be founder of other groups, but may have an owner ace
-            $membersCanAddForums = $group && $group->getMembersCanAddForums();
+            $membersCanAddForums = $group->getMembersCanAddForums();
+
             $qb = $repo->createQueryBuilder('g')
-                ->leftJoin('g.userFounder', 'u');
-
-            if ($membersCanAddForums)
-                $qb->leftJoin('g.members', 'm');
-
-            $qb->where('u.id = :userId')
+                ->leftJoin('g.userFounder', 'u')
+                ->where('u.id = :userId')
                 ->setParameter('userId', $user->getId());
 
             if ($membersCanAddForums) {
-                $qb->orWhere($qb->expr()->in('m.id', array(
-                    $user->getId()
-                )));
+                $qb->leftJoin('g.members', 'm')
+                    ->orWhere($qb->expr()->andX(
+                        $qb->expr()->in('m.id', array(
+                            $user->getId()
+                        )),
+                        $qb->expr()->eq('g.membersCanAddForums', true)
+                    ));
             }
 
             return $qb;
