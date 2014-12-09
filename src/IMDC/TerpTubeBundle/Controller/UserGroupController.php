@@ -337,22 +337,25 @@ class UserGroupController extends Controller
             $message->addRecipient($group->getUserFounder());
             $message->setSubject('Request to join "' . $group->getName() . '"');
             $message->setContent('
-                ' . $user->getUsername() . ' would like to join your group: ' . $group->getName() . '.\n
-                \n
+                <strong>' . $user->getUsername() . '</strong> would like to join your group: <strong>' . $group->getName() . '</strong>.<br />
+                <br />
                 <a href="' . $this->generateUrl('imdc_group_invite_member', array(
                     'groupId' => $group->getId(),
                     'userId' => $user->getId()
-                )) . '">Click here</a> to accept their request and send an invitation.\n
-                \n
-                Note: If this user is on your mentor, mentee or friends lists, they will be instantly added to the group.
+                )) . '"><strong>Click here</strong></a> to accept their request and send an invitation.<br />
+                <br />
+                <strong>Note:</strong> If ' . $user->getUsername() . ' is on your mentor, mentee or friends lists, they will be instantly added to the group.<br />
+                <br />
             ');
             $message->setOwner($user);
             $message->setSentDate(new \DateTime('now'));
 
             $user->addSentMessage($message);
+            $group->getUserFounder()->addReceivedMessage($message);
 
             $em->persist($message);
             $em->persist($user);
+            $em->persist($group->getUserFounder());
             $em->flush();
 
             $this->get('session')->getFlashBag()->add(

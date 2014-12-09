@@ -5,7 +5,26 @@ define([
     "use strict";
 
     var PostView = function(model, options) {
-        var ctrl = new Post(model, this, options);
+        this.controller = new Post(model, options);
+
+        this.bind__onClickHoverTimelineKeyPoint = this._onClickHoverTimelineKeyPoint.bind(this);
+        this.bind__onClickNew = this._onClickNew.bind(this);
+        this.bind__onClickEdit = this._onClickEdit.bind(this);
+        this.bind__onClickDelete = this._onClickDelete.bind(this);
+        this.bind__onClickSubmitNew = this._onClickSubmitNew.bind(this);
+        this.bind__onClickSubmitEdit = this._onClickSubmitEdit.bind(this);
+        this.bind__onClickReset = this._onClickReset.bind(this);
+        this.bind__onClickCancelNew = this._onClickCancelNew.bind(this);
+        this.bind__onClickCancelEdit = this._onClickCancelEdit.bind(this);
+        this.bind__onSuccess = this._onSuccess.bind(this);
+        this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
+        this.bind__onReset = this._onReset.bind(this);
+
+        // KeyPointService
+        this.bind__renderTimelineKeyPoint = this._renderTimelineKeyPoint.bind(this);
+        this.bind__onSelectionTimes = this._onSelectionTimes.bind(this);
+        this.bind__onHoverKeyPoint = this._onHoverKeyPoint.bind(this);
+        this.bind__onClickKeyPoint = this._onClickKeyPoint.bind(this);
 
         this.$container = $(PostView.Binder.CONTAINER + "[data-pid='" + model.id + "']");
         this.$form = this.$container.find("form[name^=" + PostView.FORM_NAME + "]");
@@ -20,32 +39,44 @@ define([
         this.$cancelNew = this.$container.find(PostView.Binder.CANCEL_NEW);
         this.$cancelEdit = this.$container.find(PostView.Binder.CANCEL_EDIT);
 
-        this.getFormField = function(fieldName) {
-            return this.$form.find("#" + PostView.FORM_NAME + "_" + fieldName);
-        };
-
-        this.$timelineKeyPoint.on("click", ctrl.bind__onClickHoverTimelineKeyPoint);
-        this.$timelineKeyPoint.on("dblclick", ctrl.bind__onClickHoverTimelineKeyPoint);
+        this.$timelineKeyPoint.on("click", this.bind__onClickHoverTimelineKeyPoint);
+        this.$timelineKeyPoint.on("dblclick", this.bind__onClickHoverTimelineKeyPoint);
         this.$timelineKeyPoint.hover(
-            ctrl.bind__onClickHoverTimelineKeyPoint,
-            ctrl.bind__onClickHoverTimelineKeyPoint);
-        this.$new.on("click", ctrl.bind__onClickNew);
-        this.$edit.on("click", ctrl.bind__onClickEdit);
-        this.$delete.on("click", ctrl.bind__onClickDelete);
-        this.$submitNew.on("click", ctrl.bind__onClickSubmitNew);
-        this.$submitEdit.on("click", ctrl.bind__onClickSubmitEdit);
-        this.$reset.on("click", ctrl.bind__onClickReset);
-        this.$cancelNew.on("click", ctrl.bind__onClickCancelNew);
-        this.$cancelEdit.on("click", ctrl.bind__onClickCancelEdit);
+            this.bind__onClickHoverTimelineKeyPoint,
+            this.bind__onClickHoverTimelineKeyPoint);
+        this.$new.on("click", this.bind__onClickNew);
+        this.$edit.on("click", this.bind__onClickEdit);
+        this.$delete.on("click", this.bind__onClickDelete);
+        this.$submitNew.on("click", this.bind__onClickSubmitNew);
+        this.$submitEdit.on("click", this.bind__onClickSubmitEdit);
+        this.$reset.on("click", this.bind__onClickReset);
+        this.$cancelNew.on("click", this.bind__onClickCancelNew);
+        this.$cancelEdit.on("click", this.bind__onClickCancelEdit);
 
         this.mediaChooser = new MediaChooser({enableDoneAndPost: true});
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, ctrl.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, ctrl.bind__onSuccessAndPost);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, ctrl.bind__onReset);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
+        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
+        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
         this.mediaChooser.setContainer(this.$form);
         this.mediaChooser.bindUIEvents();
 
-        ctrl.onViewLoaded();
+        var mediaIds = [];
+        this._getFormField("attachedFile").children().each(function(index, element) {
+            mediaIds.push($(element).val());
+        });
+        if (mediaIds.length > 0) {
+            this._toggleForm(true);
+            this.mediaChooser.setMedia(mediaIds);
+        }
+
+        // KeyPointService
+        this.keyPointService = $tt._services['keyPoint'];
+        $(this.keyPointService).on("eventDuration", this.bind__renderTimelineKeyPoint);
+        $(this.keyPointService).on("eventSelectionTimes", this.bind__onSelectionTimes);
+        $(this.keyPointService).on("eventKeyPointHover", this.bind__onHoverKeyPoint);
+        $(this.keyPointService).on("eventKeyPointClick", this.bind__onClickKeyPoint);
+
+        this.controller.onViewLoaded();
     };
 
     PostView.TAG = "PostView";
@@ -67,6 +98,222 @@ define([
 
     // this must be the same name defined in {bundle}/Form/Type/PostType
     PostView.FORM_NAME = "post";
+
+    PostView.prototype._getFormField = function(fieldName) {
+        return this.$form.find("#" + PostView.FORM_NAME + "_" + fieldName);
+    };
+
+    // clicking the clock icon will move the density bar to the comments time
+    // and highlight the comment on the density bar
+    // mousing over the clock icon should highlight the comment on the density bar
+    PostView.prototype._onClickHoverTimelineKeyPoint = function(e) {
+        if (e && e.type == "click")
+            e.preventDefault();
+
+        this.controller.interactKeyPoint(e.type);
+    };
+
+    PostView.prototype._onClickNew = function(e) {
+        e.preventDefault();
+
+        this.$new.hide();
+        this.controller.new(null)
+            .done(function(data) {
+                //this.$container.replaceWith(data.html);
+                //var _self = this;
+                //_self = new PostView(this.controller.model, this.controller.options);
+                this.$container.after(data.html);
+            }.bind(this))
+            .fail(function() {
+                this.$new.show();
+            }.bind(this));
+    };
+
+    PostView.prototype._onClickEdit = function(e) {
+        e.preventDefault();
+
+        this.controller.edit(null)
+            .done(function(data) {
+                this.$container.replaceWith(data.html);
+                var _self = this;
+                _self = new PostView(this.controller.model, this.controller.options);
+            }.bind(this));
+    };
+
+    PostView.prototype._onClickDelete = function(e) {
+        e.preventDefault();
+
+        this.view.$delete.button("loading");
+        this.controller.delete()
+            .done(function(data) {
+                this.$deleteModal
+                    .find(".modal-body")
+                    .html("Post deleted successfully.");
+
+                if (this.$deleteModal.data('bs.modal').isShown) {
+                    this.$deleteModal.on("hidden.bs.modal", function(e) {
+                        this.$container.remove();
+                    });
+                    this.$deleteModal.modal("hide");
+                    this.$container.fadeOut("slow");
+                } else {
+                    this.$container.fadeOut("slow", function(e) {
+                        this.$container.remove();
+                    });
+                }
+            }.bind(this))
+            .fail(function() {
+                this.$container
+                    .find(".modal-body")
+                    .prepend("Something went wrong. Try again.");
+                this.$delete.button("reset");
+            }.bind(this));
+    };
+
+    PostView.prototype._toggleForm = function(disabled) {
+        this.$submitNew.button(disabled ? "loading" : "reset");
+        this.$submitEdit.button(disabled ? "loading" : "reset");
+        this.$reset.attr("disabled", disabled);
+        this.$cancelNew.attr("disabled", disabled);
+        this.$cancelEdit.attr("disabled", disabled);
+    };
+
+    PostView.prototype._preSubmit = function() {
+        if (this._getFormField("content").val() == "" && this.mediaChooser.media.length == 0) {
+            alert("Your post cannot be blank. You must either select a file or write a comment.");
+            return false;
+        }
+        this._toggleForm(true);
+        return true;
+    };
+
+    PostView.prototype._onClickSubmitNew = function(e) {
+        e.preventDefault();
+
+        if (!this._preSubmit())
+            return;
+
+        this.controller.new(this.$form[0])
+            .done(function(data) {
+                if (!data.wasReplied) {
+                    this.$container.replaceWith(data.html);
+                    var _self = this;
+                    _self = new PostView(this.controller.model, this.controller.options);
+                }
+            }.bind(this))
+            .fail(function() {
+                this._toggleForm(false);
+            }.bind(this));
+    };
+
+    PostView.prototype._onClickSubmitEdit = function(e) {
+        e.preventDefault();
+
+        if (!this._preSubmit())
+            return;
+
+        this.controller.edit(this.$form[0])
+            .done(function(data) {
+                this.$container.replaceWith(data.html);
+                var _self = this;
+                _self = new PostView(this.controller.model, this.controller.options);
+            }.bind(this))
+            .fail(function() {
+                this._toggleForm(false);
+            }.bind(this));
+    };
+
+    PostView.prototype._onClickReset = function(e) {
+        e.preventDefault();
+
+        this.mediaChooser.reset();
+        this._getFormField("startTime").val(this.controller.keyPoint.startTime);
+        this._getFormField("endTime").val(this.controller.keyPoint.endTime);
+        this._getFormField("content").val("");
+
+        this.controller.editKeyPoint();
+    };
+
+    PostView.prototype._onClickCancelNew = function(e) {
+        e.preventDefault();
+
+        this.$container.remove();
+        this.controller.removeKeyPoint();
+
+        $(PostView.Binder.CONTAINER + "[data-pid='" + this.controller.model.parentPostId + "']")
+            .find(PostView.Binder.NEW)
+            .show();
+    };
+
+    PostView.prototype._onClickCancelEdit = function(e) {
+        e.preventDefault();
+
+        this.controller.view(this.model)
+            .done(function(data) {
+                this.$container.replaceWith(data.html);
+                var _self = this;
+                _self = new PostView(this.controller.model, this.controller.options);
+            }.bind(this));
+    };
+
+    PostView.prototype._updateForm = function() {
+        var formField = this._getFormField("attachedFile");
+        formField.html(
+            this.mediaChooser.generateFormData(
+                formField.data("prototype")
+            )
+        );
+    };
+
+    PostView.prototype._onSuccess = function(e) {
+        this._updateForm();
+        this._toggleForm(false);
+    };
+
+    PostView.prototype._onSuccessAndPost = function(e) {
+        this._updateForm();
+        this.$submit.trigger("click");
+    };
+
+    PostView.prototype._onReset = function(e) {
+        this._updateForm();
+    };
+
+    PostView.prototype._renderTimelineKeyPoint = function(e) {
+        console.log("%s: %s", PostView.TAG, "_renderTimelineKeyPoint");
+
+        var startTimePercentage = ((100 * this.controller.keyPoint.startTime) / e.duration).toFixed(2);
+        var endTimePercentage = ((100 * this.controller.keyPoint.endTime) / e.duration).toFixed(2);
+        var widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
+
+        this.$timelineKeyPoint.css({
+            left: startTimePercentage + "%",
+            width: widthPercentage + "%"
+        });
+    };
+
+    PostView.prototype._onSelectionTimes = function(e) {
+        this._getFormField("startTime").val(e.selection.startTime);
+        this._getFormField("endTime").val(e.selection.endTime);
+    };
+
+    PostView.prototype._onHoverKeyPoint = function(e) {
+        if (e.keyPoint.id != this.controller.keyPoint.id)
+            return;
+
+        this.$container.toggleClass("tt-post-container-highlight");
+    };
+
+    PostView.prototype._onClickKeyPoint = function(e) {
+        if (e.keyPoint.id != this.controller.keyPoint.id)
+            return;
+
+        var video = this.$container.find("video")[0];
+        if (video) {
+            video.currentTime = 0;
+            video.play();
+        }
+    };
 
     return PostView;
 });

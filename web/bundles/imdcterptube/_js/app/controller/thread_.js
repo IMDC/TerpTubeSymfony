@@ -3,24 +3,22 @@ define([
 ], function(ThreadManager) {
     "use strict";
 
-    var Thread = function(model, view, options) {
-        console.log("%s: %s- model=%o, view=%o, options=%o", Thread.TAG, "constructor", model, view, options);
+    var Thread = function(model, options) {
+        console.log("%s: %s- model=%o, options=%o", Thread.TAG, "constructor", model, options);
 
         this.model = model;
-        this.view = view;
         this.options = options;
+
+        this.keyPointService = $tt._services['keyPoint'];
 
         this.videoSpeed = 0;
         this.player = null;
         this.keyPoints = [];
         this.playingKeyPoint = null;
 
-        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
-        this.bind__onClickDelete = this._onClickDelete.bind(this);
-        this.bind__onClickVideoSpeed = this._onClickVideoSpeed.bind(this);
-        this.bind__onClickClosedCaptions = this._onClickClosedCaptions.bind(this);
-
         this.bind__onTimelineKeyPoint = this._onTimelineKeyPoint.bind(this);
+
+        $tt._instances.push(this);
     };
 
     Thread.TAG = "Thread";
@@ -74,7 +72,7 @@ define([
             console.log("%s: %s", Thread.TAG, Player.EVENT_AREA_SELECTION_CHANGED);
 
             var selection = this.player.getAreaSelectionTimes();
-            $(document).trigger($.Event(Thread.Event.SELECTION_TIMES, {
+            $(this.keyPointService).trigger($.Event(Thread.Event.SELECTION_TIMES, {
                 selection: {
                     startTime: parseFloat(selection.minTime).toFixed(2),
                     endTime: parseFloat(selection.maxTime).toFixed(2)
@@ -85,7 +83,7 @@ define([
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, function(e, keyPoint, coords) {
             console.log("%s: %s- keyPoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OVER, keyPoint, coords);
 
-            $(document).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
+            $(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
                 keyPoint: keyPoint
             }));
 
@@ -95,12 +93,12 @@ define([
                     scrollTop: $(".post-container[data-pid=" + keyPoint.id + "]").position().top
                 });
             }
-        });
+        }.bind(this));
 
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, function(e, keyPoint) {
             console.log("%s: %s- keyPoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 
-            $(document).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
+            $(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
                 keyPoint: keyPoint
             }));
         }.bind(this));
@@ -108,10 +106,10 @@ define([
         $(this.player).on(Player.EVENT_KEYPOINT_CLICK, function(e, keyPoint, coords) {
             console.log("%s: %s- keyPoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
 
-            $(document).trigger($.Event(Thread.Event.KEYPOINT_CLICK, {
+            $(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_CLICK, {
                 keyPoint: keyPoint
             }));
-        });
+        }.bind(this));
 
         $(this.player).on(Player.EVENT_KEYPOINT_BEGIN, function(e, keyPoint) {
             console.log("%s: %s- keyPoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_BEGIN, keyPoint);
@@ -144,7 +142,7 @@ define([
 
             var duration = this.options.player.mediaElement[0].duration;
             if (!isNaN(duration)) {
-                $(document).trigger($.Event(Thread.Event.DURATION, {duration: duration}));
+                $(this.keyPointService).trigger($.Event(Thread.Event.DURATION, {duration: duration}));
             }
         }
 
@@ -201,121 +199,45 @@ define([
     };
 
     Thread.prototype.onViewLoaded = function() {
-        var mediaIds = [];
-        this.view.getFormField("mediaIncluded").children().each(function(index, element) {
-            mediaIds.push($(element).val());
-        });
-        if (mediaIds.length > 0) {
-            this.view.$submit.attr("disabled", true);
-            this.view.mediaChooser.setMedia(mediaIds);
-        }
+        $(this.keyPointService).on("eventTimelineKeyPoint", this.bind__onTimelineKeyPoint);
 
-        $(document).on("eventTimelineKeyPoint", this.bind__onTimelineKeyPoint);
+        if (this.options.player) {
+            this.options.player.mediaElement.on("loadedmetadata", function(e) {
+                $(this.keyPointService).trigger($.Event(Thread.Event.DURATION, {duration: e.target.duration}));
+            });
 
-        this.options.player.mediaElement.on("loadedmetadata", function(e) {
-            $(document).trigger($.Event(Thread.Event.DURATION, {duration: e.target.duration}));
-        });
-
-        this._createPlayer();
-    };
-
-    Thread.prototype._onClickSubmit = function(e) {
-        if (this.view.$form[0].checkValidity()) {
-            $(e.target).button("loading");
+            this._createPlayer();
         }
     };
 
-    Thread.prototype._onClickDelete = function(e) {
-        e.preventDefault();
-
-        this.view.$delete.button("loading");
-        ThreadManager.delete(this.model)
-            .then(function(data, textStatus, jqXHR) {
-                if (!data.wasDeleted) {
-                    this.view.$deleteModal
-                        .find(".modal-body")
-                        .prepend("Something went wrong. Try again.");
-                    this.view.$delete.button("reset");
-                    return;
-                }
-
-                this.view.$deleteModal
-                    .find(".modal-body")
-                    .html("Topic deleted successfully.");
-
+    Thread.prototype.delete = function(e) {
+        return ThreadManager.delete(this.model)
+            .done(function(data) {
                 window.location.assign(data.redirectUrl);
-            }.bind(this),
-            function(jqXHR, textStatus, errorThrown) {
-                this.view.$container
-                    .find(".modal-body")
-                    .prepend("Something went wrong. Try again.");
-                this.view.$delete.button("reset");
             }.bind(this));
     };
 
-    // change the video speed when the slowdown button is clicked
-    Thread.prototype._onClickVideoSpeed = function(e) {
-        e.preventDefault();
-
+    Thread.prototype.adjustVideoSpeed = function() {
         this.videoSpeed = (this.videoSpeed+1)%3;
         switch (this.videoSpeed) {
             case 0:
                 this.options.player.mediaElement[0].playbackRate = 1.0;
-                $("#videoSpeed img").attr("src", this.options.player.speedImages.normal);
-                break;
+                return this.options.player.speedImages.normal;
             case 1:
                 this.options.player.mediaElement[0].playbackRate = 2.0;
-                $("#videoSpeed img").attr("src", this.options.player.speedImages.fast);
-                break;
+                return this.options.player.speedImages.fast;
             case 2:
                 this.options.player.mediaElement[0].playbackRate = 0.5;
-                $("#videoSpeed img").attr("src", this.options.player.speedImages.slow);
-                break;
+                return this.options.player.speedImages.slow;
             default:
                 this.options.player.mediaElement[0].playbackRate = 1.0;
-                $("#videoSpeed img").attr("src", this.options.player.speedImages.normal);
-                break;
+                return this.options.player.speedImages.normal;
         }
     };
 
-    // change the captioning display when you click the captioning button
-    Thread.prototype._onClickClosedCaptions = function(e) {
-        e.preventDefault();
-
+    Thread.prototype.toggleClosedCaptions = function() {
         //$("#closed-caption-button img").attr("src", this.options.player.captionImages.off);
         //$("#closed-caption-button img").attr("src", this.options.player.captionImages.on);
-    };
-
-    Thread.prototype._updateForm = function() {
-        var formField = this.view.getFormField("mediaIncluded");
-        formField.html(
-            this.view.mediaChooser.generateFormData(
-                formField.data("prototype")
-            )
-        );
-    };
-
-    Thread.prototype._onSuccess = function(e) {
-        this._updateForm();
-        this.view.$submit.attr("disabled", false);
-        if (this.view.mediaChooser.media.length > 0) {
-            this.view.getFormField("title")
-                .attr("required", false)
-                .parent()
-                .find("label")
-                .removeClass("required");
-        }
-    };
-
-    Thread.prototype._onReset = function(e) {
-        this._updateForm();
-        if (this.view.mediaChooser.media.length == 0) {
-            this.view.getFormField("title")
-                .attr("required", true)
-                .parent()
-                .find("label")
-                .addClass("required");
-        }
     };
 
     return Thread;

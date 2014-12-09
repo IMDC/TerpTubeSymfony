@@ -43,7 +43,8 @@ class ThreadType extends AbstractType
         }
 
         $builder->add('title', 'text', array(
-            'label' => 'Text Title'
+            'label' => 'Text Title',
+            'required' => !!$options['canChooseMedia'] // revise if media becomes editable for this form
         ));
 
 	    $builder->add('content', 'textarea', array(

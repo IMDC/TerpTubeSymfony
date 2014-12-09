@@ -14,65 +14,76 @@ define(function() {
 
     PostManager.new = function(post, form) {
         var settings = {
-            url: Routing.generate('imdc_post_new', {threadId: post.threadId, pid: post.id}),
-            success: function(data, textStatus, jqXHR) {
-
-            }.bind(this),
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
-            }.bind(this)
+            url: Routing.generate('imdc_post_new', {threadId: post.threadId, pid: post.id})
         };
 
         PostManager._prepForm(form, settings);
-        return $.ajax(settings);
+
+        return $.ajax(settings)
+            .then(function(data, textStatus, jqXHR) {
+                return $.Deferred().resolve(data);
+            }.bind(this),
+            function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.statusText);
+                return $.Deferred().reject();
+            }.bind(this));
     };
 
     PostManager.view = function(post) {
         var settings = {
-            url: Routing.generate('imdc_post_view', {pid: post.id}),
-            success: function(data, textStatus, jqXHR) {
-
-            }.bind(this),
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
-            }.bind(this)
+            url: Routing.generate('imdc_post_view', {pid: post.id})
         };
 
-        return $.ajax(settings);
+        return $.ajax(settings)
+            .then(function(data, textStatus, jqXHR) {
+                return $.Deferred().resolve(data);
+            }.bind(this),
+            function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.statusText);
+                return $.Deferred().reject();
+            }.bind(this));
     };
 
     PostManager.edit = function(post, form) {
         var settings = {
-            url: Routing.generate('imdc_post_edit', {pid: post.id}),
-            success: function(data, textStatus, jqXHR) {
+            url: Routing.generate('imdc_post_edit', {pid: post.id})
+        };
+
+        PostManager._prepForm(form, settings);
+
+        return $.ajax(settings)
+            .then(function(data, textStatus, jqXHR) {
                 if (data.wasEdited) {
                     post.startTime = data.post.startTime;
                     post.endTime = data.post.endTime;
                     post.isTemporal = data.post.isTemporal;
                 }
+                return $.Deferred().resolve(data);
             }.bind(this),
-            error: function(jqXHR, textStatus, errorThrown) {
+            function(jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.statusText);
-            }.bind(this)
-        };
-
-        PostManager._prepForm(form, settings);
-        return $.ajax(settings);
+                return $.Deferred().reject();
+            }.bind(this));
     };
 
     PostManager.delete = function(post) {
         var settings = {
             url: Routing.generate('imdc_post_delete', {pid: post.id}),
-            type: "POST",
-            success: function(data, textStatus, jqXHR) {
-
-            }.bind(this),
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
-            }.bind(this)
+            type: "POST"
         };
 
-        return $.ajax(settings);
+        return $.ajax(settings)
+            .then(function(data, textStatus, jqXHR) {
+                if (data.wasDeleted) {
+                    return $.Deferred().resolve(data);
+                } else {
+                    return $.Deferred().reject();
+                }
+            }.bind(this),
+            function(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.statusText);
+                return $.Deferred().reject();
+            }.bind(this));
     };
 
     return PostManager;

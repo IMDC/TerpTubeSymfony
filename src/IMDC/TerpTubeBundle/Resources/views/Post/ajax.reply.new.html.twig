@@ -1,18 +1,34 @@
-{% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
+{#{% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}#}
 
 {% set newPost = {id: random()} %}
 {% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
 
 <script type="text/javascript">
-    require(['views/post', 'core/helper', 'main'], function(PostView, Helper) {
+    {#require(['views/post', 'core/helper', 'main'], function(PostView, Helper) {#}
+        {#var $newPost = $(PostView.Binder.CONTAINER + "[data-pid={{ newPost.id }}]");#}
+        {#new PostView({#}
+            {#id: $newPost.data("pid"),#}
+            {#startTime: $newPost.data("starttime"),#}
+            {#endTime: $newPost.data("endtime"),#}
+            {#isTemporal: $newPost.data("istemporal"),#}
+            {#threadId: {{ post.parentThread.id }}#}
+        {#}, {});#}
+
+        {#Helper.autoSize();#}
+    {#});#}
+
+    require(['bootstrap', 'views/post', 'core/helper', 'main'], function(bootstrap, PostView, Helper) {
         var $newPost = $(PostView.Binder.CONTAINER + "[data-pid={{ newPost.id }}]");
-        new PostView({
-            id: $newPost.data("pid"),
-            startTime: $newPost.data("starttime"),
-            endTime: $newPost.data("endtime"),
-            isTemporal: $newPost.data("istemporal"),
-            threadId: {{ post.parentThread.id }}
-        }, {});
+        bootstrap(
+                PostView, {
+                    id: $newPost.data("pid"),
+                    startTime: $newPost.data("starttime"),
+                    endTime: $newPost.data("endtime"),
+                    isTemporal: $newPost.data("istemporal"),
+                    threadId: {{ post.parentThread.id }},
+                    parentPostId: {{ post.id }}
+                }, {}, ['keyPoint']
+        );
 
         Helper.autoSize();
     });

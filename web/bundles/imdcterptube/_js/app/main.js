@@ -20,9 +20,10 @@ define(function(require) {
     TerpTube.Core.MediaChooser = require('core/mediaChooser');
     TerpTube.Core.Gallery = require('core/gallery');
 
-    TerpTube.Views = {};
-    TerpTube.Views.Post = require('views/post');
+    TerpTube.Services = {};
+    TerpTube.Services.KeyPoint = require('core/keyPointService');
 
+    TerpTube._services = [];
     TerpTube._instances = [];
 
     window.TerpTube = TerpTube;
