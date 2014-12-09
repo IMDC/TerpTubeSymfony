@@ -504,4 +504,32 @@ class UserGroup extends BaseGroup
     {
         return $this->mediaDisplayOrder;
     }
+    /**
+     * @var boolean
+     */
+    private $membersCanAddForums;
+
+
+    /**
+     * Set membersCanAddForums
+     *
+     * @param boolean $membersCanAddForums
+     * @return UserGroup
+     */
+    public function setMembersCanAddForums($membersCanAddForums)
+    {
+        $this->membersCanAddForums = $membersCanAddForums;
+
+        return $this;
+    }
+
+    /**
+     * Get membersCanAddForums
+     *
+     * @return boolean 
+     */
+    public function getMembersCanAddForums()
+    {
+        return $this->membersCanAddForums;
+    }
 }

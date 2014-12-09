@@ -146,7 +146,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Group.prototype._onClickSubmit = function(e) {
-        $(e.target).button("loading");
+        if (this.getForm()[0].checkValidity()) {
+            $(e.target).button("loading");
+        }
     };
 
     Group.prototype._onClickDelete = function(e) {

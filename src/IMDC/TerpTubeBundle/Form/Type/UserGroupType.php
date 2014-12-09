@@ -27,6 +27,7 @@ class UserGroupType extends AbstractType
     	$builder->add('visibleToRegisteredUsers', 'checkbox', array('data' => true, 'required' => false));
     	$builder->add('openForNewMembers', 'checkbox', array('data' => true, 'required' => false));
     	$builder->add('joinByInvitationOnly', 'checkbox', array('required' => false));
+        $builder->add('membersCanAddForums', 'checkbox', array('required' => false));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

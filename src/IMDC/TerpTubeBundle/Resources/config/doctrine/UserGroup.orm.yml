@@ -25,6 +25,9 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
         joinByInvitationOnly:
             type: boolean
             nullable: true
+        membersCanAddForums:
+            type: boolean
+            nullable: true
         mediaDisplayOrder:
             type: array
     oneToMany:

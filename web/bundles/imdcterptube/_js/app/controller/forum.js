@@ -132,7 +132,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
     };
 
     Forum.prototype._onClickSubmit = function(e) {
-        $(e.target).button("loading");
+        if (this.getForm()[0].checkValidity()) {
+            $(e.target).button("loading");
+        }
     };
 
     Forum.prototype._onClickDelete = function(e) {

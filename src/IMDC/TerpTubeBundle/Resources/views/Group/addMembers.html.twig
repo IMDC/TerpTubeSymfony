@@ -51,7 +51,7 @@
                 {% else %}
                     <p class="text-center" style="margin-bottom: 20px;">No members to add</p>
                 {% endif %}
-                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
+                <a class="btn btn-danger" href="{{ path('imdc_group_view', {'groupId': group.id}) }}"><i class="fa fa-times"></i> Cancel</a>
                 <hr class="tt-separator-bottom" style="margin-top: 15px;" />
             </div>
         </div>
