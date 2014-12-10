@@ -14,7 +14,7 @@ define(function() {
 
     PostManager.new = function(post, form) {
         var settings = {
-            url: Routing.generate('imdc_post_new', {threadId: post.threadId, pid: post.id})
+            url: Routing.generate('imdc_post_new', {threadId: post.threadId, pid: (post.parentPostId || post.id)})
         };
 
         PostManager._prepForm(form, settings);

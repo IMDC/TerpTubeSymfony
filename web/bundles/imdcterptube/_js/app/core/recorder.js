@@ -353,6 +353,10 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
     Recorder.prototype._onPageAnimate = function() {
         try {
             if (this.mode == Recorder.Mode.PREVIEW && this.recordedMedia != null) {
+                if (this.page == Recorder.Page.INTERPRETATION && this.sourceMedia != null) {
+                    return; //TODO interp preview/edit/trim
+                }
+
                 this._createPlayer(true);
             } else {
                 if (this.page == Recorder.Page.INTERPRETATION) {
@@ -473,6 +477,11 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         modal.find("a[href='" + tab + "']").parent().addClass("active");
         modal.find(".tab-pane:not('" + tab + "')").removeClass("active");
         modal.find(".tab-pane" + tab).addClass("active");
+
+        //TODO interp preview/edit/trim
+        if (this.mode == Recorder.Mode.PREVIEW) {
+            modal.find("a[href='" + Recorder.Binder.INTERP + "']").hide();
+        }
 
         this._bindUIEvents();
 

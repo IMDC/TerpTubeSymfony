@@ -19,7 +19,7 @@ _Home:index.html.twig
                 </div>
                 <div class="row">
                     {#TODO CSS ME#}
-                    <div class="col-md-12 tt-media-element" style="height: 270px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
+                    <div class="col-md-12 tt-media-element" style="height: 230px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
                         <div style="position: relative; top: 50%; transform: translateY(-50%);">
                             {% if forum.titleMedia[0] is defined %}
                                 {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.titleMedia[0]} %}
@@ -29,7 +29,7 @@ _Home:index.html.twig
                             {% endif %}
                         </div>
                         {#TODO CSS ME#}
-                        <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "270px");</script>
+                        <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "230px");</script>
                     </div>
                 </div>
                 <div class="row">
@@ -48,7 +48,7 @@ _Home:index.html.twig
                                 <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(forum.getLastActivity) }}
                             </p>
                             {#TODO remove#}
-                            {#<p><a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.id}) }}">View</a></p>#}
+                            <p><a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.id}) }}">View</a></p>
                         </a>
                     </div>
                 </div>

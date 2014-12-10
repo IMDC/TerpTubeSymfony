@@ -18,7 +18,7 @@ _Forum:view.html.twig
                 </div>
                 <div class="row">
                     {#TODO CSS ME#}
-                    <div class="col-md-12 tt-media-element" style="height: 270px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
+                    <div class="col-md-12 tt-media-element" style="height: 230px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
                         <div style="position: relative; top: 50%; transform: translateY(-50%);">
                             {% if thread.mediaIncluded[0] is defined %}
                                 {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': thread.mediaIncluded[0]} %}
@@ -28,7 +28,7 @@ _Forum:view.html.twig
                             {% endif %}
                         </div>
                         {#TODO CSS ME#}
-                        <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "270px");</script>
+                        <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "230px");</script>
                     </div>
                 </div>
                 <div class="row">
@@ -51,6 +51,8 @@ _Forum:view.html.twig
                                 <i class="fa fa-pencil-square-o" title="Reply count"></i> {{ thread.posts|length }} replies<br />
                                 <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(thread.lastPostAt) }}
                             </p>
+                            {#TODO remove#}
+                            <p><a class="btn btn-default" href="{{ path('imdc_thread_view', {'threadid': thread.id}) }}">View</a></p>
                         </a>
                     </div>
                 </div>
