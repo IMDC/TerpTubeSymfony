@@ -1,11 +1,10 @@
 {
-    "name": "TerpTube",
-    "dependencies": {
-        "requirejs": "2.*",
-        "rjs": "2.1.*",
-        "dustjs": "0.3.*",
-        "jquery-autosize": "1.18.*",
-        "tag-it": "master",
-        "html5shiv": "3.7.*"
-    }
+  "name": "TerpTube",
+  "private": true,
+  "dependencies": {
+    "requirejs": "2.*",
+    "jquery-autosize": "1.*",
+    "tag-it": "*",
+    "html5shiv": "3.*"
+  }
 }

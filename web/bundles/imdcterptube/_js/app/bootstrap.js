@@ -1,16 +1,10 @@
-define(function(require) {
-    "use strict";
+define(function() {
+    'use strict';
 
-    var Bootstrap = function(view, model, options, services) {
-        $.each(services, function(index, service) {
-            if (!$tt._services[service]) {
-                var _s = require('core/' + service + 'Service');
-                $tt._services[service] = new _s();
-            }
-        });
-
-        new view(model, options);
+    var bootstrap = function(model, controller, view, options) {
+        var c = new controller(model, options);
+        new view(c, options);
     };
 
-    return Bootstrap;
+    return bootstrap;
 });

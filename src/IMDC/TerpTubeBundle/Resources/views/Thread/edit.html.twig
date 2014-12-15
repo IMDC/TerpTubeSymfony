@@ -16,12 +16,17 @@
             {#});#}
         {#});#}
 
-        require(['views/thread', 'main'], function(ThreadView) {
-            new ThreadView({
-                id: {{ thread.id }}
-            }, {
-                container: $("body")
-            });
+        require(['bootstrap', 'controller/thread_', 'views/thread', 'main'], function(bootstrap, Thread, ThreadView) {
+            bootstrap(
+                    {
+                        id: {{ thread.id }}
+                    },
+                    Thread,
+                    ThreadView,
+                    {
+                        container: $("body")
+                    }
+            );
         });
     </script>
 {% endblock header %}

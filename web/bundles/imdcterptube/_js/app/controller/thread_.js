@@ -1,6 +1,7 @@
 define([
-    'core/threadManager'
-], function(ThreadManager) {
+    'core/threadManager',
+    'service'
+], function(ThreadManager, Service) {
     "use strict";
 
     var Thread = function(model, options) {
@@ -9,7 +10,7 @@ define([
         this.model = model;
         this.options = options;
 
-        this.keyPointService = $tt._services['keyPoint'];
+        this.keyPointService = Service.get('keyPoint');
 
         this.videoSpeed = 0;
         this.player = null;

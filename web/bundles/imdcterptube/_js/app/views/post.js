@@ -1,11 +1,11 @@
 define([
-    'controller/post_',
-    'core/mediaChooser'
-], function(Post, MediaChooser) {
+    'core/mediaChooser',
+    'service'
+], function(MediaChooser, Service) {
     "use strict";
 
-    var PostView = function(model, options) {
-        this.controller = new Post(model, options);
+    var PostView = function(controller, options) {
+        this.controller = controller;
 
         this.bind__onClickHoverTimelineKeyPoint = this._onClickHoverTimelineKeyPoint.bind(this);
         this.bind__onClickNew = this._onClickNew.bind(this);
@@ -26,7 +26,7 @@ define([
         this.bind__onHoverKeyPoint = this._onHoverKeyPoint.bind(this);
         this.bind__onClickKeyPoint = this._onClickKeyPoint.bind(this);
 
-        this.$container = $(PostView.Binder.CONTAINER + "[data-pid='" + model.id + "']");
+        this.$container = $(PostView.Binder.CONTAINER + "[data-pid='" + this.controller.model.id + "']");
         this.$form = this.$container.find("form[name^=" + PostView.FORM_NAME + "]");
         this.$timelineKeyPoint = this.$container.find(PostView.Binder.TIMELINE_KEYPOINT);
         this.$new = this.$container.find(PostView.Binder.NEW);
@@ -70,7 +70,7 @@ define([
         }
 
         // KeyPointService
-        this.keyPointService = $tt._services['keyPoint'];
+        this.keyPointService = Service.get('keyPoint');
         $(this.keyPointService).on("eventDuration", this.bind__renderTimelineKeyPoint);
         $(this.keyPointService).on("eventSelectionTimes", this.bind__onSelectionTimes);
         $(this.keyPointService).on("eventKeyPointHover", this.bind__onHoverKeyPoint);
@@ -248,7 +248,7 @@ define([
     PostView.prototype._onClickCancelEdit = function(e) {
         e.preventDefault();
 
-        this.controller.view(this.model)
+        this.controller.view()
             .done(function(data) {
                 this.$container.replaceWith(data.html);
                 var _self = this;

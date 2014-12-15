@@ -108,6 +108,7 @@ IMDC\TerpTubeBundle\Entity\User:
         #functions as many To Many
         userGroups:
             targetEntity: UserGroup
+            inversedBy: members
             joinTable:
                 name: fos_user_group
                 joinColumns:

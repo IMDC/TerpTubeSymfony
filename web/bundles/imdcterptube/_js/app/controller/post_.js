@@ -1,6 +1,7 @@
 define([
-    'core/postManager'
-], function(PostManager) {
+    'core/postManager',
+    'service'
+], function(PostManager, Service) {
     "use strict";
 
     var Post = function(model, options) {
@@ -9,7 +10,7 @@ define([
         this.model = model;
         this.options = options;
 
-        this.keyPointService = $tt._services['keyPoint'];
+        this.keyPointService = Service.get('keyPoint');
 
         this.keyPoint = new KeyPoint(
             this.model.id,

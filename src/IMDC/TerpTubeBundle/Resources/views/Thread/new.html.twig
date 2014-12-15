@@ -13,10 +13,15 @@
             });
         });*/
 
-        require(['views/thread', 'main'], function(ThreadView) {
-            new ThreadView({}, {
-                container: $("body")
-            });
+        require(['bootstrap', 'controller/thread_', 'views/thread', 'main'], function(bootstrap, Thread, ThreadView) {
+            bootstrap(
+                    {},
+                    Thread,
+                    ThreadView,
+                    {
+                        container: $("body")
+                    }
+            );
         });
     </script>
 {% endblock header %}

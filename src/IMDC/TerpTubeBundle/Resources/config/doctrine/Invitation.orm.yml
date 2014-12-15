@@ -34,11 +34,13 @@ IMDC\TerpTubeBundle\Entity\Invitation:
     manyToOne:
         creator:
             targetEntity: User
+            inversedBy: createdInvitations
             joinColumn:
                 name: creator_id
                 referencedColumnName: id
         recipient:
             targetEntity: User
+            inversedBy: receivedInvitations
             joinColumn:
                 name: recipient_id
                 referencedColumnName: id

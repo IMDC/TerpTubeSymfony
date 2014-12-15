@@ -69,42 +69,19 @@
             $(window).trigger("resize");
         });
 
-        {#require(['views/thread', 'views/post', 'main'], function(ThreadView, PostView) {#}
-            {#new ThreadView({#}
-                {#id: {{ thread.id }}#}
-            {#}, {#}
-                {#container: $("#threadOpContainer"),#}
-                {#player: {#}
-                    {#mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),#}
-                    {#playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",#}
-                    {#speedImages: {#}
-                        {#normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",#}
-                        {#fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",#}
-                        {#slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"#}
-                    {#},#}
-                    {#captionImages: {#}
-                        {#off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",#}
-                        {#on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"#}
-                    {#}#}
-                {#}#}
-            {#});#}
-
-            {#$(PostView.Binder.CONTAINER).each(function(index, element) {#}
-                {#new PostView({#}
-                    {#id: $(element).data("pid"),#}
-                    {#startTime: $(element).data("starttime"),#}
-                    {#endTime: $(element).data("endtime"),#}
-                    {#isTemporal: $(element).data("istemporal"),#}
-                    {#threadId: {{ thread.id }}#}
-                {#}, {});#}
-            {#});#}
-        {#});#}
-
-        require(['bootstrap', 'views/thread', 'views/post', 'main'], function(bootstrap, ThreadView, PostView) {
+        require([
+            'bootstrap',
+            'controller/thread_', 'views/thread',
+            'controller/post_', 'views/post',
+            'main'
+        ], function(bootstrap, Thread, ThreadView, Post, PostView) {
             bootstrap(
-                    ThreadView, {
+                    {
                         id: {{ thread.id }}
-                    }, {
+                    },
+                    Thread,
+                    ThreadView,
+                    {
                         container: $("#threadOpContainer"),
                         player: {
                             mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),
@@ -119,18 +96,21 @@
                                 on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"
                             }
                         }
-                    }, ['keyPoint']
+                    }
             );
 
             $(PostView.Binder.CONTAINER).each(function(index, element) {
                 bootstrap(
-                        PostView, {
+                        {
                             id: $(element).data("pid"),
                             startTime: $(element).data("starttime"),
                             endTime: $(element).data("endtime"),
                             isTemporal: $(element).data("istemporal"),
                             threadId: {{ thread.id }}
-                        }, {}, ['keyPoint']
+                        },
+                        Post,
+                        PostView,
+                        {}
                 );
             });
         });

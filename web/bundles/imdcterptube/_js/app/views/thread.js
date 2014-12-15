@@ -1,11 +1,10 @@
 define([
-    'controller/thread_',
     'core/mediaChooser'
-], function(Thread, MediaChooser) {
+], function(MediaChooser) {
     "use strict";
 
-    var ThreadView = function(model, options) {
-        this.controller = new Thread(model, options);
+    var ThreadView = function(controller, options) {
+        this.controller = controller;
 
         this.bind__onClickSubmit = this._onClickSubmit.bind(this);
         this.bind__onClickDelete = this._onClickDelete.bind(this);

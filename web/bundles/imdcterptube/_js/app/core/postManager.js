@@ -22,11 +22,11 @@ define(function() {
         return $.ajax(settings)
             .then(function(data, textStatus, jqXHR) {
                 return $.Deferred().resolve(data);
-            }.bind(this),
+            },
             function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
+                console.log(jqXHR.responseText);
                 return $.Deferred().reject();
-            }.bind(this));
+            });
     };
 
     PostManager.view = function(post) {
@@ -37,11 +37,11 @@ define(function() {
         return $.ajax(settings)
             .then(function(data, textStatus, jqXHR) {
                 return $.Deferred().resolve(data);
-            }.bind(this),
+            },
             function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
+                console.log(jqXHR.responseText);
                 return $.Deferred().reject();
-            }.bind(this));
+            });
     };
 
     PostManager.edit = function(post, form) {
@@ -59,11 +59,11 @@ define(function() {
                     post.isTemporal = data.post.isTemporal;
                 }
                 return $.Deferred().resolve(data);
-            }.bind(this),
+            },
             function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
+                console.log(jqXHR.responseText);
                 return $.Deferred().reject();
-            }.bind(this));
+            });
     };
 
     PostManager.delete = function(post) {
@@ -79,11 +79,11 @@ define(function() {
                 } else {
                     return $.Deferred().reject();
                 }
-            }.bind(this),
+            },
             function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
+                console.log(jqXHR.responseText);
                 return $.Deferred().reject();
-            }.bind(this));
+            });
     };
 
     return PostManager;

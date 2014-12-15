@@ -114,10 +114,6 @@ assetic:
             inputs:
                 - %kernel.root_dir%/../bower_components/requirejs/require.js
             output: js/require.js
-        dust_js:
-            inputs:
-                - %kernel.root_dir%/../bower_components/dustjs/dist/dust-full-0.3.0.min.js
-            output: js/dust-full.min.js
 
 # Doctrine Configuration
 doctrine:
