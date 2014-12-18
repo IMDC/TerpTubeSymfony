@@ -165,7 +165,6 @@ class ForumController extends Controller
      * @param Request $request
      * @param $forumid
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function viewAction(Request $request, $forumid)
@@ -183,7 +182,8 @@ class ForumController extends Controller
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('VIEW', $forum) === false) {
-            throw new AccessDeniedException();
+        	//if the suer is not allowed to see this content, redirect them back to forum list
+            return $this->redirect($this->generateUrl('imdc_forum_list'));
         }
 
         $threadRepo = $em->getRepository('IMDCTerpTubeBundle:Thread');

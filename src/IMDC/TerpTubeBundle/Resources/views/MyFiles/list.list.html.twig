@@ -26,6 +26,7 @@
                             </span>
                             <span>
                                 <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+                                <a class="btn btn-default" href="{{  resourceFile.getResource() }}" download><i class="fa fa-download"></i></a>
                                 <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': resourceFile.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
                             </span>
                         </td>

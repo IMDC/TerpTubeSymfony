@@ -137,7 +137,11 @@ class UserGroupController extends Controller
             throw new \Exception('group not found');
         }
 
-        $securityContext = $this->get('security.context');
+	    $securityContext = $this->get('security.context');
+        if ($securityContext->isGranted('VIEW', $group) === false) {
+            //redirect user to groups page if they dont have access to content
+            return $this->redirect($this->generateUrl('imdc_group_list'));
+        }
 
         $user = $this->getUser();
         $forumRepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
