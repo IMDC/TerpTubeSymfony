@@ -54,6 +54,7 @@
         
         {% block header %}
             <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}">
+            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube_old.css') }}">
             <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube.css') }}">
 
             <script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
@@ -64,18 +65,22 @@
                         paths: {
                             dust: 'lib/dust-full.min',
                             'dust-helpers': 'lib/dust-helpers.min',
-                            templates: 'views/templates',
+                            underscore: 'lib/underscore-min',
+                            templates: 'template/templates',
                             extra: 'lib/extra'
                         },
                         shim: {
                             'dust-helpers': {
                                 deps: ['dust']
                             },
+                            underscore: {
+                                exports: '_'
+                            },
                             templates: {
                                 deps: ['dust-helpers']
                             },
                             main: {
-                                deps: ['templates', 'extra']
+                                deps: ['underscore', 'templates', 'extra']
                             }
                         }
                     });

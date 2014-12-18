@@ -1,7 +1,8 @@
 define([
     'core/threadManager',
-    'service'
-], function(ThreadManager, Service) {
+    'service',
+    'service/keyPointService'
+], function(ThreadManager, Service, KeyPointService) {
     "use strict";
 
     var Thread = function(model, options) {
@@ -73,20 +74,27 @@ define([
             console.log("%s: %s", Thread.TAG, Player.EVENT_AREA_SELECTION_CHANGED);
 
             var selection = this.player.getAreaSelectionTimes();
-            $(this.keyPointService).trigger($.Event(Thread.Event.SELECTION_TIMES, {
+            /*$(this.keyPointService).trigger($.Event(Thread.Event.SELECTION_TIMES, {
                 selection: {
                     startTime: parseFloat(selection.minTime).toFixed(2),
                     endTime: parseFloat(selection.maxTime).toFixed(2)
                 }
-            }));
+            }));*/
+            this.keyPointService.dispatch('all', KeyPointService.Event.SELECTION_TIMES, {
+                selection: {
+                    startTime: parseFloat(selection.minTime).toFixed(2),
+                    endTime: parseFloat(selection.maxTime).toFixed(2)
+                }
+            });
         }).bind(this));
 
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, function(e, keyPoint, coords) {
             console.log("%s: %s- keyPoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OVER, keyPoint, coords);
 
-            $(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
+            /*$(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
                 keyPoint: keyPoint
-            }));
+            }));*/
+            this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.HOVER);
 
             // avoid animating when key points are overlapped and multiple invokes of this event are called
             if (!$("#threadReplyContainer").is(':animated')) {
@@ -99,17 +107,19 @@ define([
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, function(e, keyPoint) {
             console.log("%s: %s- keyPoint=%o", Thread.TAG, Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 
-            $(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
+            /*$(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
                 keyPoint: keyPoint
-            }));
+            }));*/
+            this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.HOVER);
         }.bind(this));
 
         $(this.player).on(Player.EVENT_KEYPOINT_CLICK, function(e, keyPoint, coords) {
             console.log("%s: %s- keyPoint=%o, coords=%o", Thread.TAG, Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
 
-            $(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_CLICK, {
+            /*$(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_CLICK, {
                 keyPoint: keyPoint
-            }));
+            }));*/
+            this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.CLICK);
         }.bind(this));
 
         $(this.player).on(Player.EVENT_KEYPOINT_BEGIN, function(e, keyPoint) {
@@ -143,7 +153,8 @@ define([
 
             var duration = this.options.player.mediaElement[0].duration;
             if (!isNaN(duration)) {
-                $(this.keyPointService).trigger($.Event(Thread.Event.DURATION, {duration: duration}));
+                //$(this.keyPointService).trigger($.Event(Thread.Event.DURATION, {duration: duration}));
+                this.keyPointService.dispatch('all', KeyPointService.Event.DURATION, {duration: duration});
             }
         }
 
@@ -200,11 +211,13 @@ define([
     };
 
     Thread.prototype.onViewLoaded = function() {
-        $(this.keyPointService).on("eventTimelineKeyPoint", this.bind__onTimelineKeyPoint);
+        //$(this.keyPointService).on("eventTimelineKeyPoint", this.bind__onTimelineKeyPoint);
+        this.keyPointService.subscribe('all', this.bind__onTimelineKeyPoint);
 
         if (this.options.player) {
             this.options.player.mediaElement.on("loadedmetadata", function(e) {
-                $(this.keyPointService).trigger($.Event(Thread.Event.DURATION, {duration: e.target.duration}));
+                //$(this.keyPointService).trigger($.Event(Thread.Event.DURATION, {duration: e.target.duration}));
+                this.keyPointService.dispatch('all', KeyPointService.DURATION, {duration: e.target.duration});
             });
 
             this._createPlayer();

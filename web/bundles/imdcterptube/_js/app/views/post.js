@@ -1,7 +1,7 @@
 define([
     'core/mediaChooser',
-    'service'
-], function(MediaChooser, Service) {
+    'service/keyPointService'
+], function(MediaChooser, KeyPointService) {
     "use strict";
 
     var PostView = function(controller, options) {
@@ -21,10 +21,11 @@ define([
         this.bind__onReset = this._onReset.bind(this);
 
         // KeyPointService
-        this.bind__renderTimelineKeyPoint = this._renderTimelineKeyPoint.bind(this);
+        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
+        /*this.bind__renderTimelineKeyPoint = this._renderTimelineKeyPoint.bind(this);
         this.bind__onSelectionTimes = this._onSelectionTimes.bind(this);
         this.bind__onHoverKeyPoint = this._onHoverKeyPoint.bind(this);
-        this.bind__onClickKeyPoint = this._onClickKeyPoint.bind(this);
+        this.bind__onClickKeyPoint = this._onClickKeyPoint.bind(this);*/
 
         this.$container = $(PostView.Binder.CONTAINER + "[data-pid='" + this.controller.model.id + "']");
         this.$form = this.$container.find("form[name^=" + PostView.FORM_NAME + "]");
@@ -70,13 +71,13 @@ define([
         }
 
         // KeyPointService
-        this.keyPointService = Service.get('keyPoint');
+        /*this.keyPointService = Service.get('keyPoint');
         $(this.keyPointService).on("eventDuration", this.bind__renderTimelineKeyPoint);
         $(this.keyPointService).on("eventSelectionTimes", this.bind__onSelectionTimes);
         $(this.keyPointService).on("eventKeyPointHover", this.bind__onHoverKeyPoint);
-        $(this.keyPointService).on("eventKeyPointClick", this.bind__onClickKeyPoint);
+        $(this.keyPointService).on("eventKeyPointClick", this.bind__onClickKeyPoint);*/
 
-        this.controller.onViewLoaded();
+        this.controller.onViewLoaded(this); //FIXME controller should not be aware of view
     };
 
     PostView.TAG = "PostView";
@@ -277,6 +278,23 @@ define([
 
     PostView.prototype._onReset = function(e) {
         this._updateForm();
+    };
+
+    PostView.prototype._onKeyPointEvent = function(e) {
+        switch (e.type) {
+            case KeyPointService.Event.DURATION:
+                this._renderTimelineKeyPoint(e);
+                break;
+            case KeyPointService.Event.SELECTION_TIMES:
+                this._onSelectionTimes(e);
+                break;
+            case KeyPointService.Event.HOVER:
+                this._onHoverKeyPoint(e);
+                break;
+            case KeyPointService.Event.CLICK:
+                this._onClickKeyPoint(e);
+                break;
+        }
     };
 
     PostView.prototype._renderTimelineKeyPoint = function(e) {

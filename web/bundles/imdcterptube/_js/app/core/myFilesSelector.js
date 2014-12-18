@@ -154,7 +154,7 @@ define(['core/mediaManager'], function(MediaManager) {
 
         container.find("button.edit-title").on("click", function(e) {
             e.stopPropagation();
-            $(this).parent().parent().prev().editable('toggle');
+            $(this).parent().prev().editable('toggle');
         });
 
         var urlOverride = (function(e) {
@@ -171,13 +171,6 @@ define(['core/mediaManager'], function(MediaManager) {
         this._getElement(MyFilesSelector.Binder.MODAL_DIALOG)
             .find("ul.pagination li a")
             .on("click", urlOverride);
-
-        //FIXME change to css :hover
-        var show = function() {$(this).find('.css-hover').css("display", "inline-block");};
-        var hide = function() {$(this).find('.css-hover').hide()};
-        this._getElement(MyFilesSelector.Binder.FILES_LIST)
-            .find("tr > td:nth-of-type(2), div > div > div:nth-child(3)")
-            .hover(show, hide);
     };
 
     MyFilesSelector.prototype._onLoadPageSuccess = function(data, textStatus, jqXHR) {

@@ -1,20 +1,16 @@
 {% macro controls(style) %}
     {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-    <div class="row">
-        <div class="col-md-12 text-right">
-            <button class="btn btn-danger my-files-selector-bulk-action" title="{{ 'filesGateway.deleteLink'|trans }}" data-action="1"><i class="fa fa-trash-o"></i></button>
-            {% if style == 'grid' %}
-                {% set style = 'list' %}
-                {% set styleIcon = 'fa-th-list' %}
-                <button class="btn btn-default my-files-selector-toggle-selection" title="Toggle selection" disabled="disabled"><i class="fa fa-check-square-o"></i></button>
-            {% else %}
-                {% set style = 'grid' %}
-                {% set styleIcon = 'fa-th-large' %}
-            {% endif %}
-            <a class="btn btn-default my-files-selector-toggle-style" href="{{ path('imdc_myfiles_list', {'style': style}) }}"><i class="fa {{ styleIcon }}"></i></a>
-        </div>
-    </div>
+    <button class="btn btn-danger my-files-selector-bulk-action" title="{{ 'filesGateway.deleteLink'|trans }}" data-action="1"><i class="fa fa-trash-o"></i></button>
+    {% if style == 'grid' %}
+        {% set style = 'list' %}
+        {% set styleIcon = 'fa-th-list' %}
+        <button class="btn btn-default my-files-selector-toggle-selection" title="Toggle selection" disabled="disabled"><i class="fa fa-check-square-o"></i></button>
+    {% else %}
+        {% set style = 'grid' %}
+        {% set styleIcon = 'fa-th-large' %}
+    {% endif %}
+    <a class="btn btn-default my-files-selector-toggle-style" href="{{ path('imdc_myfiles_list', {'style': style}) }}"><i class="fa {{ styleIcon }}"></i></a>
 {% endmacro %}
 
 {% macro typeToIcon(type) %}
@@ -27,7 +23,7 @@
     {% elseif type == 9 %}
         {% set icon = 'fa-file-o' %}
     {% endif %}
-    <i class="fa {{ icon }} fa-2x" style="vertical-align: middle; padding-right: 8px;"></i>
+    <i class="fa {{ icon }} fa-2x"></i>
 {% endmacro %}
 
 {% macro formatSize(size) %}
@@ -40,7 +36,7 @@
 
 {% macro thumbnail(thumbnailPath) %}
     {% if thumbnailPath is not null %}
-        <img style="width: 100%; max-height: 175px;" src="{{ asset(thumbnailPath) }}" />
+        <img src="{{ asset(thumbnailPath) }}" />
     {% else %}
         <span class="fa-stack fa-lg" style="width: 100%;">
             <i class="fa fa-file-o fa-stack-2x"></i>

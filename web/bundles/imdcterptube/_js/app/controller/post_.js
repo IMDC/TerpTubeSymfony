@@ -1,7 +1,8 @@
 define([
     'core/postManager',
-    'service'
-], function(PostManager, Service) {
+    'service',
+    'service/keyPointService'
+], function(PostManager, Service, KeyPointService) {
     "use strict";
 
     var Post = function(model, options) {
@@ -12,12 +13,15 @@ define([
 
         this.keyPointService = Service.get('keyPoint');
 
-        this.keyPoint = new KeyPoint(
+        this.keyPoint = new KeyPoint( //TODO put this inside the model
             this.model.id,
             this.model.startTime,
             this.model.endTime,
             "", {drawOnTimeLine: this.model.isTemporal}
         );
+
+        // KeyPointService
+        //this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
 
         $tt._instances.push(this);
     };
@@ -28,11 +32,16 @@ define([
         TIMELINE_KEYPOINT: "eventTimelineKeyPoint"
     };
 
-    Post.prototype.onViewLoaded = function() {
-        $(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
+    Post.prototype.onViewLoaded = function(view) { //FIXME controller should not be aware of view
+        /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
             action: this.options.editing ? "edit" : "add",
             keyPoint: this.keyPoint
-        }));
+        }));*/
+        this.keyPointService.register(this.keyPoint);
+        this.keyPointService.subscribe(this.keyPoint.id, view.bind__onKeyPointEvent);
+        this.keyPointService.dispatch(this.keyPoint.id, KeyPointService.Event.TIMELINE, {
+            action: this.options.editing ? "edit" : "add"
+        });
     };
 
     Post.prototype.new = function(form) {
@@ -48,10 +57,11 @@ define([
         return PostManager.edit(this.model, form)
             .done(function(data) {
                 if (data.wasEdited) {
-                    $(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
+                    /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
                         action: "cancel",
                         keyPoint: this.keyPoint
-                    }));
+                    }));*/
+                    this.keyPointService.dispatch(this.keyPoint.id, KeyPointService.Event.TIMELINE, {action: 'cancel'});
                     this.options.editing = false;
                 }
                 this.options.editing = true;
@@ -61,32 +71,36 @@ define([
     Post.prototype.delete = function() {
         return PostManager.delete(this.model)
             .done(function(data) {
-                $(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
+                /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
                     action: "remove",
                     keyPoint: this.keyPoint
-                }));
+                }));*/
+                this.keyPointService.dispatch(this.keyPoint.id, KeyPointService.Event.TIMELINE, {action: 'remove'});
             }.bind(this));
     };
 
     Post.prototype.interactKeyPoint = function(eventType) {
-        $(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
+        /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
             action: eventType,
             keyPoint: this.keyPoint
-        }));
+        }));*/
+        this.keyPointService.dispatch(this.keyPoint.id, KeyPointService.Event.TIMELINE, {action: eventType});
     };
 
     Post.prototype.editKeyPoint = function() {
-        $(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
+        /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
             action: "edit",
             keyPoint: this.keyPoint
-        }));
+        }));*/
+        this.keyPointService.dispatch(this.keyPoint.id, KeyPointService.Event.TIMELINE, {action: 'edit'});
     };
 
     Post.prototype.removeKeyPoint = function() {
-        $(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
+        /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
             action: "remove",
             keyPoint: this.keyPoint
-        }));
+        }));*/
+        this.keyPointService.dispatch(this.keyPoint.id, KeyPointService.Event.TIMELINE, {action: 'remove'});
     };
 
     Post.prototype.view = function() {
@@ -94,10 +108,11 @@ define([
 
         return PostManager.view(this.model)
             .done(function(data) {
-                $(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
+                /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
                     action: "cancel",
                     keyPoint: this.keyPoint
-                }));
+                }));*/
+                this.keyPointService.dispatch(this.keyPoint.id, KeyPointService.Event.TIMELINE, {action: 'cancel'});
             }.bind(this));
     };
 

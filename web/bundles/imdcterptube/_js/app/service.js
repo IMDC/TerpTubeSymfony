@@ -1,5 +1,5 @@
 define(function(require) {
-    "use strict";
+    'use strict';
 
     var Service = function() {
 
@@ -7,7 +7,7 @@ define(function(require) {
 
     Service.get = function(name) {
         if (!$tt._services[name]) {
-            var service = require('core/' + name + 'Service');
+            var service = require('service/' + name + 'Service');
             $tt._services[name] = new service();
         }
 

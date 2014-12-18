@@ -3,7 +3,7 @@ requirejs.config({
     paths: {
         dust: 'lib/dust-full.min',
         'dust-helpers': 'lib/dust-helpers.min',
-        templates: 'views/templates',
+        templates: 'template/templates',
         extra: 'lib/extra'
     },
     shim: {
