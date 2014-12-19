@@ -155,6 +155,10 @@ ul.pagination {
 .tt-list-table {
   @extend .tt-table;
 
+  & span {
+    color: initial; /* override bootstrap span color under .active class */
+  }
+
   > thead > tr > th, > tbody > tr > td {
     line-height: 34px;
     vertical-align: middle;

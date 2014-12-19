@@ -1,0 +1,101 @@
+{% macro listFiles(style, files) %}
+    {% import _self as _files %}
+
+    {% if style == 'list' %}
+        {{ _files.listFilesList(files) }}
+    {% else %}
+        {{ _files.listFilesGrid(files) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro listFilesList(resourceFiles) %}
+    {% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as media %}
+
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6 text-center">{{ knp_pagination_render(resourceFiles) }}</div>
+        <div class="col-md-3 text-right">{{ media.controls('list') }}</div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover tt-myFiles-list-table">
+            <thead>
+            <th><input type="checkbox" class="my-files-selector-toggle-selection" disabled /></th>
+            <th>Name</th>
+            <th>Date uploaded</th>
+            <th>Size</th>
+            </thead>
+            <tbody class="my-files-selector-files-list">
+            {% if resourceFiles|length > 0 %}
+                {% for resourceFile in resourceFiles %}
+                    {% set previewDisabled = resourceFile.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
+                    <tr>
+                        <td><input type="checkbox" data-mid="{{ resourceFile.id }}" /></td>
+                        <td class="tt-myFiles-nameColumn {{ previewDisabled }}">
+                            <span class="edit-title my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resourceFile.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
+                                {{ media.typeToIcon(resourceFile.type) }}{{ resourceFile.title }}
+                            </span>
+                            <span>
+                                <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+                                <a class="btn btn-default" href="{{  resourceFile.getResource() }}" download><i class="fa fa-download"></i></a>
+                                <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': resourceFile.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                            </span>
+                        </td>
+                        <td>{{ resourceFile.getMetaData.getTimeUploaded|date('M m Y h:i a') }}</td>
+                        <td>{{ media.formatSize(resourceFile.metaData.size) }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr colspan="4">
+                    <div class="text-center">{{ 'filesGateway.noFiles'|trans }}</div>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6 text-center">{{ knp_pagination_render(resourceFiles) }}</div>
+        <div class="col-md-3 text-right">{{ media.controls('list') }}</div>
+    </div>
+{% endmacro %}
+
+{% macro listFilesGrid(resourceFiles) %}
+    {% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as media %}
+
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6 text-center">{{ knp_pagination_render(resourceFiles) }}</div>
+        <div class="col-md-3 text-right">{{ media.controls('grid') }}</div>
+    </div>
+    <div class="row tt-myFiles-grid my-files-selector-files-list">
+        {% if resourceFiles|length > 0 %}
+            {% for resourceFile in resourceFiles %}
+                {% set previewDisabled = resourceFile.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
+                <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12">
+                    <div class="thumbnail tt-myFiles-grid-thumbnail">
+                        <input type="checkbox" data-mid="{{ resourceFile.id }}" />
+                        <div>
+                            <div class="my-files-selector-file {{ previewDisabled }}" data-mid="{{ resourceFile.id }}">
+                                {{ media.thumbnail(resourceFile.thumbnailPath) }}
+                                <span style="vertical-align: middle; display: inline-block; height: 100%;"></span>
+                            </div>
+                        </div>
+                        <div>
+                        <span class="edit-title {{ previewDisabled }} my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resourceFile.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
+                            {{ media.typeToIcon(resourceFile.type) }}{{ resourceFile.title }}
+                        </span>
+                        <span>
+                            <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+                            <a class="btn btn-default" href="{{  resourceFile.getResource() }}" download><i class="fa fa-download"></i></a>
+                            <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': resourceFile.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center">{{ 'filesGateway.noFiles'|trans }}</div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col-md-offset-3 col-md-6 text-center">{{ knp_pagination_render(resourceFiles) }}</div>
+        <div class="col-md-3 text-right">{{ media.controls('grid') }}</div>
+    </div>
+{% endmacro %}

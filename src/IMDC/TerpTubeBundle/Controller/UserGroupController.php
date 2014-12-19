@@ -490,14 +490,20 @@ class UserGroupController extends Controller
         }
 
         $paginator = $this->get('knp_paginator');
+        $members = $paginator->paginate(
+            $group->getMembers(),
+            $request->query->get('page', 1), /*page number*/
+            !$request->isXmlHttpRequest() ? 24 : 12 /*limit per page*/
+        );
         $nonMembers = $paginator->paginate(
             $nonMembers,
             $request->query->get('page', 1), /*page number*/
-            8 /*limit per page*/
+            !$request->isXmlHttpRequest() ? 24 : 12 /*limit per page*/
         );
 
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,
+            'members' => $members,
             'nonMembers' => $nonMembers,
             'style' => $style
         ));

@@ -1,5 +1,7 @@
 {% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
 
+{% import 'IMDCTerpTubeBundle:Group:macros.html.twig' as _group %}
+
 {% block title %}Manage Group{% endblock %}
 
 {% block header %}
@@ -25,6 +27,53 @@
 
 {% block content %}
     <div class="col-md-12">
-        {% include 'IMDCTerpTubeBundle:Group:manage.' ~ style ~ '.html.twig' %}
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <form class="tt-group-manage-search-form" role="form">
+                    <div class="form-group text-center">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-default">
+                                <input type="checkbox" autocomplete="off" /> <i class="fa fa-user"></i> Friends
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" autocomplete="off" /> <i class="fa fa-inbox"></i> Mentors
+                            </label>
+                            <label class="btn btn-default">
+                                <input type="checkbox" autocomplete="off" /> <i class="fa fa-star"></i> Mentees
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Search by username">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-default">
+                                    <span class="fa fa-search"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="active"><a href=".tab-members" role="tab" data-toggle="tab">Group Members</a></li>
+            <li><a href=".tab-community" role="tab" data-toggle="tab">Community</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active tab-members">
+                {{ _group.listUsers(style, members) }}
+                <button class="btn btn-success" data-loading-text="Removing members...">
+                    <i class="fa fa-check"></i> Remove Selected
+                </button>
+            </div>
+            <div class="tab-pane tab-community">
+                {{ _group.listUsers(style, nonMembers) }}
+                <button class="btn btn-success" data-loading-text="Adding members...">
+                    <i class="fa fa-check"></i> Add Selected
+                </button>
+            </div>
+        </div>
+        {#{% include 'IMDCTerpTubeBundle:Group:manage.' ~ style ~ '.html.twig' %}#}
     </div>
 {% endblock content %}
