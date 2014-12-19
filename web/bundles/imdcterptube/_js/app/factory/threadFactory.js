@@ -1,27 +1,27 @@
-define(function() {
-    "use strict";
+define(function () {
+    'use strict';
 
-    var ThreadManager = {};
+    var ThreadFactory = {};
 
-    ThreadManager.delete = function(thread) {
+    ThreadFactory.delete = function (thread) {
         var settings = {
             url: Routing.generate('imdc_thread_delete', {threadid: thread.id}),
-            type: "POST"
+            type: 'POST'
         };
 
         return $.ajax(settings)
-            .then(function(data, textStatus, jqXHR) {
+            .then(function (data, textStatus, jqXHR) {
                 if (data.wasDeleted) {
                     return $.Deferred().resolve(data);
                 } else {
                     return $.Deferred().reject();
                 }
-            }.bind(this),
-            function(jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.statusText);
+            },
+            function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.responseText);
                 return $.Deferred().reject();
-            }.bind(this));
+            });
     };
 
-    return ThreadManager;
+    return ThreadFactory;
 });

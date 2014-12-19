@@ -1,8 +1,8 @@
 define([
-    'core/threadManager',
+    'factory/threadFactory',
     'service',
     'service/keyPointService'
-], function(ThreadManager, Service, KeyPointService) {
+], function(ThreadFactory, Service, KeyPointService) {
     "use strict";
 
     var Thread = function(model, options) {
@@ -225,7 +225,7 @@ define([
     };
 
     Thread.prototype.delete = function(e) {
-        return ThreadManager.delete(this.model)
+        return ThreadFactory.delete(this.model)
             .done(function(data) {
                 window.location.assign(data.redirectUrl);
             }.bind(this));

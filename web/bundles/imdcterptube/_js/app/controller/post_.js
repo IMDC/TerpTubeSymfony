@@ -1,8 +1,8 @@
 define([
-    'core/postManager',
+    'factory/postFactory',
     'service',
     'service/keyPointService'
-], function(PostManager, Service, KeyPointService) {
+], function(PostFactory, Service, KeyPointService) {
     "use strict";
 
     var Post = function(model, options) {
@@ -45,7 +45,7 @@ define([
     };
 
     Post.prototype.new = function(form) {
-        return PostManager.new(this.model, form)
+        return PostFactory.new(this.model, form)
             .done(function(data) {
                 if (data.wasReplied) {
                     window.location.replace(data.redirectUrl);
@@ -54,7 +54,7 @@ define([
     };
 
     Post.prototype.edit = function(form) {
-        return PostManager.edit(this.model, form)
+        return PostFactory.edit(this.model, form)
             .done(function(data) {
                 if (data.wasEdited) {
                     /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
@@ -69,7 +69,7 @@ define([
     };
 
     Post.prototype.delete = function() {
-        return PostManager.delete(this.model)
+        return PostFactory.delete(this.model)
             .done(function(data) {
                 /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
                     action: "remove",
@@ -106,7 +106,7 @@ define([
     Post.prototype.view = function() {
         this.options.editing = false;
 
-        return PostManager.view(this.model)
+        return PostFactory.view(this.model)
             .done(function(data) {
                 /*$(this.keyPointService).trigger($.Event(Post.Event.TIMELINE_KEYPOINT, {
                     action: "cancel",

@@ -1,4 +1,4 @@
-define(['bower_components/underscore/underscore'], function () {
+define(['underscore'], function () {
     'use strict';
 
     var KeyPointService = function () {
@@ -66,14 +66,13 @@ define(['bower_components/underscore/underscore'], function () {
 
             if (kIndex === 'all') {
                 e.keyPoints = this.keyPoints;
-            }
-            else {
+            } else {
                 e.keyPoint = this.keyPoints[kIndex];
             }
 
             if (_.isObject(args)) {
                 // add the extra args for this event to the event object
-                _.each(args, function(value, key, list) {
+                _.each(args, function (value, key, list) {
                     e[key] = value;
                 });
             }

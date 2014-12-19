@@ -1,0 +1,46 @@
+{% import _self as manage %}
+
+{% macro user_list(users) %}
+    <div class="table-responsive">
+        <table class="table table-hover tt-list-table">
+            <thead>
+                <th><input type="checkbox" disabled="disabled" /></th>
+                <th>Username</th>
+                <th>Posts</th>
+                <th>Joined</th>
+            </thead>
+            <tbody>
+                {% if users|length > 0 %}
+                    {% for user in users %}
+                        <tr>
+                            <td><input type="checkbox" data-uid="{{ user.id }}" /></td>
+                            <td>
+                                <span>{% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}</span>
+                                <span>{% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' with {'member': user} %}</span>
+                            </td>
+                            <td>{{ user.postCount }}</td>
+                            <td>{{ time_diff(user.joinDate) }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr colspan="4">
+                        <div class="text-center">No members</div>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endmacro %}
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="active"><a href=".tab-members" role="tab" data-toggle="tab">Members</a></li>
+    <li><a href=".tab-community" role="tab" data-toggle="tab">Community</a></li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane active tab-members">
+        {{ manage.user_list(group.members) }}
+    </div>
+    <div class="tab-pane tab-community">
+        {{ manage.user_list(nonMembers) }}
+    </div>
+</div>

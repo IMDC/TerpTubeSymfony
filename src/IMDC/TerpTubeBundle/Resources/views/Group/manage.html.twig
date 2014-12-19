@@ -1,0 +1,30 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Manage Group Members{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'controller/group_', 'view/group',
+            'main'
+        ], function(bootstrap, Group, GroupView) {
+            bootstrap(
+                    {},
+                    Group,
+                    GroupView,
+                    {}
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block sidebarlinks_groups %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        {% include 'IMDCTerpTubeBundle:Group:manage.' ~ style ~ '.html.twig' %}
+    </div>
+{% endblock content %}

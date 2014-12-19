@@ -124,6 +124,9 @@ class PostController extends Controller
 
             $content = array(
                 'wasReplied' => true,
+                'post' => array(
+                    'id' => $post->getId()
+                ),
                 'redirectUrl' => $this->generateUrl('imdc_thread_view', array(
                         'threadid' => $thread->getId()))
             );

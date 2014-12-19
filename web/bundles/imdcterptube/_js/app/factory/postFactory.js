@@ -1,58 +1,58 @@
-define(function() {
-    "use strict";
+define(function () {
+    'use strict';
 
-    var PostManager = {};
+    var PostFactory = {};
 
-    PostManager._prepForm = function(form, settings) {
+    PostFactory._prepForm = function (form, settings) {
         if (form) {
-            settings.type = "POST";
+            settings.type = 'POST';
             settings.contentType = false;
             settings.data = new FormData(form);
             settings.processData = false;
         }
     };
 
-    PostManager.new = function(post, form) {
+    PostFactory.new = function (post, form) {
         var settings = {
             url: Routing.generate('imdc_post_new', {threadId: post.threadId, pid: (post.parentPostId || post.id)})
         };
 
-        PostManager._prepForm(form, settings);
+        PostFactory._prepForm(form, settings);
 
         return $.ajax(settings)
-            .then(function(data, textStatus, jqXHR) {
+            .then(function (data, textStatus, jqXHR) {
                 return $.Deferred().resolve(data);
             },
-            function(jqXHR, textStatus, errorThrown) {
+            function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
                 return $.Deferred().reject();
             });
     };
 
-    PostManager.view = function(post) {
+    PostFactory.view = function (post) {
         var settings = {
             url: Routing.generate('imdc_post_view', {pid: post.id})
         };
 
         return $.ajax(settings)
-            .then(function(data, textStatus, jqXHR) {
+            .then(function (data, textStatus, jqXHR) {
                 return $.Deferred().resolve(data);
             },
-            function(jqXHR, textStatus, errorThrown) {
+            function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
                 return $.Deferred().reject();
             });
     };
 
-    PostManager.edit = function(post, form) {
+    PostFactory.edit = function (post, form) {
         var settings = {
             url: Routing.generate('imdc_post_edit', {pid: post.id})
         };
 
-        PostManager._prepForm(form, settings);
+        PostFactory._prepForm(form, settings);
 
         return $.ajax(settings)
-            .then(function(data, textStatus, jqXHR) {
+            .then(function (data, textStatus, jqXHR) {
                 if (data.wasEdited) {
                     post.startTime = data.post.startTime;
                     post.endTime = data.post.endTime;
@@ -60,31 +60,31 @@ define(function() {
                 }
                 return $.Deferred().resolve(data);
             },
-            function(jqXHR, textStatus, errorThrown) {
+            function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
                 return $.Deferred().reject();
             });
     };
 
-    PostManager.delete = function(post) {
+    PostFactory.delete = function (post) {
         var settings = {
             url: Routing.generate('imdc_post_delete', {pid: post.id}),
-            type: "POST"
+            type: 'POST'
         };
 
         return $.ajax(settings)
-            .then(function(data, textStatus, jqXHR) {
+            .then(function (data, textStatus, jqXHR) {
                 if (data.wasDeleted) {
                     return $.Deferred().resolve(data);
                 } else {
                     return $.Deferred().reject();
                 }
             },
-            function(jqXHR, textStatus, errorThrown) {
+            function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
                 return $.Deferred().reject();
             });
     };
 
-    return PostManager;
+    return PostFactory;
 });

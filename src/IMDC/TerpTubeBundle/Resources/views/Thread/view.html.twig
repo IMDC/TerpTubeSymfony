@@ -161,7 +161,7 @@
                     <!-- post reply form -->
                     {#<div class="row post-container-reply" data-pid="{{ post.id }}">#}
                         {#{% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'post': post} %}#}
-                        {% set newPost = {id: random()} %}
+                        {% set newPost = {id: '0' ~ random()} %}
                         {% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
                     {#</div>#}
                 {#</div>#}
