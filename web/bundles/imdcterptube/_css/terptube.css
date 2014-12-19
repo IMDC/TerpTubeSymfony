@@ -151,20 +151,22 @@ ul.pagination {
   cursor: pointer;
 }
 
-/* line 159, sass/_base.scss */
-.tt-list-table > thead th:nth-of-type(1), .tt-myFiles-list-table > thead th:nth-of-type(1) {
-  width: 1%;
+/* line 158, sass/_base.scss */
+.tt-list-table > thead > tr > th, .tt-myFiles-list-table > thead > tr > th, .tt-list-table > tbody > tr > td, .tt-myFiles-list-table > tbody > tr > td {
+  line-height: 34px;
   vertical-align: middle;
+}
+/* line 162, sass/_base.scss */
+.tt-list-table > thead > tr > th:first-child, .tt-myFiles-list-table > thead > tr > th:first-child, .tt-list-table > tbody > tr > td:first-child, .tt-myFiles-list-table > tbody > tr > td:first-child {
+  width: 1%;
   line-height: initial;
 }
-/* line 165, sass/_base.scss */
-.tt-list-table > thead th:nth-of-type(2), .tt-myFiles-list-table > thead th:nth-of-type(2) {
-  line-height: 34px;
+/* line 167, sass/_base.scss */
+.tt-list-table > thead > tr > th:nth-of-type(2), .tt-myFiles-list-table > thead > tr > th:nth-of-type(2), .tt-list-table > tbody > tr > td:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td:nth-of-type(2) {
   width: 60%;
 }
-/* line 172, sass/_base.scss */
+/* line 173, sass/_base.scss */
 .tt-list-table > tbody td:nth-of-type(2), .tt-myFiles-list-table > tbody td:nth-of-type(2) {
-  line-height: 34px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

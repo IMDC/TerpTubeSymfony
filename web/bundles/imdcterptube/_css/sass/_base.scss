@@ -155,22 +155,22 @@ ul.pagination {
 .tt-list-table {
   @extend .tt-table;
 
-  > thead th {
-    &:nth-of-type(1) {
+  > thead > tr > th, > tbody > tr > td {
+    line-height: 34px;
+    vertical-align: middle;
+
+    &:first-child {
       width: 1%;
-      vertical-align: middle;
       line-height: initial;
     }
 
     &:nth-of-type(2) {
-      line-height: 34px;
       width: 60%;
     }
   }
 
   > tbody td {
     &:nth-of-type(2) {
-      line-height: 34px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

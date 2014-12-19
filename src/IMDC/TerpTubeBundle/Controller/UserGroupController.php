@@ -448,6 +448,61 @@ class UserGroupController extends Controller
         ));
     }
 
+    public function manageAction(Request $request, $groupId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+        if (!$group) {
+            throw new \Exception('group not found');
+        }
+
+        $style = $this->get('request')->query->get('style', 'list');
+
+        $groupMemberIds = array();
+        foreach ($group->getMembers() as $member) {
+            $groupMemberIds[] = $member->getId();
+        }
+
+        $qb = $em->getRepository('IMDCTerpTubeBundle:User')->createQueryBuilder('u');
+        $nonMembers = $qb->leftJoin('u.profile', 'p', Join::WITH, $qb->expr()->eq('u.profile', 'p.id'))
+            ->where($qb->expr()->eq('p.profileVisibleToPublic', ':public'))
+            ->andWhere($qb->expr()->notIn('u.id', ':groupMemberIds'))
+            ->setParameters(array(
+                'public' => 1,
+                'groupMemberIds' => $groupMemberIds))
+            ->getQuery()->getResult();
+
+        // exclude users that have a pending invitation for the group
+        $numNonMembers = count($nonMembers);
+        for ($i=0; $i<$numNonMembers; $i++) {
+            $member = $nonMembers[$i];
+            $receivedInvites = $member->getReceivedInvitations();
+            foreach ($receivedInvites as $receivedInvite) {
+                if ($receivedInvite->getType()->isGroup()
+                    && !$receivedInvite->getIsAccepted() && !$receivedInvite->getIsDeclined() && !$receivedInvite->getIsCancelled()) {
+                    $groupCheck = InvitationController::getGroupFromInviteData($this, $receivedInvite);
+                    if ($groupCheck && $groupCheck->getId() == $group->getId()) {
+                        unset($nonMembers[$i]);
+                        break; // stop at the first active invite. though more than one active invite should not be present
+                    }
+                }
+            }
+        }
+
+        $paginator = $this->get('knp_paginator');
+        $nonMembers = $paginator->paginate(
+            $nonMembers,
+            $request->query->get('page', 1), /*page number*/
+            8 /*limit per page*/
+        );
+
+        return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
+            'group' => $group,
+            'nonMembers' => $nonMembers,
+            'style' => $style
+        ));
+    }
+
     public function inviteMemberAction(Request $request, $groupId, $userId)
     {
         if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {

@@ -49,6 +49,12 @@ imdc_group_message:
   requirements:
     groupId: \d+
 
+imdc_group_manage:
+  pattern: /{groupId}/manage
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:manage }
+  requirements:
+    groupId: \d+
+
 imdc_group_invite_member:
   pattern: /{groupId}/invite/{userId}
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:inviteMember }

@@ -1,13 +1,15 @@
 {% import _self as manage %}
 
-{% macro user_list(users) %}
+{% macro listUsers(users) %}
     <div class="table-responsive">
         <table class="table table-hover tt-list-table">
             <thead>
-                <th><input type="checkbox" disabled="disabled" /></th>
-                <th>Username</th>
-                <th>Posts</th>
-                <th>Joined</th>
+                <tr>
+                    <th><input type="checkbox" disabled="disabled" /></th>
+                    <th>Username</th>
+                    <th>Posts</th>
+                    <th>Joined</th>
+                </tr>
             </thead>
             <tbody>
                 {% if users|length > 0 %}
@@ -38,9 +40,9 @@
 </ul>
 <div class="tab-content">
     <div class="tab-pane active tab-members">
-        {{ manage.user_list(group.members) }}
+        {{ manage.listUsers(group.members) }}
     </div>
     <div class="tab-pane tab-community">
-        {{ manage.user_list(nonMembers) }}
+        {{ manage.listUsers(nonMembers) }}
     </div>
 </div>
