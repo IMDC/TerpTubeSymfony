@@ -8,18 +8,22 @@
     {{ parent() }}
 
     <script type="text/javascript">
-        /*require([
+        require([
             'bootstrap',
-            'controller/group_', 'view/group',
+            'controller/groupController', 'views/group/manageView',
             'main'
-        ], function(bootstrap, Group, GroupView) {
+        ], function(bootstrap, GroupController, GroupManageView) {
             bootstrap(
-                    {},
-                    Group,
-                    GroupView,
-                    {}
+                    {
+                        id: {{ group.id }}
+                    },
+                    GroupController,
+                    GroupManageView,
+                    {
+                        container: $('body')
+                    }
             );
-        });*/
+        });
     </script>
 {% endblock header %}
 
@@ -57,19 +61,19 @@
             </div>
         </div>
         <ul class="nav nav-tabs" role="tablist">
-            <li class="active"><a href=".tab-members" role="tab" data-toggle="tab">Group Members</a></li>
-            <li><a href=".tab-community" role="tab" data-toggle="tab">Community</a></li>
+            <li class="active"><a href="#tab-members" role="tab" data-toggle="tab">Group Members</a></li>
+            <li><a href="#tab-community" role="tab" data-toggle="tab">Community</a></li>
         </ul>
         <div class="tab-content">
-            <div class="tab-pane active tab-members">
+            <div class="tab-pane active" id="tab-members">
                 {{ _group.listUsers(style, members) }}
-                <button class="btn btn-success" data-loading-text="Removing members...">
+                <button class="btn btn-success group-remove" data-loading-text="Removing members...">
                     <i class="fa fa-check"></i> Remove Selected
                 </button>
             </div>
-            <div class="tab-pane tab-community">
+            <div class="tab-pane" id="tab-community">
                 {{ _group.listUsers(style, nonMembers) }}
-                <button class="btn btn-success" data-loading-text="Adding members...">
+                <button class="btn btn-success group-add" data-loading-text="Adding members...">
                     <i class="fa fa-check"></i> Add Selected
                 </button>
             </div>

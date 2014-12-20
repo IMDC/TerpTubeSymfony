@@ -71,15 +71,15 @@
 
         require([
             'bootstrap',
-            'controller/thread_', 'views/thread',
-            'model/postModel', 'controller/post_', 'views/post',
+            'controller/threadController', 'views/thread',
+            'model/postModel', 'controller/postController', 'views/post',
             'main'
-        ], function(bootstrap, Thread, ThreadView, PostModel, Post, PostView) {
+        ], function(bootstrap, ThreadController, ThreadView, PostModel, PostController, PostView) {
             bootstrap(
                     {
                         id: {{ thread.id }}
                     },
-                    Thread,
+                    ThreadController,
                     ThreadView,
                     {
                         container: $("#threadOpContainer"),
@@ -108,7 +108,7 @@
                             isTemporal: $(element).data("istemporal"),
                             threadId: {{ thread.id }}
                         }),
-                        Post,
+                        PostController,
                         PostView,
                         {}
                 );

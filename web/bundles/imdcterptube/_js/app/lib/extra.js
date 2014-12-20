@@ -1,10 +1,12 @@
-Function.prototype.extend = function(parentClass) {
-    for (var f in parentClass)
-        this[f] = parentClass[f];
-    for (var f in parentClass.prototype)
-        this.prototype[f] = parentClass.prototype[f];
+Function.prototype.extend = function (parent) {
+    for (var p in parent)
+        this[p] = parent[p];
+
+    for (var p in parent.prototype)
+        this.prototype[p] = parent.prototype[p];
+
     this.prototype.constructor = this;
-    this.prototype.parent = parentClass.prototype;
+    this.prototype.parent = parent.prototype;
 
     return this;
 };

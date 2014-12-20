@@ -6,11 +6,26 @@
     {{ parent() }}
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        /*$(document).ready(function() {
             require(['main'], function() {
                 var group = new $tt.Controller.Group({page: $tt.Controller.Group.Page.NEW});
                 group.bindUIEvents();
             });
+        });*/
+
+        require([
+            'bootstrap',
+            'controller/groupController', 'views/group/newView',
+            'main'
+        ], function(bootstrap, GroupController, GroupNewView) {
+            bootstrap(
+                    {},
+                    GroupController,
+                    GroupNewView,
+                    {
+                        container: $('body')
+                    }
+            );
         });
     </script>
 {% endblock header %}

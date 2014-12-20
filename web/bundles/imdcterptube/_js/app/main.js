@@ -6,8 +6,8 @@ define(function(require) {
     TerpTube.Controller = {};
     TerpTube.Controller.MyFiles = require('controller/myFiles');
     TerpTube.Controller.Forum = require('controller/forum');
-    TerpTube.Controller.Thread = require('controller/thread_');
-    TerpTube.Controller.Post = require('controller/post_');
+    //TerpTube.Controller.Thread = require('controller/thread');
+    //TerpTube.Controller.Post = require('controller/post');
     TerpTube.Controller.Group = require('controller/group');
     TerpTube.Controller.Message = require('controller/message');
     TerpTube.Controller.Profile = require('controller/profile');

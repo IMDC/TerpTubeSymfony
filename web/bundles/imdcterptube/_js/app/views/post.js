@@ -1,8 +1,8 @@
 define([
-    'core/mediaChooser',
     'model/model',
+    'core/mediaChooser',
     'service/keyPointService'
-], function(MediaChooser, Model, KeyPointService) {
+], function(Model, MediaChooser, KeyPointService) {
     "use strict";
 
     var PostView = function(controller, options) {

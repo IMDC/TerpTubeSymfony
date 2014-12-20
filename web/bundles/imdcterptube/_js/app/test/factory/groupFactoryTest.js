@@ -1,25 +1,25 @@
 define([
     'chai',
     'test/common',
-    'factory/threadFactory',
+    'factory/groupFactory',
     'jquery',
     'fos_routes'
-], function (chai, Common, ThreadFactory) {
+], function (chai, Common, GroupFactory) {
     'use strict';
 
     var assert = chai.assert;
 
-    describe('ThreadFactory', function () {
+    describe('GroupFactory', function () {
 
         this.timeout(Common.PAGE_LOAD_TIMEOUT * 2);
 
         Common.ajaxSetup();
 
-        var thread;
+        var group;
 
         before(function (done) {
-            thread = {
-                id: 10 // this must be set to an existing thread id
+            group = {
+                id: 11 // this must be set to an existing group id
             };
 
             Common.login(done);
@@ -27,8 +27,8 @@ define([
             setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
-        it('should delete the thread', function (done) {
-            return ThreadFactory.delete(thread)
+        it('should delete the group', function (done) {
+            return GroupFactory.delete(group)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasDeleted', 'result should have key:wasDeleted');
@@ -46,7 +46,7 @@ define([
         });
 
         after(function () {
-            thread = null;
+            group = null;
         });
 
     });

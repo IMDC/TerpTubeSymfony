@@ -6,9 +6,9 @@
 <script type="text/javascript">
     require([
         'bootstrap',
-        'model/postModel', 'controller/post_', 'views/post',
+        'model/postModel', 'controller/postController', 'views/post',
         'core/helper', 'main'
-    ], function(bootstrap, PostModel, Post, PostView, Helper) {
+    ], function(bootstrap, PostModel, PostController, PostView, Helper) {
         var $newPost = $(PostView.Binder.CONTAINER + "[data-pid={{ newPost.id }}]");
         bootstrap(
                 new PostModel({
@@ -19,7 +19,7 @@
                     threadId: "{{ post.parentThread.id|default(null) }}",
                     parentPostId: "{{ post.id|default(null) }}"
                 }),
-                Post,
+                PostController,
                 PostView,
                 {}
         );

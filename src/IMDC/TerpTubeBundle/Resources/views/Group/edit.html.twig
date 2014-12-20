@@ -6,7 +6,7 @@
     {{ parent() }}
 
     <script type="text/javascript">
-        $(document).ready(function() {
+        /*$(document).ready(function() {
             require(['main'], function() {
                 var group = new $tt.Controller.Group({
                     page: $tt.Controller.Group.Page.EDIT,
@@ -14,6 +14,23 @@
                 });
                 group.bindUIEvents();
             });
+        });*/
+
+        require([
+            'bootstrap',
+            'controller/groupController', 'views/group/editView',
+            'main'
+        ], function(bootstrap, GroupController, GroupEditView) {
+            bootstrap(
+                    {
+                        id: {{ group.id }}
+                    },
+                    GroupController,
+                    GroupEditView,
+                    {
+                        container: $('body')
+                    }
+            );
         });
     </script>
 {% endblock header %}
