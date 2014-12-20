@@ -14,7 +14,7 @@ define(function () {
 
     PostFactory.new = function (post, form) {
         var settings = {
-            url: Routing.generate('imdc_post_new', {threadId: post.threadId, pid: (post.parentPostId || post.id)})
+            url: Routing.generate('imdc_post_new', {threadId: post.get('threadId'), pid: (post.get('parentPostId') || post.get('id'))})
         };
 
         PostFactory._prepForm(form, settings);
@@ -31,7 +31,7 @@ define(function () {
 
     PostFactory.view = function (post) {
         var settings = {
-            url: Routing.generate('imdc_post_view', {pid: post.id})
+            url: Routing.generate('imdc_post_view', {pid: post.get('id')})
         };
 
         return $.ajax(settings)
@@ -46,7 +46,7 @@ define(function () {
 
     PostFactory.edit = function (post, form) {
         var settings = {
-            url: Routing.generate('imdc_post_edit', {pid: post.id})
+            url: Routing.generate('imdc_post_edit', {pid: post.get('id')})
         };
 
         PostFactory._prepForm(form, settings);
@@ -54,9 +54,9 @@ define(function () {
         return $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.wasEdited) {
-                    post.startTime = data.post.startTime;
-                    post.endTime = data.post.endTime;
-                    post.isTemporal = data.post.isTemporal;
+                    post.set('startTime', data.post.startTime);
+                    post.set('endTime', data.post.endTime);
+                    post.set('isTemporal', data.post.isTemporal);
                 }
                 return $.Deferred().resolve(data);
             },
@@ -68,7 +68,7 @@ define(function () {
 
     PostFactory.delete = function (post) {
         var settings = {
-            url: Routing.generate('imdc_post_delete', {pid: post.id}),
+            url: Routing.generate('imdc_post_delete', {pid: post.get('id')}),
             type: 'POST'
         };
 

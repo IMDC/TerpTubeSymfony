@@ -72,9 +72,9 @@
         require([
             'bootstrap',
             'controller/thread_', 'views/thread',
-            'controller/post_', 'views/post',
+            'model/postModel', 'controller/post_', 'views/post',
             'main'
-        ], function(bootstrap, Thread, ThreadView, Post, PostView) {
+        ], function(bootstrap, Thread, ThreadView, PostModel, Post, PostView) {
             bootstrap(
                     {
                         id: {{ thread.id }}
@@ -101,13 +101,13 @@
 
             $(PostView.Binder.CONTAINER).each(function(index, element) {
                 bootstrap(
-                        {
+                        new PostModel({
                             id: $(element).data("pid"),
                             startTime: $(element).data("starttime"),
                             endTime: $(element).data("endtime"),
                             isTemporal: $(element).data("istemporal"),
                             threadId: {{ thread.id }}
-                        },
+                        }),
                         Post,
                         PostView,
                         {}

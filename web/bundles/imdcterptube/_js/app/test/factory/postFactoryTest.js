@@ -1,15 +1,16 @@
 define([
     'chai',
     'test/common',
+    'model/postModel',
     'factory/postFactory',
     'jquery',
     'fos_routes'
-], function (chai, Common, PostFactory) {
+], function (chai, Common, PostModel, PostFactory) {
     'use strict';
 
     var assert = chai.assert;
 
-    describe('PostFactory checks', function () {
+    describe('PostFactory', function () {
 
         this.timeout(Common.PAGE_LOAD_TIMEOUT * 7);
 
@@ -19,10 +20,10 @@ define([
         var postForm;
 
         before(function (done) {
-            post = {
+            post = new PostModel({
                 id: '0' + Math.floor((Math.random() * 100000) + 1),
                 threadId: 17
-            };
+            });
             postForm = '';
 
             Common.login(done);
@@ -65,10 +66,10 @@ define([
 
                     assert.isTrue(data.wasReplied, 'key:wasReplied should be true');
                     assert.isNumber(data.post.id, 'value of key path:post.id should be a number');
-                    assert.match(data.redirectUrl, new RegExp('.*\\/' + post.threadId + '.*'),
+                    assert.match(data.redirectUrl, new RegExp('.*\\/' + post.get('threadId') + '.*'),
                         'key:redirectUrl should have matched');
 
-                    post.id = data.post.id;
+                    post.set('id', data.post.id);
                     done();
                 })
                 .fail(function () {
@@ -87,7 +88,7 @@ define([
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'html', 'result should have key:html');
 
-                    assert.include(data.html, 'data-pid="' + post.id + '"', 'key:html should contain the post id');
+                    assert.include(data.html, 'data-pid="' + post.get('id') + '"', 'key:html should contain the post id');
                     done();
                 })
                 .fail(function () {
@@ -119,7 +120,7 @@ define([
             setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
-        it('should edit post form', function (done) {
+        it('should edit post', function (done) {
             assert.notStrictEqual(postForm.length, 0, 'should not be of length 0. a previous test has failed');
 
             var content = postForm.find('textarea[name="post[content]"]');
@@ -136,9 +137,9 @@ define([
                     assert.isTrue(data.wasEdited, 'key:wasEdited should be true');
                     assert.include(data.html, contentVal, 'key:html should contain submitted post content');
 
-                    assert.isDefined(post.startTime, 'post key:startTime should be defined');
-                    assert.isDefined(post.endTime, 'post key:endTime should be defined');
-                    assert.isDefined(post.isTemporal, 'post key:isTemporal should be defined');
+                    assert.isNull(post.get('startTime'), 'post key:startTime should be null');
+                    assert.isNull(post.get('endTime'), 'post key:endTime should be null');
+                    assert.isFalse(post.get('isTemporal'), 'post key:isTemporal should be false');
                     done();
                 })
                 .fail(function () {

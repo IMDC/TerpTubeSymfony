@@ -6,7 +6,7 @@ define([
 
     var expect = chai.expect;
 
-    describe('KeyPointService checks', function () {
+    describe('KeyPointService', function () {
 
         var keyPoints;
         var args;
@@ -52,14 +52,14 @@ define([
             expect(_.size(keyPointService.keyPoints)).to.equal(0);
         });
 
-        it('should have subscribed key point', function () {
+        it('should have subscribed to key point', function () {
             var kIndex = KeyPointService._kIndex(keyPoints[0].id);
             keyPointService.subscribe(keyPoints[0].id, callback);
 
             expect(keyPointService.subscriptions[kIndex][0]).to.equal(callback);
         });
 
-        it('should have unsubscribed key point', function () {
+        it('should have unsubscribed from key point', function () {
             keyPointService.unsubscribe(keyPoints[0].id, callback);
             expect(_.size(keyPointService.subscriptions)).to.equal(0);
         });

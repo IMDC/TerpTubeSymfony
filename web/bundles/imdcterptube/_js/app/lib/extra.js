@@ -1,4 +1,6 @@
 Function.prototype.extend = function(parentClass) {
+    for (var f in parentClass)
+        this[f] = parentClass[f];
     for (var f in parentClass.prototype)
         this.prototype[f] = parentClass.prototype[f];
     this.prototype.constructor = this;

@@ -38,15 +38,19 @@ define(['underscore'], function () {
             this.subscriptions[kIndex] = [];
         }
 
-        this.subscriptions[kIndex].push(callback);
+        if (!_.contains(this.subscriptions[kIndex], callback)) {
+            this.subscriptions[kIndex].push(callback);
+        }
     };
 
     KeyPointService.prototype.unsubscribe = function (keyPointId, callback) {
         var kIndex = KeyPointService._kIndex(keyPointId);
         if (_.contains(this.subscriptions, kIndex)) {
             var callbacks = this.subscriptions[kIndex];
-            var index = _.indexOf(callbacks, callback);
-            callbacks.splice(index, 1);
+            if (_.contains(callbacks, callback)) {
+                var index = _.indexOf(callbacks, callback);
+                callbacks.splice(index, 1);
+            }
         }
     };
 

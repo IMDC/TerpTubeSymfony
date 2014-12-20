@@ -94,7 +94,7 @@ define([
             /*$(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
                 keyPoint: keyPoint
             }));*/
-            this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.HOVER);
+            this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.HOVER, {isMouseOver: true});
 
             // avoid animating when key points are overlapped and multiple invokes of this event are called
             if (!$("#threadReplyContainer").is(':animated')) {
@@ -110,7 +110,7 @@ define([
             /*$(this.keyPointService).trigger($.Event(Thread.Event.KEYPOINT_HOVER, {
                 keyPoint: keyPoint
             }));*/
-            this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.HOVER);
+            this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.HOVER, {isMouseOver: false});
         }.bind(this));
 
         $(this.player).on(Player.EVENT_KEYPOINT_CLICK, function(e, keyPoint, coords) {

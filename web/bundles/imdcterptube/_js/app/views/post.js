@@ -1,7 +1,8 @@
 define([
     'core/mediaChooser',
+    'model/model',
     'service/keyPointService'
-], function(MediaChooser, KeyPointService) {
+], function(MediaChooser, Model, KeyPointService) {
     "use strict";
 
     var PostView = function(controller, options) {
@@ -19,15 +20,16 @@ define([
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
+        this.bind__onModelChange = this._onModelChange.bind(this);
 
         // KeyPointService
-        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
+        //this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
         /*this.bind__renderTimelineKeyPoint = this._renderTimelineKeyPoint.bind(this);
         this.bind__onSelectionTimes = this._onSelectionTimes.bind(this);
         this.bind__onHoverKeyPoint = this._onHoverKeyPoint.bind(this);
         this.bind__onClickKeyPoint = this._onClickKeyPoint.bind(this);*/
 
-        this.$container = $(PostView.Binder.CONTAINER + "[data-pid='" + this.controller.model.id + "']");
+        this.$container = $(PostView.Binder.CONTAINER + "[data-pid='" + this.controller.model.get('id') + "']");
         this.$form = this.$container.find("form[name^=" + PostView.FORM_NAME + "]");
         this.$timelineKeyPoint = this.$container.find(PostView.Binder.TIMELINE_KEYPOINT);
         this.$new = this.$container.find(PostView.Binder.NEW);
@@ -77,7 +79,9 @@ define([
         $(this.keyPointService).on("eventKeyPointHover", this.bind__onHoverKeyPoint);
         $(this.keyPointService).on("eventKeyPointClick", this.bind__onClickKeyPoint);*/
 
-        this.controller.onViewLoaded(this); //FIXME controller should not be aware of view
+        this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
+
+        this.controller.onViewLoaded(/*this*/);
     };
 
     PostView.TAG = "PostView";
@@ -228,8 +232,8 @@ define([
         e.preventDefault();
 
         this.mediaChooser.reset();
-        this._getFormField("startTime").val(this.controller.keyPoint.startTime);
-        this._getFormField("endTime").val(this.controller.keyPoint.endTime);
+        this._getFormField("startTime").val(this.controller.model.get('keyPoint.startTime'));
+        this._getFormField("endTime").val(this.controller.model.get('keyPoint.endTime'));
         this._getFormField("content").val("");
 
         this.controller.editKeyPoint();
@@ -241,7 +245,7 @@ define([
         this.$container.remove();
         this.controller.removeKeyPoint();
 
-        $(PostView.Binder.CONTAINER + "[data-pid='" + this.controller.model.parentPostId + "']")
+        $(PostView.Binder.CONTAINER + "[data-pid='" + this.controller.model.get('parentPostId') + "']")
             .find(PostView.Binder.NEW)
             .show();
     };
@@ -280,28 +284,29 @@ define([
         this._updateForm();
     };
 
-    PostView.prototype._onKeyPointEvent = function(e) {
-        switch (e.type) {
-            case KeyPointService.Event.DURATION:
-                this._renderTimelineKeyPoint(e);
-                break;
-            case KeyPointService.Event.SELECTION_TIMES:
-                this._onSelectionTimes(e);
-                break;
-            case KeyPointService.Event.HOVER:
-                this._onHoverKeyPoint(e);
-                break;
-            case KeyPointService.Event.CLICK:
-                this._onClickKeyPoint(e);
-                break;
-        }
+    PostView.prototype._onModelChange = function(e) {
+        this._renderTimelineKeyPoint(
+            e.model.get('keyPoint.startTime', ''),
+            e.model.get('keyPoint.endTime', ''),
+            e.model.get('keyPoint.videoDuration', '')
+        );
+        this._onSelectionTimes(
+            e.model.get('keyPoint.selection.startTime', ''),
+            e.model.get('keyPoint.selection.endTime', '')
+        );
+        this._onHoverKeyPoint(
+            e.model.get('keyPoint.isHovering', false)
+        );
+        this._onClickKeyPoint(
+            e.model.get('keyPoint.isPlaying', false)
+        );
     };
 
-    PostView.prototype._renderTimelineKeyPoint = function(e) {
+    PostView.prototype._renderTimelineKeyPoint = function(startTime, endTime, videoDuration) {
         console.log("%s: %s", PostView.TAG, "_renderTimelineKeyPoint");
 
-        var startTimePercentage = ((100 * this.controller.keyPoint.startTime) / e.duration).toFixed(2);
-        var endTimePercentage = ((100 * this.controller.keyPoint.endTime) / e.duration).toFixed(2);
+        var startTimePercentage = ((100 * startTime) / videoDuration).toFixed(2);
+        var endTimePercentage = ((100 * endTime) / videoDuration).toFixed(2);
         var widthPercentage = (endTimePercentage - startTimePercentage).toFixed(2);
 
         this.$timelineKeyPoint.css({
@@ -310,24 +315,22 @@ define([
         });
     };
 
-    PostView.prototype._onSelectionTimes = function(e) {
-        this._getFormField("startTime").val(e.selection.startTime);
-        this._getFormField("endTime").val(e.selection.endTime);
+    PostView.prototype._onSelectionTimes = function(startTime, endTime) {
+        this._getFormField("startTime").val(startTime);
+        this._getFormField("endTime").val(endTime);
     };
 
-    PostView.prototype._onHoverKeyPoint = function(e) {
-        if (e.keyPoint.id != this.controller.keyPoint.id)
-            return;
-
-        this.$container.toggleClass("tt-post-container-highlight");
+    PostView.prototype._onHoverKeyPoint = function(isHovering) {
+        if (isHovering) {
+            this.$container.addClass("tt-post-container-highlight");
+        } else {
+            this.$container.removeClass("tt-post-container-highlight");
+        }
     };
 
-    PostView.prototype._onClickKeyPoint = function(e) {
-        if (e.keyPoint.id != this.controller.keyPoint.id)
-            return;
-
+    PostView.prototype._onClickKeyPoint = function(isPlaying) {
         var video = this.$container.find("video")[0];
-        if (video) {
+        if (video && isPlaying) {
             video.currentTime = 0;
             video.play();
         }

@@ -9,7 +9,7 @@ define([
 
     var assert = chai.assert;
 
-    describe('ThreadFactory checks', function () {
+    describe('ThreadFactory', function () {
 
         this.timeout(Common.PAGE_LOAD_TIMEOUT * 2);
 
