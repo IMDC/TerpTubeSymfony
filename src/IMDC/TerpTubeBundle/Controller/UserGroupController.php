@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr\Join;
 use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
@@ -10,6 +11,7 @@ use IMDC\TerpTubeBundle\Entity\Message;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\IdType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
+use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormBuilder;
@@ -450,26 +452,144 @@ class UserGroupController extends Controller
 
     public function manageAction(Request $request, $groupId)
     {
+        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
             throw new \Exception('group not found');
         }
 
-        $style = $this->get('request')->query->get('style', 'list');
+        $securityContext = $this->get('security.context');
+        if (false === $securityContext->isGranted('EDIT', $group)) {
+            throw new AccessDeniedException();
+        }
 
+        $style = $this->get('request')->query->get('style', 'list');
+        $activeTab = $this->get('request')->query->get('active_tab', '#tab-members');
+
+        // pagination
+        $pageLimit = 24;
+        $pageParamM = 'page_m';
+        $pageParamNM = 'page_c';
+        $pageM = $request->query->get($pageParamM, 1);
+        $pageNM = $request->query->get($pageParamNM, 1);
+
+        $user = $this->getUser();
+        $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
+
+        // prep query builders
+        $membersQb = $userRepo->createQueryBuilder('u');
+        $nonMembersQb = $userRepo->createQueryBuilder('u');
+
+        // start: apply query filters
+        $searchForm = $this->createForm(new UserGroupManageSearchType());
+        $searchForm->handleRequest($request);
+
+        if ($searchForm->isValid()) {
+            // reset to page 1 regardless
+            $pageM = $pageNM = 1;
+
+            $filterFriends = $searchForm->get('friends')->getData();
+            $filterMentors = $searchForm->get('mentors')->getData();
+            $filterMentees = $searchForm->get('mentees')->getData();
+            $username = $searchForm->get('username')->getData();
+
+            // only filter if at least one is true. show all (don't filter) by default
+            if ($filterFriends || $filterMentors || $filterMentees) {
+                //$filterQb = $userRepo->createQueryBuilder('iu')->select('*.id');
+                //$filterQbs = array();
+
+                $filterIds = array();
+
+                if ($filterFriends) {
+                    //$filterQb->innerJoin('iu.friendsList', 's');
+                    /*$filterQbs[] = $userRepo->createQueryBuilder('us')
+                        ->select('s.id')
+                        ->innerJoin('us.friendsList', 's');*/
+
+                    foreach ($user->getFriendsList() as $friend) {
+                        $filterIds[] = $friend->getId();
+                    }
+                }
+
+                if ($filterMentors) {
+                    //$filterQb->innerJoin('iu.mentorList', 'r');
+                    /*$filterQbs[] = $userRepo->createQueryBuilder('ur')
+                        ->select('r.id')
+                        ->innerJoin('ur.mentorList', 'r');*/
+
+                    foreach ($user->getMentorList() as $mentor) {
+                        $filterIds[] = $mentor->getId();
+                    }
+                }
+
+                if ($filterMentees) {
+                    //$filterQb->innerJoin('iu.menteeList', 'e');
+                    /*$filterQbs[] = $userRepo->createQueryBuilder('ue')
+                        ->select('e.id')
+                        ->innerJoin('ue.menteeList', 'e');*/
+
+                    foreach ($user->getMenteeList() as $mentee) {
+                        $filterIds[] = $mentee->getId();
+                    }
+                }
+
+                //$filterQb->where($filterQb->expr()->eq('iu.id', ':userId'));
+
+                /*$orX = $qb->expr()->orX();
+                foreach ($filterQbs as $filterQb) {
+                    //$filterQb->where($filterQb->expr()->eq('iu.id', ':userId'));
+                    $orX->add($qb->expr()->in('u.id', $filterQb->getDQL()));
+                }*/
+
+                /*$qb->where($qb->expr()->in('u.id', $filterQb->getDQL()))
+                    ->setParameter('userId', $user->getId());*/
+
+                /*$qb->where($orX)
+                    ->setParameter('userId', $user->getId());*/
+
+                $membersQb
+                    ->where($membersQb->expr()->in('u.id', ':filterIds'))
+                    ->setParameter('filterIds', $filterIds);
+
+                $nonMembersQb
+                    ->where($nonMembersQb->expr()->in('u.id', ':filterIds'))
+                    ->setParameter('filterIds', $filterIds);
+            }
+
+            $membersQb
+                ->andWhere($membersQb->expr()->like('u.username', ':username'))
+                ->setParameter('username', '%'.$username.'%');
+
+            $nonMembersQb
+                ->andWhere($nonMembersQb->expr()->like('u.username', ':username'))
+                ->setParameter('username', '%'.$username.'%');
+        }
+        // end: apply query filters
+
+        // filter group members
+        $members = $membersQb
+            ->leftJoin('u.profile', 'p')
+            ->innerJoin('u.userGroups', 'g')
+            ->andWhere($membersQb->expr()->eq('g.id', ':groupId'))
+            ->setParameter('groupId', $group->getId())
+            ->getQuery()->getResult();
+
+        // start: filter non group members
         $groupMemberIds = array();
         foreach ($group->getMembers() as $member) {
             $groupMemberIds[] = $member->getId();
         }
 
-        $qb = $em->getRepository('IMDCTerpTubeBundle:User')->createQueryBuilder('u');
-        $nonMembers = $qb->leftJoin('u.profile', 'p', Join::WITH, $qb->expr()->eq('u.profile', 'p.id'))
-            ->where($qb->expr()->eq('p.profileVisibleToPublic', ':public'))
-            ->andWhere($qb->expr()->notIn('u.id', ':groupMemberIds'))
-            ->setParameters(array(
-                'public' => 1,
-                'groupMemberIds' => $groupMemberIds))
+        $nonMembers = $nonMembersQb
+            ->leftJoin('u.profile', 'p', Join::WITH, $nonMembersQb->expr()->eq('u.profile', 'p.id'))
+            ->andWhere($nonMembersQb->expr()->eq('p.profileVisibleToPublic', ':public'))
+            ->andWhere($nonMembersQb->expr()->notIn('u.id', ':groupMemberIds'))
+            ->setParameter('public', 1)
+            ->setParameter('groupMemberIds', $groupMemberIds)
             ->getQuery()->getResult();
 
         // exclude users that have a pending invitation for the group
@@ -488,24 +608,36 @@ class UserGroupController extends Controller
                 }
             }
         }
+        // end: filter non group members
 
+        // pagination
         $paginator = $this->get('knp_paginator');
+
         $members = $paginator->paginate(
-            $group->getMembers(),
-            $request->query->get('page', 1), /*page number*/
-            !$request->isXmlHttpRequest() ? 24 : 12 /*limit per page*/
+            $members,
+            $pageM, /*page number*/
+            $pageLimit, /*limit per page*/
+            array('pageParameterName' => $pageParamM)
         );
+        $members->setParam('style', $style);
+        $members->setParam('active_tab', '#tab-members');
+
         $nonMembers = $paginator->paginate(
             $nonMembers,
-            $request->query->get('page', 1), /*page number*/
-            !$request->isXmlHttpRequest() ? 24 : 12 /*limit per page*/
+            $pageNM, /*page number*/
+            $pageLimit, /*limit per page*/
+            array('pageParameterName' => $pageParamNM)
         );
+        $nonMembers->setParam('style', $style);
+        $nonMembers->setParam('active_tab', '#tab-community');
 
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,
             'members' => $members,
             'nonMembers' => $nonMembers,
-            'style' => $style
+            'style' => $style,
+            'activeTab' => $activeTab,
+            'searchForm' => $searchForm->createView()
         ));
     }
 

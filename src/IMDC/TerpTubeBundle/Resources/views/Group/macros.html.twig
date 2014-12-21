@@ -1,7 +1,6 @@
 {% macro listUsers(style, users) %}
     {% import _self as _group %}
 
-    <div class="text-center">{{ knp_pagination_render(users) }}</div>
     {% if style == 'list' %}
         {{ _group.listUsersList(users) }}
     {% else %}
@@ -22,29 +21,44 @@
             </tr>
             </thead>
             <tbody>
-            {% if users|length > 0 %}
-                {% for user in users %}
-                    {% set isMe = user == app.user %}
+                {% if users|length > 0 %}
+                    {% for user in users %}
+                        {% set isMe = user == app.user %}
+                        <tr>
+                            <td><input type="checkbox" data-uid="{{ user.id }}" {% if isMe %}disabled{% endif %} /></td>
+                            <td>
+                                <span>{% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}{% if isMe %} <strong>(me)</strong>{% endif %}</span>
+                                <span>{% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' with {'member': user} %}</span>
+                            </td>
+                            <td>{{ user.postCount }}</td>
+                            <td>{{ time_diff(user.joinDate) }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
                     <tr>
-                        <td><input type="checkbox" data-uid="{{ user.id }}" {% if isMe %}disabled{% endif %} /></td>
-                        <td>
-                            <span>{% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}{% if isMe %} <strong>(me)</strong>{% endif %}</span>
-                            <span>{% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' with {'member': user} %}</span>
-                        </td>
-                        <td>{{ user.postCount }}</td>
-                        <td>{{ time_diff(user.joinDate) }}</td>
+                        <td colspan="4"><div class="text-center">None found</div></td>
                     </tr>
-                {% endfor %}
-            {% else %}
-                <tr colspan="4">
-                    <div class="text-center">No group members</div>
-                </tr>
-            {% endif %}
+                {% endif %}
             </tbody>
         </table>
     </div>
 {% endmacro %}
 
 {% macro listUsersGrid(users) %}
+    {% if users|length > 0 %}
+        {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': users} %}
+    {% else %}
+        <p class="text-center" style="margin-bottom: 20px;">None found</p>
+    {% endif %}
+{% endmacro %}
 
+{% macro controls(style, groupId) %}
+    {% if style == 'grid' %}
+        {% set style = 'list' %}
+        {% set style_icon = 'fa-th-list' %}
+    {% else %}
+        {% set style = 'grid' %}
+        {% set style_icon = 'fa-th-large' %}
+    {% endif %}
+    <a class="btn btn-default" href="{{ path('imdc_group_manage', {'groupId': groupId, 'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
 {% endmacro %}
