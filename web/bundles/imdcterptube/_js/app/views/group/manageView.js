@@ -21,7 +21,7 @@ define(function () {
         this.$remove.on('click', this.bind__onClickRemove);
         this.$add.on('click', this.bind__onClickAdd);
 
-        this.controller.onViewLoaded();
+        $tt._instances.push(this);
     };
 
     ManageView.TAG = 'GroupManageView';

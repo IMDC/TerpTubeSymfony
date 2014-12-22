@@ -80,8 +80,6 @@ define([
         $(this.keyPointService).on("eventKeyPointClick", this.bind__onClickKeyPoint);*/
 
         this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
-
-        this.controller.onViewLoaded(/*this*/);
     };
 
     PostView.TAG = "PostView";

@@ -13,13 +13,17 @@
             });
         });*/
 
-        require(['bootstrap', 'controller/thread_', 'views/thread', 'main'], function(bootstrap, Thread, ThreadView) {
+        require([
+            'bootstrap',
+            'controller/threadController', 'views/thread/newView',
+            'main'
+        ], function(bootstrap, ThreadController, ThreadView) {
             bootstrap(
                     {},
-                    Thread,
+                    ThreadController,
                     ThreadView,
                     {
-                        container: $("body")
+                        container: $('body')
                     }
             );
         });

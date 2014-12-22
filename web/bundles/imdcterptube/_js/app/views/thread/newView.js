@@ -23,7 +23,7 @@ define([
         this.mediaChooser.bindUIEvents();
 
         var mediaIds = [];
-        this._getFormField('media').children().each(function (index, element) {
+        this._getFormField('mediaIncluded').children().each(function (index, element) {
             mediaIds.push($(element).val());
         });
         if (mediaIds.length > 0) {
@@ -34,14 +34,14 @@ define([
         $tt._instances.push(this);
     };
 
-    NewView.TAG = 'GroupNewView';
+    NewView.TAG = 'ThreadNewView';
 
     NewView.Binder = {
-        SUBMIT: '.group-submit'
+        SUBMIT: '.thread-submit'
     };
 
-    // this must be the same name defined in {bundle}/Form/Type/UserGroupType
-    NewView.FORM_NAME = 'user_group';
+    // this must be the same name defined in {bundle}/Form/Type/ThreadType
+    NewView.FORM_NAME = 'thread';
 
     NewView.prototype._getFormField = function (fieldName) {
         return this.$form.find('#' + NewView.FORM_NAME + '_' + fieldName);
@@ -54,7 +54,7 @@ define([
     };
 
     NewView.prototype._updateForm = function () {
-        var formField = this._getFormField('media');
+        var formField = this._getFormField('mediaIncluded');
         formField.html(
             this.mediaChooser.generateFormData(
                 formField.data('prototype')
@@ -65,10 +65,24 @@ define([
     NewView.prototype._onSuccess = function (e) {
         this._updateForm();
         this.$submit.attr('disabled', false);
+        if (this.mediaChooser.media.length > 0) {
+            this._getFormField('title')
+                .attr('required', false)
+                .parent()
+                .find('label')
+                .removeClass('required');
+        }
     };
 
     NewView.prototype._onReset = function (e) {
         this._updateForm();
+        if (this.mediaChooser.media.length == 0) {
+            this._getFormField('title')
+                .attr('required', true)
+                .parent()
+                .find('label')
+                .addClass('required');
+        }
     };
 
     return NewView;

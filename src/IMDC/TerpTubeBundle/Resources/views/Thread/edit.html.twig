@@ -16,15 +16,19 @@
             {#});#}
         {#});#}
 
-        require(['bootstrap', 'controller/thread_', 'views/thread', 'main'], function(bootstrap, Thread, ThreadView) {
+        require([
+            'bootstrap',
+            'controller/threadController', 'views/thread/editView',
+            'main'
+        ], function(bootstrap, ThreadController, ThreadView) {
             bootstrap(
                     {
                         id: {{ thread.id }}
                     },
-                    Thread,
+                    ThreadController,
                     ThreadView,
                     {
-                        container: $("body")
+                        container: $('body')
                     }
             );
         });

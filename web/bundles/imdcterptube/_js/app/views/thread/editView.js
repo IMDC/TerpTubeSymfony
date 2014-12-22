@@ -1,5 +1,5 @@
 define([
-    'views/group/newView'
+    'views/thread/newView'
 ], function (NewView) {
     'use strict';
 
@@ -16,10 +16,10 @@ define([
 
     EditView.extend(NewView);
 
-    EditView.TAG = 'GroupEditView';
+    EditView.TAG = 'ThreadEditView';
 
-    EditView.Binder.DELETE_MODAL = '.group-delete-modal';
-    EditView.Binder.DELETE = '.group-delete';
+    EditView.Binder.DELETE_MODAL = '.thread-delete-modal';
+    EditView.Binder.DELETE = '.thread-delete';
 
     EditView.prototype._onClickDelete = function (e) {
         e.preventDefault();
@@ -29,7 +29,7 @@ define([
             .done(function (data) {
                 this.$deleteModal
                     .find('.modal-body')
-                    .html('Group deleted successfully.');
+                    .html('Topic deleted successfully.');
             }.bind(this))
             .fail(function () {
                 this.$container

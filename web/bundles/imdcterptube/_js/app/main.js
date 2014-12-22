@@ -1,5 +1,45 @@
-define(function(require) {
-    "use strict";
+define([
+    'controller/myFiles',
+    'controller/forum',
+    'controller/group',
+    'controller/message',
+    'controller/profile',
+
+    'core/helper',
+    'core/mediaManager',
+    'core/myFilesSelector',
+    'core/recorder',
+    'core/mediaChooser',
+    'core/gallery',
+
+
+
+    'bootstrap',
+    'service',
+
+    'factory/groupFactory',
+    'factory/postFactory',
+    'factory/threadFactory',
+
+    'service/keyPointService',
+
+    'model/postModel',
+
+    'controller/groupController',
+    'controller/postController',
+    'controller/threadController',
+
+    'views/group/newView',
+    'views/group/editView',
+    'views/group/manageView',
+
+    'views/thread/newView',
+    'views/thread/editView',
+    'views/thread/viewView',
+
+    'views/post'
+], function () {
+    'use strict';
 
     var TerpTube = {};
 
@@ -30,7 +70,7 @@ define(function(require) {
 
     $tt.Core.Helper.autoSize();
 
-    dust.helpers.generateUrl = function(chunk, context, bodies, params) {
+    dust.helpers.generateUrl = function (chunk, context, bodies, params) {
         return chunk.write($tt.Core.Helper.generateUrl(params.path));
     };
 });
