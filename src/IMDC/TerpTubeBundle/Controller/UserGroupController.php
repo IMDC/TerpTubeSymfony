@@ -13,6 +13,7 @@ use IMDC\TerpTubeBundle\Form\Type\IdType;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
+use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -410,9 +411,9 @@ class UserGroupController extends Controller
 
         $user = $this->getUser();
         $user->removeUserGroup($group);
-        $group->removeMember($user);
+        //$group->removeMember($user);
 
-        $em->persist($group);
+        //$em->persist($group);
         $em->persist($user);
         $em->flush();
 
@@ -480,6 +481,72 @@ class UserGroupController extends Controller
         $user = $this->getUser();
         $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
 
+        $removeForm = $this->createForm(new UsersSelectType('user_group_manage_remove'), null, array('em' => $em));
+        $removeForm->handleRequest($request);
+
+        if ($removeForm->isValid()) {
+            // reset to page 1 regardless
+            $pageM = $pageNM = 1;
+
+            $members = $removeForm->get('users')->getData();
+            $deletedMembers = 0;
+
+            foreach ($members as $member) {
+                if ($group->isUserMemberOfGroup($member)) {
+                    $member->removeUserGroup($group);
+                    $em->persist($member);
+                    $deletedMembers++;
+                }
+            }
+
+            $em->flush();
+
+            if ($deletedMembers > 0) {
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('info', sprintf('Removed %d members.', $deletedMembers));
+            }
+        }
+
+        $addForm = $this->createForm(new UsersSelectType('user_group_manage_add'), null, array('em' => $em));
+        $addForm->handleRequest($request);
+
+        if ($addForm->isValid()) {
+            // reset to page 1 regardless
+            $pageM = $pageNM = 1;
+
+            $newMembers = $addForm->get('users')->getData();
+            $user = $this->getUser();
+            $addedMembers = 0;
+            $invitedMembers = 0;
+
+            foreach ($newMembers as $newMember) {
+                if ($user->isUserOnMentorList($newMember)
+                    || $user->isUserOnMenteeList($newMember)
+                    || $user->isUserOnFriendsList($newMember)) {
+                    // by pass invitation step and add users directly
+                    //$group->addMember($newMember);
+                    $newMember->addUserGroup($group);
+                    //$em->persist($group);
+                    $em->persist($newMember);
+                    $addedMembers++;
+                } else {
+                    $this->sendGroupInvitation($user, $newMember, $group);
+                    $invitedMembers++;
+                }
+            }
+
+            $em->flush();
+
+            if ($addedMembers > 0 || $invitedMembers > 0) {
+                $fb = $this->get('session')->getFlashBag();
+                if ($addedMembers > 0)
+                    $fb->add('info', sprintf('Added %d members.', $addedMembers));
+                if ($invitedMembers > 0)
+                    $fb->add('info', sprintf('Invited %d members.', $invitedMembers));
+            }
+        }
+
         // prep query builders
         $membersQb = $userRepo->createQueryBuilder('u');
         $nonMembersQb = $userRepo->createQueryBuilder('u');
@@ -492,28 +559,17 @@ class UserGroupController extends Controller
             // reset to page 1 regardless
             $pageM = $pageNM = 1;
 
-            $filterFriends = $searchForm->get('friends')->getData();
             $filterMentors = $searchForm->get('mentors')->getData();
             $filterMentees = $searchForm->get('mentees')->getData();
+            $filterFriends = $searchForm->get('friends')->getData();
             $username = $searchForm->get('username')->getData();
 
             // only filter if at least one is true. show all (don't filter) by default
-            if ($filterFriends || $filterMentors || $filterMentees) {
+            if ($filterMentors || $filterMentees || $filterFriends) {
                 //$filterQb = $userRepo->createQueryBuilder('iu')->select('*.id');
                 //$filterQbs = array();
 
                 $filterIds = array();
-
-                if ($filterFriends) {
-                    //$filterQb->innerJoin('iu.friendsList', 's');
-                    /*$filterQbs[] = $userRepo->createQueryBuilder('us')
-                        ->select('s.id')
-                        ->innerJoin('us.friendsList', 's');*/
-
-                    foreach ($user->getFriendsList() as $friend) {
-                        $filterIds[] = $friend->getId();
-                    }
-                }
 
                 if ($filterMentors) {
                     //$filterQb->innerJoin('iu.mentorList', 'r');
@@ -534,6 +590,17 @@ class UserGroupController extends Controller
 
                     foreach ($user->getMenteeList() as $mentee) {
                         $filterIds[] = $mentee->getId();
+                    }
+                }
+
+                if ($filterFriends) {
+                    //$filterQb->innerJoin('iu.friendsList', 's');
+                    /*$filterQbs[] = $userRepo->createQueryBuilder('us')
+                        ->select('s.id')
+                        ->innerJoin('us.friendsList', 's');*/
+
+                    foreach ($user->getFriendsList() as $friend) {
+                        $filterIds[] = $friend->getId();
                     }
                 }
 
@@ -637,7 +704,9 @@ class UserGroupController extends Controller
             'nonMembers' => $nonMembers,
             'style' => $style,
             'activeTab' => $activeTab,
-            'searchForm' => $searchForm->createView()
+            'searchForm' => $searchForm->createView(),
+            'removeForm' => $removeForm->createView(),
+            'addForm' => $addForm->createView()
         ));
     }
 
@@ -692,8 +761,9 @@ class UserGroupController extends Controller
      * @return RedirectResponse|Response
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
+     * @deprecated
      */
-    public function addMembersAction(Request $request, $groupId)
+    public function addMembersAction(Request $request, $groupId) //TODO delete
     {
         if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -805,8 +875,9 @@ class UserGroupController extends Controller
      * @return RedirectResponse
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
+     * @deprecated
      */
-    public function deleteMembersAction(Request $request, $groupId)
+    public function deleteMembersAction(Request $request, $groupId) //TODO delete
     {
         if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -838,8 +909,10 @@ class UserGroupController extends Controller
                 }
 
                 if ($group->isUserMemberOfGroup($member)) {
-                    $group->removeMember($member);
-                    $em->persist($group);
+                    //$group->removeMember($member);
+                    //$em->persist($group);
+                    $member->removeUserGroup($group);
+                    $em->persist($member);
                     $deletedMembers++;
                 }
             }
@@ -858,8 +931,9 @@ class UserGroupController extends Controller
 
     /**
      * @return FormBuilder
+     * @deprecated
      */
-    private function getGenericIdFormBuilder() {
+    private function getGenericIdFormBuilder() { //TODO delete
         //TODO replace with standard form type with user data transformer
         $defaultData = array('users' => new ArrayCollection());
         return $this->createFormBuilder($defaultData)

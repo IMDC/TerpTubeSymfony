@@ -3,8 +3,8 @@
 namespace IMDC\TerpTubeBundle\Form\Type;
 
 use Doctrine\ORM\EntityManager;
-use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIdArrayTransformer;
-use IMDC\TerpTubeBundle\Form\DataTransformer\MediaToIdTransformer;
+use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIntArrayTransformer;
+use IMDC\TerpTubeBundle\Form\DataTransformer\MediaToIntTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactory;
@@ -33,8 +33,8 @@ class MediaChooserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //$builder->addModelTransformer(new MediaToIdTransformer($this->entityManager));
-        $builder->addModelTransformer(new MediaCollectionToIdArrayTransformer($this->entityManager));
+        //$builder->addModelTransformer(new MediaToIntTransformer($this->entityManager));
+        $builder->addModelTransformer(new MediaCollectionToIntArrayTransformer($this->entityManager));
     }
 
     /**

@@ -7,7 +7,7 @@ use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class MediaToIdTransformer implements DataTransformerInterface
+class MediaToIntTransformer implements DataTransformerInterface
 {
     private $om;
 

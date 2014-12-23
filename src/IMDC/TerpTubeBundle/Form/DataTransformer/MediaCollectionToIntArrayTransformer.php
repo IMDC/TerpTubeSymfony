@@ -5,7 +5,7 @@ namespace IMDC\TerpTubeBundle\Form\DataTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class MediaCollectionToIdArrayTransformer implements DataTransformerInterface
+class MediaCollectionToIntArrayTransformer implements DataTransformerInterface
 {
     private $om;
 

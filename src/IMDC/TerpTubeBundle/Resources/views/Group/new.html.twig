@@ -17,11 +17,11 @@
             'bootstrap',
             'controller/groupController', 'views/group/newView',
             'main'
-        ], function(bootstrap, GroupController, GroupNewView) {
+        ], function(bootstrap, GroupController, GroupView) {
             bootstrap(
                     {},
                     GroupController,
-                    GroupNewView,
+                    GroupView,
                     {
                         container: $('body')
                     }

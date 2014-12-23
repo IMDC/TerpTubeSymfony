@@ -5,7 +5,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityNotFoundException;
 use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIdArrayTransformer;
+use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Form\Type\ResourceFileFormType;
 use IMDC\TerpTubeBundle\Utils\Utils;
@@ -817,7 +817,7 @@ class MyFilesGatewayController extends Controller
          */
 
         $mediaIds = $request->get('mediaIds');
-        $transformer = new MediaCollectionToIdArrayTransformer ($em);
+        $transformer = new MediaCollectionToIntArrayTransformer ($em);
         $mediaCollection = $transformer->reverseTransform($mediaIds);
         $ordered = Utils::orderMedia($mediaCollection, $mediaIds);
 

@@ -5,7 +5,12 @@ namespace IMDC\TerpTubeBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class IdType extends AbstractType
+/**
+ * Class IdType
+ * @package IMDC\TerpTubeBundle\Form\Type
+ * @deprecated
+ */
+class IdType extends AbstractType //TODO delete
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{

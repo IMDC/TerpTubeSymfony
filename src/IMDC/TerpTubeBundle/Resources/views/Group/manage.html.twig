@@ -12,13 +12,13 @@
             'bootstrap',
             'controller/groupController', 'views/group/manageView',
             'main'
-        ], function(bootstrap, GroupController, GroupManageView) {
+        ], function(bootstrap, GroupController, GroupView) {
             bootstrap(
                     {
                         id: {{ group.id }}
                     },
                     GroupController,
-                    GroupManageView,
+                    GroupView,
                     {
                         container: $('body')
                     }
@@ -53,13 +53,15 @@
         <div class="tab-content">
             <div class="tab-pane{% if active_tab == '#tab-members' %} active{% endif %}" id="tab-members">
                 {{ _group.listUsers(style, members) }}
-                <button class="btn btn-success group-remove" disabled data-loading-text="Removing members...">
+                {{ form(removeForm) }}
+                <button class="btn btn-success group-remove" disabled data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Removing members...">
                     <i class="fa fa-check"></i> Remove Selected
                 </button>
             </div>
             <div class="tab-pane{% if active_tab == '#tab-community' %} active{% endif %}" id="tab-community">
                 {{ _group.listUsers(style, nonMembers) }}
-                <button class="btn btn-success group-add" disabled data-loading-text="Adding members...">
+                {{ form(addForm) }}
+                <button class="btn btn-success group-add" disabled data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Adding members...">
                     <i class="fa fa-check"></i> Add Selected
                 </button>
             </div>

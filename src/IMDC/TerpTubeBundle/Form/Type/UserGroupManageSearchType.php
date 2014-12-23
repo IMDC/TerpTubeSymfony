@@ -11,17 +11,17 @@ class UserGroupManageSearchType extends AbstractType
     {
         //$builder->setMethod('GET');
 
-        $builder->add('friends', 'checkbox', array(
-            'label' => false,
-            'required' => false
-        ));
-
         $builder->add('mentors', 'checkbox', array(
             'label' => false,
             'required' => false
         ));
 
         $builder->add('mentees', 'checkbox', array(
+            'label' => false,
+            'required' => false
+        ));
+
+        $builder->add('friends', 'checkbox', array(
             'label' => false,
             'required' => false
         ));

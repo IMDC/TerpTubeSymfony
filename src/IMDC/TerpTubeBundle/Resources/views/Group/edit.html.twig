@@ -20,13 +20,13 @@
             'bootstrap',
             'controller/groupController', 'views/group/editView',
             'main'
-        ], function(bootstrap, GroupController, GroupEditView) {
+        ], function(bootstrap, GroupController, GroupView) {
             bootstrap(
                     {
                         id: {{ group.id }}
                     },
                     GroupController,
-                    GroupEditView,
+                    GroupView,
                     {
                         container: $('body')
                     }
