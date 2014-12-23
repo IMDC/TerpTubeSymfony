@@ -18,7 +18,6 @@ define([
                 callbackResult = e.model.get('name');
             };
             data = {id: 1, name: 'hello', nested: {foo: 'bar', bar: {marco: 10}}};
-            model = new Model(data);
         });
 
         beforeEach(function () {
@@ -41,7 +40,15 @@ define([
             expect(path[2]).to.equal('marco');
         });
 
+        it('should be undefined', function () {
+            try {
+                model = new Model([]);
+            } catch (err) {}
+            expect(model).to.be.undefined();
+        });
+
         it('should have data equal given data at instantiation', function () {
+            model = new Model(data);
             expect(model.data).to.equal(data);
         });
 

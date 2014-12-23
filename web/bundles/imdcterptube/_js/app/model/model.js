@@ -3,8 +3,8 @@ define(['underscore'], function () {
 
     var Model = function (data) {
         data = data || {};
-        if (!_.isObject(data)) {
-            throw 'data must be an object';
+        if (!_.isObject(data) || _.isArray(data) || _.isFunction(data)) {
+            throw new Error('data must be an object');
         }
 
         this.data = data;
@@ -55,7 +55,7 @@ define(['underscore'], function () {
             model: this
         };
 
-        if (_.isObject(args)) {
+        if (_.isObject(args) && !_.isArray(data) && !_.isFunction(data)) {
             // add the extra args for this event to the event object
             _.each(args, function (value, key, list) {
                 e[key] = value;

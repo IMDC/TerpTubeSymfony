@@ -17,14 +17,14 @@ define([
         Common.ajaxSetup();
 
         var post;
-        var postForm;
+        var form;
 
         before(function (done) {
             post = new PostModel({
                 id: '0' + Math.floor((Math.random() * 100000) + 1),
                 threadId: 17
             });
-            postForm = '';
+            form = '';
 
             Common.login(done);
 
@@ -41,7 +41,7 @@ define([
                     assert.isFalse(data.wasReplied, 'key:wasReplied should be false');
                     assert.include(data.html, 'form  name="post"', 'key:html should contain a post form');
 
-                    postForm = $(data.html).find('form');
+                    form = $(data.html).find('form');
                     done();
                 })
                 .fail(function () {
@@ -53,11 +53,11 @@ define([
         });
 
         it('should create a new post', function (done) {
-            assert.notStrictEqual(postForm.length, 0, 'should not be of length 0. a previous test has failed');
+            assert.notStrictEqual(form.length, 0, 'should not be of length 0. a previous test has failed');
 
-            postForm.find('textarea[name="post[content]"]').val('testtest_new');
+            form.find('textarea[name="post[content]"]').val('testtest_new');
 
-            return PostFactory.new(post, postForm[0])
+            return PostFactory.new(post, form[0])
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasReplied', 'result should have key:wasReplied');
@@ -77,7 +77,7 @@ define([
                     done();
                 });
 
-            postForm = '';
+            form = '';
 
             setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
@@ -109,7 +109,7 @@ define([
                     assert.isFalse(data.wasEdited, 'key:wasEdited should be false');
                     assert.include(data.html, 'form  name="post"', 'key:html should contain a post form');
 
-                    postForm = $(data.html).find('form');
+                    form = $(data.html).find('form');
                     done();
                 })
                 .fail(function () {
@@ -121,13 +121,13 @@ define([
         });
 
         it('should edit post', function (done) {
-            assert.notStrictEqual(postForm.length, 0, 'should not be of length 0. a previous test has failed');
+            assert.notStrictEqual(form.length, 0, 'should not be of length 0. a previous test has failed');
 
-            var content = postForm.find('textarea[name="post[content]"]');
+            var content = form.find('textarea[name="post[content]"]');
             var contentVal = 'testtest_edit';
             content.val(contentVal);
 
-            return PostFactory.edit(post, postForm[0])
+            return PostFactory.edit(post, form[0])
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasEdited', 'result should have key:wasEdited');
@@ -147,7 +147,7 @@ define([
                     done();
                 });
 
-            postForm = '';
+            form = '';
 
             setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
@@ -171,7 +171,7 @@ define([
 
         after(function () {
             post = null;
-            postForm = null;
+            form = null;
         });
 
     });
