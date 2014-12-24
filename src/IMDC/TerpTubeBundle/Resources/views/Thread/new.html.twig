@@ -15,11 +15,11 @@
 
         require([
             'bootstrap',
-            'controller/threadController', 'views/thread/newView',
+            'model/threadModel', 'controller/threadController', 'views/thread/newView',
             'main'
-        ], function(bootstrap, ThreadController, ThreadView) {
+        ], function(bootstrap, ThreadModel, ThreadController, ThreadView) {
             bootstrap(
-                    {},
+                    new ThreadModel({}),
                     ThreadController,
                     ThreadView,
                     {

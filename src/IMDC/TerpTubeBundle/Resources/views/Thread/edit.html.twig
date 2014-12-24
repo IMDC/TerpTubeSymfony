@@ -18,13 +18,13 @@
 
         require([
             'bootstrap',
-            'controller/threadController', 'views/thread/editView',
+            'model/threadModel', 'controller/threadController', 'views/thread/editView',
             'main'
-        ], function(bootstrap, ThreadController, ThreadView) {
+        ], function(bootstrap, ThreadModel, ThreadController, ThreadView) {
             bootstrap(
-                    {
+                    new ThreadModel({
                         id: {{ thread.id }}
-                    },
+                    }),
                     ThreadController,
                     ThreadView,
                     {

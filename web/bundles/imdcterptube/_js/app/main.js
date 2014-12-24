@@ -24,6 +24,7 @@ define([
     'service/keyPointService',
 
     'model/postModel',
+    'model/threadModel',
 
     'controller/groupController',
     'controller/postController',

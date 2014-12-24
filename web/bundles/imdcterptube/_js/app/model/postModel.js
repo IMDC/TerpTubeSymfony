@@ -3,6 +3,8 @@ define(['model/model', 'extra'], function (Model) {
 
     var PostModel = function (data) {
         Model.prototype.constructor.apply(this, arguments);
+
+        this.data.keyPoint = null;
     };
 
     PostModel.extend(Model);

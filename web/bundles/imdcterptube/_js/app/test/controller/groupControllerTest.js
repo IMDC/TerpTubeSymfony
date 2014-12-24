@@ -1,11 +1,12 @@
 define([
     'chai',
+    'test/common',
     'controller/groupController',
     'jquery',
     'jquery-mockjax',
     'fos_routes',
     'es5-shim'
-], function (chai, GroupController) {
+], function (chai, Common, GroupController) {
     'use strict';
 
     var assert = chai.assert;
@@ -32,7 +33,7 @@ define([
         });
 
         beforeEach(function () {
-            pageUrl = null;
+            pageUrl = undefined;
             $.mockjax.clear();
         });
 
@@ -50,7 +51,7 @@ define([
                     assert.fail('done', 'fail', 'request should have failed');
                 })
                 .fail(function () {
-                    assert.isNull(pageUrl, 'pageUrl should be null');
+                    assert.isUndefined(pageUrl, 'pageUrl should be null');
                 });
         });
 
@@ -58,7 +59,8 @@ define([
             $.mockjax({
                 url: Routing.generate('imdc_group_delete', {groupId: group.id}),
                 responseText: {
-                    wasDeleted: true
+                    wasDeleted: true,
+                    redirectUrl: Common.BASE_URL + '/group/' + group.id
                 }
             });
 

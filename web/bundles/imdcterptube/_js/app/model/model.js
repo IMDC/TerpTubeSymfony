@@ -55,7 +55,7 @@ define(['underscore'], function () {
             model: this
         };
 
-        if (_.isObject(args) && !_.isArray(data) && !_.isFunction(data)) {
+        if (_.isObject(args) && !_.isArray(args) && !_.isFunction(args)) {
             // add the extra args for this event to the event object
             _.each(args, function (value, key, list) {
                 e[key] = value;
@@ -75,13 +75,13 @@ define(['underscore'], function () {
     };
 
     Model.prototype.set = function (keyPath, value, doDispatch) {
-        var doDispatch = typeof doDispatch !== 'undefined' ? doDispatch : true;
+        doDispatch = typeof doDispatch !== 'undefined' ? doDispatch : true;
         var result = this._findKeyPath(this.data, keyPath);
 
         this._setKeyPath(this.data, keyPath, value);
 
         if (doDispatch && result !== value) {
-            this._dispatch(Model.Event.CHANGE);
+            this._dispatch(Model.Event.CHANGE, {keyPath: keyPath});
         }
     };
 

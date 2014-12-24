@@ -41,9 +41,7 @@ define([
                 break;
             case KeyPointService.Event.CLICK:
                 this.model.set('keyPoint.isPlaying', true);
-                setTimeout(function () {
-                    this.model.set('keyPoint.isPlaying', false);
-                }.bind(this));
+                this.model.set('keyPoint.isPlaying', false, false);
                 break;
         }
     };

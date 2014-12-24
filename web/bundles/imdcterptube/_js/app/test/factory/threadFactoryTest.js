@@ -1,10 +1,11 @@
 define([
     'chai',
     'test/common',
+    'thread/threadModel',
     'factory/threadFactory',
     'jquery',
     'fos_routes'
-], function (chai, Common, ThreadFactory) {
+], function (chai, Common, ThreadModel, ThreadFactory) {
     'use strict';
 
     var assert = chai.assert;
@@ -18,9 +19,9 @@ define([
         var thread;
 
         before(function (done) {
-            thread = {
+            thread = new ThreadModel({
                 id: 10 // this must be set to an existing thread id
-            };
+            });
 
             Common.login(done);
 

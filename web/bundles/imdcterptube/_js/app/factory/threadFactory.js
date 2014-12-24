@@ -5,7 +5,7 @@ define(function () {
 
     ThreadFactory.delete = function (thread) {
         var settings = {
-            url: Routing.generate('imdc_thread_delete', {threadid: thread.id}),
+            url: Routing.generate('imdc_thread_delete', {threadid: thread.get('id')}),
             type: 'POST'
         };
 

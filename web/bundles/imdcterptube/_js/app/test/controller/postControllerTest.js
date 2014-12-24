@@ -47,7 +47,7 @@ define([
 
         beforeEach(function () {
             keyPointEvent = null;
-            pageUrl = null;
+            pageUrl = undefined;
             $.mockjax.clear();
         });
 
@@ -79,7 +79,7 @@ define([
 
             return controller.new()
                 .done(function (data) {
-                    assert.isNull(pageUrl, 'pageUrl should be null');
+                    assert.isUndefined(pageUrl, 'pageUrl should be null');
                 })
                 .fail(function () {
                     assert.fail('fail', 'done', 'request should not have failed');
@@ -92,7 +92,7 @@ define([
                 responseText: {
                     wasReplied: true,
                     post: {},
-                    redirectUrl: Common.BASE_URL + '/thread' + post.get('threadId')
+                    redirectUrl: Common.BASE_URL + '/thread/' + post.get('threadId')
                 }
             });
 
