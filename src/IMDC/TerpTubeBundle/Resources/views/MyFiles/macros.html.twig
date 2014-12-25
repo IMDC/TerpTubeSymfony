@@ -68,13 +68,12 @@
         {% if resourceFiles|length > 0 %}
             {% for resourceFile in resourceFiles %}
                 {% set previewDisabled = resourceFile.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
-                <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+                <div class="col-md-3">
                     <div class="thumbnail tt-myFiles-grid-thumbnail">
                         <input type="checkbox" data-mid="{{ resourceFile.id }}" />
                         <div>
                             <div class="my-files-selector-file {{ previewDisabled }}" data-mid="{{ resourceFile.id }}">
                                 {{ media.thumbnail(resourceFile.thumbnailPath) }}
-                                <span style="vertical-align: middle; display: inline-block; height: 100%;"></span>
                             </div>
                         </div>
                         <div>

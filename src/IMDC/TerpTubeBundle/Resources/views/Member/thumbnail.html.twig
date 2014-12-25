@@ -13,13 +13,13 @@ _Member:index.html.twig
     {% set isSelection = false %}
 {% endif %}
 
+<div class="row">
 {% for member in members %}
-    {% if loop.index % 4 == 1 %}
-        <div class="row">
+{#    {% if loop.index % 4 == 1 %}
             <ul class="list-unstyled">
     {% endif %}
-    <li>
-        <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2">
+    <li>#}
+        <div class="col-md-3">
             <div class="thumbnail text-center tt-member-thumbnail">
                 <div class="row">
                     <div class="col-md-12">
@@ -40,9 +40,9 @@ _Member:index.html.twig
                 </div>
             </div>
         </div>
-    </li>
+{#    </li>
     {% if loop.index % 4 == 0 or loop.last %}
             </ul>
-        </div>
-    {% endif %}
+    {% endif %}#}
 {% endfor %}
+</div>

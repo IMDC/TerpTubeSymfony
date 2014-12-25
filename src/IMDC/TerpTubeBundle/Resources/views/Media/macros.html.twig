@@ -36,7 +36,7 @@
 
 {% macro thumbnail(thumbnailPath) %}
     {% if thumbnailPath is not null %}
-        <img src="{{ asset(thumbnailPath) }}" />
+        <img class="img-responsive center-block" src="{{ asset(thumbnailPath) }}" />
     {% else %}
         <span class="fa-stack fa-lg" style="width: 100%;">
             <i class="fa fa-file-o fa-stack-2x"></i>

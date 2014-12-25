@@ -32,15 +32,15 @@
 {% block content %}
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <a class="btn btn-default" href="{{ path('imdc_group_view', {'groupId': group.id}) }}">
                     <i class="fa fa-arrow-left"></i> Back to Group
                 </a>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-6">
                 {{ form(searchForm, {'attr': {'class': 'tt-group-manage-search-form'}}) }}
             </div>
-            <div class="col-md-2 text-right">
+            <div class="col-md-3 text-right">
                 {{ _group.controls(style, group.id) }}
             </div>
         </div>
