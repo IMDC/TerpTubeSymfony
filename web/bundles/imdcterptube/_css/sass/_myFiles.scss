@@ -33,25 +33,11 @@ tbody tr td
 
   $img-height: 175px;
 
-  > input:first-of-type[type='checkbox'] {
-    position: absolute;
-    margin: 4px;
-    z-index: 1;
-  }
-
-  > div:nth-of-type(1) {
+  > div:first-of-type {
     height: $img-height;
-    margin-bottom: 5px;
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
 
     > div {
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-
-      > img {
+      img {
         max-height: $img-height;
         /*width: 100%;
         object-fit: contain;*/
@@ -89,4 +75,11 @@ tbody tr td
   @extend .tt-list-table;
 
   margin-bottom: 8px;
+
+  > tbody td:nth-of-type(2) > span:nth-of-type(1) {
+    i.fa {
+      vertical-align: middle;
+      padding-right: 8px;
+    }
+  }
 }

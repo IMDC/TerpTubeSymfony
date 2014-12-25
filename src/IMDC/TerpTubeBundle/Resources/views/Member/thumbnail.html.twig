@@ -20,23 +20,23 @@ _Member:index.html.twig
     {% endif %}
     <li>#}
         <div class="col-md-3">
-            <div class="thumbnail text-center tt-member-thumbnail">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div>{% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' %}</div>
-                    </div>
+            <div class="thumbnail text-center tt-member-grid-thumbnail">
+                {% if isSelection %}
+                    <input type="checkbox" data-uid="{{ member.id }}" {% if app.user == member %}disabled {% endif %}/>
+                {% endif %}
+                <div>
+                    <div>{% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' %}</div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <p style="font-size: 24px;">
-                            {% include 'IMDCTerpTubeBundle:Member:username.html.twig' %}
-                        </p>
-                        <p class="text-muted">
-                            <i class="fa fa-pencil-square-o" title="{{ 'member.infoBlock.postCount'|trans }}"></i> {{ member.postCount }} posts<br />
-                            <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ member.joinDate|date('M j Y') }}
-                        </p>
-                        {{ _member.connect_tools(app.user, member, 'ul') }}
-                    </div>
+                <div>
+                    <p>
+                        {% include 'IMDCTerpTubeBundle:Member:username.html.twig' %}
+                        {% if isSelection and app.user == member %} <span class="tt-this-is-you">(you)</span>{% endif %}
+                    </p>
+                    <p class="text-muted">
+                        <i class="fa fa-pencil-square-o" title="{{ 'member.infoBlock.postCount'|trans }}"></i> {{ member.postCount }} posts<br />
+                        <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ member.joinDate|date('M j Y') }}
+                    </p>
+                    {{ _member.connect_tools(app.user, member, 'ul') }}
                 </div>
             </div>
         </div>

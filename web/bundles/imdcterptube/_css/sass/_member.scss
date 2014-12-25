@@ -1,22 +1,25 @@
-.tt-member-thumbnail {
+.tt-member-grid-thumbnail {
+  @extend .tt-grid-thumbnail;
+
   $img-height: 125px;
 
-  min-height: 255px;
+  min-height: 265px;
+  cursor: initial;
 
-  > div.row:first-of-type > div:first-of-type {
+  > div:first-of-type {
     height: $img-height;
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
 
     > div {
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-
       img {
         max-height: $img-height;
       }
     }
+  }
+
+  > div:nth-of-type(2) > p:first-of-type {
+    font-size: 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

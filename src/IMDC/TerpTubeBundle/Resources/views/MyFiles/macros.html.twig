@@ -77,14 +77,14 @@
                             </div>
                         </div>
                         <div>
-                        <span class="edit-title {{ previewDisabled }} my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resourceFile.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
-                            {{ media.typeToIcon(resourceFile.type) }}{{ resourceFile.title }}
-                        </span>
-                        <span>
-                            <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
-                            <a class="btn btn-default" href="{{  resourceFile.getResource() }}" download><i class="fa fa-download"></i></a>
-                            <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': resourceFile.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
-                        </span>
+                            <span class="edit-title {{ previewDisabled }} my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resourceFile.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
+                                {{ media.typeToIcon(resourceFile.type) }}{{ resourceFile.title }}
+                            </span>
+                            <span>
+                                <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+                                <a class="btn btn-default" href="{{  resourceFile.getResource() }}" download><i class="fa fa-download"></i></a>
+                                <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': resourceFile.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                            </span>
                         </div>
                     </div>
                 </div>

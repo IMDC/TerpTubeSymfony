@@ -151,54 +151,80 @@ ul.pagination {
 }
 
 /* line 154, sass/_base.scss */
-.tt-grid-thumbnail, .tt-myFiles-grid-thumbnail {
-  height: 225px;
+.tt-grid-thumbnail, .tt-myFiles-grid-thumbnail, .tt-member-grid-thumbnail {
+  min-height: 225px;
   cursor: pointer;
 }
+/* line 158, sass/_base.scss */
+.tt-grid-thumbnail input:first-of-type[type='checkbox'], .tt-myFiles-grid-thumbnail input:first-of-type[type='checkbox'], .tt-member-grid-thumbnail input:first-of-type[type='checkbox'] {
+  position: absolute;
+  margin: 4px;
+  display: block;
+  z-index: 1;
+}
+/* line 165, sass/_base.scss */
+.tt-grid-thumbnail > div:first-of-type, .tt-myFiles-grid-thumbnail > div:first-of-type, .tt-member-grid-thumbnail > div:first-of-type {
+  margin-bottom: 5px;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+/* line 171, sass/_base.scss */
+.tt-grid-thumbnail > div:first-of-type > div, .tt-myFiles-grid-thumbnail > div:first-of-type > div, .tt-member-grid-thumbnail > div:first-of-type > div {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
 
-/* line 162, sass/_base.scss */
+/* line 182, sass/_base.scss */
 .tt-list-table span, .tt-myFiles-list-table span {
   color: initial;
   /* override bootstrap span color under .active class */
 }
-/* line 166, sass/_base.scss */
+/* line 186, sass/_base.scss */
 .tt-list-table > thead > tr > th, .tt-myFiles-list-table > thead > tr > th, .tt-list-table > tbody > tr > td, .tt-myFiles-list-table > tbody > tr > td {
   line-height: 34px;
   vertical-align: middle;
 }
-/* line 170, sass/_base.scss */
+/* line 190, sass/_base.scss */
 .tt-list-table > thead > tr > th:first-child, .tt-myFiles-list-table > thead > tr > th:first-child, .tt-list-table > tbody > tr > td:first-child, .tt-myFiles-list-table > tbody > tr > td:first-child {
   width: 1%;
   line-height: initial;
 }
-/* line 175, sass/_base.scss */
+/* line 195, sass/_base.scss */
 .tt-list-table > thead > tr > th:nth-of-type(2), .tt-myFiles-list-table > thead > tr > th:nth-of-type(2), .tt-list-table > tbody > tr > td:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td:nth-of-type(2) {
   width: 60%;
 }
-/* line 181, sass/_base.scss */
+/* line 201, sass/_base.scss */
 .tt-list-table > tbody td:nth-of-type(2), .tt-myFiles-list-table > tbody td:nth-of-type(2) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* line 186, sass/_base.scss */
+/* line 206, sass/_base.scss */
 .tt-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1), .tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) {
   cursor: pointer;
 }
-/* line 189, sass/_base.scss */
+/* line 209, sass/_base.scss */
 .tt-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) i.fa, .tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) i.fa {
   vertical-align: middle;
   padding-right: 8px;
 }
-/* line 195, sass/_base.scss */
+/* line 215, sass/_base.scss */
 .tt-list-table > tbody td:nth-of-type(2) > span:nth-of-type(2), .tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(2) {
   float: right;
   margin-bottom: -1px;
   display: none;
 }
-/* line 201, sass/_base.scss */
+/* line 221, sass/_base.scss */
 .tt-list-table > tbody td:nth-of-type(2):hover > span:nth-of-type(2), .tt-myFiles-list-table > tbody td:nth-of-type(2):hover > span:nth-of-type(2) {
   display: inline-block;
+}
+
+/* line 228, sass/_base.scss */
+.tt-this-is-you {
+  font-size: 0.9em;
+  color: #aaa !important;
 }
 
 /* line 1, sass/_default.scss */
@@ -321,33 +347,17 @@ tbody tr td {
 }
 
 /* line 36, sass/_myFiles.scss */
-.tt-myFiles-grid-thumbnail > input:first-of-type[type='checkbox'] {
-  position: absolute;
-  margin: 4px;
-  z-index: 1;
-}
-/* line 42, sass/_myFiles.scss */
-.tt-myFiles-grid-thumbnail > div:nth-of-type(1) {
+.tt-myFiles-grid-thumbnail > div:first-of-type {
   height: 175px;
-  margin-bottom: 5px;
-  -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-  transform-style: preserve-3d;
 }
-/* line 49, sass/_myFiles.scss */
-.tt-myFiles-grid-thumbnail > div:nth-of-type(1) > div {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-/* line 54, sass/_myFiles.scss */
-.tt-myFiles-grid-thumbnail > div:nth-of-type(1) > div > img {
+/* line 40, sass/_myFiles.scss */
+.tt-myFiles-grid-thumbnail > div:first-of-type > div img {
   max-height: 175px;
   /*width: 100%;
   object-fit: contain;*/
   height: calc(175px/1.5);
 }
-/* line 63, sass/_myFiles.scss */
+/* line 49, sass/_myFiles.scss */
 .tt-myFiles-grid-thumbnail > div:nth-of-type(2) {
   height: 35px;
   line-height: 35px;
@@ -356,25 +366,30 @@ tbody tr td {
   /*white-space: nowrap;*/
   display: inline-block;
 }
-/* line 71, sass/_myFiles.scss */
+/* line 57, sass/_myFiles.scss */
 .tt-myFiles-grid-thumbnail > div:nth-of-type(2) > span:nth-of-type(1) i.fa {
   vertical-align: middle;
 }
-/* line 75, sass/_myFiles.scss */
+/* line 61, sass/_myFiles.scss */
 .tt-myFiles-grid-thumbnail > div:nth-of-type(2) > span:nth-of-type(2) {
   position: absolute;
   right: 20px;
   bottom: 25px;
   display: none;
 }
-/* line 83, sass/_myFiles.scss */
+/* line 69, sass/_myFiles.scss */
 .tt-myFiles-grid-thumbnail:hover > div:nth-of-type(2) > span:nth-of-type(2) {
   display: inline-block;
 }
 
-/* line 88, sass/_myFiles.scss */
+/* line 74, sass/_myFiles.scss */
 .tt-myFiles-list-table {
   margin-bottom: 8px;
+}
+/* line 80, sass/_myFiles.scss */
+.tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) i.fa {
+  vertical-align: middle;
+  padding-right: 8px;
 }
 
 /* used as a selector */
@@ -493,23 +508,22 @@ tbody tr td {
 }
 
 /* line 1, sass/_member.scss */
-.tt-member-thumbnail {
-  min-height: 255px;
+.tt-member-grid-thumbnail {
+  min-height: 265px;
+  cursor: initial;
 }
-/* line 6, sass/_member.scss */
-.tt-member-thumbnail > div.row:first-of-type > div:first-of-type {
+/* line 9, sass/_member.scss */
+.tt-member-grid-thumbnail > div:first-of-type {
   height: 125px;
-  -webkit-transform-style: preserve-3d;
-  -moz-transform-style: preserve-3d;
-  transform-style: preserve-3d;
 }
-/* line 12, sass/_member.scss */
-.tt-member-thumbnail > div.row:first-of-type > div:first-of-type > div {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-/* line 17, sass/_member.scss */
-.tt-member-thumbnail > div.row:first-of-type > div:first-of-type > div img {
+/* line 13, sass/_member.scss */
+.tt-member-grid-thumbnail > div:first-of-type > div img {
   max-height: 125px;
+}
+/* line 19, sass/_member.scss */
+.tt-member-grid-thumbnail > div:nth-of-type(2) > p:first-of-type {
+  font-size: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

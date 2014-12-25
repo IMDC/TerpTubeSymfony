@@ -152,8 +152,28 @@ ul.pagination {
 }
 
 .tt-grid-thumbnail {
-  height: 225px;
+  min-height: 225px;
   cursor: pointer;
+
+  input:first-of-type[type='checkbox'] {
+    position: absolute;
+    margin: 4px;
+    display: block;
+    z-index: 1;
+  }
+
+  > div:first-of-type {
+    margin-bottom: 5px;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+
+    > div {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
 }
 
 .tt-list-table {
@@ -186,7 +206,7 @@ ul.pagination {
       > span:nth-of-type(1) {
         cursor: pointer;
 
-        & i.fa {
+        i.fa {
           vertical-align: middle;
           padding-right: 8px;
         }
@@ -203,4 +223,9 @@ ul.pagination {
       }
     }
   }
+}
+
+.tt-this-is-you {
+  font-size: 0.9em;
+  color: #aaa !important;
 }
