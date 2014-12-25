@@ -110,7 +110,7 @@ define([
             .done(function(data) {
                 //this.$container.replaceWith(data.html);
                 //var _self = this;
-                //_self = new PostView(this.controller.model, this.controller.options);
+                //_self = new PostView(this.controller, this.controller.options);
                 this.$container.after(data.html);
             }.bind(this))
             .fail(function() {
@@ -125,7 +125,7 @@ define([
             .done(function(data) {
                 this.$container.replaceWith(data.html);
                 var _self = this;
-                _self = new PostView(this.controller.model, this.controller.options);
+                _self = new PostView(this.controller, this.controller.options);
             }.bind(this));
     };
 
@@ -187,7 +187,7 @@ define([
                 if (!data.wasReplied) {
                     this.$container.replaceWith(data.html);
                     var _self = this;
-                    _self = new PostView(this.controller.model, this.controller.options);
+                    _self = new PostView(this.controller, this.controller.options);
                 }
             }.bind(this))
             .fail(function() {
@@ -205,7 +205,7 @@ define([
             .done(function(data) {
                 this.$container.replaceWith(data.html);
                 var _self = this;
-                _self = new PostView(this.controller.model, this.controller.options);
+                _self = new PostView(this.controller, this.controller.options);
             }.bind(this))
             .fail(function() {
                 this._toggleForm(false);
@@ -241,7 +241,7 @@ define([
             .done(function(data) {
                 this.$container.replaceWith(data.html);
                 var _self = this;
-                _self = new PostView(this.controller.model, this.controller.options);
+                _self = new PostView(this.controller, this.controller.options);
             }.bind(this));
     };
 

@@ -1,4 +1,6 @@
-define(['model/model'], function (Model) {
+define([
+    'model/model'
+], function (Model) {
     'use strict';
 
     var ViewView = function (controller, options) {
@@ -110,7 +112,7 @@ define(['model/model'], function (Model) {
     ViewView.prototype._toggleTemporal = function (disabled, keyPoint) {
         this.player.pause();
         this.playingKeyPoint = null;
-        if (!disabled && keyPoint && keyPoint.options.drawOnTimeLine) {
+        if (!disabled && keyPoint) {
             this.player.setPlayHeadImage('');
             this.player.seek(keyPoint.startTime);
             this.player.setAreaSelectionStartTime(keyPoint.startTime);
@@ -143,14 +145,12 @@ define(['model/model'], function (Model) {
                 keyPoint.paintHighlighted = true;
                 this.player.seek(keyPoint.startTime);
                 this.player.redrawKeyPoints = true;
-                this.player.repaint();
 
                 // clear the highlighted comment after 3 seconds
                 setTimeout((function () {
                     keyPoint.paintHighlightedTimeout = false;
                     keyPoint.paintHighlighted = false;
                     this.player.redrawKeyPoints = true;
-                    this.player.repaint();
                 }).bind(this), 3000);
             }
 
@@ -162,14 +162,14 @@ define(['model/model'], function (Model) {
                 // highlight the comment
                 keyPoint.paintHighlighted = true;
                 this.player.redrawKeyPoints = true;
-                this.player.repaint();
             } else {
                 if (!keyPoint.paintHighlightedTimeout) {
                     keyPoint.paintHighlighted = false;
                     this.player.redrawKeyPoints = true;
-                    this.player.repaint();
                 }
             }
+
+            this.player.repaint();
         }
     };
 

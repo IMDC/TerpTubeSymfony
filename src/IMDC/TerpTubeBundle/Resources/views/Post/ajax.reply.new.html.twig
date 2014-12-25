@@ -6,10 +6,10 @@
 <script type="text/javascript">
     require([
         'bootstrap',
-        'model/postModel', 'controller/postController', 'views/post',
+        'model/postModel', 'controller/postController', 'views/post/newView',
         'core/helper', 'main'
     ], function(bootstrap, PostModel, PostController, PostView, Helper) {
-        var $newPost = $(PostView.Binder.CONTAINER + "[data-pid={{ newPost.id }}]");
+        var $newPost = $(PostView.Binder.CONTAINER + '[data-pid="{{ newPost.id }}"]');
         bootstrap(
                 new PostModel({
                     id: $newPost.data("pid"),

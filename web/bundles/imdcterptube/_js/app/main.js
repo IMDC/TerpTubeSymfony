@@ -34,11 +34,13 @@ define([
     'views/group/editView',
     'views/group/manageView',
 
+    'views/post/newView',
+    'views/post/editView',
+    'views/post/viewView',
+
     'views/thread/newView',
     'views/thread/editView',
-    'views/thread/viewView',
-
-    'views/post'
+    'views/thread/viewView'
 ], function () {
     'use strict';
 
@@ -49,7 +51,7 @@ define([
     TerpTube.Controller.Forum = require('controller/forum');
     //TerpTube.Controller.Thread = require('controller/thread');
     //TerpTube.Controller.Post = require('controller/post');
-    TerpTube.Controller.Group = require('controller/group');
+    //TerpTube.Controller.Group = require('controller/group');
     TerpTube.Controller.Message = require('controller/message');
     TerpTube.Controller.Profile = require('controller/profile');
 

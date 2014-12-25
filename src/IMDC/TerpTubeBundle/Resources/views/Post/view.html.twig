@@ -58,45 +58,49 @@ _Post:view.html.twig
             </div>
             <!-- post tools -->
             <div class="col-md-1 pull-right">
-                <ul class="list-unstyled">
-                    {% if post.isTemporal %}
-                        <li><a class="post-timeline-keypoint" href="#" title="Jump to selected timeline region" data-pid="{{ post.id }}"><i class="fa fa-clock-o"></i></a></li>
-                    {% endif %}
-                    {% if post.author.id == app.user.id %}
-                        <li><a class="post-edit" href="#" title="Edit this post" data-pid="{{ post.id }}"><i class="fa fa-pencil"></i></a></li>
-                        <li><a href="#" title="Delete this post" data-toggle="modal" data-target=".post-delete-modal[data-pid={{ post.id }}]"><i class="fa fa-trash-o"></i></a></li>
-                    {% endif %}
-                </ul>
-                <div class="modal fade post-delete-modal" data-pid="{{ post.id }}">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                <h4 class="modal-title">Delete this post</h4>
-                            </div>
-                            <div class="modal-body text-center">
-                                <p>
-                                    This post will be permanently deleted.<br />
-                                    This action cannot be undone.<br />
-                                    Are you sure?
-                                </p>
-                            </div>
-                            <div class="modal-footer">
-                                <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
-                                <a class="btn btn-danger post-delete" data-pid="{{ post.id }}" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>
+                {% block post_tools %}
+                    <ul class="list-unstyled">
+                        {% if post.isTemporal %}
+                            <li><a class="post-timeline-keypoint" href="#" title="Jump to selected timeline region" data-pid="{{ post.id }}"><i class="fa fa-clock-o"></i></a></li>
+                        {% endif %}
+                        {% if post.author.id == app.user.id %}
+                            <li><a class="post-edit" href="#" title="Edit this post" data-pid="{{ post.id }}"><i class="fa fa-pencil"></i></a></li>
+                            <li><a href="#" title="Delete this post" data-toggle="modal" data-target=".post-delete-modal[data-pid={{ post.id }}]"><i class="fa fa-trash-o"></i></a></li>
+                        {% endif %}
+                    </ul>
+                    <div class="modal fade post-delete-modal" data-pid="{{ post.id }}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title">Delete this post</h4>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p>
+                                        This post will be permanently deleted.<br />
+                                        This action cannot be undone.<br />
+                                        Are you sure?
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
+                                    <a class="btn btn-danger post-delete" data-pid="{{ post.id }}" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endblock post_tools %}
             </div>
         </div>
         {% if not isPostReply %}
             <!-- post reply -->
-            <div class="row">
-                <div class="col-md-1 col-md-offset-11">
-                    <p><a class="post-new" href="#" title="Reply to this post" data-pid="{{ post.id }}"><i class="fa fa-reply fa-rotate-180 fa-lg"></i></a></p>
+            {% block post_reply %}
+                <div class="row">
+                    <div class="col-md-1 col-md-offset-11">
+                        <p><a class="post-new" href="#" title="Reply to this post" data-pid="{{ post.id }}"><i class="fa fa-reply fa-rotate-180 fa-lg"></i></a></p>
+                    </div>
                 </div>
-            </div>
+            {% endblock %}
         {% endif %}
     </div>
 </div>

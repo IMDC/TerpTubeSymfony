@@ -1,0 +1,22 @@
+.tt-member-thumbnail {
+  $img-height: 125px;
+
+  min-height: 255px;
+
+  > div.row:first-of-type > div:first-of-type {
+    height: $img-height;
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+
+    > div {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+
+      img {
+        max-height: $img-height;
+      }
+    }
+  }
+}

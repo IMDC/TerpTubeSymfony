@@ -1,0 +1,77 @@
+{% macro _message(user, member, button) %}
+    <a {% if button %}class="btn btn-default" {% endif %}
+       href="{{ path('imdc_message_new', {'userid': member.username}) }}"
+       title="Send a message to {{ member.username }}">
+        <i class="fa fa-envelope-o"></i>
+    </a>
+{% endmacro %}
+
+{% macro _mentor(user, member, button) %}
+    {% if user.isUserOnMentorList(member) %}
+        {% if not button %}
+            <i class="fa fa-star" title="This user is your mentor"></i>
+        {% endif %}
+    {% else %}
+        <a {% if button %}class="btn btn-default" {% endif %}
+           href="{{ path('imdc_invitation_mentor', {'id': member.id}) }}"
+           title="Invite user to be your mentor">
+            <i class="fa fa-inbox"></i>
+        </a>
+    {% endif %}
+{% endmacro %}
+
+{% macro _mentee(user, member, button) %}
+    {% if user.isUserOnMenteeList(member) %}
+        {% if not button %}
+            <i class="fa fa-star" title="This user is your mentee"></i>
+        {% endif %}
+    {% else %}
+        <a {% if button %}class="btn btn-default" {% endif %}
+           href="{{ path('imdc_invitation_mentee', {'id': member.id}) }}"
+           title="Invite user to be your mentee">
+            <i class="fa fa-star-o"></i>
+        </a>
+    {% endif %}
+{% endmacro %}
+
+{% macro _friend(user, member, button) %}
+    {% if user.isUserOnFriendsList(member) %}
+        {% if not button %}
+            <i class="fa fa-minus" title="This user is your friend"></i>
+        {% endif %}
+    {% else %}
+        <a {% if button %}class="btn btn-default" {% endif %}
+           href="{{ path('imdc_member_friend_add', {'userid': member.id}) }}"
+           title="Click to add {{ member.username }} to your friends list">
+            <i class="fa fa-plus"></i>
+        </a>
+    {% endif %}
+{% endmacro %}
+
+{% macro connect_tools(user, member, style) %}
+    {% import _self as _member %}
+
+    {% set button = style == 'button' %}
+    {% set message = _member._message(user, member, button) %}
+    {% set mentor = _member._mentor(user, member, button) %}
+    {% set mentee = _member._mentee(user, member, button) %}
+    {% set friend = _member._friend(user, member, button) %}
+
+    {% if style == 'button' %}
+        {% if user.id != member.id %}
+            {{ message }}
+            {{ mentor }}
+            {{ mentee }}
+            {{ friend }}
+        {% endif %}
+    {% else %}
+        <ul class="list-unstyled list-inline">
+            {% if user.id != member.id %}
+                <li>{{ message }}</li>
+                <li>{{ mentor }}</li>
+                <li>{{ mentee }}</li>
+                <li>{{ friend }}</li>
+            {% endif %}
+        </ul>
+    {% endif %}
+{% endmacro %}

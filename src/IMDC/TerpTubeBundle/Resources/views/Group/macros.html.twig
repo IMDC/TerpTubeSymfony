@@ -10,6 +10,8 @@
 {% endmacro %}
 
 {% macro listUsersList(users) %}
+    {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
+
     <div class="table-responsive">
         <table class="table table-hover tt-list-table">
             <thead>
@@ -23,15 +25,14 @@
             <tbody>
                 {% if users|length > 0 %}
                     {% for user in users %}
-                        {% set isMe = user == app.user %}
                         <tr>
-                            <td><input type="checkbox" data-uid="{{ user.id }}" {% if isMe %}disabled{% endif %} /></td>
+                            <td><input type="checkbox" data-uid="{{ user.id }}" {% if user == app.user %}disabled{% endif %} /></td>
                             <td>
-                                <span>{% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}{% if isMe %} <strong>(me)</strong>{% endif %}</span>
-                                <span>{% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' with {'member': user} %}</span>
+                                <span>{% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}{% if user == app.user %} <strong>(me)</strong>{% endif %}</span>
+                                <span>{{ _member.connect_tools(app.user, user, 'button') }}</span>
                             </td>
                             <td>{{ user.postCount }}</td>
-                            <td>{{ time_diff(user.joinDate) }}</td>
+                            <td>{{ user.joinDate|date('M j Y') }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
@@ -45,11 +46,13 @@
 {% endmacro %}
 
 {% macro listUsersGrid(users) %}
-    {% if users|length > 0 %}
-        {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': users} %}
-    {% else %}
-        <p class="text-center" style="margin-bottom: 20px;">None found</p>
-    {% endif %}
+    <div class="tt-grid-div">
+        {% if users|length > 0 %}
+            {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': users} %}
+        {% else %}
+            <p class="text-center" style="margin-bottom: 20px;">None found</p>
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro controls(style, groupId) %}

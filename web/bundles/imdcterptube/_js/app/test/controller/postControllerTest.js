@@ -68,6 +68,41 @@ define([
             assert.equal(keyPointEvent.action, 'add', 'key point event action should equal');
         });
 
+        it('should have dispatched each specified key point event', function () {
+            var events = ['click', 'dblclick', 'mouseenter', 'mouseleave'];
+            for (var e in events) {
+                controller.interactKeyPoint(e);
+
+                assert.equal(keyPointEvent.type, KeyPointService.Event.TIMELINE, 'key point event type should equal');
+                assert.equal(keyPointEvent.keyPoint.id, post.get('id'), 'key point id should equal post id');
+                assert.equal(keyPointEvent.action, e, 'key point event action should equal');
+            }
+        });
+
+        it('should have dispatched "edit" key point event', function () {
+            controller.editKeyPoint();
+
+            assert.equal(keyPointEvent.type, KeyPointService.Event.TIMELINE, 'key point event type should equal');
+            assert.equal(keyPointEvent.keyPoint.id, post.get('id'), 'key point id should equal post id');
+            assert.equal(keyPointEvent.action, 'edit', 'key point event action should equal');
+        });
+
+        it('should have dispatched "cancel" key point event', function () {
+            controller.cancelKeyPoint();
+
+            assert.equal(keyPointEvent.type, KeyPointService.Event.TIMELINE, 'key point event type should equal');
+            assert.equal(keyPointEvent.keyPoint.id, post.get('id'), 'key point id should equal post id');
+            assert.equal(keyPointEvent.action, 'cancel', 'key point event action should equal');
+        });
+
+        it('should have deregistered and dispatched "remove" key point event', function () {
+            controller.removeKeyPoint();
+
+            assert.equal(keyPointEvent.type, KeyPointService.Event.TIMELINE, 'key point event type should equal');
+            assert.equal(keyPointEvent.keyPoint.id, post.get('id'), 'key point id should equal post id');
+            assert.equal(keyPointEvent.action, 'remove', 'key point event action should equal');
+        });
+
         it('should not have redirected', function () {
             $.mockjax({
                 url: Routing.generate('imdc_post_new', {threadId: post.get('threadId'), pid: post.get('id')}),
@@ -105,7 +140,7 @@ define([
                 });
         });
 
-        it('should be editing', function () {
+        it('should not have edited', function () {
             $.mockjax({
                 url: Routing.generate('imdc_post_edit', {pid: post.get('id')}),
                 responseText: {
@@ -116,14 +151,17 @@ define([
 
             return controller.edit()
                 .done(function (data) {
-                    assert.isTrue(controller.options.editing, 'controller "editing" should be true');
+                    assert.isObject(data, 'result should be an object');
+                    assert.property(data, 'wasEdited', 'result should have key:wasEdited');
+
+                    assert.isFalse(data.wasEdited, 'key:wasEdited should be false');
                 })
                 .fail(function () {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
         });
 
-        it('should have dispatched "cancel" key point event', function () {
+        it('should have edited', function () {
             $.mockjax({
                 url: Routing.generate('imdc_post_edit', {pid: post.get('id')}),
                 responseText: {
@@ -135,23 +173,14 @@ define([
 
             return controller.edit()
                 .done(function (data) {
-                    assert.equal(keyPointEvent.type, KeyPointService.Event.TIMELINE, 'key point event type should equal');
-                    assert.equal(keyPointEvent.keyPoint.id, post.get('id'), 'key point id should equal post id');
-                    assert.equal(keyPointEvent.action, 'cancel', 'key point event action should equal');
+                    assert.isObject(data, 'result should be an object');
+                    assert.property(data, 'wasEdited', 'result should have key:wasEdited');
 
-                    assert.isFalse(controller.options.editing, 'controller "editing" should be false');
+                    assert.isTrue(data.wasEdited, 'key:wasEdited should be true');
                 })
                 .fail(function () {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
-        });
-
-        it('should have deregistered and dispatched "remove" key point event', function () {
-            controller.removeKeyPoint();
-
-            assert.equal(keyPointEvent.type, KeyPointService.Event.TIMELINE, 'key point event type should equal');
-            assert.equal(keyPointEvent.keyPoint.id, post.get('id'), 'key point id should equal post id');
-            assert.equal(keyPointEvent.action, 'remove', 'key point event action should equal');
         });
 
         it('should not have deregistered and dispatched "remove" key point event via delete', function () {

@@ -18,33 +18,34 @@ define([
         this.videoSpeed = 0;
 
         // KeyPointService
-        this.bind__onTimelineKeyPoint = this._onTimelineKeyPoint.bind(this);
+        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
 
         $tt._instances.push(this);
     };
 
     Thread.TAG = 'Thread';
 
-    Thread.prototype._onTimelineKeyPoint = function (e) {
-        if (e.action == 'add') {
-            this.model.removeKeyPoint(e.keyPoint);
+    Thread.prototype._onKeyPointEvent = function (e) {
+        if (e.type != KeyPointService.Event.TIMELINE)
+            return;
 
-            if (e.keyPoint.startTime && e.keyPoint.endTime)
+        if (e.action == 'add') {
+            //if (e.keyPoint.startTime && e.keyPoint.endTime)
                 this.model.addKeyPoint(e.keyPoint);
         }
 
         if (e.action == 'edit') {
-            this.model.removeKeyPoint(e.keyPoint, false);
+            this.model.setKeyPoint(e.keyPoint.id, 'options.drawOnTimeLine', false);
             this.model.setKeyPoint(e.keyPoint.id, 'isEditing', true);
         }
 
-        if (e.action == 'remove') {
+        if (e.action == 'cancel' || e.action == 'remove') {
             this.model.setKeyPoint(e.keyPoint.id, 'isEditing', false);
-            this.model.removeKeyPoint(e.keyPoint);
+            this.model.setKeyPoint(e.keyPoint.id, 'options.drawOnTimeLine', true);
         }
 
-        if (e.action == 'cancel') {
-            this.model.setKeyPoint(e.keyPoint.id, 'isEditing', false);
+        if (e.action == 'remove') {
+            this.model.removeKeyPoint(e.keyPoint.id);
         }
 
         if (e.action == 'click') {
@@ -67,7 +68,7 @@ define([
     };
 
     Thread.prototype.onViewLoaded = function () {
-        this.keyPointService.subscribe('all', this.bind__onTimelineKeyPoint);
+        this.keyPointService.subscribe('all', this.bind__onKeyPointEvent);
     };
 
     Thread.prototype.updateKeyPointDuration = function (duration) {
