@@ -106,7 +106,7 @@ define([
         this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
         this._getFormField('content').val('');
 
-        this.controller.cancelKeyPoint();
+        this.controller.editKeyPoint({cancel: true});
     };
 
     NewView.prototype._onClickCancelNew = function (e) {

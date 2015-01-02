@@ -21,13 +21,13 @@ define([
             ];
             args = {foo: 'bar'};
             callback = function (e) {
-                callbackResult += e.foo;
+                callbackResult = e;
             };
             keyPointService = new KeyPointService();
         });
 
         beforeEach(function () {
-            callbackResult = '';
+            callbackResult = null;
         });
 
         it('should have returned single key point key', function () {
@@ -64,16 +64,40 @@ define([
             expect(_.size(keyPointService.subscriptions)).to.equal(0);
         });
 
-        it('should have dispatched single key point with args', function () {
+        it('should not have dispatched for unknown key point', function () {
             keyPointService.register(keyPoints[0]);
             keyPointService.subscribe(keyPoints[0].id, callback);
 
-            keyPointService.dispatch(keyPoints[0].id, KeyPointService.Event.TIMELINE, args);
+            keyPointService.dispatch('unknown key point', KeyPointService.Event.CLICK, args);
 
             keyPointService.unsubscribe(keyPoints[0].id, callback);
             keyPointService.deregister(keyPoints[0].id);
 
-            expect(callbackResult).to.equal(args.foo);
+            expect(callbackResult).to.be.null();
+        });
+
+        it('should not have dispatched for unknown event', function () {
+            keyPointService.register(keyPoints[0]);
+            keyPointService.subscribe(keyPoints[0].id, callback);
+
+            keyPointService.dispatch(keyPoints[0].id, 'unknown event', args);
+
+            keyPointService.unsubscribe(keyPoints[0].id, callback);
+            keyPointService.deregister(keyPoints[0].id);
+
+            expect(callbackResult).to.be.null();
+        });
+
+        it('should have dispatched single key point with args', function () {
+            keyPointService.register(keyPoints[0]);
+            keyPointService.subscribe(keyPoints[0].id, callback);
+
+            keyPointService.dispatch(keyPoints[0].id, KeyPointService.Event.CLICK, args);
+
+            keyPointService.unsubscribe(keyPoints[0].id, callback);
+            keyPointService.deregister(keyPoints[0].id);
+
+            expect(callbackResult.foo).to.equal(args.foo);
         });
 
         it('should have dispatched all key points with args', function () {
@@ -81,13 +105,13 @@ define([
             keyPointService.register(keyPoints[1]);
             keyPointService.subscribe('all', callback);
 
-            keyPointService.dispatch('all', KeyPointService.Event.TIMELINE, args);
+            keyPointService.dispatch('all', KeyPointService.Event.CLICK, args);
 
             keyPointService.unsubscribe('all', callback);
             keyPointService.deregister(keyPoints[1].id);
             keyPointService.deregister(keyPoints[0].id);
 
-            expect(callbackResult).to.equal(args.foo + args.foo);
+            expect(callbackResult.foo).to.equal(args.foo);
         });
 
         after(function () {

@@ -17,14 +17,15 @@ define([
         $tt._services = [];
         $tt._instances = [];
 
-        var group;
+        var model;
         var pageUrl;
         var controller;
 
         before(function () {
-            group = {id: 10};
-            controller = new GroupController(group, {});
+            model = {id: 10};
+            controller = new GroupController(model, {});
             controller.onViewLoaded();
+            $.mockjaxSettings.logging = false;
 
             // override to prevent page reloads
             window.location.assign = function (url) {
@@ -39,7 +40,7 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: group.id}),
+                url: Routing.generate('imdc_group_delete', {groupId: model.id}),
                 responseText: {
                     wasDeleted: false
                 }
@@ -57,10 +58,10 @@ define([
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: group.id}),
+                url: Routing.generate('imdc_group_delete', {groupId: model.id}),
                 responseText: {
                     wasDeleted: true,
-                    redirectUrl: Common.BASE_URL + '/group/' + group.id
+                    redirectUrl: Common.BASE_URL + '/groups'
                 }
             });
 
@@ -74,7 +75,7 @@ define([
         });
 
         after(function () {
-            group = null;
+            model = null;
             pageUrl = null;
             controller = null;
         });

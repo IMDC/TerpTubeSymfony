@@ -79,7 +79,7 @@ define([
     ViewView.prototype._onMouseOverKeyPoint = function (e, keyPoint, coords) {
         console.log("%s: %s- keyPoint=%o, coords=%o", ViewView.TAG, Player.EVENT_KEYPOINT_MOUSE_OVER, keyPoint, coords);
 
-        this.controller.updateKeyPointHover(keyPoint.id, {isMouseOver: true});
+        this.controller.hoverKeyPoint(keyPoint.id, {isMouseOver: true});
 
         // avoid animating when key points are overlapped and multiple invokes of this event are called
         if (!$("#threadReplyContainer").is(':animated')) {
@@ -92,13 +92,13 @@ define([
     ViewView.prototype._onMouseOutKeyPoint = function (e, keyPoint) {
         console.log("%s: %s- keyPoint=%o", ViewView.TAG, Player.EVENT_KEYPOINT_MOUSE_OUT, keyPoint);
 
-        this.controller.updateKeyPointHover(keyPoint.id, {isMouseOver: false});
+        this.controller.hoverKeyPoint(keyPoint.id, {isMouseOver: false});
     };
 
     ViewView.prototype._onClickKeyPoint = function (e, keyPoint, coords) {
         console.log("%s: %s- keyPoint=%o, coords=%o", ViewView.TAG, Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
 
-        this.controller.updateKeyPointClick(keyPoint.id);
+        this.controller.clickKeyPoint(keyPoint.id);
     };
 
     ViewView.prototype._onEndKeyPoint = function (e, keyPoint) {
@@ -130,46 +130,48 @@ define([
         this.controller.updateKeyPointDuration(this.options.player.mediaElement[0].duration);
 
         // check if a key point was changed
-        if (e.keyPath && e.keyPath.indexOf('keyPoints.') == 0) { // trailing dot is for an element of the array/object
+        if (e.keyPath.indexOf('keyPoints.') == 0) { // trailing dot is for an element of the array/object
             // get the key point, not just the property of the key point that changed
             var keyPoint = e.model.get(e.keyPath.substr(0, e.keyPath.lastIndexOf('.')));
 
-            if (keyPoint.isEditing) {
-                this._toggleTemporal(!(keyPoint.startTime && keyPoint.endTime), keyPoint);
-            } else {
-                this._toggleTemporal(true);
-            }
-
-            if (keyPoint.isSeeking) {
-                keyPoint.paintHighlightedTimeout = true;
-                keyPoint.paintHighlighted = true;
-                this.player.seek(keyPoint.startTime);
-                this.player.redrawKeyPoints = true;
-
-                // clear the highlighted comment after 3 seconds
-                setTimeout((function () {
-                    keyPoint.paintHighlightedTimeout = false;
-                    keyPoint.paintHighlighted = false;
-                    this.player.redrawKeyPoints = true;
-                }).bind(this), 3000);
-            }
-
-            if (keyPoint.isPlaying) {
-                this.playingKeyPoint = keyPoint;
-                this.player.seek(keyPoint.startTime);
-                this.player.play();
-            } else if (keyPoint.isHovering) {
-                // highlight the comment
-                keyPoint.paintHighlighted = true;
-                this.player.redrawKeyPoints = true;
-            } else {
-                if (!keyPoint.paintHighlightedTimeout) {
-                    keyPoint.paintHighlighted = false;
-                    this.player.redrawKeyPoints = true;
+            if (keyPoint instanceof KeyPoint) {
+                if (keyPoint.isEditing) {
+                    this._toggleTemporal(!(keyPoint.startTime && keyPoint.endTime), keyPoint);
+                } else {
+                    this._toggleTemporal(true);
                 }
-            }
 
-            this.player.repaint();
+                if (keyPoint.isSeeking) {
+                    keyPoint.paintHighlightedTimeout = true;
+                    keyPoint.paintHighlighted = true;
+                    this.player.seek(keyPoint.startTime);
+                    this.player.redrawKeyPoints = true;
+
+                    // clear the highlighted comment after 3 seconds
+                    setTimeout((function () {
+                        keyPoint.paintHighlightedTimeout = false;
+                        keyPoint.paintHighlighted = false;
+                        this.player.redrawKeyPoints = true;
+                    }).bind(this), 3000);
+                }
+
+                if (keyPoint.isPlaying) {
+                    this.playingKeyPoint = keyPoint;
+                    this.player.seek(keyPoint.startTime);
+                    this.player.play();
+                } else if (keyPoint.isHovering) {
+                    // highlight the comment
+                    keyPoint.paintHighlighted = true;
+                    this.player.redrawKeyPoints = true;
+                } else {
+                    if (!keyPoint.paintHighlightedTimeout) {
+                        keyPoint.paintHighlighted = false;
+                        this.player.redrawKeyPoints = true;
+                    }
+                }
+
+                this.player.repaint();
+            }
         }
     };
 

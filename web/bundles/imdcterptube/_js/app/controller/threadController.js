@@ -26,44 +26,40 @@ define([
     Thread.TAG = 'Thread';
 
     Thread.prototype._onKeyPointEvent = function (e) {
-        if (e.type != KeyPointService.Event.TIMELINE)
-            return;
+        /*if (!e.keyPoints)
+            return; // only 'all' dispatches wanted*/
 
-        if (e.action == 'add') {
-            //if (e.keyPoint.startTime && e.keyPoint.endTime)
-                this.model.addKeyPoint(e.keyPoint);
-        }
-
-        if (e.action == 'edit') {
-            this.model.setKeyPoint(e.keyPoint.id, 'options.drawOnTimeLine', false);
-            this.model.setKeyPoint(e.keyPoint.id, 'isEditing', true);
-        }
-
-        if (e.action == 'cancel' || e.action == 'remove') {
-            this.model.setKeyPoint(e.keyPoint.id, 'isEditing', false);
-            this.model.setKeyPoint(e.keyPoint.id, 'options.drawOnTimeLine', true);
-        }
-
-        if (e.action == 'remove') {
-            this.model.removeKeyPoint(e.keyPoint.id);
-        }
-
-        if (e.action == 'click') {
-            this.model.setKeyPoint(e.keyPoint.id, 'isSeeking', true);
-            this.model.setKeyPoint(e.keyPoint.id, 'isSeeking', false, false);
-        }
-
-        if (e.action == 'dblclick') {
-            this.model.setKeyPoint(e.keyPoint.id, 'isPlaying', true);
-            this.model.setKeyPoint(e.keyPoint.id, 'isPlaying', false, false);
-        }
-
-        if (e.action == 'mouseenter') {
-            this.model.setKeyPoint(e.keyPoint.id, 'isHovering', true);
-        }
-
-        if (e.action == 'mouseleave') {
-            this.model.setKeyPoint(e.keyPoint.id, 'isHovering', false);
+        switch (e.type) {
+            case KeyPointService.Event.ADD:
+                //if (e.keyPoint.startTime && e.keyPoint.endTime)
+                    this.model.addKeyPoint(e.keyPoint);
+                break;
+            case KeyPointService.Event.HOVER:
+                this.model.setKeyPointProperty(e.keyPoint.id, 'isHovering', e.isMouseOver);
+                break;
+            case KeyPointService.Event.CLICK:
+                var prop = e.isDblClick ? 'isPlaying' : 'isSeeking';
+                this.model.setKeyPointProperty(e.keyPoint.id, prop, true);
+                setTimeout(function () {
+                    this.model.setKeyPointProperty(e.keyPoint.id, prop, false, false);
+                }.bind(this), 100);
+                break;
+            case KeyPointService.Event.EDIT:
+                if (!e.cancel) {
+                    this.model.setKeyPointProperty(e.keyPoint.id, 'options.drawOnTimeLine', false);
+                    this.model.setKeyPointProperty(e.keyPoint.id, 'isEditing', true);
+                    break;
+                }
+                // do not break;
+            case KeyPointService.Event.REMOVE:
+                this.model.setKeyPointProperty(e.keyPoint.id, 'isEditing', false);
+                this.model.setKeyPointProperty(e.keyPoint.id, 'options.drawOnTimeLine', true);
+                if (e.type == KeyPointService.Event.REMOVE) {
+                    setTimeout(function () {
+                        this.model.removeKeyPoint(e.keyPoint.id);
+                    }.bind(this), 100);
+                }
+                break;
         }
     };
 
@@ -86,11 +82,11 @@ define([
         });
     };
 
-    Thread.prototype.updateKeyPointHover = function (keyPointId, args) {
+    Thread.prototype.hoverKeyPoint = function (keyPointId, args) {
         this.keyPointService.dispatch(keyPointId, KeyPointService.Event.HOVER, args);
     };
 
-    Thread.prototype.updateKeyPointClick = function (keyPointId) {
+    Thread.prototype.clickKeyPoint = function (keyPointId) {
         this.keyPointService.dispatch(keyPointId, KeyPointService.Event.CLICK);
     };
 
@@ -112,7 +108,7 @@ define([
         return ThreadFactory.delete(this.model)
             .done(function (data) {
                 window.location.assign(data.redirectUrl);
-            }.bind(this));
+            });
     };
 
     return Thread;

@@ -8,11 +8,13 @@ define(['underscore'], function () {
     };
 
     KeyPointService.Event = {
-        TIMELINE: 'eventTimeline',
+        ADD: 'eventAdd',
         DURATION: 'eventDuration',
         SELECTION_TIMES: 'eventSelectionTimes',
         HOVER: 'eventHover',
-        CLICK: 'eventClick'
+        CLICK: 'eventClick',
+        EDIT: 'eventEdit',
+        REMOVE: 'eventRemove'
     };
 
     KeyPointService._kIndex = function (keyPointId) {
@@ -27,14 +29,14 @@ define(['underscore'], function () {
 
     KeyPointService.prototype.deregister = function (keyPointId) {
         var kIndex = KeyPointService._kIndex(keyPointId);
-        if (_.contains(this.keyPoints, kIndex)) {
+        if (_.has(this.keyPoints, kIndex)) {
             this.keyPoints.splice(kIndex, 1);
         }
     };
 
     KeyPointService.prototype.subscribe = function (keyPointId, callback) {
         var kIndex = KeyPointService._kIndex(keyPointId);
-        if (!_.contains(this.subscriptions, kIndex)) {
+        if (!_.has(this.subscriptions, kIndex)) {
             this.subscriptions[kIndex] = [];
         }
 
@@ -45,7 +47,7 @@ define(['underscore'], function () {
 
     KeyPointService.prototype.unsubscribe = function (keyPointId, callback) {
         var kIndex = KeyPointService._kIndex(keyPointId);
-        if (_.contains(this.subscriptions, kIndex)) {
+        if (_.has(this.subscriptions, kIndex)) {
             var callbacks = this.subscriptions[kIndex];
             if (_.contains(callbacks, callback)) {
                 var index = _.indexOf(callbacks, callback);
@@ -57,8 +59,8 @@ define(['underscore'], function () {
     KeyPointService.prototype.dispatch = function (keyPointId, event, args) {
         var kIndex = KeyPointService._kIndex(keyPointId);
 
-        if ((kIndex !== 'all' || !_.contains(this.keyPoints, kIndex))
-            && !_.contains(KeyPointService.Event, event))
+        if ((kIndex !== 'all' && !_.has(this.keyPoints, kIndex))
+            || !_.contains(KeyPointService.Event, event))
             return;
 
         var subscriptions = kIndex === 'all' ? _.values(this.subscriptions) : [this.subscriptions[kIndex]];

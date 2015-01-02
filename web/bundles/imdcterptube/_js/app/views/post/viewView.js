@@ -7,7 +7,7 @@ define([
     var ViewView = function (controller, options) {
         this.controller = controller;
 
-        this.bind__onClickHoverTimelineKeyPoint = this._onClickHoverTimelineKeyPoint.bind(this);
+        this.bind__onClickHoverKeyPoint = this._onClickHoverKeyPoint.bind(this);
         this.bind__onClickNew = this._onClickNew.bind(this);
         this.bind__onClickEdit = this._onClickEdit.bind(this);
         this.bind__onClickDelete = this._onClickDelete.bind(this);
@@ -20,11 +20,11 @@ define([
         this.$deleteModal = this.$container.find(ViewView.Binder.DELETE_MODAL);
         this.$delete = this.$container.find(ViewView.Binder.DELETE);
 
-        this.$timelineKeyPoint.on('click', this.bind__onClickHoverTimelineKeyPoint);
-        this.$timelineKeyPoint.on('dblclick', this.bind__onClickHoverTimelineKeyPoint);
+        this.$timelineKeyPoint.on('click', this.bind__onClickHoverKeyPoint);
+        this.$timelineKeyPoint.on('dblclick', this.bind__onClickHoverKeyPoint);
         this.$timelineKeyPoint.hover(
-            this.bind__onClickHoverTimelineKeyPoint,
-            this.bind__onClickHoverTimelineKeyPoint);
+            this.bind__onClickHoverKeyPoint,
+            this.bind__onClickHoverKeyPoint);
         this.$new.on('click', this.bind__onClickNew);
         this.$edit.on('click', this.bind__onClickEdit);
         this.$delete.on('click', this.bind__onClickDelete);
@@ -48,11 +48,22 @@ define([
     // clicking the clock icon will move the density bar to the comments time
     // and highlight the comment on the density bar
     // mousing over the clock icon should highlight the comment on the density bar
-    ViewView.prototype._onClickHoverTimelineKeyPoint = function (e) {
-        if (e && e.type == 'click')
-            e.preventDefault();
-
-        this.controller.interactKeyPoint(e.type);
+    ViewView.prototype._onClickHoverKeyPoint = function (e) {
+        switch (e.type) {
+            case 'mouseenter':
+            case 'mouseleave':
+                this.controller.hoverKeyPoint({
+                    isMouseOver: e.type == 'mouseenter'
+                });
+                break;
+            case 'click':
+            case 'dblclick':
+                e.preventDefault();
+                this.controller.clickKeyPoint({
+                    isDblClick: e.type == 'dblclick'
+                });
+                break;
+        }
     };
 
     ViewView.prototype._onClickNew = function (e) {
@@ -78,7 +89,7 @@ define([
                 var _self = this;
                 _self = new EditView(this.controller, this.controller.options);
                 this.controller.onViewLoaded();
-                this.controller.editKeyPoint();
+                this.controller.editKeyPoint({cancel: false});
             }.bind(this));
     };
 
@@ -112,8 +123,8 @@ define([
             }.bind(this));
     };
 
-    ViewView.prototype._renderTimelineKeyPoint = function (startTime, endTime, videoDuration) {
-        console.log('%s: %s', ViewView.TAG, '_renderTimelineKeyPoint');
+    ViewView.prototype._renderKeyPoint = function (startTime, endTime, videoDuration) {
+        console.log('%s: %s', ViewView.TAG, '_renderKeyPoint');
 
         var startTimePercentage = ((100 * startTime) / videoDuration).toFixed(2);
         var endTimePercentage = ((100 * endTime) / videoDuration).toFixed(2);
@@ -125,7 +136,7 @@ define([
         });
     };
 
-    ViewView.prototype._onHoverKeyPoint = function (isHovering) {
+    ViewView.prototype._hoverKeyPoint = function (isHovering) {
         if (isHovering) {
             this.$container.addClass('tt-post-container-highlight');
         } else {
@@ -133,7 +144,7 @@ define([
         }
     };
 
-    ViewView.prototype._onClickKeyPoint = function (isPlaying) {
+    ViewView.prototype._clickKeyPoint = function (isPlaying) {
         var video = this.$container.find('video')[0];
         if (video && isPlaying) {
             video.currentTime = 0;
@@ -142,15 +153,15 @@ define([
     };
 
     ViewView.prototype._onModelChange = function (e) {
-        this._renderTimelineKeyPoint(
+        this._renderKeyPoint(
             e.model.get('keyPoint.startTime', ''),
             e.model.get('keyPoint.endTime', ''),
             e.model.get('keyPoint.videoDuration', '')
         );
-        this._onHoverKeyPoint(
+        this._hoverKeyPoint(
             e.model.get('keyPoint.isHovering', false)
         );
-        this._onClickKeyPoint(
+        this._clickKeyPoint(
             e.model.get('keyPoint.isPlaying', false)
         );
     };

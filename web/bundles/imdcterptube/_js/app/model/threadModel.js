@@ -13,10 +13,10 @@ define(['model/model', 'extra', 'underscore'], function (Model) {
         this.removeKeyPoint(keyPoint.id);
 
         this.data.keyPoints.push(keyPoint);
-        this._dispatch(Model.Event.CHANGE);
+        this._dispatch(Model.Event.CHANGE, 'keyPoints.' + (this.data.keyPoints.length - 1));
     };
 
-    ThreadModel.prototype.setKeyPoint = function (keyPointId, keyPath, value, doDispatch) {
+    ThreadModel.prototype.setKeyPointProperty = function (keyPointId, keyPath, value, doDispatch) {
         for (var index in this.data.keyPoints) {
             if (this.data.keyPoints[index].id == keyPointId) {
                 this.set('keyPoints.' + index + '.' + keyPath, value, doDispatch);
@@ -29,7 +29,7 @@ define(['model/model', 'extra', 'underscore'], function (Model) {
         for (var index in this.data.keyPoints) {
             if (this.data.keyPoints[index].id == keyPointId) {
                 this.data.keyPoints.splice(index, 1);
-                this._dispatch(Model.Event.CHANGE);
+                this._dispatch(Model.Event.CHANGE, 'keyPoints');
                 return;
             }
         }

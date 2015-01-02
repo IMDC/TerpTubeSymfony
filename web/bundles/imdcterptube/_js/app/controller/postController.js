@@ -40,36 +40,42 @@ define([
                 this.model.set('keyPoint.isHovering', e.isMouseOver);
                 break;
             case KeyPointService.Event.CLICK:
-                this.model.set('keyPoint.isPlaying', true);
-                this.model.set('keyPoint.isPlaying', false, false);
+                var prop = 'keyPoint.' + (e.isDblClick ? 'isPlaying' : 'isSeeking');
+                this.model.set(prop, true);
+                setTimeout(function () {
+                    this.model.set(prop, false, false);
+                }.bind(this), 100);
                 break;
         }
     };
 
     Post.prototype.onViewLoaded = function () {
+        this.addKeyPoint();
+    };
+
+    Post.prototype.addKeyPoint = function () {
         var keyPoint = this.model.get('keyPoint');
         this.keyPointService.register(keyPoint);
         this.keyPointService.subscribe(keyPoint.id, this.bind__onKeyPointEvent);
-        this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.TIMELINE, {
-            action: 'add'
-        });
+        this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.ADD);
     };
 
-    Post.prototype.interactKeyPoint = function (eventType) {
-        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.TIMELINE, {action: eventType});
+    Post.prototype.hoverKeyPoint = function (args) {
+        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.HOVER, args);
     };
 
-    Post.prototype.editKeyPoint = function () {
-        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.TIMELINE, {action: 'edit'});
+    Post.prototype.clickKeyPoint = function (args) {
+        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.CLICK, args);
     };
 
-    Post.prototype.cancelKeyPoint = function () {
-        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.TIMELINE, {action: 'cancel'});
+    Post.prototype.editKeyPoint = function (args) {
+        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.EDIT, args);
     };
 
     Post.prototype.removeKeyPoint = function () {
         var keyPoint = this.model.get('keyPoint');
-        this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.TIMELINE, {action: 'remove'});
+        this.keyPointService.dispatch(keyPoint.id, KeyPointService.Event.REMOVE);
+        this.keyPointService.unsubscribe(keyPoint.id, this.bind__onKeyPointEvent);
         this.keyPointService.deregister(keyPoint.id);
     };
 
@@ -79,21 +85,21 @@ define([
                 if (data.wasReplied) {
                     window.location.replace(data.redirectUrl);
                 }
-            }.bind(this));
+            });
     };
 
     Post.prototype.edit = function (form) {
         return PostFactory.edit(this.model, form)
             .done(function (data) {
 
-            }.bind(this));
+            });
     };
 
     Post.prototype.view = function () {
         return PostFactory.view(this.model)
             .done(function (data) {
 
-            }.bind(this));
+            });
     };
 
     Post.prototype.delete = function () {

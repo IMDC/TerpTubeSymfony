@@ -11,7 +11,7 @@ define([
         var callbackResult;
         var callback;
         var data;
-        var post;
+        var model;
 
         before(function () {
             callback = function (e) {
@@ -21,7 +21,7 @@ define([
                 id: '0' + Math.floor((Math.random() * 100000) + 1),
                 threadId: 17
             };
-            post = new PostModel(data);
+            model = new PostModel(data);
         });
 
         beforeEach(function () {
@@ -29,14 +29,14 @@ define([
         });
 
         it('should be a new post', function () {
-            expect(post.isNew()).to.be.true();
+            expect(model.isNew()).to.be.true();
         });
 
         after(function () {
             callbackResult = null;
             callback = null;
             data = null;
-            post = null;
+            model = null;
         });
 
     });

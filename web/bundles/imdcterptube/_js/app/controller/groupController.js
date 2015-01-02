@@ -22,7 +22,7 @@ define([
         return GroupFactory.delete(this.model)
             .done(function (data) {
                 window.location.assign(data.redirectUrl);
-            }.bind(this));
+            });
     };
 
     return Group;

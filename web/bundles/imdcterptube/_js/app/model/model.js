@@ -49,9 +49,10 @@ define(['underscore'], function () {
         list[path.shift()] = value;
     };
 
-    Model.prototype._dispatch = function (event, args) {
+    Model.prototype._dispatch = function (event, keyPath, args) {
         var e = {
             type: event,
+            keyPath: keyPath,
             model: this
         };
 
@@ -81,7 +82,7 @@ define(['underscore'], function () {
         this._setKeyPath(this.data, keyPath, value);
 
         if (doDispatch && result !== value) {
-            this._dispatch(Model.Event.CHANGE, {keyPath: keyPath});
+            this._dispatch(Model.Event.CHANGE, keyPath);
         }
     };
 
