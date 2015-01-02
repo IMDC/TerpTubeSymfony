@@ -1746,6 +1746,7 @@ Player.prototype.recording_startRecording = function()
     this.recordAudio.startRecording();
     // this.recordVideo.startRecording();
 
+    this.clearPlayer();
     this.recording_recordingStarted();
     // $(this.videoID)[0].startRecording();
 };
