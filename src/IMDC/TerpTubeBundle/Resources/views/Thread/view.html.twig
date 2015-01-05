@@ -1,36 +1,59 @@
 {% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
 
+{% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as _media %}
+
 {% block title %}{{ thread.title|truncate(50) }}{% endblock %}
 
 {% block header %}
     {{ parent() }}
 
     <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/threadModel', 'controller/threadController', 'views/thread/viewView',
+            'model/postModel', 'controller/postController', 'views/post/newView', 'views/post/viewView',
+            'main'
+        ], function (bootstrap, ThreadModel, ThreadController, ThreadView, PostModel, PostController, PostNewView, PostViewView) {
+            bootstrap(
+                    new ThreadModel({{ thread|serialize('json')|raw }}),
+                    ThreadController,
+                    ThreadView,
+                    {
+                        container: $("#threadOpContainer"),
+                        player: {
+                            playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
+                            speedImages: {
+                                normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",
+                                fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",
+                                slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"
+                            },
+                            captionImages: {
+                                off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",
+                                on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"
+                            }
+                        }
+                    }
+            );
+
+            $(PostViewView.Binder.CONTAINER).each(function (index, element) {
+                var model = new PostModel({
+                    id: $(element).data("pid"),
+                    startTime: $(element).data("starttime"),
+                    endTime: $(element).data("endtime"),
+                    isTemporal: $(element).data("istemporal"),
+                    threadId: {{ thread.id }}
+                });
+
+                bootstrap(
+                        model,
+                        PostController,
+                        model.isNew() ? PostNewView : PostViewView,
+                        {}
+                );
+            });
+        });
+
         $(document).ready(function() {
-            {#require(['main'], function() {#}
-                {#var thread = new $tt.Controller.Thread({#}
-                    {#page: $tt.Controller.Thread.Page.VIEW,#}
-                    {#threadId: {{ thread.id }}#}
-                {#});#}
-                {#thread.bindUIEvents();#}
-
-                {#{% if thread.mediaIncluded|length != 0 %}#}
-                    {#thread.createPlayer({#}
-                        {#mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),#}
-                        {#playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",#}
-                        {#speedImages: {#}
-                            {#normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",#}
-                            {#fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",#}
-                            {#slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"#}
-                        {#},#}
-                        {#captionImages: {#}
-                            {#off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",#}
-                            {#on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"#}
-                        {#}#}
-                    {#});#}
-                {#{% endif %}#}
-            {#});#}
-
             //
             // following is layout specific. keep it here
             //
@@ -68,52 +91,6 @@
 
             $(window).trigger("resize");
         });
-
-        require([
-            'bootstrap',
-            'model/threadModel', 'controller/threadController', 'views/thread/viewView',
-            'model/postModel', 'controller/postController', 'views/post/viewView',
-            'main'
-        ], function(bootstrap, ThreadModel, ThreadController, ThreadView, PostModel, PostController, PostView) {
-            bootstrap(
-                    new ThreadModel({
-                        id: {{ thread.id }}
-                    }),
-                    ThreadController,
-                    ThreadView,
-                    {
-                        container: $("#threadOpContainer"),
-                        player: {
-                            mediaElement: $("#{{ thread.mediaIncluded[0].getID }}"),
-                            playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
-                            speedImages: {
-                                normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",
-                                fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",
-                                slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"
-                            },
-                            captionImages: {
-                                off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",
-                                on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"
-                            }
-                        }
-                    }
-            );
-
-            $(PostView.Binder.CONTAINER).each(function(index, element) {
-                bootstrap(
-                        new PostModel({
-                            id: $(element).data("pid"),
-                            startTime: $(element).data("starttime"),
-                            endTime: $(element).data("endtime"),
-                            isTemporal: $(element).data("istemporal"),
-                            threadId: {{ thread.id }}
-                        }),
-                        PostController,
-                        PostView,
-                        {}
-                );
-            });
-        });
     </script>
 {% endblock header %}
 
@@ -148,9 +125,10 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-12">
+					<div class="col-md-12 thread-media-element">
 						{% if thread.mediaIncluded|length != 0 %}
-							{% include 'IMDCTerpTubeBundle:Thread:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0], 'preloadMedia': true} %}
+							{#{% include 'IMDCTerpTubeBundle:Thread:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0], 'preloadMedia': true} %}#}
+                            {{ _media.element(thread.getOrderedMedia[0], false) }}
 						{% else %}
 							<div class="lead text-center" style="padding-top: 30px;">No Media</div>
 						{% endif %}

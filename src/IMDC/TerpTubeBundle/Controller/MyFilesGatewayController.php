@@ -4,7 +4,9 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityNotFoundException;
+use IMDC\TerpTubeBundle\Entity\Interpretation;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Form\Type\ResourceFileFormType;
@@ -469,7 +471,91 @@ class MyFilesGatewayController extends Controller
         ));
     }
 
-    public function addRecordingAction(Request $request, $url)
+    public function addRecordingAction(Request $request)
+    {
+        // post requests only
+        if (!$request->isMethod('POST')) {
+            throw new BadRequestHttpException('POST requests only');
+        }
+
+        // check if user is logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $user = $this->getUser();
+        $currentTime = new \DateTime('now');
+        $em = $this->getDoctrine()->getManager();
+
+        $isFirefox = filter_var($request->request->get('isFirefox'), FILTER_VALIDATE_BOOLEAN);
+        $video = $request->files->get('video-blob', null);
+        $audio = $request->files->get('audio-blob', null);
+        if (($isFirefox && empty($audio)) || (!$isFirefox && (empty($video) || empty($audio)))) {
+            throw new \Exception('no media data found in request');
+        }
+
+        $isInterpretation = filter_var($request->request->get('isInterpretation'), FILTER_VALIDATE_BOOLEAN);
+        $sourceStartTime = floatval($request->request->get('sourceStartTime', 0));
+        $sourceId = $request->request->get('sourceId', null);
+        $sourceMedia = null;
+        if ($isInterpretation) {
+            $sourceMedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($sourceId);
+            if (!$sourceMedia) {
+                throw new \Exception('source media not found');
+            }
+        }
+
+        $transcoder = $this->container->get('imdc_terptube.transcoder');
+        $mergedFile = $isFirefox
+            ? $transcoder->remuxWebM($audio)
+            : $transcoder->mergeAudioVideo($audio, $video);
+        $mergedFile = $transcoder->removeFirstFrame($mergedFile);
+
+        $resourceFile = new ResourceFile();
+        $resourceFile->setFile($mergedFile);
+        $resourceFile->setWebmExtension('webm');
+
+        if ($isInterpretation) {
+            $media = new Interpretation();
+            $media->setSourceStartTime($sourceStartTime);
+            $media->setSource($sourceMedia);
+        } else {
+            $media = new Media();
+        }
+
+        $media->setOwner($user);
+        $media->setType(Media::TYPE_VIDEO);
+        $media->setTitle('Recording-' . $currentTime->format('Y-m-d-H:i'));
+        $media->setIsReady(Media::READY_WEBM);
+        $media->setResource($resourceFile);
+
+        $resourceFile->setMedia($media);
+        $user->addResourceFile($media);
+
+        $em->persist($resourceFile);
+        $em->persist($media);
+        $em->persist($user);
+        $em->flush();
+
+        $eventDispatcher = $this->container->get('event_dispatcher');
+        $uploadEvent = new UploadEvent($media);
+        $eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadEvent);
+
+        $content = array(
+            'responseCode' => 200,
+            'feedback' => 'media added',
+            'media' => JSEntities::getMediaObject($media)
+        );
+
+        return new Response(json_encode($content), 200, array(
+            'Content-Type' => 'application/json'
+        ));
+    }
+
+    /**
+     * @deprecated
+     */
+    public function addRecordingOldAction(Request $request, $url) //TODO delete
     {
         if (!$request->isMethod('POST')) {
             // FIXME add the recording stuff here
@@ -583,7 +669,10 @@ class MyFilesGatewayController extends Controller
         ));
     }
 
-    public function addSimultaneousRecordingAction(Request $request, $sourceMediaID, $startTime, $url)
+    /**
+     * @deprecated
+     */
+    public function addSimultaneousRecordingAction(Request $request, $sourceMediaID, $startTime, $url) //TODO delete
     {
         if (!$request->isMethod('POST')) {
             $recorderConfiguration = $request->get("recorderConfiguration");

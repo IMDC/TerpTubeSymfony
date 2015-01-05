@@ -171,11 +171,11 @@ class UserGroupController extends Controller
                     ->getViewableCountForForums($forums, $securityContext)
         );
 
-        if ($securityContext->isGranted('EDIT', $group) === true) {
+        /*if ($securityContext->isGranted('EDIT', $group) === true) {
             $formBuilder = $this->getGenericIdFormBuilder();
             $formBuilder->setAction($this->generateUrl('imdc_group_delete_members', array('groupId' => $groupId)));
             $parameters['form'] = $formBuilder->getForm()->createView();
-        }
+        }*/
 
         return $this->render('IMDCTerpTubeBundle:Group:view.html.twig', $parameters);
 	}

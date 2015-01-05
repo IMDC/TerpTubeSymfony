@@ -1,32 +1,17 @@
-{% macro controls(style) %}
-    {% trans_default_domain 'IMDCTerpTubeBundle' %}
-
-    <button class="btn btn-danger my-files-selector-bulk-action" title="{{ 'filesGateway.deleteLink'|trans }}" data-action="1"><i class="fa fa-trash-o"></i></button>
-    {% if style == 'grid' %}
-        {% set style = 'list' %}
-        {% set styleIcon = 'fa-th-list' %}
-        <button class="btn btn-default my-files-selector-toggle-selection" title="Toggle selection" disabled="disabled"><i class="fa fa-check-square-o"></i></button>
-    {% else %}
-        {% set style = 'grid' %}
-        {% set styleIcon = 'fa-th-large' %}
-    {% endif %}
-    <a class="btn btn-default my-files-selector-toggle-style" href="{{ path('imdc_myfiles_list', {'style': style}) }}"><i class="fa {{ styleIcon }}"></i></a>
-{% endmacro %}
-
-{% macro typeToIcon(type) %}
-    {% if type == 1 %}
+{% macro type_to_icon(type) %}
+    {% if type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
         {% set icon = 'fa-file-video-o' %}
-    {% elseif type == 2 %}
+    {% elseif type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
         {% set icon = 'fa-file-audio-o' %}
-    {% elseif type == 0 %}
+    {% elseif type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
         {% set icon = 'fa-file-photo-o' %}
-    {% elseif type == 9 %}
+    {% elseif type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
         {% set icon = 'fa-file-o' %}
     {% endif %}
     <i class="fa {{ icon }} fa-2x"></i>
 {% endmacro %}
 
-{% macro formatSize(size) %}
+{% macro format_size(size) %}
     {% if size == -1 %}
         <i class="fa fa-spinner fa-spin fa-large"> </i>
     {% else %}
@@ -34,13 +19,44 @@
     {% endif %}
 {% endmacro %}
 
-{% macro thumbnail(thumbnailPath) %}
-    {% if thumbnailPath is not null %}
-        <img class="img-responsive center-block" src="{{ asset(thumbnailPath) }}" />
+{% macro thumbnail(path) %}
+    {% if path is not null %}
+        <img class="img-responsive center-block" src="{{ asset(path) }}" />
     {% else %}
         <span class="fa-stack fa-lg" style="width: 100%;">
             <i class="fa fa-file-o fa-stack-2x"></i>
             <i class="fa fa-play-circle fa-stack-1x"></i>
         </span>
+    {% endif %}
+{% endmacro %}
+
+{% macro element(media, enable_controls) %}
+    {% set enable_controls = enable_controls is defined ? enable_controls : true %}
+
+    {% if media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
+        <video class="tt-media-video" {% if enable_controls %}controls{% endif %} poster="{{ asset(media.getThumbnailPath) }}" preload="metadata">
+            <source src="{{ asset(media.getResource.getWebPath) }}" />
+        </video>
+        {% if media.isInterpretation %}
+            <video class="tt-media-pip-video" poster="{{ asset(media.source.getThumbnailPath) }}" preload="metadata">
+                <source src="{{ asset(media.source.getResource.getWebPath) }}" />
+            </video>
+        {% endif %}
+    {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
+        <audio class="tt-media-audio" {% if enable_controls %}controls{% endif %}>
+            <source src="{{ asset(media.getResource.getWebPath) }}" />
+            Your browser does not support the audio element, please upgrade to Google Chrome
+        </audio>
+    {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
+        <img class="img-responsive center-block tt-media-img" src="{{ asset(media.getResource.getWebPath) }}" alt="{{ media.title }}" title="{{ media.title }}" />
+    {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
+        <div class="row">
+            <div class="col-md-3 thumbnail text-center">
+                <a href="{{ asset(media.getResource.getWebPath) }}">
+                    <p><i class="fa fa-file fa-5x"></i></p>
+                    <div>{{ media.title }}</div>
+                </a>
+            </div>
+        </div>
     {% endif %}
 {% endmacro %}

@@ -4,7 +4,12 @@ namespace IMDC\TerpTubeBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class CompoundMediaControllerTest extends WebTestCase
+/**
+ * Class CompoundMediaControllerTest
+ * @package IMDC\TerpTubeBundle\Tests\Controller
+ * @deprecated
+ */
+class CompoundMediaControllerTest extends WebTestCase //TODO delete
 {
     /*
     public function testCompleteScenario()

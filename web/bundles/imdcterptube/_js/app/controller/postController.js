@@ -37,6 +37,10 @@ define([
                 this.model.set('keyPoint.selection', e.selection);
                 break;
             case KeyPointService.Event.HOVER:
+            case KeyPointService.Event.CLICK:
+                this.model.forceChange();
+                break;
+            /*case KeyPointService.Event.HOVER:
                 this.model.set('keyPoint.isHovering', e.isMouseOver);
                 break;
             case KeyPointService.Event.CLICK:
@@ -45,7 +49,7 @@ define([
                 setTimeout(function () {
                     this.model.set(prop, false, false);
                 }.bind(this), 100);
-                break;
+                break;*/
         }
     };
 
@@ -61,15 +65,23 @@ define([
     };
 
     Post.prototype.hoverKeyPoint = function (args) {
-        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.HOVER, args);
+        this.model.set('keyPoint.isHovering', args.isMouseOver);
+
+        this.keyPointService.dispatch(this.model.get('keyPoint.id'), KeyPointService.Event.HOVER, args);
     };
 
     Post.prototype.clickKeyPoint = function (args) {
-        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.CLICK, args);
+        var prop = 'keyPoint.' + (args.isDblClick ? 'isPlaying' : 'isSeeking');
+        this.model.set(prop, true);
+        setTimeout(function () {
+            this.model.set(prop, false, false);
+        }.bind(this), 100);
+
+        this.keyPointService.dispatch(this.model.get('keyPoint.id'), KeyPointService.Event.CLICK, args);
     };
 
     Post.prototype.editKeyPoint = function (args) {
-        this.keyPointService.dispatch(this.model.get('keyPoint').id, KeyPointService.Event.EDIT, args);
+        this.keyPointService.dispatch(this.model.get('keyPoint.id'), KeyPointService.Event.EDIT, args);
     };
 
     Post.prototype.removeKeyPoint = function () {

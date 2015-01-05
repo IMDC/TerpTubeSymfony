@@ -51,7 +51,8 @@
 		"pimple/pimple" : "dev-master",
 		"ext-curl" : "*",
 		"willdurand/js-translation-bundle" : "~2.1",
-		"jquery/jquerymap" : "1.10.2"
+		"jquery/jquerymap" : "1.10.2",
+	  	"jms/serializer-bundle" : "0.*"
 	},
 	"scripts" : {
 		"post-install-cmd" : [

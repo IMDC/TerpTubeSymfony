@@ -4,7 +4,12 @@ namespace IMDC\TerpTubeBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class PermissionsControllerTest extends WebTestCase
+/**
+ * Class PermissionsControllerTest
+ * @package IMDC\TerpTubeBundle\Tests\Controller
+ * @deprecated
+ */
+class PermissionsControllerTest extends WebTestCase //TODO delete
 {
     /*
     public function testCompleteScenario()

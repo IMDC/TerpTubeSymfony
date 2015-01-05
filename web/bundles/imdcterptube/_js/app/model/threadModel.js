@@ -16,22 +16,33 @@ define(['model/model', 'extra', 'underscore'], function (Model) {
         this._dispatch(Model.Event.CHANGE, 'keyPoints.' + (this.data.keyPoints.length - 1));
     };
 
-    ThreadModel.prototype.setKeyPointProperty = function (keyPointId, keyPath, value, doDispatch) {
+    ThreadModel.prototype._findKeyPoint = function (keyPointId) {
         for (var index in this.data.keyPoints) {
             if (this.data.keyPoints[index].id == keyPointId) {
-                this.set('keyPoints.' + index + '.' + keyPath, value, doDispatch);
-                return;
+                return index;
             }
         }
     };
 
+    ThreadModel.prototype.setKeyPointProperty = function (keyPointId, keyPath, value, doDispatch) {
+        var index = this._findKeyPoint(keyPointId);
+        if (index) {
+            this.set('keyPoints.' + index + '.' + keyPath, value, doDispatch);
+        }
+    };
+
     ThreadModel.prototype.removeKeyPoint = function (keyPointId) {
-        for (var index in this.data.keyPoints) {
-            if (this.data.keyPoints[index].id == keyPointId) {
-                this.data.keyPoints.splice(index, 1);
-                this._dispatch(Model.Event.CHANGE, 'keyPoints');
-                return;
-            }
+        var index = this._findKeyPoint(keyPointId);
+        if (index) {
+            this.data.keyPoints.splice(index, 1);
+            this._dispatch(Model.Event.CHANGE, 'keyPoints');
+        }
+    };
+
+    ThreadModel.prototype.forceChangeKeyPoint = function (keyPointId, keyPath) {
+        var index = this._findKeyPoint(keyPointId);
+        if (index) {
+            this.forceChange('keyPoints.' + index + '.' + keyPath);
         }
     };
 

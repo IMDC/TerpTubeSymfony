@@ -7,4 +7,3 @@ IMDC\TerpTubeBundle\Entity\AccessType:
     fields:
         description:
             type: string
-    lifecycleCallbacks: {  }

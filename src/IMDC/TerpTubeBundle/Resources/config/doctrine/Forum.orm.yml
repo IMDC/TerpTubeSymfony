@@ -72,4 +72,3 @@ IMDC\TerpTubeBundle\Entity\Forum:
                 inverseJoinColumns:
                     user_id:
                         referencedColumnName: id
-    lifecycleCallbacks: {  }

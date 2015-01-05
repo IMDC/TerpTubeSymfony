@@ -2,7 +2,7 @@
 
 {% block title %}{{ group.name }}{% endblock %}
 
-{% block header %}
+{#{% block header %}
     {{ parent() }}
 
     <script type="text/javascript">
@@ -13,7 +13,7 @@
             });
         });
     </script>
-{% endblock header %}
+{% endblock header %}#}
 
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
@@ -107,7 +107,7 @@
     </div>
 {% endblock content %}
 
-{% block outside_body %}
+{#{% block outside_body %}
     {{ parent() }}
 
     {% if form is defined %}
@@ -117,4 +117,4 @@
             {{ form_end(form) }}
         </div>
     {% endif %}
-{% endblock outside_body %}
+{% endblock outside_body %}#}

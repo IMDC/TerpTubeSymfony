@@ -1,0 +1,14 @@
+IMDC\TerpTubeBundle\Entity\Interpretation:
+    type:  entity
+    table: interpretation
+    fields:
+        sourceStartTime:
+            type: decimal
+            precision: 12
+            scale: 2
+    manyToOne:
+        source:
+            targetEntity: Media
+            joinColumn:
+                name: source_id
+                referencedColumnName: id

@@ -53,7 +53,7 @@ imdc_myfiles_delete:
 
 imdc_myfiles_add_recording:
   pattern: /add/recording
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addRecording, url: null }
+  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addRecording }
   options:
     expose: true
 

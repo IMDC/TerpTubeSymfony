@@ -201,13 +201,14 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         }
 
         var container;
-        //var postUrl;
+        var additionalDataToPost = {};
         if (this.page == Recorder.Page.NORMAL) {
             container = this._getElement(Recorder.Binder.NORMAL_VIDEO);
-            //postUrl = Routing.generate("imdc_myfiles_add_recording");
         } else {
             container = this._getElement(Recorder.Binder.INTERP_VIDEO_R);
-            //postUrl = Routing.generate("imdc_myfiles_add_simultaneous_recording");
+            additionalDataToPost = {
+                sourceId: this.sourceMedia.id
+            }
         }
 
         this.recorder = new Player(container, {
@@ -220,7 +221,8 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
             maxRecordingTime : Recorder.MAX_RECORDING_TIME,
             recordingSuccessFunction: this.bind__onRecordingSuccess,
             recordingErrorFunction: this.bind__onRecordingError,
-            recordingPostURL: Routing.generate("imdc_myfiles_add_recording"), //postUrl,
+            recordingPostURL: Routing.generate("imdc_myfiles_add_recording"),
+            additionalDataToPost: additionalDataToPost,
             forwardButtons: forwardButtons,
             forwardFunctions: forwardFunctions
         });
@@ -253,10 +255,7 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         console.log("%s: %s", Recorder.TAG, "_onRecordingStarted");
 
         this.player.setControlsEnabled(false);
-        /*this.recorder.options.additionalDataToPost = {
-            sourceMediaID: this.sourceMedia.id,
-            startTime: this.player.getCurrentTime()
-        };*/
+        this.recorder.options.additionalDataToPost.sourceStartTime = this.player.getCurrentTime();
         this.player.play();
     };
 

@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Utils\Utils;
 
 /**
  * Forum class, serves as general organization for discussion topics (Threads).
@@ -32,9 +33,24 @@ class Forum
     private $creationDate;
 
     /**
+     * @var array
+     */
+    private $mediaDisplayOrder;
+
+    /**
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $creator;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\UserGroup
+     */
+    private $group;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\AccessType
+     */
+    private $accessType;
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -57,16 +73,6 @@ class Forum
     private $forumModerators;
 
     /**
-     * @var \IMDC\TerpTubeBundle\Entity\UserGroup
-     */
-    private $group;
-
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\AccessType
-     */
-    private $accessType;
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -82,7 +88,7 @@ class Forum
         //FIXME title being optional causes nulls (ex. new from media)
         //return $this->getTitleText();
 
-        return $this->getId().':'.$this->getTitleText();
+        return $this->getId() . ':' . $this->getTitleText();
     }
         
     /**
@@ -165,6 +171,29 @@ class Forum
     }
 
     /**
+     * Set mediaDisplayOrder
+     *
+     * @param array $mediaDisplayOrder
+     * @return Forum
+     */
+    public function setMediaDisplayOrder($mediaDisplayOrder)
+    {
+        $this->mediaDisplayOrder = $mediaDisplayOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get mediaDisplayOrder
+     *
+     * @return array
+     */
+    public function getMediaDisplayOrder()
+    {
+        return $this->mediaDisplayOrder;
+    }
+
+    /**
      * Set creator
      *
      * @param \IMDC\TerpTubeBundle\Entity\User $creator
@@ -185,6 +214,52 @@ class Forum
     public function getCreator()
     {
         return $this->creator;
+    }
+
+    /**
+     * Set group
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $group
+     * @return Forum
+     */
+    public function setGroup(\IMDC\TerpTubeBundle\Entity\UserGroup $group = null)
+    {
+        $this->group = $group;
+
+        return $this;
+    }
+
+    /**
+     * Get group
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\UserGroup
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+    /**
+     * Set accessType
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\AccessType $accessType
+     * @return Forum
+     */
+    public function setAccessType(\IMDC\TerpTubeBundle\Entity\AccessType $accessType = null)
+    {
+        $this->accessType = $accessType;
+
+        return $this;
+    }
+
+    /**
+     * Get accessType
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\AccessType
+     */
+    public function getAccessType()
+    {
+        return $this->accessType;
     }
 
     /**
@@ -241,6 +316,13 @@ class Forum
     public function removeTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
     {
         $this->titleMedia->removeElement($titleMedia);
+    }
+
+    public function setTitleMedia($titleMedia)
+    {
+        $this->titleMedia = $titleMedia;
+
+        return $this;
     }
 
     /**
@@ -319,93 +401,8 @@ class Forum
         return $this->forumModerators;
     }
 
-    /**
-     * Set group
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\UserGroup $group
-     * @return Forum
-     */
-    public function setGroup(\IMDC\TerpTubeBundle\Entity\UserGroup $group = null)
+    public function getOrderedMedia()
     {
-        $this->group = $group;
-
-        return $this;
-    }
-
-    /**
-     * Get group
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\UserGroup
-     */
-    public function getGroup()
-    {
-        return $this->group;
-    }
-
-    /**
-     * Set accessType
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\AccessType $accessType
-     * @return Forum
-     */
-    public function setAccessType(\IMDC\TerpTubeBundle\Entity\AccessType $accessType = null)
-    {
-        $this->accessType = $accessType;
-
-        return $this;
-    }
-
-    /**
-     * Get accessType
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\AccessType
-     */
-    public function getAccessType()
-    {
-        return $this->accessType;
-    }
-
-    //TODO delete
-    /*public function setTitleMedia(\IMDC\TerpTubeBundle\Entity\Media $titleMedia)
-    {
-        $this->titleMedia = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->titleMedia[] = $titleMedia;
-
-        return $this;
-    }*/
-
-    public function setTitleMedia($titleMedia)
-    {
-        $this->titleMedia = $titleMedia;
-
-        return $this;
-    }
-    /**
-     * @var array
-     */
-    private $mediaDisplayOrder;
-
-
-    /**
-     * Set mediaDisplayOrder
-     *
-     * @param array $mediaDisplayOrder
-     * @return Forum
-     */
-    public function setMediaDisplayOrder($mediaDisplayOrder)
-    {
-        $this->mediaDisplayOrder = $mediaDisplayOrder;
-
-        return $this;
-    }
-
-    /**
-     * Get mediaDisplayOrder
-     *
-     * @return array 
-     */
-    public function getMediaDisplayOrder()
-    {
-        return $this->mediaDisplayOrder;
+        return Utils::orderMedia($this->getTitleMedia(), $this->getMediaDisplayOrder());
     }
 }

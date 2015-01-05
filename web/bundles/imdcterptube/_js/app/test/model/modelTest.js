@@ -15,7 +15,7 @@ define([
 
         before(function () {
             callback = function (e) {
-                callbackResult = e.model.get('name');
+                callbackResult = e.model.get(e.keyPath);
             };
             data = {id: 1, name: 'hello', nested: {foo: 'bar', bar: {marco: 10}}};
         });
@@ -126,6 +126,17 @@ define([
             model.unsubscribe(callback);
 
             expect(callbackResult).to.not.equal(data.name);
+        });
+
+        it('should have dispatched change event', function () {
+            model.forceChange();
+            expect(callbackResult).to.be.undefined();
+
+            model.forceChange('nested.nonExist');
+            expect(callbackResult).to.be.undefined();
+
+            model.forceChange('name');
+            expect(callbackResult).to.equal(data.name);
         });
 
         after(function () {

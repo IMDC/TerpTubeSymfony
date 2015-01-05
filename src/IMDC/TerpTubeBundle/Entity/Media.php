@@ -8,7 +8,7 @@ use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 /**
  * Media
  */
-class Media
+class Media implements MediaInterface
 {
 
     const TYPE_IMAGE = 0;
@@ -331,4 +331,8 @@ class Media
         }
     }
 
+    public function isInterpretation()
+    {
+        return false;
+    }
 }

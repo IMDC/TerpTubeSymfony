@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Utils\Utils;
 
 /**
  * Thread
@@ -74,6 +75,11 @@ class Thread {
 	 */
 	private $tags;
 
+	/**
+	 * @var array
+	 */
+	private $mediaDisplayOrder;
+
     /**
      *
      * @var \IMDC\TerpTubeBundle\Entity\User
@@ -121,8 +127,8 @@ class Thread {
 	public function __construct()
     {
 		$this->usersFollowing   = new \Doctrine\Common\Collections\ArrayCollection();
-		$this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->mediaIncluded    = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->posts            = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 	
 	/**
@@ -364,6 +370,29 @@ class Thread {
     {
         return $this->tags;
     }
+
+	/**
+	 * Set mediaDisplayOrder
+	 *
+	 * @param array $mediaDisplayOrder
+	 * @return Thread
+	 */
+	public function setMediaDisplayOrder($mediaDisplayOrder)
+	{
+		$this->mediaDisplayOrder = $mediaDisplayOrder;
+
+		return $this;
+	}
+
+	/**
+	 * Get mediaDisplayOrder
+	 *
+	 * @return array
+	 */
+	public function getMediaDisplayOrder()
+	{
+		return $this->mediaDisplayOrder;
+	}
 	
 	/**
 	 * Set creator
@@ -511,6 +540,13 @@ class Thread {
         $this->mediaIncluded->removeElement($mediaIncluded);
     }
 
+	public function setMediaIncluded($mediaIncluded)
+	{
+		$this->mediaIncluded = $mediaIncluded;
+
+		return $this;
+	}
+
     /**
      * Get mediaIncluded
      *
@@ -554,47 +590,8 @@ class Thread {
 		return $this->posts;
 	}
 
-    //TODO delete
-    /*public function setMediaIncluded(\IMDC\TerpTubeBundle\Entity\Media $mediaIncluded)
-    {
-        $this->mediaIncluded = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->mediaIncluded[] = $mediaIncluded;
-
-        return $this;
-    }*/
-
-    public function setMediaIncluded($mediaIncluded)
-    {
-        $this->mediaIncluded = $mediaIncluded;
-
-        return $this;
-    }
-    /**
-     * @var array
-     */
-    private $mediaDisplayOrder;
-
-
-    /**
-     * Set mediaDisplayOrder
-     *
-     * @param array $mediaDisplayOrder
-     * @return Thread
-     */
-    public function setMediaDisplayOrder($mediaDisplayOrder)
-    {
-        $this->mediaDisplayOrder = $mediaDisplayOrder;
-
-        return $this;
-    }
-
-    /**
-     * Get mediaDisplayOrder
-     *
-     * @return array 
-     */
-    public function getMediaDisplayOrder()
-    {
-        return $this->mediaDisplayOrder;
-    }
+	public function getOrderedMedia()
+	{
+		return Utils::orderMedia($this->getMediaIncluded(), $this->getMediaDisplayOrder());
+	}
 }

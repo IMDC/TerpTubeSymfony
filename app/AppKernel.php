@@ -30,14 +30,15 @@ class AppKernel extends Kernel
 				new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle (),
 				new Knp\Bundle\TimeBundle\KnpTimeBundle (),
 				new Knp\Bundle\MenuBundle\KnpMenuBundle (),
+				new Ibrows\XeditableBundle\IbrowsXeditableBundle (),
+				new Bazinga\Bundle\JsTranslationBundle\BazingaJsTranslationBundle (),
+				new JMS\SerializerBundle\JMSSerializerBundle(),
 				// support for the admin
 				new Sonata\jQueryBundle\SonatajQueryBundle (),
 				new Sonata\BlockBundle\SonataBlockBundle (),
 				new Sonata\AdminBundle\SonataAdminBundle (),
 				new Sonata\CoreBundle\SonataCoreBundle (),
-				new Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle (),
-				new Ibrows\XeditableBundle\IbrowsXeditableBundle (),
-				new Bazinga\Bundle\JsTranslationBundle\BazingaJsTranslationBundle () 
+				new Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle ()
 		);
 		
 		if (in_array ( $this->getEnvironment (), array (

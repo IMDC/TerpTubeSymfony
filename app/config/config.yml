@@ -256,4 +256,11 @@ sonata_block:
 
 bazinga_js_translation:
     locale_fallback:  en
-    default_domain:   IMDCTerpTubeBundle 
+    default_domain:   IMDCTerpTubeBundle
+
+jms_serializer:
+    metadata:
+        directories:
+            FOSUserBundle:
+                namespace_prefix: "FOS\\UserBundle"
+                path: "%kernel.root_dir%/Resources/FOSUserBundle/config/serializer"

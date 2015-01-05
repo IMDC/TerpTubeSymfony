@@ -106,7 +106,7 @@ define([
             assert.equal(kpsCallbackResult.keyPoint, keyPoint, 'key point should equal');
             assert.isTrue(kpsCallbackResult.isMouseOver, 'key:isMouseOver should be true');
 
-            assert.isTrue(mCallbackResult.model.get('keyPoints.0.isHovering'), 'key point property should be true');
+            assert.isTrue(mCallbackResult.model.get('keyPoints.0.isPlayerHovering'), 'key point property should be true');
         });
 
         it('should have dispatched "hover" (false) key point event', function () {
@@ -116,28 +116,18 @@ define([
             assert.equal(kpsCallbackResult.keyPoint, keyPoint, 'key point should equal');
             assert.isFalse(kpsCallbackResult.isMouseOver, 'key:isMouseOver should be false');
 
-            assert.isFalse(mCallbackResult.model.get('keyPoints.0.isHovering'), 'key point property should be false');
+            assert.isFalse(mCallbackResult.model.get('keyPoints.0.isPlayerHovering'), 'key point property should be false');
         });
 
-        it('should have dispatched "click" key point event', function (done) {
+        it('should have dispatched "click" (double) key point event', function (done) {
             controller.clickKeyPoint(keyPoint.id);
 
             assert.equal(kpsCallbackResult.type, KeyPointService.Event.CLICK, 'key point event type should equal');
             assert.equal(kpsCallbackResult.keyPoint, keyPoint, 'key point should equal');
 
-            assert.isTrue(mCallbackResult.model.get('keyPoints.0.isSeeking'), 'key point property should be true');
+            assert.isTrue(mCallbackResult.model.get('keyPoints.0.isPlayerPlaying'), 'key point property should be true');
             setTimeout(function () {
-                assert.isFalse(mCallbackResult.model.get('keyPoints.0.isSeeking'), 'key point property should be false');
-                done();
-            }, 200);
-        });
-
-        it('should have double clicked key point', function (done) {
-            keyPointService.dispatch(keyPoint.id, KeyPointService.Event.CLICK, {isDblClick: true});
-
-            assert.isTrue(mCallbackResult.model.get('keyPoints.0.isPlaying'), 'key point property should be true');
-            setTimeout(function () {
-                assert.isFalse(mCallbackResult.model.get('keyPoints.0.isPlaying'), 'key point property should be false');
+                assert.isFalse(mCallbackResult.model.get('keyPoints.0.isPlayerPlaying'), 'key point property should be false');
                 done();
             }, 200);
         });

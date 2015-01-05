@@ -31,9 +31,19 @@ define([
             callbackResult = '';
         });
 
+        it('should not have found key point', function () {
+            var index = model._findKeyPoint(keyPoint.id);
+            expect(index).to.be.undefined();
+        });
+
         it('should have added new key point', function () {
             model.addKeyPoint(keyPoint);
             expect(callbackResult).to.equal(keyPoint);
+        });
+
+        it('should have found key point', function () {
+            var index = model._findKeyPoint(keyPoint.id);
+            expect(index).to.equal('0');
         });
 
         it('should have set key point property', function () {
@@ -45,6 +55,22 @@ define([
         it('should not have added key point twice', function () {
             model.addKeyPoint(keyPoint);
             expect(model.data.keyPoints).have.length(1);
+        });
+
+        it('should not have dispatched change event', function () {
+            model.forceChangeKeyPoint();
+            expect(callbackResult).to.equal('');
+        });
+
+        it('should have dispatched change event', function () {
+            model.forceChangeKeyPoint(keyPoint.id);
+            expect(callbackResult).to.be.undefined();
+
+            model.forceChangeKeyPoint(keyPoint.id, 'nested.nonExist');
+            expect(callbackResult).to.be.undefined();
+
+            model.forceChangeKeyPoint(keyPoint.id, 'startTime');
+            expect(callbackResult).to.equal(keyPoint.startTime);
         });
 
         it('should have removed key point', function () {

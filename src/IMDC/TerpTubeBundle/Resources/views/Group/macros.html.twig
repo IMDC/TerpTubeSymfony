@@ -1,15 +1,4 @@
-{% macro listUsers(style, users) %}
-    {% import _self as _group %}
-
-    {% if style == 'list' %}
-        {{ _group.listUsersList(users) }}
-    {% else %}
-        {{ _group.listUsersGrid(users) }}
-    {% endif %}
-    <div class="text-center">{{ knp_pagination_render(users) }}</div>
-{% endmacro %}
-
-{% macro listUsersList(users) %}
+{% macro _list_users_list(users) %}
     {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
 
     <div class="table-responsive">
@@ -45,7 +34,7 @@
     </div>
 {% endmacro %}
 
-{% macro listUsersGrid(users) %}
+{% macro _list_users_grid(users) %}
     <div class="tt-grid-div">
         {% if users|length > 0 %}
             {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': users, 'isSelection': true} %}
@@ -55,7 +44,18 @@
     </div>
 {% endmacro %}
 
-{% macro controls(style, groupId) %}
+{% macro list_users(style, users) %}
+    {% import _self as _group %}
+
+    {% if style == 'list' %}
+        {{ _group._list_users_list(users) }}
+    {% else %}
+        {{ _group._list_users_grid(users) }}
+    {% endif %}
+    <div class="text-center">{{ knp_pagination_render(users) }}</div>
+{% endmacro %}
+
+{% macro controls(style, group_id) %}
     {% if style == 'grid' %}
         {% set style = 'list' %}
         {% set style_icon = 'fa-th-list' %}
@@ -63,5 +63,5 @@
         {% set style = 'grid' %}
         {% set style_icon = 'fa-th-large' %}
     {% endif %}
-    <a class="btn btn-default" href="{{ path('imdc_group_manage', {'groupId': groupId, 'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
+    <a class="btn btn-default" href="{{ path('imdc_group_manage', {'groupId': group_id, 'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
 {% endmacro %}

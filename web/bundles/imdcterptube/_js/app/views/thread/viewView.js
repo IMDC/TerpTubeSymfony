@@ -12,24 +12,33 @@ define([
 
         this.bind__onClickVideoSpeed = this._onClickVideoSpeed.bind(this);
         this.bind__onClickClosedCaptions = this._onClickClosedCaptions.bind(this);
-        this.bind__onAreaSelectionChangedKeyPoint = this._onAreaSelectionChangedKeyPoint.bind(this);
+        this.bind__onAreaSelectionChanged = this._onAreaSelectionChanged.bind(this);
         this.bind__onMouseOverKeyPoint = this._onMouseOverKeyPoint.bind(this);
         this.bind__onMouseOutKeyPoint = this._onMouseOutKeyPoint.bind(this);
         this.bind__onClickKeyPoint = this._onClickKeyPoint.bind(this);
         this.bind__onEndKeyPoint = this._onEndKeyPoint.bind(this);
+        this.bind__onPlaybackStarted = this._onPlaybackStarted.bind(this);
+        this.bind__onPlaybackStopped = this._onPlaybackStopped.bind(this);
+        this.bind__onSeek = this._onSeek.bind(this);
         this.bind__onModelChange = this._onModelChange.bind(this);
 
         this.$container = options.container;
+        this.$video = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video:first-of-type');
+        this.$pipVideo = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video:nth-of-type(2)');
 
         $('#videoSpeed').on('click', this.bind__onClickVideoSpeed);
         $('#closedCaptions').on('click', this.bind__onClickClosedCaptions);
 
-        if (this.options.player) {
-            this.options.player.mediaElement.on("loadedmetadata", function (e) {
+        if (this.controller.model.get('type') === 1 && this.controller.model.get('ordered_media').length > 0) {
+            this.$video.on('loadedmetadata', function (e) {
                 this.controller.updateKeyPointDuration(e.target.duration);
-            });
+            }.bind(this));
 
             this._createPlayer();
+
+            if (this.controller.model.get('ordered_media.0.is_interpretation')) {
+                this.$pipVideo[0].currentTime = this.controller.model.get('ordered_media.0.source_start_time');
+            }
         }
 
         this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
@@ -40,12 +49,14 @@ define([
     ViewView.TAG = 'ThreadViewView';
     ViewView.DEFAULT_TEMPORAL_COMMENT_LENGTH = 3;
 
-    ViewView.Binder = {};
+    ViewView.Binder = {
+        MEDIA_ELEMENT: '.thread-media-element'
+    };
 
     ViewView.prototype._createPlayer = function () {
         console.log("%s: %s", ViewView.TAG, "_createPlayer");
 
-        this.player = new Player(this.options.player.mediaElement, {
+        this.player = new Player(this.$video, {
             areaSelectionEnabled: false,
             updateTimeType: Player.DENSITY_BAR_UPDATE_TYPE_ABSOLUTE,
             audioBar: false,
@@ -61,16 +72,19 @@ define([
             }).bind(this)
         });
 
-        $(this.player).on(Player.EVENT_AREA_SELECTION_CHANGED, this.bind__onAreaSelectionChangedKeyPoint);
+        $(this.player).on(Player.EVENT_AREA_SELECTION_CHANGED, this.bind__onAreaSelectionChanged);
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, this.bind__onMouseOverKeyPoint);
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, this.bind__onMouseOutKeyPoint);
         $(this.player).on(Player.EVENT_KEYPOINT_CLICK, this.bind__onClickKeyPoint);
         $(this.player).on(Player.EVENT_KEYPOINT_END, this.bind__onEndKeyPoint);
+        $(this.player).on(Player.EVENT_PLAYBACK_STARTED, this.bind__onPlaybackStarted);
+        $(this.player).on(Player.EVENT_PLAYBACK_STOPPED, this.bind__onPlaybackStopped);
+        $(this.player).on(Player.EVENT_SEEK, this.bind__onSeek);
 
         this.player.createControls();
     };
 
-    ViewView.prototype._onAreaSelectionChangedKeyPoint = function (e) {
+    ViewView.prototype._onAreaSelectionChanged = function (e) {
         console.log("%s: %s", ViewView.TAG, Player.EVENT_AREA_SELECTION_CHANGED);
 
         this.controller.updateKeyPointSelectionTimes(this.player.getAreaSelectionTimes());
@@ -109,6 +123,27 @@ define([
         }
     };
 
+    ViewView.prototype._onPlaybackStarted = function (e) {
+        console.log("%s: %s", ViewView.TAG, Player.EVENT_PLAYBACK_STARTED);
+
+        this.$pipVideo[0].play();
+    };
+
+    ViewView.prototype._onPlaybackStopped = function (e) {
+        console.log("%s: %s", ViewView.TAG, Player.EVENT_PLAYBACK_STOPPED);
+
+        this.$pipVideo[0].pause();
+    };
+
+    ViewView.prototype._onSeek = function (e, time) {
+        console.log("%s: %s- time=%d", ViewView.TAG, Player.EVENT_SEEK, time);
+
+        this.$pipVideo[0].currentTime = Math.min(
+            this.player.getCurrentTime() + this.controller.model.get('ordered_media.0.source_start_time'),
+            this.$pipVideo[0].duration
+        );
+    };
+
     ViewView.prototype._toggleTemporal = function (disabled, keyPoint) {
         this.player.pause();
         this.playingKeyPoint = null;
@@ -125,9 +160,12 @@ define([
     };
 
     ViewView.prototype._onModelChange = function (e) {
+        if (!this.player)
+            return;
+
         this.player.setKeyPoints(e.model.get('keyPoints', []));
 
-        this.controller.updateKeyPointDuration(this.options.player.mediaElement[0].duration);
+        this.controller.updateKeyPointDuration(this.$video[0].duration);
 
         // check if a key point was changed
         if (e.keyPath.indexOf('keyPoints.') == 0) { // trailing dot is for an element of the array/object
@@ -180,7 +218,7 @@ define([
         e.preventDefault();
 
         var rate = this.controller.adjustVideoSpeed();
-        this.options.player.mediaElement[0].playbackRate = rate.value;
+        this.$video[0].playbackRate = rate.value;
         $('#videoSpeed img').attr('src', rate.image);
     };
 

@@ -1,0 +1,15 @@
+IMDC\TerpTubeBundle\Entity\Thread:
+  virtual_properties:
+    getOrderedMedia:
+      serialized_name: ordered_media
+  properties:
+    mediaDisplayOrder:
+      exclude: true
+    parentForum:
+      exclude: true
+    usersFollowing:
+      exclude: true
+    mediaIncluded:
+      exclude: true
+    posts:
+      exclude: true

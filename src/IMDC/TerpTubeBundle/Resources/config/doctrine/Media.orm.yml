@@ -1,5 +1,12 @@
 IMDC\TerpTubeBundle\Entity\Media:
     type:  entity
+    inheritanceType: JOINED
+    discriminatorColumn:
+        name: discr
+        type: string
+    discriminatorMap:
+        media: Media
+        interpretation: Interpretation
     table: media
     repositoryClass: IMDC\TerpTubeBundle\Entity\MediaRepository
     id:

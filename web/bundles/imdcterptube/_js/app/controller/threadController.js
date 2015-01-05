@@ -13,8 +13,6 @@ define([
 
         this.keyPointService = Service.get('keyPoint');
 
-        this.model.set('keyPoints', []);
-
         this.videoSpeed = 0;
 
         // KeyPointService
@@ -35,6 +33,10 @@ define([
                     this.model.addKeyPoint(e.keyPoint);
                 break;
             case KeyPointService.Event.HOVER:
+            case KeyPointService.Event.CLICK:
+                this.model.forceChangeKeyPoint(e.keyPoint.id);
+                break;
+            /*case KeyPointService.Event.HOVER:
                 this.model.setKeyPointProperty(e.keyPoint.id, 'isHovering', e.isMouseOver);
                 break;
             case KeyPointService.Event.CLICK:
@@ -43,7 +45,7 @@ define([
                 setTimeout(function () {
                     this.model.setKeyPointProperty(e.keyPoint.id, prop, false, false);
                 }.bind(this), 100);
-                break;
+                break;*/
             case KeyPointService.Event.EDIT:
                 if (!e.cancel) {
                     this.model.setKeyPointProperty(e.keyPoint.id, 'options.drawOnTimeLine', false);
@@ -83,10 +85,17 @@ define([
     };
 
     Thread.prototype.hoverKeyPoint = function (keyPointId, args) {
+        this.model.setKeyPointProperty(keyPointId, 'isPlayerHovering', args.isMouseOver);
+
         this.keyPointService.dispatch(keyPointId, KeyPointService.Event.HOVER, args);
     };
 
     Thread.prototype.clickKeyPoint = function (keyPointId) {
+        this.model.setKeyPointProperty(keyPointId, 'isPlayerPlaying', true);
+        setTimeout(function () {
+            this.model.setKeyPointProperty(keyPointId, 'isPlayerPlaying', false, false);
+        }.bind(this), 100);
+
         this.keyPointService.dispatch(keyPointId, KeyPointService.Event.CLICK);
     };
 

@@ -48,7 +48,7 @@ class Utils
 		return $iValue;
 	}
 
-    public static function orderMedia($mediaCollection, array $displayOrder)
+    public static function orderMedia($mediaCollection, $displayOrder)
     {
         if (empty($displayOrder)) {
             return $mediaCollection;

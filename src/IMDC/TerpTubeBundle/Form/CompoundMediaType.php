@@ -6,7 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CompoundMediaType extends AbstractType
+/**
+ * Class CompoundMediaType
+ * @package IMDC\TerpTubeBundle\Form
+ * @deprecated
+ */
+class CompoundMediaType extends AbstractType //TODO delete
 {
         /**
      * @param FormBuilderInterface $builder

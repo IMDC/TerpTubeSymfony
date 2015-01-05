@@ -15,7 +15,7 @@ define([
 
         before(function () {
             callback = function (e) {
-                callbackResult = e.model.get('id');
+                callbackResult = e.model.get(e.keyPath);
             };
             data = {
                 id: '0' + Math.floor((Math.random() * 100000) + 1),

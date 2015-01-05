@@ -203,7 +203,7 @@ class ForumController extends Controller
             $threads->setParam($key, $value);
         }
 
-        $ordered = Utils::orderMedia($forum->getTitleMedia(), $forum->getMediaDisplayOrder());
+        $ordered = $forum->getOrderedMedia();
         $mediaJson = array();
         foreach ($ordered as $media) {
             $mediaJson[] = JSEntities::getMediaObject($media);
@@ -263,10 +263,7 @@ class ForumController extends Controller
             }
             ksort($ordered);*/
 
-            $form->get('titleMedia')->setData(
-                Utils::orderMedia(
-                    $forum->getTitleMedia(),
-                    $forum->getMediaDisplayOrder()));
+            $form->get('titleMedia')->setData($forum->getOrderedMedia());
         } else {
             $forum->setLastActivity(new \DateTime('now'));
 

@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
+use IMDC\TerpTubeBundle\Tests\Common;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -16,18 +17,7 @@ class ForumControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
 
-        $crawler = $this->client->request('GET', '/login');
-
-        $form = $crawler->selectButton('_submit')->form(array(
-            '_username'  => 'test',
-            '_password'  => 'test'
-        ));
-
-        $this->client->submit($form);
-
-        $this->assertTrue($this->client->getResponse()->isRedirect());
-
-        $this->client->followRedirect();
+        Common::login($this->client);
     }
 
     public function testNew()

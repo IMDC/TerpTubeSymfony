@@ -37,7 +37,6 @@ define([
             keyPointService = Service.get('keyPoint');
             keyPointService.subscribe('all', kpsCallback);
             mCallback = function (e) {
-                console.log(e);
                 mCallbackResult = e;
             };
             model = new PostModel({

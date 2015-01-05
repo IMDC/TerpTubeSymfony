@@ -118,7 +118,7 @@ class ThreadController extends Controller
             $thread->setMediaDisplayOrder($form->get('mediaIncluded')->getViewData());
 
             if (count($thread->getMediaIncluded()) > 0) {
-                $ordered = Utils::orderMedia($thread->getMediaIncluded(), $thread->getMediaDisplayOrder());
+                $ordered = $thread->getOrderedMedia();
                 $thread->setType($ordered[0]->getType()); // thread type is determined by the first associated media
             }
 

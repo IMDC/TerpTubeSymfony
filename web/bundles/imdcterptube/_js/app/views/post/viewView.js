@@ -159,10 +159,10 @@ define([
             e.model.get('keyPoint.videoDuration', '')
         );
         this._hoverKeyPoint(
-            e.model.get('keyPoint.isHovering', false)
+            e.model.get('keyPoint.isPlayerHovering', false)
         );
         this._clickKeyPoint(
-            e.model.get('keyPoint.isPlaying', false)
+            e.model.get('keyPoint.isPlayerPlaying', false)
         );
     };
 

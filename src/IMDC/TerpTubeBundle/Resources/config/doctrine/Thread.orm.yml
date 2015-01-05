@@ -81,4 +81,3 @@ IMDC\TerpTubeBundle\Entity\Thread:
             targetEntity: Post
             mappedBy: parentThread
             cascade: ["remove"]
-    lifecycleCallbacks: {  }

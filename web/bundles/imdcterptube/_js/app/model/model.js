@@ -105,5 +105,10 @@ define(['underscore'], function () {
         });
     };
 
+    Model.prototype.forceChange = function (keyPath) {
+        keyPath = typeof keyPath !== 'undefined' ? keyPath : '';
+        this._dispatch(Model.Event.CHANGE, keyPath);
+    };
+
     return Model;
 });
