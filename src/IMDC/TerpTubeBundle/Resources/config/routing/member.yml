@@ -4,17 +4,17 @@ imdc_member_list:
 
 imdc_member_friend_list:
   pattern: /friends
-  defaults: { _controller: IMDCTerpTubeBundle:FriendsList:showAll }
+  defaults: { _controller: IMDCTerpTubeBundle:Contact:showAll }
 
 imdc_member_friend_add:
   pattern: /friends/{userid}/add
-  defaults: { _controller: IMDCTerpTubeBundle:FriendsList:add }
+  defaults: { _controller: IMDCTerpTubeBundle:Contact:add }
   requirements:
     userid: \d+
 
 imdc_member_friend_remove:
   pattern: /friends/{userid}/remove/{redirect}
-  defaults: { _controller: IMDCTerpTubeBundle:FriendsList:remove, redirect:null }
+  defaults: { _controller: IMDCTerpTubeBundle:Contact:remove, redirect:null }
   requirements:
     userid: \d+
 

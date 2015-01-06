@@ -17,7 +17,7 @@ define(function () {
         this.$tabs = this.$container.find(ManageView.Binder.TABS);
         this.$membersToggle = this.$container.find(ManageView.Binder.MEMBERS_TOGGLE);
         this.$communityToggle = this.$container.find(ManageView.Binder.COMMUNITY_TOGGLE);
-        //this.$users = this.$container.find(ManageView.Binder.MEMBERS_CBS + ',' + ManageView.Binder.COMMUNITY_CBS);
+        this.$toggle = this.$container.find(ManageView.Binder.TOGGLE);
         this.$members = this.$container.find(ManageView.Binder.MEMBERS_CBS);
         this.$community = this.$container.find(ManageView.Binder.COMMUNITY_CBS);
         this.$remove = this.$container.find(ManageView.Binder.REMOVE);
@@ -26,13 +26,23 @@ define(function () {
         //this.$search.on('click', this.bind__onClickSearch);
         this.$tabs.on('shown.bs.tab', this.bind__onShownTab);
 
-        this.$membersToggle.on('click', function (e) {
+        var membersToggle = function (e) {
             this.$members.prop('checked', this.$members.filter(':checked').length == 0);
             this.$remove.attr('disabled', this.$members.filter(':checked').length == 0);
-        }.bind(this));
-        this.$communityToggle.on('click', function (e) {
+        }.bind(this);
+        var communityToggle = function (e) {
             this.$community.prop('checked', this.$community.filter(':checked').length == 0);
             this.$add.attr('disabled', this.$community.filter(':checked').length == 0);
+        }.bind(this);
+
+        this.$membersToggle.on('click', membersToggle);
+        this.$communityToggle.on('click', communityToggle);
+        this.$toggle.on('click', function (e) {
+            if ($('.tab-pane.active').attr('id') == 'tabMembers') {
+                membersToggle(e);
+            } else {
+                communityToggle(e);
+            }
         }.bind(this));
 
         this.$members.on('change', function (e) {
@@ -61,10 +71,11 @@ define(function () {
     ManageView.Binder = {
         //SEARCH: '.group-search',
         TABS: '.group-tabs a[data-toggle="tab"]',
-        MEMBERS_TOGGLE: '#tab-members .group-toggle-selection',
-        COMMUNITY_TOGGLE: '#tab-community .group-toggle-selection',
-        MEMBERS_CBS: '#tab-members input[type="checkbox"][data-uid]:not([disabled])',
-        COMMUNITY_CBS: '#tab-community input[type="checkbox"][data-uid]:not([disabled])',
+        MEMBERS_TOGGLE: '#tabMembers .group-toggle-selection', // list
+        COMMUNITY_TOGGLE: '#tabCommunity .group-toggle-selection', // list
+        TOGGLE: 'button.group-toggle-selection', // grid
+        MEMBERS_CBS: '#tabMembers input[type="checkbox"][data-uid]:not([disabled])',
+        COMMUNITY_CBS: '#tabCommunity input[type="checkbox"][data-uid]:not([disabled])',
         REMOVE: '.group-remove',
         ADD: '.group-add'
     };

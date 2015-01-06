@@ -21,6 +21,9 @@ IMDCTerpTubeBundle_member:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/member.yml"
   prefix: /member
 
+IMDCTerpTubeBundle_contact:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/contact.yml"
+
 IMDCTerpTubeBundle_message:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/message.yml"
   prefix: /message

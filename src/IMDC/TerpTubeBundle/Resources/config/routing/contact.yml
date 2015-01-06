@@ -1,0 +1,3 @@
+imdc_contact_list:
+  pattern: /contacts
+  defaults: { _controller: IMDCTerpTubeBundle:Contact:list }

@@ -469,7 +469,7 @@ class UserGroupController extends Controller
         }
 
         $style = $this->get('request')->query->get('style', 'list');
-        $activeTab = $this->get('request')->query->get('active_tab', '#tab-members');
+        $activeTab = $this->get('request')->query->get('active_tab', '#tabMembers');
 
         // pagination
         $pageLimit = 24;
@@ -687,7 +687,7 @@ class UserGroupController extends Controller
             array('pageParameterName' => $pageParamM)
         );
         $members->setParam('style', $style);
-        $members->setParam('active_tab', '#tab-members');
+        $members->setParam('active_tab', '#tabMembers');
 
         $nonMembers = $paginator->paginate(
             $nonMembers,
@@ -696,7 +696,7 @@ class UserGroupController extends Controller
             array('pageParameterName' => $pageParamNM)
         );
         $nonMembers->setParam('style', $style);
-        $nonMembers->setParam('active_tab', '#tab-community');
+        $nonMembers->setParam('active_tab', '#tabCommunity');
 
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,

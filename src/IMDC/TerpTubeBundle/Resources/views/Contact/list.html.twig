@@ -1,0 +1,32 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% import 'IMDCTerpTubeBundle:Group:macros.html.twig' as _group %}
+
+{% block title %}My Contacts{% endblock %}
+
+{% block content %}
+    <div class="col-lg-2 col-md-2">
+        <ul class="nav nav-pills nav-stacked">
+            <li class="active"><a href="#tabAll" data-toggle="tab">My Contacts <span class="badge">{{ all|length }}</span></a></li>
+            <li><a href="#tabMentors" data-toggle="tab">Mentors <span class="badge">{{ mentors|length }}</span></a></li>
+            <li><a href="#tabMentees" data-toggle="tab">Mentees <span class="badge">{{ mentees|length }}</span></a></li>
+            <li><a href="#tabFriends" data-toggle="tab">Friends <span class="badge">{{ friends|length }}</span></a></li>
+        </ul>
+    </div>
+    <div class="col-lg-10 col-md-10">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tabAll">
+                {{ _group.list_users('list', all) }}
+            </div>
+            <div class="tab-pane" id="tabMentors">
+                {{ _group.list_users('list', mentors) }}
+            </div>
+            <div class="tab-pane" id="tabMentees">
+                {{ _group.list_users('list', mentees) }}
+            </div>
+            <div class="tab-pane" id="tabFriends">
+                {{ _group.list_users('list', friends) }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
