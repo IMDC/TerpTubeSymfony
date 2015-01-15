@@ -31,7 +31,9 @@
                 {{ form_widget(form.titleMedia) }}
                 {{ form_row(form.titleText) }}
                 {{ form_row(form.accessType) }}
-                {{ form_row(form.group) }}
+                {% if form.group is defined %}
+                    {{ form_row(form.group) }}
+                {% endif %}
                 <button class="btn btn-success forum-submit"><i class="fa fa-check"></i> Create</button>
                 <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}

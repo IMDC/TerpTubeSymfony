@@ -86,16 +86,20 @@ class ForumController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
+        $formOptions = array(
+            'user' => $user
+        );
 
+        $group = null;
         if ($groupId) {
             $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
+            if ($group) {
+                $formOptions['group'] = $group;
+            }
         }
 
         $forum = new Forum();
-        $form = $this->createForm(new ForumType(), $forum, array(
-            'user' => $user,
-            'group' => $group
-        ));
+        $form = $this->createForm(new ForumType(), $forum, $formOptions);
         $form->handleRequest($request);
 
         if (!$form->isValid() && !$form->isSubmitted()) {

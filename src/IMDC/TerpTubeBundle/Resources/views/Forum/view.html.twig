@@ -96,4 +96,11 @@
 			</div>
 		</div>
 	</div>
+	{% if app.environment == 'test' %}
+		{#FIXME change this once the forum is json serialized (update the tests too)#}
+		<div style="display: none;">
+			<div id="__testMedia">{{ mediaJson|json_encode|raw }}</div>
+			<div id="__testGroupId">{% if forum.group %}{{ forum.group.id }}{% endif %}</div>
+		</div>
+	{% endif %}
 {% endblock content %}

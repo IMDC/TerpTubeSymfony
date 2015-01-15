@@ -12,7 +12,7 @@ class ForumType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
 	{
         $user = $options['user'];
-        $group = $options['group'];
+        $group = array_key_exists('group', $options) ? $options['group'] : null;
 
         $builder->add('titleMedia', 'media_chooser');
 
@@ -26,14 +26,12 @@ class ForumType extends AbstractType
 
         $queryBuilder = function (EntityRepository $repo) use ($user, $group) {
             //TODO filter all groups by ace instead of founder. user may not be founder of other groups, but may have an owner ace
-            $membersCanAddForums = $group->getMembersCanAddForums();
-
             $qb = $repo->createQueryBuilder('g')
                 ->leftJoin('g.userFounder', 'u')
                 ->where('u.id = :userId')
                 ->setParameter('userId', $user->getId());
 
-            if ($membersCanAddForums) {
+            if ($group && $group->getMembersCanAddForums()) {
                 $qb->leftJoin('g.members', 'm')
                     ->orWhere($qb->expr()->andX(
                         $qb->expr()->in('m.id', array(
@@ -63,7 +61,8 @@ class ForumType extends AbstractType
             ->setDefaults(array(
                 'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum'))
             ->setRequired(array(
-                'user',
+                'user'))
+            ->setOptional(array(
                 'group'))
             ->setAllowedTypes(array(
                 'user' => 'Symfony\Component\Security\Core\User\UserInterface',
