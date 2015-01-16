@@ -472,11 +472,38 @@ class UserGroupController extends Controller
         $activeTab = $this->get('request')->query->get('active_tab', '#tabMembers');
 
         // pagination
-        $pageLimit = 24;
-        $pageParamM = 'page_m';
-        $pageParamNM = 'page_c';
-        $pageM = $request->query->get($pageParamM, 1);
-        $pageNM = $request->query->get($pageParamNM, 1);
+        $defaultPageNum = 1;
+        $defaultPageLimit = 24;
+        $paginatorParams = array(
+            'members' => array(
+                'knp' => array('pageParameterName' => 'page_m'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style,
+                    'active_tab' => '#tabMembers'
+                )
+            ),
+            'nonMembers' => array(
+                'knp' => array('pageParameterName' => 'page_c'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style,
+                    'active_tab' => '#tabCommunity'
+                )
+            )
+        );
+        //TODO consolidate?
+        // extract paginator params from request
+        foreach ($paginatorParams as &$params) {
+            $params['page'] = $request->query->get($params['knp']['pageParameterName'], $params['page']);
+        }
+        $resetPage = function () use ($paginatorParams, $defaultPageNum) {
+            foreach ($paginatorParams as &$params) {
+                $params['page'] = $defaultPageNum;
+            }
+        };
 
         $user = $this->getUser();
         $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
@@ -485,8 +512,8 @@ class UserGroupController extends Controller
         $removeForm->handleRequest($request);
 
         if ($removeForm->isValid()) {
-            // reset to page 1 regardless
-            $pageM = $pageNM = 1;
+            // reset to default page regardless
+            $resetPage();
 
             $members = $removeForm->get('users')->getData();
             $deletedMembers = 0;
@@ -512,8 +539,8 @@ class UserGroupController extends Controller
         $addForm->handleRequest($request);
 
         if ($addForm->isValid()) {
-            // reset to page 1 regardless
-            $pageM = $pageNM = 1;
+            // reset to default page regardless
+            $resetPage();
 
             $newMembers = $addForm->get('users')->getData();
             $user = $this->getUser();
@@ -556,8 +583,8 @@ class UserGroupController extends Controller
         $searchForm->handleRequest($request);
 
         if ($searchForm->isValid()) {
-            // reset to page 1 regardless
-            $pageM = $pageNM = 1;
+            // reset to default page regardless
+            $resetPage();
 
             $filterMentors = $searchForm->get('mentors')->getData();
             $filterMentees = $searchForm->get('mentees')->getData();
@@ -679,24 +706,28 @@ class UserGroupController extends Controller
 
         // pagination
         $paginator = $this->get('knp_paginator');
+        //TODO consolidate?
+        $paginate = function ($object, $name) use ($paginatorParams, $paginator) {
+            $params = $paginatorParams[$name];
 
-        $members = $paginator->paginate(
-            $members,
-            $pageM, /*page number*/
-            $pageLimit, /*limit per page*/
-            array('pageParameterName' => $pageParamM)
-        );
-        $members->setParam('style', $style);
-        $members->setParam('active_tab', '#tabMembers');
+            $paginated = $paginator->paginate(
+                $object,
+                $params['page'],
+                $params['pageLimit'],
+                $params['knp']
+            );
 
-        $nonMembers = $paginator->paginate(
-            $nonMembers,
-            $pageNM, /*page number*/
-            $pageLimit, /*limit per page*/
-            array('pageParameterName' => $pageParamNM)
-        );
-        $nonMembers->setParam('style', $style);
-        $nonMembers->setParam('active_tab', '#tabCommunity');
+            if (array_key_exists('urlParams', $params)) {
+                foreach ($params['urlParams'] as $key => $value) {
+                    $paginated->setParam($key, $value);
+                }
+            }
+
+            return $paginated;
+        };
+
+        $members = $paginate($members, 'members');
+        $nonMembers = $paginate($nonMembers, 'nonMembers');
 
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,

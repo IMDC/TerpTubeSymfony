@@ -7,6 +7,11 @@ use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Class MyFilesGatewayControllerTest
+ * @package IMDC\TerpTubeBundle\Tests\Controller
+ * @author Jamal Edey <jamal.edey@ryerson.ca>
+ */
 class MyFilesGatewayControllerTest extends WebTestCase
 {
     /**

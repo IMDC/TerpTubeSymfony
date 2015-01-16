@@ -521,4 +521,9 @@ class UserProfile
     {
         return $this->profileVisibleToPublic;
     }
+
+    public function getName()
+    {
+        return $this->firstName . ' ' . $this->lastName;
+    }
 }

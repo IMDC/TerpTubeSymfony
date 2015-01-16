@@ -176,52 +176,56 @@ ul.pagination {
   transform: translateY(-50%);
 }
 
-/* line 182, sass/_base.scss */
+/* line 186, sass/_base.scss */
 .tt-list-table span, .tt-myFiles-list-table span {
   color: initial;
   /* override bootstrap span color under .active class */
 }
-/* line 186, sass/_base.scss */
+/* line 190, sass/_base.scss */
 .tt-list-table > thead > tr > th, .tt-myFiles-list-table > thead > tr > th, .tt-list-table > tbody > tr > td, .tt-myFiles-list-table > tbody > tr > td {
   line-height: 34px;
   vertical-align: middle;
 }
-/* line 190, sass/_base.scss */
+/* line 194, sass/_base.scss */
 .tt-list-table > thead > tr > th:first-child, .tt-myFiles-list-table > thead > tr > th:first-child, .tt-list-table > tbody > tr > td:first-child, .tt-myFiles-list-table > tbody > tr > td:first-child {
   width: 1%;
   line-height: initial;
 }
-/* line 195, sass/_base.scss */
-.tt-list-table > thead > tr > th:nth-of-type(2), .tt-myFiles-list-table > thead > tr > th:nth-of-type(2), .tt-list-table > tbody > tr > td:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td:nth-of-type(2) {
-  width: 60%;
-}
 /* line 201, sass/_base.scss */
-.tt-list-table > tbody td:nth-of-type(2), .tt-myFiles-list-table > tbody td:nth-of-type(2) {
+.tt-list-table > tbody i.fa, .tt-myFiles-list-table > tbody i.fa {
+  vertical-align: middle;
+}
+/* line 206, sass/_base.scss */
+.tt-list-table > tbody td.tt-list-table-col-thumbnail, .tt-myFiles-list-table > tbody td.tt-list-table-col-thumbnail {
+  text-align: center;
+}
+/* line 210, sass/_base.scss */
+.tt-list-table > tbody td.tt-list-table-col-primary, .tt-myFiles-list-table > tbody td.tt-list-table-col-primary {
+  width: 60%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* line 206, sass/_base.scss */
-.tt-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1), .tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) {
+/* line 216, sass/_base.scss */
+.tt-list-table > tbody td.tt-list-table-col-primary > span:nth-of-type(1), .tt-myFiles-list-table > tbody td.tt-list-table-col-primary > span:nth-of-type(1) {
   cursor: pointer;
 }
-/* line 209, sass/_base.scss */
-.tt-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) i.fa, .tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) i.fa {
-  vertical-align: middle;
-  padding-right: 8px;
-}
-/* line 215, sass/_base.scss */
-.tt-list-table > tbody td:nth-of-type(2) > span:nth-of-type(2), .tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(2) {
+/* line 220, sass/_base.scss */
+.tt-list-table > tbody td.tt-list-table-col-primary > span:nth-of-type(2), .tt-myFiles-list-table > tbody td.tt-list-table-col-primary > span:nth-of-type(2) {
   float: right;
   margin-bottom: -1px;
   display: none;
 }
-/* line 221, sass/_base.scss */
-.tt-list-table > tbody td:nth-of-type(2):hover > span:nth-of-type(2), .tt-myFiles-list-table > tbody td:nth-of-type(2):hover > span:nth-of-type(2) {
+/* line 226, sass/_base.scss */
+.tt-list-table > tbody td.tt-list-table-col-primary:hover > span:nth-of-type(2), .tt-myFiles-list-table > tbody td.tt-list-table-col-primary:hover > span:nth-of-type(2) {
   display: inline-block;
 }
+/* line 233, sass/_base.scss */
+.tt-list-table .tt-avatar, .tt-myFiles-list-table .tt-avatar, .tt-list-table .tt-thumbnail, .tt-myFiles-list-table .tt-thumbnail {
+  max-height: 34px;
+}
 
-/* line 228, sass/_base.scss */
+/* line 238, sass/_base.scss */
 .tt-this-is-you {
   font-size: 0.9em;
   color: #aaa !important;
@@ -366,8 +370,8 @@ tbody tr td {
 }
 /* line 49, sass/_myFiles.scss */
 .tt-myFiles-grid-thumbnail > div:nth-of-type(2) {
-  height: 35px;
-  line-height: 35px;
+  height: 34px;
+  line-height: 34px;
   overflow: hidden;
   text-overflow: ellipsis;
   /*white-space: nowrap;*/
@@ -381,7 +385,7 @@ tbody tr td {
 .tt-myFiles-grid-thumbnail > div:nth-of-type(2) > span:nth-of-type(2) {
   position: absolute;
   right: 20px;
-  bottom: 25px;
+  bottom: 30px;
   display: none;
 }
 /* line 69, sass/_myFiles.scss */
@@ -392,11 +396,6 @@ tbody tr td {
 /* line 74, sass/_myFiles.scss */
 .tt-myFiles-list-table {
   margin-bottom: 8px;
-}
-/* line 80, sass/_myFiles.scss */
-.tt-myFiles-list-table > tbody td:nth-of-type(2) > span:nth-of-type(1) i.fa {
-  vertical-align: middle;
-  padding-right: 8px;
 }
 
 /* used as a selector */

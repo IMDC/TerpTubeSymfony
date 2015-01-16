@@ -1,3 +1,15 @@
+{% macro controls(style, group_id) %}
+    {% if style == 'grid' %}
+        {% set style = 'list' %}
+        {% set style_icon = 'fa-th-list' %}
+        <button class="btn btn-default group-toggle-selection" title="Toggle selection"><i class="fa fa-check-square-o"></i></button>
+    {% else %}
+        {% set style = 'grid' %}
+        {% set style_icon = 'fa-th-large' %}
+    {% endif %}
+    <a class="btn btn-default" href="{{ path('imdc_group_manage', {'groupId': group_id, 'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
+{% endmacro %}
+
 {% macro _list_users_list(users) %}
     {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
 
@@ -6,6 +18,7 @@
             <thead>
                 <tr>
                     <th><input type="checkbox" class="group-toggle-selection" /></th>
+                    <th><!-- thumbnail --></th>
                     <th>Username</th>
                     <th>Posts</th>
                     <th>Joined</th>
@@ -16,8 +29,14 @@
                     {% for user in users %}
                         <tr>
                             <td><input type="checkbox" data-uid="{{ user.id }}" {% if app.user == user %}disabled {% endif %}/></td>
-                            <td>
-                                <span>{% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}{% if app.user == user %} <span class="tt-this-is-you">(you)</span>{% endif %}</span>
+                            <td class="tt-list-table-col-thumbnail">
+                                {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}
+                            </td>
+                            <td class="tt-list-table-col-primary">
+                                <span>
+                                    {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
+                                    {% if app.user == user %} <span class="tt-this-is-you">(you)</span>{% endif %}
+                                </span>
                                 <span>{{ _member.connect_tools(app.user, user, 'button') }}</span>
                             </td>
                             <td>{{ user.postCount }}</td>
@@ -53,16 +72,4 @@
         {{ _group._list_users_grid(users) }}
     {% endif %}
     <div class="text-center">{{ knp_pagination_render(users) }}</div>
-{% endmacro %}
-
-{% macro controls(style, group_id) %}
-    {% if style == 'grid' %}
-        {% set style = 'list' %}
-        {% set style_icon = 'fa-th-list' %}
-        <button class="btn btn-default group-toggle-selection" title="Toggle selection"><i class="fa fa-check-square-o"></i></button>
-    {% else %}
-        {% set style = 'grid' %}
-        {% set style_icon = 'fa-th-large' %}
-    {% endif %}
-    <a class="btn btn-default" href="{{ path('imdc_group_manage', {'groupId': group_id, 'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
 {% endmacro %}

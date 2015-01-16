@@ -1,14 +1,18 @@
 {% macro type_to_icon(type) %}
     {% if type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
         {% set icon = 'fa-file-video-o' %}
+        {% set type_str = 'Video' %}
     {% elseif type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
         {% set icon = 'fa-file-audio-o' %}
+        {% set type_str = 'Audio' %}
     {% elseif type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
         {% set icon = 'fa-file-photo-o' %}
+        {% set type_str = 'Image' %}
     {% elseif type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
         {% set icon = 'fa-file-o' %}
+        {% set type_str = 'Other' %}
     {% endif %}
-    <i class="fa {{ icon }} fa-2x"></i>
+    <i class="fa {{ icon }} fa-2x" title="{{ type_str }}"></i>
 {% endmacro %}
 
 {% macro format_size(size) %}
@@ -19,11 +23,13 @@
     {% endif %}
 {% endmacro %}
 
-{% macro thumbnail(path) %}
+{% macro thumbnail(path, css_class) %}
+    {% set css_class = css_class|default('img-responsive center-block tt-thumbnail') %}
+
     {% if path is not null %}
-        <img class="img-responsive center-block" src="{{ asset(path) }}" />
+        <img class="{{ css_class }}" src="{{ asset(path) }}" />
     {% else %}
-        <span class="fa-stack fa-lg" style="width: 100%;">
+        <span class="fa-stack fa-lg">
             <i class="fa fa-file-o fa-stack-2x"></i>
             <i class="fa fa-play-circle fa-stack-1x"></i>
         </span>

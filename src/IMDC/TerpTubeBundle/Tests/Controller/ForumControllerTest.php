@@ -6,6 +6,11 @@ use IMDC\TerpTubeBundle\Tests\Common;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Class ForumControllerTest
+ * @package IMDC\TerpTubeBundle\Tests\Controller
+ * @author Jamal Edey <jamal.edey@ryerson.ca>
+ */
 class ForumControllerTest extends WebTestCase
 {
     /**
@@ -24,7 +29,6 @@ class ForumControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/forum/new');
 
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->assertCount(1, $crawler->filter('form[name="forum"]'), 'a single forum form should be present');
         $this->assertCount(1, $crawler->filter('#forum_accessType_0:checked'), '"public" (default) access type should be checked');
     }
@@ -72,7 +76,6 @@ class ForumControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', '/forum/new/4');
 
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->assertCount(1, $crawler->filter('form[name="forum"]'), 'a single forum form should be present');
         $this->assertCount(1, $crawler->filter('#forum_accessType_4:checked'), '"specific group" access type should be checked');
     }

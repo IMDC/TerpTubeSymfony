@@ -1,0 +1,54 @@
+{% macro controls() %}
+    <button class="btn btn-default contact-bulk-action" style="display: none;" title="Message" data-action="3"><i class="fa fa-envelope"></i></button>
+    <button class="btn btn-default contact-bulk-action" style="display: none;" title="Create group" data-action="2"><i class="fa fa-users"></i></button>
+    <button class="btn btn-danger contact-bulk-action" style="display: none;" title="Remove" data-action="1"><i class="fa fa-trash-o"></i></button>
+{% endmacro %}
+
+{% macro list_users(users) %}
+    {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
+
+    <div class="table-responsive">
+        <table class="table table-hover tt-list-table">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="contact-toggle-selection" /></th>
+                    <th><!-- avatar --></th>
+                    <th>Username</th>
+                    <th>Name</th>
+                    <th>Joined</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if users|length > 0 %}
+                    {% for user in users %}
+                        <tr>
+                            <td><input type="checkbox" data-uid="{{ user.id }}" {% if app.user == user %}disabled {% endif %}/></td>
+                            <td class="tt-list-table-col-thumbnail">
+                                {#<a href="{{ path('imdc_profile_user', {'userName': user.getUsername}) }}">
+                                    <img class="tt-avatar" src="{{ user.getProfile.getAvatar ? asset(user.getProfile.getAvatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
+                                </a>#}
+                                {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}
+                            </td>
+                            <td class="tt-list-table-col-primary">
+                                <span>
+                                    {#<a href="{{ path('imdc_profile_user', {'userName': user.getUsername}) }}">
+                                        {{ user.getUsername }}
+                                    </a>#}
+                                    {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
+                                </span>
+                                <span>{{ _member.connect_tools(app.user, user, 'button') }}</span>
+                            </td>
+                            <td>{{ user.getProfile.getName }}</td>
+                            <td>{{ user.getJoinDate|date('M j Y') }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4"><div class="text-center">None</div></td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-offset-3 col-md-6 text-center">{{ knp_pagination_render(users) }}</div>
+{% endmacro %}

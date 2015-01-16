@@ -26,33 +26,80 @@ class ContactController extends Controller
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
+        // pagination
+        $defaultPageNum = 1;
+        $defaultPageLimit = 24;
+        $paginatorParams = array(
+            'all' => array(
+                'knp' => array('pageParameterName' => 'page_l'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'active_tab' => '#tabAll'
+                )
+            ),
+            'mentors' => array(
+                'knp' => array('pageParameterName' => 'page_r'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'active_tab' => '#tabMentors'
+                )
+            ),
+            'mentees' => array(
+                'knp' => array('pageParameterName' => 'page_e'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'active_tab' => '#tabMentees'
+                )
+            ),
+            'friends' => array(
+                'knp' => array('pageParameterName' => 'page_s'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'active_tab' => '#tabFriends'
+                )
+            )
+        );
+        //TODO consolidate?
+        // extract paginator params from request
+        foreach ($paginatorParams as &$params) {
+            $params['page'] = $request->query->get($params['knp']['pageParameterName'], $params['page']);
+        }
+
         $user = $this->getUser();
         $all = array_merge($user->getMentorList()->toArray(),
             $user->getMenteeList()->toArray(),
             $user->getFriendsList()->toArray());
 
+        // pagination
         $paginator = $this->get('knp_paginator');
+        //TODO consolidate?
+        $paginate = function ($object, $name) use ($paginatorParams, $paginator) {
+            $params = $paginatorParams[$name];
 
-        $all = $paginator->paginate(
-            $all,
-            $request->query->get('page', 1), /*page number*/
-            8 /*limit per page*/
-        );
-        $mentors = $paginator->paginate(
-            $user->getMentorList(),
-            $request->query->get('page', 1), /*page number*/
-            8 /*limit per page*/
-        );
-        $mentees = $paginator->paginate(
-            $user->getMenteeList(),
-            $request->query->get('page', 1), /*page number*/
-            8 /*limit per page*/
-        );
-        $friends = $paginator->paginate(
-            $user->getFriendsList(),
-            $request->query->get('page', 1), /*page number*/
-            8 /*limit per page*/
-        );
+            $paginated = $paginator->paginate(
+                $object,
+                $params['page'],
+                $params['pageLimit'],
+                $params['knp']
+            );
+
+            if (array_key_exists('urlParams', $params)) {
+                foreach ($params['urlParams'] as $key => $value) {
+                    $paginated->setParam($key, $value);
+                }
+            }
+
+            return $paginated;
+        };
+
+        $all = $paginate($all, 'all');
+        $mentors = $paginate($user->getMentorList(), 'mentors');
+        $mentees = $paginate($user->getMenteeList(), 'mentees');
+        $friends = $paginate($user->getFriendsList(), 'friends');
 
         return $this->render('IMDCTerpTubeBundle:Contact:list.html.twig', array(
             'all' => $all,
