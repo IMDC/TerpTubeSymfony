@@ -105,5 +105,9 @@ _Thread:view.html.twig
 {% endblock %}
 
 {% block users_select_widget %}
-    <div id="{{ form.users.vars.id }}" data-prototype="{{ form_widget(form.users.vars.prototype)|e }}"></div>
+    <div id="{{ form.users.vars.id }}" data-prototype="{{ form_widget(form.users.vars.prototype)|e }}">
+        {% for user in form.users %}
+            {{ form_row(user) }}
+        {% endfor %}
+    </div>
 {% endblock %}

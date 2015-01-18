@@ -1,0 +1,94 @@
+define([
+    'core/subscriber',
+    'extra'
+], function (Subscriber) {
+    'use strict';
+
+    var TableComponent = function ($table) {
+        Subscriber.prototype.constructor.apply(this, arguments);
+
+        this.bind__onClickToggleSelection = this._onClickToggleSelection.bind(this);
+        this.bind__onClickBulkAction = this._onClickBulkAction.bind(this);
+        this.bind__onClickItems = this._onClickItems.bind(this);
+
+        this.$table = $table;
+        this.$toggleSelection = this.$table.find(TableComponent.Binder.TOGGLE_SELECTION);
+        this.$bulkActions = this.$table.find(TableComponent.Binder.BULK_ACTION);
+        this.$items = this.$table.find(TableComponent.Binder.ITEM);
+
+        this.$toggleSelection.on('click', this.bind__onClickToggleSelection);
+        this.$bulkActions.on('click', this.bind__onClickBulkAction);
+        this.$items.on('change', this.bind__onClickItems);
+    };
+
+    TableComponent.extend(Subscriber);
+
+    TableComponent.Binder = {
+        TOGGLE_SELECTION: '.table-component-toggle-selection',
+        BULK_ACTION: '.table-component-bulk-action',
+        ITEM: 'input.table-component-item:not([disabled])'
+    };
+
+    TableComponent.Event = {
+        SELECTION_CHANGE: 'eventSelectionChange',
+        CLICK_BULK_ACTION: 'eventClickBulkAction'
+    };
+
+    TableComponent.prototype._dispatchToggleEvent = function (e) {
+        var $checked = this.getSelection();
+        this._dispatch(TableComponent.Event.SELECTION_CHANGE, {
+            $selection: $checked,
+            tableComponent: this,
+            parentEvent: e
+        });
+    };
+
+    TableComponent.prototype._onClickToggleSelection = function (e) {
+        this.$items.prop('checked', e.target.checked);
+        this._dispatchToggleEvent(e);
+    };
+
+    TableComponent.prototype._onClickBulkAction = function (e) {
+        var action = $(e.currentTarget).data('action');
+        this._dispatch(TableComponent.Event.CLICK_BULK_ACTION, {
+            $bulkAction: $(e.currentTarget),
+            action: action,
+            $selection: this.getSelection(),
+            tableComponent: this,
+            parentEvent: e
+        });
+    };
+
+    TableComponent.prototype._onClickItems = function (e) {
+        var $checked = this.getSelection();
+        this._dispatch(TableComponent.Event.SELECTION_CHANGE, {
+            $selection: $checked,
+            tableComponent: this,
+            parentEvent: e
+        });
+
+        var allChecked = $checked.length == this.$items.length;
+        this.$toggleSelection.prop('checked', allChecked);
+        if (allChecked) {
+            this._dispatchToggleEvent(e);
+        }
+    };
+
+    TableComponent.prototype.getTable = function () {
+        return this.$table;
+    };
+
+    TableComponent.prototype.getBulkActions = function () {
+        return this.$bulkActions;
+    };
+
+    TableComponent.prototype.getSelection = function () {
+        return this.$items.filter(':checked');
+    };
+
+    TableComponent.table = function ($table) {
+        return new TableComponent($table);
+    };
+
+    return TableComponent;
+});

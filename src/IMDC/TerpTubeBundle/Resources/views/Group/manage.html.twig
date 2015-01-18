@@ -37,11 +37,10 @@
                     <i class="fa fa-arrow-left"></i> Back to Group
                 </a>
             </div>
-            <div class="col-md-6">
+        </div>
+        <div class="row">
+            <div class="col-md-offset-3 col-md-6">
                 {{ form(searchForm, {'attr': {'class': 'tt-group-manage-search-form'}}) }}
-            </div>
-            <div class="col-md-3 text-right">
-                {{ _group.controls(style, group.id) }}
             </div>
         </div>
         {# used to persist the active tab between searches #}
@@ -50,16 +49,16 @@
             <li{% if active_tab == '#tabMembers' %} class="active"{% endif %}><a href="#tabMembers" role="tab" data-toggle="tab">Group Members</a></li>
             <li{% if active_tab == '#tabCommunity' %} class="active"{% endif %}><a href="#tabCommunity" role="tab" data-toggle="tab">Community</a></li>
         </ul>
-        <div class="tab-content">
+        <div class="tab-content" style="margin-top: 5px;">
             <div class="tab-pane{% if active_tab == '#tabMembers' %} active{% endif %}" id="tabMembers">
-                {{ _group.list_users(style, members) }}
+                {{ _group.list_users(style, members, group.id) }}
                 {{ form(removeForm) }}
                 <button class="btn btn-success group-remove" disabled data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Removing members...">
                     <i class="fa fa-check"></i> Remove Selected
                 </button>
             </div>
             <div class="tab-pane{% if active_tab == '#tabCommunity' %} active{% endif %}" id="tabCommunity">
-                {{ _group.list_users(style, nonMembers) }}
+                {{ _group.list_users(style, nonMembers, group.id) }}
                 {{ form(addForm) }}
                 <button class="btn btn-success group-add" disabled data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Adding members...">
                     <i class="fa fa-check"></i> Add Selected

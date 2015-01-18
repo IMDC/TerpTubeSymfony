@@ -5,6 +5,8 @@ imdc_group_list:
 imdc_group_new:
   pattern: /new
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:new }
+  options:
+    expose: true
 
 imdc_group_view:
   pattern: /{groupId}

@@ -13,6 +13,8 @@ imdc_message_archive:
 imdc_message_new:
   pattern: /new/{username}
   defaults: { _controller: IMDCTerpTubeBundle:Message:new, username: null }
+  options:
+    expose: true
 
 imdc_message_view:
   pattern: /{messageid}

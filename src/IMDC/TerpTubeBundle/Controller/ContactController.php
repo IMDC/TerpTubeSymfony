@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use IMDC\TerpTubeBundle\Entity;
+use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,34 +34,22 @@ class ContactController extends Controller
             'all' => array(
                 'knp' => array('pageParameterName' => 'page_l'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'active_tab' => '#tabAll'
-                )
+                'pageLimit' => $defaultPageLimit
             ),
             'mentors' => array(
                 'knp' => array('pageParameterName' => 'page_r'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'active_tab' => '#tabMentors'
-                )
+                'pageLimit' => $defaultPageLimit
             ),
             'mentees' => array(
                 'knp' => array('pageParameterName' => 'page_e'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'active_tab' => '#tabMentees'
-                )
+                'pageLimit' => $defaultPageLimit
             ),
             'friends' => array(
                 'knp' => array('pageParameterName' => 'page_s'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'active_tab' => '#tabFriends'
-                )
+                'pageLimit' => $defaultPageLimit
             )
         );
         //TODO consolidate?
@@ -101,11 +90,14 @@ class ContactController extends Controller
         $mentees = $paginate($user->getMenteeList(), 'mentees');
         $friends = $paginate($user->getFriendsList(), 'friends');
 
+        $usersSelectForm = $this->createForm(new UsersSelectType(), null, array('em' => $this->getDoctrine()->getManager()));
+
         return $this->render('IMDCTerpTubeBundle:Contact:list.html.twig', array(
             'all' => $all,
             'mentors' => $mentors,
             'mentees' => $mentees,
-            'friends' => $friends
+            'friends' => $friends,
+            'users_select_form' => $usersSelectForm->createView()
         ));
     }
 

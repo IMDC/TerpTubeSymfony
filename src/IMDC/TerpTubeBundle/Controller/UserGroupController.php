@@ -62,16 +62,35 @@ class UserGroupController extends Controller
      */
     public function newAction(Request $request)
     {
-        // check if user logged in
+        // check if user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
+        $em = $this->getDoctrine()->getManager();
+
+        $usersSelectForm = $this->createForm(new UsersSelectType(), null, array('em' => $em));
+        $usersSelectForm->handleRequest($request);
+
+        $members = null;
+        if ($usersSelectForm->isValid()) {
+            $members = $usersSelectForm->get('users')->getData();
+        }
+
         $group = new UserGroup();
-        $form = $this->createForm(new UserGroupType(), $group);
+        $form = $this->createForm(new UserGroupType(), $group, array(
+            'em' => $em
+        ));
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if (!$form->isValid()) {
+            if ($members) {
+                //$form->get('members')->get('users')->setData($members);
+                $form->get('members')->setData($members);
+            } else {
+                $form->remove('members');
+            }
+        } else {
             $user = $this->getUser();
             $group->setUserFounder($user);
             $group->addAdmin($user);
@@ -96,7 +115,6 @@ class UserGroupController extends Controller
 
             $user->addUserGroup($group);
 
-            $em = $this->getDoctrine()->getManager();
             $em->persist($group);
             $em->persist($user);
             $em->flush();
@@ -110,6 +128,10 @@ class UserGroupController extends Controller
             $aclProvider->updateAcl($acl);
 
             $this->get('session')->getFlashBag()->add('info', 'Group created successfully!');
+
+            //$members = $form->get('members')->get('users')->getData();
+            $members = $form->get('members')->getData();
+            $this->addMembers($group, $members);
 
             return $this->redirect($this->generateUrl('imdc_group_view', array(
                 'groupId' => $group->getId()
@@ -516,23 +538,7 @@ class UserGroupController extends Controller
             $resetPage();
 
             $members = $removeForm->get('users')->getData();
-            $deletedMembers = 0;
-
-            foreach ($members as $member) {
-                if ($group->isUserMemberOfGroup($member)) {
-                    $member->removeUserGroup($group);
-                    $em->persist($member);
-                    $deletedMembers++;
-                }
-            }
-
-            $em->flush();
-
-            if ($deletedMembers > 0) {
-                $this->get('session')
-                    ->getFlashBag()
-                    ->add('info', sprintf('Removed %d members.', $deletedMembers));
-            }
+            $this->removeMembers($group, $members);
         }
 
         $addForm = $this->createForm(new UsersSelectType('user_group_manage_add'), null, array('em' => $em));
@@ -542,36 +548,8 @@ class UserGroupController extends Controller
             // reset to default page regardless
             $resetPage();
 
-            $newMembers = $addForm->get('users')->getData();
-            $user = $this->getUser();
-            $addedMembers = 0;
-            $invitedMembers = 0;
-
-            foreach ($newMembers as $newMember) {
-                if ($user->isUserOnMentorList($newMember)
-                    || $user->isUserOnMenteeList($newMember)
-                    || $user->isUserOnFriendsList($newMember)) {
-                    // by pass invitation step and add users directly
-                    //$group->addMember($newMember);
-                    $newMember->addUserGroup($group);
-                    //$em->persist($group);
-                    $em->persist($newMember);
-                    $addedMembers++;
-                } else {
-                    $this->sendGroupInvitation($user, $newMember, $group);
-                    $invitedMembers++;
-                }
-            }
-
-            $em->flush();
-
-            if ($addedMembers > 0 || $invitedMembers > 0) {
-                $fb = $this->get('session')->getFlashBag();
-                if ($addedMembers > 0)
-                    $fb->add('info', sprintf('Added %d members.', $addedMembers));
-                if ($invitedMembers > 0)
-                    $fb->add('info', sprintf('Invited %d members.', $invitedMembers));
-            }
+            $members = $addForm->get('users')->getData();
+            $this->addMembers($group, $members);
         }
 
         // prep query builders
@@ -960,20 +938,6 @@ class UserGroupController extends Controller
         return $this->redirect($this->generateUrl('imdc_group_view', array('groupId' => $groupId)));
     }
 
-    /**
-     * @return FormBuilder
-     * @deprecated
-     */
-    private function getGenericIdFormBuilder() { //TODO delete
-        //TODO replace with standard form type with user data transformer
-        $defaultData = array('users' => new ArrayCollection());
-        return $this->createFormBuilder($defaultData)
-            ->add('users', 'collection', array(
-                'type' => new IdType(),
-                'label' => false,
-                'allow_add' => true));
-    }
-
     private function sendGroupInvitation($sender, $recipient, $group)
     {
         $em = $this->getDoctrine()->getManager();
@@ -994,5 +958,75 @@ class UserGroupController extends Controller
         $em->persist($sender);
         $em->persist($recipient);
         $em->flush();
+    }
+
+    private function removeMembers($group, $members)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $deletedMembers = 0;
+
+        foreach ($members as $member) {
+            if ($group->isUserMemberOfGroup($member)) {
+                $member->removeUserGroup($group);
+                $em->persist($member);
+                $deletedMembers++;
+            }
+        }
+
+        $em->flush();
+
+        if ($deletedMembers > 0) {
+            $this->get('session')
+                ->getFlashBag()
+                ->add('info', sprintf('Removed %d members.', $deletedMembers));
+        }
+    }
+
+    private function addMembers($group, $members)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->getUser();
+        $addedMembers = 0;
+        $invitedMembers = 0;
+
+        foreach ($members as $member) {
+            if ($user->isUserOnMentorList($member)
+                || $user->isUserOnMenteeList($member)
+                || $user->isUserOnFriendsList($member)) {
+                // by pass invitation step and add users directly
+                //$group->addMember($newMember);
+                $member->addUserGroup($group);
+                //$em->persist($group);
+                $em->persist($member);
+                $addedMembers++;
+            } else {
+                $this->sendGroupInvitation($user, $member, $group);
+                $invitedMembers++;
+            }
+        }
+
+        $em->flush();
+
+        if ($addedMembers > 0 || $invitedMembers > 0) {
+            $fb = $this->get('session')->getFlashBag();
+            if ($addedMembers > 0)
+                $fb->add('info', sprintf('Added %d members.', $addedMembers));
+            if ($invitedMembers > 0)
+                $fb->add('info', sprintf('Invited %d members.', $invitedMembers));
+        }
+    }
+
+    /**
+     * @return FormBuilder
+     * @deprecated
+     */
+    private function getGenericIdFormBuilder() { //TODO delete
+        //TODO replace with standard form type with user data transformer
+        $defaultData = array('users' => new ArrayCollection());
+        return $this->createFormBuilder($defaultData)
+            ->add('users', 'collection', array(
+                'type' => new IdType(),
+                'label' => false,
+                'allow_add' => true));
     }
 }

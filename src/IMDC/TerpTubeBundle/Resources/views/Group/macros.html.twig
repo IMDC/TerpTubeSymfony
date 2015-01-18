@@ -1,8 +1,8 @@
-{% macro controls(style, group_id) %}
+{% macro _controls(style, group_id) %}
     {% if style == 'grid' %}
         {% set style = 'list' %}
         {% set style_icon = 'fa-th-list' %}
-        <button class="btn btn-default group-toggle-selection" title="Toggle selection"><i class="fa fa-check-square-o"></i></button>
+        <button class="btn btn-default table-component-toggle-selection" title="Toggle selection"><i class="fa fa-check-square-o"></i></button>
     {% else %}
         {% set style = 'grid' %}
         {% set style_icon = 'fa-th-large' %}
@@ -10,66 +10,17 @@
     <a class="btn btn-default" href="{{ path('imdc_group_manage', {'groupId': group_id, 'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
 {% endmacro %}
 
-{% macro _list_users_list(users) %}
+{% macro list_users(style, users, group_id) %}
+    {% import _self as _group %}
     {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
 
-    <div class="table-responsive">
-        <table class="table table-hover tt-list-table">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" class="group-toggle-selection" /></th>
-                    <th><!-- thumbnail --></th>
-                    <th>Username</th>
-                    <th>Posts</th>
-                    <th>Joined</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if users|length > 0 %}
-                    {% for user in users %}
-                        <tr>
-                            <td><input type="checkbox" data-uid="{{ user.id }}" {% if app.user == user %}disabled {% endif %}/></td>
-                            <td class="tt-list-table-col-thumbnail">
-                                {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}
-                            </td>
-                            <td class="tt-list-table-col-primary">
-                                <span>
-                                    {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
-                                    {% if app.user == user %} <span class="tt-this-is-you">(you)</span>{% endif %}
-                                </span>
-                                <span>{{ _member.connect_tools(app.user, user, 'button') }}</span>
-                            </td>
-                            <td>{{ user.postCount }}</td>
-                            <td>{{ user.joinDate|date('M j Y') }}</td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="4"><div class="text-center">None found</div></td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
+    <div class="row">
+        <div class="col-md-12 text-right">{{ _group._controls(style, group_id) }}</div>
     </div>
-{% endmacro %}
-
-{% macro _list_users_grid(users) %}
-    <div class="tt-grid-div">
-        {% if users|length > 0 %}
-            {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': users, 'isSelection': true} %}
-        {% else %}
-            <p class="text-center" style="margin-bottom: 20px;">None found</p>
-        {% endif %}
-    </div>
-{% endmacro %}
-
-{% macro list_users(style, users) %}
-    {% import _self as _group %}
-
     {% if style == 'list' %}
-        {{ _group._list_users_list(users) }}
+        {{ _member.list_users_list(users, true) }}
     {% else %}
-        {{ _group._list_users_grid(users) }}
+        {{ _member.list_users_grid(users, true) }}
     {% endif %}
     <div class="text-center">{{ knp_pagination_render(users) }}</div>
 {% endmacro %}

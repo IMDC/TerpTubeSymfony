@@ -24,55 +24,57 @@ tbody tr td
 	width: 100%;
 }
 
+// tt-myFiles-grid-div (tt-gd)
+$tt-mgd-img-height: 175px;
+
 .tt-myFiles-grid-div {
   @extend .tt-grid-div;
-}
 
-.tt-myFiles-grid-thumbnail {
-  @extend .tt-grid-thumbnail;
+  margin-top: 20px;
+  cursor: pointer;
 
-  $img-height: 175px;
+  & div.tt-grid-div-body {
+    min-height: 225px;
 
-  > div:first-of-type {
-    height: $img-height;
+    & div.tt-grid-div-thumbnail {
+      height: $tt-mgd-img-height;
 
-    > div {
-      img {
-        max-height: $img-height;
-        /*width: 100%;
-        object-fit: contain;*/
-        height: calc(175px/1.5);
+      > div {
+        img {
+          max-height: $tt-mgd-img-height;
+          /*width: 100%;
+          object-fit: contain;*/
+          height: calc(175px / 1.5);
+        }
       }
     }
-  }
 
-  > div:nth-of-type(2) {
-    height: 34px;
-    line-height: 34px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    /*white-space: nowrap;*/
-    display: inline-block;
+    & div.tt-grid-div-primary {
+      height: 34px;
+      line-height: 34px;
+      /*white-space: nowrap;*/
+      display: inline-block;
 
-    > span:nth-of-type(1) i.fa {
-      vertical-align: middle;
+      > span:nth-of-type(1) i.fa {
+        vertical-align: middle;
+      }
+
+      > span:nth-of-type(2) {
+        position: absolute;
+        right: 20px;
+        bottom: 30px;
+        display: none;
+      }
     }
 
-    > span:nth-of-type(2) {
-      position: absolute;
-      right: 20px;
-      bottom: 30px;
-      display: none;
+    &:hover div.tt-grid-div-primary > span:nth-of-type(2) {
+      display: inline-block;
     }
-  }
-
-  &:hover > div:nth-of-type(2) > span:nth-of-type(2) {
-    display: inline-block;
   }
 }
 
 .tt-myFiles-list-table {
   @extend .tt-list-table;
 
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }

@@ -142,36 +142,62 @@ ul.pagination {
   }
 }
 
+.tt-this-is-you {
+  font-size: 0.9em;
+  color: #aaa !important;
+}
+
+.tt-controls {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .tt-popup-dialog {
   position: fixed !important;
   z-index: 5000;
 }
 
+// tt-grid-div (tt-gd)
+$tt-gd-img-height: 125px;
+
 .tt-grid-div {
-  margin-top: 15px;
-}
+  margin-top: 5px;
 
-.tt-grid-thumbnail {
-  min-height: 225px;
-  cursor: pointer;
+  & div.tt-grid-div-body {
+    min-height: 265px;
 
-  input:first-of-type[type='checkbox'] {
-    position: absolute;
-    margin: 4px;
-    display: block;
-    z-index: 1;
-  }
+    & div.tt-grid-div-item {
+      position: absolute;
+      margin-left: 4px;
+      z-index: 1;
+    }
 
-  > div:first-of-type {
-    margin-bottom: 5px;
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
+    & div.tt-grid-div-thumbnail {
+      height: $tt-gd-img-height;
+      margin-bottom: 5px;
+      -webkit-transform-style: preserve-3d;
+      -moz-transform-style: preserve-3d;
+      transform-style: preserve-3d;
 
-    > div {
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
+      > div {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+
+        img {
+          max-height: $tt-gd-img-height;
+        }
+      }
+    }
+
+    & div.tt-grid-div-primary {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      > p:nth-of-type(1) {
+        font-size: 24px;
+      }
     }
   }
 }
@@ -183,6 +209,8 @@ $tt-lt-line-height: $tt-lt-row-height;
 .tt-list-table {
   @extend .tt-table;
 
+  margin-top: 5px;
+
   & span {
     color: initial; /* override bootstrap span color under .active class */
   }
@@ -191,51 +219,46 @@ $tt-lt-line-height: $tt-lt-row-height;
     line-height: $tt-lt-line-height;
     vertical-align: middle;
 
-    &:first-child {
-      width: 1%;
-      line-height: initial;
-    }
-  }
-
-  > tbody {
     i.fa {
       vertical-align: middle;
     }
 
-    td {
-      &.tt-list-table-col-thumbnail {
-        text-align: center;
-      }
+    &.tt-list-table-col-item {
+      width: 1%;
+      line-height: initial;
+    }
 
-      &.tt-list-table-col-primary {
-        width: 60%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    &.tt-list-table-col-thumbnail {
+      text-align: center;
+    }
 
-        > span:nth-of-type(1) {
-          cursor: pointer;
-        }
+    &.tt-list-table-col-primary {
+      width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-        > span:nth-of-type(2) {
-          float: right;
-          margin-bottom: -1px;
-          display: none;
-        }
-
-        &:hover > span:nth-of-type(2)  {
-          display: inline-block;
-        }
-      }
+    .tt-avatar, .tt-thumbnail {
+      max-height: $tt-lt-row-height;
     }
   }
 
-  .tt-avatar, .tt-thumbnail {
-    max-height: $tt-lt-row-height;
-  }
-}
+  > tbody > tr > td {
+    &.tt-list-table-col-primary {
+      > span:nth-of-type(1) {
+        cursor: pointer;
+      }
 
-.tt-this-is-you {
-  font-size: 0.9em;
-  color: #aaa !important;
+      > span:nth-of-type(2) {
+        float: right;
+        margin-bottom: -1px;
+        display: none;
+      }
+
+      &:hover > span:nth-of-type(2)  {
+        display: inline-block;
+      }
+    }
+  }
 }

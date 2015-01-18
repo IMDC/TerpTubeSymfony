@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
+use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,6 +42,13 @@ class MessageController extends Controller
 		}
 
 		$em = $this->getDoctrine()->getManager();
+
+		$usersSelectForm = $this->createForm(new UsersSelectType(), null, array('em' => $em));
+		$usersSelectForm->handleRequest($request);
+
+		if ($usersSelectForm->isValid()) {
+			$recipients = $usersSelectForm->get('users')->getData();
+		}
 		
 		$message = new Message();
 		$form = $this->createForm(new PrivateMessageType(), $message, array(

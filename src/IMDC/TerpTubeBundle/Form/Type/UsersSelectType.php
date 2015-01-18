@@ -11,14 +11,17 @@ class UsersSelectType extends AbstractType
 {
     private $name;
 
-    public function __construct($name)
+    public function __construct($name = '')
     {
         $this->name = !empty($name) ? $name : 'users_select';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $entityManager = $options['em'];
+        $em = $options['em'];
 
         $builder->add(
             $builder
@@ -29,10 +32,13 @@ class UsersSelectType extends AbstractType
                     'attr' => array(
                         'style' => 'display: none;'
                     )))
-                ->addModelTransformer(new UserCollectionToIntArrayTransformer($entityManager))
+                ->addModelTransformer(new UserCollectionToIntArrayTransformer($em))
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
@@ -43,6 +49,9 @@ class UsersSelectType extends AbstractType
             ));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return $this->name;

@@ -20,9 +20,9 @@
     <div class="table-responsive">
         <table class="table table-hover tt-myFiles-list-table">
             <thead>
-                <th><input type="checkbox" class="my-files-selector-toggle-selection" disabled /></th>
-                <th><!-- thumbnail --></th>
-                <th>Name</th>
+                <th class="tt-list-table-col-item"><input type="checkbox" class="my-files-selector-toggle-selection" disabled /></th>
+                <th class="tt-list-table-col-thumbnail"><!-- thumbnail --></th>
+                <th class="tt-list-table-col-primary">Name</th>
                 <th>Date uploaded</th>
                 <th>Type</th>
                 <th>Size</th>
@@ -30,11 +30,11 @@
             <tbody class="my-files-selector-files-list">
                 {% if resource_files|length > 0 %}
                     {% for resource_file in resource_files %}
-                        {% set previewDisabled = resource_file.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
+                        {% set preview_disabled = resource_file.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
                         <tr>
-                            <td><input type="checkbox" data-mid="{{ resource_file.id }}" /></td>
+                            <td class="tt-list-table-col-item"><input type="checkbox" data-mid="{{ resource_file.id }}" /></td>
                             <td class="tt-list-table-col-thumbnail">{{ _media.thumbnail(resource_file.thumbnailPath) }}</td>
-                            <td class="tt-list-table-col-primary tt-myFiles-nameColumn {{ previewDisabled }}">
+                            <td class="tt-list-table-col-primary tt-myFiles-nameColumn {{ preview_disabled }}">
                                 <span class="edit-title my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resource_file.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
                                     {{ resource_file.title }}
                                 </span>
@@ -63,20 +63,25 @@
     {% import _self as _files %}
     {% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as _media %}
 
-    <div class="row tt-myFiles-grid-div my-files-selector-files-list">
+    <div class="tt-myFiles-grid-div my-files-selector-files-list">
         {% if resource_files|length > 0 %}
             {% for resource_file in resource_files %}
-                {% set previewDisabled = resource_file.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
+                {% if loop.index % 4 == 1 %}
+                    <div class="row">
+                {% endif %}
+                {% set preview_disabled = resource_file.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
                 <div class="col-md-3">
-                    <div class="thumbnail tt-myFiles-grid-thumbnail">
-                        <input type="checkbox" data-mid="{{ resource_file.id }}" />
-                        <div>
-                            <div class="my-files-selector-file {{ previewDisabled }}" data-mid="{{ resource_file.id }}">
+                    <div class="thumbnail tt-grid-div-body">
+                        <div class="tt-grid-div-item">
+                            <input type="checkbox" data-mid="{{ resource_file.id }}" />
+                        </div>
+                        <div class="tt-grid-div-thumbnail">
+                            <div class="my-files-selector-file {{ preview_disabled }}" data-mid="{{ resource_file.id }}">
                                 {{ _media.thumbnail(resource_file.thumbnailPath) }}
                             </div>
                         </div>
-                        <div>
-                            <span class="edit-title {{ previewDisabled }} my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resource_file.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
+                        <div class="tt-grid-div-primary">
+                            <span class="edit-title {{ preview_disabled }} my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resource_file.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
                                 {{ _media.type_to_icon(resource_file.type) }}{{ resource_file.title }}
                             </span>
                             <span>
@@ -87,6 +92,9 @@
                         </div>
                     </div>
                 </div>
+                {% if loop.index % 4 == 0 or loop.last %}
+                    </div>
+                {% endif %}
             {% endfor %}
         {% else %}
             <div class="text-center">{{ 'filesGateway.noFiles'|trans }}</div>
@@ -97,7 +105,7 @@
 {% macro list_files(style, resource_files) %}
     {% import _self as _files %}
 
-    <div class="row">
+    <div class="row tt-controls">
         <div class="col-md-offset-3 col-md-6 text-center">{{ knp_pagination_render(resource_files) }}</div>
         <div class="col-md-3 text-right">{{ _files.controls(style) }}</div>
     </div>

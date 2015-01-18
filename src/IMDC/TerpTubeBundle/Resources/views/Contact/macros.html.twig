@@ -1,19 +1,23 @@
-{% macro controls() %}
-    <button class="btn btn-default contact-bulk-action" style="display: none;" title="Message" data-action="3"><i class="fa fa-envelope"></i></button>
-    <button class="btn btn-default contact-bulk-action" style="display: none;" title="Create group" data-action="2"><i class="fa fa-users"></i></button>
-    <button class="btn btn-danger contact-bulk-action" style="display: none;" title="Remove" data-action="1"><i class="fa fa-trash-o"></i></button>
+{% macro _controls() %}
+    <button class="btn btn-default table-component-bulk-action" title="Send Message" data-action="3" disabled><i class="fa fa-envelope"></i></button>
+    <button class="btn btn-default table-component-bulk-action" title="Create group" data-action="2" disabled><i class="fa fa-users"></i></button>
+    <button class="btn btn-danger table-component-bulk-action" title="Remove" data-action="1" disabled><i class="fa fa-trash-o"></i></button>
 {% endmacro %}
 
 {% macro list_users(users) %}
+    {% import _self as _contact %}
     {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
 
+    <div class="row">
+        <div class="col-md-12 text-right">{{ _contact._controls() }}</div>
+    </div>
     <div class="table-responsive">
         <table class="table table-hover tt-list-table">
             <thead>
                 <tr>
-                    <th><input type="checkbox" class="contact-toggle-selection" /></th>
-                    <th><!-- avatar --></th>
-                    <th>Username</th>
+                    <th class="tt-list-table-col-item"><input type="checkbox" class="table-component-toggle-selection" /></th>
+                    <th class="tt-list-table-col-thumbnail"><!-- avatar --></th>
+                    <th class="tt-list-table-col-primary">Username</th>
                     <th>Name</th>
                     <th>Joined</th>
                 </tr>
@@ -22,7 +26,7 @@
                 {% if users|length > 0 %}
                     {% for user in users %}
                         <tr>
-                            <td><input type="checkbox" data-uid="{{ user.id }}" {% if app.user == user %}disabled {% endif %}/></td>
+                            <td class="tt-list-table-col-item"><input type="checkbox" class="table-component-item" data-uid="{{ user.id }}" {% if app.user == user %}disabled {% endif %}/></td>
                             <td class="tt-list-table-col-thumbnail">
                                 {#<a href="{{ path('imdc_profile_user', {'userName': user.getUsername}) }}">
                                     <img class="tt-avatar" src="{{ user.getProfile.getAvatar ? asset(user.getProfile.getAvatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
