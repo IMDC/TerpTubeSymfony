@@ -28,6 +28,8 @@ class ContactController extends Controller
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
+        $style = $this->get('request')->query->get('style', 'list');
+
         // pagination
         $defaultPageNum = 1;
         $defaultPageLimit = 24;
@@ -35,22 +37,34 @@ class ContactController extends Controller
             'all' => array(
                 'knp' => array('pageParameterName' => 'page_l'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
             ),
             'mentors' => array(
                 'knp' => array('pageParameterName' => 'page_r'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
             ),
             'mentees' => array(
                 'knp' => array('pageParameterName' => 'page_e'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
             ),
             'friends' => array(
                 'knp' => array('pageParameterName' => 'page_s'),
                 'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
             )
         );
         //TODO consolidate?
@@ -96,6 +110,7 @@ class ContactController extends Controller
         ));
 
         return $this->render('IMDCTerpTubeBundle:Contact:list.html.twig', array(
+            'style' => $style,
             'all' => $all,
             'mentors' => $mentors,
             'mentees' => $mentees,
@@ -104,6 +119,10 @@ class ContactController extends Controller
         ));
     }
 
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     */
     public function deleteAction(Request $request) //TODO api?
     {
         // check if user is logged in
@@ -203,6 +222,7 @@ class ContactController extends Controller
      * @param integer $userid
      * @param string $redirect where to send the user after removed
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @deprecated
      */
     public function removeAction(Request $request, $userid, $redirect)
     {
@@ -233,30 +253,4 @@ class ContactController extends Controller
 
         return $this->redirect($this->generateUrl($redirect));
     }
-
-    /**
-     * Show all people on friends list
-     *
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @deprecated
-     */
-    public function showAllAction(Request $request)
-    {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-        $user = new \IMDC\TerpTubeBundle\Entity\User;
-
-        $user = $this->getUser();
-
-        $usersFriends = $user->getFriendsList();
-
-        return $this->render('IMDCTerpTubeBundle:Member:index.html.twig', array(
-            'members' => $usersFriends,
-            'isFriendsList' => true
-        ));
-    }
-
 }

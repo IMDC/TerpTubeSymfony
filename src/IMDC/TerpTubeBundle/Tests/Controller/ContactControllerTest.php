@@ -18,18 +18,61 @@ class ContactControllerTest extends WebTestCase
      */
     private $client;
 
+    private static $userIds = array(13, 14);
+
     public function setUp()
     {
         $this->client = static::createClient();
 
         Common::login($this->client);
+
+        // add users to friends list
+        foreach (self::$userIds as $userId) {
+            $this->client->request('GET', '/member/friends/' . $userId . '/add');
+        }
     }
     
     public function testList()
     {
+        // list style
         $crawler = $this->client->request('GET', '/contacts/');
+        $tableCount = $crawler->filter('.tab-pane[id^=tab]');
+
+        // grid style
+        $crawler = $this->client->request('GET', '/contacts/?style=grid');
+        $gridCount = $crawler->filter('.tab-pane[id^=tab]');
 
         // four tables (all, mentors, mentees, friends)
-        $this->assertCount(4, $crawler->filter('table.tt-list-table th:nth-child(2)'));
+        $this->assertCount(4, $tableCount);
+        $this->assertCount(4, $gridCount);
+    }
+
+    public function testDelete_Fail()
+    {
+        $this->client->request('POST', '/contacts/remove', array(
+            'userIds' => self::$userIds,
+            'contactList' => 'error'
+        ));
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('success', $response);
+        $this->assertArrayHasKey('message', $response);
+        $this->assertFalse($response['success']);
+    }
+
+    public function testDelete_Success()
+    {
+        $this->client->request('POST', '/contacts/remove', array(
+            'userIds' => self::$userIds,
+            'contactList' => 'friends'
+        ));
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('success', $response);
+        $this->assertTrue($response['success']);
     }
 }

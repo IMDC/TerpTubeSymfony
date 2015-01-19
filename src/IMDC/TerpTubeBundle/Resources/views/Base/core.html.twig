@@ -143,7 +143,7 @@
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{#{ path('imdc_myfiles_list_interpretations') }#}"><i class="fa fa-film fa-2x"></i></a>
                                             </li>-->
                                             <li {% block nav_ul_authenticated_my_friends %}{% endblock %}>
-                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_member_friend_list') }}" title="{{ 'nav.my_friends' | trans  }}"><i class="fa fa-user fa-2x"></i></a>
+                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_contact_list') }}" title="My Contacts"><i class="fa fa-user fa-2x"></i></a>
                                             </li>
                                             <li {% block nav_ul_authenticated_my_groups %}{% endblock %}>
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}" title="{{ 'nav.my_groups' | trans  }}"><i class="fa fa-users fa-2x"></i></a>

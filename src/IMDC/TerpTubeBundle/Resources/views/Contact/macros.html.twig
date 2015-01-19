@@ -1,58 +1,29 @@
-{% macro _controls() %}
+{% macro _controls(style) %}
     <button class="btn btn-default table-component-bulk-action" title="Send Message" data-action="3" disabled><i class="fa fa-envelope"></i></button>
     <button class="btn btn-default table-component-bulk-action" title="Create group" data-action="2" disabled><i class="fa fa-users"></i></button>
     <button class="btn btn-danger table-component-bulk-action" title="Remove" data-action="1" disabled><i class="fa fa-trash-o"></i></button>
+    {% if style == 'grid' %}
+        {% set style = 'list' %}
+        {% set style_icon = 'fa-th-list' %}
+        <button class="btn btn-default table-component-toggle-selection" title="Toggle selection"><i class="fa fa-check-square-o"></i></button>
+    {% else %}
+        {% set style = 'grid' %}
+        {% set style_icon = 'fa-th-large' %}
+    {% endif %}
+    <a class="btn btn-default" href="{{ path('imdc_contact_list', {'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
 {% endmacro %}
 
-{% macro list_users(users) %}
+{% macro list_users(style, users) %}
     {% import _self as _contact %}
     {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
 
     <div class="row">
-        <div class="col-md-12 text-right">{{ _contact._controls() }}</div>
+        <div class="col-md-12 text-right">{{ _contact._controls(style) }}</div>
     </div>
-    <div class="table-responsive">
-        <table class="table table-hover tt-list-table">
-            <thead>
-                <tr>
-                    <th class="tt-list-table-col-item"><input type="checkbox" class="table-component-toggle-selection" /></th>
-                    <th class="tt-list-table-col-thumbnail"><!-- avatar --></th>
-                    <th class="tt-list-table-col-primary">Username</th>
-                    <th>Name</th>
-                    <th>Joined</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if users|length > 0 %}
-                    {% for user in users %}
-                        <tr>
-                            <td class="tt-list-table-col-item"><input type="checkbox" class="table-component-item" data-uid="{{ user.id }}" {% if app.user == user %}disabled {% endif %}/></td>
-                            <td class="tt-list-table-col-thumbnail">
-                                {#<a href="{{ path('imdc_profile_user', {'userName': user.getUsername}) }}">
-                                    <img class="tt-avatar" src="{{ user.getProfile.getAvatar ? asset(user.getProfile.getAvatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" />
-                                </a>#}
-                                {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}
-                            </td>
-                            <td class="tt-list-table-col-primary">
-                                <span>
-                                    {#<a href="{{ path('imdc_profile_user', {'userName': user.getUsername}) }}">
-                                        {{ user.getUsername }}
-                                    </a>#}
-                                    {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
-                                </span>
-                                <span>{{ _member.connect_tools(app.user, user, 'button') }}</span>
-                            </td>
-                            <td>{{ user.getProfile.getName }}</td>
-                            <td>{{ user.getJoinDate|date('M j Y') }}</td>
-                        </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="4"><div class="text-center">None</div></td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
-    <div class="col-md-offset-3 col-md-6 text-center">{{ knp_pagination_render(users) }}</div>
+    {% if style == 'list' %}
+        {{ _member.list_users_list(users, true) }}
+    {% else %}
+        {{ _member.list_users_grid(users, true) }}
+    {% endif %}
+    <div class="text-center">{{ knp_pagination_render(users) }}</div>
 {% endmacro %}

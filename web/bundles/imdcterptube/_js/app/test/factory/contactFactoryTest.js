@@ -32,14 +32,17 @@ define([
         });
 
         it('should not delete contacts', function (done) {
-            return ContactFactory.delete(userIds, '')
+            return ContactFactory.delete(userIds, 'error')
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
                     done();
                 })
                 .fail(function (data) {
                     assert.isObject(data, 'result should be an object');
+                    assert.property(data, 'success', 'result should have key:success');
                     assert.property(data, 'message', 'result should have key:message');
+
+                    assert.isFalse(data.success, 'key:success should be false');
                     done();
                 });
 

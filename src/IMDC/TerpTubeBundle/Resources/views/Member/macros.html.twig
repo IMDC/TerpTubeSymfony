@@ -109,7 +109,9 @@
                     {% for user in users %}
                         <tr>
                             {% if is_selection %}
-                                <td class="tt-list-table-col-item"><input type="checkbox" class="table-component-item" data-uid="{{ user.id }}" {#{% if app.user == user %}disabled {% endif %}#}/></td>
+                                <td class="tt-list-table-col-item">
+                                    <input type="checkbox" class="table-component-item" data-uid="{{ user.id }}" {#{% if app.user == user %}disabled {% endif %}#}/>
+                                </td>
                             {% endif %}
                             <td class="tt-list-table-col-thumbnail">
                                 {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}
