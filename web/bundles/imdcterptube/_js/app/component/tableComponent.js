@@ -5,7 +5,7 @@ define([
     'use strict';
 
     var TableComponent = function ($table) {
-        Subscriber.prototype.constructor.apply(this, arguments);
+        Subscriber.prototype.constructor.apply(this);
 
         this.bind__onClickToggleSelection = this._onClickToggleSelection.bind(this);
         this.bind__onClickBulkAction = this._onClickBulkAction.bind(this);

@@ -7,8 +7,7 @@ define(['underscore'], function () {
 
     Subscriber.prototype._dispatch = function (event, args) {
         var e = {
-            type: event,
-            model: this
+            type: event
         };
 
         if (_.isObject(args) && !_.isArray(args) && !_.isFunction(args)) {

@@ -1,15 +1,22 @@
-define(['underscore'], function () {
+define([
+    'core/subscriber',
+    'extra',
+    'underscore'
+], function (Subscriber) {
     'use strict';
 
     var Model = function (data) {
+        Subscriber.prototype.constructor.apply(this);
+
         data = data || {};
         if (!_.isObject(data) || _.isArray(data) || _.isFunction(data)) {
             throw new Error('data must be an object');
         }
 
         this.data = data;
-        this.subscriptions = [];
     };
+
+    Model.extend(Subscriber);
 
     Model.Event = {
         CHANGE: 'eventChange'
@@ -50,6 +57,15 @@ define(['underscore'], function () {
     };
 
     Model.prototype._dispatch = function (event, keyPath, args) {
+        args = _.extend(args || {}, {
+            keyPath: keyPath,
+            model: this
+        });
+
+        Subscriber.prototype._dispatch.call(this, event, args);
+    };
+
+    /*Model.prototype._dispatch = function (event, keyPath, args) {
         var e = {
             type: event,
             keyPath: keyPath,
@@ -68,7 +84,7 @@ define(['underscore'], function () {
             if (_.isFunction(element))
                 element.call(this, e);
         }, this);
-    };
+    };*/
 
     Model.prototype.get = function (keyPath, defaultValue) {
         var result = this._findKeyPath(this.data, keyPath);
@@ -86,7 +102,7 @@ define(['underscore'], function () {
         }
     };
 
-    Model.prototype.subscribe = function (event, callback) {
+    /*Model.prototype.subscribe = function (event, callback) {
         if (!_.contains(this.subscriptions, event)) {
             this.subscriptions[event] = [];
         }
@@ -103,7 +119,7 @@ define(['underscore'], function () {
                 callbacks.splice(index, 1);
             }
         });
-    };
+    };*/
 
     Model.prototype.forceChange = function (keyPath) {
         keyPath = typeof keyPath !== 'undefined' ? keyPath : '';

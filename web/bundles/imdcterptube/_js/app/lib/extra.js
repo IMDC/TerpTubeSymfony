@@ -1,5 +1,5 @@
 Function.prototype.extend = function (parent) {
-    for (var p in parent)
+    /*for (var p in parent)
         this[p] = parent[p];
 
     for (var p in parent.prototype)
@@ -7,6 +7,15 @@ Function.prototype.extend = function (parent) {
 
     this.prototype.constructor = this;
     this.prototype.parent = parent.prototype;
+
+    return this;*/
+
+    for (var p in parent) {
+        this[p] = parent[p];
+    }
+
+    this.prototype = Object.create(parent.prototype);
+    this.prototype.constructor = this;
 
     return this;
 };

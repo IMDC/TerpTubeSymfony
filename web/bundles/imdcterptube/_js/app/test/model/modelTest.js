@@ -52,7 +52,7 @@ define([
             expect(model.data).to.equal(data);
         });
 
-        it('should have subscribed to event', function () {
+        /*it('should have subscribed to event', function () {
             model.subscribe(Model.Event.CHANGE, callback);
             var subs = model.subscriptions[Model.Event.CHANGE];
 
@@ -64,7 +64,7 @@ define([
         it('should have unsubscribed from event', function () {
             model.unsubscribe(callback);
             expect(model.subscriptions.length).to.equal(0);
-        });
+        });*/
 
         it('should equal retrieved value', function () {
             var marco = model.get('name');

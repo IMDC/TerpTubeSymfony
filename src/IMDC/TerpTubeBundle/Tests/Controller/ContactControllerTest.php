@@ -27,7 +27,7 @@ class ContactControllerTest extends WebTestCase
     
     public function testList()
     {
-        $crawler = $this->client->request('GET', '/contacts');
+        $crawler = $this->client->request('GET', '/contacts/');
 
         // four tables (all, mentors, mentees, friends)
         $this->assertCount(4, $crawler->filter('table.tt-list-table th:nth-child(2)'));
