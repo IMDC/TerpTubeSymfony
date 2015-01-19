@@ -22,7 +22,7 @@ class InvitationController extends Controller
      */
     public function listAction(Request $request)
     {
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
@@ -57,7 +57,7 @@ class InvitationController extends Controller
             throw $this->createNotFoundException('Unable to find user.');
         }
         
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -102,7 +102,7 @@ class InvitationController extends Controller
             throw $this->createNotFoundException('Unable to find user.');
         }
         
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -150,7 +150,7 @@ class InvitationController extends Controller
             throw $this->createNotFoundException('Unable to find Invitation entity.');
         }
 
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -235,7 +235,7 @@ class InvitationController extends Controller
             throw $this->createNotFoundException('Unable to find Invitation entity.');
         }
 
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -279,7 +279,7 @@ class InvitationController extends Controller
             throw $this->createNotFoundException('Unable to find Invitation entity.');
         }
         
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -323,7 +323,7 @@ class InvitationController extends Controller
             throw $this->createNotFoundException('Unable to find Invitation entity.');
         }
         
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));

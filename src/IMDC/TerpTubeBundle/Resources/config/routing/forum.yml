@@ -23,8 +23,8 @@ imdc_forum_edit:
 imdc_forum_delete:
   pattern: /{forumid}/delete
   defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
+  methods: [POST]
   requirements:
-    _method: POST
     forumid: \d+
   options:
     expose: true

@@ -25,12 +25,20 @@ class ForumControllerTest extends WebTestCase
         Common::login($this->client);
     }
 
+    public function testList()
+    {
+        $crawler = $this->client->request('GET', '/forum/');
+        $this->assertGreaterThanOrEqual(1, $crawler->filter('p:contains("No forums"), .tt-forum-thumbnail')->count(),
+            'either "no forums" or forums should be present');
+    }
+
     public function testNew_GetForm()
     {
         $crawler = $this->client->request('GET', '/forum/new');
 
         $this->assertCount(1, $crawler->filter('form[name="forum"]'), 'a single forum form should be present');
-        $this->assertCount(1, $crawler->filter('#forum_accessType_0:checked'), '"public" (default) access type should be checked');
+        $this->assertCount(1, $crawler->filter('#forum_accessType_0:checked'),
+            '"public" (default) access type should be checked');
     }
 
     public function testNew_SubmitFormWithTitle()
@@ -62,8 +70,6 @@ class ForumControllerTest extends WebTestCase
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
 
-        //echo $this->client->getResponse()->getContent(); die;
-
         $media = json_decode($crawler->filter('#__testMedia')->text(), true);
 
         $this->assertTrue(is_array($media));
@@ -77,7 +83,8 @@ class ForumControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/forum/new/4');
 
         $this->assertCount(1, $crawler->filter('form[name="forum"]'), 'a single forum form should be present');
-        $this->assertCount(1, $crawler->filter('#forum_accessType_4:checked'), '"specific group" access type should be checked');
+        $this->assertCount(1, $crawler->filter('#forum_accessType_4:checked'),
+            '"specific group" access type should be checked');
     }
 
     public function testNew_SubmitGroupFormWithTitle()
@@ -98,11 +105,23 @@ class ForumControllerTest extends WebTestCase
         $this->assertEquals($groupId, $crawler->filter('#__testGroupId')->text());
 
         preg_match('/\/forum\/(\d+)/', $this->client->getRequest()->getUri(), $matches);
-        return $matches[1];
+        return array('title' => $title, 'forumId' => $matches[1]);
     }
 
     /**
      * @depends testNew_SubmitGroupFormWithTitle
+     * @param $args
+     */
+    public function testView($args)
+    {
+        $crawler = $this->client->request('GET', '/forum/' . $args['forumId']);
+        $this->assertCount(1, $crawler->filter('title:contains("' . $args['title'] . '")'));
+
+        return $args['forumId'];
+    }
+
+    /**
+     * @depends testView
      * @param $forumId
      */
     public function testEdit_GetForm($forumId)
@@ -158,5 +177,24 @@ class ForumControllerTest extends WebTestCase
         $this->assertGreaterThanOrEqual(1, count($media));
         $this->assertArrayHasKey('id', $media[0]);
         $this->assertEquals($mediaIds[0], $media[0]['id']);
+
+        return $forumId;
+    }
+
+    /**
+     * @depends testEdit_SubmitFormWithMedia
+     * @param $forumId
+     */
+    public function testDelete($forumId)
+    {
+        $this->client->request('POST', '/forum/' . $forumId . '/delete');
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('wasDeleted', $response);
+        $this->assertArrayHasKey('redirectUrl', $response);
+        $this->assertTrue($response['wasDeleted']);
+        $this->assertRegExp('/\/forum\/$/', $response['redirectUrl']);
     }
 }

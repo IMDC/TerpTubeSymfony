@@ -17,7 +17,7 @@ class HelpController extends Controller
      */
 	public function indexAction(Request $request)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}

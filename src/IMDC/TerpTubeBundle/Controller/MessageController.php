@@ -36,7 +36,7 @@ class MessageController extends Controller
      */
 	public function newAction(Request $request, $username = null, $recipients = null)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
@@ -113,7 +113,7 @@ class MessageController extends Controller
 
 	public function viewAllPrivateMessagesAction(Request $request, $feedbackmsg = NULL)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -157,7 +157,7 @@ class MessageController extends Controller
 	 */
 	public function deleteMessageAction(Request $request, $messageid)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -204,7 +204,7 @@ class MessageController extends Controller
 
 	public function archiveMessageAction(Request $request, $messageid)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -240,7 +240,7 @@ class MessageController extends Controller
 
 	public function viewSentMessagesAction(Request $request)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -258,7 +258,7 @@ class MessageController extends Controller
 
 	public function viewArchivedMessagesAction(Request $request)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -277,7 +277,7 @@ class MessageController extends Controller
 
 	public function viewMessageAction(Request $request, $messageid)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
 		{
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -351,7 +351,7 @@ class MessageController extends Controller
 
 	public function replyToMessageAction(Request $request, $messageid)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}

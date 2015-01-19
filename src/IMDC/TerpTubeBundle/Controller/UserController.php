@@ -31,7 +31,7 @@ class UserController extends Controller
      */
     public function indexAction(Request $request, $page=null)
     {
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -87,7 +87,7 @@ class UserController extends Controller
             throw $this->createNotFoundException('Unable to find user.');
 		}
         
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -122,7 +122,7 @@ class UserController extends Controller
             throw $this->createNotFoundException('Unable to find user.');
 		}
         
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
         {
             return $this->redirect($this->generateUrl('fos_user_security_login'));

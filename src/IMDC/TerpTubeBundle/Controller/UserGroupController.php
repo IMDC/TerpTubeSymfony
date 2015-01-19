@@ -38,7 +38,7 @@ class UserGroupController extends Controller
      */
     public function listAction(Request $request)
 	{
-		// check if user logged in
+		// check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
@@ -151,7 +151,7 @@ class UserGroupController extends Controller
      */
     public function viewAction(Request $request, $groupId)
 	{
-	    // check if user logged in
+	    // check if the user is logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
@@ -211,7 +211,7 @@ class UserGroupController extends Controller
      */
     public function editAction(Request $request, $groupId)
 	{
-	    // check if user logged in
+	    // check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
@@ -281,7 +281,7 @@ class UserGroupController extends Controller
             throw new BadRequestHttpException('Only Ajax POST calls accepted');
         }
 
-	    // check if user logged in
+	    // check if the user is logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
@@ -324,7 +324,7 @@ class UserGroupController extends Controller
      */
     public function listMyGroupsAction(Request $request)
     {
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
@@ -343,7 +343,7 @@ class UserGroupController extends Controller
      */
     public function joinAction(Request $request, $groupId)
 	{
-	    // check if user logged in
+	    // check if the user is logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
@@ -420,7 +420,7 @@ class UserGroupController extends Controller
      */
     public function leaveAction(Request $request, $groupId)
     {
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }

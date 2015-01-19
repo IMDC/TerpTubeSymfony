@@ -104,7 +104,7 @@ class ContactController extends Controller
         ));
     }
 
-    public function deleteAction(Request $request) //TODO API?
+    public function deleteAction(Request $request) //TODO api?
     {
         // check if user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -173,7 +173,7 @@ class ContactController extends Controller
     public function addAction(Request $request, $userid)
     {
 
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
@@ -206,7 +206,7 @@ class ContactController extends Controller
      */
     public function removeAction(Request $request, $userid, $redirect)
     {
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
@@ -243,7 +243,7 @@ class ContactController extends Controller
      */
     public function showAllAction(Request $request)
     {
-        // check if user logged in
+        // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }

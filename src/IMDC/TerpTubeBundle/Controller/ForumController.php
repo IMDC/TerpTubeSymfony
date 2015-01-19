@@ -2,43 +2,33 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
-use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
-use IMDC\TerpTubeBundle\Entity\ForumRepository;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
-use IMDC\TerpTubeBundle\Form\Type\ForumFormDeleteType;
-use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Model\JSEntities;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
-use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
-use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Forum object related actions such as new, edit, delete
  * @author paul
- *
+ * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
 class ForumController extends Controller
 {
     /**
      * @param Request $request
-     * @return Response
+     * @return RedirectResponse|Response
      */
     public function listAction(Request $request)
 	{
-        /**
-         * @var $repo ForumRepository
-         */
-
-		// check if user logged in
+        // check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
@@ -75,11 +65,10 @@ class ForumController extends Controller
      * @param Request $request
      * @param $groupId
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
     public function newAction(Request $request, $groupId)
 	{
-	    // check if user logged in
+	    // check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 			return $this->redirect($this->generateUrl('fos_user_security_login'));
 		}
@@ -102,33 +91,25 @@ class ForumController extends Controller
         $form = $this->createForm(new ForumType(), $forum, $formOptions);
         $form->handleRequest($request);
 
-        if (!$form->isValid() && !$form->isSubmitted()) {
+        if (!$form->isValid()) {
             if ($group) {
-                $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP));
+                $form->get('accessType')->setData(
+                    $em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP)
+                );
 
                 if ($group->getUserFounder()->getId() == $user->getId() || $group->getMembersCanAddForums()) {
                     $form->get('group')->setData($group);
                 }
             } else {
-                $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC));
+                $form->get('accessType')->setData(
+                    $em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC)
+                );
             }
         } else {
             $currentDateTime = new \DateTime('now');
             $forum->setCreator($user);
             $forum->setLastActivity($currentDateTime);
             $forum->setCreationDate($currentDateTime);
-
-            /*$media = $form->get('mediatextarea')->getData();
-            if ($media) {
-                if (!$user->getResourceFiles()->contains($media)) {
-                    throw new AccessDeniedException(); //TODO more appropriate exception?
-                }
-
-                /*if (!$forum->getTitleMedia()->contains($media))
-                    $forum->addTitleMedia($media);*
-                //FIXME override for now. at some point multiple media may be used
-                $forum->setTitleMedia($media);
-            }*/
 
             //TODO 'currently' only your own media should be here, but check anyway
             if (!$user->ownsMediaInCollection($form->get('titleMedia')->getData())) {
@@ -173,7 +154,7 @@ class ForumController extends Controller
      */
     public function viewAction(Request $request, $forumid)
 	{
-	    // check if user logged in
+	    // check if the user is logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
@@ -224,12 +205,11 @@ class ForumController extends Controller
      * @param Request $request
      * @param $forumid
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function editAction(Request $request, $forumid)
 	{
-	    // check if user logged in
+	    // check if the user is logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
@@ -253,35 +233,9 @@ class ForumController extends Controller
         $form->handleRequest($request);
 
         if (!$form->isValid()) {
-            /*if (count($forum->getTitleMedia()) > 0) {
-                $form->get('mediatextarea')->setData($forum->getTitleMedia()->get(0));
-            }*/
-
-            /*$ordered = array();
-            foreach ($forum->getTitleMedia() as $media) {
-                foreach ($forum->getMediaDisplayOrder() as $index => $mediaId) {
-                    if ($media->getId() == $mediaId) {
-                        $ordered[$index] = $media;
-                    }
-                }
-            }
-            ksort($ordered);*/
-
             $form->get('titleMedia')->setData($forum->getOrderedMedia());
         } else {
             $forum->setLastActivity(new \DateTime('now'));
-
-            /*$media = $form->get('mediatextarea')->getData();
-            if ($media) {
-                if (!$user->getResourceFiles()->contains($media)) {
-                    throw new AccessDeniedException(); //TODO more appropriate exception?
-                }
-
-                /*if (!$forum->getTitleMedia()->contains($media))
-                    $forum->addTitleMedia($media);*
-                //FIXME override for now. at some point multiple media may be used
-                $forum->setTitleMedia($media);
-            }*/
 
             //TODO 'currently' only your own media should be here, but check anyway
             if (!$user->ownsMediaInCollection($form->get('titleMedia')->getData())) {
@@ -329,14 +283,9 @@ class ForumController extends Controller
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
-    public function deleteAction(Request $request, $forumid)
+    public function deleteAction(Request $request, $forumid) //TODO api?
 	{
-        // if not ajax, throw an error
-        if (!$request->isXmlHttpRequest() || !$request->isMethod('POST')) {
-            throw new BadRequestHttpException('Only Ajax POST calls accepted');
-        }
-
-	    // check if user logged in
+        // check if the user is logged in
 	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
 	        return $this->redirect($this->generateUrl('fos_user_security_login'));
 	    }
@@ -353,16 +302,6 @@ class ForumController extends Controller
         }
 
         $user = $this->getUser();
-        /*$threads = $forum->getThreads();
-        foreach ($threads as $thread) {
-            $threadposts = $thread->getPosts();
-            foreach ($threadposts as $threadpost) {
-                $threadpost->getAuthor()->removePost($threadpost);
-                $em->remove($threadpost);
-            }
-            $thread->getCreator()->removeThread($thread);
-            $em->remove($thread);
-        }*/
         $user->removeForum($forum);
 
         $em->remove($forum);
@@ -379,6 +318,8 @@ class ForumController extends Controller
             'redirectUrl' => $this->generateUrl('imdc_forum_list')
         );
 
-        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
+        return new Response(json_encode($content), 200, array(
+            'Content-Type' => 'application/json'
+        ));
 	}
 }
