@@ -1,3 +1,9 @@
 imdc_contact_list:
-  pattern: /contacts
+  pattern: /
   defaults: { _controller: IMDCTerpTubeBundle:Contact:list }
+
+imdc_contact_delete:
+  pattern: /remove
+  defaults: { _controller: IMDCTerpTubeBundle:Contact:delete }
+  options:
+    expose: true

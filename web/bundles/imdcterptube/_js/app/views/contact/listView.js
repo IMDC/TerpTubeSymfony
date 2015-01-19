@@ -1,6 +1,7 @@
 define([
-    'component/tableComponent'
-], function (TableComponent) {
+    'component/tableComponent',
+    'factory/ContactFactory'
+], function (TableComponent, ContactFactory) {
     'use strict';
 
     var ListView = function (controller, options) {
@@ -55,16 +56,45 @@ define([
     ListView.prototype._onClickBulkAction = function (e) {
         switch (e.action) {
             case 1: // remove
+                var contactList = e.tableComponent.getTable()
+                    .attr('id')
+                    .replace(/^tab/, '')
+                    .toLowerCase();
+
+                if (contactList == 'all') {
+                    if (!confirm('This will remove the selected contacts from all lists. Continue?'))
+                        break;
+                }
+
+                e.$bulkAction.attr('disabled', true);
+
+                var userIds = [];
+                e.$selection.each(function (index, element) {
+                    userIds.push($(element).data('uid'));
+                });
+
+                ContactFactory.delete(userIds, contactList)
+                    .done(function (data) {
+                        window.location.reload(true);
+                    })
+                    .fail(function (data) {
+                        if (data) {
+                            alert(data.message);
+                        } else {
+                            alert('Something went wrong.');
+                        }
+                        e.$bulkAction.attr('disabled', false);
+                    });
                 break;
             case 2: // new group
+                e.$bulkAction.attr('disabled', true);
                 this._updateUsersSelectForm(e.$selection);
-                e.$bulkAction.toggleClass('disabled');
                 this.$form.attr('action', Routing.generate('imdc_group_new'));
                 this.$form.submit();
                 break;
             case 3: // send message
+                e.$bulkAction.attr('disabled', true);
                 this._updateUsersSelectForm(e.$selection);
-                e.$bulkAction.toggleClass('disabled');
                 this.$form.attr('action', Routing.generate('imdc_message_new'));
                 this.$form.submit();
                 break;

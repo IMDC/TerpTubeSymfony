@@ -63,11 +63,6 @@ define([
     };
 
     ManageView.prototype._updateUsersSelectForm = function ($users, $form) {
-        if ($users.length == 0) {
-            alert('No users selected.');
-            return true;
-        }
-
         var $userList = this._getFormField($form, 'users');
         $userList.html('');
 
@@ -82,20 +77,20 @@ define([
     ManageView.prototype._onClickRemove = function (e) {
         e.preventDefault();
 
-        this._updateUsersSelectForm(this.membersTblCmp.getSelection(), this.$formRemove);
-
         this.$remove.button('loading');
         this.$remove.toggleClass('disabled');
+
+        this._updateUsersSelectForm(this.membersTblCmp.getSelection(), this.$formRemove);
         this.$formRemove.submit();
     };
 
     ManageView.prototype._onClickAdd = function (e) {
         e.preventDefault();
 
-        this._updateUsersSelectForm(this.communityTblCmp.getSelection(), this.$formAdd);
-
         this.$add.button('loading');
         this.$add.toggleClass('disabled');
+
+        this._updateUsersSelectForm(this.communityTblCmp.getSelection(), this.$formAdd);
         this.$formAdd.submit();
     };
 

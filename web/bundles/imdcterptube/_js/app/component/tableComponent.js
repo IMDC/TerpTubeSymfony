@@ -44,7 +44,7 @@ define([
     };
 
     TableComponent.prototype._onClickToggleSelection = function (e) {
-        this.$items.prop('checked', e.target.checked);
+        this.$items.prop('checked', $(e.target).is('input[type="checkbox"]') ? e.target.checked : this.getSelection().length == 0);
         this._dispatchToggleEvent(e);
     };
 

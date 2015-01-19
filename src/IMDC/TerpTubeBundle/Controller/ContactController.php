@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use IMDC\TerpTubeBundle\Entity;
+use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -90,7 +91,9 @@ class ContactController extends Controller
         $mentees = $paginate($user->getMenteeList(), 'mentees');
         $friends = $paginate($user->getFriendsList(), 'friends');
 
-        $usersSelectForm = $this->createForm(new UsersSelectType(), null, array('em' => $this->getDoctrine()->getManager()));
+        $usersSelectForm = $this->createForm(new UsersSelectType(), null, array(
+            'em' => $this->getDoctrine()->getManager()
+        ));
 
         return $this->render('IMDCTerpTubeBundle:Contact:list.html.twig', array(
             'all' => $all,
@@ -98,6 +101,65 @@ class ContactController extends Controller
             'mentees' => $mentees,
             'friends' => $friends,
             'users_select_form' => $usersSelectForm->createView()
+        ));
+    }
+
+    public function deleteAction(Request $request) //TODO API?
+    {
+        // check if user is logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        try {
+            $userIds = $request->get('userIds', array());
+            $contactList = strtolower((string)$request->get('contactList'));
+            if (empty($contactList)) {
+                throw new \Exception('contact list must not be empty');
+            }
+
+            $user = $this->getUser();
+            $em = $this->getDoctrine()->getManager();
+
+            $transformer = new UserCollectionToIntArrayTransformer($em);
+            $contacts = $transformer->reverseTransform($userIds);
+
+            foreach ($contacts as $contact) {
+                switch ($contactList) {
+                    case 'all':
+                        $user->getMentorList()->removeElement($contact);
+                        $user->getMenteeList()->removeElement($contact);
+                        $user->getFriendsList()->removeElement($contact);
+                        break;
+                    case 'mentor':
+                        $user->getMentorList()->removeElement($contact);
+                        break;
+                    case 'mentee':
+                        $user->getMenteeList()->removeElement($contact);
+                        break;
+                    case 'friends':
+                        $user->getFriendsList()->removeElement($contact);
+                        break;
+                    default:
+                        throw new \Exception('invalid contact list');
+                }
+            }
+
+            $em->persist($user);
+            $em->flush();
+
+            $content = array(
+                'success' => true
+            );
+        } catch (\Exception $ex) {
+            $content = array(
+                'success' => false,
+                'message' => $ex->getMessage()
+            );
+        }
+
+        return new Response (json_encode($content), 200, array(
+            'Content-Type' => 'application/json'
         ));
     }
 
@@ -172,30 +234,29 @@ class ContactController extends Controller
         return $this->redirect($this->generateUrl($redirect));
     }
 
-	/**
-	 * Show all people on friends list
-	 *
-	 * @param Request $request
-	 * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+    /**
+     * Show all people on friends list
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @deprecated
-	 */
-	public function showAllAction(Request $request)
-	{
-		// check if user logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-		$user = new \IMDC\TerpTubeBundle\Entity\User;
+     */
+    public function showAllAction(Request $request)
+    {
+        // check if user logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+        $user = new \IMDC\TerpTubeBundle\Entity\User;
 
-		$user = $this->getUser();
+        $user = $this->getUser();
 
-		$usersFriends = $user->getFriendsList();
+        $usersFriends = $user->getFriendsList();
 
         return $this->render('IMDCTerpTubeBundle:Member:index.html.twig', array(
             'members' => $usersFriends,
             'isFriendsList' => true
         ));
-	}
+    }
 
 }
