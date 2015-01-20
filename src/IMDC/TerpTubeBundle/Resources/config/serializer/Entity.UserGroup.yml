@@ -1,4 +1,4 @@
-IMDC\TerpTubeBundle\Entity\Thread:
+IMDC\TerpTubeBundle\Entity\UserGroup:
   exclusion_policy: ALL
   virtual_properties:
     getOrderedMedia:
@@ -6,5 +6,5 @@ IMDC\TerpTubeBundle\Entity\Thread:
   properties:
     id:
       expose: true
-    type:
+    name:
       expose: true

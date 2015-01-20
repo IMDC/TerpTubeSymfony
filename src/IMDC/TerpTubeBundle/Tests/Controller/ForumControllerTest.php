@@ -13,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class ForumControllerTest extends WebTestCase
 {
+    private static $mediaIds = array(1, 4);
+
     /**
      * @var Client
      */
@@ -59,12 +61,11 @@ class ForumControllerTest extends WebTestCase
 
     public function testNew_SubmitFormWithMedia()
     {
-        $mediaIds = array(1);
         $crawler = $this->client->request('GET', '/forum/new');
 
         $form = $crawler->filter('form[name="forum"] > button:contains("Create")')->form();
         $values = $form->getPhpValues();
-        $values['forum']['titleMedia'] = $mediaIds;
+        $values['forum']['titleMedia'] = self::$mediaIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
@@ -73,9 +74,10 @@ class ForumControllerTest extends WebTestCase
         $media = json_decode($crawler->filter('#__testMedia')->text(), true);
 
         $this->assertTrue(is_array($media));
-        $this->assertGreaterThanOrEqual(1, count($media));
-        $this->assertArrayHasKey('id', $media[0]);
-        $this->assertEquals($mediaIds[0], $media[0]['id']);
+        $this->assertCount(count(self::$mediaIds), $media);
+        foreach ($media as $m) {
+            $this->assertContains($m['id'], self::$mediaIds);
+        }
     }
 
     public function testNew_GetGroupForm()
@@ -160,12 +162,11 @@ class ForumControllerTest extends WebTestCase
      */
     public function testEdit_SubmitFormWithMedia($forumId)
     {
-        $mediaIds = array(4);
         $crawler = $this->client->request('GET', '/forum/' . $forumId . '/edit');
 
         $form = $crawler->filter('form[name="forum"] > div > div > button:contains("Save")')->form();
         $values = $form->getPhpValues();
-        $values['forum']['titleMedia'] = $mediaIds;
+        $values['forum']['titleMedia'] = self::$mediaIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
@@ -174,9 +175,10 @@ class ForumControllerTest extends WebTestCase
         $media = json_decode($crawler->filter('#__testMedia')->text(), true);
 
         $this->assertTrue(is_array($media));
-        $this->assertGreaterThanOrEqual(1, count($media));
-        $this->assertArrayHasKey('id', $media[0]);
-        $this->assertEquals($mediaIds[0], $media[0]['id']);
+        $this->assertCount(count(self::$mediaIds), $media);
+        foreach ($media as $m) {
+            $this->assertContains($m['id'], self::$mediaIds);
+        }
 
         return $forumId;
     }

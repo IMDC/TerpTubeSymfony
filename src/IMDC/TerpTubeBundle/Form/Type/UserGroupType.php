@@ -13,6 +13,7 @@ class UserGroupType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $em = $options['em'];
+        $hasMembersChildForm = $options['hasMembersChildForm'];
 
         $builder->add('media', 'media_chooser');
 
@@ -38,21 +39,24 @@ class UserGroupType extends AbstractType
             'required' => false
         ));*/
 
-        $builder->add(
-            $builder
-                ->create('members', 'text', array(
-                    'mapped' => false,
-                    'required' => false
-                ))
-                ->addModelTransformer(new UsersToStringsTransformer($em))
-        );
+        if ($hasMembersChildForm) {
+            $builder->add(
+                $builder
+                    ->create('members', 'text', array(
+                        'mapped' => false,
+                        'required' => false
+                    ))
+                    ->addModelTransformer(new UsersToStringsTransformer($em))
+            );
+        }
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
             ->setDefaults(array(
-                'data_class' => 'IMDC\TerpTubeBundle\Entity\UserGroup'))
+                'data_class' => 'IMDC\TerpTubeBundle\Entity\UserGroup',
+                'hasMembersChildForm' => false))
             ->setRequired(array(
                 'em'))
             ->setAllowedTypes(array(

@@ -42,6 +42,8 @@ class UsersSelectType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
+            ->setDefaults(array(
+                'intention' => $this->getName())) // for dynamic csrf token generation
             ->setRequired(array(
                 'em'))
             ->setAllowedTypes(array(

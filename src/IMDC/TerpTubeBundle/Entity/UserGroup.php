@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use FOS\UserBundle\Model\Group as BaseGroup;
+use IMDC\TerpTubeBundle\Utils\Utils;
 
 /**
  * UserGroup
@@ -42,6 +43,16 @@ class UserGroup extends BaseGroup
     private $joinByInvitationOnly;
 
     /**
+     * @var boolean
+     */
+    private $membersCanAddForums;
+
+    /**
+     * @var array
+     */
+    private $mediaDisplayOrder;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $forums;
@@ -76,6 +87,8 @@ class UserGroup extends BaseGroup
      */
     public function __construct()
     {
+        parent::__construct(null);
+
         $this->forums       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->members      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->moderators   = new \Doctrine\Common\Collections\ArrayCollection();
@@ -92,7 +105,6 @@ class UserGroup extends BaseGroup
     {
         return $this->id;
     }
-    
     
     /**
      * Set dateCreated
@@ -230,6 +242,52 @@ class UserGroup extends BaseGroup
     public function getJoinByInvitationOnly()
     {
         return $this->joinByInvitationOnly;
+    }
+
+    /**
+     * Set membersCanAddForums
+     *
+     * @param boolean $membersCanAddForums
+     * @return UserGroup
+     */
+    public function setMembersCanAddForums($membersCanAddForums)
+    {
+        $this->membersCanAddForums = $membersCanAddForums;
+
+        return $this;
+    }
+
+    /**
+     * Get membersCanAddForums
+     *
+     * @return boolean
+     */
+    public function getMembersCanAddForums()
+    {
+        return $this->membersCanAddForums;
+    }
+
+    /**
+     * Set mediaDisplayOrder
+     *
+     * @param array $mediaDisplayOrder
+     * @return UserGroup
+     */
+    public function setMediaDisplayOrder($mediaDisplayOrder)
+    {
+        $this->mediaDisplayOrder = $mediaDisplayOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get mediaDisplayOrder
+     *
+     * @return array
+     */
+    public function getMediaDisplayOrder()
+    {
+        return $this->mediaDisplayOrder;
     }
 
     /**
@@ -410,6 +468,13 @@ class UserGroup extends BaseGroup
         $this->media->removeElement($media);
     }
 
+    public function setMedia($media)
+    {
+        $this->media = $media;
+
+        return $this;
+    }
+
     /**
      * Get media
      *
@@ -427,7 +492,6 @@ class UserGroup extends BaseGroup
     }
 
     /**
-     *
      * @param \IMDC\TerpTubeBundle\Entity\User $user
      * @return boolean
      */
@@ -437,7 +501,6 @@ class UserGroup extends BaseGroup
     }
 
     /**
-     *
      * @param \IMDC\TerpTubeBundle\Entity\User $user
      * @return boolean
      */
@@ -447,7 +510,6 @@ class UserGroup extends BaseGroup
     }
 
     /**
-     *
      * @param \IMDC\TerpTubeBundle\Entity\User $user
      * @return boolean
      */
@@ -456,80 +518,13 @@ class UserGroup extends BaseGroup
         return $this->admins->contains($user);
     }
 
-    //TODO delete
-    /*public function setMedia(\IMDC\TerpTubeBundle\Entity\Media $media)
+    public function getOrderedMedia()
     {
-        $this->media = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->media[] = $media;
-
-        return $this;
-    }*/
-
-    public function setMedia($media)
-    {
-        $this->media = $media;
-
-        return $this;
+        return Utils::orderMedia($this->getMedia(), $this->getMediaDisplayOrder());
     }
     
     public function __toString()
     {
-        return $this->getName();
-    }
-    /**
-     * @var array
-     */
-    private $mediaDisplayOrder;
-
-
-    /**
-     * Set mediaDisplayOrder
-     *
-     * @param array $mediaDisplayOrder
-     * @return UserGroup
-     */
-    public function setMediaDisplayOrder($mediaDisplayOrder)
-    {
-        $this->mediaDisplayOrder = $mediaDisplayOrder;
-
-        return $this;
-    }
-
-    /**
-     * Get mediaDisplayOrder
-     *
-     * @return array 
-     */
-    public function getMediaDisplayOrder()
-    {
-        return $this->mediaDisplayOrder;
-    }
-    /**
-     * @var boolean
-     */
-    private $membersCanAddForums;
-
-
-    /**
-     * Set membersCanAddForums
-     *
-     * @param boolean $membersCanAddForums
-     * @return UserGroup
-     */
-    public function setMembersCanAddForums($membersCanAddForums)
-    {
-        $this->membersCanAddForums = $membersCanAddForums;
-
-        return $this;
-    }
-
-    /**
-     * Get membersCanAddForums
-     *
-     * @return boolean 
-     */
-    public function getMembersCanAddForums()
-    {
-        return $this->membersCanAddForums;
+        return (string)$this->getName();
     }
 }

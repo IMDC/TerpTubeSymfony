@@ -2,19 +2,6 @@
 
 {% block title %}{{ group.name }}{% endblock %}
 
-{#{% block header %}
-    {{ parent() }}
-
-    <script type="text/javascript">
-        $(document).ready(function() {
-            require(['main'], function() {
-                var group = new $tt.Controller.Group({page: $tt.Controller.Group.Page.VIEW});
-                group.bindUIEvents();
-            });
-        });
-    </script>
-{% endblock header %}#}
-
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
 {% block content %}
@@ -105,16 +92,9 @@
             </div>
         </div>
     </div>
-{% endblock content %}
-
-{#{% block outside_body %}
-    {{ parent() }}
-
-    {% if form is defined %}
-        <div id="selectedUsersForm" style="display: none;">
-            {{ form_start(form) }}
-            <div class="selected-users" data-prototype="{{ form_widget(form.users.vars.prototype)|e }}"></div>
-            {{ form_end(form) }}
+    {% if app.environment == 'test' %}
+        <div style="display: none;">
+            <div id="__testModel">{{ group|serialize('json')|raw }}</div>
         </div>
     {% endif %}
-{% endblock outside_body %}#}
+{% endblock content %}
