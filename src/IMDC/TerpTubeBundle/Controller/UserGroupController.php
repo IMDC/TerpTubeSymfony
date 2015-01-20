@@ -50,7 +50,7 @@ class UserGroupController extends Controller
 
         $groups = $repo->getViewableToUser($user, $securityContext);
 
-		return $this->render('IMDCTerpTubeBundle:Group:index.html.twig', array(
+		return $this->render('IMDCTerpTubeBundle:Group:list.html.twig', array(
             'groups' => $groups
         ));
 	}
@@ -329,7 +329,7 @@ class UserGroupController extends Controller
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
-        return $this->render('IMDCTerpTubeBundle:Group:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Group:list.html.twig', array(
             'groups' => $this->getUser()->getUserGroups(),
             'isMyGroups' => true
         ));
@@ -473,6 +473,12 @@ class UserGroupController extends Controller
         ));
     }
 
+    /**
+     * @param Request $request
+     * @param $groupId
+     * @return Response
+     * @throws \Exception
+     */
     public function manageAction(Request $request, $groupId)
     {
         if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -571,57 +577,25 @@ class UserGroupController extends Controller
 
             // only filter if at least one is true. show all (don't filter) by default
             if ($filterMentors || $filterMentees || $filterFriends) {
-                //$filterQb = $userRepo->createQueryBuilder('iu')->select('*.id');
-                //$filterQbs = array();
-
                 $filterIds = array();
 
                 if ($filterMentors) {
-                    //$filterQb->innerJoin('iu.mentorList', 'r');
-                    /*$filterQbs[] = $userRepo->createQueryBuilder('ur')
-                        ->select('r.id')
-                        ->innerJoin('ur.mentorList', 'r');*/
-
                     foreach ($user->getMentorList() as $mentor) {
                         $filterIds[] = $mentor->getId();
                     }
                 }
 
                 if ($filterMentees) {
-                    //$filterQb->innerJoin('iu.menteeList', 'e');
-                    /*$filterQbs[] = $userRepo->createQueryBuilder('ue')
-                        ->select('e.id')
-                        ->innerJoin('ue.menteeList', 'e');*/
-
                     foreach ($user->getMenteeList() as $mentee) {
                         $filterIds[] = $mentee->getId();
                     }
                 }
 
                 if ($filterFriends) {
-                    //$filterQb->innerJoin('iu.friendsList', 's');
-                    /*$filterQbs[] = $userRepo->createQueryBuilder('us')
-                        ->select('s.id')
-                        ->innerJoin('us.friendsList', 's');*/
-
                     foreach ($user->getFriendsList() as $friend) {
                         $filterIds[] = $friend->getId();
                     }
                 }
-
-                //$filterQb->where($filterQb->expr()->eq('iu.id', ':userId'));
-
-                /*$orX = $qb->expr()->orX();
-                foreach ($filterQbs as $filterQb) {
-                    //$filterQb->where($filterQb->expr()->eq('iu.id', ':userId'));
-                    $orX->add($qb->expr()->in('u.id', $filterQb->getDQL()));
-                }*/
-
-                /*$qb->where($qb->expr()->in('u.id', $filterQb->getDQL()))
-                    ->setParameter('userId', $user->getId());*/
-
-                /*$qb->where($orX)
-                    ->setParameter('userId', $user->getId());*/
 
                 $membersQb
                     ->where($membersQb->expr()->in('u.id', ':filterIds'))
@@ -709,10 +683,10 @@ class UserGroupController extends Controller
 
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,
-            'members' => $members,
-            'nonMembers' => $nonMembers,
             'style' => $style,
             'activeTab' => $activeTab,
+            'members' => $members,
+            'nonMembers' => $nonMembers,
             'searchForm' => $searchForm->createView(),
             'removeForm' => $removeForm->createView(),
             'addForm' => $addForm->createView()
@@ -762,180 +736,6 @@ class UserGroupController extends Controller
         }
 
         return $this->redirect($request->headers->get('referer'));
-    }
-
-    /**
-     * @param Request $request
-     * @param $groupId
-     * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @throws \Exception
-     * @deprecated
-     */
-    public function addMembersAction(Request $request, $groupId) //TODO delete
-    {
-        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
-        $em = $this->getDoctrine()->getManager();
-        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-        if (!$group) {
-            throw new \Exception('group not found');
-        }
-
-        $securityContext = $this->get('security.context');
-        if ($securityContext->isGranted('EDIT', $group) === false) {
-            throw new AccessDeniedException();
-        }
-
-        $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
-
-        $form = $this->getGenericIdFormBuilder()->getForm();
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $formUsers = $form->get('users')->getData();
-            $user = $this->getUser();
-            $addedMembers = 0;
-            $invitedMembers = 0;
-
-            foreach ($formUsers as $formUser) {
-                $newMember = $userRepo->find($formUser['id']);
-                if (!$newMember) {
-                    // user not found
-                    continue;
-                }
-
-                if ($user->isUserOnMentorList($newMember)
-                    || $user->isUserOnMenteeList($newMember)
-                    || $user->isUserOnFriendsList($newMember)) {
-                    // by pass invitation step and add users directly
-                    //$group->addMember($newMember);
-                    $newMember->addUserGroup($group);
-                    //$em->persist($group);
-                    $em->persist($newMember);
-                    $addedMembers++;
-                } else {
-                    $this->sendGroupInvitation($user, $newMember, $group);
-                    $invitedMembers++;
-                }
-            }
-
-            $em->flush();
-
-            if ($addedMembers > 0 || $invitedMembers > 0) {
-                $fb = $this->get('session')->getFlashBag();
-                if ($addedMembers > 0)
-                    $fb->add('info', sprintf('Added %d members.', $addedMembers));
-                if ($invitedMembers > 0)
-                    $fb->add('info', sprintf('Invited %d members.', $invitedMembers));
-            }
-        }
-
-        $groupMemberIds = array();
-        foreach ($group->getMembers() as $member) {
-            $groupMemberIds[] = $member->getId();
-        }
-
-        $qb = $userRepo->createQueryBuilder('u');
-        $nonMembers = $qb->leftJoin('u.profile', 'p', Join::WITH, $qb->expr()->eq('u.profile', 'p.id'))
-            ->where($qb->expr()->eq('p.profileVisibleToPublic', ':public'))
-            ->andWhere($qb->expr()->notIn('u.id', ':groupMemberIds'))
-            ->setParameters(array(
-                'public' => 1,
-                'groupMemberIds' => $groupMemberIds))
-            ->getQuery()->getResult();
-
-        // exclude users that have a pending invitation for the group
-        $numNonMembers = count($nonMembers);
-        for ($i=0; $i<$numNonMembers; $i++) {
-            $member = $nonMembers[$i];
-            $receivedInvites = $member->getReceivedInvitations();
-            foreach ($receivedInvites as $receivedInvite) {
-                if ($receivedInvite->getType()->isGroup()
-                    && !$receivedInvite->getIsAccepted() && !$receivedInvite->getIsDeclined() && !$receivedInvite->getIsCancelled()) {
-                    $groupCheck = InvitationController::getGroupFromInviteData($this, $receivedInvite);
-                    if ($groupCheck && $groupCheck->getId() == $group->getId()) {
-                        unset($nonMembers[$i]);
-                        break; // stop at the first active invite. though more than one active invite should not be present
-                    }
-                }
-            }
-        }
-
-        $paginator = $this->get('knp_paginator');
-        $nonMembers = $paginator->paginate(
-            $nonMembers,
-            $request->query->get('page', 1), /*page number*/
-            8 /*limit per page*/
-        );
-
-        return $this->render('IMDCTerpTubeBundle:Group:addMembers.html.twig', array(
-            'group' => $group,
-            'nonMembers' => $nonMembers,
-            'form' => $form->createView()
-        ));
-    }
-
-    /**
-     * @param Request $request
-     * @param $groupId
-     * @return RedirectResponse
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @throws \Exception
-     * @deprecated
-     */
-    public function deleteMembersAction(Request $request, $groupId) //TODO delete
-    {
-        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
-        $em = $this->getDoctrine()->getManager();
-        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-        if (!$group) {
-            throw new \Exception('group not found');
-        }
-
-        $securityContext = $this->get('security.context');
-        if ($securityContext->isGranted('EDIT', $group) === false) {
-            throw new AccessDeniedException();
-        }
-
-        $form = $this->getGenericIdFormBuilder()->getForm();
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $formUsers = $form->get('users')->getData();
-            $deletedMembers = 0;
-
-            foreach ($formUsers as $formUser) {
-                $member = $em->getRepository('IMDCTerpTubeBundle:User')->find($formUser['id']);
-                if (!$member) {
-                    // user not found
-                    continue;
-                }
-
-                if ($group->isUserMemberOfGroup($member)) {
-                    //$group->removeMember($member);
-                    //$em->persist($group);
-                    $member->removeUserGroup($group);
-                    $em->persist($member);
-                    $deletedMembers++;
-                }
-            }
-
-            $em->flush();
-
-            if ($deletedMembers > 0) {
-                $this->get('session')
-                    ->getFlashBag()
-                    ->add('info', sprintf('Deleted %d members.', $deletedMembers));
-            }
-        }
-
-        return $this->redirect($this->generateUrl('imdc_group_view', array('groupId' => $groupId)));
     }
 
     private function sendGroupInvitation($sender, $recipient, $group)
@@ -1014,19 +814,5 @@ class UserGroupController extends Controller
             if ($invitedMembers > 0)
                 $fb->add('info', sprintf('Invited %d members.', $invitedMembers));
         }
-    }
-
-    /**
-     * @return FormBuilder
-     * @deprecated
-     */
-    private function getGenericIdFormBuilder() { //TODO delete
-        //TODO replace with standard form type with user data transformer
-        $defaultData = array('users' => new ArrayCollection());
-        return $this->createFormBuilder($defaultData)
-            ->add('users', 'collection', array(
-                'type' => new IdType(),
-                'label' => false,
-                'allow_add' => true));
     }
 }

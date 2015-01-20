@@ -63,15 +63,3 @@ imdc_group_invite_member:
   requirements:
     groupId: \d+
     userId: \d+
-
-#imdc_group_add_members: //TODO delete
-#  pattern: /{groupId}/addMembers
-#  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:addMembers }
-#  requirements:
-#    groupId: \d+
-#
-#imdc_group_delete_members: //TODO delete
-#  pattern: /{groupId}/deleteMembers
-#  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:deleteMembers }
-#  requirements:
-#    groupId: \d+

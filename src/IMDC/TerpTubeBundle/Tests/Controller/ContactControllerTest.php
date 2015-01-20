@@ -13,12 +13,12 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class ContactControllerTest extends WebTestCase
 {
+    private static $userIds = array(13, 14);
+
     /**
      * @var Client
      */
     private $client;
-
-    private static $userIds = array(13, 14);
 
     public function setUp()
     {
@@ -35,14 +35,14 @@ class ContactControllerTest extends WebTestCase
     public function testList()
     {
         // list style
-        $crawler = $this->client->request('GET', '/contacts/');
+        $crawler = $this->client->request('GET', '/contacts/?style=list');
         $tableCount = $crawler->filter('.tab-pane[id^=tab]');
 
         // grid style
         $crawler = $this->client->request('GET', '/contacts/?style=grid');
         $gridCount = $crawler->filter('.tab-pane[id^=tab]');
 
-        // four tables (all, mentors, mentees, friends)
+        // four tables/divs (all, mentors, mentees, friends)
         $this->assertCount(4, $tableCount);
         $this->assertCount(4, $gridCount);
     }
