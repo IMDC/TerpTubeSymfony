@@ -1,10 +1,11 @@
 define([
     'chai',
     'test/common',
+    'model/groupModel',
     'factory/groupFactory',
     'jquery',
     'fos_routes'
-], function (chai, Common, GroupFactory) {
+], function (chai, Common, GroupModel, GroupFactory) {
     'use strict';
 
     var assert = chai.assert;
@@ -18,9 +19,9 @@ define([
         var group;
 
         before(function (done) {
-            group = {
-                id: 11 // this must be set to an existing group id
-            };
+            group = new GroupModel({
+                id: 41 // this must be set to an existing group id
+            });
 
             Common.login(done);
 

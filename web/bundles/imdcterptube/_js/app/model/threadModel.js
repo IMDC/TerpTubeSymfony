@@ -1,4 +1,8 @@
-define(['model/model', 'extra', 'underscore'], function (Model) {
+define([
+    'model/model',
+    'extra',
+    'underscore'
+], function (Model) {
     'use strict';
 
     var ThreadModel = function (data) {

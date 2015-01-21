@@ -5,7 +5,7 @@ define(function () {
 
     GroupFactory.delete = function (group) {
         var settings = {
-            url: Routing.generate('imdc_group_delete', {groupId: group.id}),
+            url: Routing.generate('imdc_group_delete', {groupId: group.get('id')}),
             type: 'POST'
         };
 

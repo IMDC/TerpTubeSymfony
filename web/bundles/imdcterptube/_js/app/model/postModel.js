@@ -1,4 +1,7 @@
-define(['model/model', 'extra'], function (Model) {
+define([
+    'model/model',
+    'extra'
+], function (Model) {
     'use strict';
 
     var PostModel = function (data) {

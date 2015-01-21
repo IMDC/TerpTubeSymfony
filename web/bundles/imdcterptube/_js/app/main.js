@@ -1,7 +1,6 @@
 define([
     'controller/myFiles',
     'controller/forum',
-    'controller/group',
     'controller/message',
     'controller/profile',
 
@@ -17,18 +16,34 @@ define([
     'bootstrap',
     'service',
 
+    // core
+    'core/subscriber',
+
+    // factory
+    'factory/contactFactory',
     'factory/groupFactory',
     'factory/postFactory',
     'factory/threadFactory',
 
+    // service
     'service/keyPointService',
 
+    // model
+    'model/groupModel',
     'model/postModel',
     'model/threadModel',
 
+    // controller
+    'controller/contactController',
     'controller/groupController',
     'controller/postController',
     'controller/threadController',
+
+    // component
+    'component/tableComponent',
+
+    // view
+    'views/contact/listView',
 
     'views/group/newView',
     'views/group/editView',
@@ -51,7 +66,6 @@ define([
     TerpTube.Controller.Forum = require('controller/forum');
     //TerpTube.Controller.Thread = require('controller/thread');
     //TerpTube.Controller.Post = require('controller/post');
-    //TerpTube.Controller.Group = require('controller/group');
     TerpTube.Controller.Message = require('controller/message');
     TerpTube.Controller.Profile = require('controller/profile');
 

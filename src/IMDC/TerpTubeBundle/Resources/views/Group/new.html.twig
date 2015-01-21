@@ -8,11 +8,11 @@
     <script type="text/javascript">
         require([
             'bootstrap',
-            'controller/groupController', 'views/group/newView',
+            'model/groupModel', 'controller/groupController', 'views/group/newView',
             'main'
-        ], function(bootstrap, GroupController, GroupView) {
+        ], function(bootstrap, GroupModel, GroupController, GroupView) {
             bootstrap(
-                    {},
+                    new GroupModel(),
                     GroupController,
                     GroupView,
                     {

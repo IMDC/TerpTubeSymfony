@@ -1,12 +1,13 @@
 define([
     'chai',
     'test/common',
+    'model/groupModel',
     'controller/groupController',
     'jquery',
     'jquery-mockjax',
     'fos_routes',
     'es5-shim'
-], function (chai, Common, GroupController) {
+], function (chai, Common, GroupModel, GroupController) {
     'use strict';
 
     var assert = chai.assert;
@@ -22,7 +23,9 @@ define([
         var controller;
 
         before(function () {
-            model = {id: 10};
+            model = new GroupModel({
+                id: 10
+            });
             controller = new GroupController(model, {});
             controller.onViewLoaded();
             $.mockjaxSettings.logging = false;
@@ -40,7 +43,7 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: model.id}),
+                url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
                 responseText: {
                     wasDeleted: false
                 }
@@ -58,7 +61,7 @@ define([
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: model.id}),
+                url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
                 responseText: {
                     wasDeleted: true,
                     redirectUrl: Common.BASE_URL + '/groups'

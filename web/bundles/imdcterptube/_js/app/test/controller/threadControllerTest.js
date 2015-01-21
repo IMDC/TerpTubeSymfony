@@ -42,7 +42,9 @@ define([
             mCallback = function (e) {
                 mCallbackResult = e;
             };
-            model = new ThreadModel({id: 17});
+            model = new ThreadModel({
+                id: 17
+            });
             model.subscribe(Model.Event.CHANGE, mCallback);
             $.mockjaxSettings.logging = false;
 

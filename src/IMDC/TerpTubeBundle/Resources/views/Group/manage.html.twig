@@ -10,13 +10,11 @@
     <script type="text/javascript">
         require([
             'bootstrap',
-            'controller/groupController', 'views/group/manageView',
+            'model/groupModel', 'controller/groupController', 'views/group/manageView',
             'main'
-        ], function(bootstrap, GroupController, GroupView) {
+        ], function(bootstrap, GroupModel, GroupController, GroupView) {
             bootstrap(
-                    {
-                        id: {{ group.id }}
-                    },
+                    new GroupModel({{ group|serialize('json')|raw }}),
                     GroupController,
                     GroupView,
                     {
