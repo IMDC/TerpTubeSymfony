@@ -1,6 +1,6 @@
 define([
     'component/tableComponent',
-    'factory/ContactFactory'
+    'factory/contactFactory'
 ], function (TableComponent, ContactFactory) {
     'use strict';
 

@@ -50,10 +50,10 @@ define(function() {
 
     Helper.generateUrl = function(path, root) {
         var root = typeof root !== "undefined" ? root : false;
-        var baseUrl = Routing.getBaseUrl();
+        var baseUrl = Routing.getBaseUrl() + "/";
         return root
             ? baseUrl + path
-            : baseUrl.replace(/\w+\.php$/gi, "")  + path;
+            : baseUrl.replace(/\w+\.php/$/gi, "")  + path;
     };
 
     Helper.autoSize = function() {

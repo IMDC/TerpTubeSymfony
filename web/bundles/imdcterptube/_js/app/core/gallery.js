@@ -311,6 +311,7 @@ define([
         //data, textStatus, jqXHR
         this.media = e.payload.media;
         this._populate();
+        console.log("Success")
     };
 
     Gallery.prototype._onGetMediaInfoError = function(e) {
