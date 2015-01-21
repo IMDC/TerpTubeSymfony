@@ -53,7 +53,7 @@ define(function() {
         var baseUrl = Routing.getBaseUrl() + "/";
         return root
             ? baseUrl + path
-            : baseUrl.replace(/\w+\.php/$/gi, "")  + path;
+            : baseUrl.replace(/\w+\.php\/$/gi, "")  + path;
     };
 
     Helper.autoSize = function() {
