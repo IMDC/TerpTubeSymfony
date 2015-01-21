@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  */
 class ForumControllerTest extends WebTestCase
 {
-    private static $mediaIds = array(1, 4);
+    private static $mediaIds = array(4, 1); // shuffle for order check
 
     /**
      * @var Client

@@ -23,8 +23,8 @@ imdc_group_edit:
 imdc_group_delete:
   pattern: /{groupId}/delete
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:delete }
+  methods: [POST]
   requirements:
-    _method: POST
     groupId: \d+
   options:
     expose: true

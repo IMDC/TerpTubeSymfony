@@ -15,7 +15,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class UserGroupControllerTest extends WebTestCase
 {
     private static $userIds = array(13, 14);
-    private static $mediaIds = array(1, 4);
+    private static $mediaIds = array(4, 1); // shuffle for order check
 
     /**
      * @var Client
@@ -37,7 +37,7 @@ class UserGroupControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManager();
 
-        // add users to friends list to bypass invitation step
+        // add users to friends list to bypass invitation step when adding users to a group
         foreach (self::$userIds as $userId) {
             $this->client->request('GET', '/member/friends/' . $userId . '/add');
         }
@@ -86,6 +86,7 @@ class UserGroupControllerTest extends WebTestCase
         $name = 'test:new:' . rand();
         $users = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->findById(self::$userIds);
 
+        // members field is only available when user ids are posted
         $form = $this->client->getContainer()
             ->get('form.factory')
             ->create(new UsersSelectType(), null, array('em' => $this->entityManager));
@@ -113,7 +114,6 @@ class UserGroupControllerTest extends WebTestCase
         $this->assertCount(1, $crawler->filter('title:contains("' . $name . '")'));
         $this->assertCount(count($users) + 1, $crawler->filter('.tt-member-grid-thumbnail')); // owner + members
 
-        // manually delete the group
         $this->delete($crawler);
     }
 
@@ -144,14 +144,18 @@ class UserGroupControllerTest extends WebTestCase
 
         $model = Common::getModel($crawler);
 
+        $this->assertCount(1, $crawler->filter('title:contains("' . $name . '")'));
         $this->assertTrue(is_array($model['ordered_media']));
         $this->assertCount(count(self::$mediaIds), $model['ordered_media']);
+        // check existence
         foreach ($model['ordered_media'] as $m) {
-            $this->assertArrayHasKey('id', $m);
             $this->assertContains($m['id'], self::$mediaIds);
         }
+        // check order
+        foreach (self::$mediaIds as $key => $mediaId) {
+            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
+        }
 
-        // manually delete the group
         $this->delete($crawler);
     }
 
@@ -246,9 +250,13 @@ class UserGroupControllerTest extends WebTestCase
 
         $this->assertTrue(is_array($model['ordered_media']));
         $this->assertCount(count(self::$mediaIds), $model['ordered_media']);
+        // check existence
         foreach ($model['ordered_media'] as $m) {
-            $this->assertArrayHasKey('id', $m);
             $this->assertContains($m['id'], self::$mediaIds);
+        }
+        // check order
+        foreach (self::$mediaIds as $key => $mediaId) {
+            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
         }
 
         return $model;

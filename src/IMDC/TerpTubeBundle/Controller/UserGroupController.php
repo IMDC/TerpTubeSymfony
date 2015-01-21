@@ -96,6 +96,8 @@ class UserGroupController extends Controller
                 throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
+            $group->setMediaDisplayOrder($form->get('media')->getViewData());
+
             $user->addUserGroup($group);
 
             $em->persist($group);
@@ -217,6 +219,8 @@ class UserGroupController extends Controller
                 throw new AccessDeniedException(); //TODO more appropriate exception?
             }
 
+            $group->setMediaDisplayOrder($form->get('media')->getViewData());
+
             $em->persist($group);
             $em->flush();
 
@@ -241,7 +245,7 @@ class UserGroupController extends Controller
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
-    public function deleteAction(Request $request, $groupId)
+    public function deleteAction(Request $request, $groupId) //TODO api?
     {
         // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {

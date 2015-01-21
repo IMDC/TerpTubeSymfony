@@ -213,4 +213,9 @@
 			</div>
 		</div>
 	</div>
+    {% if app.environment == 'test' %}
+        <div style="display: none;">
+            <div id="__testModel">{{ thread|serialize('json')|raw }}</div>
+        </div>
+    {% endif %}
 {% endblock content %}

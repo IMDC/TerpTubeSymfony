@@ -2,30 +2,24 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
-use IMDC\TerpTubeBundle\Controller\MyFilesGatewayController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
-use IMDC\TerpTubeBundle\Form\Type\MediaType;
+use IMDC\TerpTubeBundle\Entity\Post;
+use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
+use IMDC\TerpTubeBundle\Form\Type\ThreadType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
-use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use IMDC\TerpTubeBundle\Entity\Thread;
-use IMDC\TerpTubeBundle\Entity\Post;
-use IMDC\TerpTubeBundle\Form\Type\ThreadType;
-use IMDC\TerpTubeBundle\Form\Type\ThreadFormDeleteType;
 
 /**
- * Controller for all Thread related actions including edit, delete, create
- * 
+ * Controller for all Thread related actions including new, edit, delete
  * @author paul
- *
+ * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
 class ThreadController extends Controller
 {
@@ -94,21 +88,6 @@ class ThreadController extends Controller
             $thread->setSticky(false);
             $thread->setLastPostAt($currentDateTime);
             $thread->setParentForum($forum);
-
-            /*$media = $form->get('mediatextarea')->getData();
-            if ($media) {
-                if (!$user->getResourceFiles()->contains($media)) {
-                    throw new AccessDeniedException(); //TODO more appropriate exception?
-                }
-
-                /*if (!$thread->getMediaIncluded()->contains($media)) {
-                    $thread->addMediaIncluded($media);
-                    $thread->setType($media->getType());
-                }*
-                //FIXME override for now. at some point multiple media may be used
-                $thread->setMediaIncluded($media);
-                $thread->setType($media->getType());
-            }*/
 
             //TODO 'currently' only your own media should be here, but check anyway
             if (!$user->ownsMediaInCollection($form->get('mediaIncluded')->getData())) {
@@ -219,28 +198,11 @@ class ThreadController extends Controller
         ));
         $form->handleRequest($request);
 
-        if (!$form->isValid()) {
-            /*if (count($thread->getMediaIncluded()) > 0) {
-                $form->get('mediatextarea')->setData($thread->getMediaIncluded()->get(0));
-            }*/
-        } else {
+        if ($form->isValid()) {
             $user = $this->getUser();
             $currentDateTime = new \DateTime('now');
             $thread->setEditedAt($currentDateTime);
             $thread->setEditedBy($user);
-
-            //FIXME changing media not allowed?
-            /*$media = $form->get('mediatextarea')->getData();
-            if ($media) {
-                if (!$user->getResourceFiles()->contains($media)) {
-                    throw new AccessDeniedException(); //TODO more appropriate exception?
-                }
-
-                if (!$thread->getMediaIncluded()->contains($media)) {
-                    $thread->addMediaIncluded($media);
-                    $thread->setType($media->getType());
-                }
-            }*/
 
             $forum = $thread->getParentForum();
             $forum->setLastActivity($currentDateTime);
@@ -253,13 +215,7 @@ class ThreadController extends Controller
             $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            // for consistency recreate the underlying acl
-            //$accessProvider->deleteAccess($objectIdentity);
-            //$access = $accessProvider->createAccess($objectIdentity);
-
-            // get existing underlying acl
             $access = $accessProvider->getAccess($objectIdentity);
-            //$access->insertEntries($securityIdentity);
             $access->updateEntries($securityIdentity);
             $accessProvider->updateAccess($access);
 
@@ -286,13 +242,8 @@ class ThreadController extends Controller
      * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
-    public function deleteAction(Request $request, $threadid)
+    public function deleteAction(Request $request, $threadid) //TODO api?
     {
-        // if not ajax, throw an error
-        if (!$request->isXmlHttpRequest() || !$request->isMethod('POST')) {
-            throw new BadRequestHttpException('Only Ajax POST calls accepted');
-        }
-
         // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -328,7 +279,7 @@ class ThreadController extends Controller
         $content = array(
             'wasDeleted' => true,
             'redirectUrl' => $this->generateUrl('imdc_forum_view', array(
-                    'forumid' => $forum->getId()))
+                'forumid' => $forum->getId()))
         );
 
         return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));

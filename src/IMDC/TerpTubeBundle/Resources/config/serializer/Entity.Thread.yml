@@ -6,5 +6,7 @@ IMDC\TerpTubeBundle\Entity\Thread:
   properties:
     id:
       expose: true
+    title:
+      expose: true
     type:
       expose: true
