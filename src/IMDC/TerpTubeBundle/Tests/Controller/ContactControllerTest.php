@@ -53,10 +53,8 @@ class ContactControllerTest extends WebTestCase
             'userIds' => self::$userIds,
             'contactList' => 'error'
         ));
-
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('success', $response);
         $this->assertArrayHasKey('message', $response);
         $this->assertFalse($response['success']);
@@ -68,10 +66,8 @@ class ContactControllerTest extends WebTestCase
             'userIds' => self::$userIds,
             'contactList' => 'friends'
         ));
-
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('success', $response);
         $this->assertTrue($response['success']);
     }

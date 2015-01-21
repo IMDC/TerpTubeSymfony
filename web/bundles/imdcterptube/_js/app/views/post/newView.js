@@ -115,7 +115,7 @@ define([
         this.$container.remove();
         this.controller.removeKeyPoint();
 
-        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parentPostId') + '"]')
+        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
             .find(NewView.Binder.NEW)
             .show();
     };

@@ -41,10 +41,12 @@ define([
             };
             model = new PostModel({
                 id: '0' + Math.floor((Math.random() * 100000) + 1),
-                startTime: 100,
-                endTime: 200,
-                isTemporal: true,
-                threadId: 17
+                start_time: 100,
+                end_time: 200,
+                is_temporal: true,
+                parent_thread: {
+                    id: 17
+                }
             });
             model.subscribe(Model.Event.CHANGE, mCallback);
             $.mockjaxSettings.logging = false;
@@ -64,7 +66,7 @@ define([
 
         it('should have instantiated', function () {
             controller = new PostController(model, {});
-            assert.equal(controller.model.get('keyPoint.startTime'), model.get('startTime'), 'key point start times should equal');
+            assert.equal(controller.model.get('keyPoint.startTime'), model.get('start_time'), 'key point start times should equal');
         });
 
         it('should have registered and subscribed key point, and dispatched "add" key point event', function () {
@@ -166,7 +168,7 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_new', {threadId: model.get('threadId'), pid: model.get('id')}),
+                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id'), pid: model.get('id')}),
                 responseText: {
                     wasReplied: false,
                     html: ''
@@ -184,11 +186,11 @@ define([
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_new', {threadId: model.get('threadId'), pid: model.get('id')}),
+                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id'), pid: model.get('id')}),
                 responseText: {
                     wasReplied: true,
                     post: {},
-                    redirectUrl: Common.BASE_URL + '/thread/' + model.get('threadId')
+                    redirectUrl: Common.BASE_URL + '/thread/' + model.get('parent_thread.id')
                 }
             });
 

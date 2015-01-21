@@ -19,7 +19,9 @@ define([
             };
             data = {
                 id: '0' + Math.floor((Math.random() * 100000) + 1),
-                threadId: 17
+                parent_thread: {
+                    id: 17
+                }
             };
             model = new PostModel(data);
         });

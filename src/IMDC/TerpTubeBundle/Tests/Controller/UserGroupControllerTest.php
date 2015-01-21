@@ -81,7 +81,10 @@ class UserGroupControllerTest extends WebTestCase
         }
     }
 
-    public function testNew_SubmitFormWithTitleAndMembers()
+    /**
+     * @depends testNew_GetFormWithMembers
+     */
+    public function testNew_SubmitFormWithNameAndMembers()
     {
         $name = 'test:new:' . rand();
         $users = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->findById(self::$userIds);
@@ -114,7 +117,7 @@ class UserGroupControllerTest extends WebTestCase
         $this->assertCount(1, $crawler->filter('title:contains("' . $name . '")'));
         $this->assertCount(count($users) + 1, $crawler->filter('.tt-member-grid-thumbnail')); // owner + members
 
-        $this->delete($crawler);
+        $this->delete(Common::getModel($crawler));
     }
 
     public function testNew_GetForm()
@@ -128,6 +131,9 @@ class UserGroupControllerTest extends WebTestCase
             'option should be checked');
     }
 
+    /**
+     * @depends testNew_GetForm
+     */
     public function testNew_SubmitFormWithMedia()
     {
         $name = 'test:new:' . rand();
@@ -156,13 +162,14 @@ class UserGroupControllerTest extends WebTestCase
             $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
         }
 
-        $this->delete($crawler);
+        $this->delete($model);
     }
 
     /**
+     * @depends testNew_GetForm
      * @return array
      */
-    public function testNew_SubmitFormWithTitle()
+    public function testNew_SubmitFormWithName()
     {
         $name = 'test:new:' . rand();
         $crawler = $this->client->request('GET', '/group/new');
@@ -181,7 +188,7 @@ class UserGroupControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testNew_SubmitFormWithTitle
+     * @depends testNew_SubmitFormWithName
      * @param $model
      * @return array
      */
@@ -211,7 +218,7 @@ class UserGroupControllerTest extends WebTestCase
      * @param $model
      * @return array
      */
-    public function testEdit_SubmitFormWithTitle($model)
+    public function testEdit_SubmitFormWithName($model)
     {
         $name = 'test:edit:' . rand();
         $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/edit');
@@ -230,7 +237,7 @@ class UserGroupControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testEdit_SubmitFormWithTitle
+     * @depends testEdit_SubmitFormWithName
      * @param $model
      * @return array
      */
@@ -388,20 +395,17 @@ class UserGroupControllerTest extends WebTestCase
     public function testDelete($model)
     {
         $this->client->request('POST', '/group/' . $model['id'] . '/delete');
-
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('wasDeleted', $response);
         $this->assertArrayHasKey('redirectUrl', $response);
         $this->assertTrue($response['wasDeleted']);
         $this->assertRegExp('/\/group\/$/', $response['redirectUrl']);
     }
 
-    private function delete($crawler)
+    private function delete($model)
     {
         // manually delete the group
-        $model = Common::getModel($crawler);
         $group = $this->entityManager->getRepository('IMDCTerpTubeBundle:UserGroup')->find($model['id']);
         $this->entityManager->remove($group);
         $this->entityManager->flush();

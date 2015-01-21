@@ -11,7 +11,7 @@
                 {{ form_widget(form.endTime) }}
             {% endif %}
             {{ form_row(form.content) }}
-            <a class="btn btn-success post-submit-edit" href="#" data-pid="{{ post.id }}" data-loading-text="Editing post..."><i class="fa fa-check"></i> Edit</a>
+            <button class="btn btn-success post-submit-edit" href="#" data-pid="{{ post.id }}" data-loading-text="Editing post..."><i class="fa fa-check"></i> Edit</button>
             <a class="btn btn-danger post-cancel-edit" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
             {{ form_end(form) }}
             <script type="text/javascript">

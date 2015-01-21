@@ -22,7 +22,9 @@ define([
         before(function (done) {
             post = new PostModel({
                 id: '0' + Math.floor((Math.random() * 100000) + 1),
-                threadId: 17
+                parent_thread: {
+                    id: 17
+                }
             });
             form = '';
 
@@ -66,7 +68,7 @@ define([
 
                     assert.isTrue(data.wasReplied, 'key:wasReplied should be true');
                     assert.isNumber(data.post.id, 'value of key path:post.id should be a number');
-                    assert.match(data.redirectUrl, new RegExp('.*\\/' + post.get('threadId') + '.*'),
+                    assert.match(data.redirectUrl, new RegExp('.*\\/' + post.get('parent_thread.id') + '.*'),
                         'key:redirectUrl should have matched');
 
                     post.set('id', data.post.id);
@@ -137,9 +139,11 @@ define([
                     assert.isTrue(data.wasEdited, 'key:wasEdited should be true');
                     assert.include(data.html, contentVal, 'key:html should contain submitted post content');
 
-                    assert.isNull(post.get('startTime'), 'post key:startTime should be null');
-                    assert.isNull(post.get('endTime'), 'post key:endTime should be null');
-                    assert.isFalse(post.get('isTemporal'), 'post key:isTemporal should be false');
+                    assert.isUndefined(post.get('start_time'), 'post key:start_time should be undefined');
+                    assert.isUndefined(post.get('end_time'), 'post key:end_time should be undefined');
+                    assert.isFalse(post.get('is_temporal'), 'post key:is_temporal should be false');
+                    assert.isUndefined(post.get('parent_post'), 'post key:parent_post should be undefined');
+                    assert.isDefined(post.get('parent_thread'), 'post key:parent_thread should be defined');
                     done();
                 })
                 .fail(function () {

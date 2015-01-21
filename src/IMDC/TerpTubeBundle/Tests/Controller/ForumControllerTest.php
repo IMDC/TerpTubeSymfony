@@ -43,6 +43,9 @@ class ForumControllerTest extends WebTestCase
             '"public" (default) access type should be checked');
     }
 
+    /**
+     * @depends testNew_GetForm
+     */
     public function testNew_SubmitFormWithTitle()
     {
         $title = 'test:new';
@@ -59,6 +62,9 @@ class ForumControllerTest extends WebTestCase
         $this->assertCount(1, $crawler->filter('title:contains("' . $title . '")'));
     }
 
+    /**
+     * @depends testNew_GetForm
+     */
     public function testNew_SubmitFormWithMedia()
     {
         $crawler = $this->client->request('GET', '/forum/new');
@@ -89,6 +95,10 @@ class ForumControllerTest extends WebTestCase
             '"specific group" access type should be checked');
     }
 
+    /**
+     * @depends testNew_GetGroupForm
+     * @return array
+     */
     public function testNew_SubmitGroupFormWithTitle()
     {
         $groupId = 4;
@@ -190,10 +200,8 @@ class ForumControllerTest extends WebTestCase
     public function testDelete($forumId)
     {
         $this->client->request('POST', '/forum/' . $forumId . '/delete');
-
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('wasDeleted', $response);
         $this->assertArrayHasKey('redirectUrl', $response);
         $this->assertTrue($response['wasDeleted']);

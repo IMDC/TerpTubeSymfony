@@ -2,3 +2,6 @@ IMDC\TerpTubeBundle\Entity\Media:
   virtual_properties:
     isInterpretation:
       serialized_name: is_interpretation
+  properties:
+    owner:
+      exclude: true

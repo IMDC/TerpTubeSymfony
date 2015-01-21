@@ -4,6 +4,9 @@
 
 {% block title %}{{ thread.title|truncate(50) }}{% endblock %}
 
+{#TODO deliver from controller#}
+{% set newPost = {id: '0' ~ random()} %}
+
 {% block header %}
     {{ parent() }}
 
@@ -35,19 +38,18 @@
                     }
             );
 
-            $(PostViewView.Binder.CONTAINER).each(function (index, element) {
-                var model = new PostModel({
-                    id: $(element).data("pid"),
-                    startTime: $(element).data("starttime"),
-                    endTime: $(element).data("endtime"),
-                    isTemporal: $(element).data("istemporal"),
-                    threadId: {{ thread.id }}
-                });
+            bootstrap(
+                    new PostModel({{ newPost|serialize('json')|raw }}),
+                    PostController,
+                    PostNewView,
+                    {}
+            );
 
+            $.each({{ thread.posts|serialize('json')|raw }}, function (index, post) {
                 bootstrap(
-                        model,
+                        new PostModel(post),
                         PostController,
-                        model.isNew() ? PostNewView : PostViewView,
+                        PostViewView,
                         {}
                 );
             });
@@ -139,7 +141,6 @@
                     <!-- post reply form -->
                     {#<div class="row post-container-reply" data-pid="{{ post.id }}">#}
                         {#{% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'post': post} %}#}
-                        {% set newPost = {id: '0' ~ random()} %}
                         {% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
                     {#</div>#}
                 {#</div>#}

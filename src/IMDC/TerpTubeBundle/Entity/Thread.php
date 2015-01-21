@@ -8,69 +8,59 @@ use IMDC\TerpTubeBundle\Utils\Utils;
 /**
  * Thread
  */
-class Thread {
+class Thread
+{
 	/**
-	 *
 	 * @var integer
 	 */
 	private $id;
 	
 	/**
-	 *
 	 * @var \DateTime
 	 */
 	private $creationDate;
 	
 	/**
-	 *
 	 * @var boolean
 	 */
 	private $locked;
 	
 	/**
-	 *
 	 * @var boolean
 	 */
 	private $sticky;
 	
 	/**
-	 *
 	 * @var string
 	 */
 	private $content;
 	
 	/**
-	 *
 	 * @var integer
 	 */
 	private $lastPostID;
 	
 	/**
-	 *
 	 * @var \DateTime
 	 */
 	private $lastPostAt;
 	
 	/**
-	 *
 	 * @var \DateTime
 	 */
 	private $editedAt;
 	
 	/**
-	 *
 	 * @var string
 	 */
 	private $title;
 	
 	/**
-	 *
 	 * @var integer
 	 */
 	private $type;
 	
 	/**
-	 *
 	 * @var array
 	 */
 	private $tags;
@@ -81,19 +71,16 @@ class Thread {
 	private $mediaDisplayOrder;
 
     /**
-     *
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $creator;
 
     /**
-     *
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $editedBy;
 
     /**
-     *
      * @var \IMDC\TerpTubeBundle\Entity\Forum
      */
     private $parentForum;
@@ -104,19 +91,16 @@ class Thread {
     private $accessType;
 
     /**
-     *
      * @var \Doctrine\Common\Collections\Collection
      */
     private $usersFollowing;
 
     /**
-     *
      * @var \Doctrine\Common\Collections\Collection
      */
     private $mediaIncluded;
 
     /**
-     *
      * @var \Doctrine\Common\Collections\Collection
      */
     private $posts;

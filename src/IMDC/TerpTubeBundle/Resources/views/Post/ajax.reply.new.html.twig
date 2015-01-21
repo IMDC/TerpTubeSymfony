@@ -9,16 +9,8 @@
         'model/postModel', 'controller/postController', 'views/post/newView',
         'core/helper', 'main'
     ], function(bootstrap, PostModel, PostController, PostView, Helper) {
-        var $newPost = $(PostView.Binder.CONTAINER + '[data-pid="{{ newPost.id }}"]');
         bootstrap(
-                new PostModel({
-                    id: $newPost.data("pid"),
-                    startTime: $newPost.data("starttime"),
-                    endTime: $newPost.data("endtime"),
-                    isTemporal: $newPost.data("istemporal"),
-                    threadId: "{{ post.parentThread.id|default(null) }}",
-                    parentPostId: "{{ post.id|default(null) }}"
-                }),
+                new PostModel({{ newPost|serialize('json')|raw }}),
                 PostController,
                 PostView,
                 {}

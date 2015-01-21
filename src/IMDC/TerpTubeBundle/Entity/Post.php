@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Utils\Utils;
 
 /**
  * Post
@@ -49,6 +50,29 @@ class Post
      * @var boolean
      */
     private $isTemporal;
+
+    /**
+     * @var array
+     */
+    private $mediaDisplayOrder;
+
+    /**
+     * This is a collection in order to support inclusion of multiple files per post
+     * such as a transcript file, a captions file, etc.
+     * (at a later date) (paul)
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $attachedFile;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $replies;
+
+    /**
+     * @var \IMDC\TerpTubeBundle\Entity\Post
+     */
+    private $parentPost;
     
     /**
      * @var \IMDC\TerpTubeBundle\Entity\User
@@ -64,24 +88,6 @@ class Post
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
     private $editedBy;
-
-    /**
-     * This is a collection in order to support inclusion of multiple files per post
-     * such as a transcript file, a captions file, etc.
-     * (at a later date)
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $attachedFile;
-
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $replies;
-    
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\Post
-     */
-    private $parentPost;
     
     /**
      * Constructor
@@ -125,6 +131,29 @@ class Post
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Set isDeleted
+     *
+     * @param boolean $isDeleted
+     * @return Post
+     */
+    public function setIsDeleted($isDeleted)
+    {
+        $this->isDeleted = $isDeleted;
+
+        return $this;
+    }
+
+    /**
+     * Get isDeleted
+     *
+     * @return boolean
+     */
+    public function getIsDeleted()
+    {
+        return $this->isDeleted;
     }
 
     /**
@@ -174,6 +203,194 @@ class Post
     }
 
     /**
+     * Set startTime
+     *
+     * @param float $startTime
+     * @return Post
+     */
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
+
+        return $this;
+    }
+
+    /**
+     * Get startTime
+     *
+     * @return float
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Set endTime
+     *
+     * @param float $endTime
+     * @return Post
+     */
+    public function setEndTime($endTime)
+    {
+        $this->endTime = $endTime;
+
+        return $this;
+    }
+
+    /**
+     * Get endTime
+     *
+     * @return float
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
+    }
+
+    /**
+     * Set isTemporal
+     *
+     * @param boolean $isTemporal
+     * @return Post
+     */
+    public function setIsTemporal($isTemporal)
+    {
+        $this->isTemporal = $isTemporal;
+
+        return $this;
+    }
+
+    /**
+     * Get isTemporal
+     *
+     * @return boolean
+     */
+    public function getIsTemporal()
+    {
+        return $this->isTemporal;
+    }
+
+    /**
+     * Set mediaDisplayOrder
+     *
+     * @param array $mediaDisplayOrder
+     * @return Post
+     */
+    public function setMediaDisplayOrder($mediaDisplayOrder)
+    {
+        $this->mediaDisplayOrder = $mediaDisplayOrder;
+
+        return $this;
+    }
+
+    /**
+     * Get mediaDisplayOrder
+     *
+     * @return array
+     */
+    public function getMediaDisplayOrder()
+    {
+        return $this->mediaDisplayOrder;
+    }
+
+    /**
+     * Add attachedFile
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedFile
+     * @return Post
+     */
+    public function addAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
+    {
+        $this->attachedFile[] = $attachedFile;
+
+        return $this;
+    }
+
+    /**
+     * Remove attachedFile
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedFile
+     */
+    public function removeAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
+    {
+        $this->attachedFile->removeElement($attachedFile);
+    }
+
+    public function setAttachedFile($attachedFile)
+    {
+        $this->attachedFile = $attachedFile;
+
+        return $this;
+    }
+
+    /**
+     * Get attachedFile
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAttachedFile()
+    {
+        return $this->attachedFile;
+    }
+
+    /**
+     * Add replies
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
+     * @return Post
+     */
+    public function addReplies(\IMDC\TerpTubeBundle\Entity\Post $replies)
+    {
+        $this->replies[] = $replies;
+
+        return $this;
+    }
+
+    /**
+     * Remove replies
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
+     */
+    public function removeReplie(\IMDC\TerpTubeBundle\Entity\Post $replies)
+    {
+        $this->replies->removeElement($replies);
+    }
+
+    /**
+     * Get replies
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getReplies()
+    {
+        return $this->replies;
+    }
+
+    /**
+     * Set parentPost
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\Post $parentPost
+     * @return Post
+     */
+    public function setParentPost(\IMDC\TerpTubeBundle\Entity\Post $parentPost = null)
+    {
+        $this->parentPost = $parentPost;
+
+        return $this;
+    }
+
+    /**
+     * Get parentPost
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\Post
+     */
+    public function getParentPost()
+    {
+        return $this->parentPost;
+    }
+
+    /**
      * Set author
      *
      * @param \IMDC\TerpTubeBundle\Entity\User $author
@@ -194,30 +411,6 @@ class Post
     public function getAuthor()
     {
         return $this->author;
-    }
-
-    
-    /**
-     * Set isDeleted
-     *
-     * @param boolean $isDeleted
-     * @return Post
-     */
-    public function setIsDeleted($isDeleted)
-    {
-        $this->isDeleted = $isDeleted;
-    
-        return $this;
-    }
-
-    /**
-     * Get isDeleted
-     *
-     * @return boolean 
-     */
-    public function getIsDeleted()
-    {
-        return $this->isDeleted;
     }
 
     /**
@@ -267,164 +460,6 @@ class Post
     }
 
     /**
-     * Add attachedFile
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedFile
-     * @return Post
-     */
-    public function addAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
-    {
-        $this->attachedFile[] = $attachedFile;
-    
-        return $this;
-    }
-
-    /**
-     * Remove attachedFile
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Media $attachedFile
-     */
-    public function removeAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
-    {
-        $this->attachedFile->removeElement($attachedFile);
-    }
-
-    /**
-     * Get attachedFile
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getAttachedFile()
-    {
-        return $this->attachedFile;
-    }
-
-    /**
-     * Set isTemporal
-     *
-     * @param boolean $isTemporal
-     * @return Post
-     */
-    public function setIsTemporal($isTemporal)
-    {
-        $this->isTemporal = $isTemporal;
-    
-        return $this;
-    }
-
-    /**
-     * Get isTemporal
-     *
-     * @return boolean 
-     */
-    public function getIsTemporal()
-    {
-        return $this->isTemporal;
-    }
-
-    /**
-     * Set startTime
-     *
-     * @param float $startTime
-     * @return Post
-     */
-    public function setStartTime($startTime)
-    {
-        $this->startTime = $startTime;
-    
-        return $this;
-    }
-
-    /**
-     * Get startTime
-     *
-     * @return float 
-     */
-    public function getStartTime()
-    {
-        return $this->startTime;
-    }
-
-    /**
-     * Set endTime
-     *
-     * @param float $endTime
-     * @return Post
-     */
-    public function setEndTime($endTime)
-    {
-        $this->endTime = $endTime;
-    
-        return $this;
-    }
-
-    /**
-     * Get endTime
-     *
-     * @return float 
-     */
-    public function getEndTime()
-    {
-        return $this->endTime;
-    }
-
-    /**
-     * Add replies
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
-     * @return Post
-     */
-    public function addReplies(\IMDC\TerpTubeBundle\Entity\Post $replies)
-    {
-        $this->replies[] = $replies;
-    
-        return $this;
-    }
-
-    /**
-     * Remove replies
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Post $replies
-     */
-    public function removeReplie(\IMDC\TerpTubeBundle\Entity\Post $replies)
-    {
-        $this->replies->removeElement($replies);
-    }
-
-    /**
-     * Get replies
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getReplies()
-    {
-        return $this->replies;
-    }
-
-    /**
-     * Set parentPost
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Post $parentPost
-     * @return Post
-     */
-    public function setParentPost(\IMDC\TerpTubeBundle\Entity\Post $parentPost = null)
-    {
-        $this->parentPost = $parentPost;
-    
-        return $this;
-    }
-
-    /**
-     * Get parentPost
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\Post 
-     */
-    public function getParentPost()
-    {
-        return $this->parentPost;
-    }
-
-    /**
      * Add replies
      *
      * @param \IMDC\TerpTubeBundle\Entity\Post $replies
@@ -447,47 +482,8 @@ class Post
         $this->replies->removeElement($replies);
     }
 
-    //TODO delete
-    /*public function setAttachedFile(\IMDC\TerpTubeBundle\Entity\Media $attachedFile)
+    public function getOrderedMedia()
     {
-        $this->attachedFile = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->attachedFile[] = $attachedFile;
-
-        return $this;
-    }*/
-
-    public function setAttachedFile($attachedFile)
-    {
-        $this->attachedFile = $attachedFile;
-
-        return $this;
-    }
-    /**
-     * @var array
-     */
-    private $mediaDisplayOrder;
-
-
-    /**
-     * Set mediaDisplayOrder
-     *
-     * @param array $mediaDisplayOrder
-     * @return Post
-     */
-    public function setMediaDisplayOrder($mediaDisplayOrder)
-    {
-        $this->mediaDisplayOrder = $mediaDisplayOrder;
-
-        return $this;
-    }
-
-    /**
-     * Get mediaDisplayOrder
-     *
-     * @return array 
-     */
-    public function getMediaDisplayOrder()
-    {
-        return $this->mediaDisplayOrder;
+        return Utils::orderMedia($this->getAttachedFile(), $this->getMediaDisplayOrder());
     }
 }

@@ -47,9 +47,8 @@ class MyFilesGatewayControllerTest extends WebTestCase
             $this->client->getResponse()->getContent()
         );
 
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('responseCode', $response);
         $this->assertArrayHasKey('feedback', $response);
         $this->assertEquals(200, $response['responseCode']);
@@ -74,9 +73,8 @@ class MyFilesGatewayControllerTest extends WebTestCase
             $this->client->getResponse()->getContent()
         );
 
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('responseCode', $response);
         $this->assertArrayHasKey('feedback', $response);
         $this->assertEquals(200, $response['responseCode']);

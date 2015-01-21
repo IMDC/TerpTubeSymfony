@@ -65,4 +65,3 @@ IMDC\TerpTubeBundle\Entity\Post:
             targetEntity: User
             inversedBy: editedPosts
             nullable: true
-    lifecycleCallbacks: {  }

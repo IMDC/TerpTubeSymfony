@@ -49,6 +49,9 @@ class ThreadControllerTest extends WebTestCase
             '"public" access type should be checked');
     }
 
+    /**
+     * @depends testNew_GetForm
+     */
     public function testNew_SubmitFormWithMedia()
     {
         $crawler = $this->client->request('GET', '/thread/new/' . self::$forumId);
@@ -75,10 +78,11 @@ class ThreadControllerTest extends WebTestCase
         }
 
         // manually delete
-        $this->delete($crawler);
+        $this->delete($model);
     }
 
     /**
+     * @depends testNew_GetForm
      * @return array
      */
     public function testNew_SubmitFormWithTitle()
@@ -156,20 +160,17 @@ class ThreadControllerTest extends WebTestCase
     public function testDelete($model)
     {
         $this->client->request('POST', '/thread/' . $model['id'] . '/delete');
-
-        $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('wasDeleted', $response);
         $this->assertArrayHasKey('redirectUrl', $response);
         $this->assertTrue($response['wasDeleted']);
         $this->assertRegExp('/\/forum\/\d+$/', $response['redirectUrl']);
     }
 
-    private function delete($crawler)
+    private function delete($model)
     {
         // manually delete the thread
-        $model = Common::getModel($crawler);
         $em = $this->client->getContainer()
             ->get('doctrine')
             ->getManager();
