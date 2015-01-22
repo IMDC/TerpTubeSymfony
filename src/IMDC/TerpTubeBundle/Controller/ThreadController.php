@@ -28,7 +28,6 @@ class ThreadController extends Controller
      * @param $forumid
      * @param $mediaId
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function newAction(Request $request, $forumid, $mediaId)
@@ -65,8 +64,9 @@ class ThreadController extends Controller
             $formOptions['em'] = $em;
         }
 
-        $thread = new Thread();
         $securityContext = $this->get('security.context');
+
+        $thread = new Thread();
         $form = $this->createForm(new ThreadType($securityContext), $thread, $formOptions);
         $form->handleRequest($request);
 
@@ -75,7 +75,9 @@ class ThreadController extends Controller
                 $form->get('mediaIncluded')->setData(array($media));
             }
 
-            $form->get('accessType')->setData($em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC));
+            $form->get('accessType')->setData(
+                $em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC)
+            );
         } else {
             if ($isNewFromMedia) {
                 $forum = $form->get('forum')->getData();
@@ -137,7 +139,6 @@ class ThreadController extends Controller
      * @param Request $request
      * @param $threadid
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function viewAction(Request $request, $threadid)
@@ -172,7 +173,6 @@ class ThreadController extends Controller
      * @param Request $request
      * @param $threadid
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function editAction(Request $request, $threadid)
@@ -238,8 +238,6 @@ class ThreadController extends Controller
      * @param Request $request
      * @param $threadid
      * @return RedirectResponse|Response
-     * @throws BadRequestHttpException
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function deleteAction(Request $request, $threadid) //TODO api?

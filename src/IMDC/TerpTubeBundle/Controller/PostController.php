@@ -18,16 +18,14 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class PostController extends Controller
 {
-	/**
+    /**
      * @param Request $request
      * @param $threadId
      * @param $pid
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @throws \Exception
      */
-    public function newAction(Request $request, $threadId, $pid)
+    public function newAction(Request $request, $threadId, $pid) //TODO api?
     {
         // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -48,7 +46,6 @@ class PostController extends Controller
             throw new \Exception('thread/post not found');
         }
 
-        //$isPostReply = !$thread;
         $isPostReply = !!$postParent;
         $post = new Post();
         $form = $this->createForm(new PostType(), $post, array(
@@ -80,7 +77,6 @@ class PostController extends Controller
             $em->persist($post);
             $em->flush();
 
-            //if ($isPostReply)
             if ($isPostReply && !$thread)
                 $thread = $postParent->getParentThread();
 
@@ -114,7 +110,7 @@ class PostController extends Controller
         } else {
             $content = array(
                 'wasReplied' => false,
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.new.html.twig', array(
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                     'form' => $form->createView(),
                     'post' => $postParent))
             );
@@ -125,7 +121,13 @@ class PostController extends Controller
         ));
     }
 
-    public function viewAction(Request $request, $pid)
+    /**
+     * @param Request $request
+     * @param $pid
+     * @return RedirectResponse|Response
+     * @throws \Exception
+     */
+    public function viewAction(Request $request, $pid) //TODO api?
     {
         // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -152,11 +154,9 @@ class PostController extends Controller
      * @param Request $request
      * @param $pid
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @throws \Exception
      */
-    public function editAction(Request $request, $pid)
+    public function editAction(Request $request, $pid) //TODO api?
 	{
         // check if the user is logged in
 		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -203,13 +203,12 @@ class PostController extends Controller
                 'wasEdited' => true,
                 'post' => json_decode($serializer->serialize($post, 'json'), true),
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                    'post' => $post,
-                    /*'isPostReply' => !!$post->getParentPost()*/))
+                    'post' => $post))
             );
         } else {
             $content = array(
                 'wasEdited' => false,
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.new.html.twig', array(
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
                     'form' => $form->createView(),
                     'post' => $post))
             );
@@ -224,10 +223,9 @@ class PostController extends Controller
      * @param Request $request
      * @param $pid
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      * @throws \Exception
      */
-    public function deleteAction(Request $request, $pid)
+    public function deleteAction(Request $request, $pid) //TODO api?
     {
         // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {

@@ -182,7 +182,7 @@ define([
                 url: Routing.generate('imdc_thread_delete', {threadid: model.get('id')}),
                 responseText: {
                     wasDeleted: true,
-                    redirectUrl: Common.BASE_URL + '/forums'
+                    redirectUrl: Common.BASE_URL + '/forum/'
                 }
             });
 

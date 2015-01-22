@@ -8,15 +8,20 @@
     {{ parent() }}
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            require(['main'], function() {
-                var forum = new $tt.Controller.Forum({
-                    page: $tt.Controller.Forum.Page.VIEW,
-                    media: {{ mediaJson|json_encode|raw }}
-                });
-                forum.bindUIEvents();
-            });
-        });
+        require([
+			'bootstrap',
+			'model/forumModel', 'controller/forumController', 'views/forum/viewView',
+			'main'
+		], function(bootstrap, ForumModel, ForumController, ForumView) {
+			bootstrap(
+					new ForumModel({{ forum|serialize('json')|raw }}),
+					ForumController,
+					ForumView,
+					{
+						container: $('body')
+					}
+			);
+		});
     </script>
 {% endblock header %}
 
@@ -30,7 +35,7 @@
 		</ol>
 		<div class="row">
 			<div class="col-md-offset-4 col-md-4">
-				{% if mediaJson is defined and mediaJson|length > 0 %}
+				{% if forum.getTitleMedia|length > 0 %}
                     <div class="gallery-container"></div>
                 {% else %}
 					<p>No media</p>
@@ -97,10 +102,8 @@
 		</div>
 	</div>
 	{% if app.environment == 'test' %}
-		{#FIXME change this once the forum is json serialized (update the tests too)#}
 		<div style="display: none;">
-			<div id="__testMedia">{{ mediaJson|json_encode|raw }}</div>
-			<div id="__testGroupId">{% if forum.group %}{{ forum.group.id }}{% endif %}</div>
+			<div id="__testModel">{{ forum|serialize('json')|raw }}</div>
 		</div>
 	{% endif %}
 {% endblock content %}

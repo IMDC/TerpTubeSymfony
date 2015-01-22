@@ -1,8 +1,3 @@
-{#
-included by:
-_Post:view.html.twig
-#}
-
 {% set isPostReply = post.parentPost is not empty %}
 
 <div class="row post-container tt-post-container{% if isPostReply %} tt-post-reply-container{% endif %}" style="margin-bottom: 15px;" {#style="border: initial; border-collapse: initial; border-radius: initial; margin-bottom: 0; padding-bottom: 0;" #}data-pid="{{ post.id }}" data-starttime="{{ post.startTime }}" data-endtime="{{ post.endTime }}" data-istemporal={{ post.isTemporal ? 'true' : 'false' }}>

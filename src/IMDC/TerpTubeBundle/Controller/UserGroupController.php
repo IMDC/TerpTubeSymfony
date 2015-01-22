@@ -29,7 +29,7 @@ class UserGroupController extends Controller
 {
     /**
      * @param Request $request
-     * @return Response
+     * @return RedirectResponse|Response
      */
     public function listAction(Request $request)
     {
@@ -53,7 +53,7 @@ class UserGroupController extends Controller
     /**
      * @param Request $request
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
     public function newAction(Request $request)
     {
@@ -185,7 +185,6 @@ class UserGroupController extends Controller
      * @param Request $request
      * @param $groupId
      * @return RedirectResponse|Response
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function editAction(Request $request, $groupId)
@@ -241,9 +240,8 @@ class UserGroupController extends Controller
      * @param Request $request
      * @param $groupId
      * @return RedirectResponse|Response
-     * @throws BadRequestHttpException
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
     public function deleteAction(Request $request, $groupId) //TODO api?
     {
@@ -709,6 +707,11 @@ class UserGroupController extends Controller
         return $this->redirect($request->headers->get('referer'));
     }
 
+    /**
+     * @param $sender
+     * @param $recipient
+     * @param $group
+     */
     private function sendGroupInvitation($sender, $recipient, $group)
     {
         $em = $this->getDoctrine()->getManager();
@@ -731,6 +734,10 @@ class UserGroupController extends Controller
         $em->flush();
     }
 
+    /**
+     * @param $group
+     * @param $members
+     */
     private function removeMembers($group, $members)
     {
         $em = $this->getDoctrine()->getManager();
@@ -753,6 +760,10 @@ class UserGroupController extends Controller
         }
     }
 
+    /**
+     * @param $group
+     * @param $members
+     */
     private function addMembers($group, $members)
     {
         $em = $this->getDoctrine()->getManager();

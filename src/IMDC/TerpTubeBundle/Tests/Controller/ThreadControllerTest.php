@@ -87,7 +87,7 @@ class ThreadControllerTest extends WebTestCase
      */
     public function testNew_SubmitFormWithTitle()
     {
-        $title = 'test:new:' . rand();
+        $title = 'test:new';
         $crawler = $this->client->request('GET', '/thread/new/' . self::$forumId);
 
         $form = $crawler->filter('form[name="thread"] > button:contains("Create")')->form(array(
@@ -136,7 +136,7 @@ class ThreadControllerTest extends WebTestCase
      */
     public function testEdit_SubmitFormWithTitle($model)
     {
-        $title = 'test:edit:' . rand();
+        $title = 'test:edit';
         $crawler = $this->client->request('GET', '/thread/' . $model['id'] . '/edit');
 
         $form = $crawler->filter('form[name="thread"] > div > div > button:contains("Save")')->form(array(

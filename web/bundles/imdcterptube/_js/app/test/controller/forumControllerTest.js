@@ -1,18 +1,18 @@
 define([
     'chai',
     'test/common',
-    'model/groupModel',
-    'controller/groupController',
+    'model/forumModel',
+    'controller/forumController',
     'jquery',
     'jquery-mockjax',
     'fos_routes',
     'es5-shim'
-], function (chai, Common, GroupModel, GroupController) {
+], function (chai, Common, ForumModel, ForumController) {
     'use strict';
 
     var assert = chai.assert;
 
-    describe('GroupController', function () {
+    describe('ForumController', function () {
 
         window.$tt = {};
         $tt._services = [];
@@ -23,10 +23,10 @@ define([
         var controller;
 
         before(function () {
-            model = new GroupModel({
+            model = new ForumModel({
                 id: 10
             });
-            controller = new GroupController(model, {});
+            controller = new ForumController(model, {});
             controller.onViewLoaded();
             $.mockjaxSettings.logging = false;
 
@@ -43,7 +43,7 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
+                url: Routing.generate('imdc_forum_delete', {forumid: model.get('id')}),
                 responseText: {
                     wasDeleted: false
                 }
@@ -61,10 +61,10 @@ define([
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
+                url: Routing.generate('imdc_forum_delete', {forumid: model.get('id')}),
                 responseText: {
                     wasDeleted: true,
-                    redirectUrl: Common.BASE_URL + '/group/'
+                    redirectUrl: Common.BASE_URL + '/forum/'
                 }
             });
 

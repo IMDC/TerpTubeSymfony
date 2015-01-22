@@ -6,6 +6,9 @@ use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\Post;
 
+/**
+ * @deprecated
+ */
 class JSEntities
 {
 

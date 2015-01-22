@@ -5,7 +5,6 @@ namespace IMDC\TerpTubeBundle\Controller;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
-use IMDC\TerpTubeBundle\Model\JSEntities;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -188,15 +187,8 @@ class ForumController extends Controller
             $threads->setParam($key, $value);
         }
 
-        $ordered = $forum->getOrderedMedia();
-        $mediaJson = array();
-        foreach ($ordered as $media) {
-            $mediaJson[] = JSEntities::getMediaObject($media);
-        }
-
 	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
 	    	'forum' => $forum,
-            'mediaJson' => $mediaJson,
 	    	'threads' => $threads
 	    ));
 	}
@@ -279,8 +271,6 @@ class ForumController extends Controller
      * @param Request $request
      * @param $forumid
      * @return RedirectResponse|Response
-     * @throws BadRequestHttpException
-     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
      * @throws \Exception
      */
     public function deleteAction(Request $request, $forumid) //TODO api?

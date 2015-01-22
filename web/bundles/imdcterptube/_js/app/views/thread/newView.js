@@ -49,7 +49,7 @@ define([
 
     NewView.prototype._onClickSubmit = function (e) {
         if (this.$form[0].checkValidity()) {
-            $(e.target).button('loading');
+            this.$submit.button('loading');
         }
     };
 
