@@ -150,12 +150,8 @@ class UserGroupController extends Controller
         }
 
         $securityContext = $this->get('security.context');
-        if ($securityContext->isGranted('VIEW', $group) === false) {
-            //redirect user to groups page if they dont have access to content
-            return $this->redirect($this->generateUrl('imdc_group_list'));
-        }
-
         $user = $this->getUser();
+        
         $forumRepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
         $sortParams = array(
             'sort' => $request->query->get('sort', 'f.lastActivity'),
