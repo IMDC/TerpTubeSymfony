@@ -29,10 +29,10 @@ _Forum:view.html.twig
 #}
 {% block media_gallery_dust %}
     {% set enableControls = enableControls is defined ? enableControls : true %}
-    {#{% set preloadMedia = preloadMedia is defined ? preloadMedia : true %}#}
+    {% set preloadMedia = preloadMedia is defined ? preloadMedia : false %}
 
     <script type="text/html" id="mediaElementVideo">
-        <video class="tt-media-video" id="{media.id}" {% if enableControls %}controls{% endif %} poster="{{ asset('') }}{media.thumbnail}" preload="metadata{#{% if preloadMedia %}auto{% else %}none{% endif %}#}">
+        <video class="tt-media-video" id="{media.id}" {% if enableControls %}controls{% endif %} poster="{{ asset('') }}{media.thumbnail}" preload="{% if preloadMedia %}auto{% else %}none{% endif %}">
             <source src="{{ asset('') }}{media.resource.pathMPEG}" />
             <source src="{{ asset('') }}{media.resource.pathWebm}" />
         </video>

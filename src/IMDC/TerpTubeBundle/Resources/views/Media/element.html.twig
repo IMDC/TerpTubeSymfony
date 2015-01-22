@@ -13,9 +13,7 @@ _Thread:thumbnail.html.twig
 {% if enableControls is not defined %}
     {% set enableControls = true %}
 {% endif %}
-{#{% if preloadMedia is not defined %}#}
-    {#{% set preloadMedia = false %}#}
-{#{% endif %}#}
+{% set preloadMedia = preloadMedia is defined ? preloadMedia : false %}
 
 {% block media %}
     {# mediatype 0 = image 1 = video 2 = audio 9 = other #}
@@ -25,7 +23,7 @@ _Thread:thumbnail.html.twig
         {% endblock mediaimagetype %}
     {% elseif mediaFile.type == 1 %}
         {% block mediavideotype %}
-            <video class="tt-media-video" id="{{ mediaFile.getID }}" {% if enableControls %}controls{% endif %} poster="{{ asset(mediaFile.getThumbnailPath) }}" preload="metadata{#{% if preloadMedia %}auto{% else %}none{% endif %}#}">
+            <video class="tt-media-video" id="{{ mediaFile.getID }}" {% if enableControls %}controls{% endif %} poster="{{ asset(mediaFile.getThumbnailPath) }}" preload="{% if preloadMedia %}auto{% else %}none{% endif %}">
                 <source src="{{ asset(mediaFile.getResource.getWebPathWebm) }}" />
                 <source src="{{ asset(mediaFile.getResource.getWebPath) }}" />
             </video>

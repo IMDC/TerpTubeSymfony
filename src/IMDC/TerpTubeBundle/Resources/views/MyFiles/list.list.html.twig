@@ -22,7 +22,7 @@
                         <td><input type="checkbox" data-mid="{{ resourceFile.id }}" /></td>
                         <td class="tt-myFiles-nameColumn {{ previewDisabled }}">
                             <span class="edit-title my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ resourceFile.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}">
-                                {{ media.typeToIcon(resourceFile.type) }}{{ resourceFile.title }}
+                                {{ media.type_to_icon(resourceFile.type) }}{{ resourceFile.title }}
                             </span>
                             <span>
                                 <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
@@ -31,7 +31,7 @@
                             </span>
                         </td>
                         <td>{{ resourceFile.getMetaData.getTimeUploaded|date('M m Y h:i a') }}</td>
-                        <td>{{ media.formatSize(resourceFile.metaData.size) }}</td>
+                        <td>{{ media.format_size(resourceFile.metaData.size) }}</td>
                     </tr>
                 {% endfor %}
             {% else %}
