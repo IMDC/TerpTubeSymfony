@@ -539,7 +539,7 @@ define([
         var newSelectedMedia = container.data("prototype");
         newSelectedMedia = newSelectedMedia.replace(/__id__/g, media.id);
         newSelectedMedia = newSelectedMedia.replace(/__title__/g, media.title);
-        newSelectedMedia = newSelectedMedia.replace(/__resource_webPath__/g, media.resource.pathMPEG);
+        newSelectedMedia = newSelectedMedia.replace(/__resource_webPath__/g, media.resource.web_path);
         container.append(newSelectedMedia);
 
         this._getElement(MediaChooser.Binder.SELECTED_MEDIA)

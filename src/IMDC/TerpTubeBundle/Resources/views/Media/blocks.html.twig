@@ -32,28 +32,28 @@ _Forum:view.html.twig
     {% set preloadMedia = preloadMedia is defined ? preloadMedia : false %}
 
     <script type="text/html" id="mediaElementVideo">
-        <video class="tt-media-video" id="{media.id}" {% if enableControls %}controls{% endif %} poster="{{ asset('') }}{media.thumbnail}" preload="{% if preloadMedia %}auto{% else %}none{% endif %}">
-            <source src="{{ asset('') }}{media.resource.pathMPEG}" />
-            <source src="{{ asset('') }}{media.resource.pathWebm}" />
+        <video class="tt-media-video" id="{media.id}" {% if enableControls %}controls{% endif %} poster="{{ asset('') }}{media.thumbnail_path}" preload="{% if preloadMedia %}auto{% else %}none{% endif %}">
+            {#<source src="{{ asset('') }}{media.resource.pathMPEG}" />#}
+            <source src="{{ asset('') }}{media.resource.web_path}" />
         </video>
         <button class="btn btn-primary">Interpret this video</button>
     </script>
 
     <script type="text/html" id="mediaElementAudio">
         <audio class="tt-media-audio" {% if enableControls %}controls{% endif %}>
-            <source src="{{ asset('') }}{media.resource.pathMPEG}" />
+            <source src="{{ asset('') }}{media.resource.web_path}" />
             Your browser does not support the audio element, please upgrade to Google Chrome
         </audio>
     </script>
 
     <script type="text/html" id="mediaElementImage">
-        <img class="img-responsive center-block tt-media-img" src="{{ asset('') }}{media.resource.pathMPEG}" alt="{media.title}" title="{media.title}" />
+        <img class="img-responsive center-block tt-media-img" src="{{ asset('') }}{media.resource.web_path}" alt="{media.title}" title="{media.title}" />
     </script>
 
     <script type="text/html" id="mediaElementOther">
         <div class="row">
             <div class="col-md-3 thumbnail text-center">
-                <a href="{{ asset('') }}{media.resource.pathMPEG}">
+                <a href="{{ asset('') }}{media.resource.web_path}">
                     <p><i class="fa fa-file fa-5x"></i></p>
                     <div>{media.title}</div>
                 </a>

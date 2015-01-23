@@ -10,7 +10,7 @@ define([
             container: $('.gallery-container')
         });
         $(this.gallery).on($tt.Core.Gallery.Event.READY, (function (e) {
-            this.gallery.setMedia(this.controller.model.get('title_media'));
+            this.gallery.setMedia(this.controller.model.get('ordered_media'));
         }).bind(this));
         this.gallery.render();
 

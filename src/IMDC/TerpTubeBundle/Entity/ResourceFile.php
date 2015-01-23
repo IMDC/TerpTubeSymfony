@@ -111,8 +111,8 @@ class ResourceFile
     	? null
     	: $this->getUploadDir().'/'.$this->id.'.'.$this->path;
     }
-    
-    public function getWebPathWebm()
+
+    public function getWebPathWebm() //TODO revise
     {
     	return null === $this->path
     	? null

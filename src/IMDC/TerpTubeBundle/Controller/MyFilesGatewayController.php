@@ -116,7 +116,10 @@ class MyFilesGatewayController extends Controller
         ));
     }
 
-    public function previewMediaAction(Request $request, $mediaId)
+    /**
+     * @deprecated
+     */
+    public function previewMediaAction(Request $request, $mediaId) //TODO delete
     {
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
@@ -161,7 +164,10 @@ class MyFilesGatewayController extends Controller
         ));
     }
 
-    public function previewCompoundMediaAction(Request $request, $compoundMediaId, $url)
+    /**
+     * @deprecated
+     */
+    public function previewCompoundMediaAction(Request $request, $compoundMediaId, $url) //TODO delete
     {
         $recorderConfiguration = $request->get("recorderConfiguration");
         $user = $this->getUser();
@@ -233,6 +239,7 @@ class MyFilesGatewayController extends Controller
                 'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
             );
         } else {
+            $serializer = $this->get('jms_serializer');
             // FIXME if video is being transcoded, need to queue the operation to execute once it completes
             // FIXME check if start/end times are proper values
             $resourceFile = $media->getResource();
@@ -255,7 +262,7 @@ class MyFilesGatewayController extends Controller
                     $return = array(
                         'responseCode' => 200,
                         'feedback' => 'Successfully trimmed media!',
-                        'media' => JSEntities::getMediaObject($media)
+                        'media' => json_decode($serializer->serialize($media, 'json'), true)
                     );
                 } else {
                     $return = array(
@@ -285,7 +292,7 @@ class MyFilesGatewayController extends Controller
                     $return = array(
                         'responseCode' => 200,
                         'feedback' => 'Successfully trimmed media!',
-                        'media' => JSEntities::getMediaObject($media)
+                        'media' => json_decode($serializer->serialize($media, 'json'), true)
                     );
                 } else {
                     $return = array(
@@ -541,10 +548,11 @@ class MyFilesGatewayController extends Controller
         $uploadEvent = new UploadEvent($media);
         $eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadEvent);
 
+        $serializer = $this->get('jms_serializer');
         $content = array(
             'responseCode' => 200,
             'feedback' => 'media added',
-            'media' => JSEntities::getMediaObject($media)
+            'media' => json_decode($serializer->serialize($media, 'json'), true)
         );
 
         return new Response(json_encode($content), 200, array(
@@ -871,10 +879,11 @@ class MyFilesGatewayController extends Controller
             $dispatcher = $this->get('event_dispatcher');
             $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD, new UploadEvent ($media));
 
+            $serializer = $this->get('jms_serializer');
             $content = array(
                 'wasUploaded' => true,
                 'finished' => true, // TODO remove
-                'media' => JSEntities::getMediaObject($media)
+                'media' => json_decode($serializer->serialize($media, 'json'), true)
             );
         } else {
             $content = array(
@@ -910,13 +919,9 @@ class MyFilesGatewayController extends Controller
         $mediaCollection = $transformer->reverseTransform($mediaIds);
         $ordered = Utils::orderMedia($mediaCollection, $mediaIds);
 
-        $mediaJson = array();
-        foreach ($ordered as $media) {
-            $mediaJson [] = JSEntities::getMediaObject($media);
-        }
-
+        $serializer = $this->get('jms_serializer');
         $content = array(
-            'media' => $mediaJson
+            'media' => json_decode($serializer->serialize($ordered, 'json'), true)
         );
 
         return new Response (json_encode($content), 200, array(

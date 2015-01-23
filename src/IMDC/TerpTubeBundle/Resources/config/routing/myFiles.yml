@@ -4,19 +4,19 @@ imdc_myfiles_list:
   options:
     expose: true
 
-#imdc_myfiles_list_interpretations:
+#imdc_myfiles_list_interpretations: TODO delete
 #  pattern: /interpretations
 #  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:gatewayInterpretations }
 
-imdc_myfiles_preview:
-  pattern: /{mediaId}/preview
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewMedia }
-  requirements:
-    mediaId: \d+
-  options:
-    expose: true
+#imdc_myfiles_preview: TODO delete
+#  pattern: /{mediaId}/preview
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewMedia }
+#  requirements:
+#    mediaId: \d+
+#  options:
+#    expose: true
 
-#imdc_myfiles_preview_compound_media:
+#imdc_myfiles_preview_compound_media: TODO delete
 #  pattern: /preview/compound_media/{compoundMediaId}
 #  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:previewCompoundMedia, url: null }
 #  requirements:
@@ -57,7 +57,7 @@ imdc_myfiles_add_recording:
   options:
     expose: true
 
-#imdc_myfiles_add_simultaneous_recording:
+#imdc_myfiles_add_simultaneous_recording: TODO delete
 #  pattern: /add/simultaneous_recording/{sourceMediaID}/{startTime}
 #  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addSimultaneousRecording, url: null, startTime: null }
 #  options:

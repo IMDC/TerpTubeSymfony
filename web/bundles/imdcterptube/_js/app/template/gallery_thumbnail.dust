@@ -1,6 +1,6 @@
 {#media}
     <li style="float: left; list-style: none; margin-right: 5px; cursor: pointer; height: 100%; border: 2px solid black;" data-mid="{id}">
-        <img style="max-height: 100%; width: 100%;" src="{@generateUrl path=thumbnail /}" />
+        <img style="max-height: 100%; width: 100%;" src="{@generateUrl path=thumbnail_path /}" />
         <span style="vertical-align: middle; display: inline-block; height: 100%;"></span>
     </li>
 {/media}

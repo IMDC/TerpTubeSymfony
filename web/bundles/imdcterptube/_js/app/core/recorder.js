@@ -207,6 +207,7 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         } else {
             container = this._getElement(Recorder.Binder.INTERP_VIDEO_R);
             additionalDataToPost = {
+                isInterpretation: true,
                 sourceId: this.sourceMedia.id
             }
         }
@@ -507,7 +508,7 @@ define(['core/helper', 'core/mediaManager', 'core/myFilesSelector'], function(He
         var video = this._getElement(binder);
         var source = video.find("source");
         video.removeAttr("src");
-        source.attr("src", Helper.generateUrl(media.resource.pathMPEG));
+        source.attr("src", Helper.generateUrl(media.resource.web_path));
     };
 
     Recorder.prototype.setSourceMedia = function(media) {

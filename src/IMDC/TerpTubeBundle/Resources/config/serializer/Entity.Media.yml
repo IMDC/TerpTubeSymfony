@@ -3,5 +3,9 @@ IMDC\TerpTubeBundle\Entity\Media:
     isInterpretation:
       serialized_name: is_interpretation
   properties:
+    thumbnailPath:
+      access_type: public_method
+      accessor:
+        getter: getThumbnailPath
     owner:
       exclude: true

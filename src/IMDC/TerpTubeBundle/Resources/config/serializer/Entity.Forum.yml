@@ -10,5 +10,3 @@ IMDC\TerpTubeBundle\Entity\Forum:
       expose: true
     group:
       expose: true
-    titleMedia:
-      expose: true
