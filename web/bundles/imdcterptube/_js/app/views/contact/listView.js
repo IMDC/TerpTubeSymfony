@@ -55,14 +55,14 @@ define([
 
     ListView.prototype._onClickBulkAction = function (e) {
         switch (e.action) {
-            case 1: // remove
+            case 1: // delete
                 var contactList = e.tableComponent.getTable()
                     .attr('id')
                     .replace(/^tab/, '')
                     .toLowerCase();
 
                 if (contactList == 'all') {
-                    if (!confirm('This will remove the selected contacts from all lists. Continue?'))
+                    if (!confirm('This will delete the selected contacts from all lists. Continue?'))
                         break;
                 }
 

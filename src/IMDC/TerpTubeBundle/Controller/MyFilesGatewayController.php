@@ -4,36 +4,26 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityNotFoundException;
+use FFMpeg\FFProbe;
+use IMDC\TerpTubeBundle\Entity\CompoundMedia;
 use IMDC\TerpTubeBundle\Entity\Interpretation;
 use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Entity\MetaData;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
+use IMDC\TerpTubeBundle\Event\UploadEvent;
 use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
-use IMDC\TerpTubeBundle\Form\Type\ResourceFileFormType;
+use IMDC\TerpTubeBundle\Model\JSEntities;
 use IMDC\TerpTubeBundle\Utils\Utils;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
-use IMDC\TerpTubeBundle\Model\JSEntities;
-use FFMpeg\FFProbe;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Request;
-use IMDC\TerpTubeBundle\Entity\CompoundMedia;
-use IMDC\TerpTubeBundle\Entity\ResourceFile;
-use IMDC\TerpTubeBundle\Form\Type\OtherMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\VideoMediaFormType;
-use IMDC\TerpTubeBundle\Event\UploadEvent;
-use IMDC\TerpTubeBundle\Form\Type\AudioMediaFormType;
-use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Process\Process;
-use IMDC\TerpTubeBundle\Entity\Post;
 
 class MyFilesGatewayController extends Controller
 {
@@ -50,24 +40,24 @@ class MyFilesGatewayController extends Controller
         }
 
         $criteria = Criteria::create();
-        $type = $this->get('request')->query->get('type', false);
-        $style = $this->get('request')->query->get('style', 'grid');
+        $type = $request->query->get('type', false);
+        $style = $request->query->get('style', 'grid');
 
         if ($type !== false) {
             $criteria->andWhere(Criteria::expr()->eq('type', $type));
         }
 
-        $resourceFiles = $this->getUser()->getResourceFiles()->matching($criteria);
+        $media = $this->getUser()->getResourceFiles()->matching($criteria);
 
         $paginator = $this->get('knp_paginator');
-        $resourceFiles = $paginator->paginate(
-            $resourceFiles,
-            $this->get('request')->query->get('page', 1), /*page number*/
-            !$request->isXmlHttpRequest() ? 24 : 12 /*limit per page*/
+        $media = $paginator->paginate(
+            $media,
+            $request->query->get('page', 1), /*page number*/
+            !$request->isXmlHttpRequest() ? 24 : ($style == 'list' ? 12 : 8) /*limit per page*/
         );
 
         $parameters = array(
-            'resourceFiles' => $resourceFiles,
+            'media' => $media,
             'style' => $style
         );
 
@@ -76,13 +66,15 @@ class MyFilesGatewayController extends Controller
         }
 
         $response = $this->render('IMDCTerpTubeBundle:MyFiles:' .
-            ($request->isXmlHttpRequest() ? 'list.' . $style : 'index') . '.html.twig', $parameters);
+            ($request->isXmlHttpRequest() ? 'ajax.' : '') . 'list.html.twig', $parameters);
 
         if ($request->isXmlHttpRequest()) {
-            $response = new Response (json_encode(array(
+            $content = array(
                 'page' => $response->getContent(),
                 'finished' => false
-            )), 200, array(
+            );
+
+            $response = new Response(json_encode($content), 200, array(
                 'Content-Type' => 'application/json'
             ));
         }
@@ -157,8 +149,8 @@ class MyFilesGatewayController extends Controller
             'finished' => false,
             'media' => JSEntities::getMediaObject($media),
             'page' => $this->renderView($template, array(
-                    'mediaFile' => $media
-                ))
+                'mediaFile' => $media
+            ))
         )), 200, array(
             'Content-Type' => 'application/json'
         ));

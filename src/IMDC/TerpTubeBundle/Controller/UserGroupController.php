@@ -74,6 +74,7 @@ class UserGroupController extends Controller
 
         $group = new UserGroup();
         $formType = new UserGroupType();
+        // TODO use form event preset data instead?
         $hasMembersChildForm = !!$request->request->get($formType->getName() . '[members]', !!$members, true);
         $form = $this->createForm($formType, $group, array(
             'em' => $em,

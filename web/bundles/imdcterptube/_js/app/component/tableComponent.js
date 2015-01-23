@@ -4,19 +4,24 @@ define([
 ], function (Subscriber) {
     'use strict';
 
-    var TableComponent = function ($table) {
+    var TableComponent = function (options) {
         Subscriber.prototype.constructor.apply(this);
 
         this.bind__onClickToggleSelection = this._onClickToggleSelection.bind(this);
         this.bind__onClickBulkAction = this._onClickBulkAction.bind(this);
         this.bind__onClickItems = this._onClickItems.bind(this);
 
-        this.$table = $table;
+        this.$table = options.$table;
         this.$toggleSelection = this.$table.find(TableComponent.Binder.TOGGLE_SELECTION);
         this.$bulkActions = this.$table.find(TableComponent.Binder.BULK_ACTION);
         this.$items = this.$table.find(TableComponent.Binder.ITEM);
 
+        this.$toggleSelection.attr('disabled', !options.multiSelect);
+        if (!options.multiSelect) {
+            this.$toggleSelection.prop('checked', false);
+        }
         this.$toggleSelection.on('click', this.bind__onClickToggleSelection);
+
         this.$bulkActions.on('click', this.bind__onClickBulkAction);
         this.$items.on('change', this.bind__onClickItems);
     };
@@ -86,8 +91,19 @@ define([
         return this.$items.filter(':checked');
     };
 
-    TableComponent.table = function ($table) {
-        return new TableComponent($table);
+    TableComponent.table = function ($table, options) {
+        var defaults = {
+            multiSelect: true
+        };
+
+        options = options || defaults;
+        for (var o in defaults) {
+            options[o] = typeof options[o] != "undefined" ? options[o] : defaults[o];
+        }
+
+        options.$table = $table;
+
+        return new TableComponent(options);
     };
 
     return TableComponent;

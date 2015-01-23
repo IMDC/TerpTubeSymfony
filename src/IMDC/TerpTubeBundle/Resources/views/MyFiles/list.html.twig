@@ -1,0 +1,34 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% use 'IMDCTerpTubeBundle:Form:fields.html.twig' %}
+
+{% block title %}{{ 'filesGateway.title'|trans }}{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                var myFiles = new $tt.Controller.MyFiles();
+                myFiles.bindUIEvents();
+            });
+        });
+    </script>
+{% endblock header %}
+
+{% block nav_ul_authenticated_my_files %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                {% set isFileSelection = false %}
+                {{ block('media_chooser_widget') }}
+            </div>
+        </div>
+        {% include 'IMDCTerpTubeBundle:MyFiles:ajax.list.html.twig' %}
+    </div>
+{% endblock content %}

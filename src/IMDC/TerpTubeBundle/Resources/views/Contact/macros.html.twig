@@ -1,7 +1,7 @@
 {% macro _controls(style) %}
     <button class="btn btn-default table-component-bulk-action" title="Send Message" data-action="3" disabled><i class="fa fa-envelope"></i></button>
     <button class="btn btn-default table-component-bulk-action" title="Create group" data-action="2" disabled><i class="fa fa-users"></i></button>
-    <button class="btn btn-danger table-component-bulk-action" title="Remove" data-action="1" disabled><i class="fa fa-trash-o"></i></button>
+    <button class="btn btn-danger table-component-bulk-action" title="Delete" data-action="1" disabled><i class="fa fa-trash-o"></i></button>
     {% if style == 'grid' %}
         {% set style = 'list' %}
         {% set style_icon = 'fa-th-list' %}

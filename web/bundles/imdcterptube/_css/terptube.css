@@ -146,32 +146,26 @@ ul.pagination {
 }
 
 /* line 150, sass/_base.scss */
-.tt-controls {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
-/* line 155, sass/_base.scss */
 .tt-popup-dialog {
   position: fixed !important;
   z-index: 5000;
 }
 
-/* line 163, sass/_base.scss */
+/* line 158, sass/_base.scss */
 .tt-grid-div, .tt-myFiles-grid-div {
   margin-top: 5px;
 }
-/* line 166, sass/_base.scss */
+/* line 161, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body, .tt-myFiles-grid-div div.tt-grid-div-body {
   min-height: 265px;
 }
-/* line 169, sass/_base.scss */
+/* line 164, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-item, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-item {
   position: absolute;
   margin-left: 4px;
   z-index: 1;
 }
-/* line 175, sass/_base.scss */
+/* line 170, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail {
   height: 125px;
   margin-bottom: 5px;
@@ -179,76 +173,76 @@ ul.pagination {
   -moz-transform-style: preserve-3d;
   transform-style: preserve-3d;
 }
-/* line 182, sass/_base.scss */
+/* line 177, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div {
   position: relative;
   top: 50%;
   transform: translateY(-50%);
 }
-/* line 187, sass/_base.scss */
+/* line 182, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div img, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div img {
   max-height: 125px;
 }
-/* line 193, sass/_base.scss */
+/* line 188, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-primary, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-primary {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* line 198, sass/_base.scss */
+/* line 193, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-primary > p:nth-of-type(1), .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-primary > p:nth-of-type(1) {
   font-size: 24px;
 }
 
-/* line 209, sass/_base.scss */
+/* line 204, sass/_base.scss */
 .tt-list-table, .tt-myFiles-list-table {
   margin-top: 5px;
 }
-/* line 214, sass/_base.scss */
+/* line 209, sass/_base.scss */
 .tt-list-table span, .tt-myFiles-list-table span {
   color: initial;
   /* override bootstrap span color under .active class */
 }
-/* line 218, sass/_base.scss */
+/* line 213, sass/_base.scss */
 .tt-list-table > thead > tr > th, .tt-myFiles-list-table > thead > tr > th, .tt-list-table > tbody > tr > td, .tt-myFiles-list-table > tbody > tr > td {
   line-height: 34px;
   vertical-align: middle;
 }
-/* line 222, sass/_base.scss */
+/* line 217, sass/_base.scss */
 .tt-list-table > thead > tr > th i.fa, .tt-myFiles-list-table > thead > tr > th i.fa, .tt-list-table > tbody > tr > td i.fa, .tt-myFiles-list-table > tbody > tr > td i.fa {
   vertical-align: middle;
 }
-/* line 226, sass/_base.scss */
+/* line 221, sass/_base.scss */
 .tt-list-table > thead > tr > th.tt-list-table-col-item, .tt-myFiles-list-table > thead > tr > th.tt-list-table-col-item, .tt-list-table > tbody > tr > td.tt-list-table-col-item, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-item {
   width: 1%;
   line-height: initial;
 }
-/* line 231, sass/_base.scss */
+/* line 226, sass/_base.scss */
 .tt-list-table > thead > tr > th.tt-list-table-col-thumbnail, .tt-myFiles-list-table > thead > tr > th.tt-list-table-col-thumbnail, .tt-list-table > tbody > tr > td.tt-list-table-col-thumbnail, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-thumbnail {
   text-align: center;
 }
-/* line 235, sass/_base.scss */
+/* line 230, sass/_base.scss */
 .tt-list-table > thead > tr > th.tt-list-table-col-primary, .tt-myFiles-list-table > thead > tr > th.tt-list-table-col-primary, .tt-list-table > tbody > tr > td.tt-list-table-col-primary, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary {
   width: 60%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* line 242, sass/_base.scss */
+/* line 237, sass/_base.scss */
 .tt-list-table > thead > tr > th .tt-avatar, .tt-myFiles-list-table > thead > tr > th .tt-avatar, .tt-list-table > thead > tr > th .tt-thumbnail, .tt-myFiles-list-table > thead > tr > th .tt-thumbnail, .tt-list-table > tbody > tr > td .tt-avatar, .tt-myFiles-list-table > tbody > tr > td .tt-avatar, .tt-list-table > tbody > tr > td .tt-thumbnail, .tt-myFiles-list-table > tbody > tr > td .tt-thumbnail {
   max-height: 34px;
 }
-/* line 249, sass/_base.scss */
+/* line 244, sass/_base.scss */
 .tt-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(1), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(1) {
   cursor: pointer;
 }
-/* line 253, sass/_base.scss */
+/* line 248, sass/_base.scss */
 .tt-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(2) {
   float: right;
   margin-bottom: -1px;
   display: none;
 }
-/* line 259, sass/_base.scss */
+/* line 254, sass/_base.scss */
 .tt-list-table > tbody > tr > td.tt-list-table-col-primary:hover > span:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary:hover > span:nth-of-type(2) {
   display: inline-block;
 }
