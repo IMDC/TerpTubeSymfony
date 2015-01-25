@@ -1,4 +1,4 @@
-{% set newPost = {id: '0' ~ random()} %}
+{% set newPost = {id: '0' ~ random(), parent_thread: thread, parent_post: post} %}
 {% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
 
 <script type="text/javascript">

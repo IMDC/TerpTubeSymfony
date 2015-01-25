@@ -112,7 +112,8 @@ class PostController extends Controller
                 'wasReplied' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                     'form' => $form->createView(),
-                    'post' => $postParent))
+                    'post' => $postParent, 
+                	'thread' =>$thread))
             );
         }
 

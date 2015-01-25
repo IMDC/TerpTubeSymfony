@@ -68,7 +68,6 @@ define([
 
     ViewView.prototype._onClickNew = function (e) {
         e.preventDefault();
-
         this.$new.hide();
         this.controller.new(null)
             .done(function (data) {

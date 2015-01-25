@@ -5,7 +5,7 @@
 {% block title %}{{ thread.title|truncate(50) }}{% endblock %}
 
 {#TODO deliver from controller#}
-{% set newPost = {id: '0' ~ random()} %}
+{% set newPost = {id: '0' ~ random(), parent_thread: thread} %}
 
 {% block header %}
     {{ parent() }}
