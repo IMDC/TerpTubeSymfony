@@ -535,6 +535,19 @@ class MyFilesGatewayController extends Controller
         $em->persist($media);
         $em->persist($user);
         $em->flush();
+        
+        // FIXME: transcoder seems to do this already. no need to rename and persist
+        // Need to rename to webm since in some cases the recording is done as a .bin file
+        $resource = $media->getResource();
+        $resourceFile = new File ($resource->getAbsolutePath());
+        $targetFile = $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm';
+        if (!file_exists($targetFile)) {
+        	$fs = new Filesystem ();
+        	$fs->rename($resourceFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
+        }
+        $resource->setPath("webm");
+        // $em->persist ( $resourceFile );
+        $em->flush();
 
         $eventDispatcher = $this->container->get('event_dispatcher');
         $uploadEvent = new UploadEvent($media);
