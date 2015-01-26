@@ -246,7 +246,7 @@ class MyFilesGatewayController extends Controller
                 $resultMp4 = $transcoder->trimVideo($mp4File, $startTime, $endTime);
                 $finalFile = new File ($webmFile);
                  if ($ffprobe->format ( $finalFile->getRealPath () )->has ( 'duration' ))
-					$videoDuration = $ffprobe->format ( $webmFile->getRealPath () )->get ( 'duration' );;
+					$videoDuration = $ffprobe->format ( $finalFile->getRealPath () )->get ( 'duration' );;
                 $fileSize = filesize($finalFile->getRealPath());
                 $metaData->setDuration($videoDuration);
                 $metaData->setSize($fileSize);
@@ -274,7 +274,7 @@ class MyFilesGatewayController extends Controller
                 $media->setPendingOperations($pendingOperations);
                 $finalFile = new File ($webmFile);
                 if ($ffprobe->format ( $finalFile->getRealPath () )->has ( 'duration' ))
-					$videoDuration = $ffprobe->format ( $webmFile->getRealPath () )->get ( 'duration' );;
+					$videoDuration = $ffprobe->format ( $finalFile->getRealPath () )->get ( 'duration' );;
                 $fileSize = filesize($finalFile->getRealPath());
                 $metaData->setDuration($videoDuration);
                 $metaData->setSize($fileSize);
