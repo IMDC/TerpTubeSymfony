@@ -245,7 +245,8 @@ class MyFilesGatewayController extends Controller
                 $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
                 $resultMp4 = $transcoder->trimVideo($mp4File, $startTime, $endTime);
                 $finalFile = new File ($webmFile);
-                 if ($ffprobe->format ( $finalFile->getRealPath () )->has ( 'duration' ))
+                $videoDuration = 0;
+                if ($ffprobe->format ( $finalFile->getRealPath () )->has ( 'duration' ))
 					$videoDuration = $ffprobe->format ( $finalFile->getRealPath () )->get ( 'duration' );;
                 $fileSize = filesize($finalFile->getRealPath());
                 $metaData->setDuration($videoDuration);
@@ -273,6 +274,7 @@ class MyFilesGatewayController extends Controller
                 array_push($pendingOperations, "trim,mp4," . $startTime . "," . $endTime);
                 $media->setPendingOperations($pendingOperations);
                 $finalFile = new File ($webmFile);
+                $videoDuration = 0;
                 if ($ffprobe->format ( $finalFile->getRealPath () )->has ( 'duration' ))
 					$videoDuration = $ffprobe->format ( $finalFile->getRealPath () )->get ( 'duration' );;
                 $fileSize = filesize($finalFile->getRealPath());
