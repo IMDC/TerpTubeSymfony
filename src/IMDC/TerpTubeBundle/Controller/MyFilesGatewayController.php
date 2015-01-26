@@ -238,7 +238,6 @@ class MyFilesGatewayController extends Controller
             $webmFile = $resourceFile->getAbsolutePathWebm();
             $mp4File = $resourceFile->getAbsolutePath();
             $ffprobe = FFProbe::create();
-            \Doctrine\Common\Util\Debug::dump($ffprobe);
             $metaData = $media->getMetaData();
             $transcoder = $this->container->get('imdc_terptube.transcoder');
             // FIXME Throws exception at rename when trying to move the mp4 file.
