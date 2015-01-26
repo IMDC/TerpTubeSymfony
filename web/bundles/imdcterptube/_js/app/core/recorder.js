@@ -184,6 +184,8 @@ define([ 'core/helper', 'core/mediaManager', 'core/myFilesSelector' ], function(
 
 	this.mediaManager.trimMedia(this.recordedMedia.id, currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
 		currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
+	//cut should always also call the done function
+	this._done(e);
     };
 
     Recorder.prototype._back = function(e)
