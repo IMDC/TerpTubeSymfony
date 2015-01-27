@@ -6,8 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * CompoundMedia
+ * @deprecated
  */
-class CompoundMedia
+class CompoundMedia //TODO delete
 {
     /**
      * @var integer

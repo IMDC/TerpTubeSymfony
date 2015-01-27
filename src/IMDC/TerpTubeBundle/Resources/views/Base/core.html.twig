@@ -1,5 +1,4 @@
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
-{% use 'IMDCTerpTubeBundle:Media:blocks.html.twig' %}
 <!DOCTYPE html>
 
 <html lang="en">
@@ -206,9 +205,4 @@
         {% block javascripts %}
         {% endblock javascripts %}
     </body>
-    {% block outside_body %}
-        {#{{ block('recorder_dust') }}
-        {{ block('my_files_selector_dust') }}#}
-        {{ block('media_gallery_dust') }}
-    {% endblock outside_body %}
 </html>

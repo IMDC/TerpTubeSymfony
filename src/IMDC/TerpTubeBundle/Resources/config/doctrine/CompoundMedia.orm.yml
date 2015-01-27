@@ -1,4 +1,4 @@
-IMDC\TerpTubeBundle\Entity\CompoundMedia:
+IMDC\TerpTubeBundle\Entity\CompoundMedia: #TODO delete
     type:  entity
     table: compound_media
     repositoryClass: IMDC\TerpTubeBundle\Entity\CompoundMediaRepository

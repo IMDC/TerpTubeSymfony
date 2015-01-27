@@ -9,7 +9,7 @@ use IMDC\TerpTubeBundle\Entity\Post;
 /**
  * @deprecated
  */
-class JSEntities
+class JSEntities //TODO delete
 {
 
     public static function getMediaObject (Media $media)

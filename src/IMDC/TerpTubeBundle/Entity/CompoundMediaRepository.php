@@ -10,8 +10,9 @@ use IMDC\TerpTubeBundle\IMDCTerpTubeBundle;
 
 /**
  * MediaRepository
+ * @deprecated
  */
-class CompoundMediaRepository extends EntityRepository {
+class CompoundMediaRepository extends EntityRepository { // TODO delete
 	public function findAllInterpretationsCreatedByUser(User $user) {
 		return $this->getEntityManager ()->createQuery ( '
                     SELECT c
