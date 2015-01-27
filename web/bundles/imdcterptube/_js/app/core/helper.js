@@ -49,7 +49,7 @@ define(function() {
     };
 
     Helper.generateUrl = function(path, root) {
-        var root = typeof root !== "undefined" ? root : false;
+        root = typeof root !== "undefined" ? root : false;
         var baseUrl = Routing.getBaseUrl() + "/";
         return root
             ? baseUrl + path

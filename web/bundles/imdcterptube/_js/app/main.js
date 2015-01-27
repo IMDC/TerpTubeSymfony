@@ -1,13 +1,8 @@
 define([
-    //'controller/myFiles',
     'controller/message',
     'controller/profile',
 
     'core/mediaManager',
-    /*'core/myFilesSelector',
-    'core/recorder',
-    'core/mediaChooser',
-    'core/gallery',*/
 
 
 
@@ -70,17 +65,8 @@ define([
     var TerpTube = {};
 
     TerpTube.Controller = {};
-    //TerpTube.Controller.MyFiles = require('controller/myFiles');
     TerpTube.Controller.Message = require('controller/message');
     TerpTube.Controller.Profile = require('controller/profile');
-
-    /*TerpTube.Core = {};
-    TerpTube.Core.Helper = require('core/helper');
-    TerpTube.Core.MediaManager = require('core/mediaManager');
-    TerpTube.Core.MyFilesSelector = require('core/myFilesSelector');
-    TerpTube.Core.Recorder = require('core/recorder');
-    TerpTube.Core.MediaChooser = require('core/mediaChooser');
-    TerpTube.Core.Gallery = require('core/gallery');*/
 
     TerpTube._services = [];
     TerpTube._instances = [];
@@ -90,11 +76,9 @@ define([
 
     ///////////////////////////////
 
-    //$tt.Core.Helper.autoSize();
     var Helper = require('core/helper');
 
     dust.helpers.generateUrl = function (chunk, context, bodies, params) {
-        //return chunk.write($tt.Core.Helper.generateUrl(params.path));
         return chunk.write(Helper.generateUrl(params.path));
     };
 });

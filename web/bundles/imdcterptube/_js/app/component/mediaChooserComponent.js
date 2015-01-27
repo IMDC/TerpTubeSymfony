@@ -71,6 +71,7 @@ define([
 
     MediaChooserComponent.Event = {
         SUCCESS: 'eventSuccess',
+        SUCCESS_AND_POST: 'eventSuccessAndPost',
         ERROR: 'eventError',
         RESET: 'eventReset'
     };

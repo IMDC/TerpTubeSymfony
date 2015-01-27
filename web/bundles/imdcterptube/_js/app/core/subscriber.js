@@ -37,8 +37,8 @@ define(['underscore'], function () {
     Subscriber.prototype.unsubscribe = function (callback) {
         _.each(this.subscriptions, function (callbacks, index, list) {
             if (_.contains(callbacks, callback)) {
-                var index = _.indexOf(callbacks, callback);
-                callbacks.splice(index, 1);
+                var cbIndex = _.indexOf(callbacks, callback);
+                callbacks.splice(cbIndex, 1);
             }
         });
     };

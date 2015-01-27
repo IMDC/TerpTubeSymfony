@@ -106,13 +106,13 @@ define([
                 if (this.$deleteModal.data('bs.modal').isShown) {
                     this.$deleteModal.on('hidden.bs.modal', function (e) {
                         this.$container.remove();
-                    });
+                    }.bind(this));
                     this.$deleteModal.modal('hide');
                     this.$container.fadeOut('slow');
                 } else {
                     this.$container.fadeOut('slow', function (e) {
                         this.$container.remove();
-                    });
+                    }.bind(this));
                 }
             }.bind(this))
             .fail(function () {

@@ -1,13 +1,14 @@
-define(['core/mediaChooser'], function(MediaChooser) {
+define([
+    'component/mediaChooserComponent'
+], function(MediaChooserComponent) {
     "use strict";
 
     var Message = function(options) {
         console.log("%s: %s- options=%o", Message.TAG, "constructor", options);
 
         this.page = options.page;
-        this.mediaChooser = null;
+        this.mcCmp = null;
 
-//        this.bind__onPageLoaded = this._onPageLoaded.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
 
@@ -62,12 +63,9 @@ define(['core/mediaChooser'], function(MediaChooser) {
     Message.prototype._bindUIEventsNewReply = function(isReply) {
         console.log("%s: %s- isReply=%s", Message.TAG, "_bindUIEventsNewReply", isReply);
 
-        this.mediaChooser = new MediaChooser();
-//        $(this.mediaChooser).on(MediaChooser.Event.PAGE_LOADED, this.bind__onPageLoaded);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.setContainer(this.getContainer());
-        this.mediaChooser.bindUIEvents();
+        this.mcCmp = MediaChooserComponent.render(this.getContainer());
+        this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
 
         var mediaIds = [];
         this.getFormField("attachedMedia").children().each(function(index, element) {
@@ -75,23 +73,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
         });
         if (mediaIds.length > 0) {
             this._getElement(Message.Binder.SUBMIT).attr("disabled", true);
-            this.mediaChooser.setMedia(mediaIds);
+            this.mcCmp.setMedia(mediaIds);
         }
 
         this.getFormField("recipients").tagit();
-
-        /*this._getElement(Message.Binder.SUBMIT).on("click", (function(e) {
-            e.preventDefault();
-
-            var formField = this.getFormField("attachedMedia");
-            formField.html(
-                this.mediaChooser.generateFormData(
-                    formField.data("prototype")
-                )
-            );
-
-            this.getForm().submit();
-        }).bind(this));*/
     };
 
     Message.prototype._bindUIEventsView = function() {
@@ -110,26 +95,10 @@ define(['core/mediaChooser'], function(MediaChooser) {
         );
     };
 
-    //thought this would of been useful at some point between page loads. guess not
-//    Message.prototype._onPageLoaded = function(e) {
-//        console.log("%s: %s", Message.TAG, "_onPageLoaded");
-//
-//        switch (this.mediaChooser.page) {
-//            case MediaChooser.Page.RECORD_VIDEO:
-//                this.mediaChooser.createVideoRecorder();
-//                break;
-//            case MediaChooser.Page.PREVIEW:
-//                if (e.payload.media.type == MediaChooser.MEDIA_TYPE.VIDEO.id)
-//                    this.mediaChooser.createVideoPlayer();
-//
-//                break;
-//        }
-//    };
-
     Message.prototype._updateForm = function() {
         var formField = this.getFormField("attachedMedia");
         formField.html(
-            this.mediaChooser.generateFormData(
+            this.mcCmp.generateFormData(
                 formField.data("prototype")
             )
         );

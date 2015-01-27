@@ -17,6 +17,11 @@ define([
         this.sourceMedia = null;
         this.recordedMedia = null;
 
+        this.forwardButton = '<button class="forwardButton"></button>';
+        this.doneButton = '<button class="doneButton"></button>';
+        this.doneAndPostButton = '<button class="doneAndPostButton"></button>';
+        this.backButton = '<button class="backButton"></button>';
+
         this.bind__onShownModal = this._onShownModal.bind(this);
         this.bind__onHiddenModal = this._onHiddenModal.bind(this);
         this.bind__onShowTab = this._onShowTab.bind(this);

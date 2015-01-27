@@ -14,9 +14,9 @@ define([
         this.activeMedia = null;
 
         this.thumbsContainerBounds = {
-            width: null,
-            thumbWidth: null,
-            thumbsWidth: null
+            width: 0,
+            thumbWidth: 0,
+            thumbsWidth: 0
         };
 
         this.bind__onClickAction = this._onClickAction.bind(this);
