@@ -4,10 +4,6 @@ imdc_myfiles_list:
   options:
     expose: true
 
-#imdc_myfiles_list_interpretations: TODO delete
-#  pattern: /interpretations
-#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:gatewayInterpretations }
-
 imdc_myfiles_trim:
   pattern: /{mediaId}/trim/{startTime}/{endTime}
   defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:trimMedia }

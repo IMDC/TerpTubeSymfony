@@ -3,20 +3,16 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
-use Doctrine\ORM\EntityNotFoundException;
 use FFMpeg\FFProbe;
-use IMDC\TerpTubeBundle\Entity\CompoundMedia;
 use IMDC\TerpTubeBundle\Entity\Interpretation;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
 use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
-use IMDC\TerpTubeBundle\Model\JSEntities;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -80,33 +76,6 @@ class MyFilesGatewayController extends Controller
         }
 
         return $response;
-    }
-
-    /**
-     * A gateway form for uploading/recording or selecting existing files
-     *
-     * @param String $filter
-     * @param boolean $isAjax
-     * @param String $path
-     * @throws AccessDeniedException
-     * @throws NotFoundHttpException
-     * @throws BadRequestHttpException
-     * @return \Symfony\Component\HttpFoundation\Response
-     * @deprecated
-     */
-    public function gatewayInterpretationsAction(Request $request) //TODO delete
-    {
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-        $user = $this->getUser();
-        $em = $this->getDoctrine()->getManager();
-        // CompoundMedia interpretations
-        $repo = $em->getRepository('IMDCTerpTubeBundle:CompoundMedia');
-        $interpretations = $repo->findAllInterpretationsCreatedByUser($user);
-        return $this->render('IMDCTerpTubeBundle:MyFilesGateway:interpretations.html.twig', array(
-            'interpretations' => $interpretations
-        ));
     }
 
     /**
