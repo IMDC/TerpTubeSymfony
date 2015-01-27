@@ -92,22 +92,19 @@
             {% endif %}
 
             <script type="text/javascript">
-                require(['core/recorder'], function(Recorder) {
-                    $("a.navbar-link.main-recorder").on("click", (function(e) {
-                        $tt._recorder = new Recorder({
-                            page: Recorder.Page.NORMAL
-                        });
-                        $($tt._recorder).on(Recorder.Event.READY, (function(e) {
+                require(['component/recorderComponent'], function(RecorderComponent) {
+                    $('a.navbar-link.main-recorder').on('click', function (e) {
+                        RecorderComponent.render({}, function (e) {
+                            $tt._recorder = e.recorderComponent;
+                            $tt._recorder.subscribe(RecorderComponent.Event.DONE, function (e) {
+                                $tt._recorder.show();
+                            }.bind(this));
+                            $tt._recorder.subscribe(RecorderComponent.Event.HIDDEN, function(e) {
+                                $tt._recorder.destroy();
+                            }.bind(this));
                             $tt._recorder.show();
-                        }).bind(this));
-                        $($tt._recorder).on(Recorder.Event.DONE, (function(e) {
-                            $tt._recorder.hide();
-                        }).bind(this));
-                        $($tt._recorder).on(Recorder.Event.HIDDEN, (function(e) {
-                            $tt._recorder.destroy();
-                        }).bind(this));
-                        $tt._recorder.render();
-                    }).bind(this));
+                        }.bind(this));
+                    }.bind(this));
                 });
             </script>
         {% endblock header %}

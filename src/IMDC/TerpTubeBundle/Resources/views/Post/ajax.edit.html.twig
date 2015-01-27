@@ -15,7 +15,9 @@
             <a class="btn btn-danger post-cancel-edit" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
             {{ form_end(form) }}
             <script type="text/javascript">
-                $tt.Core.Helper.autoSize();
+                require('core/helper', function (Helper) {
+                    Helper.autoSize();
+                });
             </script>
         </div>
     </div>

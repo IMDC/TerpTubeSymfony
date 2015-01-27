@@ -4,17 +4,27 @@
 
 {% use 'IMDCTerpTubeBundle:Form:fields.html.twig' %}
 
+{% import 'IMDCTerpTubeBundle:MyFiles:macros.html.twig' as _my_files %}
+
 {% block title %}{{ 'filesGateway.title'|trans }}{% endblock %}
 
 {% block header %}
     {{ parent() }}
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            require(['main'], function() {
-                var myFiles = new $tt.Controller.MyFiles();
-                myFiles.bindUIEvents();
-            });
+        require([
+            'bootstrap',
+            'controller/myFilesController', 'views/myFiles/listView',
+            'main'
+        ], function(bootstrap, MyFilesController, MyFilesView) {
+            bootstrap(
+                    {},
+                    MyFilesController,
+                    MyFilesView,
+                    {
+                        container: $('body')
+                    }
+            );
         });
     </script>
 {% endblock header %}
@@ -29,6 +39,10 @@
                 {{ block('media_chooser_widget') }}
             </div>
         </div>
-        {% include 'IMDCTerpTubeBundle:MyFiles:ajax.list.html.twig' %}
+        <div class="row">
+            <div class="col-md-12">
+                {{ _my_files.list_files(style, media) }}
+            </div>
+        </div>
     </div>
 {% endblock content %}

@@ -5,3 +5,19 @@
         {{ _my_files.list_files(style, media) }}
     </div>
 </div>
+<script type="text/javascript">
+    require([
+        'bootstrap',
+        'controller/myFilesController', 'views/myFiles/listView',
+        'main'
+    ], function(bootstrap, MyFilesController, MyFilesView) {
+        bootstrap(
+                {},
+                MyFilesController,
+                MyFilesView,
+                {
+                    container: $('body')
+                }
+        );
+    });
+</script>

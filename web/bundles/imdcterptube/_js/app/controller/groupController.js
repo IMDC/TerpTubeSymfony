@@ -18,7 +18,7 @@ define([
 
     };
 
-    Group.prototype.delete = function (e) {
+    Group.prototype.delete = function () {
         return GroupFactory.delete(this.model)
             .done(function (data) {
                 window.location.assign(data.redirectUrl);

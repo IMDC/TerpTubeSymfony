@@ -8,6 +8,8 @@ define([
 
         this.model = model;
         this.options = options;
+
+        $tt._instances.push(this);
     };
 
     Forum.TAG = 'Forum';
@@ -16,7 +18,7 @@ define([
 
     };
 
-    Forum.prototype.delete = function (e) {
+    Forum.prototype.delete = function () {
         return ForumFactory.delete(this.model)
             .done(function (data) {
                 window.location.assign(data.redirectUrl);

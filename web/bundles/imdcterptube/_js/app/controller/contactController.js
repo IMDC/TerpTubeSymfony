@@ -1,4 +1,6 @@
-define(function () {
+define([
+    'factory/contactFactory'
+], function (ContactFactory) {
     'use strict';
 
     var Contact = function (model, options) {
@@ -14,6 +16,13 @@ define(function () {
 
     Contact.prototype.onViewLoaded = function () {
 
+    };
+
+    Contact.prototype.delete = function (userIds, contactList) {
+        return ContactFactory.delete(userIds, contactList)
+            .done(function (data) {
+                window.location.reload(true);
+            });
     };
 
     return Contact;

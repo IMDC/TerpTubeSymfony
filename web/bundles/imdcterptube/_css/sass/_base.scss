@@ -170,6 +170,7 @@ $tt-gd-img-height: 125px;
     & div.tt-grid-div-thumbnail {
       height: $tt-gd-img-height;
       margin-bottom: 5px;
+      text-align: center;
       -webkit-transform-style: preserve-3d;
       -moz-transform-style: preserve-3d;
       transform-style: preserve-3d;
@@ -241,10 +242,6 @@ $tt-lt-line-height: $tt-lt-row-height;
 
   > tbody > tr > td {
     &.tt-list-table-col-primary {
-      > span:nth-of-type(1) {
-        cursor: pointer;
-      }
-
       > span:nth-of-type(2) {
         float: right;
         margin-bottom: -1px;

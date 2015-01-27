@@ -31,13 +31,13 @@ $tt-mgd-img-height: 175px;
   @extend .tt-grid-div;
 
   margin-top: 20px;
-  cursor: pointer;
 
   & div.tt-grid-div-body {
     min-height: 225px;
 
     & div.tt-grid-div-thumbnail {
       height: $tt-mgd-img-height;
+      cursor: pointer;
 
       > div {
         img {
@@ -54,6 +54,7 @@ $tt-mgd-img-height: 175px;
       line-height: 34px;
       /*white-space: nowrap;*/
       display: inline-block;
+      cursor: pointer;
 
       > span:nth-of-type(1) i.fa {
         vertical-align: middle;
@@ -77,4 +78,16 @@ $tt-mgd-img-height: 175px;
   @extend .tt-list-table;
 
   margin-bottom: 5px;
+
+  > thead > tr > th, > tbody > tr > td {
+    &.tt-list-table-col-thumbnail {
+      cursor: pointer;
+    }
+
+    &.tt-list-table-col-primary {
+      > span:nth-of-type(1) {
+        cursor: pointer;
+      }
+    }
+  }
 }

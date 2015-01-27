@@ -1,18 +1,18 @@
 define([
-    'core/gallery'
-], function (Gallery) {
+    'component/galleryComponent'
+], function (GalleryComponent) {
     'use strict';
 
     var ViewView = function (controller, options) {
         this.controller = controller;
 
-        this.gallery = new Gallery({
-            container: $('.gallery-container')
-        });
-        $(this.gallery).on($tt.Core.Gallery.Event.READY, (function (e) {
-            this.gallery.setMedia(this.controller.model.get('ordered_media'));
-        }).bind(this));
-        this.gallery.render();
+        GalleryComponent.render({
+            $container: $('.gallery-container'),
+            mode: GalleryComponent.Mode.INLINE,
+            media: this.controller.model.get('ordered_media')
+        }, function (e) {
+            this.galleryCmp = e.galleryComponent;
+        }.bind(this));
 
         $tt._instances.push(this);
     };

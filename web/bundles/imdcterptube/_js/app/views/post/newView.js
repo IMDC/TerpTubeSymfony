@@ -1,7 +1,7 @@
 define([
     'model/model',
-    'core/mediaChooser'
-], function (Model, MediaChooser) {
+    'component/mediaChooserComponent'
+], function (Model, MediaChooserComponent) {
     'use strict';
 
     var NewView = function (controller, options) {
@@ -25,12 +25,10 @@ define([
         this.$reset.on('click', this.bind__onClickReset);
         this.$cancelNew.on('click', this.bind__onClickCancelNew);
 
-        this.mediaChooser = new MediaChooser({enableDoneAndPost: true});
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.setContainer(this.$form);
-        this.mediaChooser.bindUIEvents();
+        this.mcCmp = MediaChooserComponent.render(this.$form, {enableDoneAndPost: true});
+        this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
 
         var mediaIds = [];
         this._getFormField('attachedFile').children().each(function (index, element) {
@@ -38,7 +36,7 @@ define([
         });
         if (mediaIds.length > 0) {
             this._toggleForm(true);
-            this.mediaChooser.setMedia(mediaIds);
+            this.mcCmp.setMedia(mediaIds);
         }
 
         this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
@@ -69,7 +67,7 @@ define([
     };
 
     NewView.prototype._preSubmit = function () {
-        if (this._getFormField('content').val() == '' && this.mediaChooser.media.length == 0) {
+        if (this._getFormField('content').val() == '' && this.mcCmp.media.length == 0) {
             alert('Your post cannot be blank. You must either select a file or write a comment.');
             return false;
         }
@@ -101,7 +99,7 @@ define([
     NewView.prototype._onClickReset = function (e) {
         e.preventDefault();
 
-        this.mediaChooser.reset();
+        this.mcCmp.reset();
         this._getFormField('startTime').val(this.controller.model.get('keyPoint.startTime'));
         this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
         this._getFormField('content').val('');
@@ -135,7 +133,7 @@ define([
     NewView.prototype._updateForm = function () {
         var formField = this._getFormField('attachedFile');
         formField.html(
-            this.mediaChooser.generateFormData(
+            this.mcCmp.generateFormData(
                 formField.data('prototype')
             )
         );

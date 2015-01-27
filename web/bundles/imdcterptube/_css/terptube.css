@@ -169,80 +169,77 @@ ul.pagination {
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail {
   height: 125px;
   margin-bottom: 5px;
+  text-align: center;
   -webkit-transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
   transform-style: preserve-3d;
 }
-/* line 177, sass/_base.scss */
+/* line 178, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div {
   position: relative;
   top: 50%;
   transform: translateY(-50%);
 }
-/* line 182, sass/_base.scss */
+/* line 183, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div img, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div img {
   max-height: 125px;
 }
-/* line 188, sass/_base.scss */
+/* line 189, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-primary, .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-primary {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* line 193, sass/_base.scss */
+/* line 194, sass/_base.scss */
 .tt-grid-div div.tt-grid-div-body div.tt-grid-div-primary > p:nth-of-type(1), .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-primary > p:nth-of-type(1) {
   font-size: 24px;
 }
 
-/* line 204, sass/_base.scss */
+/* line 205, sass/_base.scss */
 .tt-list-table, .tt-myFiles-list-table {
   margin-top: 5px;
 }
-/* line 209, sass/_base.scss */
+/* line 210, sass/_base.scss */
 .tt-list-table span, .tt-myFiles-list-table span {
   color: initial;
   /* override bootstrap span color under .active class */
 }
-/* line 213, sass/_base.scss */
+/* line 214, sass/_base.scss */
 .tt-list-table > thead > tr > th, .tt-myFiles-list-table > thead > tr > th, .tt-list-table > tbody > tr > td, .tt-myFiles-list-table > tbody > tr > td {
   line-height: 34px;
   vertical-align: middle;
 }
-/* line 217, sass/_base.scss */
+/* line 218, sass/_base.scss */
 .tt-list-table > thead > tr > th i.fa, .tt-myFiles-list-table > thead > tr > th i.fa, .tt-list-table > tbody > tr > td i.fa, .tt-myFiles-list-table > tbody > tr > td i.fa {
   vertical-align: middle;
 }
-/* line 221, sass/_base.scss */
+/* line 222, sass/_base.scss */
 .tt-list-table > thead > tr > th.tt-list-table-col-item, .tt-myFiles-list-table > thead > tr > th.tt-list-table-col-item, .tt-list-table > tbody > tr > td.tt-list-table-col-item, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-item {
   width: 1%;
   line-height: initial;
 }
-/* line 226, sass/_base.scss */
+/* line 227, sass/_base.scss */
 .tt-list-table > thead > tr > th.tt-list-table-col-thumbnail, .tt-myFiles-list-table > thead > tr > th.tt-list-table-col-thumbnail, .tt-list-table > tbody > tr > td.tt-list-table-col-thumbnail, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-thumbnail {
   text-align: center;
 }
-/* line 230, sass/_base.scss */
+/* line 231, sass/_base.scss */
 .tt-list-table > thead > tr > th.tt-list-table-col-primary, .tt-myFiles-list-table > thead > tr > th.tt-list-table-col-primary, .tt-list-table > tbody > tr > td.tt-list-table-col-primary, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary {
   width: 60%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* line 237, sass/_base.scss */
+/* line 238, sass/_base.scss */
 .tt-list-table > thead > tr > th .tt-avatar, .tt-myFiles-list-table > thead > tr > th .tt-avatar, .tt-list-table > thead > tr > th .tt-thumbnail, .tt-myFiles-list-table > thead > tr > th .tt-thumbnail, .tt-list-table > tbody > tr > td .tt-avatar, .tt-myFiles-list-table > tbody > tr > td .tt-avatar, .tt-list-table > tbody > tr > td .tt-thumbnail, .tt-myFiles-list-table > tbody > tr > td .tt-thumbnail {
   max-height: 34px;
 }
-/* line 244, sass/_base.scss */
-.tt-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(1), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(1) {
-  cursor: pointer;
-}
-/* line 248, sass/_base.scss */
+/* line 245, sass/_base.scss */
 .tt-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(2) {
   float: right;
   margin-bottom: -1px;
   display: none;
 }
-/* line 254, sass/_base.scss */
+/* line 251, sass/_base.scss */
 .tt-list-table > tbody > tr > td.tt-list-table-col-primary:hover > span:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary:hover > span:nth-of-type(2) {
   display: inline-block;
 }
@@ -376,15 +373,15 @@ tbody tr td {
 /* line 30, sass/_myFiles.scss */
 .tt-myFiles-grid-div {
   margin-top: 20px;
-  cursor: pointer;
 }
-/* line 36, sass/_myFiles.scss */
+/* line 35, sass/_myFiles.scss */
 .tt-myFiles-grid-div div.tt-grid-div-body {
   min-height: 225px;
 }
-/* line 39, sass/_myFiles.scss */
+/* line 38, sass/_myFiles.scss */
 .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail {
   height: 175px;
+  cursor: pointer;
 }
 /* line 43, sass/_myFiles.scss */
 .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-thumbnail > div img {
@@ -399,26 +396,35 @@ tbody tr td {
   line-height: 34px;
   /*white-space: nowrap;*/
   display: inline-block;
+  cursor: pointer;
 }
-/* line 58, sass/_myFiles.scss */
+/* line 59, sass/_myFiles.scss */
 .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-primary > span:nth-of-type(1) i.fa {
   vertical-align: middle;
 }
-/* line 62, sass/_myFiles.scss */
+/* line 63, sass/_myFiles.scss */
 .tt-myFiles-grid-div div.tt-grid-div-body div.tt-grid-div-primary > span:nth-of-type(2) {
   position: absolute;
   right: 20px;
   bottom: 30px;
   display: none;
 }
-/* line 70, sass/_myFiles.scss */
+/* line 71, sass/_myFiles.scss */
 .tt-myFiles-grid-div div.tt-grid-div-body:hover div.tt-grid-div-primary > span:nth-of-type(2) {
   display: inline-block;
 }
 
-/* line 76, sass/_myFiles.scss */
+/* line 77, sass/_myFiles.scss */
 .tt-myFiles-list-table {
   margin-bottom: 5px;
+}
+/* line 83, sass/_myFiles.scss */
+.tt-myFiles-list-table > thead > tr > th.tt-list-table-col-thumbnail, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-thumbnail {
+  cursor: pointer;
+}
+/* line 88, sass/_myFiles.scss */
+.tt-myFiles-list-table > thead > tr > th.tt-list-table-col-primary > span:nth-of-type(1), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(1) {
+  cursor: pointer;
 }
 
 /* used as a selector */

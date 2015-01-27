@@ -1,6 +1,6 @@
 define([
-    'core/mediaChooser'
-], function (MediaChooser) {
+    'component/mediaChooserComponent'
+], function (MediaChooserComponent) {
     'use strict';
 
     var NewView = function (controller, options) {
@@ -21,11 +21,9 @@ define([
 
         this.$accessTypes.filter(':checked').trigger('change');
 
-        this.mediaChooser = new MediaChooser();
-        $(this.mediaChooser).on(MediaChooser.Event.SUCCESS, this.bind__onSuccess);
-        $(this.mediaChooser).on(MediaChooser.Event.RESET, this.bind__onReset);
-        this.mediaChooser.setContainer(this.$form);
-        this.mediaChooser.bindUIEvents();
+        this.mcCmp = MediaChooserComponent.render(this.$form);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
 
         var mediaIds = [];
         this._getFormField('titleMedia').children().each(function (index, element) {
@@ -33,7 +31,7 @@ define([
         });
         if (mediaIds.length > 0) {
             this.$submit.attr('disabled', true);
-            this.mediaChooser.setMedia(mediaIds);
+            this.mcCmp.setMedia(mediaIds);
         }
 
         $tt._instances.push(this);
@@ -76,7 +74,7 @@ define([
     NewView.prototype._updateForm = function () {
         var formField = this._getFormField('titleMedia');
         formField.html(
-            this.mediaChooser.generateFormData(
+            this.mcCmp.generateFormData(
                 formField.data('prototype')
             )
         );
@@ -95,7 +93,7 @@ define([
     };
 
     NewView.prototype._onReset = function (e) {
-        if (this.mediaChooser.media.length == 0)
+        if (this.mcCmp.media.length == 0)
             this._getFormField('titleText')
                 .attr('required', true)
                 .parent()

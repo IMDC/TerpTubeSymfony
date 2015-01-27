@@ -1,7 +1,6 @@
 define([
-    'component/tableComponent',
-    'factory/contactFactory'
-], function (TableComponent, ContactFactory) {
+    'component/tableComponent'
+], function (TableComponent) {
     'use strict';
 
     var ListView = function (controller, options) {
@@ -73,10 +72,7 @@ define([
                     userIds.push($(element).data('uid'));
                 });
 
-                ContactFactory.delete(userIds, contactList)
-                    .done(function (data) {
-                        window.location.reload(true);
-                    })
+                this.controller.delete(userIds, contactList)
                     .fail(function (data) {
                         if (data) {
                             alert(data.message);

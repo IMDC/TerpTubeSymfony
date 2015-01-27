@@ -16,6 +16,7 @@ define(function () {
         var settings = {
             url: Routing.generate('imdc_post_new', {threadId: post.get('parent_thread.id'), pid: (post.get('parent_post.id') || post.get('id'))})
         };
+
         PostFactory._prepForm(form, settings);
 
         return $.ajax(settings)

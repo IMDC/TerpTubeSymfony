@@ -1,14 +1,13 @@
 define([
-    'controller/myFiles',
+    //'controller/myFiles',
     'controller/message',
     'controller/profile',
 
-    'core/helper',
     'core/mediaManager',
-    'core/myFilesSelector',
+    /*'core/myFilesSelector',
     'core/recorder',
     'core/mediaChooser',
-    'core/gallery',
+    'core/gallery',*/
 
 
 
@@ -16,6 +15,7 @@ define([
     'service',
 
     // core
+    'core/helper',
     'core/subscriber',
 
     // factory
@@ -27,6 +27,7 @@ define([
 
     // service
     'service/keyPointService',
+    'service/subscriberService',
 
     // model
     'model/forumModel',
@@ -38,10 +39,15 @@ define([
     'controller/contactController',
     'controller/forumController',
     'controller/groupController',
+    'controller/myFilesController',
     'controller/postController',
     'controller/threadController',
 
     // component
+    'component/galleryComponent',
+    'component/mediaChooserComponent',
+    'component/myFilesSelectorComponent',
+    'component/recorderComponent',
     'component/tableComponent',
 
     // view
@@ -64,17 +70,17 @@ define([
     var TerpTube = {};
 
     TerpTube.Controller = {};
-    TerpTube.Controller.MyFiles = require('controller/myFiles');
+    //TerpTube.Controller.MyFiles = require('controller/myFiles');
     TerpTube.Controller.Message = require('controller/message');
     TerpTube.Controller.Profile = require('controller/profile');
 
-    TerpTube.Core = {};
+    /*TerpTube.Core = {};
     TerpTube.Core.Helper = require('core/helper');
     TerpTube.Core.MediaManager = require('core/mediaManager');
     TerpTube.Core.MyFilesSelector = require('core/myFilesSelector');
     TerpTube.Core.Recorder = require('core/recorder');
     TerpTube.Core.MediaChooser = require('core/mediaChooser');
-    TerpTube.Core.Gallery = require('core/gallery');
+    TerpTube.Core.Gallery = require('core/gallery');*/
 
     TerpTube._services = [];
     TerpTube._instances = [];
@@ -84,9 +90,11 @@ define([
 
     ///////////////////////////////
 
-    $tt.Core.Helper.autoSize();
+    //$tt.Core.Helper.autoSize();
+    var Helper = require('core/helper');
 
     dust.helpers.generateUrl = function (chunk, context, bodies, params) {
-        return chunk.write($tt.Core.Helper.generateUrl(params.path));
+        //return chunk.write($tt.Core.Helper.generateUrl(params.path));
+        return chunk.write(Helper.generateUrl(params.path));
     };
 });
