@@ -56,7 +56,8 @@ class TranscodeListener implements EventSubscriberInterface
 	
 	public function printError(TranscodeEvent $event)
     {
-    	$this->logger->critical('Transcoding Error: ' . $event->getException());
+    	$this->logger->critical('Transcoding Error: ---------');
+    	$this->logger->critical($event->getException());
     	return;
     }
     
