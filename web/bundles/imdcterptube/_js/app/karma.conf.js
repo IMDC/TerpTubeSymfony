@@ -33,6 +33,7 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
+        'test/view/**/*Test.js', // view tests are handled by CasperJS
         // exclude for faster testing
         'test/factory/contact*',
         'test/factory/forum*',

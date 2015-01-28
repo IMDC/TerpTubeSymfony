@@ -588,6 +588,9 @@ class UserGroupController extends Controller
             ->getQuery()->getResult();
 
         // start: filter non group members
+        // if members were removed this needs to be rerun to update the members collection
+        $em->clear();
+        $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         $groupMemberIds = array();
         foreach ($group->getMembers() as $member) {
             $groupMemberIds[] = $member->getId();

@@ -48,9 +48,15 @@ define([
     // view
     'views/contact/listView',
 
+    'views/forum/newView',
+    'views/forum/editView',
+    'views/forum/viewView',
+
     'views/group/newView',
     'views/group/editView',
     'views/group/manageView',
+
+    'views/myFiles/listView',
 
     'views/post/newView',
     'views/post/editView',
