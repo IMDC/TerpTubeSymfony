@@ -20,6 +20,9 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 	private $doctrine;
 	private $ffprobe;
 	private $transcoder;
+	
+	const MIN_AUDIO_BR = 100000;
+	
 	public function __construct($logger, $doctrine, $transcoder)
 	{
 		$this->logger = $logger;
@@ -97,22 +100,31 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 			$resourceFile = new File($resource->getAbsolutePath());
 			
 			$transcodingType = $media->getIsReady();
+			
+			$audioBitRate = UploadAudioConsumer::MIN_AUDIO_BR;
+			$suffix = '';
+			if ($this->ffprobe->streams ( $resourceFile->getRealPath () )->audios()->first()->has ( 'bit_rate' ))
+				$audioBitRate = intval($this->ffprobe->streams ( $resourceFile->getRealPath () )->audios()->first()->get ( 'bit_rate' ));
+				
+			if ($audioBitRate < UploadAudioConsumer::MIN_AUDIO_BR)
+				$suffix = '_low_audio_br';
+			
 			if ($transcodingType == Media::READY_NO)
 			{
 				$this->logger->info("Transcoding " . $resourceFile->getRealPath());
-				$mp4File = $this->transcoder->transcodeAudioToX264($resourceFile, 'ffmpeg.aac_audio');
-				$webmFile = $this->transcoder->transcodeAudioToWebM($resourceFile, 'ffmpeg.webm_audio');
+				$mp4File = $this->transcoder->transcodeAudioToX264($resourceFile, 'ffmpeg.aac_audio'. $suffix);
+				$webmFile = $this->transcoder->transcodeAudioToWebM($resourceFile, 'ffmpeg.webm_audio'. $suffix);
 			}
 			else if ($transcodingType == Media::READY_MPEG)
 			{
 				$this->logger->info("Transcoding " . $resourceFile->getRealPath());
-				$webmFile = $this->transcoder->transcodeAudioToWebM($resourceFile, 'ffmpeg.webm_audio');
+				$webmFile = $this->transcoder->transcodeAudioToWebM($resourceFile, 'ffmpeg.webm_audio'. $suffix);
 				$mp4File = $resourceFile;
 			}
 			else if ($transcodingType == Media::READY_WEBM)
 			{
 				$this->logger->info("Transcoding " . $resourceFile->getRealPath());
-				$mp4File = $this->transcoder->transcodeAudioToX264($resourceFile, 'ffmpeg.aac_audio');
+				$mp4File = $this->transcoder->transcodeAudioToX264($resourceFile, 'ffmpeg.aac_audio'. $suffix);
 				$webmFile = $resourceFile;
 			}
 			else

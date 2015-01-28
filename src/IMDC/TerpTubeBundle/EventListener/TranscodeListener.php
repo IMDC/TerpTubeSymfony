@@ -49,23 +49,20 @@ class TranscodeListener implements EventSubscriberInterface
 	
 	public function printMessage(MessageEvent $event)
 	{
-		$this->logger->info('Transcode Message');
-		$this->logger->info($event->getMessage());
+		$this->logger->info('Transcoding Message' . $event->getMessage());
 		 
 		return;
 	}
 	
 	public function printError(TranscodeEvent $event)
     {
-    	$this->logger->info('Transcode Error');
-    	$this->logger->info($event->getException());
-    	
+    	$this->logger->critical('Transcoding Error: ' . $event->getException());
     	return;
     }
     
     public function fileConverted(TranscodeEvent $event)
     {
-    	$this->logger->info('File '. $event->getInputPath() .' converted to: ' .$event->getOutputPath());
+    	$this->logger->info('Transcoding Successfull from File '. $event->getInputPath() .' to: ' .$event->getOutputPath());
     	 
     	return;
     }

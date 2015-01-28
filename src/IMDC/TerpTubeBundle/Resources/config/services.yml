@@ -94,8 +94,20 @@ services:
         tags:
             - {name: transcoding.preset}
             
+    transcoding.preset.ffmpeg.x264_720p_video_low_audio_br:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\X264Video720pLowAudioBRPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            
     transcoding.preset.ffmpeg.webm_720p_video:
         class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideo720pPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.webm_720p_video_low_audio_br:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideo720pLowAudioBRPreset
         scope: prototype
         tags:
             - {name: transcoding.preset}
@@ -105,9 +117,21 @@ services:
         scope: prototype
         tags:
             - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.x264_vga_video_low_audio_br:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\X264VideoVGALowAudioBRPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
             
     transcoding.preset.ffmpeg.webm_vga_video:
         class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideoVGAPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.webm_vga_video_low_audio_br:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideoVGALowAudioBRPreset
         scope: prototype
         tags:
             - {name: transcoding.preset}
@@ -117,9 +141,21 @@ services:
         scope: prototype
         tags:
             - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.aac_audio_low_audio_br:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\AACAudioLowBRPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
             
     transcoding.preset.ffmpeg.webm_audio:
         class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMAudioPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.webm_audio_low_audio_br:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMAudioLowBRPreset
         scope: prototype
         tags:
             - {name: transcoding.preset}
