@@ -49,7 +49,7 @@ class TranscodeListener implements EventSubscriberInterface
 	
 	public function printMessage(MessageEvent $event)
 	{
-		$this->logger->info('Transcoding Message' . $event->getMessage());
+		$this->logger->info('Transcoding Message: ' . $event->getMessage());
 		 
 		return;
 	}
