@@ -17,13 +17,12 @@ use Symfony\Component\Filesystem\Exception\IOException;
 
 class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 {
-	const MIN_AUDIO_BR = 100000;
-	
 	private $logger;
 	private $doctrine;
 	private $ffprobe;
 	private $transcoder;
 	private $fs;
+	
 	public function __construct($logger, $doctrine, $transcoder)
 	{
 		$this->logger = $logger;
@@ -102,31 +101,24 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 			$resourceFile = new File ( $resource->getAbsolutePath () );
 			
 			// Grab the width/height first to convert to the nearest standard resolution.
-			//FIXME get the audio bitrate and convert to similar rate, otherwise an exception occurs if the input rate is too low
-			$audioBitRate = UploadVideoConsumer::MIN_AUDIO_BR;
-			$suffix = '';
-			if ($this->ffprobe->streams ( $resourceFile->getRealPath () )->audios()->first()->has ( 'bit_rate' ))
-				$audioBitRate = intval($this->ffprobe->streams ( $resourceFile->getRealPath () )->audios()->first()->get ( 'bit_rate' ));
 			
-			if ($audioBitRate < UploadVideoConsumer::MIN_AUDIO_BR)
-				$suffix = '_low_audio_br';
 			$transcodingType = $media->getIsReady ();
 			if ($transcodingType == Media::READY_NO)
 			{
 				$this->logger->info ( "Transcoding " . $resourceFile->getRealPath () );
-				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video'. $suffix );
-				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video'. $suffix );
+				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video');
+				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video');
 			}
 			else if ($transcodingType == Media::READY_MPEG)
 			{
 				$this->logger->info ( "Transcoding " . $resourceFile->getRealPath () );
-				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video'. $suffix );
+				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video' );
 				$mp4File = $resourceFile;
 			}
 			else if ($transcodingType == Media::READY_WEBM)
 			{
 				$this->logger->info ( "Transcoding " . $resourceFile->getRealPath () );
-				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video'. $suffix );
+				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video' );
 				$webmFile = $resourceFile;
 			}
 			else
