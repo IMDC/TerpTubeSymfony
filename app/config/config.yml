@@ -4,6 +4,7 @@ imports:
     - { resource: "@IMDCTerpTubeBundle/Resources/config/constants/Events.xml" }
     - { resource: "@IMDCTerpTubeBundle/Resources/config/constants/Filters.xml" }
     - { resource: "@IMDCTerpTubeBundle/Resources/config/admin.yml" }
+    - { resource: "@IMDCTerpTubeBundle/Resources/config/version.yml" }
 
 framework:
     #esi:             ~
@@ -31,6 +32,8 @@ twig:
     form:
         resources:
             - 'IMDCTerpTubeBundle:Form:fields.html.twig'
+    globals:
+        version: %app.version%
 
 braincrafted_bootstrap:
     less_filter: lessphp

@@ -52,11 +52,11 @@
         <script src="{{ url('bazinga_jstranslation_js', { 'domain': 'IMDCTerpTubeBundle' }) }}"></script>
         
         {% block header %}
-            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}">
-            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube_old.css') }}">
-            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube.css') }}">
+            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}?version={{ version }}">
+            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube_old.css') }}?version={{ version }}">
+            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube.css') }}?version={{ version }}">
 
-            <script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}"></script>
+            <script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}?version={{ version }}"></script>
             {% if app.environment == 'dev' %}
                 <script type="text/javascript">
                     requirejs.config({
@@ -87,7 +87,7 @@
                     require(['main']);
                 </script>
             {% else %}
-                <script src="{{ asset('bundles/imdcterptube/_js/terptube.js') }}"></script>
+                <script src="{{ asset('bundles/imdcterptube/_js/terptube.js') }}?version={{ version }}"></script>
             {% endif %}
 
             <script type="text/javascript">

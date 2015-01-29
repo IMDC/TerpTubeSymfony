@@ -1,3 +1,7 @@
+/*!
+ * version=#version
+ */
+
 define([
     'controller/message',
     'controller/profile',
