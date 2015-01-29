@@ -6,6 +6,7 @@ use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 /**
  * Class AccessObjectIdentity
