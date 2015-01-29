@@ -41,7 +41,7 @@
 		"incenteev/composer-parameter-handler" : "~2.0",
 		"gregwar/captcha-bundle" : "dev-master",
 		"bmatzner/fontawesome-bundle" : "*",
-		"oldsound/rabbitmq-bundle" : "dev-master",
+		"oldsound/rabbitmq-bundle" : "1.5.*",
 		"ac/transcoding-bundle" : "dev-master",
 		"videlalvaro/php-amqplib" : "*",
 		"php-ffmpeg/php-ffmpeg" : "0.4.*@dev",
