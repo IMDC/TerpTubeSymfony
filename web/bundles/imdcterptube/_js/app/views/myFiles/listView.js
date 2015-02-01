@@ -21,16 +21,6 @@ define([
         this.tblCmp.subscribe(TableComponent.Event.CLICK_BULK_ACTION, this.bind__onClickBulkAction);
 
         var instance = this;
-        this.$filesList.find('span.edit-title').editable({
-            toggle: 'manual',
-            unsavedclass: null,
-            success: function (response, newValue) {
-                instance.mediaManager.updateMedia({
-                    id: $(this).data('mid'),
-                    title: newValue
-                });
-            }
-        });
 
         this.$filesList.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
@@ -42,6 +32,17 @@ define([
         this.mcCmp = MediaChooserComponent.render(this.$container);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
         this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
+        
+        this.$filesList.find('span.edit-title').editable({
+            toggle: 'manual',
+            unsavedclass: null,
+            success: function (response, newValue) {
+                instance.mcCmp.mediaManager.updateMedia({
+                    id: $(this).data('mid'),
+                    title: newValue
+                });
+            }
+        });
 
         var sub = Service.get('subscriber');
         sub.dispatch(ListView.TAG, 'onViewLoaded', {
@@ -79,7 +80,7 @@ define([
 //                return this.mediaManager.deleteMedia(file.data("val"), Translator.trans('filesGateway.deleteConfirmMessage'));
 
                 $.each(e.$selection, (function (index, element) {
-                    this.mediaManager.deleteMedia($(element).data("mid")/*, Translator.trans('filesGateway.deleteConfirmMessage')*/);
+                    this.mcCmp.mediaManager.deleteMedia($(element).data("mid")/*, Translator.trans('filesGateway.deleteConfirmMessage')*/);
                 }).bind(this));
 
                 //FIXME: make me better
