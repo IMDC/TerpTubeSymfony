@@ -6,7 +6,6 @@ use IMDC\TerpTubeBundle\Form\Type\LanguageFormType;
 use IMDC\TerpTubeBundle\Entity\Language;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
 use Symfony\Component\Form\FormFactory;
-use IMDC\TerpTubeBundle\Form\Type\ImageMediaFormType;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -20,12 +19,15 @@ use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Model\UserInterface;
+use IMDC\TerpTubeBundle\Utils\Utils;
+
 
 use FOS\UserBundle\Controller\ProfileController as BaseController;
 
 // these import the "@Route" and "@Template" annotations
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use IMDC\TerpTubeBundle\Form\Type\MediaType;
 
 class ProfileController extends Controller
 {
@@ -101,7 +103,7 @@ class ProfileController extends Controller
 
 		$formFactory = $this->container->get('form.factory');
 
-		$form = $formFactory->create(new ImageMediaFormType(), $avatar, array());
+		$form = $formFactory->create(new MediaType(), $avatar, array());
 
 		if ('POST' === $request->getMethod())
 		{
@@ -109,27 +111,37 @@ class ProfileController extends Controller
 
 			if ($form->isValid())
 			{
-				$avatar->setOwner($userObject);
-				$avatar->setType(Media::TYPE_IMAGE);
-				// flush object to database
-				$em = $this->container->get('doctrine')->getManager();
-				$em->persist($avatar);
-				// Remove old avatar from DB:
-				if (($oldAvatar = $profile->getAvatar()) !== null)
-					$em->remove($profile->getAvatar());
-				$profile->setAvatar($avatar);
-
-				$em->flush();
-
-				$this->container->get('session')->getFlashBag()->add('info', 'Avatar updated successfully!');
-
-				$eventDispatcher = $this->container->get('event_dispatcher');
-				$uploadedEvent = new UploadEvent($avatar);
-				$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
-
-				$url = $this->container->get('router')->generate('imdc_profile_me');
-				$response = new RedirectResponse($url);
-				return $response;
+				$uploadedFile = $avatar->getResource()->getFile();
+				$type = Utils::getUploadedFileType($uploadedFile);
+				if ($type == Media::TYPE_IMAGE)
+				{
+					$avatar->setOwner($userObject);
+					$avatar->setType(Media::TYPE_IMAGE);
+					// flush object to database
+					$em = $this->container->get('doctrine')->getManager();
+					$em->persist($avatar);
+					// Remove old avatar from DB:
+					if (($oldAvatar = $profile->getAvatar()) !== null)
+						$em->remove($profile->getAvatar());
+					$profile->setAvatar($avatar);
+					
+					$em->flush();
+					
+					$this->container->get('session')->getFlashBag()->add('info', 'Avatar updated successfully!');
+					
+					$eventDispatcher = $this->container->get('event_dispatcher');
+					$uploadedEvent = new UploadEvent($avatar);
+					$eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadedEvent);
+					
+					$url = $this->container->get('router')->generate('imdc_profile_me');
+					$response = new RedirectResponse($url);
+					return $response;
+				}
+				else 
+				{
+					$this->container->get('session')->getFlashBag()->add('warning', 'You must select an image for an avatar!');
+				}
+				
 			}
 		}
 

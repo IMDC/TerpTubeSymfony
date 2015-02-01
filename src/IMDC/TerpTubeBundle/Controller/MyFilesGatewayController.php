@@ -481,57 +481,15 @@ class MyFilesGatewayController extends Controller
             // $mimeType = finfo_file($finfo, $uploadedFile->getRealPath());
             // finfo_close($finfo);
 
-            $mimeType = $uploadedFile->getMimeType();
             $resourcePath = $uploadedFile->getRealPath();
             $fs = new Filesystem ();
+            
+            $type = Utils::getUploadedFileType($uploadedFile);
 
-            if ($mimeType == 'application/octet-stream') {
-                $process = new Process ('file --mime-type ' . escapeshellarg($resourcePath));
-                $process->run();
-
-                // executes after the command finishes
-                if (!$process->isSuccessful()) {
-                    throw new \RuntimeException ($process->getErrorOutput());
-                }
-
-                $processOutput = $process->getOutput();
-                $mimeType = substr($processOutput, strrpos($processOutput, ":") + 2);
-            }
-
-            $this->get('logger')->info('Mime-Type: ' . $mimeType);
-            $type = Media::TYPE_OTHER;
-            if (preg_match("/^video\/.*/", $mimeType))
-                $type = Media::TYPE_VIDEO;
-            else if (preg_match("/^audio\/.*/", $mimeType))
-                $type = Media::TYPE_AUDIO;
-            else if (preg_match("/^image\/.*/", $mimeType))
-                $type = Media::TYPE_IMAGE;
-            $this->get('logger')->info('Mime-Type: ' . $type);
             $media->setType($type);
             $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
             $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
             $originalExtension = $uploadedFile->getClientOriginalExtension();
-            // FFMPEG does not like the .bin extension, therefore rename it to an extension in the appropriate group type which FFMPEG can handle.
-            // if ($uploadedFile->guessExtension () == "bin")
-            // {
-            // // if ($type == Media::TYPE_VIDEO)
-            // // {
-            // // $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".avi", true );
-            // // $resource->setPath ( "avi" );
-            // // }
-            // // else if ($type == Media::TYPE_AUDIO)
-            // // {
-            // // $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".mp3", true );
-            // // $resource->setPath ( "mp3" );
-            // // }
-            // // else if ($type == Media::TYPE_IMAGE)
-            // // {
-            // // $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".jpg", true );
-            // // $resource->setPath ( "jpg" );
-            // // }
-            // $fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . "." . $uploadedFile->getClientOriginalExtension (), true );
-            // $resource->setPath ( $uploadedFile->getClientOriginalExtension () );
-            // }
 
             $user->addResourceFile($media);
 

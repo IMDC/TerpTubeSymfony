@@ -4,9 +4,41 @@ namespace IMDC\TerpTubeBundle\Utils;
 
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
+use IMDC\TerpTubeBundle\Entity\Media;
 
 class Utils
 {
+	public static function getUploadedFileType($uploadedFile)
+	{
+		$mimeType = $uploadedFile->getMimeType();
+		$resourcePath = $uploadedFile->getRealPath();
+		
+		if ($mimeType == 'application/octet-stream') {
+			$process = new Process('file --mime-type ' . escapeshellarg($resourcePath));
+			$process->run();
+		
+			// executes after the command finishes
+			if (!$process->isSuccessful()) {
+				throw new \RuntimeException ($process->getErrorOutput());
+			}
+		
+			$processOutput = $process->getOutput();
+			$mimeType = substr($processOutput, strrpos($processOutput, ":") + 2);
+		}
+		
+		$type = Media::TYPE_OTHER;
+		if (preg_match("/^video\/.*/", $mimeType))
+			$type = Media::TYPE_VIDEO;
+		else if (preg_match("/^audio\/.*/", $mimeType))
+			$type = Media::TYPE_AUDIO;
+		else if (preg_match("/^image\/.*/", $mimeType))
+			$type = Media::TYPE_IMAGE;
+		
+		return $type;
+	}
+	
 	public static function delTree($dir)
 	{
 		$files = array_diff(scandir($dir), array('.', '..'));
