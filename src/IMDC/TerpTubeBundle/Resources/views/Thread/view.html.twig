@@ -151,7 +151,11 @@
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<p class="tt-thread-content">{{ thread.content|nl2br }}</p>
+						{% if thread.content|length > 0 %}
+							<p>{{ thread.content|nl2br }}</p>
+						{% else %}
+						    <p><i>No description given</i></p>
+						{%  endif %}
 					</div>
 				</div>
 				<div class="row">
