@@ -38,12 +38,14 @@ _Thread:thumbnail.html.twig
     {% elseif mediaFile.type == 9 %}
         {% block mediaothertype %}
             <div class="row">
-                <div class="col-md-3 thumbnail text-center">
+                <div class="col-md-4"></div>
+                <div class="col-md-4 thumbnail text-center">
                     <a href="{{ asset(mediaFile.getResource.getWebPath) }}">
                         <p><i class="fa fa-file fa-5x"></i></p>
                         <div>{{ mediaFile.title }}</div>
                     </a>
                 </div>
+                <div class="col-md-4"></div>
             </div>
         {% endblock mediaothertype %}
     {% endif %}
