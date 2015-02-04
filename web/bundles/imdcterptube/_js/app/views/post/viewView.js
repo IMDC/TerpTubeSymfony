@@ -96,7 +96,7 @@ define([
     ViewView.prototype._onClickDelete = function (e) {
         e.preventDefault();
 
-        this.view.$delete.button('loading');
+        this.$delete.button('loading');
         this.controller.delete()
             .done(function (data) {
                 this.$deleteModal
