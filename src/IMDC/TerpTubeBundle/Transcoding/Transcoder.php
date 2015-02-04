@@ -48,6 +48,8 @@ class Transcoder
     public function mergeAudioVideo (File $audioFile, File $videoFile)
     {
         // Process video merging.
+        $tempFileName = null;
+        $outputFileWebm = null;
         try
         {
             if ($audioFile == null)
@@ -118,6 +120,11 @@ class Transcoder
         catch (Exception $e)
         {
             $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            return null;
         }
         return $videoFile;
     }
@@ -125,42 +132,31 @@ class Transcoder
     public function createThumbnail ($mediaFilePath, $type)
     {
         $this->logger->info("Creating a thumbnail");
-        
-        $umask = umask();
-        umask(0000);
-        if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
-            mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
-        $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "thumbnail");
-        
-        $dir = getcwd();
-        chdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
-        $outputFile = $tempFileName . '.png';
-        
-        if ($type == Media::TYPE_VIDEO)
+        $tempFileName = null;
+        $outputFileWebm = null;
+        try
         {
+            $umask = umask();
+            umask(0000);
+            if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
+                mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
+            $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "thumbnail");
             
-            $thumbnailTime = $this->parseSecondsToFFMPEGTime(1.0);
+            $dir = getcwd();
+            chdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
+            $outputFile = $tempFileName . '.png';
             
-            $this->ffmpeg->getFFMpegDriver()->command(
-                    array(
-                            "-i",
-                            $mediaFilePath,
-                            "-ss",
-                            $thumbnailTime,
-                            "-filter:v",
-                            "scale=-1:" . Media::THUMBNAIL_HEIGHT . ",scale=trunc(in_w/2)*2:trunc(in_h/2)*2",
-                            "-vframes",
-                            "1",
-                            $outputFile
-                    ));
-        }
-        else 
-            if ($type == Media::TYPE_IMAGE)
+            if ($type == Media::TYPE_VIDEO)
             {
+                
+                $thumbnailTime = $this->parseSecondsToFFMPEGTime(1.0);
+                
                 $this->ffmpeg->getFFMpegDriver()->command(
                         array(
                                 "-i",
                                 $mediaFilePath,
+                                "-ss",
+                                $thumbnailTime,
                                 "-filter:v",
                                 "scale=-1:" . Media::THUMBNAIL_HEIGHT . ",scale=trunc(in_w/2)*2:trunc(in_h/2)*2",
                                 "-vframes",
@@ -168,18 +164,42 @@ class Transcoder
                                 $outputFile
                         ));
             }
-            else
+            else 
+                if ($type == Media::TYPE_IMAGE)
+                {
+                    $this->ffmpeg->getFFMpegDriver()->command(
+                            array(
+                                    "-i",
+                                    $mediaFilePath,
+                                    "-filter:v",
+                                    "scale=-1:" . Media::THUMBNAIL_HEIGHT . ",scale=trunc(in_w/2)*2:trunc(in_h/2)*2",
+                                    "-vframes",
+                                    "1",
+                                    $outputFile
+                            ));
+                }
+                else
+                {
+                    $outputFile = NULL;
+                }
+            if ($outputFile != NULL)
             {
-                $outputFile = NULL;
+                chmod($outputFile, 0664);
             }
-        if ($outputFile != NULL)
-        {
-            chmod($outputFile, 0664);
+            umask($umask);
+            chdir($dir);
+            
+            $this->fs->remove($tempFileName);
         }
-        umask($umask);
-        chdir($dir);
-        
-        $this->fs->remove($tempFileName);
+        catch (Exception $e)
+        {
+            $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFile))
+                $this->fs->remove($outputFile);
+            return null;
+        }
         $this->logger->info("Transcoding complete!");
         
         return $outputFile;
@@ -189,6 +209,9 @@ class Transcoder
     {
         // Process video merging.
         $this->logger->info("Removing first frame");
+        
+        $tempFileName = null;
+        $outputFileWebm = null;
         try
         {
             $videoFilePath = $videoFile->getRealPath();
@@ -245,6 +268,11 @@ class Transcoder
         catch (Exception $e)
         {
             $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            return null;
         }
         return $videoFile;
     }
@@ -264,6 +292,9 @@ class Transcoder
      */
     public function trimVideo ($inputFile, $startTime, $endTime)
     {
+        $tempFileName = null;
+        $outputFileWebm = null;
+        $workingDir = null;
         try
         {
             // This fails from a recording
@@ -324,6 +355,12 @@ class Transcoder
         catch (Exception $e)
         {
             $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            if ($this->fs->exists($workingDir))
+                $this->fs->remove($workingDir);
             return false;
         }
         return true;
@@ -339,78 +376,94 @@ class Transcoder
      */
     public function transcodeToWebM (File $inputFile, $preset)
     {
-        
-        // $tempDir = '/tmp/terptube-transcoding';
-        $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
-        $umask = umask();
-        umask(0000);
-        if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
-            mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
-        
-        if (! file_exists($workingDir))
-            mkdir($workingDir);
-        $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "WebMVideo");
-        
-        umask($umask);
-        $dir = getcwd();
-        chdir($workingDir);
-        // Convert to webm
-        $outputFileWebm = $tempFileName . '.webm';
-        
-        $actualPreset = $this->transcoder->getPreset($preset);
-        $audioBitRate = Transcoder::MAX_AUDIO_BR;
-        $hasAudio = false;
-        if ($this->ffprobe->streams($inputFile->getRealPath())
+        $tempFileName = null;
+        $outputFileWebm = null;
+        $workingDir = null;
+        try
+        {
+            // $tempDir = '/tmp/terptube-transcoding';
+            $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
+            $umask = umask();
+            umask(0000);
+            if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
+                mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
+            
+            if (! file_exists($workingDir))
+                mkdir($workingDir);
+            $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "WebMVideo");
+            
+            umask($umask);
+            $dir = getcwd();
+            chdir($workingDir);
+            // Convert to webm
+            $outputFileWebm = $tempFileName . '.webm';
+            
+            $actualPreset = $this->transcoder->getPreset($preset);
+            $audioBitRate = Transcoder::MAX_AUDIO_BR;
+            $hasAudio = false;
+            if ($this->ffprobe->streams($inputFile->getRealPath())
                 ->audios()
                 ->count() != 0)
-        {
-            $hasAudio = true;
-            if ($this->ffprobe->streams($inputFile->getRealPath())
+            {
+                $hasAudio = true;
+                if ($this->ffprobe->streams($inputFile->getRealPath())
                     ->audios()
                     ->first()
                     ->has('bit_rate'))
-                        $audioBitRate = min($audioBitRate,
-                                intval(
-                                        $this->ffprobe->streams($inputFile->getRealPath())
+                    $audioBitRate = min($audioBitRate, 
+                            intval(
+                                    $this->ffprobe->streams($inputFile->getRealPath())
                                         ->audios()
                                         ->first()
                                         ->get('bit_rate')));
+            }
+            
+            $acodec = NULL;
+            $ab = NULL;
+            if (! $hasAudio)
+            {
+                $acodec = $actualPreset->get("-acodec");
+                $ab = $actualPreset->get("-ab");
+                $actualPreset->remove("-acodec");
+                $actualPreset->remove("-ab");
+                $actualPreset->set("-an", NULL);
+            }
+            else
+            {
+                $ab = $actualPreset->get("-ab");
+                $actualPreset->set("-ab", "" . intval($audioBitRate / 1000) . "k");
+            }
+            
+            $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
+            $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $actualPreset, $outputFileWebm);
+            
+            // restore the current settings for the audio
+            if (! $hasAudio)
+            {
+                $actualPreset->set("-ab", $ab);
+                $actualPreset->set("-acodec", $acodec);
+                $actualPreset->remove("-an");
+            }
+            else
+            {
+                $actualPreset->set("-ab", $ab);
+            }
+            
+            chdir($dir);
+            $this->fs->remove($workingDir);
+            $this->fs->remove($tempFileName);
         }
-        
-        $acodec = NULL;
-        $ab = NULL;
-        if (!$hasAudio)
+        catch (Exception $e)
         {
-            $acodec = $actualPreset->get("-acodec");
-            $ab = $actualPreset->get("-ab");
-            $actualPreset->remove("-acodec");
-            $actualPreset->remove("-ab");
-            $actualPreset->set("-an", NULL);
+            $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            if ($this->fs->exists($workingDir))
+                $this->fs->remove($workingDir);
+            return null;
         }
-        else
-        {
-            $ab = $actualPreset->get("-ab");
-            $actualPreset->set("-ab", "" . intval($audioBitRate/1000) . "k");
-        }
-        
-        $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
-        $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $actualPreset, $outputFileWebm);
-        
-        //restore the current settings for the audio
-        if (!$hasAudio)
-        {
-            $actualPreset->set("-ab", $ab);
-            $actualPreset->set("-acodec", $acodec);
-            $actualPreset->remove("-an");
-        }
-        else
-        {
-            $actualPreset->set("-ab", $ab);
-        }
-        
-        chdir($dir);
-        $this->fs->remove($workingDir);
-        $this->fs->remove($tempFileName);
         $this->logger->info("Transcoding complete!");
         
         return new File($outputFileWebm);
@@ -427,61 +480,78 @@ class Transcoder
      */
     public function transcodeAudioToWebM (File $inputFile, $preset)
     {
-        // $tempDir = '/tmp/terptube-transcoding';
-        $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
-        $umask = umask();
-        umask(0000);
-        if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
-            mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
-        
-        if (! file_exists($workingDir))
-            mkdir($workingDir);
-        $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "WebMAudio");
-        
-        umask($umask);
-        $dir = getcwd();
-        chdir($workingDir);
-        // Convert to webm
-        $outputFileWebm = $tempFileName . '.webm';
-        
-        $actualPreset = $this->transcoder->getPreset($preset);
-        $audioBitRate = Transcoder::MAX_AUDIO_BR;
-        $hasAudio = false;
-        if ($this->ffprobe->streams($inputFile->getRealPath())
+        $tempFileName = null;
+        $outputFileWebm = null;
+        $workingDir = null;
+        try
+        {
+            // $tempDir = '/tmp/terptube-transcoding';
+            $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
+            $umask = umask();
+            umask(0000);
+            if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
+                mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
+            
+            if (! file_exists($workingDir))
+                mkdir($workingDir);
+            $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "WebMAudio");
+            
+            umask($umask);
+            $dir = getcwd();
+            chdir($workingDir);
+            // Convert to webm
+            $outputFileWebm = $tempFileName . '.webm';
+            
+            $actualPreset = $this->transcoder->getPreset($preset);
+            $audioBitRate = Transcoder::MAX_AUDIO_BR;
+            $hasAudio = false;
+            if ($this->ffprobe->streams($inputFile->getRealPath())
                 ->audios()
                 ->count() != 0)
-        {
-            $hasAudio = true;
-            if ($this->ffprobe->streams($inputFile->getRealPath())
+            {
+                $hasAudio = true;
+                if ($this->ffprobe->streams($inputFile->getRealPath())
                     ->audios()
                     ->first()
                     ->has('bit_rate'))
-                        $audioBitRate = min($audioBitRate,
-                                intval(
-                                        $this->ffprobe->streams($inputFile->getRealPath())
+                    $audioBitRate = min($audioBitRate, 
+                            intval(
+                                    $this->ffprobe->streams($inputFile->getRealPath())
                                         ->audios()
                                         ->first()
                                         ->get('bit_rate')));
+            }
+            
+            $ab = NULL;
+            if (! $hasAudio)
+            {
+                throw new InvalidInputException(sprintf("Not an audio file"));
+            }
+            else
+            {
+                $ab = $actualPreset->get("-ab");
+                $actualPreset->set("-ab", "" . intval($audioBitRate / 1000) . "k");
+            }
+            
+            $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
+            $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $actualPreset, $outputFileWebm);
+            
+            $actualPreset->set("-ab", $ab);
+            chdir($dir);
+            $this->fs->remove($workingDir);
+            $this->fs->remove($tempFileName);
         }
-        
-        $ab = NULL;
-        if (!$hasAudio)
+        catch (Exception $e)
         {
-            throw new InvalidInputException(sprintf("Not an audio file"));
+            $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            if ($this->fs->exists($workingDir))
+                $this->fs->remove($workingDir);
+            return null;
         }
-        else
-        {
-            $ab = $actualPreset->get("-ab");
-            $actualPreset->set("-ab", "" . intval($audioBitRate/1000) . "k");
-        }
-        
-        $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
-        $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $actualPreset, $outputFileWebm);
-        
-        $actualPreset->set("-ab", $ab);
-        chdir($dir);
-        $this->fs->remove($workingDir);
-        $this->fs->remove($tempFileName);
         $this->logger->info("Transcoding complete!");
         
         return new File($outputFileWebm);
@@ -498,75 +568,92 @@ class Transcoder
     public function transcodeToX264 (File $inputFile, $preset)
     {
         // $tempDir = '/tmp/terptube-transcoding';
-        $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
-        $umask = umask();
-        umask(0000);
-        if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
-            mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
-        
-        if (! file_exists($workingDir))
-            mkdir($workingDir);
-        $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "X264Video");
-        
-        umask($umask);
-        $dir = getcwd();
-        chdir($workingDir);
-        // Convert to webm
-        $outputFileWebm = $tempFileName . '.mp4';
-        
-        $actualPreset = $this->transcoder->getPreset($preset);
-        
-        $audioBitRate = Transcoder::MAX_AUDIO_BR;
-        $hasAudio = false;
-        if ($this->ffprobe->streams($inputFile->getRealPath())
-            ->audios()
-            ->count() != 0)
+        $tempFileName = null;
+        $outputFileWebm = null;
+        $workingDir = null;
+        try
         {
-            $hasAudio = true;
+            $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
+            $umask = umask();
+            umask(0000);
+            if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
+                mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
+            
+            if (! file_exists($workingDir))
+                mkdir($workingDir);
+            $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "X264Video");
+            
+            umask($umask);
+            $dir = getcwd();
+            chdir($workingDir);
+            // Convert to webm
+            $outputFileWebm = $tempFileName . '.mp4';
+            
+            $actualPreset = $this->transcoder->getPreset($preset);
+            
+            $audioBitRate = Transcoder::MAX_AUDIO_BR;
+            $hasAudio = false;
             if ($this->ffprobe->streams($inputFile->getRealPath())
                 ->audios()
-                ->first()
-                ->has('bit_rate'))
-                $audioBitRate = min($audioBitRate, 
-                        intval(
-                                $this->ffprobe->streams($inputFile->getRealPath())
-                                    ->audios()
-                                    ->first()
-                                    ->get('bit_rate')));
+                ->count() != 0)
+            {
+                $hasAudio = true;
+                if ($this->ffprobe->streams($inputFile->getRealPath())
+                    ->audios()
+                    ->first()
+                    ->has('bit_rate'))
+                    $audioBitRate = min($audioBitRate, 
+                            intval(
+                                    $this->ffprobe->streams($inputFile->getRealPath())
+                                        ->audios()
+                                        ->first()
+                                        ->get('bit_rate')));
+            }
+            
+            // get the current settings for the audio
+            $acodec = NULL;
+            $ab = NULL;
+            if (! $hasAudio)
+            {
+                $acodec = $actualPreset->get("-acodec");
+                $ab = $actualPreset->get("-ab");
+                $actualPreset->remove("-acodec");
+                $actualPreset->remove("-ab");
+                $actualPreset->set("-an", NULL);
+            }
+            else
+            {
+                $ab = $actualPreset->get("-ab");
+                $actualPreset->set("-ab", "" . intval($audioBitRate / 1000) . "k");
+            }
+            $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
+            $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $actualPreset, $outputFileWebm);
+            // restore the current settings for the audio
+            if (! $hasAudio)
+            {
+                $actualPreset->set("-ab", $ab);
+                $actualPreset->set("-acodec", $acodec);
+                $actualPreset->remove("-an");
+            }
+            else
+            {
+                $actualPreset->set("-ab", $ab);
+            }
+            chdir($dir);
+            $this->fs->remove($workingDir);
+            $this->fs->remove($tempFileName);
         }
-        
-        //get the current settings for the audio
-        $acodec = NULL;
-        $ab = NULL;
-        if (!$hasAudio)
+        catch (Exception $e)
         {
-            $acodec = $actualPreset->get("-acodec");
-            $ab = $actualPreset->get("-ab");
-            $actualPreset->remove("-acodec");
-            $actualPreset->remove("-ab");
-            $actualPreset->set("-an", NULL);
+            $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            if ($this->fs->exists($workingDir))
+                $this->fs->remove($workingDir);
+            return null;
         }
-        else
-        {
-            $ab = $actualPreset->get("-ab");
-            $actualPreset->set("-ab", "" . intval($audioBitRate/1000) . "k");
-        }
-        $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
-        $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $actualPreset, $outputFileWebm);
-        //restore the current settings for the audio
-        if (!$hasAudio)
-        {
-            $actualPreset->set("-ab", $ab);
-            $actualPreset->set("-acodec", $acodec);
-            $actualPreset->remove("-an");
-        }
-        else
-        {
-            $actualPreset->set("-ab", $ab);
-        }
-        chdir($dir);
-        $this->fs->remove($workingDir);
-        $this->fs->remove($tempFileName);
         $this->logger->info("Transcoding complete!");
         
         return new File($outputFileWebm);
@@ -584,60 +671,77 @@ class Transcoder
     public function transcodeAudioToX264 (File $inputFile, $preset)
     {
         // $tempDir = '/tmp/terptube-transcoding';
-        $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
-        $umask = umask();
-        umask(0000);
-        if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
-            mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
-        
-        if (! file_exists($workingDir))
-            mkdir($workingDir);
-        $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "X264Audio");
-        
-        umask($umask);
-        $dir = getcwd();
-        chdir($workingDir);
-        // Convert to webm
-        $outputFileWebm = $tempFileName . '.m4a';
-        
-        $actualPreset = $this->transcoder->getPreset($preset);
-        $audioBitRate = Transcoder::MAX_AUDIO_BR;
-        $hasAudio = false;
-        if ($this->ffprobe->streams($inputFile->getRealPath())
+        $tempFileName = null;
+        $outputFileWebm = null;
+        $workingDir = null;
+        try
+        {
+            $workingDir = Transcoder::TEMPORARY_DIRECTORY_TRANSCODING . '/' . $inputFile->getFilename();
+            $umask = umask();
+            umask(0000);
+            if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
+                mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
+            
+            if (! file_exists($workingDir))
+                mkdir($workingDir);
+            $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "X264Audio");
+            
+            umask($umask);
+            $dir = getcwd();
+            chdir($workingDir);
+            // Convert to webm
+            $outputFileWebm = $tempFileName . '.m4a';
+            
+            $actualPreset = $this->transcoder->getPreset($preset);
+            $audioBitRate = Transcoder::MAX_AUDIO_BR;
+            $hasAudio = false;
+            if ($this->ffprobe->streams($inputFile->getRealPath())
                 ->audios()
                 ->count() != 0)
-        {
-            $hasAudio = true;
-            if ($this->ffprobe->streams($inputFile->getRealPath())
+            {
+                $hasAudio = true;
+                if ($this->ffprobe->streams($inputFile->getRealPath())
                     ->audios()
                     ->first()
                     ->has('bit_rate'))
-                        $audioBitRate = min($audioBitRate,
-                                intval(
-                                        $this->ffprobe->streams($inputFile->getRealPath())
+                    $audioBitRate = min($audioBitRate, 
+                            intval(
+                                    $this->ffprobe->streams($inputFile->getRealPath())
                                         ->audios()
                                         ->first()
                                         ->get('bit_rate')));
+            }
+            
+            $ab = NULL;
+            if (! $hasAudio)
+            {
+                throw new InvalidInputException(sprintf("Not an audio file"));
+            }
+            else
+            {
+                $ab = $actualPreset->get("-ab");
+                $actualPreset->set("-ab", "" . intval($audioBitRate / 1000) . "k");
+            }
+            
+            $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
+            $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $preset, $outputFileWebm);
+            
+            $actualPreset->set("-ab", $ab);
+            chdir($dir);
+            $this->fs->remove($workingDir);
+            $this->fs->remove($tempFileName);
         }
-        
-        $ab = NULL;
-        if (!$hasAudio)
+        catch (Exception $e)
         {
-            throw new InvalidInputException(sprintf("Not an audio file"));
+            $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            if ($this->fs->exists($workingDir))
+                $this->fs->remove($workingDir);
+            return null;
         }
-        else
-        {
-            $ab = $actualPreset->get("-ab");
-            $actualPreset->set("-ab", "" . intval($audioBitRate/1000) . "k");
-        }
-        
-        $this->logger->info("Transcoding " . $inputFile->getRealPath() . " to: " . $outputFileWebm);
-        $this->transcoder->transcodeWithPreset($inputFile->getRealPath(), $preset, $outputFileWebm);
-        
-        $actualPreset->set("-ab", $ab);
-        chdir($dir);
-        $this->fs->remove($workingDir);
-        $this->fs->remove($tempFileName);
         $this->logger->info("Transcoding complete!");
         
         return new File($outputFileWebm);
@@ -652,6 +756,8 @@ class Transcoder
      */
     public function remuxWebM (File $file)
     {
+        $tempFileName = null;
+        $outputFileWebm = null;
         try
         {
             $filePath = $file->getRealPath();
@@ -694,6 +800,11 @@ class Transcoder
         catch (Exception $e)
         {
             $this->logger->error($e->getTraceAsString());
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
+            return null;
         }
         return $file;
     }
