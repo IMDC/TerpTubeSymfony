@@ -27,6 +27,7 @@ class Transcoder
     const TEMPORARY_DIRECTORY_RECORDING = '/tmp/terptube-recordings';
 
     const MAX_AUDIO_BR = 128000;
+    const MIN_AUDIO_BR_VORBIS = 45000;
 
     public function __construct ($logger, $transcoder, $ffmpegConfiguration)
     {
@@ -416,6 +417,7 @@ class Transcoder
                                         ->audios()
                                         ->first()
                                         ->get('bit_rate')));
+                    $audioBitRate = max($audioBitRate, Transcoder::MIN_AUDIO_BR_VORBIS);
             }
             
             $acodec = NULL;
@@ -520,6 +522,7 @@ class Transcoder
                                         ->audios()
                                         ->first()
                                         ->get('bit_rate')));
+                    $audioBitRate = max($audioBitRate, Transcoder::MIN_AUDIO_BR_VORBIS);
             }
             
             $ab = NULL;
