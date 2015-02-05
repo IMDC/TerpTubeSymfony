@@ -22,7 +22,6 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 	private $ffprobe;
 	private $transcoder;
 	private $fs;
-	
 	public function __construct($logger, $doctrine, $transcoder)
 	{
 		$this->logger = $logger;
@@ -101,13 +100,30 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 			$resourceFile = new File ( $resource->getAbsolutePath () );
 			
 			// Grab the width/height first to convert to the nearest standard resolution.
+			// TODO need to send an event to alert the user that this is an invalid video
+			try
+			{
+				$isVideo = $this->transcoder->checkVideoFile ( $resourceFile );
+				if (! $isVideo)
+				{
+					// not a video so don't hold up the queue
+					$this->logger->error ( "Error with the video or not a valid video file $resourceFile!" );
+					return true;
+				}
+			}
+			catch ( \Exception $e )
+			{
+				// not a video so don't hold up the queue
+				$this->logger->error ( "Error with the video or not a valid video file $resourceFile!" );
+				return true;
+			}
 			
 			$transcodingType = $media->getIsReady ();
 			if ($transcodingType == Media::READY_NO)
 			{
 				$this->logger->info ( "Transcoding " . $resourceFile->getRealPath () );
-				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video');
-				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video');
+				$mp4File = $this->transcoder->transcodeToX264 ( $resourceFile, 'ffmpeg.x264_720p_video' );
+				$webmFile = $this->transcoder->transcodeToWebM ( $resourceFile, 'ffmpeg.webm_720p_video' );
 			}
 			else if ($transcodingType == Media::READY_MPEG)
 			{
@@ -128,6 +144,11 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 				return true;
 			}
 			// Create a thumbnail
+			if ($mp4File == null || $webmFile == null)
+			{
+				$this->logger->error ( "Could not transcode the video for some reason" );
+				return false;
+			}
 			
 			$videoWidth = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'width' );
 			$videoHeight = $this->ffprobe->streams ( $webmFile->getRealPath () )->videos ()->first ()->get ( 'height' );
@@ -196,7 +217,7 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 			
 			$this->logger->info ( "Transcoding complete!" );
 		}
-		catch ( Exception $e )
+		catch ( \Exception $e )
 		{
 			$this->logger->error ( $e->getTraceAsString () );
 			return false;

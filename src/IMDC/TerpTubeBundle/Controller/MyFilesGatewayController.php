@@ -485,7 +485,20 @@ class MyFilesGatewayController extends Controller
             $fs = new Filesystem ();
             
             $type = Utils::getUploadedFileType($uploadedFile);
-
+            $isValid = true;
+            $transcoder = $this->container->get('imdc_terptube.transcoder');
+			if ($type == Media::TYPE_AUDIO)
+			{
+				$isValid = $transcoder->checkAudioFile($resourcePath);
+			}
+			else if ($type == Media::TYPE_VIDEO)
+			{
+				$isValid = $transcoder->checkVideoFile($resourcePath);
+			}
+			if (!$isValid)
+			{
+				//Wrong audio/video type. return error
+			}
             $media->setType($type);
             $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
             $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
