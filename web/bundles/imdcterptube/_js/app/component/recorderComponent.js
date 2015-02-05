@@ -552,6 +552,10 @@ define([
         }
         this._togglePlayerTitle();
     };
+    
+    RecorderComponent.prototype._getElement = function(binder) {
+        return this.$container.find(binder);
+    };
 
     RecorderComponent.render = function (options, callback) {
         var defaults = {

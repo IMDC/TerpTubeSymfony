@@ -29,6 +29,7 @@ define([ 'core/subscriber', 'core/mediaManager', 'component/recorderComponent', 
 	this.$uploadTitle = this.$container.find(MediaChooserComponent.Binder.UPLOAD_TITLE);
 	this.$working = this.$container.find(MediaChooserComponent.Binder.WORKING);
 	this.$selected = this.$container.find(MediaChooserComponent.Binder.SELECTED);
+	this.$uploaded = this.$container.find(MediaChooserComponent.Binder.UPLOADED);
 
 	this.$resourceFile.on('change', this.bind__onChangeResourceFile);
 	this.$recordVideo.on('click', this.bind__onClickRecordVideo);
@@ -64,7 +65,8 @@ define([ 'core/subscriber', 'core/mediaManager', 'component/recorderComponent', 
 	WORKING : '.mediachooser-working',
 	SELECTED : '.mediachooser-selected',
 	SELECTED_MEDIA : '.mediachooser-selected-media',
-	REMOVE : '.mediachooser-remove'
+	REMOVE : '.mediachooser-remove',
+	UPLOADED : '.mediachooser-uploaded'
     };
 
     MediaChooserComponent.Event = {
@@ -199,7 +201,8 @@ define([ 'core/subscriber', 'core/mediaManager', 'component/recorderComponent', 
 	    this.recorderCmp.subscribe(RecorderComponent.Event.DONE, function(e)
 	    {
 		this.recorderCmp.hide();
-		this._addSelectedMedia(e.media);
+		if (this.$selected.length > 0)
+		    this._addSelectedMedia(e.media);
 		this._invokeSuccess(e.doPost);
 	    }.bind(this));
 	    this.recorderCmp.subscribe(RecorderComponent.Event.HIDDEN, function(e)
@@ -259,7 +262,8 @@ define([ 'core/subscriber', 'core/mediaManager', 'component/recorderComponent', 
 
 	this._uploadFile(this.$uploadForm[0]).done(function(data)
 	{
-	    this._addSelectedMedia(data.media);
+	    if (this.$selected.length > 0)
+		this._addSelectedMedia(data.media);
 	    this._invokeSuccess();
 	}.bind(this)).fail(function(error)
 	{
