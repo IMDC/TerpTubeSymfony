@@ -453,6 +453,8 @@ class MyFilesGatewayController extends Controller
             throw new \Exception('no media data found in request');
         }
         
+        $transcoder = $this->container->get('imdc_terptube.transcoder');
+        
         $isInterpretation = filter_var($request->request->get('isInterpretation'), FILTER_VALIDATE_BOOLEAN);
         $sourceStartTime = floatval($request->request->get('sourceStartTime', 0));
         $sourceId = $request->request->get('sourceId', null);
