@@ -9,6 +9,7 @@ define([
         this.bind__onClickSubmit = this._onClickSubmit.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
+        this.bind__onError = this._onError.bind(this);
 
         this.$container = options.container;
         this.$form = this.$container.find('form[name^=' + NewView.FORM_NAME + ']');
@@ -19,6 +20,7 @@ define([
         this.mcCmp = MediaChooserComponent.render(this.$form);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
         this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.ERROR, this.bind__onError);
 
         var mediaIds = [];
         this._getFormField('mediaIncluded').children().each(function (index, element) {
@@ -81,6 +83,10 @@ define([
                 .find('label')
                 .addClass('required');
         }
+    };
+    
+    NewView.prototype._onError = function (e) {
+	alert('Error: ' + e.error);
     };
 
     return NewView;

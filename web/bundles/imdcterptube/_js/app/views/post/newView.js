@@ -14,6 +14,7 @@ define([
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
         this.bind__onModelChange = this._onModelChange.bind(this);
+        this.bind__onError = this._onError.bind(this);
 
         this.$container = $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('id') + '"]');
         this.$form = this.$container.find('form[name^=' + NewView.FORM_NAME + ']');
@@ -29,6 +30,7 @@ define([
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
         this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.ERROR, this.bind__onError);
 
         var mediaIds = [];
         this._getFormField('attachedFile').children().each(function (index, element) {
@@ -151,6 +153,10 @@ define([
 
     NewView.prototype._onReset = function (e) {
         this._updateForm();
+    };
+    
+    NewView.prototype._onError = function (e) {
+	alert('Error: ' + e.error);
     };
 
     return NewView;

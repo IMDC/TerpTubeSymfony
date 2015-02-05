@@ -99,6 +99,24 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 			$resource = $media->getResource();
 			$resourceFile = new File($resource->getAbsolutePath());
 			
+			
+			try
+			{
+			    $isVideo = $this->transcoder->checkAudioFile ( $resourceFile );
+			    if (! $isVideo)
+			    {
+			        // not a video so don't hold up the queue
+			        $this->logger->error ( "Error with the audio or not a valid audio file: $resourceFile!" );
+			        return true;
+			    }
+			}
+			catch ( \Exception $e )
+			{
+			    // not a video so don't hold up the queue
+			    $this->logger->error ( "Error with the audio or not a valid audio file: $resourceFile!" );
+			    return true;
+			}
+			
 			$transcodingType = $media->getIsReady();
 			
 			if ($transcodingType == Media::READY_NO)

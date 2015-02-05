@@ -12,6 +12,7 @@ define([
         this.bind__onClickBulkAction = this._onClickBulkAction.bind(this);
         this.bind__onClickFile = this._onClickFile.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
+        this.bind__onError = this._onError.bind(this);
 
         this.$container = options.container;
         this.$filesList = this.$container.find(ListView.Binder.FILES_LIST);
@@ -32,6 +33,7 @@ define([
         this.mcCmp = MediaChooserComponent.render(this.$container);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
         this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.ERROR, this.bind__onError);
         
         this.$filesList.find('span.edit-title').editable({
             toggle: 'manual',
@@ -111,6 +113,10 @@ define([
 
     ListView.prototype._onSuccess = function (e) {
         window.location.reload(true); //TODO load to last page?
+    };
+    
+    ListView.prototype._onError = function (e) {
+	 alert('Error: ' + e.error);
     };
 
     return ListView;
