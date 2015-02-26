@@ -1,0 +1,12 @@
+IMDC\TerpTubeBundle\Entity\Thread:
+  exclusion_policy: ALL
+  virtual_properties:
+    getOrderedMedia:
+      serialized_name: ordered_media
+  properties:
+    id:
+      expose: true
+    title:
+      expose: true
+    type:
+      expose: true

@@ -1,0 +1,52 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Create a new Topic{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/threadModel', 'controller/threadController', 'views/thread/newView',
+            'main'
+        ], function(bootstrap, ThreadModel, ThreadController, ThreadView) {
+            bootstrap(
+                    new ThreadModel(),
+                    ThreadController,
+                    ThreadView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-offset-2 col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {% if form.forum is defined %}
+                    {{ form_row(form.forum) }}
+                {% endif %}
+                {{ form_widget(form.mediaIncluded) }}
+                {{ form_row(form.title) }}
+                {{ form_row(form.content) }}
+                {{ form_row(form.accessType) }}
+                <button class="btn btn-success thread-submit"><i class="fa fa-check"></i> Create</button>
+                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

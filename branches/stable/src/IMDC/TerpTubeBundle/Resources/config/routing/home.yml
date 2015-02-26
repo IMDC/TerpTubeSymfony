@@ -1,0 +1,3 @@
+imdc_home_user_home:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:Home:index }
