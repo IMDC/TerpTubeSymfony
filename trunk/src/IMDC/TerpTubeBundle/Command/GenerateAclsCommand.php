@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Command;
 
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
+use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -33,6 +34,7 @@ class GenerateAclsCommand extends ContainerAwareCommand
             $em->getConnection()->exec("TRUNCATE acl_entries");
         }
 
+        /* @var $accessProvider AccessProvider */
         $accessProvider = $this->getContainer()->get('imdc_terptube.security.acl.access_provider');
         $insertAces = function ($object, $user) use ($accessProvider) {
             $objectIdentity = AccessObjectIdentity::fromAccessObject($object);
@@ -40,7 +42,7 @@ class GenerateAclsCommand extends ContainerAwareCommand
 
             $access = $accessProvider->createAccess($objectIdentity);
             $access->insertEntries($securityIdentity);
-            $accessProvider->updateAccess($access);
+            $accessProvider->updateAccess();
         };
 
         $output->writeln('Inserting forum ACEs');

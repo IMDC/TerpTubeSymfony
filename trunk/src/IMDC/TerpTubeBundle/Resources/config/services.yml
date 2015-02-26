@@ -139,7 +139,7 @@ services:
 
     imdc_terptube.security.acl.access_voter:
         class: IMDC\TerpTubeBundle\Security\Acl\Voter\AccessVoter
-        arguments: [@imdc_terptube.security.acl.access_provider]
+        arguments: [@imdc_terptube.security.acl.access_provider, @service_container]
         public: false
         tags:
             - { name: security.voter }

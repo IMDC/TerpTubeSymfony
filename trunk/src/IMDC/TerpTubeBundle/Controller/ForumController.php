@@ -6,6 +6,7 @@ use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
+use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -123,13 +124,14 @@ class ForumController extends Controller
             $em->persist($user);
             $em->flush();
 
+            /* @var $accessProvider AccessProvider */
             $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
             $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             $access = $accessProvider->createAccess($objectIdentity);
             $access->insertEntries($securityIdentity);
-            $accessProvider->updateAccess($access);
+            $accessProvider->updateAccess();
 
             $this->get('session')->getFlashBag()->add(
                 'info', 'Forum created successfully!'
@@ -244,13 +246,14 @@ class ForumController extends Controller
 	        $em->persist($user);
 	        $em->flush();
 
+            /* @var $accessProvider AccessProvider */
             $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
             $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->getAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity);
             $access->updateEntries($securityIdentity);
-            $accessProvider->updateAccess($access);
+            $accessProvider->updateAccess();
 	        
 	        $this->get('session')->getFlashBag()->add(
                 'info', 'Forum edited successfully!'
