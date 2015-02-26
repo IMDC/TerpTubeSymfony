@@ -43,19 +43,15 @@ class AccessProvider
     /**
      * @param AccessObjectIdentity $objectIdentity
      * @return Access
+     * @deprecated
      */
     public function getAccess(AccessObjectIdentity $objectIdentity)
     {
         return $this->createAccess($objectIdentity);
     }
 
-    /**
-     * @param Access $access
-     */
-    public function updateAccess(Access $access)
+    public function updateAccess()
     {
-        //FIXME will $access ever be used?
-
         $this->aclProvider->updateAcl($this->acl);
     }
 

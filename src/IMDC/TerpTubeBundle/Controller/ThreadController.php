@@ -8,6 +8,7 @@ use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Form\Type\ThreadType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
+use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -113,13 +114,14 @@ class ThreadController extends Controller
             $em->persist($user);
             $em->flush();
 
+            /* @var $accessProvider AccessProvider */
             $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
             $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             $access = $accessProvider->createAccess($objectIdentity);
             $access->insertEntries($securityIdentity);
-            $accessProvider->updateAccess($access);
+            $accessProvider->updateAccess();
 
             $this->get('session')->getFlashBag()->add(
                 'success', 'Thread created successfully!'
@@ -211,13 +213,14 @@ class ThreadController extends Controller
             $em->persist($forum);
             $em->flush();
 
+            /* @var $accessProvider AccessProvider */
             $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
             $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->getAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity);
             $access->updateEntries($securityIdentity);
-            $accessProvider->updateAccess($access);
+            $accessProvider->updateAccess();
 
             $this->get('session')->getFlashBag()->add(
                 'success', 'Forum post edited successfully!'

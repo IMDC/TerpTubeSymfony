@@ -21,11 +21,11 @@ final class AccessObjectIdentity
 
     /**
      * @param AccessType $accessType
-     * @param $objectIdentity
+     * @param ObjectIdentity $objectIdentity
      * @param array $securityIdentities
      * @throws \InvalidArgumentException
      */
-    public function __construct(AccessType $accessType, $objectIdentity, array $securityIdentities = array())
+    public function __construct(AccessType $accessType, ObjectIdentity $objectIdentity, array $securityIdentities = array())
     {
         if (empty($accessType)) {
             throw new \InvalidArgumentException('$accessType cannot be empty.');
@@ -89,7 +89,7 @@ final class AccessObjectIdentity
     }
 
     /**
-     * @return mixed
+     * @return ObjectIdentity
      */
     public function getObjectIdentity()
     {

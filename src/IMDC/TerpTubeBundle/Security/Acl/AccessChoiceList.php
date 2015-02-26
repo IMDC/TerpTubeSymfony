@@ -29,6 +29,7 @@ class AccessChoiceList extends ObjectChoiceList
     {
         $qb = $entityManager->getRepository('IMDCTerpTubeBundle:AccessType')->createQueryBuilder('a');
         if ($class == 'IMDC\TerpTubeBundle\Entity\Thread') {
+            // threads do not support group access type
             $qb->where('a.id != :accessType')
                 ->setParameter('accessType', AccessType::TYPE_GROUP);
         }
