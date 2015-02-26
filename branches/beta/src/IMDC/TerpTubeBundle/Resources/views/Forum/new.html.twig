@@ -1,0 +1,51 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Create a new Forum{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/forumModel', 'controller/forumController', 'views/forum/newView',
+            'main'
+        ], function(bootstrap, ForumModel, ForumController, ForumView) {
+            bootstrap(
+                    new ForumModel(),
+                    ForumController,
+                    ForumView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block sidebarlinks_pages %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-offset-2 col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_widget(form.titleMedia) }}
+                {{ form_row(form.titleText) }}
+                {{ form_row(form.accessType) }}
+                {% if form.group is defined %}
+                    {{ form_row(form.group) }}
+                {% endif %}
+                <button class="btn btn-success forum-submit"><i class="fa fa-check"></i> Create</button>
+                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

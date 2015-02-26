@@ -1,0 +1,39 @@
+.tt-media-img {
+
+}
+
+.tt-media-video, .tt-media-audio {
+  width: 100%;
+}
+
+.tt-media-pip-video {
+  position: absolute;
+  top: 0;
+  height: 25%;
+}
+
+.tt-media-preview {
+  &-title {
+    padding-bottom: 10px;
+    text-align: center;
+
+    &>input {
+      width: 50%;
+      text-align: center;
+    }
+  }
+
+  &-fullscreen {
+    width: 100%;
+    height: 100%;
+
+    &>.tt-media-img {
+      padding-top: 10%;
+      height: 80%;
+    }
+  }
+
+  &>.tt-media-img {
+    cursor: pointer;
+  }
+}

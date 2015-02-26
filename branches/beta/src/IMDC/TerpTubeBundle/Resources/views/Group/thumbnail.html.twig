@@ -1,0 +1,45 @@
+{#
+included by:
+_Group:list.html.twig
+_Home:index.html.twig
+#}
+
+{% for group in groups %}
+    {% if loop.index % 4 == 1 %}
+        <div class="row">
+            <ul class="list-unstyled">
+    {% endif %}
+    <li>
+        <div class="col-md-3">
+            <div class="thumbnail text-center tt-forum-thumbnail" style="min-height: 400px;">
+                {#TODO CSS ME#}
+                <div class="tt-media-element" style="height: 230px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
+                    <div style="position: relative; top: 50%; transform: translateY(-50%);">
+                        {% if group.media[0] is defined %}
+                            {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.media[0]} %}
+                        {% else %}
+                            <i class="fa fa-question fa-3x"></i><br />
+                            <em>no media</em>
+                        {% endif %}
+                    </div>
+                    {#TODO CSS ME#}
+                    <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "230px");</script>
+                </div>
+                <a href="{{ path('imdc_group_view', {'groupId': group.id}) }}" title="{{ group.name }}">
+                    <p style="font-size: 24px;">{{ group.name }}</p>
+                    <p class="text-muted">
+                        <i class="fa fa-user" title="Founder"></i> {{ group.userFounder.userName }}&ensp;
+                        <i class="fa fa-users" title="Member count"></i> {{ group.members|length }} members<br />
+                        <i class="fa fa-clock-o" title="Date created"></i> {{ group.dateCreated|date('Y-m-d g:i a') }}
+                    </p>
+                    {#TODO remove#}
+                    <p><a class="btn btn-default" href="{{ path('imdc_group_view', {'groupId': group.id}) }}">View</a></p>
+                </a>
+            </div>
+        </div>
+    </li>
+    {% if loop.index % 4 == 0 or loop.last %}
+            </ul>
+        </div>
+    {% endif %}
+{% endfor %}

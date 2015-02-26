@@ -1,0 +1,83 @@
+IMDC\TerpTubeBundle\Entity\Thread:
+    type: entity
+    table: thread
+    repositoryClass: IMDC\TerpTubeBundle\Entity\ThreadRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        creationDate:
+            type: datetime
+        locked:
+            type: boolean
+        sticky:
+            type: boolean
+        content:
+            type: text
+            nullable: true
+        lastPostID:
+            type: integer
+            nullable: true
+        lastPostAt:
+            type: datetime
+            nullable: true
+        editedAt:
+            type: datetime
+            nullable: true
+        title:
+            type: string
+            length: '255'
+            nullable: true
+        type:
+            type: smallint
+            nullable: true
+        tags:
+            type: array
+            nullable: true
+        mediaDisplayOrder:
+            type: array
+    manyToOne:
+        creator:
+            targetEntity: User
+            inversedBy: threads
+        editedBy:
+            targetEntity: User
+            inversedBy: editedThreads
+            nullable: true
+        parentForum:
+            targetEntity: Forum
+            inversedBy: threads
+            nullable: true
+        accessType:
+            targetEntity: AccessType
+            joinColumn:
+                name: access_type_id
+                referencedColumnName: id
+    manyToMany:
+        usersFollowing:
+            targetEntity: User
+            joinTable:
+                name: users_following_threads
+                joinColumns:
+                    thread_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        mediaIncluded:
+            targetEntity: Media
+            joinTable:
+                name: threads_included_media
+                joinColumns:
+                    thread_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    media_id:
+                        referencedColumnName: id
+    oneToMany:
+        posts:
+            targetEntity: Post
+            mappedBy: parentThread
+            cascade: ["remove"]

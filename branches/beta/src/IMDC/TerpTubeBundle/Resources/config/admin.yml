@@ -1,0 +1,140 @@
+# IMDC/TerpTubeBundle/Resources/config/admin.yml
+
+services:
+    sonata.admin.user:
+        class: IMDC\TerpTubeBundle\Admin\UserAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Users", label: "User" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\User
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.post:
+        class: IMDC\TerpTubeBundle\Admin\PostAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Posts", label: "Post" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Post
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.message:
+        class: IMDC\TerpTubeBundle\Admin\MessageAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Messages", label: "Messages" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Message
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+    
+    sonata.admin.media:
+        class: IMDC\TerpTubeBundle\Admin\MediaAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Media" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Media
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.usergroup:
+        class: IMDC\TerpTubeBundle\Admin\UserGroupAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "UserGroups", label: "UserGroup" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\UserGroup
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.forum:
+        class: IMDC\TerpTubeBundle\Admin\ForumAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Forums", label: "Forums" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Forum
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.resource:
+        class: IMDC\TerpTubeBundle\Admin\ResourceFileAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Resource Files", show_in_dashboard: false }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\ResourceFile
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.metadata:
+        class: IMDC\TerpTubeBundle\Admin\MetaDataAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Resources", label: "Metadata", show_in_dashboard: false}
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\MetaData
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]            
+            
+    sonata.admin.userprofile:
+        class: IMDC\TerpTubeBundle\Admin\UserProfileAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "User Profiles", label: "User Profiles", show_in_dashboard: false }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\UserProfile
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]    
+    
+    sonata.admin.thread:
+        class: IMDC\TerpTubeBundle\Admin\ThreadAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Threads", label: "Threads" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Thread
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.admin.permissions:
+        class: IMDC\TerpTubeBundle\Admin\ThreadAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Permissions", label: "Permissions" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Permissions
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]     
+    
+    sonata.admin.invitations:
+        class: IMDC\TerpTubeBundle\Admin\InvitationAdmin
+        tags:
+            - { name: sonata.admin, manager_type: orm, group: "Invitations", label: "Invitations" }
+        arguments:
+            - ~
+            - IMDC\TerpTubeBundle\Entity\Invitation
+            - ~
+        calls:
+            - [ setTranslationDomain, [IMDCTerpTubeBundle]]
+            
+    sonata.block.service.linkbox:
+        class: IMDC\TerpTubeBundle\Block\LinkBoxService
+        arguments: [ "sonata.block.service.linkbox", @templating ]
+        tags:
+            - { name: sonata.block }

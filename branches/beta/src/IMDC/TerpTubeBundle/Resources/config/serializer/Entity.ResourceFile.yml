@@ -1,0 +1,4 @@
+IMDC\TerpTubeBundle\Entity\ResourceFile:
+  virtual_properties:
+    getWebPath:
+      serialized_name: web_path

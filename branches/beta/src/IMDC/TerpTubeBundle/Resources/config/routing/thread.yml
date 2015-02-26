@@ -1,0 +1,42 @@
+imdc_thread_new:
+  pattern: /new/{forumid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:new, mediaId: null }
+  requirements:
+    forumid: \d+
+
+imdc_thread_new_from_media:
+  pattern: /new/myFiles/{mediaId}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:new, forumid: null }
+  requirements:
+    mediaId: \d+
+  options:
+    expose: true
+
+imdc_thread_view:
+  pattern: /{threadid}
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:view }
+  requirements:
+    threadid: \d+
+
+imdc_thread_edit:
+  pattern: /{threadid}/edit
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:edit }
+  requirements:
+    threadid: \d+
+
+imdc_thread_delete:
+  pattern: /{threadid}/delete
+  defaults: { _controller: IMDCTerpTubeBundle:Thread:delete }
+  methods: [POST]
+  requirements:
+    threadid: \d+
+  options:
+    expose: true
+
+imdc_thread_new_post:
+  pattern: /{threadId}/reply
+  defaults: { _controller: IMDCTerpTubeBundle:Post:new, pid: null }
+  requirements:
+    threadId: \d+
+  options:
+    expose: true

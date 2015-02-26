@@ -1,0 +1,62 @@
+{#
+included by:
+_Forum:list.html.twig
+_Home:index.html.twig
+#}
+
+{% for forum in forums %}
+	{% if loop.index % 4 == 1 %}
+		<div class="row">
+			<ul class="list-unstyled">
+	{% endif %}
+	<li>
+		<div class="col-md-3">
+            <div class="thumbnail text-center tt-forum-thumbnail">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        {% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': forum} %}
+                    </div>
+                </div>
+                <div class="row">
+                    {#TODO CSS ME#}
+                    <div class="col-md-12 tt-media-element" style="height: 230px; -webkit-transform-style: preserve-3d; -moz-transform-style: preserve-3d; transform-style: preserve-3d;">
+                        <div style="position: relative; top: 50%; transform: translateY(-50%);">
+                            {% if forum.titleMedia[0] is defined %}
+                                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': forum.titleMedia[0]} %}
+                            {% else %}
+                                <i class="fa fa-question fa-3x"></i><br />
+                                <em>no media</em>
+                            {% endif %}
+                        </div>
+                        {#TODO CSS ME#}
+                        <script type="text/javascript">$(".tt-media-element > div video, .tt-media-element > div img").css("max-height", "230px");</script>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}" title="{{ forum.titleText}}">
+                            <p style="font-size: 24px;">
+                                {% if forum.titleText %}
+                                    {{ forum.titleText|truncate(20) }}
+                                {% else %}
+                                    {{ '<em>no title</em>'|raw }}
+                                {% endif %}
+                            </p>
+                            <p class="text-muted">
+                                <i class="fa fa-user" title="Creator"></i> {{ forum.creator }}&ensp;
+                                <i class="fa fa-pencil-square-o" title="Topic count"></i> {{ forumThreadCount[loop.index0] }} topics<br />
+                                <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(forum.getLastActivity) }}
+                            </p>
+                            {#TODO remove#}
+                            <p><a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.id}) }}">View</a></p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</li>
+	{% if loop.index % 4 == 0 or loop.last %}
+			</ul>
+		</div>
+	{% endif %}
+{% endfor %}

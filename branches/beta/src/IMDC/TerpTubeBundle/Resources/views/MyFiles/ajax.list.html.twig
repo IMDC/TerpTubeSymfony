@@ -1,0 +1,23 @@
+{% import 'IMDCTerpTubeBundle:MyFiles:macros.html.twig' as _my_files %}
+
+<div class="row">
+    <div class="col-md-12">
+        {{ _my_files.list_files(style, media) }}
+    </div>
+</div>
+<script type="text/javascript">
+    require([
+        'bootstrap',
+        'controller/myFilesController', 'views/myFiles/listView',
+        'main'
+    ], function(bootstrap, MyFilesController, MyFilesView) {
+        bootstrap(
+                {},
+                MyFilesController,
+                MyFilesView,
+                {
+                    container: $('body')
+                }
+        );
+    });
+</script>

@@ -1,0 +1,64 @@
+{#
+included by:
+_Post:post.html.twig
+_Thread:view.html.twig
+#}
+
+{% if isPostReply is not defined %}
+    {% set isPostReply = false %}
+{% endif %}
+
+<div class="row post-container tt-post-container{% if isPostReply %} tt-post-reply-container{% endif %}" data-pid="{{ post.id }}">
+    <div class="{% if isPostReply %}col-md-11 col-md-offset-1{% else %}col-md-12{% endif %}">
+        <div class="row tt-post-container-inner{% if isPostReply %} tt-post-reply-container-inner{% endif %}">
+            <!-- user info -->
+            <div class="col-md-2 text-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': post.author} %}
+                        {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': post.author} %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' with {'member': post.author} %}
+                    </div>
+                </div>
+            </div>
+            <!-- post content -->
+            <div class="col-md-9 tt-post-content-container">
+                <div class="row post-container-view" data-pid="{{ post.id }}" data-starttime="{{ post.startTime }}" data-endtime="{{ post.endTime }}" data-istemporal={{ post.isTemporal ? 'true' : 'false' }}>
+                    {% include 'IMDCTerpTubeBundle:Post:ajax.post.html.twig' %}
+                </div>
+                <div class="row post-container-edit" style="display: none;" data-pid="{{ post.id }}"></div>
+                {% if not isPostReply %}
+                    <div class="row post-container-reply" style="display: none;" data-pid="{{ post.id }}"></div>
+                {% endif %}
+            </div>
+            <!-- post tools -->
+            <div class="col-md-1 pull-right">
+                <ul class="list-unstyled">
+                    {% if post.isTemporal %}
+                        <li><a class="post-timeline-keypoint" href="#" title="Jump to selected timeline region" data-pid="{{ post.id }}"><i class="fa fa-clock-o"></i></a></li>
+                    {% endif %}
+                    {% if post.author.id == app.user.id %}
+                        <li><a class="post-edit" href="#" title="Edit this post" data-pid="{{ post.id }}"><i class="fa fa-pencil"></i></a></li>
+                        <li><a class="post-delete-A" href="#" title="Delete this post" data-pid="{{ post.id }}" data-toggle="modal" data-target=".post-delete-modal"><i class="fa fa-trash-o"></i></a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% if not isPostReply %}
+            <!-- post reply -->
+            <div class="row">
+                <div class="col-md-1 col-md-offset-11">
+                    <p><a class="post-reply" href="#" title="Reply to this post" data-pid="{{ post.id }}"><i class="fa fa-reply fa-rotate-180 fa-lg"></i></a></p>
+                </div>
+            </div>
+        {% endif %}
+        <!-- replies to post -->
+        {% for postReply in post.replies %}
+            {% include 'IMDCTerpTubeBundle:Post:post.html.twig' with {'isPostReply': true, 'post': postReply} %}
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,85 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% if isReply is not defined %}
+    {% set isReply = false %}
+{% endif %}
+
+{% block title %}
+    {% if isReply %}
+        Re: {{ message.subject }}
+    {% else %}
+        New Private Message
+    {% endif %}
+{% endblock title %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            require(['main'], function() {
+                var page = $tt.Controller.Message.Page.{% if isReply %}REPLY{% else %}NEW{% endif %};
+                var message = new $tt.Controller.Message({page: page});
+                message.bindUIEvents();
+            });
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <hr class="tt-separator-top" />
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <div style="margin-bottom: 15px;">
+                    {{ form_start(form) }}
+                    {{ form_errors(form) }}
+                    {% if isReply %}
+                        {{ form_row(form.recipients) }}
+                        {{ form_row(form.subject, {'value': 'Re: ' ~ message.subject}) }}
+                    {% else %}
+                        {% if app.request.get('userid') %}
+                            {{ form_row(form.recipients, {'value': app.request.get('userid')}) }}
+                        {% else %}
+                            {{ form_row(form.recipients) }}
+                        {% endif %}
+                        {{ form_row(form.subject) }}
+                    {% endif %}
+                    {{ form_widget(form.attachedMedia) }}
+                    {% if isReply %}
+                        {{ form_row(form.content,
+                            {'value': "\n\n\n\n" ~
+                                '>From: ' ~ message.owner ~ "\n" ~
+                                '>To: ' ~ message.recipients|join(', ') ~ "\n" ~
+                                '>Subject: ' ~ message.subject ~ "\n" ~
+                                '>Sent: ' ~ message.sentDate|date('g:ia M j') ~ "\n>\n" ~
+                                ">----Original Message below----\n\n" ~
+                                message.content, 'attr': {'class': 'autosize'}})
+                        }}
+                        {% if message.attachedMedia|length > 0 %}
+                            <div style="margin-bottom: 15px">
+                                <p><strong>This message has the following attached Media</strong></p>
+                                <div class="tt-media-element">
+                                    {% for mediaFile in message.attachedMedia %}
+                                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        {{ form_row(form.content) }}
+                    {% endif %}
+                    <button class="btn btn-success message-submit"><i class="fa fa-envelope"></i> Send</button>
+                    <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
+                    {{ form_end(form) }}
+                </div>
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+{% endblock content %}

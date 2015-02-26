@@ -1,0 +1,9 @@
+IMDC\TerpTubeBundle\Entity\AccessType:
+    type: entity
+    table: access_type
+    id:
+        id:
+            type: integer
+    fields:
+        description:
+            type: string
