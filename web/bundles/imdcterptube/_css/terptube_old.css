@@ -1,0 +1,367 @@
+/* line 20, sass/_base.scss */
+body {
+  padding-top: 85px;
+  padding-bottom: 40px;
+  /* background-color: #eeeeee; */
+}
+@media (max-width: 1200px) {
+  /* line 20, sass/_base.scss */
+  body {
+    padding-top: 70px;
+  }
+}
+
+/* line 30, sass/_base.scss */
+.tt-navbar-header {
+  float: none;
+}
+
+@media (max-width: 1200px) and (min-width: 768px) {
+  /* line 35, sass/_base.scss */
+  .tt-navbar-header {
+    float: left;
+  }
+}
+/* line 40, sass/_base.scss */
+.tt-navbar-logo {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  min-height: 70px;
+}
+
+/* line 46, sass/_base.scss */
+.tt-navbar-top {
+  min-height: 70px;
+  color: white;
+  /* background-color: $eku-primary; */
+}
+
+/* line 52, sass/_base.scss */
+.tt-navbar-nav-top > li > a {
+  padding-top: 21px;
+  padding-bottom: 21px;
+}
+
+/* line 57, sass/_base.scss */
+.tt-navbar-right-top > li > a {
+  line-height: 2;
+}
+
+/* line 61, sass/_base.scss */
+.tt-navbar-bottom {
+  min-height: 25px;
+  color: white;
+}
+
+/* line 66, sass/_base.scss */
+.tt-copyright {
+  padding-top: 2.5px;
+  padding-bottom: 2.5px;
+}
+
+/* line 71, sass/_base.scss */
+.tt-navbar-side {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  bottom: 25px;
+  background-color: #888888;
+}
+/* line 80, sass/_base.scss */
+.tt-navbar-side a {
+  color: #000000;
+  font-size: 1.2em;
+}
+/* line 85, sass/_base.scss */
+.tt-navbar-side div {
+  padding-bottom: 10px;
+}
+/* line 88, sass/_base.scss */
+.tt-navbar-side div img {
+  max-width: 50px;
+  max-height: 50px;
+}
+@media (max-width: 1200px) {
+  /* line 71, sass/_base.scss */
+  .tt-navbar-side {
+    position: relative;
+    top: 0;
+    right: 0;
+    bottom: inherit;
+    margin-bottom: 15px;
+  }
+  /* line 101, sass/_base.scss */
+  .tt-navbar-side div {
+    padding-bottom: 0;
+    display: inline-block;
+  }
+}
+
+/* line 108, sass/_base.scss */
+.tt-flash-message-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+/* line 113, sass/_base.scss */
+.tt-separator-top, .tt-separator-bottom {
+  border-top: 1px solid #000000;
+}
+
+/* line 117, sass/_base.scss */
+.tt-separator-bottom {
+  margin-top: 0;
+}
+
+/* line 123, sass/_base.scss */
+.tt-date {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+/* line 128, sass/_base.scss */
+.tt-avatar {
+  max-height: 150px;
+}
+
+/* line 133, sass/_base.scss */
+.tt-table > thead, .tt-invitation-table > thead, .tt-message-table > thead, .tt-myFiles-table > thead {
+  background-color: white;
+}
+
+/* line 138, sass/_base.scss */
+.tt-popup-dialog {
+  position: fixed !important;
+  z-index: 5000;
+}
+
+/* line 1, sass/_default.scss */
+.tt-default-register > div {
+  background-color: #5a5a5a;
+  color: #fff;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border-radius: 4px;
+}
+
+/* line 1, sass/_forum.scss */
+.tt-forum-thumbnail, .tt-thread-thumbnail {
+  min-height: 420px;
+  word-wrap: break-word;
+}
+/* line 5, sass/_forum.scss */
+.tt-forum-thumbnail .tt-media-element, .tt-thread-thumbnail .tt-media-element {
+  margin: 10px 0 10px;
+}
+/* line 8, sass/_forum.scss */
+.tt-forum-thumbnail .tt-media-element .tt-media-img, .tt-thread-thumbnail .tt-media-element .tt-media-img, .tt-forum-thumbnail .tt-media-element .tt-media-video, .tt-thread-thumbnail .tt-media-element .tt-media-video, .tt-forum-thumbnail .tt-media-element .tt-media-audio, .tt-thread-thumbnail .tt-media-element .tt-media-audio {
+  /* max-height: 180px; */
+  /* bug 142 */
+}
+
+/* line 1, sass/_help.scss */
+.tt-help-intro {
+  margin-top: 100px;
+  min-height: 500px;
+}
+/* line 5, sass/_help.scss */
+.tt-help-intro div.thumbnail {
+  height: 500px;
+}
+
+/* line 5, sass/_media.scss */
+.tt-media-video, .tt-media-audio {
+  width: 100%;
+}
+
+/* line 10, sass/_media.scss */
+.tt-media-preview-title {
+  padding-bottom: 10px;
+  text-align: center;
+}
+/* line 14, sass/_media.scss */
+.tt-media-preview-title > input {
+  width: 50%;
+  text-align: center;
+}
+/* line 20, sass/_media.scss */
+.tt-media-preview-fullscreen {
+  width: 100%;
+  height: 100%;
+}
+/* line 24, sass/_media.scss */
+.tt-media-preview-fullscreen > .tt-media-img {
+  padding-top: 10%;
+  height: 80%;
+}
+/* line 30, sass/_media.scss */
+.tt-media-preview > .tt-media-img {
+  cursor: pointer;
+}
+
+/* line 11, sass/_message.scss */
+.tt-message-div div.row {
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+/* line 16, sass/_message.scss */
+.tt-message-div div.row:last-child {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+/* line 21, sass/_message.scss */
+.tt-message-div div.row.tt-message-div-header {
+  background-color: white;
+}
+/* line 24, sass/_message.scss */
+.tt-message-div div.row.tt-message-div-header > div[class*="col-"]:first-child {
+  font-weight: bold;
+}
+/* line 30, sass/_message.scss */
+.tt-message-div div[class*="col-"] {
+  border-right: 1px solid #ddd;
+  padding: 5px;
+}
+/* line 34, sass/_message.scss */
+.tt-message-div div[class*="col-"]:last-child {
+  border-right: 0;
+}
+
+/* line 5, sass/_myFiles.scss */
+.tt-myFiles-previewColumn {
+  padding: 0 !important;
+  width: 50px !important;
+}
+
+/* line 11, sass/_myFiles.scss */
+.tt-myFiles-nameColumn {
+  width: 30%;
+}
+
+/* line 16, sass/_myFiles.scss */
+tbody tr td {
+  vertical-align: middle !important;
+}
+
+/* line 21, sass/_myFiles.scss */
+.tt-myFiles-mediaThumbnail a img {
+  max-width: 100%;
+}
+
+/* line 26, sass/_myFiles.scss */
+.tt-myFiles-mediaThumbnail a {
+  width: 100%;
+}
+
+/* used as a selector */
+/* line 2, sass/_post.scss */
+.tt-post-container, .tt-post-reply-container, .tt-post-reply-container-inner {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  border-radius: 4px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin: 0 0 15px 0;
+  background-color: #fff;
+}
+
+/* line 12, sass/_post.scss */
+.tt-post-container-highlight {
+  border: 2px solid red !important;
+}
+
+/* line 16, sass/_post.scss */
+.tt-post-container-inner {
+  margin-bottom: 15px;
+}
+
+/* line 20, sass/_post.scss */
+.tt-post-reply-container {
+  /* reset all */
+  border: initial;
+  border-collapse: initial;
+  border-radius: initial;
+  padding-top: initial;
+  padding-bottom: initial;
+  margin: initial;
+  background-color: initial;
+}
+
+/* line 32, sass/_post.scss */
+.tt-post-reply-container-inner {
+  /* imitate the primary container */
+  border-top: 1px dashed #999;
+  border-radius: 4px 0 0 4px;
+  margin-bottom: 0;
+}
+
+/* line 40, sass/_post.scss */
+.tt-post-content-container {
+  min-height: 180px;
+}
+/* line 43, sass/_post.scss */
+.tt-post-content-container div[class*="col-"] > div {
+  margin-bottom: 10px;
+}
+
+/* line 48, sass/_post.scss */
+.tt-post-timeline-container {
+  height: 15px;
+}
+
+/* line 52, sass/_post.scss */
+.tt-post-timeline {
+  background: #ddd;
+  border: 1px solid #bbb;
+  height: 10px;
+  width: 100%;
+}
+
+/* line 59, sass/_post.scss */
+.tt-post-timeline-keypoint {
+  height: 100%;
+  width: 0;
+  /* this'll be adjusted based on the keypoint */
+  position: relative;
+  cursor: pointer;
+  background: red;
+}
+
+/* line 5, sass/_thread.scss */
+.tt-thread-op-container {
+  /*overflow-y: scroll;*/
+  /* scroll threadOpContainer */
+}
+
+/* line 9, sass/_thread.scss */
+.tt-thread-video-controls {
+  position: absolute;
+}
+/* line 12, sass/_thread.scss */
+.tt-thread-video-controls li img {
+  max-width: 24px;
+  margin-top: 5px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+}
+
+/* line 20, sass/_thread.scss */
+.tt-thread-content {
+  padding: 3px;
+  margin-bottom: 15px;
+  min-height: 4em;
+  max-height: 900px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  overflow-x: auto;
+  background-color: #fff;
+}
+
+/* line 31, sass/_thread.scss */
+.tt-thread-reply-container {
+  overflow-y: scroll;
+  /* scroll threadReplyContainer */
+}

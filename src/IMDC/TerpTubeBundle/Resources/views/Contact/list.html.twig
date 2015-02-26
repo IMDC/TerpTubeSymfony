@@ -1,0 +1,54 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% import 'IMDCTerpTubeBundle:Contact:macros.html.twig' as _contact %}
+
+{% block title %}My Contacts{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'controller/contactController', 'views/contact/listView',
+            'main'
+        ], function(bootstrap, ContactController, ContactView) {
+            bootstrap(
+                    {},
+                    ContactController,
+                    ContactView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+    <div class="col-lg-2 col-md-2">
+        <ul class="nav nav-pills nav-stacked">
+            <li class="active"><a href="#tabAll" data-toggle="tab">All Contacts <span class="badge">{{ all|length }}</span></a></li>
+            <li><a href="#tabMentors" data-toggle="tab">Mentors <span class="badge">{{ mentors|length }}</span></a></li>
+            <li><a href="#tabMentees" data-toggle="tab">Mentees <span class="badge">{{ mentees|length }}</span></a></li>
+            <li><a href="#tabFriends" data-toggle="tab">Friends <span class="badge">{{ friends|length }}</span></a></li>
+        </ul>
+    </div>
+    <div class="col-lg-10 col-md-10">
+        <div class="tab-content">
+            <div class="tab-pane active" id="tabAll">
+                {{ _contact.list_users(style, all) }}
+            </div>
+            <div class="tab-pane" id="tabMentors">
+                {{ _contact.list_users(style, mentors) }}
+            </div>
+            <div class="tab-pane" id="tabMentees">
+                {{ _contact.list_users(style, mentees) }}
+            </div>
+            <div class="tab-pane" id="tabFriends">
+                {{ _contact.list_users(style, friends) }}
+            </div>
+        </div>
+    </div>
+    {{ form(users_select_form) }}
+{% endblock content %}

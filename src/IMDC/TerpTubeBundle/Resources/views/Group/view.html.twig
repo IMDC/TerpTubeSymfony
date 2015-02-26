@@ -1,0 +1,104 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}{{ group.name }}{% endblock %}
+
+{% block sidebarlinks_groups %}class="active"{% endblock %}
+
+{% block content %}
+    {% set isMember = app.user in group.members %}
+    <div class="col-md-12">
+        <div class="row" style="margin-bottom: 20px;">
+            <div class="col-md-6">
+                {% if isMember and group.membersCanAddForums %}
+                    <a class="btn btn-default" href="{{ path('imdc_forum_new', {'groupId': group.id}) }}"><i class="fa fa-plus"></i> Create Forum</a>
+                {% endif %}
+                {% if not isMember and group.openForNewMembers %}
+                    <a class="btn btn-default" href="{{ path('imdc_group_join', {'groupId': group.id}) }}"><i class="fa fa-plus"></i> {% if group.joinByInvitationOnly %}Request to join group{% else %}Join group{% endif %}</a>
+                {% elseif isMember and app.user != group.userFounder %}
+                    <a class="btn btn-default" href="{{ path('imdc_group_leave', {'groupId': group.id}) }}"><i class="fa fa-minus"></i> Leave group</a>
+                {% endif %}
+            </div>
+            <div class="col-md-6 text-right">
+                {% if isMember %}
+                    <a class="btn btn-default" href="{{ path('imdc_group_message', {'groupId': group.id}) }}"><i class="fa fa-envelope"></i> Send a Group Message</a>
+                {% endif %}
+                {% if is_granted('EDIT', group) %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                            Action <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                            <li><a href="{{ path('imdc_group_edit', {'groupId': group.id}) }}"><i class="fa fa-edit"></i> Edit Group</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{{ path('imdc_group_manage', {'groupId': group.id}) }}"><i class="fa fa-wrench"></i> Manage Members</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row group-container-media">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
+                {% if group.media[0] is defined %}
+                    {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.media[0]} %}
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+        <div class="row group-container-info">
+            <div class="col-md-12">
+                <h1>{{ group.name }}</h1>
+                <div class="row">
+                    <div class="col-xs-3">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>Members</td>
+                                    <td>{{ group.members|length }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Created</td>
+                                    <td>{{ group.dateCreated|date('g:ia F j Y') }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-xs-9" style="border-left: 1px solid #dddddd;">
+                        <p>{{ group.description|default('<i>No Description</i>')|raw }}</p>
+                    </div>
+                </div>
+                {% if isMember %}
+                    <p><span class="label label-info">You are currently a member of this group</span></p>
+                {% endif %}
+            </div>
+        </div>
+        <!-- group forums -->
+        <div class="group-container-forums">
+            {% include 'IMDCTerpTubeBundle:Forum:list.html.twig' %}
+        </div>
+        <!-- group members -->
+        <div class="row">
+            <div class="col-md-12">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <hr class="tt-separator-top" />
+                {% if group.members|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' with {'members': group.members} %}
+                {% else %}
+                    <p class="text-center" style="margin-bottom: 20px;">No members</p>
+                {% endif %}
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+    {% if app.environment == 'test' %}
+        <div style="display: none;">
+            <div id="__testModel">{{ group|serialize('json')|raw }}</div>
+        </div>
+    {% endif %}
+{% endblock content %}

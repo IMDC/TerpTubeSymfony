@@ -1,0 +1,41 @@
+{#
+included by:
+_Thread:thumbnail.html.twig
+_Thread:view.html.twig
+#}
+
+{% if object.accessType is defined %}
+    {% set color = 'red' %}
+
+    {% if is_granted('VIEW', object) %}
+        {% set color = 'green' %}
+    {% endif %}
+
+    {% if object.accessType.id == constant('IMDC\\TerpTubeBundle\\Entity\\AccessType::TYPE_PUBLIC') %}
+        <i class="fa fa-unlock" title="Public" style="color: {{ color }};"></i>
+    {% endif %}
+
+    {% if object.accessType.id == constant('IMDC\\TerpTubeBundle\\Entity\\AccessType::TYPE_LINK_ONLY') %}
+        <i class="fa fa-link" title="Link only" style="color: {{ color }};"></i>
+    {% endif %}
+
+    {% if object.accessType.id == constant('IMDC\\TerpTubeBundle\\Entity\\AccessType::TYPE_REGISTERED_USERS') %}
+        <i class="fa fa-lock" title="Registered users" style="color: {{ color }};"></i>
+    {% endif %}
+
+    {% if object.accessType.id == constant('IMDC\\TerpTubeBundle\\Entity\\AccessType::TYPE_USERS') %}
+        <i class="fa fa-lock" title="Specific users" style="color: {{ color }};"></i>
+    {% endif %}
+
+    {% if object.accessType.id == constant('IMDC\\TerpTubeBundle\\Entity\\AccessType::TYPE_FRIENDS') %}
+        <i class="fa fa-lock" title="My friends" style="color: {{ color }};"></i>
+    {% endif %}
+
+    {% if object.accessType.id == constant('IMDC\\TerpTubeBundle\\Entity\\AccessType::TYPE_GROUP') %}
+        <i class="fa fa-lock" title="A specific group" style="color: {{ color }};"></i>
+    {% endif %}
+
+    {% if object.accessType.id == constant('IMDC\\TerpTubeBundle\\Entity\\AccessType::TYPE_PRIVATE') %}
+        <i class="fa fa-lock" title="Private" style="color: {{ color }};"></i>
+    {% endif %}
+{% endif %}

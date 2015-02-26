@@ -1,0 +1,42 @@
+{#
+included by:
+_Forum:index.html.twig
+_Group:view.html.twig
+#}
+
+<div class="row">
+    <div class="col-md-12">
+        <img class="img-responsive center-block" src="" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <hr class="tt-separator-top" />
+        {% if forums|length > 0 %}
+            {% set pagParams = forums.getParams %}
+            <div class="btn-group" style="margin-bottom: 10px;">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    Sort by
+                    {% if forums.isSorted('f.lastActivity') %}Last Activity
+                    {% elseif forums.isSorted('f.titleText') %}Title
+                    {% elseif forums.isSorted('f.creationDate') %}Date Created
+                    {% endif %}
+                    {% if 'asc' in pagParams %}(ascending)
+                    {% elseif 'desc' in pagParams %}(descending)
+                    {% endif %}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>{{ knp_pagination_sortable(forums, 'Last Activity', 'f.lastActivity') }}</li>
+                    <li>{{ knp_pagination_sortable(forums, 'Title', 'f.titleText') }}</li>
+                    <li>{{ knp_pagination_sortable(forums, 'Date Created', 'f.creationDate') }}</li>
+                </ul>
+            </div>
+            {% include 'IMDCTerpTubeBundle:Forum:thumbnail.html.twig' %}
+        {% else %}
+            <p class="text-center" style="margin-bottom: 20px;">No forums</p>
+        {% endif %}
+        {{ knp_pagination_render(forums) }}
+        <hr class="tt-separator-bottom" />
+    </div>
+</div>

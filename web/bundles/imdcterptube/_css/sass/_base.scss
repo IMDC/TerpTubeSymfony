@@ -1,0 +1,256 @@
+@import 'bootstrap/variables';
+
+$line-height-base-top: 2; // FontAwesome fa-2x font size (em)
+$line-height-computed-top: floor(($font-size-base * $line-height-base-top));
+
+$navbar-text-color: white;
+
+$navbar-top-height: 70px;
+$navbar-top-padding-vertical: (($navbar-top-height - $line-height-computed-top) / 2);
+
+$navbar-bottom-height: 25px;
+$navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed) / 2);
+
+$body-extra-padding: 15px;
+
+$eku-primary: #5e213b;
+
+
+
+body {
+  padding-top: $navbar-top-height + $body-extra-padding;
+  padding-bottom: $navbar-bottom-height + $body-extra-padding;
+  /* background-color: #eeeeee; */
+
+  @media (max-width: 1200px) {
+    padding-top: $navbar-top-height;
+  }
+}
+
+/* consider extending the pagination template to use a custom class*/
+ul.pagination {
+  margin-top: 0;
+  margin-bottom: 0;
+  vertical-align: bottom;
+}
+
+.tt-navbar-header {
+  float: none;
+}
+
+@media (max-width: 1200px) and (min-width: 768px) {
+  .tt-navbar-header {
+    float: left;
+  }
+}
+
+.tt-navbar-logo {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  min-height: $navbar-top-height;
+}
+
+.tt-navbar-top {
+  min-height: $navbar-top-height;
+  color: $navbar-text-color;
+  /* background-color: $eku-primary; */
+}
+
+.tt-navbar-nav-top > li > a {
+  padding-top: $navbar-top-padding-vertical;
+  padding-bottom: $navbar-top-padding-vertical;
+}
+
+.tt-navbar-right-top > li > a {
+  line-height: $line-height-base-top;
+}
+
+.tt-navbar-bottom {
+  min-height: $navbar-bottom-height;
+  color: $navbar-text-color;
+}
+
+.tt-copyright {
+  padding-top: $navbar-bottom-padding-vertical;
+  padding-bottom: $navbar-bottom-padding-vertical;
+}
+
+.tt-navbar-side {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  position: fixed;
+  top: $navbar-top-height;
+  left: 0;
+  bottom: $navbar-bottom-height;
+  background-color: #888888;
+
+  a {
+    color: #000000;
+    font-size: 1.2em;
+  }
+
+  div {
+    padding-bottom: 10px;
+
+    img {
+      max-width: 50px;
+      max-height: 50px;
+    }
+  }
+
+  @media (max-width: 1200px) {
+    position: relative;
+    top: 0;
+    right: 0;
+    bottom: inherit;
+    margin-bottom: $body-extra-padding;
+
+    div {
+      padding-bottom: 0;
+      display: inline-block;
+    }
+  }
+}
+
+.tt-flash-message-container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.tt-separator-top {
+  border-top: 1px solid #000000;
+}
+
+.tt-separator-bottom {
+  @extend .tt-separator-top;
+
+  margin-top: 0;
+}
+
+.tt-date {
+  color: #aaa;
+  font-size: 0.9em;
+}
+
+.tt-avatar {
+  max-height: 150px;
+}
+
+.tt-table {
+  > thead {
+    background-color: white;
+  }
+}
+
+.tt-this-is-you {
+  font-size: 0.9em;
+  color: #aaa !important;
+}
+
+.tt-popup-dialog {
+  position: fixed !important;
+  z-index: 5000;
+}
+
+// tt-grid-div (tt-gd)
+$tt-gd-img-height: 125px;
+
+.tt-grid-div {
+  margin-top: 5px;
+
+  & div.tt-grid-div-body {
+    min-height: 265px;
+
+    & div.tt-grid-div-item {
+      position: absolute;
+      margin-left: 4px;
+      z-index: 1;
+    }
+
+    & div.tt-grid-div-thumbnail {
+      height: $tt-gd-img-height;
+      margin-bottom: 5px;
+      text-align: center;
+      -webkit-transform-style: preserve-3d;
+      -moz-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+
+      > div {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+
+        img {
+          max-height: $tt-gd-img-height;
+        }
+      }
+    }
+
+    & div.tt-grid-div-primary {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+
+      > p:nth-of-type(1) {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+// tt-list-table (tt-lt)
+$tt-lt-row-height: 34px;
+$tt-lt-line-height: $tt-lt-row-height;
+
+.tt-list-table {
+  @extend .tt-table;
+
+  margin-top: 5px;
+
+  & span {
+    color: initial; /* override bootstrap span color under .active class */
+  }
+
+  > thead > tr > th, > tbody > tr > td {
+    line-height: $tt-lt-line-height;
+    vertical-align: middle;
+
+    i.fa {
+      vertical-align: middle;
+    }
+
+    &.tt-list-table-col-item {
+      width: 1%;
+      line-height: initial;
+    }
+
+    &.tt-list-table-col-thumbnail {
+      text-align: center;
+    }
+
+    &.tt-list-table-col-primary {
+      width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tt-avatar, .tt-thumbnail {
+      max-height: $tt-lt-row-height;
+    }
+  }
+
+  > tbody > tr > td {
+    &.tt-list-table-col-primary {
+      > span:nth-of-type(2) {
+        float: right;
+        margin-bottom: -1px;
+        display: none;
+      }
+
+      &:hover > span:nth-of-type(2)  {
+        display: inline-block;
+      }
+    }
+  }
+}

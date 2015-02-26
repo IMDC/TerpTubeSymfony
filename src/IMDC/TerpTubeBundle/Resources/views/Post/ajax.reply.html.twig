@@ -1,0 +1,19 @@
+{% set newPost = {id: '0' ~ random(), parent_thread: thread, parent_post: post} %}
+{% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
+
+<script type="text/javascript">
+    require([
+        'bootstrap',
+        'model/postModel', 'controller/postController', 'views/post/newView',
+        'core/helper', 'main'
+    ], function(bootstrap, PostModel, PostController, PostView, Helper) {
+        bootstrap(
+                new PostModel({{ newPost|serialize('json')|raw }}),
+                PostController,
+                PostView,
+                {}
+        );
+
+        Helper.autoSize();
+    });
+</script>

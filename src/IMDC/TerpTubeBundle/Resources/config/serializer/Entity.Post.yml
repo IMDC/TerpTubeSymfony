@@ -1,0 +1,20 @@
+IMDC\TerpTubeBundle\Entity\Post:
+  exclusion_policy: ALL
+  virtual_properties:
+    getOrderedMedia:
+      serialized_name: ordered_media
+  properties:
+    id:
+      expose: true
+    content:
+      expose: true
+    startTime:
+      expose: true
+    endTime:
+      expose: true
+    isTemporal:
+      expose: true
+    parentPost:
+      expose: true
+    parentThread:
+      expose: true

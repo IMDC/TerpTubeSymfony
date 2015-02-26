@@ -1,0 +1,33 @@
+.tt-thread-thumbnail {
+  @extend .tt-forum-thumbnail;
+}
+
+.tt-thread-op-container {
+  /*overflow-y: scroll;*/ /* scroll threadOpContainer */
+}
+
+.tt-thread-video-controls {
+  position: absolute;
+
+  li img {
+    max-width: 24px;
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 10px;
+  }
+}
+
+.tt-thread-content {
+  padding: 3px;
+  margin-bottom: 15px;
+  min-height: 4em;
+  max-height: 900px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  overflow-x: auto;
+  background-color: #fff;
+}
+
+.tt-thread-reply-container {
+  overflow-y: scroll; /* scroll threadReplyContainer */
+}

@@ -1,0 +1,3 @@
+imdc_help_index:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:Help:index }

@@ -1,0 +1,33 @@
+imdc_post_new:
+  pattern: /new/{threadId}/{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:new }
+  requirements:
+    threadId: \d+
+    pid: \d+
+  options:
+    expose: true
+
+imdc_post_view:
+  pattern: /{pid}
+  defaults: { _controller: IMDCTerpTubeBundle:Post:view }
+  requirements:
+    pid: \d+
+  options:
+    expose: true
+
+imdc_post_edit:
+  pattern: /{pid}/edit
+  defaults: { _controller: IMDCTerpTubeBundle:Post:edit }
+  requirements:
+    pid: \d+
+  options:
+    expose: true
+
+imdc_post_delete:
+  pattern: /{pid}/delete
+  defaults: { _controller: IMDCTerpTubeBundle:Post:delete }
+  methods: [POST]
+  requirements:
+    pid: \d+
+  options:
+    expose: true

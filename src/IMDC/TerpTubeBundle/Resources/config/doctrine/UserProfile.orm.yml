@@ -1,0 +1,91 @@
+IMDC\TerpTubeBundle\Entity\UserProfile:
+    type:   entity
+    table:  user_profile
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+     
+    manyToMany:
+        languages:    #Have an array of languages (one-to-many relationship)
+            targetEntity: Language
+            joinTable:
+                name: user_language
+                joinColumns:
+                    user_profile_id:
+                      referencedColumnName: id
+                inverseJoinColumns:
+                    language_id:
+                      referencedColumnName: id
+                      unique: true          
+            nullable: true;  
+            cascade: ["all"]
+            
+    oneToOne:
+        avatar: #avatar to hold the picture from a resource file
+            targetEntity: Media
+            joinColumn:
+                name: avatar
+                referencedColumnName: id
+            inverseColumn:
+                name: owner_id
+                referencedColumnName: id
+            cascade: ["all"]
+            
+    fields: 
+        firstName:
+            type: string
+            length: 255
+        lastName:
+            type: string
+            length: 255
+        middleName:
+            type: string
+            length: 255
+            nullable: true
+        birthDate:
+            type: date
+            nullable: true
+        city:
+            type: string
+            length: 255
+        country:
+            type: string
+            length: 255
+        gender:
+            type: string
+            length: 1
+            nullable: true
+        skypeName:
+            type: string
+            length: 255
+            nullable: true
+        interestedInMentoredByMentor:
+            type: boolean
+            nullable: true
+        interestedInMentoredByInterpreter:
+            type: boolean
+            nullable: true
+        interestedInMentoringSignLanguage:
+            type: boolean
+            nullable: true
+        interestedInMentoringInterpreter:
+            type: boolean
+            nullable: true
+        interestedInMentoringMentor:
+            type: boolean
+            nullable: true
+        profileVisibleToPublic:
+            type: boolean
+        #can be greyed out until video bio is updated
+        textBio:
+            type: text
+            nullable: true
+            
+        #education
+        #Affiliations/memberships/organizations ?
+            #Deaf community connection ? (deaf parents, etc)
+        #Video bio file
+        #Interests and specialties fields. Radio buttons for the common options.
+        #Seperate tab for professional experience in profile

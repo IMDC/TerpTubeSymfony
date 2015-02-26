@@ -1,0 +1,20 @@
+{#
+included by:
+_Thread:view.html.twig
+#}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+<div style="display: inline-block;">
+    {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' %}
+</div>
+<div style="display: inline-block; vertical-align: top;">
+    {% include 'IMDCTerpTubeBundle:Member:username.html.twig' %}
+    <p>
+        {% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' %}
+    </p>
+    <ul class="list-unstyled">
+        <li class="text-muted" style="font-size:80%;">{{ 'member.infoBlock.joined'|trans }}: {{ member.getJoinDate|date('M j Y') }}</li>
+        <li class="text-muted" style="font-size:80%;">{{ 'member.infoBlock.postCount'|trans }}: {{ member.getPostCount }}</li>
+    </ul>
+</div>
