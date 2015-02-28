@@ -56,11 +56,8 @@ class UsersToStringsTransformer implements DataTransformerInterface
     {
         $users = new ArrayCollection();
         
-        if (!$usernames) {
-            throw new TransformationFailedException(sprintf(
-    				'Usernames string with value of "%s" not transformed',
-    				$usernames
-    				));
+        if (empty($usernames)) {
+            return $users;
         }
          
         if (!is_string($usernames)) {

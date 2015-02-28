@@ -48,10 +48,10 @@ class Access
             case AccessType::TYPE_LINK_ONLY:
             case AccessType::TYPE_REGISTERED_USERS:
             case AccessType::TYPE_PRIVATE:
+            case AccessType::TYPE_FRIENDS:
                 // no other aces needed
                 break;
             case AccessType::TYPE_USERS:
-            case AccessType::TYPE_FRIENDS:
             case AccessType::TYPE_GROUP:
                 foreach ($this->objectIdentity->getSecurityIdentities() as $securityIdentity) {
                     if ($accessType == AccessType::TYPE_GROUP && $securityIdentity instanceof GroupSecurityIdentity)
@@ -121,10 +121,10 @@ class Access
                 };
 
                 $delAces = 0;
-                for ($a=0; $a<count($aces); $a++) {
+                for ($a = 0; $a < count($aces); $a++) {
                     $ace = $aces[$a];
                     if (!$sidExists($ace->getSecurityIdentity())) {
-                        $acl->deleteObjectAce($a-$delAces++);
+                        $acl->deleteObjectAce($a - $delAces++);
                     }
                 }
 
@@ -190,8 +190,25 @@ class Access
                 }
                 return false;
             case AccessType::TYPE_USERS:
-            case AccessType::TYPE_FRIENDS:
                 // handled by AclVoter
+                return false;
+            case AccessType::TYPE_FRIENDS:
+                $objectIdent = $this->objectIdentity->getObjectIdentity();
+
+                if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Forum') {
+                    $forum = $this->entityManager->find('IMDCTerpTubeBundle:Forum', $objectIdent->getIdentifier());
+                    if ($forum && $forum->getCreator()->getFriendsList()->contains($user)) {
+                        return true;
+                    }
+                }
+
+                if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Thread') {
+                    $thread = $this->entityManager->find('IMDCTerpTubeBundle:Thread', $objectIdent->getIdentifier());
+                    if ($thread && $thread->getCreator()->getFriendsList()->contains($user)) {
+                        return true;
+                    }
+                }
+
                 return false;
             case AccessType::TYPE_GROUP:
                 $aces = $acl->getObjectAces();

@@ -5,8 +5,11 @@ namespace IMDC\TerpTubeBundle\Form\Type;
 use Doctrine\ORM\EntityManager;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Security\Acl\AccessChoiceList;
+use IMDC\TerpTubeBundle\Security\Acl\AccessDataToFormDataTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -29,22 +32,46 @@ class AccessTypeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /*$class = $options['class'];
-        $hasValidGroup = $options['hasValidGroup'];
+        $accessData = $options['access_data'];
 
-        $qb = $this->entityManager->getRepository('IMDCTerpTubeBundle:AccessType')->createQueryBuilder('a');
-        if ($class == 'IMDC\TerpTubeBundle\Entity\Thread') {
-            $qb->where('a.id != :accessType')
-                ->setParameter('accessType', AccessType::TYPE_GROUP);
-        }
-        $builder->add('_', 'entity', array(
-            'class' => 'IMDCTerpTubeBundle:AccessType',
-            'query_builder' => $qb,
-            'expanded' => true,
-            'data' => $this->entityManager->getReference('IMDCTerpTubeBundle:AccessType', $hasValidGroup ? AccessType::TYPE_GROUP : AccessType::TYPE_PUBLIC),
-            'label' => false,
-            'property_path' => 'id'
-        ));*/
+        $builder->add(
+            $builder
+                ->create('type', 'choice', array(
+                    'choice_list' => $options['choice_list'],
+                    'expanded' => true,
+                    'label' => false))
+                ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                    $accessType = $event->getData();
+                    if (!$accessType) {
+                        $accessType = $this->entityManager->find('IMDCTerpTubeBundle:AccessType', AccessType::TYPE_PUBLIC);
+                    }
+
+                    $event->setData($accessType);
+                })
+        );
+
+        $builder->add('data', new AccessDataType($this->entityManager), array(
+            'label' => false
+        ));
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($accessData) {
+            // convert data to into this form's data
+            $accessType = $event->getData();
+            if ($accessType instanceof AccessType) {
+                $transformer = new AccessDataToFormDataTransformer($accessType, $this->entityManager);
+                $data = $transformer->transform($accessData);
+
+                $event->setData(array(
+                    'type' => $accessType, // access type
+                    'data' => $data
+                ));
+            }
+        });
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            // set data to what the parent form expects after this form's data has been set (FormEvents::PRE_SUBMIT)
+            $event->setData($event->getForm()->get('type')->getData()); // access type
+        });
     }
 
     /**
@@ -52,30 +79,22 @@ class AccessTypeType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $em = $this->entityManager;
-
-        $choiceList = function (Options $options) use ($em) {
-            return AccessChoiceList::fromEntityManager($em, $options['class']);
+        $choiceList = function (Options $options) {
+            return AccessChoiceList::fromEntityManager($this->entityManager, $options['class']);
         };
 
         $resolver
             ->setDefaults(array(
                 'choice_list' => $choiceList,
-                'expanded' => true))
+                'access_data' => null))
             ->setRequired(array(
                 'class'))
-            ->addAllowedValues(array(
+            ->setAllowedTypes(array(
+                'access_data' => array('null', 'IMDC\TerpTubeBundle\Entity\AccessData')))
+            ->setAllowedValues(array(
                 'class' => array(
                     'IMDC\TerpTubeBundle\Entity\Forum',
                     'IMDC\TerpTubeBundle\Entity\Thread')));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParent()
-    {
-        return 'choice';
     }
 
     /**

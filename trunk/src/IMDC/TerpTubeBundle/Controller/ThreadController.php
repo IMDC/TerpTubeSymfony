@@ -2,7 +2,6 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
-use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
@@ -71,15 +70,13 @@ class ThreadController extends Controller
         $form = $this->createForm(new ThreadType($securityContext), $thread, $formOptions);
         $form->handleRequest($request);
 
-        if (!$form->isValid() && !$form->isSubmitted()) {
+        if (!$form->isSubmitted()) {
             if ($isNewFromMedia) {
                 $form->get('mediaIncluded')->setData(array($media));
             }
+        }
 
-            $form->get('accessType')->setData(
-                $em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC)
-            );
-        } else {
+        if ($form->isValid()) {
             if ($isNewFromMedia) {
                 $forum = $form->get('forum')->getData();
             }
@@ -119,7 +116,8 @@ class ThreadController extends Controller
             $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->createAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity, $form->get('accessType')->get('data'));
+            $accessProvider->setSecurityIdentities($objectIdentity, $thread);
             $access->insertEntries($securityIdentity);
             $accessProvider->updateAccess();
 
@@ -195,8 +193,14 @@ class ThreadController extends Controller
             throw new AccessDeniedException();
         }
 
+        /* @var $accessProvider AccessProvider */
+        $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+        $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
+        $accessProvider->loadAccessData($objectIdentity);
+
         $form = $this->createForm(new ThreadType(), $thread, array(
-            'canChooseMedia' => false //FIXME changing media not allowed?
+            'canChooseMedia' => false, //FIXME changing media not allowed?
+            'access_data' => $accessProvider->getAccessData()
         ));
         $form->handleRequest($request);
 
@@ -213,9 +217,6 @@ class ThreadController extends Controller
             $em->persist($forum);
             $em->flush();
 
-            /* @var $accessProvider AccessProvider */
-            $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
-            $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             $access = $accessProvider->createAccess($objectIdentity);
@@ -271,6 +272,7 @@ class ThreadController extends Controller
         $em->persist($forum);
         $em->persist($user);
 
+        /* @var $accessProvider AccessProvider */
         $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
         $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
         $accessProvider->deleteAccess($objectIdentity);

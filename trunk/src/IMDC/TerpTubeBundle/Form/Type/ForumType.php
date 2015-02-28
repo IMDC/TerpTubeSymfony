@@ -21,7 +21,8 @@ class ForumType extends AbstractType
         ));
 
         $builder->add('accessType', 'access_type', array(
-            'class' => 'IMDC\TerpTubeBundle\Entity\Forum'
+            'class' => 'IMDC\TerpTubeBundle\Entity\Forum',
+            'access_data' => $options['access_data']
         ));
 
         $queryBuilder = function (EntityRepository $repo) use ($user, $group) {
@@ -53,13 +54,16 @@ class ForumType extends AbstractType
             'required' => false,
             'attr' => $attr
         ));
+
+        // TODO access: null group if access type doesn't match
 	}
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
             ->setDefaults(array(
-                'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum'))
+                'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum',
+                'access_data' => null))
             ->setRequired(array(
                 'user'))
             ->setOptional(array(
