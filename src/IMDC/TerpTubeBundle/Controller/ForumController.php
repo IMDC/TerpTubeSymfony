@@ -91,7 +91,7 @@ class ForumController extends Controller
         $form = $this->createForm(new ForumType(), $forum, $formOptions);
         $form->handleRequest($request);
 
-        if (!$form->isValid()) {
+        if (!$form->isSubmitted()) {
             if ($group) {
                 $form->get('accessType')->setData(
                     $em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_GROUP)
@@ -100,12 +100,10 @@ class ForumController extends Controller
                 if ($group->getUserFounder()->getId() == $user->getId() || $group->getMembersCanAddForums()) {
                     $form->get('group')->setData($group);
                 }
-            } else {
-                $form->get('accessType')->setData(
-                    $em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC)
-                );
             }
-        } else {
+        }
+
+        if ($form->isValid()) {
             $currentDateTime = new \DateTime('now');
             $forum->setCreator($user);
             $forum->setLastActivity($currentDateTime);
@@ -129,7 +127,8 @@ class ForumController extends Controller
             $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->createAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity, $form->get('accessType')->get('data'));
+            $accessProvider->setSecurityIdentities($objectIdentity, $forum);
             $access->insertEntries($securityIdentity);
             $accessProvider->updateAccess();
 
@@ -221,14 +220,22 @@ class ForumController extends Controller
             throw new AccessDeniedException();
         }
 
+        /* @var $accessProvider AccessProvider */
+        $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+        $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
+        $accessProvider->loadAccessData($objectIdentity);
+
 	    $form = $this->createForm(new ForumType(), $forum, array(
-            'user' => $user
+            'user' => $user,
+            'access_data' => $accessProvider->getAccessData()
         ));
         $form->handleRequest($request);
 
-        if (!$form->isValid()) {
+        if (!$form->isSubmitted()) {
             $form->get('titleMedia')->setData($forum->getOrderedMedia());
-        } else {
+        }
+
+        if ($form->isValid()) {
             $forum->setLastActivity(new \DateTime('now'));
 
             //TODO 'currently' only your own media should be here, but check anyway
@@ -246,12 +253,10 @@ class ForumController extends Controller
 	        $em->persist($user);
 	        $em->flush();
 
-            /* @var $accessProvider AccessProvider */
-            $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
-            $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->createAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity, $form->get('accessType')->get('data'));
+            $accessProvider->setSecurityIdentities($objectIdentity, $forum);
             $access->updateEntries($securityIdentity);
             $accessProvider->updateAccess();
 	        
@@ -300,6 +305,7 @@ class ForumController extends Controller
         $em->remove($forum);
         $em->persist($user);
 
+        /* @var $accessProvider AccessProvider */
         $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
         $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
         $accessProvider->deleteAccess($objectIdentity);

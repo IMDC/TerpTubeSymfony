@@ -79,6 +79,7 @@ class AccessVoter implements VoterInterface
 
         $objectIdentity = AccessObjectIdentity::fromAccessObject($object);
         $access = $this->accessProvider->createAccess($objectIdentity);
+        $this->accessProvider->setSecurityIdentities($objectIdentity, $object);
         if ($access->isGranted($token->getUser(), $this->container->get('request'), $this->container->get('router')))
             return VoterInterface::ACCESS_GRANTED;
 
