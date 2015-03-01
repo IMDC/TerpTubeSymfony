@@ -7,6 +7,7 @@ use FOS\UserBundle\Model\UserInterface;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
@@ -169,16 +170,17 @@ class Access
                 if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Forum') {
                     $resourceUrl = $router->generate('imdc_forum_view', array(
                         'forumid' => (int)$objectIdent->getIdentifier()
-                    ));
+                    ), UrlGenerator::ABSOLUTE_PATH); // ensure absolute paths always
                 }
 
                 if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Thread') {
                     $resourceUrl = $router->generate('imdc_thread_view', array(
                         'threadid' => (int)$objectIdent->getIdentifier()
-                    ));
+                    ), UrlGenerator::ABSOLUTE_PATH);
                 }
 
-                if ($resourceUrl === $request->getRequestUri()) {
+                // check base url with path info only as generated urls are just that
+                if ($resourceUrl === $request->getBaseUrl().$request->getPathInfo()) {
                     return true;
                 }
 
