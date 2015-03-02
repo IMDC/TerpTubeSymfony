@@ -217,9 +217,12 @@ class ThreadController extends Controller
             $em->persist($forum);
             $em->flush();
 
+            // recreate object identity since entity has changed
+            $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->createAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity, $form->get('accessType')->get('data'));
+            $accessProvider->setSecurityIdentities($objectIdentity, $thread);
             $access->updateEntries($securityIdentity);
             $accessProvider->updateAccess();
 

@@ -263,6 +263,8 @@ class ForumController extends Controller
             $em->persist($user);
             $em->flush();
 
+            // recreate object identity since entity has changed
+            $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             $access = $accessProvider->createAccess($objectIdentity, $form->get('accessType')->get('data'));
