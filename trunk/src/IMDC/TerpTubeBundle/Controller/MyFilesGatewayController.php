@@ -42,7 +42,7 @@ class MyFilesGatewayController extends Controller
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
         
-        $criteria = Criteria::create();
+        $criteria = Criteria::create()->orderBy(array("id" => Criteria::DESC ));
         $type = $request->query->get('type', false);
         $style = $request->query->get('style', 'grid');
         
