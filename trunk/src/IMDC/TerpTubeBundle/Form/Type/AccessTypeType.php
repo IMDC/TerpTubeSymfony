@@ -10,8 +10,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Security\Core\SecurityContext;
 
 /**
  * Class AccessTypeType
@@ -21,10 +21,12 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class AccessTypeType extends AbstractType
 {
     private $entityManager;
+    private $securityContext;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, SecurityContext $securityContext)
     {
         $this->entityManager = $entityManager;
+        $this->securityContext = $securityContext;
     }
 
     /**
@@ -33,22 +35,25 @@ class AccessTypeType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $accessData = $options['access_data'];
+        $choiceList = AccessChoiceList::fromEntityManager($this->entityManager, $options['class'], $this->securityContext);
 
-        $builder->add(
-            $builder
-                ->create('type', 'choice', array(
-                    'choice_list' => $options['choice_list'],
-                    'expanded' => true,
-                    'label' => false))
-                ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-                    $accessType = $event->getData();
-                    if (!$accessType) {
-                        $accessType = $this->entityManager->find('IMDCTerpTubeBundle:AccessType', AccessType::TYPE_PUBLIC);
-                    }
+        if (count($choiceList->getChoices()) > 0) {
+            $builder->add(
+                $builder
+                    ->create('type', 'choice', array(
+                        'choice_list' => $choiceList,
+                        'expanded' => true,
+                        'label' => false))
+                    ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                        $accessType = $event->getData();
+                        if (!$accessType) {
+                            $accessType = $this->entityManager->find('IMDCTerpTubeBundle:AccessType', AccessType::TYPE_PUBLIC);
+                        }
 
-                    $event->setData($accessType);
-                })
-        );
+                        $event->setData($accessType);
+                    })
+            );
+        }
 
         $builder->add('data', new AccessDataType($this->entityManager), array(
             'label' => false
@@ -79,13 +84,8 @@ class AccessTypeType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $choiceList = function (Options $options) {
-            return AccessChoiceList::fromEntityManager($this->entityManager, $options['class']);
-        };
-
         $resolver
             ->setDefaults(array(
-                'choice_list' => $choiceList,
                 'access_data' => null))
             ->setRequired(array(
                 'class'))
