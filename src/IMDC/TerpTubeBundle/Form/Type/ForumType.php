@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace IMDC\TerpTubeBundle\Form\Type;
 
@@ -10,13 +10,13 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ForumType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
-	{
+    {
         $user = $options['user'];
-        $group = array_key_exists('group', $options) ? $options['group'] : null;
+        $group = $options['group'];
 
         $builder->add('titleMedia', 'media_chooser');
 
-	    $builder->add('titleText', 'text', array(
+        $builder->add('titleText', 'text', array(
             'label' => 'Title'
         ));
 
@@ -56,13 +56,14 @@ class ForumType extends AbstractType
         ));
 
         // TODO access: null group if access type doesn't match
-	}
+    }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
             ->setDefaults(array(
                 'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum',
+                'group' => null,
                 'access_data' => null))
             ->setRequired(array(
                 'user'))
@@ -70,11 +71,11 @@ class ForumType extends AbstractType
                 'group'))
             ->setAllowedTypes(array(
                 'user' => 'Symfony\Component\Security\Core\User\UserInterface',
-                'group' => 'IMDC\TerpTubeBundle\Entity\UserGroup'));
+                'group' => array('null', 'IMDC\TerpTubeBundle\Entity\UserGroup')));
     }
 
-	public function getName()
-	{
-		return 'forum';
-	}
+    public function getName()
+    {
+        return 'forum';
+    }
 }

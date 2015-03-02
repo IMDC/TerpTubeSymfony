@@ -146,7 +146,7 @@ services:
 
     imdc_terptube.form.type.access_type:
         class: IMDC\TerpTubeBundle\Form\Type\AccessTypeType
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [@doctrine.orm.entity_manager, @security.context]
         tags:
             - { name: form.type, alias: access_type }
 

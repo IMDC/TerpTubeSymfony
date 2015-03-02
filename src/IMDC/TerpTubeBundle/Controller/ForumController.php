@@ -27,18 +27,18 @@ class ForumController extends Controller
      * @return RedirectResponse|Response
      */
     public function listAction(Request $request)
-	{
+    {
         // check if the user is logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-		
-		$em = $this->getDoctrine()->getManager();
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
+
+        $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('IMDCTerpTubeBundle:Forum');
         $user = $this->getUser();
         $securityContext = $this->get('security.context');
 
-		$sortParams = array(
+        $sortParams = array(
             'sort' => $request->query->get('sort', 'f.lastActivity'),
             'direction' => $request->query->get('direction', 'desc')
         );
@@ -46,20 +46,20 @@ class ForumController extends Controller
         $paginator = $this->get('knp_paginator');
         $forums = $paginator->paginate(
             $repo->getViewableToUser($user, $securityContext, $sortParams),
-			$request->query->get('page', 1), /*page number*/
-			8 /*limit per page*/
-		);
+            $request->query->get('page', 1), /*page number*/
+            8 /*limit per page*/
+        );
 
         foreach ($sortParams as $key => $value) {
             $forums->setParam($key, $value);
         }
 
-		return $this->render('IMDCTerpTubeBundle:Forum:index.html.twig', array(
+        return $this->render('IMDCTerpTubeBundle:Forum:index.html.twig', array(
             'forums' => $forums,
             'forumThreadCount' => $em->getRepository('IMDCTerpTubeBundle:Thread')
-                    ->getViewableCountForForums($forums, $securityContext)
-		));
-	}
+                ->getViewableCountForForums($forums, $securityContext)
+        ));
+    }
 
     /**
      * @param Request $request
@@ -67,28 +67,38 @@ class ForumController extends Controller
      * @return RedirectResponse|Response
      */
     public function newAction(Request $request, $groupId)
-	{
-	    // check if the user is logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
+    {
+        // check if the user is logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
 
         $em = $this->getDoctrine()->getManager();
-        $user = $this->getUser();
-        $formOptions = array(
-            'user' => $user
-        );
 
         $group = null;
         if ($groupId) {
             $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-            if ($group) {
-                $formOptions['group'] = $group;
+        }
+
+        $securityContext = $this->get('security.context');
+        $user = $this->getUser();
+        if ($group) {
+            if ($securityContext->isGranted('EDIT', $group) === false &&
+                ($group->getMembers()->contains($user) && $group->getMembersCanAddForums()) === false
+            ) {
+                throw new AccessDeniedException('user cannot create group associated forums');
+            }
+        } else {
+            if ($securityContext->isGranted('ROLE_CREATE_FORUMS') === false) {
+                throw new AccessDeniedException('user cannot create top level forums');
             }
         }
 
         $forum = new Forum();
-        $form = $this->createForm(new ForumType(), $forum, $formOptions);
+        $form = $this->createForm(new ForumType(), $forum, array(
+            'user' => $user,
+            'group' => $group
+        ));
         $form->handleRequest($request);
 
         if (!$form->isSubmitted()) {
@@ -140,11 +150,11 @@ class ForumController extends Controller
                 'forumid' => $forum->getId()
             )));
         }
-        
+
         return $this->render('IMDCTerpTubeBundle:Forum:new.html.twig', array(
             'form' => $form->createView()
         ));
-	}
+    }
 
     /**
      * @param Request $request
@@ -153,13 +163,13 @@ class ForumController extends Controller
      * @throws \Exception
      */
     public function viewAction(Request $request, $forumid)
-	{
-	    // check if the user is logged in
-	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-	        return $this->redirect($this->generateUrl('fos_user_security_login'));
-	    }
+    {
+        // check if the user is logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
 
-	    $em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
         $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
         if (!$forum) {
             throw new \Exception('forum not found');
@@ -167,7 +177,7 @@ class ForumController extends Controller
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('VIEW', $forum) === false) {
-        	//if the suer is not allowed to see this content, redirect them back to forum list
+            //if the suer is not allowed to see this content, redirect them back to forum list
             return $this->redirect($this->generateUrl('imdc_forum_list'));
         }
 
@@ -178,21 +188,21 @@ class ForumController extends Controller
         );
 
         $paginator = $this->get('knp_paginator');
-	    $threads = $paginator->paginate(
+        $threads = $paginator->paginate(
             $threadRepo->getViewableToUser($forum->getId(), $securityContext, $sortParams),
             $request->query->get('page', 1) /* page number */,
-	    	8 /* limit per page */
-	    );
+            8 /* limit per page */
+        );
 
         foreach ($sortParams as $key => $value) {
             $threads->setParam($key, $value);
         }
 
-	    return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
-	    	'forum' => $forum,
-	    	'threads' => $threads
-	    ));
-	}
+        return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
+            'forum' => $forum,
+            'threads' => $threads
+        ));
+    }
 
     /**
      * @param Request $request
@@ -201,16 +211,16 @@ class ForumController extends Controller
      * @throws \Exception
      */
     public function editAction(Request $request, $forumid)
-	{
-	    // check if the user is logged in
-	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-	        return $this->redirect($this->generateUrl('fos_user_security_login'));
-	    }
+    {
+        // check if the user is logged in
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
 
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
 
-	    $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
+        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
         if (!$forum) {
             throw new \Exception('forum not found');
         }
@@ -225,7 +235,7 @@ class ForumController extends Controller
         $objectIdentity = AccessObjectIdentity::fromAccessObject($forum);
         $accessProvider->loadAccessData($objectIdentity);
 
-	    $form = $this->createForm(new ForumType(), $forum, array(
+        $form = $this->createForm(new ForumType(), $forum, array(
             'user' => $user,
             'access_data' => $accessProvider->getAccessData()
         ));
@@ -250,8 +260,8 @@ class ForumController extends Controller
             }
 
             $em->persist($forum);
-	        $em->persist($user);
-	        $em->flush();
+            $em->persist($user);
+            $em->flush();
 
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
@@ -259,21 +269,21 @@ class ForumController extends Controller
             $accessProvider->setSecurityIdentities($objectIdentity, $forum);
             $access->updateEntries($securityIdentity);
             $accessProvider->updateAccess();
-	        
-	        $this->get('session')->getFlashBag()->add(
+
+            $this->get('session')->getFlashBag()->add(
                 'info', 'Forum edited successfully!'
             );
 
-	        return $this->redirect($this->generateUrl('imdc_forum_view', array(
+            return $this->redirect($this->generateUrl('imdc_forum_view', array(
                 'forumid' => $forum->getId()
             )));
         }
-	        
+
         return $this->render('IMDCTerpTubeBundle:Forum:edit.html.twig', array(
             'form' => $form->createView(),
             'forum' => $forum
         ));
-	}
+    }
 
     /**
      * @param Request $request
@@ -282,13 +292,13 @@ class ForumController extends Controller
      * @throws \Exception
      */
     public function deleteAction(Request $request, $forumid) //TODO api?
-	{
+    {
         // check if the user is logged in
-	    if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-	        return $this->redirect($this->generateUrl('fos_user_security_login'));
-	    }
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        }
 
-	    $em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
         $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
         if (!$forum) {
             throw new \Exception('forum not found');
@@ -320,5 +330,5 @@ class ForumController extends Controller
         return new Response(json_encode($content), 200, array(
             'Content-Type' => 'application/json'
         ));
-	}
+    }
 }
