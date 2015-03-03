@@ -28,10 +28,10 @@
 {% block content %}
     <div class="col-lg-2 col-md-2">
         <ul class="nav nav-pills nav-stacked">
-            <li class="active"><a href="#tabAll" data-toggle="tab">All Contacts <span class="badge">{{ all|length }}</span></a></li>
-            <li><a href="#tabMentors" data-toggle="tab">Mentors <span class="badge">{{ mentors|length }}</span></a></li>
-            <li><a href="#tabMentees" data-toggle="tab">Mentees <span class="badge">{{ mentees|length }}</span></a></li>
-            <li><a href="#tabFriends" data-toggle="tab">Friends <span class="badge">{{ friends|length }}</span></a></li>
+            <li class="active"><a href="#tabAll" data-toggle="tab">All Contacts <span class="badge">{{ all.getPaginationData.totalCount }}</span></a></li>
+            <li><a href="#tabMentors" data-toggle="tab">Mentors <span class="badge">{{ mentors.getPaginationData.totalCount }}</span></a></li>
+            <li><a href="#tabMentees" data-toggle="tab">Mentees <span class="badge">{{ mentees.getPaginationData.totalCount }}</span></a></li>
+            <li><a href="#tabFriends" data-toggle="tab">Friends <span class="badge">{{ friends.getPaginationData.totalCount }}</span></a></li>
         </ul>
     </div>
     <div class="col-lg-10 col-md-10">
