@@ -155,3 +155,8 @@ services:
         arguments: [@doctrine.orm.entity_manager, @form.factory]
         tags:
             - { name: form.type, alias: media_chooser }
+
+    imdc_terptube.helper.multi_pagination_helper:
+        class: IMDC\TerpTubeBundle\Helper\MultiPaginationHelper
+        tags:
+            - { name: knp_paginator.injectable, paginator: @knp_paginator }
