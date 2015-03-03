@@ -10,6 +10,7 @@ use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
+use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -152,7 +153,7 @@ class UserGroupController extends Controller
 
         $securityContext = $this->get('security.context');
         $user = $this->getUser();
-        
+
         $forumRepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
         $sortParams = array(
             'sort' => $request->query->get('sort', 'f.lastActivity'),
@@ -465,7 +466,7 @@ class UserGroupController extends Controller
         // pagination
         $defaultPageNum = 1;
         $defaultPageLimit = 24;
-        $paginatorParams = array(
+        $pages = array(
             'members' => array(
                 'knp' => array('pageParameterName' => 'page_m'),
                 'page' => $defaultPageNum,
@@ -483,15 +484,44 @@ class UserGroupController extends Controller
                     'style' => $style,
                     'active_tab' => '#tabCommunity'
                 )
+            ),
+            // start: from ContactController::listAction
+            'mentors' => array(
+                'knp' => array('pageParameterName' => 'page_r'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
+            ),
+            'mentees' => array(
+                'knp' => array('pageParameterName' => 'page_e'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
+            ),
+            'friends' => array(
+                'knp' => array('pageParameterName' => 'page_s'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
+            ),
+            'all' => array(
+                'knp' => array('pageParameterName' => 'page_l'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
             )
+            // end: from ContactController::listAction
         );
-        //TODO consolidate?
-        // extract paginator params from request
-        foreach ($paginatorParams as &$params) {
-            $params['page'] = $request->query->get($params['knp']['pageParameterName'], $params['page']);
-        }
-        $resetPage = function () use ($paginatorParams, $defaultPageNum) {
-            foreach ($paginatorParams as &$params) {
+        $resetPage = function () use ($pages, $defaultPageNum) {
+            foreach ($pages as &$params) {
                 $params['page'] = $defaultPageNum;
             }
         };
@@ -587,6 +617,17 @@ class UserGroupController extends Controller
             ->setParameter('groupId', $group->getId())
             ->getQuery()->getResult();
 
+        // filter out filtered group members from user's contacts
+        $filterContacts = function ($users) use ($members) {
+            return array_filter($users, function ($user) use ($members) {
+                return !in_array($user, $members);
+            });
+        };
+        $mentors = $filterContacts($user->getMentorList()->toArray());
+        $mentees = $filterContacts($user->getMenteeList()->toArray());
+        $friends = $filterContacts($user->getFriendsList()->toArray());
+        $all = array_merge($mentors, $mentees, $friends);
+
         // start: filter non group members
         // if members were removed this needs to be rerun to update the members collection
         $em->clear();
@@ -624,35 +665,28 @@ class UserGroupController extends Controller
         // end: filter non group members
 
         // pagination
-        $paginator = $this->get('knp_paginator');
-        //TODO consolidate?
-        $paginate = function ($object, $name) use ($paginatorParams, $paginator) {
-            $params = $paginatorParams[$name];
+        /* @var $paginator MultiPaginationHelper */
+        $paginator = $this->get('imdc_terptube.helper.multi_pagination_helper');
+        $paginator->setPages($pages);
+        $paginator->prepare($request);
 
-            $paginated = $paginator->paginate(
-                $object,
-                $params['page'],
-                $params['pageLimit'],
-                $params['knp']
-            );
-
-            if (array_key_exists('urlParams', $params)) {
-                foreach ($params['urlParams'] as $key => $value) {
-                    $paginated->setParam($key, $value);
-                }
-            }
-
-            return $paginated;
-        };
-
-        $members = $paginate($members, 'members');
-        $nonMembers = $paginate($nonMembers, 'nonMembers');
+        $members = $paginator->paginate('members', $members);
+        $nonMembers = $paginator->paginate('nonMembers', $nonMembers);
+        $mentors = $paginator->paginate('mentors', $mentors);
+        $mentees = $paginator->paginate('mentees', $mentees);
+        $friends = $paginator->paginate('friends', $friends);
+        $all = $paginator->paginate('all', $all);
 
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,
             'style' => $style,
             'activeTab' => $activeTab,
             'members' => $members,
+            'contacts' => array(
+                'mentors' => $mentors,
+                'mentees' => $mentees,
+                'friends' => $friends,
+                'all' => $all),
             'nonMembers' => $nonMembers,
             'searchForm' => $searchForm->createView(),
             'removeForm' => $removeForm->createView(),
