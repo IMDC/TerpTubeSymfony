@@ -64,7 +64,7 @@ class ThreadType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-                'canChooseMedia' => true,
+                'canChooseMedia' => true, //TODO remove. no longer used
                 'canChooseForum' => false,
                 'data_class' => 'IMDC\TerpTubeBundle\Entity\Thread',
                 'access_data' => null))
