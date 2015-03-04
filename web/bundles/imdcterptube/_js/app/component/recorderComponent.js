@@ -128,7 +128,7 @@ define([
             forwardButtons.push(this.doneButton);
             forwardFunctions.push(inPreviewMode ? this.bind__cut : this.bind__done);
         }
-        if (this.enableDoneAndPost && inPreviewMode) {
+        if (this.options.enableDoneAndPost && inPreviewMode) {
             forwardButtons.push(this.doneAndPostButton);
             forwardFunctions.push(this.bind__doneAndPost);
         }
@@ -219,7 +219,7 @@ define([
 
         var forwardButtons = [this.forwardButton, this.doneButton];
         var forwardFunctions = [this.bind__preview, this.bind__done];
-        if (this.enableDoneAndPost) {
+        if (this.options.enableDoneAndPost) {
             forwardButtons.push(this.doneAndPostButton);
             forwardFunctions.push(this.bind__doneAndPost);
         }
@@ -561,7 +561,8 @@ define([
         var defaults = {
             $container: $('body'),
             tab: RecorderComponent.Tab.NORMAL,
-            mode: RecorderComponent.Mode.RECORD
+            mode: RecorderComponent.Mode.RECORD,
+            enableDoneAndPost: false
         };
 
         options = options || defaults;

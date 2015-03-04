@@ -4,8 +4,10 @@ namespace IMDC\TerpTubeBundle\Security\Acl\Voter;
 
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
  * Class AccessVoter
@@ -17,13 +19,16 @@ class AccessVoter implements VoterInterface
     const VIEW = 'view';
 
     private $accessProvider;
+    private $container;
 
     /**
      * @param AccessProvider $accessProvider
+     * @param ContainerInterface $container
      */
-    public function __construct(AccessProvider $accessProvider)
+    public function __construct(AccessProvider $accessProvider, ContainerInterface $container)
     {
         $this->accessProvider = $accessProvider;
+        $this->container = $container;
     }
 
     /**
@@ -73,8 +78,9 @@ class AccessVoter implements VoterInterface
         }
 
         $objectIdentity = AccessObjectIdentity::fromAccessObject($object);
-        $access = $this->accessProvider->getAccess($objectIdentity);
-        if ($access->isGranted($token->getUser()))
+        $access = $this->accessProvider->createAccess($objectIdentity);
+        $this->accessProvider->setSecurityIdentities($objectIdentity, $object);
+        if ($access->isGranted($token->getUser(), $this->container->get('request'), $this->container->get('router')))
             return VoterInterface::ACCESS_GRANTED;
 
         return VoterInterface::ACCESS_DENIED;

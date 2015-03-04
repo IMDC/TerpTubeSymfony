@@ -1,6 +1,7 @@
 define([
-    'component/mediaChooserComponent'
-], function (MediaChooserComponent) {
+    'component/mediaChooserComponent',
+    'component/accessTypeComponent'
+], function (MediaChooserComponent, AccessTypeComponent) {
     'use strict';
 
     var NewView = function (controller, options) {
@@ -16,6 +17,8 @@ define([
         this.$submit = this.$container.find(NewView.Binder.SUBMIT);
 
         this.$submit.on('click', this.bind__onClickSubmit);
+
+        this.atCmp = AccessTypeComponent.render(this.$form);
 
         this.mcCmp = MediaChooserComponent.render(this.$form);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);

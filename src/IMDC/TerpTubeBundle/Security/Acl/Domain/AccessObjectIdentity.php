@@ -6,7 +6,6 @@ use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Domain\UserSecurityIdentity;
 
 /**
  * Class AccessObjectIdentity
@@ -21,11 +20,9 @@ final class AccessObjectIdentity
 
     /**
      * @param AccessType $accessType
-     * @param $objectIdentity
-     * @param array $securityIdentities
-     * @throws \InvalidArgumentException
+     * @param ObjectIdentity $objectIdentity
      */
-    public function __construct(AccessType $accessType, $objectIdentity, array $securityIdentities = array())
+    public function __construct(AccessType $accessType, ObjectIdentity $objectIdentity)
     {
         if (empty($accessType)) {
             throw new \InvalidArgumentException('$accessType cannot be empty.');
@@ -37,47 +34,28 @@ final class AccessObjectIdentity
 
         $this->accessType = $accessType;
         $this->objectIdentity = $objectIdentity;
-        $this->securityIdentities = $securityIdentities;
     }
 
     /**
      * @param $object
-     * @param array $users
      * @return AccessObjectIdentity
-     * @throws \InvalidArgumentException
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
-    public static function fromAccessObject($object, array $users = array())
+    public static function fromAccessObject($object)
     {
-        if ($object instanceof Forum || $object instanceof Thread) {
-            $accessType = $object->getAccessType();
-
-            if ($accessType->getId() == AccessType::TYPE_FRIENDS) {
-                $users = $object->getCreator()->getFriendsList()->toArray();
-            }
-            if ($object instanceof Forum && $accessType->getId() != AccessType::TYPE_GROUP) {
-                $object->setGroup(null);
-            }
-            if ($object instanceof Thread && $accessType->getId() == AccessType::TYPE_GROUP) {
-                throw new \InvalidArgumentException('Group access type not allowed for threads.');
-            }
-
-            $objectIdentity = ObjectIdentity::fromDomainObject($object);
-            $securityIdentities = array();
-
-            if ($accessType->getId() == AccessType::TYPE_USERS ||
-                $accessType->getId() == AccessType::TYPE_FRIENDS) {
-                foreach ($users as $user) {
-                    $securityIdentities[] = UserSecurityIdentity::fromAccount($user);
-                }
-            }
-            if ($object instanceof Forum && $accessType->getId() == AccessType::TYPE_GROUP) {
-                $securityIdentities[] = GroupSecurityIdentity::fromGroup($object->getGroup());
-            }
-
-            return new self($accessType, $objectIdentity, $securityIdentities);
-        } else {
+        if (!$object instanceof Forum && !$object instanceof Thread) {
             throw new \InvalidArgumentException('$object is not a forum or thread.');
         }
+
+        $accessType = $object->getAccessType();
+
+        if ($accessType->getId() == AccessType::TYPE_GROUP && $object instanceof Thread) {
+            throw new \InvalidArgumentException('Group access type not allowed for threads.');
+        }
+
+        $objectIdentity = ObjectIdentity::fromDomainObject($object);
+
+        return new self($accessType, $objectIdentity);
     }
 
     /**
@@ -89,7 +67,7 @@ final class AccessObjectIdentity
     }
 
     /**
-     * @return mixed
+     * @return ObjectIdentity
      */
     public function getObjectIdentity()
     {
@@ -102,5 +80,10 @@ final class AccessObjectIdentity
     public function getSecurityIdentities()
     {
         return $this->securityIdentities;
+    }
+
+    public function setSecurityIdentities($securityIdentities)
+    {
+        $this->securityIdentities = $securityIdentities;
     }
 }

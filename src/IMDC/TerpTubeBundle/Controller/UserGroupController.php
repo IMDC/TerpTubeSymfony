@@ -7,9 +7,11 @@ use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
 use IMDC\TerpTubeBundle\Entity\Message;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
+use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
+use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -152,7 +154,7 @@ class UserGroupController extends Controller
 
         $securityContext = $this->get('security.context');
         $user = $this->getUser();
-        
+
         $forumRepo = $em->getRepository('IMDCTerpTubeBundle:Forum');
         $sortParams = array(
             'sort' => $request->query->get('sort', 'f.lastActivity'),
@@ -460,19 +462,17 @@ class UserGroupController extends Controller
         }
 
         $style = $this->get('request')->query->get('style', 'list');
-        $activeTab = $this->get('request')->query->get('active_tab', '#tabMembers');
 
         // pagination
         $defaultPageNum = 1;
         $defaultPageLimit = 24;
-        $paginatorParams = array(
+        $pages = array(
             'members' => array(
                 'knp' => array('pageParameterName' => 'page_m'),
                 'page' => $defaultPageNum,
                 'pageLimit' => $defaultPageLimit,
                 'urlParams' => array(
-                    'style' => $style,
-                    'active_tab' => '#tabMembers'
+                    'style' => $style
                 )
             ),
             'nonMembers' => array(
@@ -480,18 +480,46 @@ class UserGroupController extends Controller
                 'page' => $defaultPageNum,
                 'pageLimit' => $defaultPageLimit,
                 'urlParams' => array(
-                    'style' => $style,
-                    'active_tab' => '#tabCommunity'
+                    'style' => $style
+                )
+            ),
+            // start: from ContactController::listAction
+            'mentors' => array(
+                'knp' => array('pageParameterName' => 'page_r'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
+            ),
+            'mentees' => array(
+                'knp' => array('pageParameterName' => 'page_e'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
+            ),
+            'friends' => array(
+                'knp' => array('pageParameterName' => 'page_s'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
+            ),
+            'all' => array(
+                'knp' => array('pageParameterName' => 'page_l'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
                 )
             )
+            // end: from ContactController::listAction
         );
-        //TODO consolidate?
-        // extract paginator params from request
-        foreach ($paginatorParams as &$params) {
-            $params['page'] = $request->query->get($params['knp']['pageParameterName'], $params['page']);
-        }
-        $resetPage = function () use ($paginatorParams, $defaultPageNum) {
-            foreach ($paginatorParams as &$params) {
+        $resetPage = function () use ($pages, $defaultPageNum) {
+            foreach ($pages as &$params) {
                 $params['page'] = $defaultPageNum;
             }
         };
@@ -499,7 +527,7 @@ class UserGroupController extends Controller
         $user = $this->getUser();
         $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
 
-        $removeForm = $this->createForm(new UsersSelectType('user_group_manage_remove'), null, array('em' => $em));
+        $removeForm = $this->createForm(new UsersSelectType('ugm_remove'), null, array('em' => $em));
         $removeForm->handleRequest($request);
 
         if ($removeForm->isValid()) {
@@ -510,7 +538,7 @@ class UserGroupController extends Controller
             $this->removeMembers($group, $members);
         }
 
-        $addForm = $this->createForm(new UsersSelectType('user_group_manage_add'), null, array('em' => $em));
+        $addForm = $this->createForm(new UsersSelectType('ugm_add'), null, array('em' => $em));
         $addForm->handleRequest($request);
 
         if ($addForm->isValid()) {
@@ -524,6 +552,22 @@ class UserGroupController extends Controller
         // prep query builders
         $membersQb = $userRepo->createQueryBuilder('u');
         $nonMembersQb = $userRepo->createQueryBuilder('u');
+        $mentorsQb = $userRepo->createQueryBuilder('u');
+        $menteesQb = $userRepo->createQueryBuilder('u');
+        $friendsQb = $userRepo->createQueryBuilder('u');
+
+        // prep id arrays
+        $usersToIntArray = new UserCollectionToIntArrayTransformer($em);
+        $mentorIds = $usersToIntArray->transform($user->getMentorList());
+        $menteeIds = $usersToIntArray->transform($user->getMenteeList());
+        $friendIds = $usersToIntArray->transform($user->getFriendsList());
+
+        $updateQbsFilterIds = function ($qbs, &$filterIds) {
+            foreach ($qbs as $qb) {
+                $qb->andWhere($qb->expr()->in('u.id', ':filterIds'))
+                    ->setParameter('filterIds', $filterIds);
+            }
+        };
 
         // start: apply query filters
         $searchForm = $this->createForm(new UserGroupManageSearchType());
@@ -540,42 +584,21 @@ class UserGroupController extends Controller
 
             // only filter if at least one is true. show all (don't filter) by default
             if ($filterMentors || $filterMentees || $filterFriends) {
-                $filterIds = array();
+                $mentorIds = $filterMentors ? $mentorIds : array();
+                $menteeIds = $filterMentees ? $menteeIds : array();
+                $friendIds = $filterFriends ? $friendIds : array();
 
-                if ($filterMentors) {
-                    foreach ($user->getMentorList() as $mentor) {
-                        $filterIds[] = $mentor->getId();
-                    }
-                }
-
-                if ($filterMentees) {
-                    foreach ($user->getMenteeList() as $mentee) {
-                        $filterIds[] = $mentee->getId();
-                    }
-                }
-
-                if ($filterFriends) {
-                    foreach ($user->getFriendsList() as $friend) {
-                        $filterIds[] = $friend->getId();
-                    }
-                }
-
-                $membersQb
-                    ->where($membersQb->expr()->in('u.id', ':filterIds'))
-                    ->setParameter('filterIds', $filterIds);
-
-                $nonMembersQb
-                    ->where($nonMembersQb->expr()->in('u.id', ':filterIds'))
-                    ->setParameter('filterIds', $filterIds);
+                $filterIds = array_merge($mentorIds, $menteeIds, $friendIds);
+                $updateQbsFilterIds(array($membersQb, $nonMembersQb), $filterIds);
             }
 
-            $membersQb
-                ->andWhere($membersQb->expr()->like('u.username', ':username'))
-                ->setParameter('username', '%' . $username . '%');
-
-            $nonMembersQb
-                ->andWhere($nonMembersQb->expr()->like('u.username', ':username'))
-                ->setParameter('username', '%' . $username . '%');
+            $updateQbsLikes = function ($qbs) use ($username) {
+                foreach ($qbs as $qb) {
+                    $qb->andWhere($qb->expr()->like('u.username', ':username'))
+                        ->setParameter('username', '%' . $username . '%');
+                }
+            };
+            $updateQbsLikes(array($membersQb, $nonMembersQb, $mentorsQb, $menteesQb, $friendsQb));
         }
         // end: apply query filters
 
@@ -587,14 +610,35 @@ class UserGroupController extends Controller
             ->setParameter('groupId', $group->getId())
             ->getQuery()->getResult();
 
+        // start: filter contacts
+        $updateQbsFilterIds(array($mentorsQb), $mentorIds);
+        $updateQbsFilterIds(array($menteesQb), $menteeIds);
+        $updateQbsFilterIds(array($friendsQb), $friendIds);
+
+        $finalizeContactQbs = function ($qbs) use ($group) {
+            foreach ($qbs as $qb) {
+                $qb->leftJoin('u.profile', 'p');
+            }
+        };
+        $finalizeContactQbs(array($mentorsQb, $menteesQb, $friendsQb));
+
+        // filter out filtered group members from filtered user's contacts
+        $filterContacts = function ($users) use ($members) {
+            return array_filter($users, function ($user) use ($members) {
+                return !in_array($user, $members);
+            });
+        };
+        $mentors = $filterContacts($mentorsQb->getQuery()->getResult());
+        $mentees = $filterContacts($menteesQb->getQuery()->getResult());
+        $friends = $filterContacts($friendsQb->getQuery()->getResult());
+        $all = array_merge($mentors, $mentees, $friends);
+        // end: filter contacts
+
         // start: filter non group members
         // if members were removed this needs to be rerun to update the members collection
         $em->clear();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-        $groupMemberIds = array();
-        foreach ($group->getMembers() as $member) {
-            $groupMemberIds[] = $member->getId();
-        }
+        $groupMemberIds = $usersToIntArray->transform($group->getMembers());
 
         $nonMembers = $nonMembersQb
             ->leftJoin('u.profile', 'p', Join::WITH, $nonMembersQb->expr()->eq('u.profile', 'p.id'))
@@ -624,35 +668,27 @@ class UserGroupController extends Controller
         // end: filter non group members
 
         // pagination
-        $paginator = $this->get('knp_paginator');
-        //TODO consolidate?
-        $paginate = function ($object, $name) use ($paginatorParams, $paginator) {
-            $params = $paginatorParams[$name];
+        /* @var $paginator MultiPaginationHelper */
+        $paginator = $this->get('imdc_terptube.helper.multi_pagination_helper');
+        $paginator->setPages($pages);
+        $paginator->prepare($request);
 
-            $paginated = $paginator->paginate(
-                $object,
-                $params['page'],
-                $params['pageLimit'],
-                $params['knp']
-            );
-
-            if (array_key_exists('urlParams', $params)) {
-                foreach ($params['urlParams'] as $key => $value) {
-                    $paginated->setParam($key, $value);
-                }
-            }
-
-            return $paginated;
-        };
-
-        $members = $paginate($members, 'members');
-        $nonMembers = $paginate($nonMembers, 'nonMembers');
+        $members = $paginator->paginate('members', $members);
+        $nonMembers = $paginator->paginate('nonMembers', $nonMembers);
+        $mentors = $paginator->paginate('mentors', $mentors);
+        $mentees = $paginator->paginate('mentees', $mentees);
+        $friends = $paginator->paginate('friends', $friends);
+        $all = $paginator->paginate('all', $all);
 
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,
             'style' => $style,
-            'activeTab' => $activeTab,
             'members' => $members,
+            'contacts' => array(
+                'mentors' => $mentors,
+                'mentees' => $mentees,
+                'friends' => $friends,
+                'all' => $all),
             'nonMembers' => $nonMembers,
             'searchForm' => $searchForm->createView(),
             'removeForm' => $removeForm->createView(),

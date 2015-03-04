@@ -1,0 +1,15 @@
+IMDC\TerpTubeBundle\Entity\AccessData:
+    type: entity
+    table: access_data
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        objectIdentifier:
+            type: string
+            length: 100
+        data:
+            type: array

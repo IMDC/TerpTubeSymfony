@@ -5,12 +5,12 @@
         <a style="color: #fff; padding: 4px 8px; cursor: pointer; display: none;" title="Interpret" data-action="3"><i class="fa fa-video-camera fa-2x"></i></a>
     </div>
 
-    <div style="position: relative; width:100%; margin-bottom: 8px;">
+    {!<div style="position: relative; width:100%; margin-bottom: 8px;">
         <div style="overflow: hidden; position: relative; height: 90px;  margin-left: 55px; margin-right: 55px;">
             <ol class="gallery-normal-thumbs" style="width: 10000px; margin: 0; list-style: none; position: absolute; left: 0; overflow: hidden; padding: 0px; height: 100%; white-space: nowrap; text-align: center;"></ol>
         </div>
 
         <div class="gallery-normal-left" style="position: absolute; left: 10px; bottom: 24px; cursor: pointer; display: none;"><i class="fa fa-chevron-left fa-3x"></i></div>
         <div class="gallery-normal-right" style="position: absolute; right: 10px; bottom: 24px; cursor: pointer; display: none;"><i class="fa fa-chevron-right fa-3x"></i></div>
-    </div>
+    </div>!}
 </div>
