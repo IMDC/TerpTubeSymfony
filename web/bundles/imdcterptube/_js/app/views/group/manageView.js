@@ -42,6 +42,8 @@ define([
             this.tableCmps.push(tblCmp);
         }.bind(this));
 
+        this.$tabs.filter('[href="' + (location.hash ? location.hash : '#tabMembers') + '"]').tab('show');
+
         $tt._instances.push(this);
     };
 
@@ -54,7 +56,7 @@ define([
         ADD: '.group-add'
     };
 
-    ManageView.FORM_NAME = 'user_group_manage_';
+    ManageView.FORM_NAME = 'ugm_';
     ManageView.FORM_NAME_SEARCH = ManageView.FORM_NAME + 'search';
     ManageView.FORM_NAME_REMOVE = ManageView.FORM_NAME + 'remove';
     ManageView.FORM_NAME_ADD = ManageView.FORM_NAME + 'add';
@@ -64,7 +66,25 @@ define([
     };
 
     ManageView.prototype._onShownTab = function (e) {
-        this._getFormField(this.$formSearch, 'active_tab').val($(e.target).attr('href'));
+        var hash = $(e.target).attr('href');
+
+        if (history.pushState) {
+            history.pushState(null, null, hash);
+        } else {
+            location.hash = hash;
+        }
+
+        // KnpPaginatorBundle:Pagination:twitter_bootstrap_v3_pagination.html.twig
+        // update hash on pagination urls
+        this.$tabPanes.find('ul.pagination li a').each(function (index, element) {
+            var $link = $(element);
+            var url = $link.attr('href');
+            var index = url.lastIndexOf('#');
+            if (index > 0) {
+                url = url.substring(0, index);
+            }
+            $link.attr('href', url + hash);
+        });
     };
 
     ManageView.prototype._updateUsersSelectForm = function ($form, $button) {

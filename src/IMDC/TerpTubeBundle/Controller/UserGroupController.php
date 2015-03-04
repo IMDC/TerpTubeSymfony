@@ -461,19 +461,17 @@ class UserGroupController extends Controller
         }
 
         $style = $this->get('request')->query->get('style', 'list');
-        $activeTab = $this->get('request')->query->get('active_tab', '#tabMembers');
 
         // pagination
         $defaultPageNum = 1;
-        $defaultPageLimit = 24;
+        $defaultPageLimit = 2;
         $pages = array(
             'members' => array(
                 'knp' => array('pageParameterName' => 'page_m'),
                 'page' => $defaultPageNum,
                 'pageLimit' => $defaultPageLimit,
                 'urlParams' => array(
-                    'style' => $style,
-                    'active_tab' => '#tabMembers'
+                    'style' => $style
                 )
             ),
             'nonMembers' => array(
@@ -481,8 +479,7 @@ class UserGroupController extends Controller
                 'page' => $defaultPageNum,
                 'pageLimit' => $defaultPageLimit,
                 'urlParams' => array(
-                    'style' => $style,
-                    'active_tab' => '#tabCommunity'
+                    'style' => $style
                 )
             ),
             // start: from ContactController::listAction
@@ -529,7 +526,7 @@ class UserGroupController extends Controller
         $user = $this->getUser();
         $userRepo = $em->getRepository('IMDCTerpTubeBundle:User');
 
-        $removeForm = $this->createForm(new UsersSelectType('user_group_manage_remove'), null, array('em' => $em));
+        $removeForm = $this->createForm(new UsersSelectType('ugm_remove'), null, array('em' => $em));
         $removeForm->handleRequest($request);
 
         if ($removeForm->isValid()) {
@@ -540,7 +537,7 @@ class UserGroupController extends Controller
             $this->removeMembers($group, $members);
         }
 
-        $addForm = $this->createForm(new UsersSelectType('user_group_manage_add'), null, array('em' => $em));
+        $addForm = $this->createForm(new UsersSelectType('ugm_add'), null, array('em' => $em));
         $addForm->handleRequest($request);
 
         if ($addForm->isValid()) {
@@ -680,7 +677,6 @@ class UserGroupController extends Controller
         return $this->render('IMDCTerpTubeBundle:Group:manage.html.twig', array(
             'group' => $group,
             'style' => $style,
-            'activeTab' => $activeTab,
             'members' => $members,
             'contacts' => array(
                 'mentors' => $mentors,
