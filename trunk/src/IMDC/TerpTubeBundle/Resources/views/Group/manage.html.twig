@@ -65,15 +65,19 @@
             </div>
             {# start: keep consistent with IMDCTerpTubeBundle:Contact:list.html.twig #}
             <div class="tab-pane" id="tabContactsAll">
+                <b>All Contacts</b>
                 {{ _group.list_users(style, contacts.all, group.id) }}
             </div>
             <div class="tab-pane" id="tabContactsMentors">
+                <b>Mentors</b>
                 {{ _group.list_users(style, contacts.mentors, group.id) }}
             </div>
             <div class="tab-pane" id="tabContactsMentees">
+                <b>Mentees</b>
                 {{ _group.list_users(style, contacts.mentees, group.id) }}
             </div>
             <div class="tab-pane" id="tabContactsFriends">
+                <b>Friends</b>
                 {{ _group.list_users(style, contacts.friends, group.id) }}
             </div>
             {# end: keep consistent with IMDCTerpTubeBundle:Contact:list.html.twig #}

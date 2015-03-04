@@ -7,6 +7,7 @@ use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
 use IMDC\TerpTubeBundle\Entity\Message;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
+use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
@@ -464,7 +465,7 @@ class UserGroupController extends Controller
 
         // pagination
         $defaultPageNum = 1;
-        $defaultPageLimit = 2;
+        $defaultPageLimit = 24;
         $pages = array(
             'members' => array(
                 'knp' => array('pageParameterName' => 'page_m'),
@@ -551,6 +552,22 @@ class UserGroupController extends Controller
         // prep query builders
         $membersQb = $userRepo->createQueryBuilder('u');
         $nonMembersQb = $userRepo->createQueryBuilder('u');
+        $mentorsQb = $userRepo->createQueryBuilder('u');
+        $menteesQb = $userRepo->createQueryBuilder('u');
+        $friendsQb = $userRepo->createQueryBuilder('u');
+
+        // prep id arrays
+        $usersToIntArray = new UserCollectionToIntArrayTransformer($em);
+        $mentorIds = $usersToIntArray->transform($user->getMentorList());
+        $menteeIds = $usersToIntArray->transform($user->getMenteeList());
+        $friendIds = $usersToIntArray->transform($user->getFriendsList());
+
+        $updateQbsFilterIds = function ($qbs, &$filterIds) {
+            foreach ($qbs as $qb) {
+                $qb->andWhere($qb->expr()->in('u.id', ':filterIds'))
+                    ->setParameter('filterIds', $filterIds);
+            }
+        };
 
         // start: apply query filters
         $searchForm = $this->createForm(new UserGroupManageSearchType());
@@ -567,42 +584,21 @@ class UserGroupController extends Controller
 
             // only filter if at least one is true. show all (don't filter) by default
             if ($filterMentors || $filterMentees || $filterFriends) {
-                $filterIds = array();
+                $mentorIds = $filterMentors ? $mentorIds : array();
+                $menteeIds = $filterMentees ? $menteeIds : array();
+                $friendIds = $filterFriends ? $friendIds : array();
 
-                if ($filterMentors) {
-                    foreach ($user->getMentorList() as $mentor) {
-                        $filterIds[] = $mentor->getId();
-                    }
-                }
-
-                if ($filterMentees) {
-                    foreach ($user->getMenteeList() as $mentee) {
-                        $filterIds[] = $mentee->getId();
-                    }
-                }
-
-                if ($filterFriends) {
-                    foreach ($user->getFriendsList() as $friend) {
-                        $filterIds[] = $friend->getId();
-                    }
-                }
-
-                $membersQb
-                    ->where($membersQb->expr()->in('u.id', ':filterIds'))
-                    ->setParameter('filterIds', $filterIds);
-
-                $nonMembersQb
-                    ->where($nonMembersQb->expr()->in('u.id', ':filterIds'))
-                    ->setParameter('filterIds', $filterIds);
+                $filterIds = array_merge($mentorIds, $menteeIds, $friendIds);
+                $updateQbsFilterIds(array($membersQb, $nonMembersQb), $filterIds);
             }
 
-            $membersQb
-                ->andWhere($membersQb->expr()->like('u.username', ':username'))
-                ->setParameter('username', '%' . $username . '%');
-
-            $nonMembersQb
-                ->andWhere($nonMembersQb->expr()->like('u.username', ':username'))
-                ->setParameter('username', '%' . $username . '%');
+            $updateQbsLikes = function ($qbs) use ($username) {
+                foreach ($qbs as $qb) {
+                    $qb->andWhere($qb->expr()->like('u.username', ':username'))
+                        ->setParameter('username', '%' . $username . '%');
+                }
+            };
+            $updateQbsLikes(array($membersQb, $nonMembersQb, $mentorsQb, $menteesQb, $friendsQb));
         }
         // end: apply query filters
 
@@ -614,25 +610,35 @@ class UserGroupController extends Controller
             ->setParameter('groupId', $group->getId())
             ->getQuery()->getResult();
 
-        // filter out filtered group members from user's contacts
+        // start: filter contacts
+        $updateQbsFilterIds(array($mentorsQb), $mentorIds);
+        $updateQbsFilterIds(array($menteesQb), $menteeIds);
+        $updateQbsFilterIds(array($friendsQb), $friendIds);
+
+        $finalizeContactQbs = function ($qbs) use ($group) {
+            foreach ($qbs as $qb) {
+                $qb->leftJoin('u.profile', 'p');
+            }
+        };
+        $finalizeContactQbs(array($mentorsQb, $menteesQb, $friendsQb));
+
+        // filter out filtered group members from filtered user's contacts
         $filterContacts = function ($users) use ($members) {
             return array_filter($users, function ($user) use ($members) {
                 return !in_array($user, $members);
             });
         };
-        $mentors = $filterContacts($user->getMentorList()->toArray());
-        $mentees = $filterContacts($user->getMenteeList()->toArray());
-        $friends = $filterContacts($user->getFriendsList()->toArray());
+        $mentors = $filterContacts($mentorsQb->getQuery()->getResult());
+        $mentees = $filterContacts($menteesQb->getQuery()->getResult());
+        $friends = $filterContacts($friendsQb->getQuery()->getResult());
         $all = array_merge($mentors, $mentees, $friends);
+        // end: filter contacts
 
         // start: filter non group members
         // if members were removed this needs to be rerun to update the members collection
         $em->clear();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-        $groupMemberIds = array();
-        foreach ($group->getMembers() as $member) {
-            $groupMemberIds[] = $member->getId();
-        }
+        $groupMemberIds = $usersToIntArray->transform($group->getMembers());
 
         $nonMembers = $nonMembersQb
             ->leftJoin('u.profile', 'p', Join::WITH, $nonMembersQb->expr()->eq('u.profile', 'p.id'))
