@@ -6,6 +6,7 @@ define([
     var ManageView = function (controller, options) {
         this.controller = controller;
 
+        this.bind___onClickFormCheckboxLink = this._onClickFormCheckboxLink.bind(this);
         this.bind__onShownTab = this._onShownTab.bind(this);
         this.bind__onClickRemove = this._onClickRemove.bind(this);
         this.bind__onClickAdd = this._onClickAdd.bind(this);
@@ -14,11 +15,13 @@ define([
         this.$formSearch = this.$container.find('form[name^=' + ManageView.FORM_NAME_SEARCH + ']');
         this.$formRemove = this.$container.find('form[name^=' + ManageView.FORM_NAME_REMOVE + ']');
         this.$formAdd = this.$container.find('form[name^=' + ManageView.FORM_NAME_ADD + ']');
+        this.$formCheckboxLinks = this.$formSearch.find('label[class^="checkbox"] a');
         this.$tabs = this.$container.find(ManageView.Binder.TABS);
         this.$tabPanes = this.$container.find(ManageView.Binder.TAB_PANES);
         this.$remove = this.$container.find(ManageView.Binder.REMOVE);
         this.$add = this.$container.find(ManageView.Binder.ADD);
 
+        this.$formCheckboxLinks.on('click', this.bind___onClickFormCheckboxLink);
         this.$tabs.on('shown.bs.tab', this.bind__onShownTab);
         this.$remove.on('click', this.bind__onClickRemove);
         this.$add.on('click', this.bind__onClickAdd);
@@ -63,6 +66,17 @@ define([
 
     ManageView.prototype._getFormField = function (form, fieldName) {
         return form.find('#' + form.attr('name') + '_' + fieldName);
+    };
+
+    ManageView.prototype._onClickFormCheckboxLink = function (e) {
+        e.preventDefault();
+
+        var $cbs = this.$formSearch.find('input[type="checkbox"]');
+        var $cb = $(e.target).parent().find('input[type="checkbox"]');
+        var checked = $cb.prop('checked');
+        $cbs.prop('checked', false); // disable all others first
+        $cb.prop('checked', !checked);
+        this.$formSearch[0].submit();
     };
 
     ManageView.prototype._onShownTab = function (e) {
