@@ -45,7 +45,9 @@ define([
             this.tableCmps.push(tblCmp);
         }.bind(this));
 
-        this.$tabs.filter('[href="' + (location.hash ? location.hash : '#tabMembers') + '"]').tab('show');
+        this.$tabs.filter('[href="' + (location.hash
+            ? '#tab' + location.hash.substr(1) // strip '#'
+            : '#tabMembers') + '"]').tab('show');
 
         $tt._instances.push(this);
     };
@@ -80,7 +82,7 @@ define([
     };
 
     ManageView.prototype._onShownTab = function (e) {
-        var hash = $(e.target).attr('href');
+        var hash = '#' + $(e.target).attr('href').substr(4); // strip '#tab'
 
         if (history.pushState) {
             history.pushState(null, null, hash);
