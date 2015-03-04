@@ -139,14 +139,14 @@ services:
 
     imdc_terptube.security.acl.access_voter:
         class: IMDC\TerpTubeBundle\Security\Acl\Voter\AccessVoter
-        arguments: [@imdc_terptube.security.acl.access_provider]
+        arguments: [@imdc_terptube.security.acl.access_provider, @service_container]
         public: false
         tags:
             - { name: security.voter }
 
     imdc_terptube.form.type.access_type:
         class: IMDC\TerpTubeBundle\Form\Type\AccessTypeType
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [@doctrine.orm.entity_manager, @security.context]
         tags:
             - { name: form.type, alias: access_type }
 
@@ -155,3 +155,8 @@ services:
         arguments: [@doctrine.orm.entity_manager, @form.factory]
         tags:
             - { name: form.type, alias: media_chooser }
+
+    imdc_terptube.helper.multi_pagination_helper:
+        class: IMDC\TerpTubeBundle\Helper\MultiPaginationHelper
+        tags:
+            - { name: knp_paginator.injectable, paginator: @knp_paginator }

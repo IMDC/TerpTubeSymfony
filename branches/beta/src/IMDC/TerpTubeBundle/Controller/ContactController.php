@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 use IMDC\TerpTubeBundle\Entity;
 use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
+use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,15 +34,7 @@ class ContactController extends Controller
         // pagination
         $defaultPageNum = 1;
         $defaultPageLimit = 24;
-        $paginatorParams = array(
-            'all' => array(
-                'knp' => array('pageParameterName' => 'page_l'),
-                'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'style' => $style
-                )
-            ),
+        $pages = array(
             'mentors' => array(
                 'knp' => array('pageParameterName' => 'page_r'),
                 'page' => $defaultPageNum,
@@ -65,45 +58,33 @@ class ContactController extends Controller
                 'urlParams' => array(
                     'style' => $style
                 )
+            ),
+            'all' => array(
+                'knp' => array('pageParameterName' => 'page_l'),
+                'page' => $defaultPageNum,
+                'pageLimit' => $defaultPageLimit,
+                'urlParams' => array(
+                    'style' => $style
+                )
             )
         );
-        //TODO consolidate?
-        // extract paginator params from request
-        foreach ($paginatorParams as &$params) {
-            $params['page'] = $request->query->get($params['knp']['pageParameterName'], $params['page']);
-        }
 
         $user = $this->getUser();
-        $all = array_merge($user->getMentorList()->toArray(),
-            $user->getMenteeList()->toArray(),
-            $user->getFriendsList()->toArray());
+        $mentors = $user->getMentorList()->toArray();
+        $mentees = $user->getMenteeList()->toArray();
+        $friends = $user->getFriendsList()->toArray();
+        $all = array_merge($mentors, $mentees, $friends);
 
         // pagination
-        $paginator = $this->get('knp_paginator');
-        //TODO consolidate?
-        $paginate = function ($object, $name) use ($paginatorParams, $paginator) {
-            $params = $paginatorParams[$name];
+        /* @var $paginator MultiPaginationHelper */
+        $paginator = $this->get('imdc_terptube.helper.multi_pagination_helper');
+        $paginator->setPages($pages);
+        $paginator->prepare($request);
 
-            $paginated = $paginator->paginate(
-                $object,
-                $params['page'],
-                $params['pageLimit'],
-                $params['knp']
-            );
-
-            if (array_key_exists('urlParams', $params)) {
-                foreach ($params['urlParams'] as $key => $value) {
-                    $paginated->setParam($key, $value);
-                }
-            }
-
-            return $paginated;
-        };
-
-        $all = $paginate($all, 'all');
-        $mentors = $paginate($user->getMentorList(), 'mentors');
-        $mentees = $paginate($user->getMenteeList(), 'mentees');
-        $friends = $paginate($user->getFriendsList(), 'friends');
+        $mentors = $paginator->paginate('mentors', $mentors);
+        $mentees = $paginator->paginate('mentees', $mentees);
+        $friends = $paginator->paginate('friends', $friends);
+        $all = $paginator->paginate('all', $all);
 
         $usersSelectForm = $this->createForm(new UsersSelectType(), null, array(
             'em' => $this->getDoctrine()->getManager()
@@ -111,10 +92,10 @@ class ContactController extends Controller
 
         return $this->render('IMDCTerpTubeBundle:Contact:list.html.twig', array(
             'style' => $style,
-            'all' => $all,
             'mentors' => $mentors,
             'mentees' => $mentees,
             'friends' => $friends,
+            'all' => $all,
             'users_select_form' => $usersSelectForm->createView()
         ));
     }

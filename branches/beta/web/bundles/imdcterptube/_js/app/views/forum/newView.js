@@ -1,12 +1,13 @@
 define([
-    'component/mediaChooserComponent'
-], function (MediaChooserComponent) {
+    'component/mediaChooserComponent',
+    'component/accessTypeComponent'
+], function (MediaChooserComponent, AccessTypeComponent) {
     'use strict';
 
     var NewView = function (controller, options) {
         this.controller = controller;
 
-        this.bind__onChangeAccessType = this._onChangeAccessType.bind(this);
+        //this.bind__onChangeAccessType = this._onChangeAccessType.bind(this);
         this.bind__onClickSubmit = this._onClickSubmit.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -14,13 +15,15 @@ define([
 
         this.$container = options.container;
         this.$form = this.$container.find('form[name^=' + NewView.FORM_NAME + ']');
-        this.$accessTypes = this.$form.find('input:radio');
+        //this.$accessTypes = this.$form.find('input:radio');
         this.$submit = this.$container.find(NewView.Binder.SUBMIT);
 
-        this.$accessTypes.on('change', this.bind__onChangeAccessType);
+        //this.$accessTypes.on('change', this.bind__onChangeAccessType);
         this.$submit.on('click', this.bind__onClickSubmit);
 
-        this.$accessTypes.filter(':checked').trigger('change');
+        //this.$accessTypes.filter(':checked').trigger('change');
+
+        this.atCmp = AccessTypeComponent.render(this.$form);
 
         this.mcCmp = MediaChooserComponent.render(this.$form);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
@@ -52,7 +55,7 @@ define([
         return this.$form.find('#' + NewView.FORM_NAME + '_' + fieldName);
     };
 
-    NewView.prototype._onChangeAccessType = function (e) {
+    /*NewView.prototype._onChangeAccessType = function (e) {
         var group = this._getFormField('group');
         var parent = group.parent();
 
@@ -65,7 +68,7 @@ define([
             group.attr('required', false);
             parent.children().hide();
         }
-    };
+    };*/
 
     NewView.prototype._onClickSubmit = function (e) {
         if (this.$form[0].checkValidity()) {

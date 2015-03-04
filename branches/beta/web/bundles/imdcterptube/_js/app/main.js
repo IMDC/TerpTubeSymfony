@@ -43,6 +43,7 @@ define([
     'controller/threadController',
 
     // component
+    'component/accessTypeComponent',
     'component/galleryComponent',
     'component/mediaChooserComponent',
     'component/myFilesSelectorComponent',

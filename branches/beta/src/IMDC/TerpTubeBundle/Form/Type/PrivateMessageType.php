@@ -2,10 +2,11 @@
 
 namespace IMDC\TerpTubeBundle\Form\Type;
 
+use IMDC\TerpTubeBundle\Form\DataTransformer\UsersToStringsTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use IMDC\TerpTubeBundle\Form\DataTransformer\UsersToStringsTransformer;
+use Symfony\Component\Validator\Constraints\Count;
 
 class PrivateMessageType extends AbstractType
 {   
@@ -15,11 +16,18 @@ class PrivateMessageType extends AbstractType
     	$transformer = new UsersToStringsTransformer($entityManager);
 
         $builder->add('attachedMedia', 'media_chooser');
-    	
+
         $builder->add(
             $builder
                 ->create('recipients', 'text', array(
-                    'label' => 'Recipients (comma separated list of usernames)'))
+                    'label' => 'Recipients (comma separated list of usernames)',
+                    'constraints' => array(
+                        new Count(array(
+                            'min' => 1,
+                            'max' => 999,
+                            'minMessage' => 'At least {{ limit }} recipient must be specified.',
+                            'maxMessage' => 'At most {{ limit }} recipients can be specified.'))
+                    )))
                 ->addModelTransformer($transformer)
         );
 
