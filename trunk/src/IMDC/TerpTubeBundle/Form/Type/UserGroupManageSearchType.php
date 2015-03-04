@@ -9,7 +9,7 @@ class UserGroupManageSearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        //$builder->setMethod('GET');
+        $builder->setMethod('GET');
 
         $builder->add('mentors', 'checkbox', array(
             'label' => false,
@@ -33,13 +33,10 @@ class UserGroupManageSearchType extends AbstractType
                 'placeholder' => 'Search by username'
             )
         ));
-
-        // used to persist the active tab between searches
-        $builder->add('active_tab', 'hidden');
     }
 
     public function getName()
     {
-        return 'user_group_manage_search';
+        return 'ugm_search';
     }
 }

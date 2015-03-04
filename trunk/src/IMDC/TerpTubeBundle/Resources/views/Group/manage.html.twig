@@ -42,45 +42,44 @@
             </div>
         </div>
         {# used to persist the active tab between searches #}
-        {% set active_tab = searchForm.active_tab.vars.value|default(activeTab) %}
         <ul class="nav nav-tabs" role="tablist">
-            <li{% if active_tab == '#tabMembers' %} class="active"{% endif %}><a href="#tabMembers" role="tab" data-toggle="tab">Group Members</a></li>
+            <li class="active"><a href="#tabMembers" role="tab" data-toggle="tab">Group Members</a></li>
             <li class="dropdown" role="presentation">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">
                     My Contacts <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu" role="menu">
                     {# start: keep consistent with IMDCTerpTubeBundle:Contact:list.html.twig #}
-                    <li><a href="#tabAll" data-toggle="tab">All Contacts</a></li>
-                    <li><a href="#tabMentors" data-toggle="tab">Mentors</a></li>
-                    <li><a href="#tabMentees" data-toggle="tab">Mentees</a></li>
-                    <li><a href="#tabFriends" data-toggle="tab">Friends</a></li>
+                    <li><a href="#tabContactsAll" data-toggle="tab">All Contacts</a></li>
+                    <li><a href="#tabContactsMentors" data-toggle="tab">Mentors</a></li>
+                    <li><a href="#tabContactsMentees" data-toggle="tab">Mentees</a></li>
+                    <li><a href="#tabContactsFriends" data-toggle="tab">Friends</a></li>
                     {# end: keep consistent with IMDCTerpTubeBundle:Contact:list.html.twig #}
                 </ul>
             </li>
-            <li{% if active_tab == '#tabCommunity' %} class="active"{% endif %}><a href="#tabCommunity" role="tab" data-toggle="tab">Community</a></li>
+            <li><a href="#tabCommunity" role="tab" data-toggle="tab">Community</a></li>
         </ul>
         <div class="tab-content" style="margin-top: 5px;">
-            <div class="tab-pane{% if active_tab == '#tabMembers' %} active{% endif %}" id="tabMembers" data-type="remove">
+            <div class="tab-pane active" id="tabMembers" data-type="remove">
                 {{ _group.list_users(style, members, group.id) }}
             </div>
-            <div class="tab-pane{% if active_tab == '#tabCommunity' %} active{% endif %}" id="tabCommunity">
-                {{ _group.list_users(style, nonMembers, group.id) }}
-            </div>
             {# start: keep consistent with IMDCTerpTubeBundle:Contact:list.html.twig #}
-            <div class="tab-pane" id="tabAll">
+            <div class="tab-pane" id="tabContactsAll">
                 {{ _group.list_users(style, contacts.all, group.id) }}
             </div>
-            <div class="tab-pane" id="tabMentors">
+            <div class="tab-pane" id="tabContactsMentors">
                 {{ _group.list_users(style, contacts.mentors, group.id) }}
             </div>
-            <div class="tab-pane" id="tabMentees">
+            <div class="tab-pane" id="tabContactsMentees">
                 {{ _group.list_users(style, contacts.mentees, group.id) }}
             </div>
-            <div class="tab-pane" id="tabFriends">
+            <div class="tab-pane" id="tabContactsFriends">
                 {{ _group.list_users(style, contacts.friends, group.id) }}
             </div>
             {# end: keep consistent with IMDCTerpTubeBundle:Contact:list.html.twig #}
+            <div class="tab-pane" id="tabCommunity">
+                {{ _group.list_users(style, nonMembers, group.id) }}
+            </div>
         </div>
         {{ form(removeForm) }}
         {{ form(addForm) }}
