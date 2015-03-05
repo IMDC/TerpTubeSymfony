@@ -16,32 +16,31 @@ class UserGroupRepository extends EntityRepository
 {
     /**
      * @param $user
+     * @param $isLoggedIn
      * @param array $sortParams
      * @return \Doctrine\ORM\QueryBuilder
      */
-    public function getViewableToUserQB($user, $sortParams = array())
+    public function getViewableToUserQB($user, $isLoggedIn, $sortParams = array())
     {
         $qb = $this->createQueryBuilder('g')
             ->leftJoin('g.members', 'm');
 
-        //FIXME: treat 'visibleToPublic' as 'isPrivate'
-        $qb->where($qb->expr()->eq('g.visibleToPublic', ':visibleToPublic'))
-            //FIXME: contradicts 'isPrivate'. needed? only registered members will get here anyway
-            //->orWhere($qb->expr()->eq('g.visibleToRegisteredUsers', ':visibleToRegisteredUsers'))
-            ->orWhere($qb->expr()->in('m.id', array(
-                $user->getId()
-            )))
-            ->setParameters(array(
-                'visibleToPublic' => true,
-                //'visibleToRegisteredUsers' => true
-            ));
+        $qb->where($qb->expr()->eq('g.visibleToPublic', true));
+
+        if ($isLoggedIn) {
+            $qb = $qb->orWhere($qb->expr()->eq('g.visibleToRegisteredUsers', true))
+                ->orWhere($qb->expr()->in('m.id', array(
+                    $user->getId()
+                )));
+        }
 
         return Utils::applySortParams($qb, $sortParams);
     }
 
     public function getViewableToUser($user, SecurityContext $securityContext, $sortParams = array())
     {
-        $groups = $this->getViewableToUserQB($user, $sortParams)->getQuery()->getResult();
+        $isLoggedIn = $securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED');
+        $groups = $this->getViewableToUserQB($user, $isLoggedIn, $sortParams)->getQuery()->getResult();
 
         //FIXME: groups don't use AccessType restrictions
         //return Utils::filterViewableToUser($securityContext, $groups);
