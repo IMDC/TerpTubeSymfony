@@ -22,16 +22,17 @@ class UserGroupRepository extends EntityRepository
      */
     public function getViewableToUserQB($user, $isLoggedIn, $sortParams = array())
     {
-        $qb = $this->createQueryBuilder('g')
-            ->leftJoin('g.members', 'm');
+        $qb = $this->createQueryBuilder('g');
 
         $qb->where($qb->expr()->eq('g.visibleToPublic', true));
 
         if ($isLoggedIn) {
-            $qb = $qb->orWhere($qb->expr()->eq('g.visibleToRegisteredUsers', true))
+            $qb = $qb->leftJoin('g.members', 'm')
+                ->orWhere($qb->expr()->eq('g.visibleToRegisteredUsers', true))
                 ->orWhere($qb->expr()->in('m.id', array(
                     $user->getId()
-                )));
+                )))
+                ->groupBy('g.id');
         }
 
         return Utils::applySortParams($qb, $sortParams);
