@@ -199,7 +199,7 @@ class ThreadController extends Controller
         $accessProvider->loadAccessData($objectIdentity);
 
         $form = $this->createForm(new ThreadType(), $thread, array(
-            'canChooseMedia' => false, //FIXME changing media not allowed?
+            //'canChooseMedia' => false, //FIXME changing media allowed?
             'access_data' => $accessProvider->getAccessData()
         ));
         $form->handleRequest($request);
@@ -209,6 +209,18 @@ class ThreadController extends Controller
             $currentDateTime = new \DateTime('now');
             $thread->setEditedAt($currentDateTime);
             $thread->setEditedBy($user);
+
+            //TODO 'currently' only your own media should be here, but check anyway
+            if (!$user->ownsMediaInCollection($form->get('mediaIncluded')->getData())) {
+                throw new AccessDeniedException(); //TODO more appropriate exception?
+            }
+
+            $thread->setMediaDisplayOrder($form->get('mediaIncluded')->getViewData());
+
+            if (count($thread->getMediaIncluded()) > 0) {
+                $ordered = $thread->getOrderedMedia();
+                $thread->setType($ordered[0]->getType()); // thread type is determined by the first associated media
+            }
 
             $forum = $thread->getParentForum();
             $forum->setLastActivity($currentDateTime);

@@ -36,6 +36,7 @@
             <div class="col-md-12">
                 {{ form_start(form) }}
                 {{ form_errors(form) }}
+                {{ form_widget(form.mediaIncluded) }}
                 {{ form_row(form.title) }}
                 {{ form_row(form.content) }}
                 {{ form_row(form.accessType) }}

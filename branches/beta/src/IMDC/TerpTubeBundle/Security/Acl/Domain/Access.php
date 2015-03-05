@@ -218,7 +218,8 @@ class Access
                     return false;
                 }
 
-                $securityIdentity = $this->objectIdentity->getSecurityIdentities()[0];
+                $securityIdentities = $this->objectIdentity->getSecurityIdentities();
+                $securityIdentity = $securityIdentities[0];
 
                 foreach ($aces as $ace) {
                     if (!$ace->getSecurityIdentity() instanceof RoleSecurityIdentity)
