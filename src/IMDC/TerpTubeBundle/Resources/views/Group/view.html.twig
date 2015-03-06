@@ -9,7 +9,7 @@
     <div class="col-md-12">
         <div class="row" style="margin-bottom: 20px;">
             <div class="col-md-6">
-                {% if isMember and group.membersCanAddForums %}
+                {% if isMember and group.membersCanAddForums or app.user == group.userFounder %}
                     <a class="btn btn-default" href="{{ path('imdc_forum_new', {'groupId': group.id}) }}"><i class="fa fa-plus"></i> Create Forum</a>
                 {% endif %}
                 {% if not isMember and group.openForNewMembers %}
