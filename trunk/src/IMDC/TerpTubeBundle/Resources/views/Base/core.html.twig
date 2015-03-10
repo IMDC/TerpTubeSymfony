@@ -131,17 +131,17 @@
                                 <div class="collapse navbar-collapse" id="tt-navbar-collapse-1">
                                     {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
                                         <ul class="nav navbar-nav tt-navbar-nav-top">
-                                            <li {% block nav_ul_authenticated_my_files %}{% endblock %}>
+                                            <li {% block nav_ul_my_files %}{% endblock %}>
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_myfiles_list') }}" title="{{ 'nav.my_files' | trans  }}"><i class="fa fa-folder-open fa-2x"></i></a>
                                             </li>
                                             <!-- TODO interpretations disabled for now
                                             <li {% block nav_ul_authenticated_my_interpretations %}{% endblock %}>
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{#{ path('imdc_myfiles_list_interpretations') }#}"><i class="fa fa-film fa-2x"></i></a>
                                             </li>-->
-                                            <li {% block nav_ul_authenticated_my_friends %}{% endblock %}>
+                                            <li {% block nav_ul_contacts %}{% endblock %}>
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_contact_list') }}" title="My Contacts"><i class="fa fa-user fa-2x"></i></a>
                                             </li>
-                                            <li {% block nav_ul_authenticated_my_groups %}{% endblock %}>
+                                            <li {% block nav_ul_my_groups %}{% endblock %}>
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}" title="{{ 'nav.my_groups' | trans  }}"><i class="fa fa-users fa-2x"></i></a>
                                             </li>
                                             <li>
