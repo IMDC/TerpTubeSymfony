@@ -284,12 +284,12 @@ class UserGroupControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/manage?style=grid');
         $gridCount = $crawler->filter('.tab-pane[id^=tab]');
 
-        // two tables/divs (group members, community)
-        $this->assertCount(2, $tableCount);
-        $this->assertCount(2, $gridCount);
-        $this->assertCount(1, $crawler->filter('form[name="user_group_manage_search"]'),
-            'a single "user_group_manage_search" form should be present');
-        $this->assertCount(2, $crawler->filter('form[name="user_group_manage_remove"], form[name="user_group_manage_add"]'),
+        // six tables/divs (group members, contacts (all, mentors, meentees, friends), community)
+        $this->assertCount(6, $tableCount);
+        $this->assertCount(6, $gridCount);
+        $this->assertCount(1, $crawler->filter('form[name="ugm_search"]'),
+            'a single "ugm_search" form should be present');
+        $this->assertCount(2, $crawler->filter('form[name="ugm_remove"], form[name="ugm_add"]'),
             '"users_select" forms should be present');
 
         return $model;
@@ -305,12 +305,12 @@ class UserGroupControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->find(self::$userIds[0]);
         $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/manage?style=list');
 
-        $form = $crawler->filter('form[name="user_group_manage_search"]')->form(array(
-            'user_group_manage_search[username]' => $user->getUsername()
+        $form = $crawler->filter('form[name="ugm_search"]')->form(array(
+            'ugm_search[username]' => $user->getUsername()
         ));
         $this->client->submit($form);
 
-        $this->assertCount(1, $crawler->filter('.tab-pane[id^=tab] [data-uid="' . $user->getId() . '"]'),
+        $this->assertCount(1, $crawler->filter('.tab-pane[id=tabCommunity] [data-uid="' . $user->getId() . '"]'),
             'user should be present');
 
         return $model;
@@ -326,9 +326,9 @@ class UserGroupControllerTest extends WebTestCase
         $groupId = $model['id'];
         $crawler = $this->client->request('GET', '/group/' . $groupId . '/manage');
 
-        $form = $crawler->filter('form[name="user_group_manage_add"]')->form();
+        $form = $crawler->filter('form[name="ugm_add"]')->form();
         $values = $form->getPhpValues();
-        $values['user_group_manage_add']['users'] = self::$userIds;
+        $values['ugm_add']['users'] = self::$userIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->entityManager->clear();
@@ -351,12 +351,12 @@ class UserGroupControllerTest extends WebTestCase
         $user = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->find(self::$userIds[1]);
         $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/manage?style=list');
 
-        $form = $crawler->filter('form[name="user_group_manage_search"]')->form(array(
-            'user_group_manage_search[username]' => $user->getUsername()
+        $form = $crawler->filter('form[name="ugm_search"]')->form(array(
+            'ugm_search[username]' => $user->getUsername()
         ));
         $this->client->submit($form);
 
-        $this->assertCount(1, $crawler->filter('.tab-pane[id^=tab] [data-uid="' . $user->getId() . '"]'),
+        $this->assertCount(1, $crawler->filter('.tab-pane[id=tabMembers] [data-uid="' . $user->getId() . '"]'),
             'user should be present');
 
         return $model;
@@ -372,9 +372,9 @@ class UserGroupControllerTest extends WebTestCase
         $groupId = $model['id'];
         $crawler = $this->client->request('GET', '/group/' . $groupId . '/manage');
 
-        $form = $crawler->filter('form[name="user_group_manage_remove"]')->form();
+        $form = $crawler->filter('form[name="ugm_remove"]')->form();
         $values = $form->getPhpValues();
-        $values['user_group_manage_remove']['users'] = self::$userIds;
+        $values['ugm_remove']['users'] = self::$userIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->entityManager->clear();
