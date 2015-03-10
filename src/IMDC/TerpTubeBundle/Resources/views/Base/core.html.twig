@@ -145,7 +145,7 @@
                                                 <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}" title="{{ 'nav.my_groups' | trans  }}"><i class="fa fa-users fa-2x"></i></a>
                                             </li>
                                             <li>
-                                                <a class="navbar-link main-recorder" href="#" title="Record a video"><i class="fa fa-video-camera fa-2x"></i></a>
+                                                <a class="navbar-link main-recorder" href="#" title="{{ 'mediachooser.form.record_video.default'|trans }}"><i class="fa fa-video-camera fa-2x"></i></a>
                                             </li>
                                             {% if is_granted('ROLE_SUPER_ADMIN') %}
                                                 <li {% block nav_ul_authenticated_admin %}{% endblock %}>
