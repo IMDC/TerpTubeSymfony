@@ -21,7 +21,7 @@ class GenerateAclsCommand extends ContainerAwareCommand
         $this
             ->setName('imdc:acl:generate-acls')
             ->setDescription('Generate ACLs and relevant ACEs for supported Entities based on its access type and owner')
-            ->addOption('flush', null, InputOption::VALUE_NONE, 'If set, the ACE table will be truncated first');
+            ->addOption('flush', null, InputOption::VALUE_NONE, 'If set, the ACL tables will be truncated first');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -30,8 +30,15 @@ class GenerateAclsCommand extends ContainerAwareCommand
 
         $doFlush = $input->hasOption('flush');
         if ($doFlush) {
-            $output->writeln('Truncating ACE table');
-            $em->getConnection()->exec("TRUNCATE acl_entries");
+            $output->writeln('Truncating ACL tables');
+            $em->getConnection()->exec("
+                SET FOREIGN_KEY_CHECKS = 0;
+                TRUNCATE acl_classes;
+                TRUNCATE acl_entries;
+                TRUNCATE acl_object_identities;
+                TRUNCATE acl_object_identity_ancestors;
+                TRUNCATE acl_security_identities;
+                SET FOREIGN_KEY_CHECKS = 1;");
         }
 
         /* @var $accessProvider AccessProvider */
@@ -41,6 +48,7 @@ class GenerateAclsCommand extends ContainerAwareCommand
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
             $access = $accessProvider->createAccess($objectIdentity);
+            $accessProvider->setSecurityIdentities($objectIdentity, $object);
             $access->insertEntries($securityIdentity);
             $accessProvider->updateAccess();
         };
