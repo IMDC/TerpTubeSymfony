@@ -36,6 +36,7 @@ class AccessTypeType extends AbstractType
     {
         $accessData = $options['access_data'];
         $choiceList = AccessChoiceList::fromEntityManager($this->entityManager, $options['class'], $this->securityContext);
+        $em = $this->entityManager;
 
         if (count($choiceList->getChoices()) > 0) {
             $builder->add(
@@ -44,10 +45,10 @@ class AccessTypeType extends AbstractType
                         'choice_list' => $choiceList,
                         'expanded' => true,
                         'label' => false))
-                    ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+                    ->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($em) {
                         $accessType = $event->getData();
                         if (!$accessType) {
-                            $accessType = $this->entityManager->find('IMDCTerpTubeBundle:AccessType', AccessType::TYPE_PUBLIC);
+                            $accessType = $em->find('IMDCTerpTubeBundle:AccessType', AccessType::TYPE_PUBLIC);
                         }
 
                         $event->setData($accessType);
@@ -59,11 +60,11 @@ class AccessTypeType extends AbstractType
             'label' => false
         ));
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($accessData) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($em, $accessData) {
             // convert data to into this form's data
             $accessType = $event->getData();
             if ($accessType instanceof AccessType) {
-                $transformer = new AccessDataToFormDataTransformer($accessType, $this->entityManager);
+                $transformer = new AccessDataToFormDataTransformer($accessType, $em);
                 $data = $transformer->transform($accessData);
 
                 $event->setData(array(
