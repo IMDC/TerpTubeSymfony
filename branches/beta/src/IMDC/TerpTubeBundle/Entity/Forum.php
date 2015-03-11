@@ -23,6 +23,11 @@ class Forum
     private $titleText;
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * @var \DateTime
      */
     private $lastActivity;
@@ -122,6 +127,29 @@ class Forum
     public function getTitleText()
     {
         return $this->titleText;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Forum
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**

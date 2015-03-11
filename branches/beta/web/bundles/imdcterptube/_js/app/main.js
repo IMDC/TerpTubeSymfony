@@ -88,6 +88,7 @@ define([
     ///////////////////////////////
 
     var Helper = require('core/helper');
+    Helper.autoSize();
 
     dust.helpers.generateUrl = function (chunk, context, bodies, params) {
         return chunk.write(Helper.generateUrl(params.path));

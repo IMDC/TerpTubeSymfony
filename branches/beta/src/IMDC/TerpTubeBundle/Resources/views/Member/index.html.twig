@@ -2,25 +2,9 @@
 
 {% trans_default_domain 'IMDCTerpTubeBundle' %}
 
-{% if isFriendsList is not defined %}
-    {% set isFriendsList = false %}
-{% endif %}
+{% block title %}Members{% endblock %}
 
-{% block title %}
-    {% if not isFriendsList %}
-        Members
-    {% else %}
-        {{ app.user }}'s Friends
-    {% endif %}
-{% endblock title %}
-
-{% block sidebarlinks_members %}
-    {% if not isFriendsList %}class="active"{% endif %}
-{% endblock sidebarlinks_members %}
-
-{% block nav_ul_authenticated_my_friends %}
-    {% if isFriendsList %}class="active"{% endif %}
-{% endblock %}
+{% block sidebarlinks_members %}class="active"{% endblock %}
 
 {% block content %}
     <div class="col-md-12">
@@ -33,7 +17,7 @@
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <hr class="tt-separator-top" />
-                {% if members|length > 0 and not isFriendsList %}
+                {% if members|length > 0 %}
                     {% set pagParams = members.getParams %}
                     <div class="btn-group" style="margin-bottom: 10px;">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
@@ -62,13 +46,7 @@
                 {% endif %}
                 {% if members|length > 0 %}
                     {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' %}
-                    {% if not isFriendsList %}
-                        {{ knp_pagination_render(members) }}
-                    {% endif %}
-                {% elseif isFriendsList  %}
-                    <p class="text-center" style="margin-bottom: 20px;">
-                        No friends yet! Why not go to the <a href="{{ path('imdc_member_list') }}">members directory</a> to see some profiles?
-                    </p>
+                    {{ knp_pagination_render(members) }}
                 {% endif %}
                 <hr class="tt-separator-bottom" />
             </div>

@@ -13,14 +13,14 @@ class UserGroup extends BaseGroup
     protected $id;
 
     /**
-     * @var \DateTime
-     */
-    private $dateCreated;
-
-    /**
      * @var string
      */
     private $description;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreated;
 
     /**
      * @var boolean
@@ -105,29 +105,6 @@ class UserGroup extends BaseGroup
     {
         return $this->id;
     }
-    
-    /**
-     * Set dateCreated
-     *
-     * @param \DateTime $dateCreated
-     * @return UserGroup
-     */
-    public function setDateCreated($dateCreated)
-    {
-        $this->dateCreated = $dateCreated;
-    
-        return $this;
-    }
-
-    /**
-     * Get dateCreated
-     *
-     * @return \DateTime 
-     */
-    public function getDateCreated()
-    {
-        return $this->dateCreated;
-    }
 
     /**
      * Set description
@@ -150,6 +127,29 @@ class UserGroup extends BaseGroup
     public function getDescription()
     {
         return $this->description;
+    }
+    
+    /**
+     * Set dateCreated
+     *
+     * @param \DateTime $dateCreated
+     * @return UserGroup
+     */
+    public function setDateCreated($dateCreated)
+    {
+        $this->dateCreated = $dateCreated;
+    
+        return $this;
+    }
+
+    /**
+     * Get dateCreated
+     *
+     * @return \DateTime 
+     */
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
     }
 
     /**

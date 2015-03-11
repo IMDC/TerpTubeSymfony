@@ -20,6 +20,12 @@ class ForumType extends AbstractType
             'label' => 'Title'
         ));
 
+        $builder->add('description', 'textarea', array(
+            'required' => false,
+            'attr' => array(
+                'class' => 'autosize')
+        ));
+
         $builder->add('accessType', 'access_type', array(
             'class' => 'IMDC\TerpTubeBundle\Entity\Forum',
             'access_data' => $options['access_data']
