@@ -1,12 +1,15 @@
 {@select key=media.type}
     {@eq value=1}
-        <video class="tt-media-video" style="height: 100%;" {^enableControls}controls{/enableControls} poster="{@generateUrl path=media.thumbnail_path /}" preload="metadata">
+        <video class="tt-media-video" style="height: 100%;"
+            {^enableControls} controls {/enableControls}
+            {?media.thumbnail_path} poster="{@generateUrl path=media.thumbnail_path /}" {/media.thumbnail_path}
+               preload="metadata">
             <source src="{@generateUrl path=media.resource.web_path /}" />
         </video>
     {/eq}
 
     {@eq value=2}
-        <audio class="tt-media-audio" {^enableControls}controls{/enableControls}>
+        <audio class="tt-media-audio"{^enableControls} controls{/enableControls}>
             <source src="{@generateUrl path=media.resource.web_path /}" />
         </audio>
     {/eq}

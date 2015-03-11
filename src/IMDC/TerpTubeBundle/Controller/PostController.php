@@ -49,7 +49,8 @@ class PostController extends Controller
         $isPostReply = !!$postParent;
         $post = new Post();
         $form = $this->createForm(new PostType(), $post, array(
-            'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false
+            'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false,
+            'is_post_reply' => $isPostReply
         ));
         $form->handleRequest($request);
 

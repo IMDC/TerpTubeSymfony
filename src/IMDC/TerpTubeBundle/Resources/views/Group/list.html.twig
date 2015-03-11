@@ -4,14 +4,15 @@
     {% set isMyGroups = false %}
 {% endif %}
 
-{% block title %}
-    {% if isMyGroups %}
-        {{ app.user }}'s&nbsp;
-    {% endif %}
-    Groups
-{% endblock title %}
+{% block title %}My Groups{% endblock %}
 
-{% block sidebarlinks_groups %}class="active"{% endblock %}
+{% block nav_ul_my_groups %}
+    {% if isMyGroups %}class="active"{% endif %}
+{% endblock %}
+
+{% block sidebarlinks_groups %}
+    {% if not isMyGroups %}class="active"{% endif %}
+{% endblock %}
 
 {% block content %}
     <div class="col-md-12">

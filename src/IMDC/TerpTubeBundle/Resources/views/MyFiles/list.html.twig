@@ -6,7 +6,7 @@
 
 {% import 'IMDCTerpTubeBundle:MyFiles:macros.html.twig' as _my_files %}
 
-{% block title %}{{ 'filesGateway.title'|trans }}{% endblock %}
+{% block title %}My Files{% endblock %}
 
 {% block header %}
     {{ parent() }}
@@ -29,14 +29,16 @@
     </script>
 {% endblock header %}
 
-{% block nav_ul_authenticated_my_files %}class="active"{% endblock %}
+{% block nav_ul_my_files %}class="active"{% endblock %}
 
 {% block content %}
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-12">
-                {% set isFileSelection = false %}
-                {{ block('media_chooser_widget') }}
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
             </div>
         </div>
         <div class="row">
