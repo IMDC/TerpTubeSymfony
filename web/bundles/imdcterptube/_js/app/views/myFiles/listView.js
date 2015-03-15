@@ -1,9 +1,9 @@
 define([
+    'service',
     'component/tableComponent',
     'component/mediaChooserComponent',
-    'service',
     'component/galleryComponent'
-], function (TableComponent, MediaChooserComponent, Service, GalleryComponent) {
+], function (Service, TableComponent, MediaChooserComponent, GalleryComponent) {
     'use strict';
 
     var ListView = function (controller, options) {
@@ -21,7 +21,7 @@ define([
         this.tblCmp = TableComponent.table(this.$filesList);
         this.tblCmp.subscribe(TableComponent.Event.CLICK_BULK_ACTION, this.bind__onClickBulkAction);
 
-        var instance = this;
+        //var instance = this;
 
         this.$filesList.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
@@ -38,12 +38,18 @@ define([
         this.$filesList.find('span.edit-title').editable({
             toggle: 'manual',
             unsavedclass: null,
-            success: function (response, newValue) {
+            /*success: function (response, newValue) {
                 instance.mcCmp.mediaManager.updateMedia({
                     id: $(this).data('mid'),
                     title: newValue
                 });
-            }
+            }*/
+            pk: function () {
+                return $(this).data('mid')
+            },
+            url: function (params) {
+                return this.controller.edit(params.pk, {title: params.value}).promise();
+            }.bind(this)
         });
 
         var sub = Service.get('subscriber');
@@ -81,9 +87,12 @@ define([
 //
 //                return this.mediaManager.deleteMedia(file.data("val"), Translator.trans('filesGateway.deleteConfirmMessage'));
 
-                $.each(e.$selection, (function (index, element) {
-                    this.mcCmp.mediaManager.deleteMedia($(element).data("mid")/*, Translator.trans('filesGateway.deleteConfirmMessage')*/);
-                }).bind(this));
+                if (confirm(Translator.trans('filesGateway.deleteConfirmMessage'))) {
+                    $.each(e.$selection, (function (index, element) {
+                        //this.mcCmp.mediaManager.deleteMedia($(element).data("mid")/*, Translator.trans('filesGateway.deleteConfirmMessage')*/);
+                        this.controller.delete($(element).data('mid'), true);
+                    }).bind(this));
+                }
 
                 //FIXME: make me better
                 setTimeout(function () {
