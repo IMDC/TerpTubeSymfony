@@ -56,13 +56,14 @@ class MyFilesGatewayController extends Controller
             ->matching($criteria);
 
         $paginator = $this->get('knp_paginator');
-        $media = $paginator->paginate($media, $request->query->get('page', 1), /*page number*/
+        $paginatedMedia = $paginator->paginate($media, $request->query->get('page', 1), /*page number*/
             ! $request->isXmlHttpRequest() ? 24 : ($style == 'list' ? 12 : 8) /*limit per page*/
         );
 
         $parameters = array(
-                'media' => $media,
-                'style' => $style
+            'media' => $media,
+            'paginatedMedia' => $paginatedMedia,
+            'style' => $style
         );
 
         if (! $request->isXmlHttpRequest())
@@ -80,8 +81,7 @@ class MyFilesGatewayController extends Controller
         if ($request->isXmlHttpRequest())
         {
             $content = array(
-                    'page' => $response->getContent(),
-                    'finished' => false
+                'page' => $response->getContent()
             );
 
             $response = new Response(json_encode($content), 200,
