@@ -118,12 +118,6 @@ class ForumController extends Controller
             $forum->setCreator($user);
             $forum->setLastActivity($currentDateTime);
             $forum->setCreationDate($currentDateTime);
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('titleMedia')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $forum->setMediaDisplayOrder($form->get('titleMedia')->getViewData());
 
             $user->addForum($forum);
@@ -247,12 +241,6 @@ class ForumController extends Controller
 
         if ($form->isValid()) {
             $forum->setLastActivity(new \DateTime('now'));
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('titleMedia')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $forum->setMediaDisplayOrder($form->get('titleMedia')->getViewData());
 
             if ($forum->getAccessType()->getId() !== AccessType::TYPE_GROUP) {

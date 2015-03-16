@@ -921,6 +921,11 @@ class User extends BaseUser
         return $message;
     }
 
+    /**
+     * @param $mediaCollection
+     * @return bool
+     * @deprecated
+     */
     public function ownsMediaInCollection($mediaCollection)
     {
         if (empty($mediaCollection)) {

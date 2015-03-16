@@ -60,12 +60,6 @@ class PostController extends Controller
             $post->setAuthor($user);
             $post->setCreated($currentDateTime);
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('attachedFile')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $post->setMediaDisplayOrder($form->get('attachedFile')->getViewData());
 
             if (!$isPostReply) {
@@ -191,12 +185,6 @@ class PostController extends Controller
             $post->setEditedAt(new \DateTime('now'));
             $post->setEditedBy($user);
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('attachedFile')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $post->setMediaDisplayOrder($form->get('attachedFile')->getViewData());
 
             $forum = $post->getParentThread()->getParentForum();
