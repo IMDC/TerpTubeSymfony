@@ -21,12 +21,10 @@ define([
 
         before(function (done) {
             post = new PostModel({
-                id: '0' + Math.floor((Math.random() * 100000) + 1),
                 parent_thread: {
                     id: 17
                 }
             });
-            form = '';
 
             Common.login(done);
 
@@ -34,6 +32,8 @@ define([
         });
 
         it('should get a new post form', function (done) {
+            form = null;
+
             return PostFactory.new(post)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
@@ -50,8 +50,6 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         it('should create a new post', function (done) {
@@ -78,10 +76,6 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            form = '';
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         it('should get post', function (done) {
@@ -97,11 +91,11 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         it('should get edit post form', function (done) {
+            form = null;
+
             return PostFactory.edit(post)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
@@ -118,8 +112,6 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         it('should edit post', function (done) {
@@ -150,10 +142,6 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            form = '';
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         it('should delete the post', function (done) {
@@ -169,8 +157,6 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         after(function () {

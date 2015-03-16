@@ -4,9 +4,6 @@
 
 {% block title %}{{ thread.title|truncate(50) }}{% endblock %}
 
-{#TODO deliver from controller#}
-{% set newPost = {id: '0' ~ random(), parent_thread: thread} %}
-
 {% block header %}
     {{ parent() }}
 
@@ -39,7 +36,7 @@
             );
 
             bootstrap(
-                    new PostModel({{ newPost|serialize('json')|raw }}),
+                    new PostModel({{ post|serialize('json')|raw }}),
                     PostController,
                     PostNewView,
                     {}
@@ -136,14 +133,8 @@
 						{% endif %}
 					</div>
 				</div>
-                {#{% set post = {'id': -1} %}#}
-                {#<div class="post-container" data-pid="{{ post.id }}">#}
-                    <!-- post reply form -->
-                    {#<div class="row post-container-reply" data-pid="{{ post.id }}">#}
-                        {#{% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'post': post} %}#}
-                        {% include 'IMDCTerpTubeBundle:Post:reply.html.twig' %}
-                    {#</div>#}
-                {#</div>#}
+                <!-- post reply form -->
+                {% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'is_not_ajax': true} %}
 				<div class="row">
 					<div class="col-md-12">
 						<h1>{{ thread.title }}</h1>
@@ -181,35 +172,13 @@
 					<div class="col-md-12">
                         {% if thread.posts|length > 0 %}
                             {% for post in thread.posts if not post.parentPost %}
-                                {#<div style="border: 1px solid #ddd; border-collapse: collapse; border-radius: 4px; margin-bottom: 15px; padding-bottom: 15px;">#}
-                                    {% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
-                                    <!-- replies to post -->
-                                    {% for postReply in post.replies %}
-                                        {% include 'IMDCTerpTubeBundle:Post:view.html.twig' with {'post': postReply} %}
-                                    {% endfor %}
-                                {#</div>#}
+                                <!-- post -->
+                                {% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
+                                <!-- post replies -->
+                                {% for post_reply in post.replies %}
+                                    {% include 'IMDCTerpTubeBundle:Post:view.html.twig' with {'is_post_reply': true, 'post': post_reply} %}
+                                {% endfor %}
                             {% endfor %}
-                            {#<div class="modal fade post-delete-modal">#}
-                                {#<div class="modal-dialog">#}
-                                    {#<div class="modal-content">#}
-                                        {#<div class="modal-header">#}
-                                            {#<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>#}
-                                            {#<h4 class="modal-title">Delete this post</h4>#}
-                                        {#</div>#}
-                                        {#<div class="modal-body text-center">#}
-                                            {#<p>#}
-                                                {#This post will be permanently deleted.<br />#}
-                                                {#This action cannot be undone.<br />#}
-                                                {#Are you sure?#}
-                                            {#</p>#}
-                                        {#</div>#}
-                                        {#<div class="modal-footer">#}
-                                            {#<a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>#}
-                                            {#<a class="btn btn-danger post-delete" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>#}
-                                        {#</div>#}
-                                    {#</div>#}
-                                {#</div>#}
-                            {#</div>#}
                         {% else %}
                             <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
                         {% endif %}
