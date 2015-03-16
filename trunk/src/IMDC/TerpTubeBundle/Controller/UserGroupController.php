@@ -93,12 +93,6 @@ class UserGroupController extends Controller
             $user = $this->getUser();
             $group->setUserFounder($user);
             $group->addAdmin($user);
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('media')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $group->setMediaDisplayOrder($form->get('media')->getViewData());
 
             $user->addUserGroup($group);
@@ -210,13 +204,6 @@ class UserGroupController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $user = $this->getUser();
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('media')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $group->setMediaDisplayOrder($form->get('media')->getViewData());
 
             $em->persist($group);
