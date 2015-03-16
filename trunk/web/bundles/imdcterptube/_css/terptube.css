@@ -243,26 +243,33 @@ ul.pagination {
   font-size: 24px;
 }
 
+/*override bootstrap*/
 /* line 260, sass/_base.scss */
+textarea.form-control {
+  height: 34px;
+  /*bootstrap*/
+}
+
+/* line 265, sass/_base.scss */
 a {
   color: #000000;
 }
-/* line 263, sass/_base.scss */
+/* line 268, sass/_base.scss */
 a:hover, a:focus, a:visited {
   text-decoration: none;
 }
 
-/* line 271, sass/_base.scss */
+/* line 276, sass/_base.scss */
 .btn-link:hover, .btn-link:focus {
   text-decoration: none;
 }
 
 @media print {
-  /* line 260, sass/_base.scss */
+  /* line 265, sass/_base.scss */
   a {
     color: #000000;
   }
-  /* line 263, sass/_base.scss */
+  /* line 268, sass/_base.scss */
   a:hover, a:focus, a:visited {
     text-decoration: none;
   }

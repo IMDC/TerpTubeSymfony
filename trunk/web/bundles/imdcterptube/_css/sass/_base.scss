@@ -1,7 +1,7 @@
 @import 'bootstrap/variables';
 
 $line-height-base-top: 2; // FontAwesome fa-2x font size (em)
-$line-height-computed-top: floor(($font-size-base * $line-height-base-top));
+$line-height-computed-top: floor(($font-size-base /*bootstrap*/ * $line-height-base-top));
 
 $navbar-text-color: white;
 
@@ -9,7 +9,7 @@ $navbar-top-height: 70px;
 $navbar-top-padding-vertical: (($navbar-top-height - $line-height-computed-top) / 2);
 
 $navbar-bottom-height: 25px;
-$navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed) / 2);
+$navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed /*bootstrap*/) / 2);
 
 $body-extra-padding: 15px;
 
@@ -254,6 +254,11 @@ $tt-lt-line-height: $tt-lt-row-height;
 
 .tt-thumbnail-title {
   font-size: $title-font-size;
+}
+
+/*override bootstrap*/
+textarea.form-control {
+  height: $input-height-base; /*bootstrap*/
 }
 
 @mixin links {
