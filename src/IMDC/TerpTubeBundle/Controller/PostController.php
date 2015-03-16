@@ -109,12 +109,15 @@ class PostController extends Controller
                     'threadid' => $thread->getId()))
             );
         } else {
+            $post->setParentThread($thread);
+            $post->setParentPost($postParent);
+
             $content = array(
                 'wasReplied' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                     'form' => $form->createView(),
-                    'post' => $postParent, 
-                	'thread' =>$thread))
+                    'post' => $post,
+                    'is_post_reply' => $isPostReply))
             );
         }
 
@@ -144,7 +147,8 @@ class PostController extends Controller
 
         $content = array(
             'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                'post' => $post))
+                'post' => $post,
+                'is_post_reply' => false))
         );
 
         return new Response(json_encode($content), 200, array(
@@ -181,6 +185,8 @@ class PostController extends Controller
         ));
         $form->handleRequest($request);
 
+        $isPostReply = !!$post->getParentPost();
+
         if ($form->isValid()) {
             $post->setEditedAt(new \DateTime('now'));
             $post->setEditedBy($user);
@@ -205,14 +211,16 @@ class PostController extends Controller
                 'wasEdited' => true,
                 'post' => json_decode($serializer->serialize($post, 'json'), true),
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                    'post' => $post))
+                    'post' => $post,
+                    'is_post_reply' => $isPostReply))
             );
         } else {
             $content = array(
                 'wasEdited' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
                     'form' => $form->createView(),
-                    'post' => $post))
+                    'post' => $post,
+                    'is_post_reply' => $isPostReply))
             );
         }
 

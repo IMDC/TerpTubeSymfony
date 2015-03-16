@@ -13,8 +13,12 @@ define(function () {
     };
 
     PostFactory.new = function (post, form) {
+        var route = Routing.getRoute('imdc_post_new');
         var settings = {
-            url: Routing.generate('imdc_post_new', {threadId: post.get('parent_thread.id'), pid: (post.get('parent_post.id') || post.get('id'))})
+            url: Routing.generate('imdc_post_new', {
+                threadId: post.get('parent_thread.id'),
+                pid: (post.get('parent_post.id') || route.defaults.pid)
+            })
         };
 
         PostFactory._prepForm(form, settings);

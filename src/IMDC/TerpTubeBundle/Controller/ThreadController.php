@@ -162,10 +162,16 @@ class ThreadController extends Controller
         $form = $this->createForm(new PostType(), new Post(), array(
             'canTemporal' => $thread->getType() == 1
         ));
+
+        // empty post
+        $post = new Post();
+        $post->setParentThread($thread);
         
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
             'form' => $form->createView(),
-            'thread' => $thread
+            'thread' => $thread,
+            'post' => $post,
+            'is_post_reply' => false
         ));
     }
 
