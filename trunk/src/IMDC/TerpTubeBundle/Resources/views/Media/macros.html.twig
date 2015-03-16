@@ -52,8 +52,7 @@
 {% endmacro %}
 
 {% macro element(media, enable_controls, preloadMedia) %}
-    {% set enable_controls = enable_controls is defined ? enable_controls : true %}
-    {% set has_poster = media.getThumbnailPath is not empty %}
+    {% set enable_controls = enable_controls is not empty ? enable_controls : true %}
     {% set preloadMedia = preloadMedia is defined ? preloadMedia : false %}
 
     {% if media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
@@ -87,4 +86,9 @@
             </div>
         </div>
     {% endif %}
+{% endmacro %}
+
+{% macro no_media_element() %}
+    <i class="fa fa-question fa-3x"></i><br />
+    <em>no media</em>
 {% endmacro %}

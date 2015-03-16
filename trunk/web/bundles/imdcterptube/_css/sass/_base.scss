@@ -13,6 +13,8 @@ $navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed
 
 $body-extra-padding: 15px;
 
+$title-font-size: 24px;
+
 $eku-primary: #5e213b;
 
 
@@ -191,7 +193,7 @@ $tt-gd-img-height: 125px;
       white-space: nowrap;
 
       > p:nth-of-type(1) {
-        font-size: 24px;
+        font-size: $title-font-size;
       }
     }
   }
@@ -248,6 +250,10 @@ $tt-lt-line-height: $tt-lt-row-height;
       }
     }
   }
+}
+
+.tt-thumbnail-title {
+  font-size: $title-font-size;
 }
 
 @mixin links {
