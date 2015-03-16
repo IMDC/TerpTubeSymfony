@@ -17,7 +17,7 @@ define(function () {
         var settings = {
             url: Routing.generate('imdc_post_new', {
                 threadId: post.get('parent_thread.id'),
-                pid: (post.get('parent_post.id') || route.defaults.pid)
+                pid: (post.get('parent_post.id') || post.get('id') || route.defaults.pid)
             })
         };
 
