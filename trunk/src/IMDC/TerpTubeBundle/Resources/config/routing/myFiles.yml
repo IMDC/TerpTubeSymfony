@@ -1,19 +1,19 @@
 imdc_myfiles_list:
   pattern: /
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:list }
+  defaults: { _controller: IMDCTerpTubeBundle:MyFiles:list }
   options:
     expose: true
 
 imdc_myfiles_add_recording:
   pattern: /add/recording
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addRecording }
+  defaults: { _controller: IMDCTerpTubeBundle:MyFiles:addRecording }
   methods: [POST]
   options:
     expose: true
 
 imdc_myfiles_add:
   pattern: /add
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:add }
+  defaults: { _controller: IMDCTerpTubeBundle:MyFiles:add }
   methods: [POST]
   options:
     expose: true
