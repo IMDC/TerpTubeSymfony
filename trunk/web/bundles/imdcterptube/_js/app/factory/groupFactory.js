@@ -3,10 +3,10 @@ define(function () {
 
     var GroupFactory = {};
 
-    GroupFactory.delete = function (group) {
+    GroupFactory.delete = function (model) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_group_delete', {groupId: group.get('id')}),
+            url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
             type: 'POST'
         };
 
