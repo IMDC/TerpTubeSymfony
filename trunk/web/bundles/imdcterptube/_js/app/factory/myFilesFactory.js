@@ -5,7 +5,7 @@ define([
 
     var MyFilesFactory = {};
 
-    MyFilesFactory._prepForFormPost = function (form, settings) {
+    MyFilesFactory._prepForFormPost = function (form, settings, deferred) {
         settings.type = 'POST';
         settings.contentType = false;
         if (form) {
@@ -15,11 +15,10 @@ define([
         settings.xhr = function () {
             var xhr = $.ajaxSettings.xhr();
             xhr.upload.addEventListener('progress', function (e) {
-                if (!e.lengthComputable)
-                    return;
-
-                $.Deferred().notify(Math.floor((e.loaded / e.total) * 100));
-            }.bind(this), false);
+                if (e.lengthComputable) {
+                    deferred.notify(Math.floor((e.loaded / e.total) * 100));
+                }
+            }, false);
 
             return xhr;
         }
@@ -31,59 +30,63 @@ define([
         var settings = {
             url: Routing.generate('imdc_myfiles_add_recording')
         };
+        var deferred = $.Deferred();
 
         formData.append('isFirefox', isFirefox);
         if (!isFirefox) {
             formData.append('video-blob', video);
         }
         formData.append('audio-blob', audio);
-
         if (interpretationData) {
             formData.append('isInterpretation', true);
             formData.append('sourceStartTime', interpretationData.sourceStartTime);
             formData.append('sourceId', interpretationData.sourceId);
         }
 
-        MyFilesFactory._prepForFormPost(null, settings);
-
+        MyFilesFactory._prepForFormPost(null, settings, deferred);
         settings.data = formData;
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.responseCode == 200) {
                     data.media = new MediaModel(data.media);
-                    return $.Deferred().resolve(data);
+                    return deferred.resolve(data);
                 } else {
-                    return $.Deferred().reject(data);
+                    return deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                return deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     MyFilesFactory.add = function (form) {
         var settings = {
             url: Routing.generate('imdc_myfiles_add')
         };
+        var deferred = $.Deferred();
 
-        MyFilesFactory._prepForFormPost(form, settings);
+        MyFilesFactory._prepForFormPost(form, settings, deferred);
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.wasUploaded) {
                     data.media = new MediaModel(data.media);
-                    return $.Deferred().resolve(data);
+                    return deferred.resolve(data);
                 } else {
                     console.error(data.error);
-                    return $.Deferred().reject(data);
+                    return deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                return deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     return MyFilesFactory;
