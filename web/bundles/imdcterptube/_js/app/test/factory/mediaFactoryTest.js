@@ -22,7 +22,7 @@ define([
 
         before(function (done) {
             // index 2 must not be in use. index 3 must be in use
-            mediaIds = [4, 1, 362, 361];
+            mediaIds = [4, 1, 392, 391];
 
             Common.login(done);
 
@@ -64,18 +64,21 @@ define([
         });
 
         it('should edit the media', function (done) {
-            var oldModelData;
+            var oldId = model.get('id');
+            var oldTitle = model.get('title');
+            var newTitle = 'test:edit:' + Math.floor((Math.random() * 100000) + 1);
 
-            model.set('title', 'test:edit:' + Math.floor((Math.random() * 100000) + 1));
-            oldModelData = model.data;
+            model.set('title', newTitle);
 
             return MediaFactory.edit(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'media', 'result should have key:media');
 
-                    assert.equal(model.get('id'), oldModelData.id, 'media id should be equal');
-                    assert.equal(model.get('title'), oldModelData.title, 'media title should be equal');
+                    assert.equal(model.get('id'), oldId, 'media id should be equal');
+                    assert.notEqual(model.get('title'), oldTitle,
+                        'media title should not be equal to the old title');
+                    assert.equal(model.get('title'), newTitle, 'media title should be equal');
                     done();
                 })
                 .fail(function (data) {
@@ -85,14 +88,14 @@ define([
         });
 
         it('should trim the media', function (done) {
-            var oldModelData = model.data;
+            var oldId = model.get('id');
 
             return MediaFactory.trim(model, '0.4', '2.2')
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'media', 'result should have key:media');
 
-                    assert.equal(model.get('id'), oldModelData.id, 'media id should be equal');
+                    assert.equal(model.get('id'), oldId, 'media id should be equal');
                     done();
                 })
                 .fail(function (data) {
