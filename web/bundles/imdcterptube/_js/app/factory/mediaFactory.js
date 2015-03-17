@@ -6,6 +6,7 @@ define([
     var MediaFactory = {};
 
     MediaFactory.list = function (ids) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_media_list'),
             data: {}
@@ -15,53 +16,59 @@ define([
             settings.data.id = ids.join();
         }
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 data.media.forEach(function (element, index, array) {
                     array[index] = new MediaModel(element);
                 });
-                return $.Deferred().resolve(data);
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     MediaFactory.edit = function (model) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_media_edit', {mediaId: model.get('id')}),
             type: 'POST',
             data: {media: JSON.stringify(model.data)} // TODO add method to model to get json representation of underlying data
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.responseCode == 200) {
                     model = new MediaModel(data.media);
-                    return $.Deferred().resolve(data);
+                    deferred.resolve(data);
                 } else {
                     console.error(data.feedback);
-                    return $.Deferred().reject(data);
+                    deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     MediaFactory.delete = function (model, confirmed) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_media_delete', {mediaId: model.get('id')}),
             type: 'POST',
             data: {confirm: confirmed || false}
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.responseCode == 200) {
-                    return $.Deferred().resolve(data);
+                    deferred.resolve(data);
                 } else {
                     console.error(data.feedback);
 
@@ -75,16 +82,19 @@ define([
                         'mediaUsedLocations': mediaInUseTexts.join(', ')
                     });
 
-                    return $.Deferred().reject(data);
+                    deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     MediaFactory.trim = function (model, startTime, endTime) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_media_trim', {mediaId: model.get('id')}),
             type: 'POST',
@@ -94,20 +104,22 @@ define([
             }
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.responseCode == 200) {
                     model = new MediaModel(data.media);
-                    return $.Deferred().resolve(data);
+                    deferred.resolve(data);
                 } else {
                     console.error(data.feedback);
-                    return $.Deferred().reject(data);
+                    deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     return MediaFactory;

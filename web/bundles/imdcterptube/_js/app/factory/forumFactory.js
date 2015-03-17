@@ -4,23 +4,26 @@ define(function () {
     var ForumFactory = {};
 
     ForumFactory.delete = function (model) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_forum_delete', {forumid: model.get('id')}),
             type: 'POST'
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.wasDeleted) {
-                    return $.Deferred().resolve(data);
+                    deferred.resolve(data);
                 } else {
-                    return $.Deferred().reject();
+                    deferred.reject();
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     return ForumFactory;
