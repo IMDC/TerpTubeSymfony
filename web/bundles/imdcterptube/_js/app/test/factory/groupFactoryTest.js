@@ -16,10 +16,10 @@ define([
 
         Common.ajaxSetup();
 
-        var group;
+        var model;
 
         before(function (done) {
-            group = new GroupModel({
+            model = new GroupModel({
                 id: 41 // this must be set to an existing group id
             });
 
@@ -29,7 +29,7 @@ define([
         });
 
         it('should delete the group', function (done) {
-            return GroupFactory.delete(group)
+            return GroupFactory.delete(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasDeleted', 'result should have key:wasDeleted');
@@ -42,12 +42,10 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         after(function () {
-            group = null;
+            model = null;
         });
 
     });

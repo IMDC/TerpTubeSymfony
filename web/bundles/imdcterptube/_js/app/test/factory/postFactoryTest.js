@@ -16,11 +16,11 @@ define([
 
         Common.ajaxSetup();
 
-        var post;
+        var model;
         var form;
 
         before(function (done) {
-            post = new PostModel({
+            model = new PostModel({
                 parent_thread: {
                     id: 17
                 }
@@ -34,7 +34,7 @@ define([
         it('should get a new post form', function (done) {
             form = null;
 
-            return PostFactory.new(post)
+            return PostFactory.new(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasReplied', 'result should have key:wasReplied');
@@ -57,7 +57,7 @@ define([
 
             form.find('textarea[name="post[content]"]').val('testtest_new');
 
-            return PostFactory.new(post, form[0])
+            return PostFactory.new(model, form[0])
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasReplied', 'result should have key:wasReplied');
@@ -66,10 +66,10 @@ define([
 
                     assert.isTrue(data.wasReplied, 'key:wasReplied should be true');
                     assert.isNumber(data.post.id, 'value of key path:post.id should be a number');
-                    assert.match(data.redirectUrl, new RegExp('.*\\/' + post.get('parent_thread.id') + '.*'),
+                    assert.match(data.redirectUrl, new RegExp('.*\\/' + model.get('parent_thread.id') + '.*'),
                         'key:redirectUrl should have matched');
 
-                    post.set('id', data.post.id);
+                    model.set('id', data.post.id);
                     done();
                 })
                 .fail(function () {
@@ -79,12 +79,12 @@ define([
         });
 
         it('should get post', function (done) {
-            return PostFactory.view(post)
+            return PostFactory.view(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'html', 'result should have key:html');
 
-                    assert.include(data.html, 'data-pid="' + post.get('id') + '"', 'key:html should contain the post id');
+                    assert.include(data.html, 'data-pid="' + model.get('id') + '"', 'key:html should contain the post id');
                     done();
                 })
                 .fail(function () {
@@ -96,7 +96,7 @@ define([
         it('should get edit post form', function (done) {
             form = null;
 
-            return PostFactory.edit(post)
+            return PostFactory.edit(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasEdited', 'result should have key:wasEdited');
@@ -121,7 +121,7 @@ define([
             var contentVal = 'testtest_edit';
             content.val(contentVal);
 
-            return PostFactory.edit(post, form[0])
+            return PostFactory.edit(model, form[0])
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasEdited', 'result should have key:wasEdited');
@@ -131,11 +131,11 @@ define([
                     assert.isTrue(data.wasEdited, 'key:wasEdited should be true');
                     assert.include(data.html, contentVal, 'key:html should contain submitted post content');
 
-                    assert.isUndefined(post.get('start_time'), 'post key:start_time should be undefined');
-                    assert.isUndefined(post.get('end_time'), 'post key:end_time should be undefined');
-                    assert.isFalse(post.get('is_temporal'), 'post key:is_temporal should be false');
-                    assert.isUndefined(post.get('parent_post'), 'post key:parent_post should be undefined');
-                    assert.isDefined(post.get('parent_thread'), 'post key:parent_thread should be defined');
+                    assert.isUndefined(model.get('start_time'), 'post key:start_time should be undefined');
+                    assert.isUndefined(model.get('end_time'), 'post key:end_time should be undefined');
+                    assert.isFalse(model.get('is_temporal'), 'post key:is_temporal should be false');
+                    assert.isUndefined(model.get('parent_post'), 'post key:parent_post should be undefined');
+                    assert.isDefined(model.get('parent_thread'), 'post key:parent_thread should be defined');
                     done();
                 })
                 .fail(function () {
@@ -145,7 +145,7 @@ define([
         });
 
         it('should delete the post', function (done) {
-            return PostFactory.delete(post)
+            return PostFactory.delete(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'wasDeleted', 'result should have key:wasDeleted');
@@ -160,7 +160,7 @@ define([
         });
 
         after(function () {
-            post = null;
+            model = null;
             form = null;
         });
 

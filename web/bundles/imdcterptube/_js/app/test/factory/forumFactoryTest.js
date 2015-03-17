@@ -42,8 +42,6 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         after(function () {

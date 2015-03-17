@@ -3,10 +3,10 @@ define(function () {
 
     var ThreadFactory = {};
 
-    ThreadFactory.delete = function (thread) {
+    ThreadFactory.delete = function (model) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_thread_delete', {threadid: thread.get('id')}),
+            url: Routing.generate('imdc_thread_delete', {threadid: model.get('id')}),
             type: 'POST'
         };
 

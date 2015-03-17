@@ -38,7 +38,7 @@ module.exports = function(config) {
         'test/factory/contact*',
         'test/factory/forum*',
         'test/factory/group*',
-        //'test/factory/media*',
+        'test/factory/media*',
         'test/factory/myFiles*',
         'test/factory/post*',
         'test/factory/thread*'
