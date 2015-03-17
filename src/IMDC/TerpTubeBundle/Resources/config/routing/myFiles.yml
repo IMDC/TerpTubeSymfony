@@ -4,49 +4,49 @@ imdc_myfiles_list:
   options:
     expose: true
 
-imdc_myfiles_trim:
-  pattern: /{mediaId}/trim/{startTime}/{endTime}
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:trimMedia }
-  requirements:
-    _method:  POST
-    mediaId: \d+
-  options:
-    expose: true
-
-imdc_myfiles_update:
-  pattern: /{mediaId}/update
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:updateMedia }
-  requirements:
-    _method:  POST
-    mediaId: \d+
-  options:
-    expose: true
-
-imdc_myfiles_delete:
-  pattern: /{mediaId}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia}
-  requirements:
-    _method:  POST
-    mediaId: \d+
-  options:
-    expose: true
+#imdc_myfiles_trim:
+#  pattern: /{mediaId}/trim/{startTime}/{endTime}
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:trimMedia }
+#  requirements:
+#    _method:  POST
+#    mediaId: \d+
+#  options:
+#    expose: true
+#
+#imdc_myfiles_update:
+#  pattern: /{mediaId}/update
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:updateMedia }
+#  requirements:
+#    _method:  POST
+#    mediaId: \d+
+#  options:
+#    expose: true
+#
+#imdc_myfiles_delete:
+#  pattern: /{mediaId}/delete
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:deleteMedia}
+#  requirements:
+#    _method:  POST
+#    mediaId: \d+
+#  options:
+#    expose: true
 
 imdc_myfiles_add_recording:
   pattern: /add/recording
   defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:addRecording }
+  methods: [POST]
   options:
     expose: true
 
 imdc_myfiles_add:
   pattern: /add
   defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:add }
-  requirements:
-    _method:  POST
+  methods: [POST]
   options:
     expose: true
 
-imdc_myfiles_get_info:
-  pattern: /info
-  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:getInfo }
-  options:
-    expose: true
+#imdc_myfiles_get_info:
+#  pattern: /info
+#  defaults: { _controller: IMDCTerpTubeBundle:MyFilesGateway:getInfo }
+#  options:
+#    expose: true
