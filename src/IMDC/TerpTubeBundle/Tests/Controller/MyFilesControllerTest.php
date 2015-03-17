@@ -8,11 +8,11 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Class MyFilesGatewayControllerTest
+ * Class MyFilesControllerTest
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class MyFilesGatewayControllerTest extends WebTestCase
+class MyFilesControllerTest extends WebTestCase
 {
     /**
      * @var Client
@@ -32,9 +32,9 @@ class MyFilesGatewayControllerTest extends WebTestCase
         copy('web/uploads/media/148.webm', 'audio.webm');
     }
 
-    public function testAddRecordingFirefox()
+    public function testAddRecording_Firefox()
     {
-        MyFilesGatewayControllerTest::prepareWebmData();
+        MyFilesControllerTest::prepareWebmData();
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isFirefox' => true
@@ -43,7 +43,7 @@ class MyFilesGatewayControllerTest extends WebTestCase
         ));
 
         file_put_contents(
-            'MyFilesGatewayControllerTest_testAddRecordingFirefox.html',
+            'MyFilesControllerTest.testAddRecording_Firefox.html',
             $this->client->getResponse()->getContent()
         );
 
@@ -55,9 +55,9 @@ class MyFilesGatewayControllerTest extends WebTestCase
         $this->assertEquals('media added', $response['feedback']);
     }
 
-    public function testAddRecordingFirefoxInterpretation()
+    public function testAddRecording_FirefoxInterpretation()
     {
-        MyFilesGatewayControllerTest::prepareWebmData();
+        MyFilesControllerTest::prepareWebmData();
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isFirefox' => true,
@@ -69,7 +69,7 @@ class MyFilesGatewayControllerTest extends WebTestCase
         ));
 
         file_put_contents(
-            'MyFilesGatewayControllerTest_testAddRecordingFirefoxInterpretation.html',
+            'MyFilesControllerTest.testAddRecording_FirefoxInterpretation.html',
             $this->client->getResponse()->getContent()
         );
 
