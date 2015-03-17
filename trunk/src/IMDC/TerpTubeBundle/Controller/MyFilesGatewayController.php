@@ -1,5 +1,7 @@
 <?php
+
 namespace IMDC\TerpTubeBundle\Controller;
+
 use Doctrine\Common\Collections\Criteria;
 use FFMpeg\FFProbe;
 use IMDC\TerpTubeBundle\Entity\Interpretation;
@@ -35,19 +37,17 @@ class MyFilesGatewayController extends Controller
 
     const FEEDBACK_MESSAGE_MEDIA_UPLOAD_INVALID_FORM = "Invalid Media!";
 
-    public function listAction (Request $request)
+    public function listAction(Request $request)
     {
-        if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
-        $criteria = Criteria::create()->orderBy(array("id" => Criteria::DESC ));
+        $criteria = Criteria::create()->orderBy(array("id" => Criteria::DESC));
         $type = $request->query->get('type', false);
         $style = $request->query->get('style', 'grid');
 
-        if ($type !== false)
-        {
+        if ($type !== false) {
             $criteria->andWhere(Criteria::expr()->eq('type', $type));
         }
 
@@ -57,7 +57,7 @@ class MyFilesGatewayController extends Controller
 
         $paginator = $this->get('knp_paginator');
         $paginatedMedia = $paginator->paginate($media, $request->query->get('page', 1), /*page number*/
-            ! $request->isXmlHttpRequest() ? 24 : ($style == 'list' ? 12 : 8) /*limit per page*/
+            !$request->isXmlHttpRequest() ? 24 : ($style == 'list' ? 12 : 8) /*limit per page*/
         );
 
         $parameters = array(
@@ -66,8 +66,7 @@ class MyFilesGatewayController extends Controller
             'style' => $style
         );
 
-        if (! $request->isXmlHttpRequest())
-        {
+        if (!$request->isXmlHttpRequest()) {
             $parameters['form'] = $this->createForm('media_chooser', null, array(
                 'allow_file_select' => false,
                 'label' => false
@@ -75,19 +74,18 @@ class MyFilesGatewayController extends Controller
         }
 
         $response = $this->render(
-                'IMDCTerpTubeBundle:MyFiles:' . ($request->isXmlHttpRequest() ? 'ajax.' : '') . 'list.html.twig',
-                $parameters);
+            'IMDCTerpTubeBundle:MyFiles:' . ($request->isXmlHttpRequest() ? 'ajax.' : '') . 'list.html.twig',
+            $parameters);
 
-        if ($request->isXmlHttpRequest())
-        {
+        if ($request->isXmlHttpRequest()) {
             $content = array(
                 'page' => $response->getContent()
             );
 
             $response = new Response(json_encode($content), 200,
-                    array(
-                            'Content-Type' => 'application/json'
-                    ));
+                array(
+                    'Content-Type' => 'application/json'
+                ));
         }
 
         return $response;
@@ -102,14 +100,14 @@ class MyFilesGatewayController extends Controller
      *            $startTime
      * @param
      *            $endTime
+     * @deprecated
      */
-    public function trimMediaAction (Request $request, $mediaId, $startTime, $endTime) // TODO move to MediaController
+    public function trimMediaAction(Request $request, $mediaId, $startTime, $endTime) // TODO move to MediaController
     {
-        if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
-        if (! $request->isXmlHttpRequest())
+        if (!$request->isXmlHttpRequest())
             throw new BadRequestHttpException('Only Ajax POST calls accepted');
         $user = $this->getUser();
         $em = $this->get('doctrine')->getManager();
@@ -119,23 +117,18 @@ class MyFilesGatewayController extends Controller
          */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
 
-        if ($media == null)
-        {
+        if ($media == null) {
             $return = array(
-                    'responseCode' => 400,
-                    'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
+                'responseCode' => 400,
+                'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
             );
-        }
-        else
-            if ($media->getOwner() != $user)
-            {
+        } else
+            if ($media->getOwner() != $user) {
                 $return = array(
-                        'responseCode' => 400,
-                        'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
+                    'responseCode' => 400,
+                    'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
                 );
-            }
-            else
-            {
+            } else {
                 $serializer = $this->get('jms_serializer');
                 // FIXME if video is being transcoded, need to queue the operation to execute once it completes
                 // FIXME check if start/end times are proper values
@@ -146,40 +139,34 @@ class MyFilesGatewayController extends Controller
                 $metaData = $media->getMetaData();
                 $transcoder = $this->container->get('imdc_terptube.transcoder');
                 // FIXME Throws exception at rename when trying to move the mp4 file.
-                if ($media->getIsReady() == Media::READY_YES)
-                {
+                if ($media->getIsReady() == Media::READY_YES) {
                     $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
                     $resultMp4 = $transcoder->trimVideo($mp4File, $startTime, $endTime);
                     $finalFile = new File($webmFile);
                     $videoDuration = 0;
                     if ($ffprobe->format($finalFile->getRealPath())
-                        ->has('duration'))
+                        ->has('duration')
+                    )
                         $videoDuration = $ffprobe->format($finalFile->getRealPath())
-                            ->get('duration');
-                    ;
+                            ->get('duration');;
                     $fileSize = filesize($finalFile->getRealPath());
                     $metaData->setDuration($videoDuration);
                     $metaData->setSize($fileSize);
                     $em->flush();
-                    if ($resultWebM && $resultMp4)
-                    {
+                    if ($resultWebM && $resultMp4) {
                         $return = array(
-                                'responseCode' => 200,
-                                'feedback' => 'Successfully trimmed media!',
-                                'media' => json_decode($serializer->serialize($media, 'json'), true)
+                            'responseCode' => 200,
+                            'feedback' => 'Successfully trimmed media!',
+                            'media' => json_decode($serializer->serialize($media, 'json'), true)
+                        );
+                    } else {
+                        $return = array(
+                            'responseCode' => 400,
+                            'feedback' => 'Trimming media failed!.'
                         );
                     }
-                    else
-                    {
-                        $return = array(
-                                'responseCode' => 400,
-                                'feedback' => 'Trimming media failed!.'
-                        );
-                    }
-                }
-                else
-                    if ($media->getIsReady() == Media::READY_WEBM)
-                    {
+                } else
+                    if ($media->getIsReady() == Media::READY_WEBM) {
                         // FIXME this will encode a second time since the video was already queued for transcoding
                         // FIXME need to find out how to dequeue an item from the RabbitMQ queue
                         $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
@@ -191,10 +178,10 @@ class MyFilesGatewayController extends Controller
                         $finalFile = new File($webmFile);
                         $videoDuration = 0;
                         if ($ffprobe->format($finalFile->getRealPath())
-                            ->has('duration'))
+                            ->has('duration')
+                        )
                             $videoDuration = $ffprobe->format($finalFile->getRealPath())
-                                ->get('duration');
-                        ;
+                                ->get('duration');;
                         $fileSize = filesize($finalFile->getRealPath());
                         $metaData->setDuration($videoDuration);
                         $metaData->setSize($fileSize);
@@ -202,44 +189,44 @@ class MyFilesGatewayController extends Controller
                         // $eventDispatcher = $this->container->get ( 'event_dispatcher' );
                         // $uploadedEvent = new UploadEvent ( $media );
                         // $eventDispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, $uploadedEvent );
-                        if ($resultWebM)
-                        {
+                        if ($resultWebM) {
                             $return = array(
-                                    'responseCode' => 200,
-                                    'feedback' => 'Successfully trimmed media!',
-                                    'media' => json_decode($serializer->serialize($media, 'json'), true)
+                                'responseCode' => 200,
+                                'feedback' => 'Successfully trimmed media!',
+                                'media' => json_decode($serializer->serialize($media, 'json'), true)
+                            );
+                        } else {
+                            $return = array(
+                                'responseCode' => 400,
+                                'feedback' => 'Trimming media failed!.'
                             );
                         }
-                        else
-                        {
-                            $return = array(
-                                    'responseCode' => 400,
-                                    'feedback' => 'Trimming media failed!.'
-                            );
-                        }
-                    }
-                    else
-                    {
+                    } else {
 
                         $return = array(
-                                'responseCode' => 400,
-                                'feedback' => 'This should not happen!'
+                            'responseCode' => 400,
+                            'feedback' => 'This should not happen!'
                         );
                     }
             }
         $return = json_encode($return); // json encode the array
         return new Response($return, 200, array(
-                'Content-Type' => 'application/json'
+            'Content-Type' => 'application/json'
         ));
     }
 
-    public function updateMediaAction (Request $request, $mediaId) // TODO move to MediaController
+    /**
+     * @param Request $request
+     * @param $mediaId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @deprecated
+     */
+    public function updateMediaAction(Request $request, $mediaId) // TODO move to MediaController
     {
-        if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
-        if (! $request->isXmlHttpRequest())
+        if (!$request->isXmlHttpRequest())
             throw new BadRequestHttpException('Only Ajax POST calls accepted');
         $user = $this->getUser();
         $em = $this->get('doctrine')->getManager();
@@ -249,44 +236,36 @@ class MyFilesGatewayController extends Controller
          */
         $mediaToUpdate = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
 
-        if ($mediaToUpdate == null)
-        {
+        if ($mediaToUpdate == null) {
             $return = array(
-                    'responseCode' => 400,
-                    'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
+                'responseCode' => 400,
+                'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
             );
-        }
-        else
-            if ($mediaToUpdate->getOwner() != $user)
-            {
+        } else
+            if ($mediaToUpdate->getOwner() != $user) {
                 $return = array(
-                        'responseCode' => 400,
-                        'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
+                    'responseCode' => 400,
+                    'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
                 );
-            }
-            else
-            {
+            } else {
                 $media = json_decode($request->get('media'), true);
-                if ($mediaToUpdate !== null && $media != null && $media['title'] !== null)
-                {
+                if ($mediaToUpdate !== null && $media != null && $media['title'] !== null) {
                     $mediaToUpdate->setTitle($media['title']);
                     $em->flush();
                     $return = array(
-                            'responseCode' => 200,
-                            'feedback' => 'Successfully updated media!'
+                        'responseCode' => 200,
+                        'feedback' => 'Successfully updated media!'
                     );
-                }
-                else
-                {
+                } else {
                     $return = array(
-                            'responseCode' => 400,
-                            'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
+                        'responseCode' => 400,
+                        'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
                     );
                 }
             }
         $return = json_encode($return); // json encode the array
         return new Response($return, 200, array(
-                'Content-Type' => 'application/json'
+            'Content-Type' => 'application/json'
         ));
     }
 
@@ -295,14 +274,14 @@ class MyFilesGatewayController extends Controller
      *
      * @param Request $request
      * @param unknown_type $mediaId
+     * @deprecated
      */
-    public function deleteMediaAction (Request $request, $mediaId) // TODO move to MediaController
+    public function deleteMediaAction(Request $request, $mediaId) // TODO move to MediaController
     {
-        if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
-        if (! $request->isXmlHttpRequest())
+        if (!$request->isXmlHttpRequest())
             throw new BadRequestHttpException('Only Ajax POST calls accepted');
         $user = $this->getUser();
         $em = $this->get('doctrine')->getManager();
@@ -313,17 +292,13 @@ class MyFilesGatewayController extends Controller
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         // FIXME need to figure out if video is being transcoded and interrupt it if so and clean up
         // FIXME need to check if the video is used as a post somewhere and ask the user to confirm before deleting
-        if ($media !== null)
-        {
-            if ($media->getOwner() != $user)
-            {
+        if ($media !== null) {
+            if ($media->getOwner() != $user) {
                 $return = array(
-                        'responseCode' => 400,
-                        'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
+                    'responseCode' => 400,
+                    'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_OWNER
                 );
-            }
-            else
-            {
+            } else {
                 $needsConfirmation = false;
 
                 // Find all places where the media can be used.
@@ -335,112 +310,87 @@ class MyFilesGatewayController extends Controller
                 $threads = $em->getRepository('IMDCTerpTubeBundle:Thread')->getThreadsForMedia($media);
 
                 $mediaInUse = array();
-                if (count($forums) > 0)
-                {
+                if (count($forums) > 0) {
                     $needsConfirmation = true;
                     $mediaInUse[] = 'forum';
                 }
-                if (count($messages) > 0)
-                {
+                if (count($messages) > 0) {
                     $needsConfirmation = true;
                     $mediaInUse[] = 'message';
                 }
-                if (count($posts) > 0)
-                {
+                if (count($posts) > 0) {
                     $needsConfirmation = true;
                     $mediaInUse[] = 'post';
                 }
-                if (count($threads) > 0)
-                {
+                if (count($threads) > 0) {
                     $needsConfirmation = true;
                     $mediaInUse[] = 'thread';
                 }
-                if ($user->getProfile()->getAvatar() == $media)
-                {
+                if ($user->getProfile()->getAvatar() == $media) {
                     $needsConfirmation = true;
                     $mediaInUse[] = 'avatar';
                 }
 
-                if ($needsConfirmation)
-                {
+                if ($needsConfirmation) {
                     $confirm = $request->request->get('confirm');
                     $this->get('logger')->info("confirm: " . $confirm);
-                    if ($confirm == 'true')
-                    {
+                    if ($confirm == 'true') {
                         // User has confirmed, remove the media from all the places and then remove it
-                        foreach ($forums as $forum)
-                        {
+                        foreach ($forums as $forum) {
                             $forum->removeTitleMedia($media);
                         }
-                        foreach ($messages as $message)
-                        {
+                        foreach ($messages as $message) {
                             $message->removeAttachedMedia($media);
                         }
-                        foreach ($posts as $post)
-                        {
+                        foreach ($posts as $post) {
                             $post->removeAttachedFile($media);
                         }
-                        foreach ($threads as $thread)
-                        {
+                        foreach ($threads as $thread) {
                             $thread->removeMediaIncluded($media);
                         }
-                        if ($user->getProfile()->getAvatar() == $media)
-                        {
+                        if ($user->getProfile()->getAvatar() == $media) {
                             $user->getProfile()->setAvatar(null);
                         }
                         $em->remove($media);
                         $em->flush();
 
                         $return = array(
-                                'responseCode' => 200,
-                                'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_DELETE_SUCCESS
+                            'responseCode' => 200,
+                            'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_DELETE_SUCCESS
                         );
-                    }
-                    else
-                    {
+                    } else {
                         // User has not confirmed, send a confirmation message
                         $return = array(
-                                'responseCode' => 400,
-                                'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_IN_USE,
-                                'mediaInUse' => $mediaInUse
+                            'responseCode' => 400,
+                            'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_IN_USE,
+                            'mediaInUse' => $mediaInUse
                         );
                     }
-                }
-                else
-                {
+                } else {
                     $em->remove($media);
                     $em->flush();
                     $return = array(
-                            'responseCode' => 200,
-                            'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_DELETE_SUCCESS
+                        'responseCode' => 200,
+                        'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_DELETE_SUCCESS
                     );
                 }
             }
-        }
-        else
-        {
+        } else {
             $return = array(
-                    'responseCode' => 400,
-                    'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
+                'responseCode' => 400,
+                'feedback' => MyFilesGatewayController::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
             );
         }
         $return = json_encode($return); // json encode the array
         return new Response($return, 200, array(
-                'Content-Type' => 'application/json'
+            'Content-Type' => 'application/json'
         ));
     }
 
-    public function addRecordingAction (Request $request)
+    public function addRecordingAction(Request $request)
     {
-        // post requests only
-        if (! $request->isMethod('POST'))
-        {
-            throw new BadRequestHttpException('POST requests only');
-        }
-
         // check if user is logged in
-        if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
@@ -451,8 +401,7 @@ class MyFilesGatewayController extends Controller
         $isFirefox = filter_var($request->request->get('isFirefox'), FILTER_VALIDATE_BOOLEAN);
         $video = $request->files->get('video-blob', null);
         $audio = $request->files->get('audio-blob', null);
-        if (($isFirefox && empty($audio)) || (! $isFirefox && (empty($video) || empty($audio))))
-        {
+        if (($isFirefox && empty($audio)) || (!$isFirefox && (empty($video) || empty($audio)))) {
             throw new \Exception('no media data found in request');
         }
 
@@ -462,11 +411,9 @@ class MyFilesGatewayController extends Controller
         $sourceStartTime = floatval($request->request->get('sourceStartTime', 0));
         $sourceId = $request->request->get('sourceId', null);
         $sourceMedia = null;
-        if ($isInterpretation)
-        {
+        if ($isInterpretation) {
             $sourceMedia = $em->getRepository('IMDCTerpTubeBundle:Media')->find($sourceId);
-            if (! $sourceMedia)
-            {
+            if (!$sourceMedia) {
                 throw new \Exception('source media not found');
             }
         }
@@ -478,14 +425,11 @@ class MyFilesGatewayController extends Controller
         $resourceFile->setFile($mergedFile);
         $resourceFile->setWebmExtension('webm');
 
-        if ($isInterpretation)
-        {
+        if ($isInterpretation) {
             $media = new Interpretation();
             $media->setSourceStartTime($sourceStartTime);
             $media->setSource($sourceMedia);
-        }
-        else
-        {
+        } else {
             $media = new Media();
         }
 
@@ -508,8 +452,7 @@ class MyFilesGatewayController extends Controller
         $resource = $media->getResource();
         $resourceFile = new File($resource->getAbsolutePath());
         $targetFile = $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm';
-        if (! file_exists($targetFile))
-        {
+        if (!file_exists($targetFile)) {
             $fs = new Filesystem();
             $fs->rename($resourceFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
         }
@@ -523,28 +466,20 @@ class MyFilesGatewayController extends Controller
 
         $serializer = $this->get('jms_serializer');
         $content = array(
-                'responseCode' => 200,
-                'feedback' => 'media added',
-                'media' => json_decode($serializer->serialize($media, 'json'), true)
+            'responseCode' => 200,
+            'feedback' => 'media added',
+            'media' => json_decode($serializer->serialize($media, 'json'), true)
         );
 
-        return new Response(json_encode($content), 200,
-                array(
-                        'Content-Type' => 'application/json'
-                ));
+        return new Response(json_encode($content), 200, array(
+            'Content-Type' => 'application/json'
+        ));
     }
 
-    public function addAction (Request $request)
+    public function addAction(Request $request)
     {
-        // if not ajax, throw an error
-        if (! $request->isXmlHttpRequest() || ! $request->isMethod('POST'))
-        {
-            throw new BadRequestHttpException('Only Ajax POST calls accepted');
-        }
-
         // check if the user is logged in
-        if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
@@ -552,8 +487,7 @@ class MyFilesGatewayController extends Controller
         $form = $this->createForm(new MediaType(), $media);
         $form->handleRequest($request);
 
-        if ($form->isValid())
-        {
+        if ($form->isValid()) {
             $user = $this->getUser();
             $em = $this->getDoctrine()->getManager();
 
@@ -572,27 +506,21 @@ class MyFilesGatewayController extends Controller
             $type = Utils::getUploadedFileType($uploadedFile);
             $isValid = true;
             $transcoder = $this->container->get('imdc_terptube.transcoder');
-            if ($type == Media::TYPE_AUDIO)
-            {
+            if ($type == Media::TYPE_AUDIO) {
                 $isValid = $transcoder->checkAudioFile($uploadedFile);
-            }
-            else
-                if ($type == Media::TYPE_VIDEO)
-                {
+            } else
+                if ($type == Media::TYPE_VIDEO) {
                     $isValid = $transcoder->checkVideoFile($uploadedFile);
                 }
-            if (! $isValid)
-            {
+            if (!$isValid) {
                 // Wrong audio/video type. return error
                 $content = array(
-                        'wasUploaded' => false,
-                        'finished' => false,
-                        'error' => Transcoder::INVALID_AUDIO_VIDEO_ERROR
+                    'wasUploaded' => false,
+                    'finished' => false,
+                    'error' => Transcoder::INVALID_AUDIO_VIDEO_ERROR
                 );
                 // throw new \Exception(Transcoder::INVALID_AUDIO_VIDEO_ERROR);
-            }
-            else
-            {
+            } else {
                 $media->setType($type);
                 $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
                 $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
@@ -605,10 +533,9 @@ class MyFilesGatewayController extends Controller
                 $em->flush();
 
                 $resourcePath = $media->getResource()->getAbsolutePath();
-                if ($media->getResource()->getPath() == "bin")
-                {
+                if ($media->getResource()->getPath() == "bin") {
                     $fs->rename($resourcePath,
-                            substr($resourcePath, 0, strrpos($resourcePath, ".")) . "." . $originalExtension, true);
+                        substr($resourcePath, 0, strrpos($resourcePath, ".")) . "." . $originalExtension, true);
                     $media->getResource()->setPath($originalExtension);
                 }
                 $em->flush();
@@ -618,38 +545,38 @@ class MyFilesGatewayController extends Controller
 
                 $serializer = $this->get('jms_serializer');
                 $content = array(
-                        'wasUploaded' => true,
-                        'finished' => true, // TODO remove
-                        'media' => json_decode($serializer->serialize($media, 'json'), true)
+                    'wasUploaded' => true,
+                    'finished' => true, // TODO remove
+                    'media' => json_decode($serializer->serialize($media, 'json'), true)
                 );
             }
-        }
-        else
-        {
+        } else {
             $content = array(
-                    'wasUploaded' => false,
-                    'finished' => false,
-                    'error' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_UPLOAD_INVALID_FORM
+                'wasUploaded' => false,
+                'finished' => false,
+                'error' => MyFilesGatewayController::FEEDBACK_MESSAGE_MEDIA_UPLOAD_INVALID_FORM
             ); // TODO remove
         }
 
-        return new Response(json_encode($content), 200,
-                array(
-                        'Content-Type' => 'application/json'
-                ));
+        return new Response(json_encode($content), 200, array(
+            'Content-Type' => 'application/json'
+        ));
     }
 
-    public function getInfoAction (Request $request) // TODO move to MediaController
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @deprecated
+     */
+    public function getInfoAction(Request $request) // TODO move to MediaController
     {
         // if not ajax, throw an exception
-        if (! $request->isXmlHttpRequest())
-        {
+        if (!$request->isXmlHttpRequest()) {
             throw new BadRequestHttpException('Only Ajax calls accepted');
         }
 
         // check if the user is logged in
-        if (! $this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-        {
+        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
             return $this->redirect($this->generateUrl('fos_user_security_login'));
         }
 
@@ -666,12 +593,12 @@ class MyFilesGatewayController extends Controller
 
         $serializer = $this->get('jms_serializer');
         $content = array(
-                'media' => json_decode($serializer->serialize($ordered, 'json'), true)
+            'media' => json_decode($serializer->serialize($ordered, 'json'), true)
         );
 
         return new Response(json_encode($content), 200,
-                array(
-                        'Content-Type' => 'application/json'
-                ));
+            array(
+                'Content-Type' => 'application/json'
+            ));
     }
 }

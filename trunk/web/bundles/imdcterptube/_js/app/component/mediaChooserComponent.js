@@ -2,11 +2,12 @@ define([
     'core/subscriber',
     //'core/mediaManager',
     'factory/mediaFactory',
+    'factory/myFilesFactory',
     'component/recorderComponent',
     'component/myFilesSelectorComponent',
     'core/helper',
     'extra'
-], function (Subscriber, /*MediaManager, */MediaFactory, RecorderComponent, MyFilesSelectorComponent, Helper) {
+], function (Subscriber, /*MediaManager, */MediaFactory, MyFilesFactory, RecorderComponent, MyFilesSelectorComponent, Helper) {
     'use strict';
 
     var MediaChooserComponent = function (options) {
@@ -86,7 +87,7 @@ define([
         return this.$uploadForm.find('#' + MediaChooserComponent.FORM_NAME + '_' + fieldName);
     };
 
-    MediaChooserComponent.prototype._uploadFile = function (form) {
+    /*MediaChooserComponent.prototype._uploadFile = function (form) {
         console.log('%s: %s', MediaChooserComponent.TAG, '_loadPage');
 
         var settings = {
@@ -125,11 +126,13 @@ define([
             console.log(jqXHR.responseText);
             return $.Deferred().reject(jqXHR.responseText);
         });
-    };
+    };*/
 
     MediaChooserComponent.prototype._addSelectedMedia = function (media) {
-        var count = this.$selected.find(MediaChooserComponent.Binder.SELECTED_MEDIA).filter(
-            '[data-mid="' + media.get('id') + '"]').length;
+        var count = this.$selected
+            .find(MediaChooserComponent.Binder.SELECTED_MEDIA)
+            .filter('[data-mid="' + media.get('id') + '"]')
+            .length;
 
         if (count > 0)
             return; // exists
@@ -140,8 +143,11 @@ define([
         newSelectedMedia = newSelectedMedia.replace(/__resource_webPath__/g, media.get('resource.web_path'));
         this.$selected.append(newSelectedMedia);
 
-        this.$selected.find(MediaChooserComponent.Binder.SELECTED_MEDIA).filter('[data-mid="' + media.get('id') + '"]').find(
-            MediaChooserComponent.Binder.REMOVE).on('click', this.bind__onClickRemoveSelectedMedia);
+        this.$selected
+            .find(MediaChooserComponent.Binder.SELECTED_MEDIA)
+            .filter('[data-mid="' + media.get('id') + '"]')
+            .find(MediaChooserComponent.Binder.REMOVE)
+            .on('click', this.bind__onClickRemoveSelectedMedia);
 
         this.media.push(media);
     };
@@ -155,7 +161,9 @@ define([
             }
         }
 
-        this.$selected.find(MediaChooserComponent.Binder.SELECTED_MEDIA).filter('[data-mid="' + mediaId + '"]')
+        this.$selected
+            .find(MediaChooserComponent.Binder.SELECTED_MEDIA)
+            .filter('[data-mid="' + mediaId + '"]')
             .remove();
     };
 
@@ -167,7 +175,8 @@ define([
     MediaChooserComponent.prototype._invokeSuccess = function (doPost) {
         this._resetUpload();
 
-        var event = (typeof doPost != 'undefined' && doPost == true) ? MediaChooserComponent.Event.SUCCESS_AND_POST
+        var event = (typeof doPost != 'undefined' && doPost == true)
+            ? MediaChooserComponent.Event.SUCCESS_AND_POST
             : MediaChooserComponent.Event.SUCCESS;
 
         var args = {
@@ -237,17 +246,22 @@ define([
             return;
         }
 
-        this._uploadFile(this.$uploadForm[0]).done(function (data) {
-            if (this.$selected.length > 0)
-                this._addSelectedMedia(data.media);
-            this._invokeSuccess();
-        }.bind(this)).fail(function (error) {
-            this._resetUpload();
-            this._dispatch(MediaChooserComponent.Event.ERROR, {
-                mediaChooserComponent: this,
-                error: error
-            });
-        }.bind(this));
+        MyFilesFactory.add(this.$uploadForm[0])
+            .progress(function (percent) {
+                Helper.updateProgressBar(this.$containerUpload.show(), percent);
+            }.bind(this))
+            .done(function (data) {
+                if (this.$selected.length > 0)
+                    this._addSelectedMedia(data.media);
+                this._invokeSuccess();
+            }.bind(this))
+            .fail(function (data) {
+                this._resetUpload();
+                this._dispatch(MediaChooserComponent.Event.ERROR, {
+                    mediaChooserComponent: this,
+                    error: data ? data.error : 'Unknown error'
+                });
+            }.bind(this));
 
         this.$resourceFile.val('');
     };
