@@ -6,8 +6,6 @@ define([
     'controller/message',
     'controller/profile',
 
-    'core/mediaManager',
-
 
 
     'bootstrap',

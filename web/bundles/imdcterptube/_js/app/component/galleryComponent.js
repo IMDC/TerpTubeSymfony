@@ -1,11 +1,10 @@
 define([
     'core/subscriber',
-    //'core/mediaManager',
     'factory/mediaFactory',
     'component/recorderComponent',
     'core/helper',
     'extra'
-], function (Subscriber, /*MediaManager, */MediaFactory, RecorderComponent, Helper) {
+], function (Subscriber, MediaFactory, RecorderComponent, Helper) {
     'use strict';
 
     var GalleryComponent = function (options) {
@@ -26,8 +25,6 @@ define([
         this.bind__onClickThumbnail = this._onClickThumbnail.bind(this);
         this.bind__onRenderMedia = this._onRenderMedia.bind(this);
         this.bind__onRenderThumbnails = this._onRenderThumbnails.bind(this);
-        /*this.bind__onGetMediaInfoSuccess = this._onGetMediaInfoSuccess.bind(this);
-        this.bind__onGetMediaInfoError = this._onGetMediaInfoError.bind(this);*/
 
         this.$container = this.options.$container;
         this.$normal = this.$container.find(GalleryComponent.Binder.NORMAL);
@@ -68,12 +65,7 @@ define([
 
         this._populate();
 
-        /*this.mediaManager = new MediaManager();
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_SUCCESS, this.bind__onGetMediaInfoSuccess);
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_ERROR, this.bind__onGetMediaInfoError);*/
-
         if (typeof this.options.mediaIds !== 'undefined') {
-            //this.mediaManager.getInfo(this.options.mediaIds);
             MediaFactory.list(this.options.mediaIds)
                 .done(function (data) {
                     this.options.media = data.media;
@@ -265,18 +257,6 @@ define([
         //TODO array representation of media models
         //dust.render('gallery_thumbnail', {media: this.options.media}, this.bind__onRenderThumbnails);
     };
-
-    /*GalleryComponent.prototype._onGetMediaInfoSuccess = function (e) {
-        //data, textStatus, jqXHR
-        this.options.media = e.payload.media;
-        this._populate();
-        console.log('Success')
-    };
-
-    GalleryComponent.prototype._onGetMediaInfoError = function (e) {
-        //jqXHR, textStatus, errorThrown
-        console.log(e.jqXHR);
-    };*/
 
     GalleryComponent.prototype.show = function () {
         if (this.options.mode != GalleryComponent.Mode.PREVIEW)
