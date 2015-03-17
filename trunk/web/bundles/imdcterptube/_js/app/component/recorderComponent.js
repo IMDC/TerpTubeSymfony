@@ -1,12 +1,11 @@
 define([
     'core/subscriber',
     'component/myFilesSelectorComponent',
-    //'core/mediaManager',
     'model/mediaModel',
     'factory/mediaFactory',
     'core/helper',
     'extra'
-], function (Subscriber, MyFilesSelectorComponent, /*MediaManager, */MediaModel, MediaFactory, Helper) {
+], function (Subscriber, MyFilesSelectorComponent, MediaModel, MediaFactory, Helper) {
     'use strict';
 
     var RecorderComponent = function (options) {
@@ -75,8 +74,6 @@ define([
         if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
             this.$modalDialog.find('a[href="' + RecorderComponent.Binder.INTERP + '"]').hide();
         }
-
-        //this.mediaManager = new MediaManager();
     };
 
     RecorderComponent.extend(Subscriber);
@@ -190,8 +187,6 @@ define([
         console.log('Cutting to Min/Max Times %s %s', currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
             currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 
-        /*this.mediaManager.trimMedia(this.recordedMedia.id, currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
-            currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);*/
         MediaFactory.trim(this.recordedMedia,
             currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
             currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
@@ -207,7 +202,6 @@ define([
         this._destroyPlayers();
 
         // delete the current media!
-        //this.mediaManager.deleteMedia(this.recordedMedia.id);
         MediaFactory.delete(this.recordedMedia);
 
         // Go back to recording
@@ -480,7 +474,7 @@ define([
     RecorderComponent.prototype._onBlurPlayerTitle = function (e) {
         console.log('updated title');
         this.recordedMedia.set('title', $(e.target).val());
-        //this.mediaManager.updateMedia(this.recordedMedia);
+
         MediaFactory.edit(this.recordedMedia);
     };
 

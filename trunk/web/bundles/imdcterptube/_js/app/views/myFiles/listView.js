@@ -21,8 +21,6 @@ define([
         this.tblCmp = TableComponent.table(this.$filesList);
         this.tblCmp.subscribe(TableComponent.Event.CLICK_BULK_ACTION, this.bind__onClickBulkAction);
 
-        //var instance = this;
-
         this.$filesList.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
             $(this).parent().prev().editable('toggle');
@@ -38,12 +36,6 @@ define([
         this.$filesList.find('span.edit-title').editable({
             toggle: 'manual',
             unsavedclass: null,
-            /*success: function (response, newValue) {
-                instance.mcCmp.mediaManager.updateMedia({
-                    id: $(this).data('mid'),
-                    title: newValue
-                });
-            }*/
             pk: function () {
                 return $(this).data('mid')
             },
@@ -72,24 +64,8 @@ define([
         switch (e.action) {
             case 1: // delete
                 //FIXME confirmation. update controller to allow mass deletion
-//                var file = $(e.target);
-//
-//                $(this.mediaManager).one(MediaManager.EVENT_DELETE_SUCCESS, function() {
-//                    file.parent().parent().parent().remove();
-//                });
-//                $(this.mediaManager).one(MediaManager.EVENT_DELETE_ERROR, function(error, e) {
-//                    if (e.status == 500) {
-//                        alert(e.statusText);
-//                    } else {
-//                        alert('Error: ' + error);
-//                    }
-//                });
-//
-//                return this.mediaManager.deleteMedia(file.data("val"), Translator.trans('filesGateway.deleteConfirmMessage'));
-
                 if (confirm(Translator.trans('filesGateway.deleteConfirmMessage'))) {
                     $.each(e.$selection, (function (index, element) {
-                        //this.mcCmp.mediaManager.deleteMedia($(element).data("mid")/*, Translator.trans('filesGateway.deleteConfirmMessage')*/);
                         this.controller.delete($(element).data('mid'), true);
                     }).bind(this));
                 }
@@ -97,7 +73,7 @@ define([
                 //FIXME: make me better
                 setTimeout(function () {
                     window.location.reload(true);
-                }, 1000);
+                }, 2000);
                 break;
         }
     };

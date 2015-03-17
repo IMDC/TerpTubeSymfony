@@ -2,10 +2,9 @@ define([
     'core/subscriber',
     'service',
     'component/tableComponent',
-    //'core/mediaManager',
     'factory/mediaFactory',
     'extra'
-], function (Subscriber, Service, TableComponent, /*MediaManager, */MediaFactory) {
+], function (Subscriber, Service, TableComponent, MediaFactory) {
     'use strict';
 
     var MyFilesSelectorComponent = function (options) {
@@ -18,8 +17,6 @@ define([
         this.bind__onLoadPageSuccess = this._onLoadPageSuccess.bind(this);
         this.bind__onLoadPageError = this._onLoadPageError.bind(this);
         this.bind__onClickSelectSelected = this._onClickSelectSelected.bind(this);
-        /*this.bind__onGetMediaInfoSuccess = this._onGetMediaInfoSuccess.bind(this);
-        this.bind__onGetMediaInfoError = this._onGetMediaInfoError.bind(this);*/
         this.bind__onMyFilesListViewViewLoaded = this._onMyFilesListViewViewLoaded.bind(this);
         this.bind__onSelectionChange = this._onSelectionChange.bind(this);
 
@@ -31,10 +28,6 @@ define([
         this.$modalDialog.on('shown.bs.modal', this.bind__onShownModal);
         this.$modalDialog.on('hidden.bs.modal', this.bind__onHiddenModal);
         this.$selectSelected.on('click', this.bind__onClickSelectSelected);
-
-        /*this.mediaManager = new MediaManager();
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_SUCCESS, this.bind__onGetMediaInfoSuccess);
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_ERROR, this.bind__onGetMediaInfoError);*/
 
         var sub = Service.get('subscriber');
         sub.subscribe('onViewLoaded', this.bind__onMyFilesListViewViewLoaded);
@@ -118,21 +111,6 @@ define([
         });
     };
 
-    /*MyFilesSelectorComponent.prototype._onGetMediaInfoSuccess = function (e) {
-        //data, textStatus, jqXHR
-        this._dispatch(MyFilesSelectorComponent.Event.DONE, {
-            media: e.payload.media,
-            myFilesSelectorComponent: this
-        });
-    };
-
-    MyFilesSelectorComponent.prototype._onGetMediaInfoError = function (e) {
-        //jqXHR, textStatus, errorThrown
-        this.$selectSelected.button('reset');
-
-        console.log(e.jqXHR);
-    };*/
-
     MyFilesSelectorComponent.prototype._onClickSelectSelected = function (e) {
         e.preventDefault();
 
@@ -149,7 +127,6 @@ define([
             mediaIds.push(selectedFiles.first().data('mid'));
         }
 
-        //this.mediaManager.getInfo(mediaIds);
         MediaFactory.list(mediaIds)
             .done(function (data) {
                 this._dispatch(MyFilesSelectorComponent.Event.DONE, {

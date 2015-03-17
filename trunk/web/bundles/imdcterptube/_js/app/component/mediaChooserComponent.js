@@ -1,13 +1,12 @@
 define([
     'core/subscriber',
-    //'core/mediaManager',
     'factory/mediaFactory',
     'factory/myFilesFactory',
     'component/recorderComponent',
     'component/myFilesSelectorComponent',
     'core/helper',
     'extra'
-], function (Subscriber, /*MediaManager, */MediaFactory, MyFilesFactory, RecorderComponent, MyFilesSelectorComponent, Helper) {
+], function (Subscriber, MediaFactory, MyFilesFactory, RecorderComponent, MyFilesSelectorComponent, Helper) {
     'use strict';
 
     var MediaChooserComponent = function (options) {
@@ -16,8 +15,6 @@ define([
         this.options = options;
         this.media = [];
 
-        /*this.bind__onGetMediaInfoSuccess = this._onGetMediaInfoSuccess.bind(this);
-        this.bind__onGetMediaInfoError = this._onGetMediaInfoError.bind(this);*/
         this.bind__onClickRecordVideo = this._onClickRecordVideo.bind(this);
         this.bind__onClickUploadFile = this._onClickUploadFile.bind(this);
         this.bind__onClickSelect = this._onClickSelect.bind(this);
@@ -48,10 +45,6 @@ define([
                 });
             }.bind(this)
         });
-
-        /*this.mediaManager = new MediaManager();
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_SUCCESS, this.bind__onGetMediaInfoSuccess);
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_ERROR, this.bind__onGetMediaInfoError);*/
     };
 
     MediaChooserComponent.extend(Subscriber);
@@ -86,47 +79,6 @@ define([
     MediaChooserComponent.prototype._getFormField = function (fieldName) {
         return this.$uploadForm.find('#' + MediaChooserComponent.FORM_NAME + '_' + fieldName);
     };
-
-    /*MediaChooserComponent.prototype._uploadFile = function (form) {
-        console.log('%s: %s', MediaChooserComponent.TAG, '_loadPage');
-
-        var settings = {
-            url: Routing.generate('imdc_myfiles_add'),
-            type: 'POST',
-            processData: false,
-            data: new FormData(form),
-            contentType: false,
-            xhr: function () {
-                var xhr = $.ajaxSettings.xhr();
-                xhr.upload.addEventListener('progress', function (e) {
-                    if (!e.lengthComputable)
-                        return;
-
-                    Helper.updateProgressBar(this.$containerUpload.show(), Math.floor((e.loaded / e.total) * 100));
-                }.bind(this), false);
-
-                return xhr;
-            }.bind(this)
-        };
-
-        return $.ajax(settings).then(function (data, textStatus, jqXHR) {
-            console.log('%s: %s- finished=%s', MediaChooserComponent.TAG, '_onLoadPageSuccess', data.finished);
-            if (data.finished) {
-                return $.Deferred().resolve(data);
-            }
-            else {
-                if (data.error)
-                    console.log(data.error)
-                else
-                    data.error = "Unknown error";
-                return $.Deferred().reject(data.error);
-            }
-        }, function (jqXHR, textStatus, errorThrown) {
-            console.log('%s: %s: %s', MediaChooserComponent.TAG, '_loadPage', 'error');
-            console.log(jqXHR.responseText);
-            return $.Deferred().reject(jqXHR.responseText);
-        });
-    };*/
 
     MediaChooserComponent.prototype._addSelectedMedia = function (media) {
         var count = this.$selected
@@ -283,25 +235,6 @@ define([
         this.$select.attr('disabled', disabled);
     };
 
-    /*MediaChooserComponent.prototype._onGetMediaInfoSuccess = function (e) {
-        // data, textStatus, jqXHR
-        this.$working.hide();
-        this._toggleForm(false);
-
-        $.each(e.payload.media, function (index, element) {
-            this._addSelectedMedia(element);
-        }.bind(this));
-        this._invokeSuccess();
-    };
-
-    MediaChooserComponent.prototype._onGetMediaInfoError = function (e) {
-        // jqXHR, textStatus, errorThrown
-        this.$working.hide();
-        this._toggleForm(false);
-
-        console.log(e.jqXHR);
-    };*/
-
     MediaChooserComponent.prototype.setMedia = function (mediaIds) {
         console.log('%s: %s', MediaChooserComponent.TAG, 'setMedia');
 
@@ -312,7 +245,6 @@ define([
         this.$working.show();
         this.$selected.html('');
 
-        //this.mediaManager.getInfo(mediaIds);
         MediaFactory.list(mediaIds)
             .done(function (data) {
                 this.$working.hide();
