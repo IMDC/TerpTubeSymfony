@@ -14,6 +14,7 @@ define(function () {
 
     PostFactory.new = function (post, form) {
         var route = Routing.getRoute('imdc_post_new');
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_post_new', {
                 threadId: post.get('parent_thread.id'),
@@ -23,39 +24,45 @@ define(function () {
 
         PostFactory._prepForm(form, settings);
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                return $.Deferred().resolve(data);
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     PostFactory.view = function (post) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_post_view', {pid: post.get('id')})
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                return $.Deferred().resolve(data);
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     PostFactory.edit = function (post, form) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_post_edit', {pid: post.get('id')})
         };
 
         PostFactory._prepForm(form, settings);
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.wasEdited) {
                     //TODO model merge
@@ -65,32 +72,37 @@ define(function () {
                     post.set('parent_post', data.post.parent_post);
                     post.set('parent_thread', data.post.parent_thread);
                 }
-                return $.Deferred().resolve(data);
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     PostFactory.delete = function (post) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_post_delete', {pid: post.get('id')}),
             type: 'POST'
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.wasDeleted) {
-                    return $.Deferred().resolve(data);
+                    deferred.resolve(data);
                 } else {
-                    return $.Deferred().reject();
+                    deferred.reject();
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject();
             });
+
+        return deferred.promise();
     };
 
     return PostFactory;

@@ -27,10 +27,10 @@ define([
     MyFilesFactory.addRecording = function (video, audio, interpretationData) {
         var formData = new FormData();
         var isFirefox = !!navigator.mozGetUserMedia;
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_myfiles_add_recording')
         };
-        var deferred = $.Deferred();
 
         formData.append('isFirefox', isFirefox);
         if (!isFirefox) {
@@ -50,24 +50,24 @@ define([
             .then(function (data, textStatus, jqXHR) {
                 if (data.responseCode == 200) {
                     data.media = new MediaModel(data.media);
-                    return deferred.resolve(data);
+                    deferred.resolve(data);
                 } else {
-                    return deferred.reject(data);
+                    deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return deferred.reject();
+                deferred.reject();
             });
 
         return deferred.promise();
     };
 
     MyFilesFactory.add = function (form) {
+        var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_myfiles_add')
         };
-        var deferred = $.Deferred();
 
         MyFilesFactory._prepForFormPost(form, settings, deferred);
 
@@ -75,15 +75,15 @@ define([
             .then(function (data, textStatus, jqXHR) {
                 if (data.wasUploaded) {
                     data.media = new MediaModel(data.media);
-                    return deferred.resolve(data);
+                    deferred.resolve(data);
                 } else {
                     console.error(data.error);
-                    return deferred.reject(data);
+                    deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return deferred.reject();
+                deferred.reject();
             });
 
         return deferred.promise();
