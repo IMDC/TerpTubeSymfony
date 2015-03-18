@@ -149,9 +149,15 @@ class AccessProvider
                 }
             }
         }
-        if ($accessType->getId() == AccessType::TYPE_GROUP && $object instanceof Forum) {
-            $securityIdentities[] = GroupSecurityIdentity::fromGroup($object->getGroup());
+        if ($object instanceof Forum) {
+            if ($accessType->getId() == AccessType::TYPE_GROUP) {
+                $securityIdentities[] = GroupSecurityIdentity::fromGroup($object->getGroup());
+            } else {
+                $object->setGroup(null); // ensure group is unset if access type is not group
+            }
         }
+
+
 
         $accessObjectIdentity->setSecurityIdentities($securityIdentities);
     }
