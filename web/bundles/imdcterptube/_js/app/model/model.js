@@ -65,27 +65,6 @@ define([
         Subscriber.prototype._dispatch.call(this, event, args);
     };
 
-    /*Model.prototype._dispatch = function (event, keyPath, args) {
-        var e = {
-            type: event,
-            keyPath: keyPath,
-            model: this
-        };
-
-        if (_.isObject(args) && !_.isArray(args) && !_.isFunction(args)) {
-            // add the extra args for this event to the event object
-            _.each(args, function (value, key, list) {
-                e[key] = value;
-            });
-        }
-
-        // loop through the callbacks
-        _.each(this.subscriptions[event], function (element, index, list) {
-            if (_.isFunction(element))
-                element.call(this, e);
-        }, this);
-    };*/
-
     Model.prototype.get = function (keyPath, defaultValue) {
         var result = this._findKeyPath(this.data, keyPath);
         return typeof result !== 'undefined' ? result : defaultValue;
@@ -102,24 +81,19 @@ define([
         }
     };
 
-    /*Model.prototype.subscribe = function (event, callback) {
-        if (!_.contains(this.subscriptions, event)) {
-            this.subscriptions[event] = [];
-        }
+    Model.prototype.update = function (data, keyPath) {
+        _.each(data, function (value, key, list) {
+            var cKeyPath = keyPath ? (keyPath + '.' + key) : key;
 
-        if (!_.contains(this.subscriptions[event], callback)) {
-            this.subscriptions[event].push(callback);
-        }
-    };
-
-    Model.prototype.unsubscribe = function (callback) {
-        _.each(this.subscriptions, function (callbacks, index, list) {
-            if (_.contains(callbacks, callback)) {
-                var index = _.indexOf(callbacks, callback);
-                callbacks.splice(index, 1);
+            if (_.isObject(value) || _.isArray(value)) {
+                console.log('update: ' + cKeyPath);
+                this.update(value, cKeyPath);
+            } else {
+                console.log('set: ' + cKeyPath);
+                this.set(cKeyPath, value);
             }
-        });
-    };*/
+        }, this);
+    };
 
     Model.prototype.forceChange = function (keyPath) {
         keyPath = typeof keyPath !== 'undefined' ? keyPath : '';

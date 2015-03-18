@@ -52,20 +52,6 @@ define([
             expect(model.data).to.equal(data);
         });
 
-        /*it('should have subscribed to event', function () {
-            model.subscribe(Model.Event.CHANGE, callback);
-            var subs = model.subscriptions[Model.Event.CHANGE];
-
-            expect(subs).to.not.be.undefined();
-            expect(subs[0]).to.not.be.undefined();
-            expect(subs[0]).to.equal(callback);
-        });
-
-        it('should have unsubscribed from event', function () {
-            model.unsubscribe(callback);
-            expect(model.subscriptions.length).to.equal(0);
-        });*/
-
         it('should equal retrieved value', function () {
             var marco = model.get('name');
             expect(marco).to.equal(data.name);
@@ -126,6 +112,20 @@ define([
             model.unsubscribe(callback);
 
             expect(callbackResult).to.not.equal(data.name);
+        });
+
+        it('should update model', function () {
+            var newData = {name: 'hello:updated'};
+
+            model.update(newData);
+            expect(callbackResult).to.equal(newData.name);
+        });
+
+        it('should update model: nested', function () {
+            var newData = {nested: {bar: {macro: 20}}};
+
+            model.update(newData);
+            expect(callbackResult).to.equal(newData.nested.bar.macro);
         });
 
         it('should have dispatched change event', function () {
