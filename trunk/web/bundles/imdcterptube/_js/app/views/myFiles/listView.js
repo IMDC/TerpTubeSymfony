@@ -1,9 +1,10 @@
 define([
     'service',
+    'model/model',
     'component/tableComponent',
     'component/mediaChooserComponent',
     'component/galleryComponent'
-], function (Service, TableComponent, MediaChooserComponent, GalleryComponent) {
+], function (Service, Model, TableComponent, MediaChooserComponent, GalleryComponent) {
     'use strict';
 
     var ListView = function (controller, options) {
@@ -40,7 +41,7 @@ define([
                 return $(this).data('mid')
             },
             url: function (params) {
-                return this.controller.edit(params.pk, {title: params.value}).promise();
+                return this.controller.edit(params.pk, {title: params.value});
             }.bind(this)
         });
 
@@ -48,6 +49,13 @@ define([
         sub.dispatch(ListView.TAG, 'onViewLoaded', {
             view: this
         });
+
+        // not exactly needed. just an example
+        this.controller.model.subscribe(Model.Event.CHANGE, function (e) {
+            var media = e.model.get(e.keyPath);
+            var $file = this.$files.filter('span[data-mid="' + media.get('id') + '"]');
+            $file.html(media.get('title'));
+        }.bind(this));
 
         $tt._instances.push(this);
     };

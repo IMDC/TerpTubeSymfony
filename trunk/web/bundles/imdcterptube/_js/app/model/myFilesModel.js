@@ -14,7 +14,16 @@ define([
         if (this.data.media) {
             _.each(this.data.media, function (element, index, list) {
                 list[index] = new MediaModel(element);
-            });
+
+                // subscribe to model events
+                list[index].subscribe(Model.Event.CHANGE, function (e) {
+                    var cIndex = _.findIndex(this.data.media, e.model);
+                    if (cIndex > -1) {
+                        // bubble for model changes. prefix this collection's keypath
+                        this._dispatch(Model.Event.CHANGE, 'media.' + cIndex);
+                    }
+                }.bind(this));
+            }, this);
         }
     };
 

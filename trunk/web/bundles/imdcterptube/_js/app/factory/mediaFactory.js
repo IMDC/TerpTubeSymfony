@@ -42,7 +42,8 @@ define([
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
                 if (data.responseCode == 200) {
-                    model = new MediaModel(data.media);
+                    //model = new MediaModel(data.media);
+                    model.update(data.media);
                     deferred.resolve(data);
                 } else {
                     console.error(data.feedback);
