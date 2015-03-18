@@ -19,7 +19,7 @@
         ], function(bootstrap, MyFilesModel, MyFilesController, MyFilesView) {
             bootstrap(
                     new MyFilesModel({
-                        media: {{ media|serialize('json')|raw }}
+                        media: {{ media.items.getArrayCopy|serialize('json')|raw }}
                     }),
                     MyFilesController,
                     MyFilesView,
@@ -45,7 +45,7 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                {{ _my_files.list_files(style, paginatedMedia) }}
+                {{ _my_files.list_files(style, media) }}
             </div>
         </div>
     </div>

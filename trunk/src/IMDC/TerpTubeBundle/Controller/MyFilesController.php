@@ -42,14 +42,13 @@ class MyFilesController extends Controller
             ->matching($criteria);
 
         $paginator = $this->get('knp_paginator');
-        $paginatedMedia = $paginator->paginate(
+        $media = $paginator->paginate(
             $media, $request->query->get('page', 1), /*page number*/
             !$request->isXmlHttpRequest() ? 24 : ($style == 'list' ? 12 : 8) /*limit per page*/
         );
 
         $parameters = array(
             'media' => $media,
-            'paginatedMedia' => $paginatedMedia,
             'style' => $style
         );
 
