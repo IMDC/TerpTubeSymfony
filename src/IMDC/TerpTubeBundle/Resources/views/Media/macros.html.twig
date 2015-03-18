@@ -90,7 +90,14 @@
     {% endif %}
 {% endmacro %}
 
-{% macro no_media_element() %}
+{% macro no_element() %}
     <i class="fa fa-question fa-3x"></i><br />
     <em>no media</em>
+{% endmacro %}
+
+{% macro video_controls() %}
+    <div class="tt-media-video-controls">
+        <img id="videoSpeed" src="{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}" title="Click to change video playback speed" />
+        {#<img id="closedCaptions" src="{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}" title="Click to show/hide captions" />#}
+    </div>
 {% endmacro %}
