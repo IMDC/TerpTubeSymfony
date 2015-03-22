@@ -190,6 +190,7 @@ define([
                         keyPoint.paintHighlightedTimeout = false;
                         keyPoint.paintHighlighted = false;
                         this.player.redrawKeyPoints = true;
+                        this.player.repaint();
                     }).bind(this), 3000);
                 }
 

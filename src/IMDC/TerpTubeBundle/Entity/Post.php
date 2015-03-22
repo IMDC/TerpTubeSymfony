@@ -99,6 +99,19 @@ class Post
         $this->isDeleted    = FALSE; // set to false as default
         $this->isTemporal   = FALSE; // set to false as default
     }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return Post
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
     
     /**
      * Get id

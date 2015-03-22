@@ -13,12 +13,13 @@ define(function () {
     };
 
     PostFactory.new = function (model, form) {
+        var pid = model.get('id', -1);
         var route = Routing.getRoute('imdc_post_new');
         var deferred = $.Deferred();
         var settings = {
             url: Routing.generate('imdc_post_new', {
                 threadId: model.get('parent_thread.id'),
-                pid: (model.get('parent_post.id') || model.get('id') || route.defaults.pid)
+                pid: (model.get('parent_post.id') || (pid > 0 ? pid : null) || route.defaults.pid)
             })
         };
 
@@ -71,6 +72,8 @@ define(function () {
                     model.set('is_temporal', data.post.is_temporal);
                     model.set('parent_post', data.post.parent_post);
                     model.set('parent_thread', data.post.parent_thread);
+                    model.set('keyPoint.startTime', model.get('start_time'));
+                    model.set('keyPoint.endTime', model.get('end_time'));
                 }
                 deferred.resolve(data);
             },

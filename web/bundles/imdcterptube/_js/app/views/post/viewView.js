@@ -84,12 +84,15 @@ define([
 
         this.controller.edit(null)
             .done(function (data) {
+                //TODO make me better
                 this.$container.replaceWith(data.html);
-                this.controller.removeKeyPoint();
+                //this.controller.removeKeyPoint();
+                if (this.controller.model.get('is_temporal', false)) {
+                    this.controller.editKeyPoint({cancel: false});
+                }
                 var _self = this;
                 _self = new EditView(this.controller, this.controller.options);
                 this.controller.onViewLoaded();
-                this.controller.editKeyPoint({cancel: false});
             }.bind(this));
     };
 
