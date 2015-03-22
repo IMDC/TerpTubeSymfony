@@ -57,9 +57,9 @@ define([
                 this.model.setKeyPointProperty(e.keyPoint.id, 'isEditing', false);
                 this.model.setKeyPointProperty(e.keyPoint.id, 'options.drawOnTimeLine', true);
                 if (e.type == KeyPointService.Event.REMOVE) {
-                    setTimeout(function () {
+                    //setTimeout(function () {
                         this.model.removeKeyPoint(e.keyPoint.id);
-                    }.bind(this), 100);
+                    //}.bind(this), 100);
                 }
                 break;
         }

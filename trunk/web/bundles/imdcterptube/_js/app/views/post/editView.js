@@ -36,12 +36,18 @@ define([
 
         this.controller.edit(this.$form[0])
             .done(function (data) {
+                //TODO make me better
                 this.$container.replaceWith(data.html);
-                this.controller.removeKeyPoint();
+                //this.controller.removeKeyPoint();
+                if (this.controller.model.get('is_temporal', false)) {
+                    this.controller.editKeyPoint({cancel: true});
+                }
                 var _self = this;
                 var ViewView = require('views/post/viewView');
                 _self = new ViewView(this.controller, this.controller.options);
                 this.controller.onViewLoaded();
+                // ViewView was not present when model was changed. force it now to update the view
+                this.controller.model.forceChange();
             }.bind(this))
             .fail(function () {
                 this._toggleForm(false);
@@ -53,13 +59,19 @@ define([
 
         this.controller.view()
             .done(function (data) {
+                //TODO make me better
                 this.$container.replaceWith(data.html);
-                this.controller.removeKeyPoint();
+                //this.controller.removeKeyPoint();
+                if (this.controller.model.get('is_temporal', false)) {
+                    this.controller.editKeyPoint({cancel: true});
+                }
                 var _self = this;
                 var ViewView = require('views/post/viewView');
-                this.controller.model.set('keyPoint.videoDuration', 0, false); // force view update in the future
+                //this.controller.model.set('keyPoint.videoDuration', 0, false); // force view update in the future
                 _self = new ViewView(this.controller, this.controller.options);
                 this.controller.onViewLoaded();
+                // ViewView was not present when model was changed. force it now to update the view
+                this.controller.model.forceChange();
             }.bind(this));
     };
 

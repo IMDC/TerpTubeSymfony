@@ -159,6 +159,7 @@ class ThreadController extends Controller
 
         // empty post
         $post = new Post();
+        $post->setId(-rand());
         $post->setParentThread($thread);
         
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(

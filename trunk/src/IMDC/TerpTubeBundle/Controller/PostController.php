@@ -103,6 +103,7 @@ class PostController extends Controller
                     'threadid' => $thread->getId()))
             );
         } else {
+            $post->setId(-rand());
             $post->setParentThread($thread);
             $post->setParentPost($postParent);
 
@@ -142,7 +143,7 @@ class PostController extends Controller
         $content = array(
             'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
                 'post' => $post,
-                'is_post_reply' => false))
+                'is_post_reply' => !!$post->getParentPost()))
         );
 
         return new Response(json_encode($content), 200, array(
