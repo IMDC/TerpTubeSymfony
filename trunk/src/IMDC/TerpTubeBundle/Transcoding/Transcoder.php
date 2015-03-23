@@ -147,11 +147,11 @@ class Transcoder
             // $this->fs->rename ($videoFilePath, substr($videoFilePath, strrpos(0,$videoFilePath, ".")+1)."webm");
             // $uploadedFile =new UploadedFile($videoFilePath, "recording", "video/webm", filesize($videoFilePath),
             // UPLOAD_ERR_OK, false);
-            $isValid = $videoFile->isValid();
+            /*$isValid = $videoFile->isValid();
             if ($isValid)
                 $this->logger->info("Uploaded file valid ");
             else
-                $this->logger->info("Uploaded file invalid ");
+                $this->logger->info("Uploaded file invalid ");*/
             // $uploadedFile->move('/tmp','test.webm');
         }
         catch (\Exception $e)
