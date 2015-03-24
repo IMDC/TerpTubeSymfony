@@ -46,7 +46,7 @@ class UserGroupControllerTest extends WebTestCase
     public function testList()
     {
         $crawler = $this->client->request('GET', '/group/');
-        $this->assertGreaterThanOrEqual(1, $crawler->filter('p:contains("No groups"), .tt-forum-thumbnail')->count(),
+        $this->assertGreaterThanOrEqual(1, $crawler->filter('p:contains("No groups"), .tt-media-thumbnail')->count(),
             'either "no groups" or groups should be present');
     }
 

@@ -31,7 +31,7 @@ class ForumControllerTest extends WebTestCase
     public function testList()
     {
         $crawler = $this->client->request('GET', '/forum/');
-        $this->assertGreaterThanOrEqual(1, $crawler->filter('p:contains("No forums"), .tt-forum-thumbnail')->count(),
+        $this->assertGreaterThanOrEqual(1, $crawler->filter('p:contains("No forums"), .tt-media-thumbnail')->count(),
             'either "no forums" or forums should be present');
     }
 
@@ -40,7 +40,7 @@ class ForumControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/forum/new');
 
         $this->assertCount(1, $crawler->filter('form[name="forum"]'), 'a single forum form should be present');
-        $this->assertCount(1, $crawler->filter('#forum_accessType_0:checked'),
+        $this->assertCount(1, $crawler->filter('#forum_accessType_type_0:checked'),
             '"public" (default) access type should be checked');
     }
 
@@ -103,7 +103,7 @@ class ForumControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/forum/new/' . self::$groupId);
 
         $this->assertCount(1, $crawler->filter('form[name="forum"]'), 'a single forum form should be present');
-        $this->assertCount(1, $crawler->filter('#forum_accessType_4:checked'),
+        $this->assertCount(1, $crawler->filter('#forum_accessType_type_5:checked'),
             '"specific group" access type should be checked');
     }
 
