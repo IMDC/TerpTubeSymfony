@@ -93,7 +93,7 @@ class MediaControllerTest extends WebTestCase
         ));
 
         file_put_contents(
-            'MediaControllerTest.testTrim.html',
+            '../MediaControllerTest.testTrim.html',
             $this->client->getResponse()->getContent()
         );
 
