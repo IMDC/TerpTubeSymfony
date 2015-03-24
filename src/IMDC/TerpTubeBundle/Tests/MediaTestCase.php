@@ -47,15 +47,15 @@ class MediaTestCase extends WebTestCase
 
     /**
      * @param $fileName
-     * @param $type
+     * @return UploadedFile
      */
-    protected function createMedia($fileName, $type)
+    protected function createUploadedFile($fileName)
     {
         $rootDir = static::$kernel->getRootDir() . '/';
         $filePath = '/tmp/' . $fileName;
         copy($rootDir . '../../test_files/' . $fileName, $filePath);
 
-        $file = new UploadedFile(
+        return new UploadedFile(
             $filePath,
             $fileName,
             null,
@@ -63,6 +63,15 @@ class MediaTestCase extends WebTestCase
             null,
             true
         );
+    }
+
+    /**
+     * @param $fileName
+     * @param $type
+     */
+    protected function createMedia($fileName, $type)
+    {
+        $file = $this->createUploadedFile($fileName);
 
         $resourceFile = new ResourceFile();
         $resourceFile->setFile($file);
