@@ -36,7 +36,7 @@ class ThreadControllerTest extends WebTestCase
         $this->assertCount(1, $crawler->filter('[name^="thread[forum]"]'), 'forum field should be present');
         $this->assertCount(1, $crawler->filter('[name^="thread[mediaIncluded]"][value="' . self::$mediaIds[0] . '"]'),
             'media should be present');
-        $this->assertCount(1, $crawler->filter('#thread_accessType_0:checked'),
+        $this->assertCount(1, $crawler->filter('#thread_accessType_type_0:checked'),
             '"public" access type should be checked');
     }
 
@@ -45,7 +45,7 @@ class ThreadControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', '/thread/new/' . self::$forumId);
 
         $this->assertCount(1, $crawler->filter('form[name="thread"]'), 'a single thread form should be present');
-        $this->assertCount(1, $crawler->filter('#thread_accessType_0:checked'),
+        $this->assertCount(1, $crawler->filter('#thread_accessType_type_0:checked'),
             '"public" access type should be checked');
     }
 
