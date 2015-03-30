@@ -128,7 +128,6 @@ class MyFilesController extends Controller
         $media->setIsReady(Media::READY_WEBM);
         $media->setResource($resourceFile);
 
-        $resourceFile->setMedia($media);
         $user->addResourceFile($media);
 
         $em->persist($resourceFile);
