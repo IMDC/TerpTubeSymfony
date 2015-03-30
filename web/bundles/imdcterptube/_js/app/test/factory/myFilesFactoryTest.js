@@ -28,7 +28,7 @@ define([
                 audio = request.response;
                 console.log(audio);
             };
-            request.open('GET', Common.SCHEME_HOST + '/300.webm');
+            request.open('GET', Common.SCHEME_HOST + '/test_files/video_audio.webm');
             request.responseType = 'blob';
             request.send();
 

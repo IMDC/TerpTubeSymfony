@@ -1,5 +1,5 @@
 IMDC\TerpTubeBundle\Entity\ResourceFile:
-    type:  entity
+    type: entity
     table: resource_file
     id:
         id:
@@ -18,7 +18,6 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
         updated:
             type: datetime
             nullable: true
-               
     lifecycleCallbacks:
         prePersist: [ preUpload ]
         postPersist: [ upload ]
@@ -26,4 +25,3 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
         postUpdate: [ upload ]
         preRemove: [ storeFilenameForRemove ]
         postRemove: [ removeUpload ]
-        
