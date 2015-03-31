@@ -19,6 +19,8 @@ define([
     'factory/contactFactory',
     'factory/forumFactory',
     'factory/groupFactory',
+    'factory/mediaFactory',
+    'factory/myFilesFactory',
     'factory/postFactory',
     'factory/threadFactory',
 
@@ -29,6 +31,8 @@ define([
     // model
     'model/forumModel',
     'model/groupModel',
+    'model/mediaModel',
+    'model/myFilesModel',
     'model/postModel',
     'model/threadModel',
 
