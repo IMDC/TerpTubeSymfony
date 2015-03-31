@@ -47,7 +47,7 @@ class ResourceFileAdmin extends Admin
             // add a 'help' option container the preview's resourcefile tag
             if ($resourceFile->getPath() === 'mp4') {
                 $fileFieldOptions['help'] = '<video width="320" height="240" controls>
-                                                <source src="'.$container->get('request')->getBasePath().'/'.$resourceFile->getWebPathWebm().'" type="video/webm">
+                                                <source src="'.$container->get('request')->getBasePath().'/'.$resourceFile->getWebPath().'" type="video/webm">
                                                 Your browser does not support the video tag.
                                             </video>';
             }

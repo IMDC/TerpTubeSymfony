@@ -61,7 +61,7 @@ class MediaTestCase extends WebTestCase
             null,
             filesize($filePath),
             null,
-            false
+            true
         );
     }
 
