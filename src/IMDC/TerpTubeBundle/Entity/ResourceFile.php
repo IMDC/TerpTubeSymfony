@@ -4,10 +4,13 @@ namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceFile
 {
+    const UPLOAD_DIR = 'uploads/media'; //TODO move to app config
+
     /**
      * @var integer
      */
@@ -21,7 +24,7 @@ class ResourceFile
     /**
      * @var string
      */
-    private $webmExtension;
+    private $webmExtension; //TODO delete
 
     /**
      * @var \DateTime
@@ -31,7 +34,7 @@ class ResourceFile
     /**
      * @var string
      */
-    private $filename;
+    private $filename; //TODO delete. not used
 
     /**
      * Unmapped property to handle file uploads
@@ -41,12 +44,12 @@ class ResourceFile
     /**
      * @var \IMDC\TerpTubeBundle\Entity\Media
      */
-    private $media;
+    private $media; //TODO delete. not used
 
     /**
      * @var string
      */
-    private $name;
+    private $name; //TODO delete. not used
 
     /**
      * Get id
@@ -86,8 +89,9 @@ class ResourceFile
      *
      * @param string $webmExtension
      * @return ResourceFile
+     * @deprecated
      */
-    public function setWebmExtension($webmExtension)
+    public function setWebmExtension($webmExtension) //TODO delete
     {
         $this->webmExtension = $webmExtension;
 
@@ -98,8 +102,9 @@ class ResourceFile
      * Get webmExtension
      *
      * @return string
+     * @deprecated
      */
-    public function getWebmExtension()
+    public function getWebmExtension() //TODO delete
     {
         return $this->webmExtension;
     }
@@ -132,60 +137,64 @@ class ResourceFile
      *
      * @param string $filename
      * @return ResourceFile
+     * @deprecated
      */
-    public function setFilename($filename)
+    public function setFilename($filename) //TODO delete. not used
     {
         $this->filename = $filename;
 
         return $this;
     }
 
-    /**
-     * Get filename
-     *
-     * @return string
-     */
     public function getFilename()
     {
-        return $this->filename;
+        return $this->id . '.' . $this->path;
     }
 
     public function getWebPath()
     {
         return null === $this->path
             ? null
-            : $this->getUploadDir() . '/' . $this->id . '.' . $this->path;
+            : static::UPLOAD_DIR . '/' . $this->getFilename();
     }
 
-    public function getWebPathWebm() //TODO revise
+    /**
+     * @return null|string
+     * @deprecated
+     */
+    public function getWebPathWebm()
     {
         return null === $this->path
             ? null
-            : $this->getUploadDir() . '/' . $this->id . '.' . $this->getWebmExtension();
+            : static::UPLOAD_DIR . '/' . $this->id . '.' . $this->getWebmExtension();
     }
 
     public function getUploadRootDir()
     {
         // the absolute directory path where uploaded
         // documents should be saved
-        return __DIR__ . '/../../../../web/' . $this->getUploadDir();
+        //TODO move to app config
+        return __DIR__ . '/../../../../web/' . static::UPLOAD_DIR;
     }
 
-    protected function getUploadDir()
+    public function getAbsolutePath()
     {
-        // get rid of the __DIR__ so it doesn't screw up
-        // when displaying uploaded doc/image in the view.
-        return 'uploads/media';
+        return null === $this->path
+            ? null
+            : $this->getUploadRootDir() . '/' . $this->getFilename();
     }
 
     /**
      * Sets file. **From cookbook**
      *
-     * @param UploadedFile $file
+     * @param BaseUploadedFile $file
      */
-    public function setFile(UploadedFile $file = null)
+    public function setFile(BaseUploadedFile $file = null)
     {
-        $this->file = $file;
+        $this->file = null === $file
+            ? null
+            : UploadedFile::fromUploadedFile($file);
+
         // check if we have an old image path
         if (is_file($this->getAbsolutePath())) {
             // store the old name to delete after the update
@@ -207,9 +216,11 @@ class ResourceFile
 
     public function preUpload()
     {
-        if (null !== $this->getFile()) {
-            $this->path = $this->getFile()->guessExtension();
+        if (null === $this->getFile()) {
+            return;
         }
+
+        $this->path = $this->getFile()->guessExtension();
     }
 
     /**
@@ -235,7 +246,7 @@ class ResourceFile
         // which the UploadedFile move() method does
         $this->getFile()->move(
             $this->getUploadRootDir(),
-            $this->id . '.' . $this->getFile()->guessExtension()
+            $this->getFilename()
         );
 
         $this->setFile(null);
@@ -259,13 +270,10 @@ class ResourceFile
         }
     }
 
-    public function getAbsolutePath()
-    {
-        return null === $this->path
-            ? null
-            : $this->getUploadRootDir() . '/' . $this->id . '.' . $this->path;
-    }
-
+    /**
+     * @return null|string
+     * @deprecated
+     */
     public function getAbsolutePathWebm()
     {
         return null === $this->path
