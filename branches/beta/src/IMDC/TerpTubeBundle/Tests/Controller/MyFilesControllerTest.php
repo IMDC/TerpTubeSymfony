@@ -3,16 +3,15 @@
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
 use IMDC\TerpTubeBundle\Tests\Common;
+use IMDC\TerpTubeBundle\Tests\MediaTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
- * Class MyFilesGatewayControllerTest
+ * Class MyFilesControllerTest
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class MyFilesGatewayControllerTest extends WebTestCase
+class MyFilesControllerTest extends MediaTestCase
 {
     /**
      * @var Client
@@ -21,29 +20,25 @@ class MyFilesGatewayControllerTest extends WebTestCase
 
     public function setUp()
     {
+        parent::setUp();
+
         $this->client = static::createClient();
 
         Common::login($this->client);
     }
 
-    private static function prepareWebmData()
+    public function testAddRecording_Firefox()
     {
-        //TODO external and separate test data for video and audio
-        copy('web/uploads/media/148.webm', 'audio.webm');
-    }
-
-    public function testAddRecordingFirefox()
-    {
-        MyFilesGatewayControllerTest::prepareWebmData();
+        $audioBlob = $this->createUploadedFile('video_audio.webm');
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isFirefox' => true
         ), array(
-            'audio-blob' => new UploadedFile('audio.webm', 'audio.webm', null, filesize('audio.webm'), null, true)
+            'audio-blob' => $audioBlob
         ));
 
         file_put_contents(
-            'MyFilesGatewayControllerTest_testAddRecordingFirefox.html',
+            '../test_logs/MyFilesControllerTest.testAddRecording_Firefox.html',
             $this->client->getResponse()->getContent()
         );
 
@@ -51,13 +46,17 @@ class MyFilesGatewayControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('responseCode', $response);
         $this->assertArrayHasKey('feedback', $response);
+        $this->assertArrayHasKey('media', $response);
         $this->assertEquals(200, $response['responseCode']);
         $this->assertEquals('media added', $response['feedback']);
+
+        // find media to have it removed at tear down
+        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
     }
 
-    public function testAddRecordingFirefoxInterpretation()
+    public function testAddRecording_FirefoxInterpretation()
     {
-        MyFilesGatewayControllerTest::prepareWebmData();
+        $audioBlob = $this->createUploadedFile('video_audio.webm');
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isFirefox' => true,
@@ -65,11 +64,11 @@ class MyFilesGatewayControllerTest extends WebTestCase
             'sourceStartTime' => 1.00,
             'sourceId' => 4
         ), array(
-            'audio-blob' => new UploadedFile('audio.webm', 'audio.webm', null, filesize('audio.webm'), null, true)
+            'audio-blob' => $audioBlob
         ));
 
         file_put_contents(
-            'MyFilesGatewayControllerTest_testAddRecordingFirefoxInterpretation.html',
+            '../test_logs/MyFilesControllerTest.testAddRecording_FirefoxInterpretation.html',
             $this->client->getResponse()->getContent()
         );
 
@@ -77,7 +76,11 @@ class MyFilesGatewayControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('responseCode', $response);
         $this->assertArrayHasKey('feedback', $response);
+        $this->assertArrayHasKey('media', $response);
         $this->assertEquals(200, $response['responseCode']);
         $this->assertEquals('media added', $response['feedback']);
+
+        // find media to have it removed at tear down
+        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
     }
 }

@@ -31,7 +31,7 @@ class PostControllerTest extends WebTestCase
 
     public function testNew_GetForm()
     {
-        $this->client->request('GET', '/post/new/' . self::$threadId . '/0' . rand());
+        $this->client->request('GET', '/post/new/' . self::$threadId);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('wasReplied', $response);
@@ -47,9 +47,8 @@ class PostControllerTest extends WebTestCase
      */
     public function testNew_SubmitFormWithMediaAndContent()
     {
-        //$uri = '/post/new/' . self::$threadId . '/0' . rand();
         $content = 'test:new';
-        $this->client->request('GET', '/post/new/' . self::$threadId . '/0' . rand());
+        $this->client->request('GET', '/post/new/' . self::$threadId);
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $crawler = new Crawler($response['html'], $this->client->getRequest()->getUri());
 

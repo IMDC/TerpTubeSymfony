@@ -190,6 +190,7 @@ define([
                         keyPoint.paintHighlightedTimeout = false;
                         keyPoint.paintHighlighted = false;
                         this.player.redrawKeyPoints = true;
+                        this.player.repaint();
                     }).bind(this), 3000);
                 }
 
@@ -219,7 +220,7 @@ define([
 
         var rate = this.controller.adjustVideoSpeed();
         this.$video[0].playbackRate = rate.value;
-        $('#videoSpeed img').attr('src', rate.image);
+        $(e.target).attr('src', rate.image);
     };
 
     // change the captioning display when you click the captioning button

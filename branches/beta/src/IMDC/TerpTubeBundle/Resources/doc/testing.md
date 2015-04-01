@@ -41,7 +41,7 @@ nothing
 
 ## Notes
 
-* Running tests sequentially that use RabbitMqBundle's producer service, like in MyFilesGatewayControllerTest.php,
+* Running tests sequentially that use RabbitMqBundle's producer service, like in MyFilesControllerTest.php,
 cause a segfault (for me at least) when the second test tries to start
 
 [1]: https://phpunit.de/manual/current/en/installation.html

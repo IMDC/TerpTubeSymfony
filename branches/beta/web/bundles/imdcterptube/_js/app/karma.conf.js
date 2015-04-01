@@ -38,6 +38,8 @@ module.exports = function(config) {
         'test/factory/contact*',
         'test/factory/forum*',
         'test/factory/group*',
+        'test/factory/media*',
+        'test/factory/myFiles*',
         'test/factory/post*',
         'test/factory/thread*'
     ],
@@ -74,12 +76,16 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS_custom'],
+    browsers: ['PhantomJS2_custom'],
 
 
       customLaunchers: {
           PhantomJS_custom: {
               base: 'PhantomJS',
+              flags: ['--ignore-ssl-errors=true', '--web-security=false']
+          },
+          PhantomJS2_custom: {
+              base: 'PhantomJS2',
               flags: ['--ignore-ssl-errors=true', '--web-security=false']
           },
           Chrome_without_security: {

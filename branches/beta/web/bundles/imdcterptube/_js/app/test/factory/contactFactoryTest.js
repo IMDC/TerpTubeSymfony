@@ -45,8 +45,6 @@ define([
                     assert.isFalse(data.success, 'key:success should be false');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         it('should delete contacts', function (done) {
@@ -62,8 +60,6 @@ define([
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
         });
 
         after(function () {

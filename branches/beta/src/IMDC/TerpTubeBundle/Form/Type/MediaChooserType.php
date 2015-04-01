@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Form\Type;
 use Doctrine\ORM\EntityManager;
 use IMDC\TerpTubeBundle\Form\DataTransformer\MediaCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\DataTransformer\MediaToIntTransformer;
+use IMDC\TerpTubeBundle\Validator\Constraints\OwnsMedia;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactory;
@@ -59,7 +60,10 @@ class MediaChooserType extends AbstractType
             'allow_delete' => true,
             'type' => 'hidden',
             //'mapped' => false,
-            'required' => false
+            'required' => false,
+            'constraints' => array(
+                new OwnsMedia()
+            )
         ));
     }
 

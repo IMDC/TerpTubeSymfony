@@ -14,11 +14,13 @@
     <script type="text/javascript">
         require([
             'bootstrap',
-            'controller/myFilesController', 'views/myFiles/listView',
+            'model/myFilesModel', 'controller/myFilesController', 'views/myFiles/listView',
             'main'
-        ], function(bootstrap, MyFilesController, MyFilesView) {
+        ], function(bootstrap, MyFilesModel, MyFilesController, MyFilesView) {
             bootstrap(
-                    {},
+                    new MyFilesModel({
+                        media: {{ media.items.getArrayCopy|serialize('json')|raw }}
+                    }),
                     MyFilesController,
                     MyFilesView,
                     {

@@ -40,7 +40,6 @@ define([
                 mCallbackResult = e;
             };
             model = new PostModel({
-                id: '0' + Math.floor((Math.random() * 100000) + 1),
                 start_time: 100,
                 end_time: 200,
                 is_temporal: true,
@@ -168,7 +167,7 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id'), pid: model.get('id')}),
+                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id')}),
                 responseText: {
                     wasReplied: false,
                     html: ''
@@ -186,7 +185,7 @@ define([
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id'), pid: model.get('id')}),
+                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id')}),
                 responseText: {
                     wasReplied: true,
                     post: {},

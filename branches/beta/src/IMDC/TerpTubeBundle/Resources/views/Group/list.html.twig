@@ -4,7 +4,9 @@
     {% set isMyGroups = false %}
 {% endif %}
 
-{% block title %}My Groups{% endblock %}
+{% block title %}
+    {% if isMyGroups %}My {% endif %}Groups
+{% endblock %}
 
 {% block nav_ul_my_groups %}
     {% if isMyGroups %}class="active"{% endif %}

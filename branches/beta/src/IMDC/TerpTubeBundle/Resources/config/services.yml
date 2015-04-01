@@ -160,3 +160,9 @@ services:
         class: IMDC\TerpTubeBundle\Helper\MultiPaginationHelper
         tags:
             - { name: knp_paginator.injectable, paginator: @knp_paginator }
+
+    imdc_terptube.validator.contraints.owns_media_validator:
+        class: IMDC\TerpTubeBundle\Validator\Constraints\OwnsMediaValidator
+        arguments: [@security.context]
+        tags:
+            - { name: validator.constraint_validator, alias: owns_media }

@@ -1,10 +1,10 @@
 define([
     'core/subscriber',
-    'core/mediaManager',
+    'factory/mediaFactory',
     'component/recorderComponent',
     'core/helper',
     'extra'
-], function (Subscriber, MediaManager, RecorderComponent, Helper) {
+], function (Subscriber, MediaFactory, RecorderComponent, Helper) {
     'use strict';
 
     var GalleryComponent = function (options) {
@@ -25,8 +25,6 @@ define([
         this.bind__onClickThumbnail = this._onClickThumbnail.bind(this);
         this.bind__onRenderMedia = this._onRenderMedia.bind(this);
         this.bind__onRenderThumbnails = this._onRenderThumbnails.bind(this);
-        this.bind__onGetMediaInfoSuccess = this._onGetMediaInfoSuccess.bind(this);
-        this.bind__onGetMediaInfoError = this._onGetMediaInfoError.bind(this);
 
         this.$container = this.options.$container;
         this.$normal = this.$container.find(GalleryComponent.Binder.NORMAL);
@@ -67,12 +65,16 @@ define([
 
         this._populate();
 
-        this.mediaManager = new MediaManager();
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_SUCCESS, this.bind__onGetMediaInfoSuccess);
-        $(this.mediaManager).on(MediaManager.Event.GET_INFO_ERROR, this.bind__onGetMediaInfoError);
-
-        if (typeof this.options.mediaIds !== 'undefined')
-            this.mediaManager.getInfo(this.options.mediaIds);
+        if (typeof this.options.mediaIds !== 'undefined') {
+            MediaFactory.list(this.options.mediaIds)
+                .done(function (data) {
+                    this.options.media = data.media;
+                    this._populate();
+                }.bind(this))
+                .fail(function () {
+                    console.error('%s: media factory list', GalleryComponent.TAG);
+                });
+        }
     };
 
     GalleryComponent.extend(Subscriber);
@@ -112,7 +114,7 @@ define([
                 this.recorderCmp.hide();
 
                 if (e.doPost)
-                    window.location.assign(Routing.generate('imdc_thread_new_from_media', {mediaId: e.media.id}));
+                    window.location.assign(Routing.generate('imdc_thread_new_from_media', {mediaId: e.media.get('id')}));
             }.bind(this));
             this.recorderCmp.subscribe(RecorderComponent.Event.HIDDEN, function (e) {
                 this.recorderCmp.destroy();
@@ -215,10 +217,10 @@ define([
 
         var mediaId = $(e.currentTarget).data('mid');
         this.activeMedia = $.grep(this.options.media, function (elementOfArray, indexInArray) {
-            return elementOfArray.id == mediaId;
+            return elementOfArray.get('id') == mediaId;
         })[0];
 
-        dust.render('gallery_media', {media: this.activeMedia}, this.bind__onRenderMedia);
+        dust.render('gallery_media', {media: this.activeMedia.data}, this.bind__onRenderMedia);
     };
 
     GalleryComponent.prototype._onRenderMedia = function (err, out) {
@@ -227,7 +229,7 @@ define([
 
         var $recorderBtn = this.$action.filter('[data-action="3"]');
         var $cutBtn = this.$action.filter('[data-action="4"]');
-        if (this.activeMedia.type == 1) {
+        if (this.activeMedia.get('type') == 1) {
             $recorderBtn.show();
             if (this.options.mode == GalleryComponent.Mode.PREVIEW) {
                 $cutBtn.show();
@@ -251,20 +253,9 @@ define([
 
         this.activeMedia = this.options.media[0];
 
-        dust.render('gallery_media', {media: this.activeMedia}, this.bind__onRenderMedia);
-        dust.render('gallery_thumbnail', {media: this.options.media}, this.bind__onRenderThumbnails);
-    };
-
-    GalleryComponent.prototype._onGetMediaInfoSuccess = function (e) {
-        //data, textStatus, jqXHR
-        this.options.media = e.payload.media;
-        this._populate();
-        console.log('Success')
-    };
-
-    GalleryComponent.prototype._onGetMediaInfoError = function (e) {
-        //jqXHR, textStatus, errorThrown
-        console.log(e.jqXHR);
+        dust.render('gallery_media', {media: this.activeMedia.data}, this.bind__onRenderMedia);
+        //TODO array representation of media models
+        //dust.render('gallery_thumbnail', {media: this.options.media}, this.bind__onRenderThumbnails);
     };
 
     GalleryComponent.prototype.show = function () {
