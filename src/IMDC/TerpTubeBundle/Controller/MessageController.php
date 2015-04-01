@@ -78,21 +78,6 @@ class MessageController extends Controller
 			    $em->persist($recipient);
 			}
 
-            /*$media = $form->get('mediatextarea')->getData();
-            if ($media) {
-                if (!$user->getResourceFiles()->contains($media)) {
-                    throw new AccessDeniedException(); //TODO more appropriate exception?
-                }
-
-                if (!$message->getAttachedMedia()->contains($media))
-                    $message->addAttachedMedia($media);
-            }*/
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('attachedMedia')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $user->addSentMessage($message);
 
 			$em->persist($message);
@@ -396,21 +381,6 @@ class MessageController extends Controller
                 $recipient->addReceivedMessage($message);
 			    $em->persist($recipient);
 			}
-
-			/*$media = $form->get('mediatextarea')->getData();
-            if ($media) {
-                if (!$user->getResourceFiles()->contains($media)) {
-                    throw new AccessDeniedException(); //TODO more appropriate exception?
-                }
-
-                if (!$message->getAttachedMedia()->contains($media))
-                    $message->addAttachedMedia($media);
-            }*/
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('attachedMedia')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
 
             $user->addSentMessage($message);
 

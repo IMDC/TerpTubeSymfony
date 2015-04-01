@@ -88,12 +88,6 @@ class ThreadController extends Controller
             $thread->setSticky(false);
             $thread->setLastPostAt($currentDateTime);
             $thread->setParentForum($forum);
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('mediaIncluded')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $thread->setMediaDisplayOrder($form->get('mediaIncluded')->getViewData());
 
             if (count($thread->getMediaIncluded()) > 0) {
@@ -162,10 +156,17 @@ class ThreadController extends Controller
         $form = $this->createForm(new PostType(), new Post(), array(
             'canTemporal' => $thread->getType() == 1
         ));
+
+        // empty post
+        $post = new Post();
+        $post->setId(-rand());
+        $post->setParentThread($thread);
         
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
             'form' => $form->createView(),
-            'thread' => $thread
+            'thread' => $thread,
+            'post' => $post,
+            'is_post_reply' => false
         ));
     }
 
@@ -209,12 +210,6 @@ class ThreadController extends Controller
             $currentDateTime = new \DateTime('now');
             $thread->setEditedAt($currentDateTime);
             $thread->setEditedBy($user);
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('mediaIncluded')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $thread->setMediaDisplayOrder($form->get('mediaIncluded')->getViewData());
 
             if (count($thread->getMediaIncluded()) > 0) {

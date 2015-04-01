@@ -17,7 +17,7 @@ define([
             this.model.get('id'),
             this.model.get('start_time'),
             this.model.get('end_time'),
-            '', {drawOnTimeLine: this.model.get('is_temporal')}
+            '', {drawOnTimeLine: this.model.get('is_temporal', false)}
         ));
 
         // KeyPointService

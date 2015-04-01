@@ -1,10 +1,11 @@
 define([
     'core/subscriber',
     'component/myFilesSelectorComponent',
-    'core/mediaManager',
+    'model/mediaModel',
+    'factory/mediaFactory',
     'core/helper',
     'extra'
-], function (Subscriber, MyFilesSelectorComponent, MediaManager, Helper) {
+], function (Subscriber, MyFilesSelectorComponent, MediaModel, MediaFactory, Helper) {
     'use strict';
 
     var RecorderComponent = function (options) {
@@ -73,8 +74,6 @@ define([
         if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
             this.$modalDialog.find('a[href="' + RecorderComponent.Binder.INTERP + '"]').hide();
         }
-
-        this.mediaManager = new MediaManager();
     };
 
     RecorderComponent.extend(Subscriber);
@@ -188,7 +187,8 @@ define([
         console.log('Cutting to Min/Max Times %s %s', currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
             currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 
-        this.mediaManager.trimMedia(this.recordedMedia.id, currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
+        MediaFactory.trim(this.recordedMedia,
+            currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
             currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 
         //cut should always also call the done function
@@ -202,7 +202,7 @@ define([
         this._destroyPlayers();
 
         // delete the current media!
-        this.mediaManager.deleteMedia(this.recordedMedia.id);
+        MediaFactory.delete(this.recordedMedia);
 
         // Go back to recording
         this.setRecordedMedia(null);
@@ -232,7 +232,7 @@ define([
             container = this.$interpVideoR;
             additionalDataToPost = {
                 isInterpretation: true,
-                sourceId: this.sourceMedia.id
+                sourceId: this.sourceMedia.get('id')
             }
         }
 
@@ -301,7 +301,7 @@ define([
         console.log('%s: %s- mediaId=%d', RecorderComponent.TAG, '_onRecordingSuccess', data.media.id);
 
         //this.tempMedia = data.media;
-        this.setRecordedMedia(data.media);
+        this.setRecordedMedia(new MediaModel(data.media));
     };
 
     RecorderComponent.prototype._onRecordingError = function (e) {
@@ -473,8 +473,9 @@ define([
 
     RecorderComponent.prototype._onBlurPlayerTitle = function (e) {
         console.log('updated title');
-        this.recordedMedia.title = $(e.target).val();
-        this.mediaManager.updateMedia(this.recordedMedia);
+        this.recordedMedia.set('title', $(e.target).val());
+
+        MediaFactory.edit(this.recordedMedia);
     };
 
     RecorderComponent.prototype._onClickInterpSelect = function (e) {
@@ -516,7 +517,7 @@ define([
     RecorderComponent.prototype._injectMedia = function (video, media) {
         var source = video.find('source');
         video.removeAttr('src');
-        source.attr('src', Helper.generateUrl(media.resource.web_path));
+        source.attr('src', Helper.generateUrl(media.get('resource.web_path')));
     };
 
     RecorderComponent.prototype.setSourceMedia = function (media) {
@@ -530,7 +531,7 @@ define([
     };
 
     RecorderComponent.prototype._togglePlayerTitle = function () {
-        var title = this.recordedMedia != null ? this.recordedMedia.title : '';
+        var title = this.recordedMedia != null ? this.recordedMedia.get('title') : '';
 
         if (this.options.tab == RecorderComponent.Tab.NORMAL) {
             this.$interpTitle.hide().val('');

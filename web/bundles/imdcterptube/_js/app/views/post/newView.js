@@ -37,7 +37,7 @@ define([
             mediaIds.push($(element).val());
         });
         if (mediaIds.length > 0) {
-            this._toggleForm(true);
+            //this._toggleForm(true); //FIXME EditView override of _toggleForm will fail
             this.mcCmp.setMedia(mediaIds);
         }
 
@@ -115,8 +115,10 @@ define([
         this.$container.remove();
         this.controller.removeKeyPoint();
 
+        //TODO make me better
+        // a bit hackish but works
         $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
-            .find(NewView.Binder.NEW)
+            .find('.post-new')
             .show();
     };
 

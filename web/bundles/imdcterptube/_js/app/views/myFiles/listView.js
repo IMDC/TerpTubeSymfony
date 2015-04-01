@@ -1,9 +1,10 @@
 define([
+    'service',
+    'model/model',
     'component/tableComponent',
     'component/mediaChooserComponent',
-    'service',
     'component/galleryComponent'
-], function (TableComponent, MediaChooserComponent, Service, GalleryComponent) {
+], function (Service, Model, TableComponent, MediaChooserComponent, GalleryComponent) {
     'use strict';
 
     var ListView = function (controller, options) {
@@ -21,8 +22,6 @@ define([
         this.tblCmp = TableComponent.table(this.$filesList);
         this.tblCmp.subscribe(TableComponent.Event.CLICK_BULK_ACTION, this.bind__onClickBulkAction);
 
-        var instance = this;
-
         this.$filesList.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
             $(this).parent().prev().editable('toggle');
@@ -38,18 +37,25 @@ define([
         this.$filesList.find('span.edit-title').editable({
             toggle: 'manual',
             unsavedclass: null,
-            success: function (response, newValue) {
-                instance.mcCmp.mediaManager.updateMedia({
-                    id: $(this).data('mid'),
-                    title: newValue
-                });
-            }
+            pk: function () {
+                return $(this).data('mid')
+            },
+            url: function (params) {
+                return this.controller.edit(params.pk, {title: params.value});
+            }.bind(this)
         });
 
         var sub = Service.get('subscriber');
         sub.dispatch(ListView.TAG, 'onViewLoaded', {
             view: this
         });
+
+        // not exactly needed. just an example
+        this.controller.model.subscribe(Model.Event.CHANGE, function (e) {
+            var media = e.model.get(e.keyPath);
+            var $file = this.$files.filter('span[data-mid="' + media.get('id') + '"]');
+            $file.html(media.get('title'));
+        }.bind(this));
 
         $tt._instances.push(this);
     };
@@ -66,29 +72,16 @@ define([
         switch (e.action) {
             case 1: // delete
                 //FIXME confirmation. update controller to allow mass deletion
-//                var file = $(e.target);
-//
-//                $(this.mediaManager).one(MediaManager.EVENT_DELETE_SUCCESS, function() {
-//                    file.parent().parent().parent().remove();
-//                });
-//                $(this.mediaManager).one(MediaManager.EVENT_DELETE_ERROR, function(error, e) {
-//                    if (e.status == 500) {
-//                        alert(e.statusText);
-//                    } else {
-//                        alert('Error: ' + error);
-//                    }
-//                });
-//
-//                return this.mediaManager.deleteMedia(file.data("val"), Translator.trans('filesGateway.deleteConfirmMessage'));
-
-                $.each(e.$selection, (function (index, element) {
-                    this.mcCmp.mediaManager.deleteMedia($(element).data("mid")/*, Translator.trans('filesGateway.deleteConfirmMessage')*/);
-                }).bind(this));
+                if (confirm(Translator.trans('filesGateway.deleteConfirmMessage'))) {
+                    $.each(e.$selection, (function (index, element) {
+                        this.controller.delete($(element).data('mid'), true);
+                    }).bind(this));
+                }
 
                 //FIXME: make me better
                 setTimeout(function () {
                     window.location.reload(true);
-                }, 1000);
+                }, 2000);
                 break;
         }
     };

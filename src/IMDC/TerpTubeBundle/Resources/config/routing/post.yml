@@ -1,6 +1,6 @@
 imdc_post_new:
   pattern: /new/{threadId}/{pid}
-  defaults: { _controller: IMDCTerpTubeBundle:Post:new }
+  defaults: { _controller: IMDCTerpTubeBundle:Post:new, pid: null }
   requirements:
     threadId: \d+
     pid: \d+

@@ -43,8 +43,7 @@ class AccessProvider
      */
     public function createAccess(AccessObjectIdentity $objectIdentity, FormInterface $form = null)
     {
-        $this->loadAcl($objectIdentity);
-        $this->loadAccessData($objectIdentity, $form);
+        $this->load($objectIdentity, $form);
 
         return new Access($this->entityManager, $this, $objectIdentity);
     }
@@ -63,6 +62,7 @@ class AccessProvider
     {
         $this->aclProvider->updateAcl($this->acl);
 
+        //TODO transaction with rollback on error
         $this->entityManager->persist($this->accessData);
         $this->entityManager->flush();
     }
@@ -72,8 +72,11 @@ class AccessProvider
      */
     public function deleteAccess(AccessObjectIdentity $objectIdentity)
     {
+        $this->load($objectIdentity);
+
         $this->aclProvider->deleteAcl($objectIdentity->getObjectIdentity());
 
+        //TODO transaction with rollback on error
         $this->entityManager->remove($this->accessData);
         $this->entityManager->flush();
     }
@@ -113,6 +116,12 @@ class AccessProvider
         }
     }
 
+    private function load(AccessObjectIdentity $objectIdentity, FormInterface $form = null)
+    {
+        $this->loadAcl($objectIdentity);
+        $this->loadAccessData($objectIdentity, $form);
+    }
+
     /**
      * @return Acl
      */
@@ -149,8 +158,12 @@ class AccessProvider
                 }
             }
         }
-        if ($accessType->getId() == AccessType::TYPE_GROUP && $object instanceof Forum) {
-            $securityIdentities[] = GroupSecurityIdentity::fromGroup($object->getGroup());
+        if ($object instanceof Forum) {
+            if ($accessType->getId() == AccessType::TYPE_GROUP) {
+                $securityIdentities[] = GroupSecurityIdentity::fromGroup($object->getGroup());
+            } else {
+                $object->setGroup(null); // ensure group is unset if access type is not group
+            }
         }
 
         $accessObjectIdentity->setSecurityIdentities($securityIdentities);

@@ -36,31 +36,31 @@ class LinkBoxService extends BaseBlockService
         );
     }
     
-    public function buildEditForm(FormMapper $formMapper, BlockInterface $block)
-    {
-//         $formMapper
-//         ->add('settings', 'sonata_type_immutable_array', array(
-//             'keys' => array(
-//                 array('url', 'url', array('required' => false)),
-//                 array('title', 'text', array('required' => false)),
-//             )
-//         ))
-        ;
-    }
+//     public function buildEditForm(FormMapper $formMapper, BlockInterface $block)
+//     {
+// //         $formMapper
+// //         ->add('settings', 'sonata_type_immutable_array', array(
+// //             'keys' => array(
+// //                 array('url', 'url', array('required' => false)),
+// //                 array('title', 'text', array('required' => false)),
+// //             )
+// //         ))
+//         ;
+//     }
     
-    function validateBlock(ErrorElement $errorElement, BlockInterface $block)
-    {
-//         $errorElement
-//         ->with('settings.url')
-//         ->assertNotNull(array())
-//         ->assertNotBlank()
-//         ->end()
-//         ->with('settings.title')
-//         ->assertNotNull(array())
-//         ->assertNotBlank()
-//         ->assertMaxLength(array('limit' => 50))
-//         ->end();
-    }
+//     function validateBlock(ErrorElement $errorElement, BlockInterface $block)
+//     {
+// //         $errorElement
+// //         ->with('settings.url')
+// //         ->assertNotNull(array())
+// //         ->assertNotBlank()
+// //         ->end()
+// //         ->with('settings.title')
+// //         ->assertNotNull(array())
+// //         ->assertNotBlank()
+// //         ->assertMaxLength(array('limit' => 50))
+// //         ->end();
+//     }
     
     public function execute(BlockContextInterface $block, Response $response = null)
     {

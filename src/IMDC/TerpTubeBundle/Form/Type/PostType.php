@@ -39,7 +39,6 @@ class PostType extends AbstractType
             'required' => false,
             'attr' => array(
                 'class' => 'autosize',
-                'style' => 'height: 35px;', //FIXME css me
                 'placeholder' => 'Write a reply...')
         ));
 	}
