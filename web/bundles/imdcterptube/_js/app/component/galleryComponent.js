@@ -244,7 +244,7 @@ define([
             : containerHeight - this.$carousel.outerHeight(true);
 
         // container widths/heights/positioning
-        var thumbsWidth = this.$container.width() - (this.$left.outerWidth(true) + this.$right.outerWidth(true));
+        var thumbsWidth = this.$container.width() - (this.$left.outerWidth(true) + this.$right.outerWidth(true)) - 0.5;
         var verticalAlign = function (index, value) {
             return (itemHeight / 2) - ($(this).height() / 2);
         };

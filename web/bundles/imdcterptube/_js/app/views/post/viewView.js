@@ -1,7 +1,8 @@
 define([
     'model/model',
+    'component/galleryComponent',
     'views/post/editView'
-], function (Model, EditView) {
+], function (Model, GalleryComponent, EditView) {
     'use strict';
 
     var ViewView = function (controller, options) {
@@ -15,6 +16,7 @@ define([
 
         this.$container = $(ViewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('id') + '"]');
         this.$timelineKeyPoint = this.$container.find(ViewView.Binder.TIMELINE_KEYPOINT);
+        this.$gallery = this.$container.find(ViewView.Binder.GALLERY);
         this.$new = this.$container.find(ViewView.Binder.NEW);
         this.$edit = this.$container.find(ViewView.Binder.EDIT);
         this.$deleteModal = this.$container.find(ViewView.Binder.DELETE_MODAL);
@@ -31,6 +33,17 @@ define([
 
         this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
 
+        var media = this.controller.model.get('ordered_media');
+        if (media.length > 0) {
+            GalleryComponent.render({
+                $container: this.$gallery,
+                mode: GalleryComponent.Mode.INLINE,
+                media: media
+            }, function (e) {
+                this.galleryCmp = e.galleryComponent;
+            }.bind(this));
+        }
+
         $tt._instances.push(this);
     };
 
@@ -39,6 +52,7 @@ define([
     ViewView.Binder = {
         CONTAINER: '.post-container',
         TIMELINE_KEYPOINT: '.post-timeline-keypoint',
+        GALLERY: '.post-gallery',
         NEW: '.post-new',
         EDIT: '.post-edit',
         DELETE_MODAL: '.post-delete-modal',
