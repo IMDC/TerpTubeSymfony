@@ -23,8 +23,9 @@ define([
         this.bind__onModelChange = this._onModelChange.bind(this);
 
         this.$container = options.container;
-        this.$video = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video:first-of-type');
-        this.$pipVideo = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video:nth-of-type(2)');
+        var $videos = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video');
+        this.$video = $videos.eq($videos.length == 2 ? 1 : 0);
+        this.$pipVideo = $videos.eq($videos.length == 2 ? 0 : 1);
 
         $('#videoSpeed').on('click', this.bind__onClickVideoSpeed);
         $('#closedCaptions').on('click', this.bind__onClickClosedCaptions);

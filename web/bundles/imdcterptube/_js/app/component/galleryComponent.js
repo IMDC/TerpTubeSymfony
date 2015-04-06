@@ -13,59 +13,44 @@ define([
         this.options = options;
         this.activeMedia = null;
 
-        this.thumbsContainerBounds = {
-            width: 0,
-            thumbWidth: 0,
+        this.thumbsBounds = {
+            shiftWidth: 0,
             thumbsWidth: 0
         };
 
+        this.bind__onClickPrevNext = this._onClickPrevNext.bind(this);
         this.bind__onClickAction = this._onClickAction.bind(this);
-        this.bind__onClickNormalLeft = this._onClickNormalLeft.bind(this);
-        this.bind__onClickNormalRight = this._onClickNormalRight.bind(this);
+        this.bind__onClickLeftRight = this._onClickLeftRight.bind(this);
         this.bind__onClickThumbnail = this._onClickThumbnail.bind(this);
         this.bind__onRenderMedia = this._onRenderMedia.bind(this);
         this.bind__onRenderThumbnails = this._onRenderThumbnails.bind(this);
+        this.bind__onWindowResize = this._onWindowResize.bind(this);
 
         this.$container = this.options.$container;
-        this.$normal = this.$container.find(GalleryComponent.Binder.NORMAL);
+        this.$normal = this.$container.find(GalleryComponent.Binder.INLINE);
         this.$preview = this.$container.find(GalleryComponent.Binder.PREVIEW);
 
-        if (this.options.mode == GalleryComponent.Mode.PREVIEW) {
-            this.$action = this.$container.find(GalleryComponent.Binder.PREVIEW_ACTION);
-            this.$prev = this.$container.find(GalleryComponent.Binder.PREVIEW_PREV);
-            this.$next = this.$container.find(GalleryComponent.Binder.PREVIEW_NEXT);
-            this.$item = this.$container.find(GalleryComponent.Binder.PREVIEW_ITEM);
-            this.$thumbs = this.$container.find(GalleryComponent.Binder.PREVIEW_THUMBS);
+        this.$item = this.$container.find(GalleryComponent.Binder.ITEM);
+        this.$prev = this.$container.find(GalleryComponent.Binder.PREV);
+        this.$next = this.$container.find(GalleryComponent.Binder.NEXT);
+        this.$action = this.$container.find(GalleryComponent.Binder.ACTION);
+        this.$carousel = this.$container.find(GalleryComponent.Binder.CAROUSEL);
+        this.$thumbs = this.$container.find(GalleryComponent.Binder.THUMBS);
+        this.$left = this.$container.find(GalleryComponent.Binder.LEFT);
+        this.$right = this.$container.find(GalleryComponent.Binder.RIGHT);
 
-            $(window).on('resize', function (e) {
-                var verticalAlign = function (index, value) {
-                    return (($(window).height() - 70) / 2) - ($(this).height() / 2);
-                };
-                this.$prev.css('top', verticalAlign);
-                this.$next.css('top', verticalAlign);
-
-                this._resize();
-            }.bind(this));
-
-            $(window).trigger('resize');
-        } else {
-            this.$item = this.$container.find(GalleryComponent.Binder.NORMAL_ITEM);
-            this.$action = this.$container.find(GalleryComponent.Binder.NORMAL_ACTION);
-            this.$thumbs = this.$container.find(GalleryComponent.Binder.NORMAL_THUMBS);
-            this.$left = this.$container.find(GalleryComponent.Binder.NORMAL_LEFT);
-            this.$right = this.$container.find(GalleryComponent.Binder.NORMAL_RIGHT);
-
-            this.$left.on('click', this.bind__onClickNormalLeft);
-            this.$right.on('click', this.bind__onClickNormalRight);
-
-            this._determineBounds();
-        }
-
+        this.$prev.find('i.fa').on('click', this.bind__onClickPrevNext);
+        this.$next.find('i.fa').on('click', this.bind__onClickPrevNext);
         this.$action.on('click', this.bind__onClickAction);
+        this.$left.find('i.fa').on('click', this.bind__onClickLeftRight);
+        this.$right.find('i.fa').on('click', this.bind__onClickLeftRight);
+        $(window).on('resize', this.bind__onWindowResize);
 
         this._populate();
 
         if (typeof this.options.mediaIds !== 'undefined') {
+            $(window).trigger('resize');
+
             MediaFactory.list(this.options.mediaIds)
                 .done(function (data) {
                     this.options.media = data.media;
@@ -92,19 +77,16 @@ define([
     };
 
     GalleryComponent.Binder = {
-        NORMAL: '.gallery-normal',
-        NORMAL_ITEM: '.gallery-normal-item',
-        NORMAL_ACTION: '.gallery-normal-action a',
-        NORMAL_THUMBS: '.gallery-normal-thumbs',
-        NORMAL_LEFT: '.gallery-normal-left',
-        NORMAL_RIGHT: '.gallery-normal-right',
-
+        INLINE: '.gallery-normal',
         PREVIEW: '.gallery-preview',
-        PREVIEW_ACTION: '.gallery-preview-action a',
-        PREVIEW_PREV: '.gallery-preview-prev',
-        PREVIEW_NEXT: '.gallery-preview-next',
-        PREVIEW_ITEM: '.gallery-preview-item',
-        PREVIEW_THUMBS: '.gallery-preview-thumbs'
+        ITEM: '.gallery-item',
+        PREV: '.gallery-prev',
+        NEXT: '.gallery-next',
+        ACTION: '.gallery-action a',
+        CAROUSEL : '.gallery-carousel',
+        THUMBS: '.gallery-thumbs',
+        LEFT: '.gallery-left',
+        RIGHT: '.gallery-right'
     };
 
     GalleryComponent.prototype._launchRecorder = function (options, setMediaAsSource, setMediaAsRecorded) {
@@ -132,6 +114,21 @@ define([
         }.bind(this));
     };
 
+    GalleryComponent.prototype._onClickPrevNext = function (e) {
+        e.preventDefault();
+
+        var next = $(e.currentTarget).hasClass('next');
+
+        var index = $.inArray(this.activeMedia, this.options.media);
+        if (!next && (index - 1) < 0 || next && (index + 1) >= this.options.media.length) {
+            return;
+        }
+
+        this.activeMedia = this.options.media[index + (next ? 1 : -1)];
+
+        this._renderMedia();
+    };
+
     GalleryComponent.prototype._onClickAction = function (e) {
         var action = $(e.currentTarget).data('action');
 
@@ -139,8 +136,7 @@ define([
             case 1: // close
                 this.hide();
                 break;
-            case 2: // full screen
-                this._resize();
+            case 2: // fullscreen
                 Helper.toggleFullScreen(this.$item);
                 break;
             case 3: // interp video
@@ -158,58 +154,32 @@ define([
         }
     };
 
-    GalleryComponent.prototype._calcSlidePosition = function (goRight) {
-        var cPos = parseInt(this.$thumbs.css('left'), 10);
-        var nPos = cPos + this.thumbsContainerBounds.width;
-        var bound;
+    GalleryComponent.prototype._calcCarouselPosition = function (right) {
+        var cPos = Math.abs(parseInt(this.$thumbs.find('ul').css('left'), 10));
+        var nPos, // new
+            tPos, // tail
+            rNPos, // real new
+            fPos; // final
 
-        if (!goRight) {
-            bound = Math.min(0, Math.max(cPos, nPos));
+        if (!right) {
+            nPos = cPos - this.thumbsBounds.shiftWidth;
+            fPos = Math.min(0, -nPos);
         } else {
-            bound = Math.max(-this.thumbsContainerBounds.thumbsWidth, Math.min(cPos, nPos));
+            nPos = cPos + this.thumbsBounds.width;
+            tPos = cPos + (this.thumbsBounds.thumbsWidth - nPos);
+            rNPos = cPos + this.thumbsBounds.shiftWidth;
+            fPos = -Math.min(rNPos, (nPos >= this.thumbsBounds.thumbsWidth) ? cPos : tPos);
         }
 
-        console.log(bound);
-
-        return {cPos: cPos, nPos: nPos, bound: bound};
+        return fPos;
     };
 
-    GalleryComponent.prototype._onClickNormalLeft = function (e) {
+    GalleryComponent.prototype._onClickLeftRight = function (e) {
         e.preventDefault();
 
-        var pos = this._calcSlidePosition();
-        this.$thumbs.animate({left: pos.bound});
-    };
-
-    GalleryComponent.prototype._onClickNormalRight = function (e) {
-        e.preventDefault();
-
-        var pos = this._calcSlidePosition();
-        this.$thumbs.animate({left: pos.bound});
-    };
-
-    GalleryComponent.prototype._resize = function () {
-        var wh = $(window).height();
-        //var ww = $(window).width();
-        this.$item.css("height", Helper.isFullscreen() ? wh : wh - 210);
-        this.$item.css("top", Helper.isFullscreen() ? 0 : 70);
-        this.$item.css("background-color", Helper.isFullscreen() ? "#000" : "transparent");
-        this.$item.css("width", Helper.isFullscreen() ? "100%" : "76%");
-        //this.$item.css("left", Helper.isFullscreen() ? 0 : ww / 2 - $previewItem.width() / 2);
-        this.$item.find("img").css("height", Helper.isFullscreen() ? "100%" : "auto");
-    };
-
-    GalleryComponent.prototype._determineBounds = function () {
-        var $thumbs = this.$thumbs.find('li');
-
-        this.thumbsContainerBounds.width = this.$thumbs.parent().width();
-        this.thumbsContainerBounds.thumbWidth = $thumbs.first().width();
-        this.thumbsContainerBounds.thumbsWidth = $thumbs.length * this.thumbsContainerBounds.thumbWidth;
-
-        if (this.thumbsContainerBounds.thumbsWidth <= this.thumbsContainerBounds.width) {
-            this.$left.attr('disabled', true).hide();
-            this.$right.attr('disabled', true).hide();
-        }
+        var pos = this._calcCarouselPosition($(e.currentTarget).hasClass('right'));
+        this._updateButtonStates(pos);
+        this.$thumbs.find('ul').animate({left: pos});
     };
 
     GalleryComponent.prototype._onClickThumbnail = function (e) {
@@ -220,31 +190,112 @@ define([
             return elementOfArray.get('id') == mediaId;
         })[0];
 
-        dust.render('gallery_media', {media: this.activeMedia.data}, this.bind__onRenderMedia);
+        this._renderMedia();
     };
 
-    GalleryComponent.prototype._onRenderMedia = function (err, out) {
-        //TODO append instead and add slider so that media is loaded on demand but only once
-        this.$item.html(out);
+    GalleryComponent.prototype._updateButtonStates = function (slidePosition) {
+        if (!this.activeMedia) {
+            this.$carousel.hide();
+            return;
+        }
 
+        var $selThumbnail = this.$thumbs.find('[data-mid="' + this.activeMedia.get('id') + '"]');
+        this.$thumbs.find('div').removeClass('selected');
+
+        // action
+        var $closeBtn = this.$action.filter('[data-action="1"]');
+        var $fullscreenBtn = this.$action.filter('[data-action="2"]');
         var $recorderBtn = this.$action.filter('[data-action="3"]');
         var $cutBtn = this.$action.filter('[data-action="4"]');
+        var isPreviewMode = this.options.mode == GalleryComponent.Mode.PREVIEW;
+
+        $closeBtn.toggle(isPreviewMode);
+        $fullscreenBtn.show();
         if (this.activeMedia.get('type') == 1) {
             $recorderBtn.show();
-            if (this.options.mode == GalleryComponent.Mode.PREVIEW) {
-                $cutBtn.show();
-            }
+            $cutBtn.toggle(isPreviewMode);
         } else {
             $recorderBtn.hide();
             $cutBtn.hide();
         }
 
+        // preview
+        this.$prev.toggleClass('disabled', $selThumbnail.is(':first-child'));
+        this.$next.toggleClass('disabled', $selThumbnail.is(':last-child'));
+
+        // carousel
+        var slidePosition = slidePosition !== undefined
+            ? slidePosition
+            : parseInt(this.$thumbs.find('ul').css('left'), 10);
+
+        this.$left.find('i.fa').toggleClass('disabled', Math.abs(slidePosition) <= 0);
+        this.$right.find('i.fa').toggleClass('disabled',
+            (Math.abs(slidePosition) + this.thumbsBounds.width) >= this.thumbsBounds.thumbsWidth);
+        $selThumbnail.find('div').addClass('selected');
+        this.$carousel.show();
+    };
+
+    GalleryComponent.prototype._onWindowResize = function (e) {
+        var containerHeight = this.$container.prop('tagName').toLowerCase() === 'body'
+            ? $(window).height()
+            : this.$container.height();
+        var itemHeight = Helper.isFullscreen()
+            ? $(window).height()
+            : containerHeight - this.$carousel.outerHeight(true);
+
+        // container widths/heights/positioning
+        var thumbsWidth = this.$container.width() - (this.$left.outerWidth(true) + this.$right.outerWidth(true));
+        var verticalAlign = function (index, value) {
+            return (itemHeight / 2) - ($(this).height() / 2);
+        };
+
+        this.$item.css({height: itemHeight, 'line-height': itemHeight + 'px'});
+        this.$thumbs.width(thumbsWidth);
+        this.$prev.css('top', verticalAlign);
+        this.$next.css('top', verticalAlign);
+
+        // set media element widths/heights/positioning for gallery context
+        this.$item.find('.tt-media-video').css({height: itemHeight});
+        this.$item.find('.tt-media-img').css({'max-height': itemHeight});
+
+        // inner widths
+        var width = this.$thumbs.width();
+        var $thumbnails = this.$thumbs.find('li');
+        var initialThumbMargin = parseInt($thumbnails.eq(0).css('margin-left'), 10);
+        var thumbWidth = $thumbnails.eq(0).outerWidth(true) - initialThumbMargin;
+        var numThumbsWidth = Math.floor(width / thumbWidth);
+
+        this.thumbsBounds.width = width;
+        this.thumbsBounds.shiftWidth = thumbWidth * numThumbsWidth;
+        this.thumbsBounds.thumbsWidth = (thumbWidth * $thumbnails.length) + initialThumbMargin;
+
+        // button states
+        this._updateButtonStates();
+
+        // fullscreen
+        this.$item.toggleClass('fullscreen', Helper.isFullscreen());
+    };
+
+    GalleryComponent.prototype._onRenderMedia = function (err, out) {
+        //TODO append instead and add slider so that media is loaded on demand but only once
+        this.$item.find('div').html(out);
+
         $(window).trigger('resize');
     };
 
+    GalleryComponent.prototype._renderMedia = function () {
+        dust.render('gallery_media', {
+            media: this.activeMedia.data,
+            enableControls: true,
+            preload: false
+        }, this.bind__onRenderMedia);
+    };
+
     GalleryComponent.prototype._onRenderThumbnails = function (err, out) {
-        this.$thumbs.html(out);
+        this.$thumbs.find('ul').html(out);
         this.$thumbs.find('li').on('click', this.bind__onClickThumbnail);
+
+        $(window).trigger('resize');
     };
 
     GalleryComponent.prototype._populate = function () {
@@ -253,16 +304,16 @@ define([
 
         this.activeMedia = this.options.media[0];
 
-        dust.render('gallery_media', {media: this.activeMedia.data}, this.bind__onRenderMedia);
+        this._renderMedia();
         //TODO array representation of media models
-        //dust.render('gallery_thumbnail', {media: this.options.media}, this.bind__onRenderThumbnails);
+        dust.render('gallery_thumbnail', {media: this.options.media}, this.bind__onRenderThumbnails);
     };
 
     GalleryComponent.prototype.show = function () {
         if (this.options.mode != GalleryComponent.Mode.PREVIEW)
             return;
 
-        this.$container.css({overflow: 'hidden'}); //FIXME css class
+        this.$container.addClass('tt-gallery-modal');
 
         this.$preview.fadeIn();
     };
@@ -272,7 +323,7 @@ define([
             return;
 
         if (!this.paused)
-            this.$container.removeAttr('style'); //FIXME css class
+            this.$container.removeClass('tt-gallery-modal');
 
         this.$preview.fadeOut({
             complete: (function () {
