@@ -284,7 +284,7 @@ define([
     };
 
     GalleryComponent.prototype._renderMedia = function () {
-        dust.render('gallery_media', {
+        dust.render('media_element', {
             media: this.activeMedia.data,
             enableControls: true,
             preload: false
@@ -367,7 +367,7 @@ define([
         }
 
         var template = options.mode == GalleryComponent.Mode.INLINE
-            ? 'gallery_normal'
+            ? 'gallery_inline'
             : 'gallery_preview';
         dust.render(template, options.media, function (err, out) {
             options.$container.append(out);
