@@ -1,22 +1,29 @@
 {@select key=media.type}
     {@eq value=1}
-        <video class="tt-media-video" style="height: 100%;"
-            {^enableControls} controls {/enableControls}
+        {?media.is_interpretation}
+            <video class="tt-media-pip-video"
+                {?enableControls} controls {/enableControls}
+                {?media.source.thumbnail_path} poster="{@generateUrl path=media.source.thumbnail_path /}" {/media.source.thumbnail_path}
+                   preload="none">
+                <source src="{@generateUrl path=media.source.resource.web_path /}" />
+            </video>
+        {/media.is_interpretation}
+        <video class="tt-media-video"
+            {?enableControls} controls {/enableControls}
             {?media.thumbnail_path} poster="{@generateUrl path=media.thumbnail_path /}" {/media.thumbnail_path}
-               preload="metadata">
+               preload="none">
             <source src="{@generateUrl path=media.resource.web_path /}" />
         </video>
     {/eq}
 
     {@eq value=2}
-        <audio class="tt-media-audio"{^enableControls} controls{/enableControls}>
+        <audio class="tt-media-audio"{?enableControls} controls{/enableControls}>
             <source src="{@generateUrl path=media.resource.web_path /}" />
         </audio>
     {/eq}
 
     {@eq value=0}
-        <img class="" style="max-height: 100%; max-width: 100%;" src="{@generateUrl path=media.resource.web_path /}" title="{title}" alt="{title}" />
-        <span style="vertical-align: middle; display: inline-block; height: 100%;"></span>
+        <img class="img-responsive center-block tt-media-img" src="{@generateUrl path=media.resource.web_path /}" title="{title}" alt="{title}" />
     {/eq}
 
     {@eq value=9}

@@ -56,19 +56,20 @@
     {% set preload_media = preload_media is not null ? preload_media : false %}
 
     {% if media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
+        {% if media.isInterpretation %}
+            <video class="tt-media-pip-video"
+                    {% if enable_controls %} controls {% endif %}
+                    {% if media.source.getThumbnailPath is not empty %} poster="{{ asset(media.source.getThumbnailPath) }}" {% endif %}
+                   preload="{% if preload_media %}auto{% else %}none{% endif %}">
+                <source src="{{ asset(media.source.getResource.getWebPath) }}" />
+            </video>
+        {% endif %}
         <video class="tt-media-video"
                 {% if enable_controls %} controls {% endif %}
                 {% if media.getThumbnailPath is not empty %} poster="{{ asset(media.getThumbnailPath) }}" {% endif %}
                preload="{% if preload_media %}auto{% else %}none{% endif %}">
             <source src="{{ asset(media.getResource.getWebPath) }}" />
         </video>
-        {% if media.isInterpretation %}
-            <video class="tt-media-pip-video"
-                    {% if media.source.getThumbnailPath is not empty %} poster="{{ asset(media.source.getThumbnailPath) }}" {% endif %}
-                   preload="preload">
-                <source src="{{ asset(media.source.getResource.getWebPath) }}" />
-            </video>
-        {% endif %}
     {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
         <audio class="tt-media-audio"
                 {% if enable_controls %} controls {% endif %}
