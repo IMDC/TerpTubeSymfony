@@ -2,14 +2,14 @@
     {@eq value=1}
         {?media.is_interpretation}
             <video class="tt-media-pip-video"
-                {?enableControls} controls {/enableControls}
+                {?enable_controls} controls {/enable_controls}
                 {?media.source.thumbnail_path} poster="{@generateUrl path=media.source.thumbnail_path /}" {/media.source.thumbnail_path}
                    preload="none">
                 <source src="{@generateUrl path=media.source.resource.web_path /}" />
             </video>
         {/media.is_interpretation}
         <video class="tt-media-video"
-            {?enableControls} controls {/enableControls}
+            {?enable_controls} controls {/enable_controls}
             {?media.thumbnail_path} poster="{@generateUrl path=media.thumbnail_path /}" {/media.thumbnail_path}
                preload="none">
             <source src="{@generateUrl path=media.resource.web_path /}" />
@@ -17,7 +17,7 @@
     {/eq}
 
     {@eq value=2}
-        <audio class="tt-media-audio"{?enableControls} controls{/enableControls}>
+        <audio class="tt-media-audio"{?enable_controls} controls{/enable_controls}>
             <source src="{@generateUrl path=media.resource.web_path /}" />
         </audio>
     {/eq}

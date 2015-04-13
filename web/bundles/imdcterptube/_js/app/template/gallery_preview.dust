@@ -1,4 +1,4 @@
-<div class="tt-gallery-background gallery-preview"></div>
-<div class="tt-gallery-preview gallery-preview">
-    {>"gallery_common"/}
+<div id="{identifier}" class="tt-gallery-background gallery-inner"></div>
+<div id="{identifier}" class="tt-gallery-preview gallery-inner">
+    {>"gallery_common" /}
 </div>

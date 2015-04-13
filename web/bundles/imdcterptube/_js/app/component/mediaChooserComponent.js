@@ -4,9 +4,11 @@ define([
     'factory/myFilesFactory',
     'component/recorderComponent',
     'component/myFilesSelectorComponent',
+    'component/galleryComponent',
+    'model/mediaModel',
     'core/helper',
     'extra'
-], function (Subscriber, MediaFactory, MyFilesFactory, RecorderComponent, MyFilesSelectorComponent, Helper) {
+], function (Subscriber, MediaFactory, MyFilesFactory, RecorderComponent, MyFilesSelectorComponent, GalleryComponent, MediaModel, Helper) {
     'use strict';
 
     var MediaChooserComponent = function (options) {
@@ -19,7 +21,7 @@ define([
         this.bind__onClickUploadFile = this._onClickUploadFile.bind(this);
         this.bind__onClickSelect = this._onClickSelect.bind(this);
         this.bind__onChangeResourceFile = this._onChangeResourceFile.bind(this);
-        this.bind__onClickRemoveSelectedMedia = this._onClickRemoveSelectedMedia.bind(this);
+        //this.bind__onClickRemoveSelectedMedia = this._onClickRemoveSelectedMedia.bind(this);
 
         this.$container = this.options.$container;
         this.$containerUpload = this.$container.find(MediaChooserComponent.Binder.CONTAINER_UPLOAD);
@@ -30,21 +32,44 @@ define([
         this.$select = this.$container.find(MediaChooserComponent.Binder.SELECT);
         this.$uploadTitle = this.$container.find(MediaChooserComponent.Binder.UPLOAD_TITLE);
         this.$working = this.$container.find(MediaChooserComponent.Binder.WORKING);
-        this.$selected = this.$container.find(MediaChooserComponent.Binder.SELECTED);
-        this.$uploaded = this.$container.find(MediaChooserComponent.Binder.UPLOADED);
+        //this.$selected = this.$container.find(MediaChooserComponent.Binder.SELECTED);
+        this.$gallery = this.$container.find(MediaChooserComponent.Binder.GALLERY);
+        //this.$uploaded = this.$container.find(MediaChooserComponent.Binder.UPLOADED);
 
         this.$resourceFile.on('change', this.bind__onChangeResourceFile);
         this.$recordVideo.on('click', this.bind__onClickRecordVideo);
         this.$uploadFile.on('click', this.bind__onClickUploadFile);
         this.$select.on('click', this.bind__onClickSelect);
 
-        this.$selected.sortable({
+        /*this.$selected.sortable({
             update: function (event, ui) {
                 this._dispatch(MediaChooserComponent.Event.SUCCESS, {
                     mediaChooserComponent: this
                 });
             }.bind(this)
-        });
+        });*/
+
+        if (this.$gallery.length > 0) {
+            GalleryComponent.render({
+                $container: this.$gallery,
+                mode: GalleryComponent.Mode.INLINE,
+                canEdit: true
+            }, function (e) {
+                this.galleryCmp = e.galleryComponent;
+                this.galleryCmp.subscribe(GalleryComponent.Event.CHANGE, function (e) {
+                    this.media = this.galleryCmp.options.media;
+                    this._invokeSuccess();
+                }.bind(this));
+                this.galleryCmp.subscribe(GalleryComponent.Event.REMOVED_MEDIA, function (e) {
+                    if (e.galleryComponent.options.media.length == 0) {
+                        this.galleryCmp.hide(true);
+                        this.$gallery.slideUp();
+                    }
+                    this._removeSelectedMedia(e.media);
+                    this._invokeSuccess();
+                }.bind(this));
+            }.bind(this));
+        }
     };
 
     MediaChooserComponent.extend(Subscriber);
@@ -60,10 +85,11 @@ define([
         UPLOAD_TITLE: '.mediachooser-upload-title',
 
         WORKING: '.mediachooser-working',
-        SELECTED: '.mediachooser-selected',
-        SELECTED_MEDIA: '.mediachooser-selected-media',
-        REMOVE: '.mediachooser-remove',
-        UPLOADED: '.mediachooser-uploaded'
+        //SELECTED: '.mediachooser-selected',
+        //SELECTED_MEDIA: '.mediachooser-selected-media',
+        //REMOVE: '.mediachooser-remove',
+        GALLERY: '.mediachooser-gallery',
+        //UPLOADED: '.mediachooser-uploaded'
     };
 
     MediaChooserComponent.Event = {
@@ -81,7 +107,7 @@ define([
     };
 
     MediaChooserComponent.prototype._addSelectedMedia = function (media) {
-        var count = this.$selected
+        /*var count = this.$selected
             .find(MediaChooserComponent.Binder.SELECTED_MEDIA)
             .filter('[data-mid="' + media.get('id') + '"]')
             .length;
@@ -99,13 +125,25 @@ define([
             .find(MediaChooserComponent.Binder.SELECTED_MEDIA)
             .filter('[data-mid="' + media.get('id') + '"]')
             .find(MediaChooserComponent.Binder.REMOVE)
-            .on('click', this.bind__onClickRemoveSelectedMedia);
+            .on('click', this.bind__onClickRemoveSelectedMedia);*/
+
+        //TODO consolidate
+        for (var m in this.media) {
+            var mm = this.media[m];
+            if (mm.get('id') == media.get('id')) {
+                return; // exists
+            }
+        }
 
         this.media.push(media);
+
+        this.$gallery.slideDown();
+        this.galleryCmp.addMedia(media);
+        this.galleryCmp.show(true);
     };
 
-    MediaChooserComponent.prototype._removeSelectedMedia = function (mediaId) {
-        for (var m in this.media) {
+    MediaChooserComponent.prototype._removeSelectedMedia = function (media) {
+        /*for (var m in this.media) {
             var media = this.media[m];
             if (media.get('id') == mediaId) {
                 this.media.splice(m, 1);
@@ -116,7 +154,15 @@ define([
         this.$selected
             .find(MediaChooserComponent.Binder.SELECTED_MEDIA)
             .filter('[data-mid="' + mediaId + '"]')
-            .remove();
+            .remove();*/
+
+        //TODO consolidate
+        for (var m in this.media) {
+            var mm = this.media[m];
+            if (mm.get('id') == media.get('id')) {
+                this.media.splice(m, 1);
+            }
+        }
     };
 
     MediaChooserComponent.prototype._resetUpload = function () {
@@ -148,7 +194,7 @@ define([
             this.recorderCmp = e.recorderComponent;
             this.recorderCmp.subscribe(RecorderComponent.Event.DONE, function (e) {
                 this.recorderCmp.hide();
-                if (this.$selected.length > 0)
+                //if (this.$selected.length > 0)
                     this._addSelectedMedia(e.media);
                 this._invokeSuccess(e.doPost);
             }.bind(this));
@@ -203,7 +249,7 @@ define([
                 Helper.updateProgressBar(this.$containerUpload.show(), percent);
             }.bind(this))
             .done(function (data) {
-                if (this.$selected.length > 0)
+                //if (this.$selected.length > 0)
                     this._addSelectedMedia(data.media);
                 this._invokeSuccess();
             }.bind(this))
@@ -218,7 +264,7 @@ define([
         this.$resourceFile.val('');
     };
 
-    MediaChooserComponent.prototype._onClickRemoveSelectedMedia = function (e) {
+    /*MediaChooserComponent.prototype._onClickRemoveSelectedMedia = function (e) {
         e.preventDefault();
 
         var mediaId = $(e.currentTarget).data('mid');
@@ -227,7 +273,7 @@ define([
         this._dispatch(MediaChooserComponent.Event.SUCCESS, {
             mediaChooserComponent: this
         });
-    };
+    };*/
 
     MediaChooserComponent.prototype._toggleForm = function (disabled) {
         this.$recordVideo.attr('disabled', disabled);
@@ -243,7 +289,7 @@ define([
 
         this._toggleForm(true);
         this.$working.show();
-        this.$selected.html('');
+        //this.$selected.html('');
 
         MediaFactory.list(mediaIds)
             .done(function (data) {
@@ -266,9 +312,16 @@ define([
     MediaChooserComponent.prototype.generateFormData = function (prototype) {
         var media = '';
 
-        this.$selected.find(MediaChooserComponent.Binder.SELECTED_MEDIA).each(function (index, element) {
+        /*this.$selected.find(MediaChooserComponent.Binder.SELECTED_MEDIA).each(function (index, element) {
             var newMedia = $(prototype.replace(/__name__/g, index));
             newMedia.val($(element).data('mid'));
+
+            media += newMedia[0].outerHTML;
+        });*/
+
+        $.each(this.media, function(index, element) {
+            var newMedia = $(prototype.replace(/__name__/g, index));
+            newMedia.val(element.get('id'));
 
             media += newMedia[0].outerHTML;
         });

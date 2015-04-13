@@ -285,16 +285,27 @@ a:hover, a:focus, a:visited {
 
 /* line 49, sass/_gallery.scss */
 .tt-gallery-inline {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
   position: relative;
   height: 100%;
   background-color: #111;
+  display: none;
 }
-/* line 55, sass/_gallery.scss */
+/* line 58, sass/_gallery.scss */
 .tt-gallery-modal {
   overflow: hidden;
 }
-/* line 59, sass/_gallery.scss */
+/* line 62, sass/_gallery.scss */
 .tt-gallery-preview, .tt-gallery-background {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -304,45 +315,37 @@ a:hover, a:focus, a:visited {
   color: #fff;
   display: none;
 }
-/* line 70, sass/_gallery.scss */
+/* line 75, sass/_gallery.scss */
 .tt-gallery-background {
   background-color: #000;
   opacity: 0.8;
   z-index: 100000;
 }
-/* line 78, sass/_gallery.scss */
+/* line 83, sass/_gallery.scss */
 .tt-gallery-item {
   height: 100%;
   text-align: center;
   color: #fff;
-}
-/* line 83, sass/_gallery.scss */
-.tt-gallery-item > div {
   /* media element overrides */
 }
-/* line 85, sass/_gallery.scss */
-.tt-gallery-item > div video {
+/* line 89, sass/_gallery.scss */
+.tt-gallery-item video {
   max-width: 100%;
   width: auto;
 }
-/* line 90, sass/_gallery.scss */
-.tt-gallery-item > div img, .tt-gallery-item > div i {
+/* line 94, sass/_gallery.scss */
+.tt-gallery-item img, .tt-gallery-item i {
   max-width: 100%;
   vertical-align: middle;
   display: inline-block;
 }
-/* line 97, sass/_gallery.scss */
+/* line 100, sass/_gallery.scss */
 .tt-gallery-item.fullscreen {
   width: 100%;
   background-color: #000;
 }
-/* line 103, sass/_gallery.scss */
+/* line 106, sass/_gallery.scss */
 .tt-gallery-prev, .tt-gallery-next {
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -o-user-select: none;
-  user-select: none;
   position: absolute;
   left: 0;
   width: 80px;
@@ -370,33 +373,33 @@ a:hover, a:focus, a:visited {
 .tt-gallery-prev i:hover, .tt-gallery-next i:hover {
   color: #461269;
 }
-/* line 117, sass/_gallery.scss */
+/* line 119, sass/_gallery.scss */
 .tt-gallery-prev.disabled, .disabled.tt-gallery-next {
   display: none;
 }
-/* line 122, sass/_gallery.scss */
+/* line 124, sass/_gallery.scss */
 .tt-gallery-next {
   left: initial;
   right: 0;
 }
-/* line 129, sass/_gallery.scss */
+/* line 131, sass/_gallery.scss */
 .tt-gallery-carousel {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  height: 75px;
-}
-/* line 134, sass/_gallery.scss */
-.tt-gallery-carousel .clear {
-  clear: both;
-  height: 0;
-}
-/* line 140, sass/_gallery.scss */
-.tt-gallery-left, .tt-gallery-right {
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  height: 75px;
+}
+/* line 138, sass/_gallery.scss */
+.tt-gallery-carousel .clear {
+  clear: both;
+  height: 0;
+}
+/* line 144, sass/_gallery.scss */
+.tt-gallery-left, .tt-gallery-right {
   height: 75px;
   line-height: 75px;
   background-color: #000;
@@ -420,22 +423,22 @@ a:hover, a:focus, a:visited {
 .tt-gallery-left i:hover, .tt-gallery-right i:hover {
   color: #461269;
 }
-/* line 151, sass/_gallery.scss */
+/* line 154, sass/_gallery.scss */
 .tt-gallery-right {
   float: right;
 }
-/* line 157, sass/_gallery.scss */
+/* line 160, sass/_gallery.scss */
 .tt-gallery-thumbs {
   height: 75px;
   float: left;
 }
-/* line 161, sass/_gallery.scss */
+/* line 164, sass/_gallery.scss */
 .tt-gallery-thumbs div {
   position: relative;
   height: 75px;
   overflow: hidden;
 }
-/* line 167, sass/_gallery.scss */
+/* line 170, sass/_gallery.scss */
 .tt-gallery-thumbs ul {
   position: absolute;
   left: 0;
@@ -448,36 +451,38 @@ a:hover, a:focus, a:visited {
   overflow: hidden;
   white-space: nowrap;
   text-align: center;
+  transition: left 0.5s ease;
 }
-/* line 180, sass/_gallery.scss */
+/* line 184, sass/_gallery.scss */
 .tt-gallery-thumbs ul > li {
+  position: relative;
   margin-right: 3px;
   width: 75px;
   float: left;
   list-style: none;
   overflow: hidden;
 }
-/* line 187, sass/_gallery.scss */
+/* line 192, sass/_gallery.scss */
 .tt-gallery-thumbs ul > li:first-of-type {
   margin-left: 3px;
 }
-/* line 191, sass/_gallery.scss */
+/* line 196, sass/_gallery.scss */
 .tt-gallery-thumbs ul > li > div {
   -webkit-transform-style: preserve-3d;
   -moz-transform-style: preserve-3d;
   transform-style: preserve-3d;
   border: 2px solid #000;
-  height: 71px;
+  height: 75px;
 }
-/* line 197, sass/_gallery.scss */
+/* line 202, sass/_gallery.scss */
 .tt-gallery-thumbs ul > li > div:hover {
   border-color: #461269 !important;
 }
-/* line 201, sass/_gallery.scss */
+/* line 206, sass/_gallery.scss */
 .tt-gallery-thumbs ul > li > div.selected {
   border-color: #66169C !important;
 }
-/* line 205, sass/_gallery.scss */
+/* line 210, sass/_gallery.scss */
 .tt-gallery-thumbs ul > li > div img {
   position: relative;
   top: 50%;
@@ -486,7 +491,30 @@ a:hover, a:focus, a:visited {
   height: 100%;
   cursor: pointer;
 }
-/* line 216, sass/_gallery.scss */
+/* line 218, sass/_gallery.scss */
+.tt-gallery-thumbs ul > li > span {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+  color: #ffffff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  position: absolute;
+  right: 0;
+  margin: 5px;
+  z-index: 1;
+}
+/* line 247, sass/_gallery.scss */
 .tt-gallery-action {
   position: absolute;
   top: 10px;
@@ -494,7 +522,7 @@ a:hover, a:focus, a:visited {
   background-color: #000;
   opacity: 0.8;
 }
-/* line 223, sass/_gallery.scss */
+/* line 254, sass/_gallery.scss */
 .tt-gallery-action a {
   color: #fff;
   padding: 4px 8px;
@@ -698,7 +726,7 @@ tbody tr td {
 
 /* line 12, sass/_post.scss */
 .tt-post-container-highlight {
-  border: 2px solid red !important;
+  border: 1px solid red !important;
 }
 
 /* line 16, sass/_post.scss */
@@ -730,17 +758,13 @@ tbody tr td {
 .tt-post-content-container {
   min-height: 180px;
 }
-/* line 43, sass/_post.scss */
-.tt-post-content-container div[class*="col-"] > div {
-  margin-bottom: 10px;
-}
 
-/* line 48, sass/_post.scss */
+/* line 44, sass/_post.scss */
 .tt-post-timeline-container {
   height: 15px;
 }
 
-/* line 52, sass/_post.scss */
+/* line 48, sass/_post.scss */
 .tt-post-timeline {
   background: #ddd;
   border: 1px solid #bbb;
@@ -748,7 +772,7 @@ tbody tr td {
   width: 100%;
 }
 
-/* line 59, sass/_post.scss */
+/* line 55, sass/_post.scss */
 .tt-post-timeline-keypoint {
   height: 100%;
   width: 0;

@@ -41,6 +41,7 @@ define([
                 media: media
             }, function (e) {
                 this.galleryCmp = e.galleryComponent;
+                this.galleryCmp.show();
             }.bind(this));
         }
 
