@@ -231,6 +231,9 @@ define([
 
         var rate = this.controller.adjustVideoSpeed();
         this.$video[0].playbackRate = rate.value;
+        if (this.$pipVideo.length != 0) {
+            this.$pipVideo[0].playbackRate = rate.value;
+        }
         $(e.target).attr('src', rate.image);
     };
 
