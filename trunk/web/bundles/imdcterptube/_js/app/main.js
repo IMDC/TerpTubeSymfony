@@ -61,6 +61,7 @@ define([
 
     'views/group/newView',
     'views/group/editView',
+    'views/group/viewView',
     'views/group/manageView',
 
     'views/myFiles/listView',

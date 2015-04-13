@@ -1,7 +1,7 @@
 {% import 'IMDCTerpTubeBundle:MyFiles:macros.html.twig' as _my_files %}
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-12 my-files-list">
         {{ _my_files.list_files(style, media) }}
     </div>
 </div>
@@ -18,7 +18,7 @@
                 MyFilesController,
                 MyFilesView,
                 {
-                    container: $('body')
+                    container: $('.my-files-list')
                 }
         );
     });

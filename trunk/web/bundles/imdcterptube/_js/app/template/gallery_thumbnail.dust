@@ -1,5 +1,10 @@
 {#media}
     <li data-mid="{data.id}">
+        {?can_edit}
+            <span class="gallery-thumb-remove" title="Remove" data-mid="{data.id}">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        {/can_edit}
         <div>
             {?data.thumbnail_path}<img src="{@generateUrl path=data.thumbnail_path /}" />{/data.thumbnail_path}
         </div> {! important !}

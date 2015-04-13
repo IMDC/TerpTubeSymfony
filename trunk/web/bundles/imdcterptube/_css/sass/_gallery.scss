@@ -47,9 +47,12 @@
   }
 
   &-inline {
+    @include no-select;
+
     position: relative;
     height: 100%;
     background-color: #111;
+    display: none;
   }
 
   &-modal {
@@ -57,6 +60,8 @@
   }
 
   &-preview {
+    @include no-select;
+
     position: fixed;
     top: 0;
     left: 0;
@@ -80,18 +85,16 @@
     text-align: center;
     color: #fff;
 
-    > div {
-      /* media element overrides */
-      & video {
-        max-width: 100%;
-        width: auto;
-      }
+    /* media element overrides */
+    & video {
+      max-width: 100%;
+      width: auto;
+    }
 
-      & img, i {
-        max-width: 100%;
-        vertical-align: middle;
-        display: inline-block;
-      }
+    & img, i {
+      max-width: 100%;
+      vertical-align: middle;
+      display: inline-block;
     }
 
     &.fullscreen {
@@ -101,7 +104,6 @@
   }
 
   &-prev {
-    @include no-select;
     @include controls;
 
     position: absolute;
@@ -127,6 +129,8 @@
   }
 
   &-carousel {
+    @include no-select;
+
     margin-top: 10px;
     margin-bottom: 10px;
     height: $carousel-height;
@@ -138,7 +142,6 @@
   }
 
   &-left {
-    @include no-select;
     @include controls;
 
     height: $carousel-height;
@@ -176,8 +179,10 @@
       overflow: hidden;
       white-space: nowrap;
       text-align: center;
+      transition: left 0.5s ease;
 
       > li {
+        position: relative;
         margin-right: 3px;
         width: $thumb-width-height;
         float: left;
@@ -192,7 +197,7 @@
           @include parent-center;
 
           border: $thumb-border-width solid #000;
-          height: $thumb-width-height - ($thumb-border-width * 2);
+          height: $thumb-width-height;
 
           &:hover {
             border-color: #461269 !important;
@@ -208,6 +213,32 @@
             height: 100%;
             cursor: pointer;
           }
+        }
+
+        > span {
+          // bootstrap: .btn/.btn-danger/.btn-xs
+          padding: 1px 5px;
+          font-size: 12px;
+          line-height: 1.5;
+          border-radius: 3px;
+          color: #ffffff;
+          background-color: #d9534f;
+          border-color: #d43f3a;
+          display: inline-block;
+          margin-bottom: 0;
+          font-weight: normal;
+          text-align: center;
+          vertical-align: middle;
+          cursor: pointer;
+          background-image: none;
+          border: 1px solid transparent;
+          white-space: nowrap;
+          //
+
+          position: absolute;
+          right: 0;
+          margin: 5px;
+          z-index: 1;
         }
       }
     }

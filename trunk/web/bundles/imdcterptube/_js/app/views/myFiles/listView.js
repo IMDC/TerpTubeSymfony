@@ -89,8 +89,15 @@ define([
     ListView.prototype._onClickFile = function (e) {
         e.stopPropagation();
 
+        var media = this.controller.model.getMedia($(e.currentTarget).data('mid'));
+        if (!media) {
+            throw new Error('media not found');
+        }
+
         GalleryComponent.render({
-            mediaIds: [$(e.currentTarget).data('mid')]
+            //mediaIds: [$(e.currentTarget).data('mid')]
+            media: this.controller.model.get('media'),
+            activeMedia: media
         }, function (e) {
             this.galleryCmp = e.galleryComponent;
             this.galleryCmp.subscribe(GalleryComponent.Event.HIDDEN, function (e) {
@@ -109,7 +116,7 @@ define([
     };
     
     ListView.prototype._onError = function (e) {
-	 alert('Error: ' + e.error);
+        alert('Error: ' + e.error);
     };
 
     return ListView;
