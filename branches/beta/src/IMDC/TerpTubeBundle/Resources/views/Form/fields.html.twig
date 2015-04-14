@@ -13,17 +13,17 @@ _Thread:new.html.twig
 _Thread:view.html.twig
 #}
 {% block media_chooser_widget %}
-    {#<div class="form-group">#}
+    <div class="form-group">
         {{ block('form_label') }}
         <div class="row mediachooser-container-choose">
             <div class="col-md-12">
-                <div class="form-group">
+                {#<div class="form-group">#}
                     <a class="btn btn-primary mediachooser-record-video" href="#" title="{{ ('mediachooser.form.record_video.' ~ section)|trans }}"><i class="fa fa-video-camera"></i></a>
                     <a class="btn btn-primary mediachooser-upload-file" href="#" title="{{ 'mediachooser.form.upload_file'|trans }}"><i class="fa fa-upload"></i></a>
                     {% if allow_file_select %}
                         <a class="btn btn-primary mediachooser-select" href="#" title="{{ 'mediachooser.form.select'|trans }}"><i class="fa fa-folder-open"></i></a>
                     {% endif %}
-                </div>
+                {#</div>#}
             </div>
             {#<div class="mediachooser-choose"></div>#}
             {#<div class="modal fade mediachooser-modal">#}
@@ -38,7 +38,7 @@ _Thread:view.html.twig
                 {#</div>#}
             {#</div>#}
         </div>
-        <div class="row mediachooser-container-upload" style="display: none;" data-form="{{ form(uploadForm)|e }}">
+        <div class="row mediachooser-container-upload" style="margin-top: 10px; display: none;" data-form="{{ form(uploadForm)|e }}">
             <div class="col-md-12">
                 {#<div class="form-group">#}
                     <label>Uploading: <span class="mediachooser-upload-title"></span></label>
@@ -51,11 +51,11 @@ _Thread:view.html.twig
             </div>
         </div>
         {% if allow_file_select %}
-            <div class="row mediachooser-container-selected">
+            <div class="row mediachooser-container-selected" style="margin-top: 10px;">
                 <div class="col-md-12">
                     <div class="text-center mediachooser-working" style="display: none;"><i class="fa fa-spinner fa-4x fa-spin"></i></div>
                     {{ block('collection_widget') }}
-                    {% set selected_media = '
+                    {#{% set selected_media = '
                         <div class="col-md-3 thumbnail mediachooser-selected-media" style="margin-right: 5px;" data-mid="__id__">
                             <div class="row">
                                 <div class="col-md-offset-2 col-md-8 text-center">
@@ -69,11 +69,12 @@ _Thread:view.html.twig
                                 </div>
                             </div>
                         </div>' %}
-                    <div class="mediachooser-selected" data-prototype="{{ selected_media|e }}"></div>
+                    <div class="mediachooser-selected" data-prototype="{{ selected_media|e }}"></div>#}
+                    <div class="mediachooser-gallery" style="height: 500px; width: 100%; display: none;"></div>
                 </div>
             </div>
         {% endif %}
-    {#</div>#}
+    </div>
 {% endblock media_chooser_widget %}
 
 {# user_group_manage_search_widget #}

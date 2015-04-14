@@ -31,6 +31,7 @@ function Player(videoID, options)
     this.elementID = $(this.videoID).parent();
     // this.comments = new Array();
     this.keyPoints = new Array();
+    
     // type can be player, recorder
     // playHeadImage - url of image to use as top of playhead
     // playHeadImageOnClick - function Player.prototype.to call on
@@ -747,7 +748,7 @@ Player.prototype.setAreaSelectionStartFromCoordinates = function(coordinate)
 Player.prototype.setAreaSelectionEndFromCoordinates = function(coordinate)
 {
     this.currentMaxSelected = coordinate;
-    this.currentMaxTimeSelected = this.getTimeForX(this.currentMinSelected);
+    this.currentMaxTimeSelected = this.getTimeForX(this.currentMaxSelected);
     this.redrawKeyPoints = true;
     this.repaint();
     // this.setHighlightedRegion(this.currentMinSelected,
@@ -802,11 +803,24 @@ Player.prototype.checkStop = function()
 {
     // if (video.paused)
     // return;
-    if ($(this.videoID)[0].currentTime >= this.currentMaxTimeSelected)
+    if ($(this.videoID)[0].currentTime > this.currentMaxTimeSelected)
     {
-	this.pause();
-	$(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
-	$(this).trigger(Player.EVENT_PLAYBACK_FINISHED);
+//	$(this.videoID)[0].removeEventListener('timeupdate');
+	if (!$(this.videoID)[0].paused)
+	{
+	    this.pause();
+	    $(this).trigger(Player.EVENT_PLAYBACK_FINISHED);
+	    $(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
+	}
+	else
+	{
+	    $(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
+	}
+	console.log("max time: " + this.currentMaxTimeSelected)
+	console.log("current time: " + $(this.videoID)[0].currentTime)
+	
+//	this.jumpTo(this.currentMinTimeSelected);
+	console.log("Checkstop");
     }
     this.checkKeyPointsTime();
     this.repaint();
@@ -814,13 +828,20 @@ Player.prototype.checkStop = function()
 
 Player.prototype.play = function()
 {
+    
     if ($(this.videoID)[0].paused)
     {
+	console.log("play");
+	if ($(this.videoID)[0].currentTime >= this.currentMaxTimeSelected)
+	{
+	    $(this.videoID)[0].currentTime = this.currentMinTimeSelected;
+	    console.log("start from beginning of link");
+	}
 	$(this.videoID)[0].play();
 	$(this).trigger(Player.EVENT_PLAYBACK_STARTED);
 	this.playing = true;
     }
-
+    
     // preview = false;
     // timer = setInterval("checkStop()", 100);
 };
@@ -2033,6 +2054,7 @@ Player.prototype.getDuration = function()
 Player.prototype.getTimeForX = function(x)
 {
     var time = (x - this.trackPadding) * this.getDuration() / this.trackWidth;
+    time = time.toFixed(5);
     return time;
 };
 

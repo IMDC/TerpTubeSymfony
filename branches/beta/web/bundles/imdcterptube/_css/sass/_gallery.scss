@@ -1,0 +1,261 @@
+.tt-gallery {
+  $carousel-height: 75px;
+  $thumb-border-width: 2px;
+  $thumb-width-height: 75px;
+
+  //TODO move to mixin scss
+  @mixin parent-center {
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+  }
+
+  //TODO move to mixin scss
+  @mixin center {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  //TODO move to mixin scss
+  @mixin no-select {
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+  }
+
+  @mixin controls {
+    & i {
+      margin-left: 5px;
+      margin-right: 5px;
+      vertical-align: middle;
+      color: #fff;
+      cursor: pointer;
+
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      &:hover {
+        color: #461269;
+      }
+    }
+  }
+
+  &-inline {
+    @include no-select;
+
+    position: relative;
+    height: 100%;
+    background-color: #111;
+    display: none;
+  }
+
+  &-modal {
+    overflow: hidden;
+  }
+
+  &-preview {
+    @include no-select;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100001;
+    color: #fff;
+    display: none;
+  }
+
+  &-background {
+    @extend .tt-gallery-preview;
+
+    background-color: #000;
+    opacity: 0.8;
+    z-index: 100000;
+  }
+
+  &-item {
+    height: 100%;
+    text-align: center;
+    color: #fff;
+
+    /* media element overrides */
+    & video {
+      max-width: 100%;
+      width: auto;
+    }
+
+    & img, i {
+      max-width: 100%;
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    &.fullscreen {
+      width: 100%;
+      background-color: #000;
+    }
+  }
+
+  &-prev {
+    @include controls;
+
+    position: absolute;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    background-color: #000;
+    line-height: 80px;
+    text-align: center;
+    opacity: 0.8;
+    z-index: 10;
+
+    &.disabled {
+      display: none;
+    }
+  }
+
+  &-next {
+    @extend .tt-gallery-prev;
+
+    left: initial;
+    right: 0;
+  }
+
+  &-carousel {
+    @include no-select;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: $carousel-height;
+
+    & .clear {
+      clear: both;
+      height: 0;
+    }
+  }
+
+  &-left {
+    @include controls;
+
+    height: $carousel-height;
+    line-height: $carousel-height;
+    background-color: #000;
+    opacity: 0.8;
+    float: left;
+  }
+
+  &-right {
+    @extend .tt-gallery-left;
+
+    float: right;
+  }
+
+  &-thumbs {
+    height: $carousel-height;
+    float: left;
+
+    & div {
+      position: relative;
+      height: $carousel-height;
+      overflow: hidden;
+    }
+
+    & ul {
+      position: absolute;
+      left: 0;
+      top: 0;
+      margin: 0;
+      padding: 0px;
+      width: 10000px;
+      height: 100%;
+      list-style: none;
+      overflow: hidden;
+      white-space: nowrap;
+      text-align: center;
+      transition: left 0.5s ease;
+
+      > li {
+        position: relative;
+        margin-right: 3px;
+        width: $thumb-width-height;
+        float: left;
+        list-style: none;
+        overflow: hidden;
+
+        &:first-of-type {
+          margin-left: 3px;
+        }
+
+        > div {
+          @include parent-center;
+
+          border: $thumb-border-width solid #000;
+          height: $thumb-width-height;
+
+          &:hover {
+            border-color: #461269 !important;
+          }
+
+          &.selected {
+            border-color: #66169C !important;
+          }
+
+          & img {
+            @include center;
+
+            height: 100%;
+            cursor: pointer;
+          }
+        }
+
+        > span {
+          // bootstrap: .btn/.btn-danger/.btn-xs
+          padding: 1px 5px;
+          font-size: 12px;
+          line-height: 1.5;
+          border-radius: 3px;
+          color: #ffffff;
+          background-color: #d9534f;
+          border-color: #d43f3a;
+          display: inline-block;
+          margin-bottom: 0;
+          font-weight: normal;
+          text-align: center;
+          vertical-align: middle;
+          cursor: pointer;
+          background-image: none;
+          border: 1px solid transparent;
+          white-space: nowrap;
+          //
+
+          position: absolute;
+          right: 0;
+          margin: 5px;
+          z-index: 1;
+        }
+      }
+    }
+  }
+
+  &-action {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #000;
+    opacity: 0.8;
+
+    & a {
+      color: #fff;
+      padding: 4px 8px;
+      cursor: pointer;
+      display: none;
+    }
+  }
+}

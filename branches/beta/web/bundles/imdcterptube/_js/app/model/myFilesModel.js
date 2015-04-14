@@ -12,18 +12,27 @@ define([
         // replace key/value objects with models for all media
         // TODO consolidate under collection type?
         if (this.data.media) {
-            _.each(this.data.media, function (element, index, list) {
-                list[index] = new MediaModel(element);
+            // special case: knp paginator 'items.getArrayCopy' returns associative array for page > 1
+            // (spliced results > 0 in list) resulting in an object instead of an array after being serialized to json
+            var old = this.data.media;
+            this.data.media = [];
+
+            _.each(old, function (element, index, list) {
+                var media = new MediaModel(element);
 
                 // subscribe to model events
-                list[index].subscribe(Model.Event.CHANGE, function (e) {
+                media.subscribe(Model.Event.CHANGE, function (e) {
                     var cIndex = _.findIndex(this.data.media, e.model);
                     if (cIndex > -1) {
                         // bubble for model changes. prefix this collection's keypath
                         this._dispatch(Model.Event.CHANGE, 'media.' + cIndex);
                     }
                 }.bind(this));
+
+                this.data.media.push(media);
             }, this);
+
+            old = null;
         }
     };
 

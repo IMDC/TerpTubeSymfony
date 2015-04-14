@@ -23,8 +23,9 @@ define([
         this.bind__onModelChange = this._onModelChange.bind(this);
 
         this.$container = options.container;
-        this.$video = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video:first-of-type');
-        this.$pipVideo = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video:nth-of-type(2)');
+        var $videos = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video');
+        this.$video = $videos.eq($videos.length == 2 ? 1 : 0);
+        this.$pipVideo = $videos.eq($videos.length == 2 ? 0 : 1);
 
         $('#videoSpeed').on('click', this.bind__onClickVideoSpeed);
         $('#closedCaptions').on('click', this.bind__onClickClosedCaptions);
@@ -36,8 +37,9 @@ define([
 
             this._createPlayer();
 
-            if (this.controller.model.get('ordered_media.0.is_interpretation')) {
-                this.$pipVideo[0].currentTime = this.controller.model.get('ordered_media.0.source_start_time');
+            var media = this.controller.model.get('ordered_media.0');
+            if (media && media.is_interpretation) {
+                this.$pipVideo[0].currentTime = media.source_start_time;
             }
         }
 
@@ -126,17 +128,26 @@ define([
     ViewView.prototype._onPlaybackStarted = function (e) {
         console.log("%s: %s", ViewView.TAG, Player.EVENT_PLAYBACK_STARTED);
 
+        if (this.$pipVideo.length == 0)
+            return;
+
         this.$pipVideo[0].play();
     };
 
     ViewView.prototype._onPlaybackStopped = function (e) {
         console.log("%s: %s", ViewView.TAG, Player.EVENT_PLAYBACK_STOPPED);
 
+        if (this.$pipVideo.length == 0)
+            return;
+
         this.$pipVideo[0].pause();
     };
 
     ViewView.prototype._onSeek = function (e, time) {
-        console.log("%s: %s- time=%d", ViewView.TAG, Player.EVENT_SEEK, time);
+        console.log("%s: %s- time=%s", ViewView.TAG, Player.EVENT_SEEK, time);
+
+        if (this.$pipVideo.length == 0)
+            return;
 
         this.$pipVideo[0].currentTime = Math.min(
             this.player.getCurrentTime() + this.controller.model.get('ordered_media.0.source_start_time'),
@@ -220,6 +231,9 @@ define([
 
         var rate = this.controller.adjustVideoSpeed();
         this.$video[0].playbackRate = rate.value;
+        if (this.$pipVideo.length != 0) {
+            this.$pipVideo[0].playbackRate = rate.value;
+        }
         $(e.target).attr('src', rate.image);
     };
 

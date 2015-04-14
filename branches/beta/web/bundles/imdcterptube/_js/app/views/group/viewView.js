@@ -24,10 +24,10 @@ define([
         $tt._instances.push(this);
     };
 
-    ViewView.TAG = 'ForumViewView';
+    ViewView.TAG = 'GroupViewView';
 
     ViewView.Binder = {
-        GALLERY: '.forum-gallery'
+        GALLERY: '.group-gallery'
     };
 
     return ViewView;

@@ -41,10 +41,13 @@ _Thread:view.html.twig
                                     </div>
                                 </div>
                             {% endif %}
-                            {% if post.attachedFile|length != 0 %}
+                            {% if post.getAttachedFile|length != 0 %}
                                 <div class="row">
-                                    <div class="col-md-offset-2 col-md-8">
+                                    {#<div class="col-md-offset-2 col-md-8">
                                         {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': post.attachedFile.get(0)} %}
+                                    </div>#}
+                                    <div class="col-md-12">
+                                        <div class="post-gallery" style="margin-bottom: 10px; height: 400px; width: 100%;"></div>
                                     </div>
                                 </div>
                             {% endif %}

@@ -1,0 +1,39 @@
+{@select key=media.type}
+    {@eq value=1}
+        {?media.is_interpretation}
+            <video class="tt-media-pip-video"
+                {?enable_controls} controls {/enable_controls}
+                {?media.source.thumbnail_path} poster="{@generateUrl path=media.source.thumbnail_path /}" {/media.source.thumbnail_path}
+                   preload="none">
+                <source src="{@generateUrl path=media.source.resource.web_path /}" />
+            </video>
+        {/media.is_interpretation}
+        <video class="tt-media-video"
+            {?enable_controls} controls {/enable_controls}
+            {?media.thumbnail_path} poster="{@generateUrl path=media.thumbnail_path /}" {/media.thumbnail_path}
+               preload="none">
+            <source src="{@generateUrl path=media.resource.web_path /}" />
+        </video>
+    {/eq}
+
+    {@eq value=2}
+        <audio class="tt-media-audio"{?enable_controls} controls{/enable_controls}>
+            <source src="{@generateUrl path=media.resource.web_path /}" />
+        </audio>
+    {/eq}
+
+    {@eq value=0}
+        <img class="img-responsive center-block tt-media-img" src="{@generateUrl path=media.resource.web_path /}" title="{title}" alt="{title}" />
+    {/eq}
+
+    {@eq value=9}
+        <div class="row">
+            <div class="col-md-3 thumbnail text-center">
+                <a href="{@generateUrl path=media.resource.web_path /}">
+                    <p><i class="fa fa-file fa-5x"></i></p>
+                    <div>{title}</div>
+                </a>
+            </div>
+        </div>
+    {/eq}
+{/select}
