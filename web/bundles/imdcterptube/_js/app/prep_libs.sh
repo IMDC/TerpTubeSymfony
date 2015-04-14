@@ -5,6 +5,7 @@ libs=(
     'dustjs-linkedin-helpers/dist/dust-helpers.min.js'
     'underscore/underscore-min.js'
     'underscore/underscore-min.map'
+    'Sortable/Sortable.min.js'
 )
 
 libs_test=(

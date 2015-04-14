@@ -64,6 +64,7 @@
                             dust: 'lib/dust-full.min',
                             'dust-helpers': 'lib/dust-helpers.min',
                             underscore: 'lib/underscore-min',
+                            Sortable: 'lib/Sortable.min',
                             templates: 'template/templates',
                             extra: 'lib/extra'
                         },
@@ -73,6 +74,9 @@
                             },
                             underscore: {
                                 exports: '_'
+                            },
+                            Sortable: {
+                                exports: 'Sortable'
                             },
                             templates: {
                                 deps: ['dust-helpers']
@@ -95,7 +99,7 @@
                         RecorderComponent.render({}, function (e) {
                             $tt._recorder = e.recorderComponent;
                             $tt._recorder.subscribe(RecorderComponent.Event.DONE, function (e) {
-                                $tt._recorder.show();
+                                $tt._recorder.hide();
                             }.bind(this));
                             $tt._recorder.subscribe(RecorderComponent.Event.HIDDEN, function(e) {
                                 $tt._recorder.destroy();
