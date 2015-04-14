@@ -4,6 +4,7 @@ requirejs.config({
         dust: 'lib/dust-full.min',
         'dust-helpers': 'lib/dust-helpers.min',
         underscore: 'lib/underscore-min',
+        Sortable: 'lib/Sortable.min',
         templates: 'template/templates',
         extra: 'lib/extra'
     },
@@ -14,11 +15,14 @@ requirejs.config({
         underscore: {
             exports: '_'
         },
+        Sortable: {
+            exports: 'Sortable'
+        },
         templates: {
             deps: ['dust-helpers']
         },
         main: {
-            deps: ['templates', 'extra']
+            deps: ['underscore', 'templates', 'extra']
         }
     }
 });
