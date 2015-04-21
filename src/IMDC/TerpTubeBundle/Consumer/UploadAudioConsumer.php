@@ -58,7 +58,8 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 				}
 				else if ($operationMediaType == "webm")
 				{
-					$inputFile = $resource->getAbsolutePathWebm();
+					//$inputFile = $resource->getAbsolutePathWebm();
+					$inputFile = $resource->getAbsolutePath();
 				}
 				$startTime = $operation [2];
 				$endTime = $operation [3];
@@ -183,7 +184,7 @@ class UploadAudioConsumer extends ContainerAware implements ConsumerInterface
 				$fs->rename($mp4File, $resource->getUploadRootDir() . '/' . $resource->getId() . '.m4a');
 			
 			$resource->setPath('m4a');
-			$resource->setWebmExtension('webm');
+			//$resource->setWebmExtension('webm');
 			$media->setIsReady(Media::READY_YES);
 			
 			$em->flush();

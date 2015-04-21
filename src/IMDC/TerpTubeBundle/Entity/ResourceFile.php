@@ -52,6 +52,11 @@ class ResourceFile
     private $name; //TODO delete. not used
 
     /**
+     * @var string
+     */
+    private $temp;
+
+    /**
      * Get id
      *
      * @return integer
@@ -162,7 +167,7 @@ class ResourceFile
      * @return null|string
      * @deprecated
      */
-    public function getWebPathWebm()
+    public function getWebPathWebm() //TODO delete
     {
         return null === $this->path
             ? null
@@ -256,7 +261,7 @@ class ResourceFile
     public function storeFilenameForRemove()
     {
         $this->temp = $this->getAbsolutePath();
-        $this->tempWebm = $this->getAbsolutePathWebm();
+        //$this->tempWebm = $this->getAbsolutePathWebm();
 
     }
 
@@ -265,16 +270,16 @@ class ResourceFile
         if (file_exists($this->temp)) {
             unlink($this->temp);
         }
-        if (file_exists($this->tempWebm)) {
+        /*if (file_exists($this->tempWebm)) {
             unlink($this->tempWebm);
-        }
+        }*/
     }
 
     /**
      * @return null|string
      * @deprecated
      */
-    public function getAbsolutePathWebm()
+    public function getAbsolutePathWebm() //TODO delete
     {
         return null === $this->path
             ? null

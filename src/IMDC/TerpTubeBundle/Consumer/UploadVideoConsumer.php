@@ -58,7 +58,8 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 				}
 				else if ($operationMediaType == "webm")
 				{
-					$inputFile = $resource->getAbsolutePathWebm ();
+					//$inputFile = $resource->getAbsolutePathWebm ();
+					$inputFile = $resource->getAbsolutePath ();
 				}
 				$startTime = $operation [2];
 				$endTime = $operation [3];
@@ -205,7 +206,7 @@ class UploadVideoConsumer extends ContainerAware implements ConsumerInterface
 			}
 			
 			$resource->setPath ( 'mp4' );
-			$resource->setWebmExtension ( 'webm' );
+			//$resource->setWebmExtension ( 'webm' );
 			$media->setIsReady ( Media::READY_YES );
 			
 			$em->flush ();

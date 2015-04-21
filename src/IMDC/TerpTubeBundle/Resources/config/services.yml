@@ -50,7 +50,7 @@ services:
               
     imdc_terptube.upload_resource_listener:
         class: IMDC\TerpTubeBundle\EventListener\UploadListener
-        arguments: ["@logger", "@doctrine", "@old_sound_rabbit_mq.upload_video_producer", "@old_sound_rabbit_mq.upload_audio_producer", "@imdc_terptube.transcoder"]
+        arguments: ["@logger", "@doctrine.orm.entity_manager", "@old_sound_rabbit_mq.upload_video_producer", "@old_sound_rabbit_mq.upload_audio_producer", "@imdc_terptube.transcoder"]
         tags:
             - { name: kernel.event_subscriber}
             - { name: 'monolog.logger', channel: 'imdc' }

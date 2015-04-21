@@ -112,7 +112,7 @@ class MyFilesController extends Controller
 
         $resourceFile = new ResourceFile();
         $resourceFile->setFile($mergedFile);
-        $resourceFile->setWebmExtension('webm');
+        //$resourceFile->setWebmExtension('webm');
 
         if ($isInterpretation) {
             $media = new Interpretation();
@@ -137,7 +137,7 @@ class MyFilesController extends Controller
 
         // FIXME: transcoder seems to do this already. no need to rename and persist
         // Need to rename to webm since in some cases the recording is done as a .bin file
-        $resource = $media->getResource();
+        /*$resource = $media->getResource();
         $resourceFile = new File($resource->getAbsolutePath());
         $targetFile = $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm';
         if (!file_exists($targetFile)) {
@@ -146,7 +146,7 @@ class MyFilesController extends Controller
         }
         $resource->setPath("webm");
         // $em->persist ( $resourceFile );
-        $em->flush();
+        $em->flush();*/
 
         $eventDispatcher = $this->container->get('event_dispatcher');
         $uploadEvent = new UploadEvent($media);
@@ -219,13 +219,13 @@ class MyFilesController extends Controller
                 $em->persist($user);
                 $em->flush();
 
-                $resourcePath = $media->getResource()->getAbsolutePath();
+                /*$resourcePath = $media->getResource()->getAbsolutePath();
                 if ($media->getResource()->getPath() == "bin") {
                     $fs->rename($resourcePath,
                         substr($resourcePath, 0, strrpos($resourcePath, ".")) . "." . $originalExtension, true);
                     $media->getResource()->setPath($originalExtension);
                 }
-                $em->flush();
+                $em->flush();*/
 
                 $dispatcher = $this->get('event_dispatcher');
                 $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD, new UploadEvent($media));
