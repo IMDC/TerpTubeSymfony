@@ -10,6 +10,7 @@ define([
         this.bind__onClickSubmitNew = this._onClickSubmitNew.bind(this);
         this.bind__onClickReset = this._onClickReset.bind(this);
         this.bind__onClickCancelNew = this._onClickCancelNew.bind(this);
+        this.bind__onUploadStart = this._onUploadStart.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onSuccessAndPost = this._onSuccessAndPost.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -27,6 +28,7 @@ define([
         this.$cancelNew.on('click', this.bind__onClickCancelNew);
 
         this.mcCmp = MediaChooserComponent.render(this.$form, {enableDoneAndPost: true});
+        this.mcCmp.subscribe(MediaChooserComponent.Event.UPLOAD_START, this.bind__onUploadStart);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS_AND_POST, this.bind__onSuccessAndPost);
         this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
@@ -143,14 +145,19 @@ define([
         );
     };
 
+    NewView.prototype._onUploadStart = function (e) {
+        this.$submitNew.attr('disabled', true);
+    };
+
     NewView.prototype._onSuccess = function (e) {
         this._updateForm();
+        this.$submitNew.attr('disabled', false);
         this._toggleForm(false);
     };
 
     NewView.prototype._onSuccessAndPost = function (e) {
         this._updateForm();
-        this.$submit.trigger('click');
+        this.$submitNew.trigger('click');
     };
 
     NewView.prototype._onReset = function (e) {
@@ -158,7 +165,7 @@ define([
     };
     
     NewView.prototype._onError = function (e) {
-	alert('Error: ' + e.error);
+	    alert('Error: ' + e.error);
     };
 
     return NewView;
