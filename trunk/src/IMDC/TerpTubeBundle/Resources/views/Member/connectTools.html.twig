@@ -31,6 +31,8 @@ _Profile:view.html.twig
         <li>
             {% if app.user.isUserOnMentorList(member) %}
                 <i class="fa fa-star {{ faSize }}" title="This user is your mentor"></i>
+            {% elseif app.user.isUserOnInvitedMentorList(member) %}
+            	<i class="fa fa-inbox {{ faSize }}" title="Invitation for mentorship already sent"></i>
             {% else %}
                 <a href="{{ path('imdc_invitation_mentor', {'id': member.id}) }}" title="Invite user to be your mentor"><i class="fa fa-inbox {{ faSize }}"></i></a>
             {% endif %}
@@ -38,6 +40,8 @@ _Profile:view.html.twig
         <li>
             {% if app.user.isUserOnMenteeList(member) %}
                 <i class="fa fa-star {{ faSize }}" title="This user is your mentee"></i>
+            {% elseif app.user.isUserOnInvitedMenteeList(member) %}
+            	<i class="fa fa-star-o {{ faSize }}" title="Invitation for menteeship already sent"></i>
             {% else %}
                 <a href="{{ path('imdc_invitation_mentee', {'id': member.id}) }}" title="Invite user to be your mentee"><i class="fa fa-star-o {{ faSize }}"></i></a>
             {% endif %}
