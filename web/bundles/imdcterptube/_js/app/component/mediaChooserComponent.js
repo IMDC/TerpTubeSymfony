@@ -162,6 +162,7 @@ define([
             var mm = this.media[m];
             if (mm.get('id') == media.get('id')) {
                 this.media.splice(m, 1);
+                this.galleryCmp.removeMedia(m);
             }
         }
     };
@@ -343,8 +344,9 @@ define([
         console.log('%s: %s', MediaChooserComponent.TAG, 'reset');
 
         this._resetUpload();
+        this.galleryCmp.clear();
 
-        this.media = [];
+//        this.media = [];
 
         this._dispatch(MediaChooserComponent.Event.RESET, {
             mediaChooserComponent: this

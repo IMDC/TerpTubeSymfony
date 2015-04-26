@@ -94,6 +94,58 @@ define([
                     _self = new NewView(this.controller, this.controller.options);
                     this.controller.onViewLoaded();
                 }
+                else {
+                    //Need to add the new post to the list.
+                    this.mcCmp.reset();
+                    this._getFormField('content').val('');
+                    this._getFormField('startTime').val(this.controller.model.get('keyPoint.startTime'));
+                    this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
+                    this.controller.editKeyPoint({cancel: true});
+                    this.controller.editKeyPoint({cancel: false});
+                    this._toggleForm(false);
+                    
+                    var PostViewView = require('views/post/viewView');
+                    var PostController = require('controller/postController');
+                    var PostModel = require('model/postModel');
+                    var bootstrap = require('bootstrap')
+                    
+                    if (data.post.parent_post)
+                    {
+                	this.$container.remove();
+                        this.controller.removeKeyPoint();
+                        
+                        //Append the new reply after the parent post
+                        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]').after(data.html);
+                        bootstrap(
+                        	new PostModel(data.post),
+                        	PostController,
+                        	PostViewView,
+                        	{}
+                        );
+
+                        //TODO make me better
+                        // a bit hackish but works
+                        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
+                            .find('.post-new')
+                            .show();
+                    }
+                    else
+                    {
+                	this.$form.trigger("reset");;
+                	//Append the new reply as a last post 
+                	if ($("#replyContainerSpacer").siblings(".lead").length > 0 )
+                	{
+                	    $("#replyContainerSpacer").siblings(".lead").remove();
+            	    	}
+                	$("#replyContainerSpacer").before(data.html);
+                	bootstrap(
+                        	new PostModel(data.post),
+                        	PostController,
+                        	PostViewView,
+                        	{}
+                        );
+                    }
+                }
             }.bind(this))
             .fail(function () {
                 this._toggleForm(false);

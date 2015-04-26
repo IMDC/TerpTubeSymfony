@@ -91,16 +91,20 @@ class PostController extends Controller
             $em->persist($user);
             $em->flush();
 
-            $this->get('session')->getFlashBag()->add(
-                'success', 'Reply created successfully!'
-            );
+//             $this->get('session')->getFlashBag()->add(
+//                 'success', 'Reply created successfully!'
+//             );
+            
 
             $serializer = $this->get('jms_serializer');
             $content = array(
                 'wasReplied' => true,
                 'post' => json_decode($serializer->serialize($post, 'json'), true),
                 'redirectUrl' => $this->generateUrl('imdc_thread_view', array(
-                    'threadid' => $thread->getId()))
+                    'threadid' => $thread->getId())),
+            	'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
+            			'post' => $post,
+            			'is_post_reply' => $isPostReply))
             );
         } else {
             $post->setId(-rand());
