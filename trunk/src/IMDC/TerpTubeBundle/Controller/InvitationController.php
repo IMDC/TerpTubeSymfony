@@ -223,7 +223,11 @@ class InvitationController extends Controller
 		{
 			$group = InvitationController::getGroupFromInviteData ( $this, $entity );
 			
-			$user->addUserGroup ( $group );
+			//if not a member, add to the group.
+			if (! $user->getUserGroups()->contains ( $group ))
+			{
+				$user->addUserGroup ( $group );
+			}
 			// $group->addMember($user);
 			
 			// $em->persist($group);
