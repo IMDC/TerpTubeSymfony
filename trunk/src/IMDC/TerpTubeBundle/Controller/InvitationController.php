@@ -40,6 +40,15 @@ class InvitationController extends Controller
 				$groups [$invitation->getId ()] = InvitationController::getGroupFromInviteData ( $this, $invitation );
 			}
 		}
+		$invitations = $this->getUser ()->getCreatedInvitations ();
+		foreach ( $invitations as $invitation )
+		{
+			if ($invitation->getType ()->isGroup ())
+			{
+				$groups [$invitation->getId ()] = InvitationController::getGroupFromInviteData ( $this, $invitation );
+			}
+		}
+		
 		
 		return $this->render ( 'IMDCTerpTubeBundle:Invitation:index.html.twig', array (
 				'invitations' => $invitations,
