@@ -130,15 +130,21 @@ class ContactController extends Controller
                         $user->getMentorList()->removeElement($contact);
                         $user->getMenteeList()->removeElement($contact);
                         $user->getFriendsList()->removeElement($contact);
+                        $contact->getMenteeList()->removeElement($user);
+                        $contact->getMentorList()->removeElement($user);
+                        $contact->getFriendsList()->removeElement($user);
                         break;
-                    case 'mentor':
+                    case 'mentors':
                         $user->getMentorList()->removeElement($contact);
+                        $contact->getMenteeList()->removeElement($user);
                         break;
-                    case 'mentee':
+                    case 'mentees':
                         $user->getMenteeList()->removeElement($contact);
+                        $contact->getMentorList()->removeElement($user);
                         break;
                     case 'friends':
                         $user->getFriendsList()->removeElement($contact);
+//                         $contact->getFriendsList()->removeElement($user);
                         break;
                     default:
                         throw new \Exception('invalid contact list');
