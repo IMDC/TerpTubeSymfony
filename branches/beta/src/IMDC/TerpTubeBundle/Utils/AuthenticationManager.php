@@ -16,6 +16,11 @@ class AuthenticationManager
 
 	public function isAuthenticated(Request $request)
 	{
+		//In the dev environment there will be no token for many resources
+		if ($this->securityContext->getToken() == null)
+		{
+			return true;
+		}
 		if (!$this->securityContext->isGranted('IS_AUTHENTICATED_REMEMBERED'))
 		{
 			//$request->getSession()->getFlashBag()->add('notice', 'Please log in first');

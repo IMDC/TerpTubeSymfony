@@ -1,0 +1,2 @@
+user.exists.single: 'The user %user_name% does not exist.'
+user.exists.multiple: 'The users %user_names% do not exist.'

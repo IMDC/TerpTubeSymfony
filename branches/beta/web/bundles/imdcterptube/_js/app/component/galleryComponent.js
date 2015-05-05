@@ -239,6 +239,18 @@ define([
             galleryComponent: this
         });
     };
+    
+    GalleryComponent.prototype.clear = function() {
+	for (var i in this.options.media)
+	{
+	    var media = this.options.media[i];
+	    this.removeMedia(media);
+	    this._dispatch(GalleryComponent.Event.REMOVED_MEDIA, {
+	            media: media,
+	            galleryComponent: this
+	        });
+	}
+    }
 
     GalleryComponent.prototype._updateButtonStates = function (slidePosition) {
         var $selThumbnail = this.$thumbs.find('li[data-mid="' + this.activeMedia.get('id') + '"]');

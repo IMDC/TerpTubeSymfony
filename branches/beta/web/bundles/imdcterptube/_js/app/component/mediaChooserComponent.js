@@ -93,6 +93,7 @@ define([
     };
 
     MediaChooserComponent.Event = {
+        UPLOAD_START: 'eventUploadStart',
         SUCCESS: 'eventSuccess',
         SUCCESS_AND_POST: 'eventSuccessAndPost',
         ERROR: 'eventError',
@@ -161,6 +162,7 @@ define([
             var mm = this.media[m];
             if (mm.get('id') == media.get('id')) {
                 this.media.splice(m, 1);
+                this.galleryCmp.removeMedia(m);
             }
         }
     };
@@ -233,6 +235,8 @@ define([
     MediaChooserComponent.prototype._onChangeResourceFile = function (e) {
         e.preventDefault();
 
+        this._toggleForm(true);
+
         var maxSize = this.$resourceFile.data('maxsize');
         var fileSize = this.$resourceFile[0].files[0].size;
         if (fileSize > maxSize) {
@@ -241,6 +245,7 @@ define([
                 'maxUploadSize': (maxSize / 1048576).toFixed(1) + "MB"
             }));
             this.$resourceFile.val('');
+            this._toggleForm(false);
             return;
         }
 
@@ -252,6 +257,7 @@ define([
                 //if (this.$selected.length > 0)
                     this._addSelectedMedia(data.media);
                 this._invokeSuccess();
+                this._toggleForm(false);
             }.bind(this))
             .fail(function (data) {
                 this._resetUpload();
@@ -259,7 +265,12 @@ define([
                     mediaChooserComponent: this,
                     error: data ? data.error : 'Unknown error'
                 });
+                this._toggleForm(false);
             }.bind(this));
+
+        this._dispatch(MediaChooserComponent.Event.UPLOAD_START, {
+            mediaChooserComponent: this
+        });
 
         this.$resourceFile.val('');
     };
@@ -333,8 +344,9 @@ define([
         console.log('%s: %s', MediaChooserComponent.TAG, 'reset');
 
         this._resetUpload();
+        this.galleryCmp.clear();
 
-        this.media = [];
+//        this.media = [];
 
         this._dispatch(MediaChooserComponent.Event.RESET, {
             mediaChooserComponent: this

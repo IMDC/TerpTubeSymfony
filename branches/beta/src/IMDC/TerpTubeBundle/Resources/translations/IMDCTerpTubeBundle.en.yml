@@ -24,6 +24,7 @@ security:
         register_here: "Click here to register!"
         forgot_password: "Forgot your password?"
         password_reset: "Click here to reset it!"
+        not_logged_in: "Not logged in/Session expired! Please log in again"
 
 # Profile
 profile:

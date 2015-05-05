@@ -8,6 +8,7 @@ define([
         this.controller = controller;
 
         this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onUploadStart = this._onUploadStart.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
         this.bind__onError = this._onError.bind(this);
@@ -21,6 +22,7 @@ define([
         this.atCmp = AccessTypeComponent.render(this.$form);
 
         this.mcCmp = MediaChooserComponent.render(this.$form);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.UPLOAD_START, this.bind__onUploadStart);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
         this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
         this.mcCmp.subscribe(MediaChooserComponent.Event.ERROR, this.bind__onError);
@@ -65,6 +67,10 @@ define([
         );
     };
 
+    NewView.prototype._onUploadStart = function (e) {
+        this.$submit.attr('disabled', true);
+    };
+
     NewView.prototype._onSuccess = function (e) {
         this._updateForm();
         this.$submit.attr('disabled', false);
@@ -89,7 +95,7 @@ define([
     };
     
     NewView.prototype._onError = function (e) {
-	alert('Error: ' + e.error);
+	    alert('Error: ' + e.error);
     };
 
     return NewView;
