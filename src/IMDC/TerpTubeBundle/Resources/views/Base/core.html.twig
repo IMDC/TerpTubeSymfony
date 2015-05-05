@@ -109,6 +109,18 @@
                     }.bind(this));
                 });
             </script>
+            
+            <!-- Register an error handler for Ajax calls to reload the page on a 403 error (Usually when user is not logged in)-->
+            <script type="text/javascript">
+	            $(document).ready(function() {
+	        	    $(document).ajaxError(function (event, jqXHR, settings, thrownError) {
+	        	        if (403 === jqXHR.status) {
+		        	        alert(jqXHR.responseText);
+	        	            window.location.reload();
+	        	        }
+	        	    });
+	        	});
+            </script>
         {% endblock header %}
     </head>
     <body>

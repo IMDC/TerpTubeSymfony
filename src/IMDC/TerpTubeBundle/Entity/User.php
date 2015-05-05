@@ -4,6 +4,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\Common\Collections\Criteria;
 
 class User extends BaseUser
 {
@@ -786,6 +787,26 @@ class User extends BaseUser
     public function isUserOnMentorList(\IMDC\TerpTubeBundle\Entity\User $user)
     {
         return $this->mentorList->contains($user);
+    }
+    
+    public function isUserOnInvitedMentorList(\IMDC\TerpTubeBundle\Entity\User $user)
+    {
+    	foreach ($this->createdInvitations as $invitation)
+    	{
+    		if ($invitation->getRecipient() ==  $user && $invitation->getType()->isMentor() && !$invitation->getIsDeclined() && !$invitation->getIsAccepted() && !$invitation->getIsCancelled())
+    			return true;
+    	}
+    	return false;
+    }
+    
+    public function isUserOnInvitedMenteeList(\IMDC\TerpTubeBundle\Entity\User $user)
+    {
+    	foreach ($this->createdInvitations as $invitation)
+    	{
+    		if ($invitation->getRecipient() ==  $user && $invitation->getType()->isMentee() && !$invitation->getIsDeclined() && !$invitation->getIsAccepted() && !$invitation->getIsCancelled())
+    			return true;
+    	}
+    	return false;
     }
 
     /**

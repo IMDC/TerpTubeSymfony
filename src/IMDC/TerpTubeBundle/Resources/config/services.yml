@@ -166,3 +166,15 @@ services:
         arguments: [@security.context]
         tags:
             - { name: validator.constraint_validator, alias: owns_media }
+            
+    mdc_terptube.validator.contraints.user_exists_validator:
+        class: IMDC\TerpTubeBundle\Validator\Constraints\UserExistsValidator
+        arguments: [@doctrine.orm.entity_manager]
+        tags:
+            - { name: validator.constraint_validator, alias: user_exists }
+            
+    imdc_terptube.ajax_authentication_listener:
+        class: IMDC\TerpTubeBundle\EventListener\AjaxAuthenticationListener
+        arguments: ["@imdc_terptube.authentication_manager", @translator]
+        tags:
+             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }

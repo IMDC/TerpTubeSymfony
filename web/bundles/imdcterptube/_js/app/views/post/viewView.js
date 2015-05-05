@@ -34,7 +34,7 @@ define([
         this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
 
         var media = this.controller.model.get('ordered_media');
-        if (media.length > 0) {
+        if (media && media.length > 0) {
             GalleryComponent.render({
                 $container: this.$gallery,
                 mode: GalleryComponent.Mode.INLINE,

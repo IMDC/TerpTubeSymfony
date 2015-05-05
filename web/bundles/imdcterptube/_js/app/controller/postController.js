@@ -95,7 +95,7 @@ define([
         return PostFactory.new(this.model, form)
             .done(function (data) {
                 if (data.wasReplied) {
-                    window.location.replace(data.redirectUrl);
+//                    window.location.replace(data.redirectUrl);
                 }
             });
     };
