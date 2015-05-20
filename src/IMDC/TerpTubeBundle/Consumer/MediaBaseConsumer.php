@@ -139,22 +139,26 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
 
         $mediaType = $this->media->getType();
 
-        if ($mediaType == Media::TYPE_VIDEO || $mediaType == Media::TYPE_AUDIO) {
-            try {
-                /** @var $streams StreamCollection */
-                $streams = $this->transcoder->getFFprobe()->streams($this->media->getResource()->getAbsolutePath());
-                if (($mediaType == Media::TYPE_VIDEO && $streams->videos()->count() == 0)
-                    || ($mediaType == Media::TYPE_AUDIO && $streams->audios()->count() == 0)
-                ) {
-                    throw new \Exception();
+        switch ($mediaType) {
+            case Media::TYPE_VIDEO:
+            case Media::TYPE_AUDIO:
+                try {
+                    /** @var $streams StreamCollection */
+                    $streams = $this->transcoder->getFFprobe()->streams($this->media->getResource()->getAbsolutePath());
+                    if (($mediaType == Media::TYPE_VIDEO && $streams->videos()->count() == 0)
+                        || ($mediaType == Media::TYPE_AUDIO && $streams->audios()->count() == 0)
+                    ) {
+                        throw new \Exception();
+                    }
+                } catch (\Exception $e) {
+                    // TODO need to send an event to alert the user that this is an invalid video/audio
+                    $this->media = null; // null it so that child classes don't attempt any work
+                    // not a video so don't hold up the queue
+                    $this->logger->error(sprintf("Error. Not a valid video/audio file %d!", $this->media->getId()));
+                    return true;
                 }
-            } catch (\Exception $e) {
-                // TODO need to send an event to alert the user that this is an invalid video/audio
-                $this->media = null; // null it so that child classes don't attempt any work
-                // not a video so don't hold up the queue
-                $this->logger->error(sprintf("Error. Not a valid video/audio file %d!", $this->media->getId()));
-                return true;
-            }
+
+                break;
         }
 
         return true;

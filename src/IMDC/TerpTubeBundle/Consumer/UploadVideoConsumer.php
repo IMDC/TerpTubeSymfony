@@ -72,6 +72,7 @@ class UploadVideoConsumer extends MediaBaseConsumer
             }
 
             $resource->setPath('mp4');
+            $resource->setUpdated(new \DateTime('now'));
             $this->media->setIsReady(Media::READY_YES);
 
             $this->createThumbnail();

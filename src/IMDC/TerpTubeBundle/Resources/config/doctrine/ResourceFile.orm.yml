@@ -11,10 +11,6 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
             type: string
             length: 255
             nullable: true
-        webmExtension:
-            type: string
-            length: 5
-            nullable: true
         updated:
             type: datetime
             nullable: true
