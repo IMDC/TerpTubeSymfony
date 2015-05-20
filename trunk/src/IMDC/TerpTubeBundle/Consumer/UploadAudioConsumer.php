@@ -59,6 +59,7 @@ class UploadAudioConsumer extends MediaBaseConsumer
                 $this->fs->rename($mp4File, $resource->getUploadRootDir() . '/' . $resource->getId() . '.m4a');
 
             $resource->setPath('m4a');
+            $resource->setUpdated(new \DateTime('now'));
             $this->media->setIsReady(Media::READY_YES);
 
             $this->updateMetaData();

@@ -3,9 +3,9 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
-use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceFile
 {
@@ -22,34 +22,14 @@ class ResourceFile
     private $path;
 
     /**
-     * @var string
-     */
-    private $webmExtension; //TODO delete
-
-    /**
      * @var \DateTime
      */
     private $updated;
 
     /**
-     * @var string
-     */
-    private $filename; //TODO delete. not used
-
-    /**
      * Unmapped property to handle file uploads
      */
     private $file;
-
-    /**
-     * @var \IMDC\TerpTubeBundle\Entity\Media
-     */
-    private $media; //TODO delete. not used
-
-    /**
-     * @var string
-     */
-    private $name; //TODO delete. not used
 
     /**
      * @var string
@@ -90,31 +70,6 @@ class ResourceFile
     }
 
     /**
-     * Set webmExtension
-     *
-     * @param string $webmExtension
-     * @return ResourceFile
-     * @deprecated
-     */
-    public function setWebmExtension($webmExtension) //TODO delete
-    {
-        $this->webmExtension = $webmExtension;
-
-        return $this;
-    }
-
-    /**
-     * Get webmExtension
-     *
-     * @return string
-     * @deprecated
-     */
-    public function getWebmExtension() //TODO delete
-    {
-        return $this->webmExtension;
-    }
-
-    /**
      * Set updated
      *
      * @param \DateTime $updated
@@ -137,20 +92,6 @@ class ResourceFile
         return $this->updated;
     }
 
-    /**
-     * Set filename
-     *
-     * @param string $filename
-     * @return ResourceFile
-     * @deprecated
-     */
-    public function setFilename($filename) //TODO delete. not used
-    {
-        $this->filename = $filename;
-
-        return $this;
-    }
-
     public function getFilename()
     {
         return $this->id . '.' . $this->path;
@@ -161,17 +102,6 @@ class ResourceFile
         return null === $this->path
             ? null
             : static::UPLOAD_DIR . '/' . $this->getFilename();
-    }
-
-    /**
-     * @return null|string
-     * @deprecated
-     */
-    public function getWebPathWebm() //TODO delete
-    {
-        return null === $this->path
-            ? null
-            : static::UPLOAD_DIR . '/' . $this->id . '.' . $this->getWebmExtension();
     }
 
     public function getUploadRootDir()
@@ -193,6 +123,7 @@ class ResourceFile
      * Sets file. **From cookbook**
      *
      * @param BaseUploadedFile $file
+     * @return ResourceFile
      */
     public function setFile(BaseUploadedFile $file = null)
     {
@@ -207,6 +138,8 @@ class ResourceFile
         } else {
             $this->path = 'initial';
         }
+
+        return $this;
     }
 
     /**
@@ -255,35 +188,17 @@ class ResourceFile
         );
 
         $this->setFile(null);
-
     }
 
     public function storeFilenameForRemove()
     {
         $this->temp = $this->getAbsolutePath();
-        //$this->tempWebm = $this->getAbsolutePathWebm();
-
     }
 
     public function removeUpload()
     {
-        if (file_exists($this->temp)) {
+        if (file_exists($this->temp))
             unlink($this->temp);
-        }
-        /*if (file_exists($this->tempWebm)) {
-            unlink($this->tempWebm);
-        }*/
-    }
-
-    /**
-     * @return null|string
-     * @deprecated
-     */
-    public function getAbsolutePathWebm() //TODO delete
-    {
-        return null === $this->path
-            ? null
-            : $this->getUploadRootDir() . '/' . $this->id . '.' . $this->getWebmExtension();
     }
 
     /**
@@ -295,60 +210,10 @@ class ResourceFile
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return ResourceFile
-     * @deprecated
-     */
-    public function setName($name) //TODO delete. not used
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     * @deprecated
-     */
-    public function getName() //TODO delete. not used
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set media
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\Media $media
-     * @return ResourceFile
-     * @deprecated
-     */
-    public function setMedia(\IMDC\TerpTubeBundle\Entity\Media $media = null) //TODO delete. not used
-    {
-        $this->media = $media;
-
-        return $this;
-    }
-
-    /**
-     * Get media
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\Media
-     * @deprecated
-     */
-    public function getMedia() //TODO delete. not used
-    {
-        return $this->media;
-    }
-
-    /**
      * String description of a resource file
      */
     public function __toString()
     {
-        return $this->getAbsolutePath();
+        return $this->getFilename();
     }
 }

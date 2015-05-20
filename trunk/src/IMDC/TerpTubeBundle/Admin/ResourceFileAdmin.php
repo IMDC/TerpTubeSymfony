@@ -91,7 +91,7 @@ class ResourceFileAdmin extends Admin
     {
         $datagridMapper
             ->add('path')
-            ->add('webmExtension')
+            //->add('webmExtension')
         ;
     }
 
@@ -101,7 +101,7 @@ class ResourceFileAdmin extends Admin
         $listMapper
             ->addIdentifier('id')
             ->add('path')
-            ->add('webmExtension')
+            //->add('webmExtension')
         ;
     }
 }
