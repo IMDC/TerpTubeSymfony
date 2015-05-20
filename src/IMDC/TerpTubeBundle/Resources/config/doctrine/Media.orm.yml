@@ -44,11 +44,23 @@ IMDC\TerpTubeBundle\Entity\Media:
                 name: meta_data
                 referencedColumnName: id
             cascade: ["all"]
-        resource: #resource object to hold the data
+        sourceResource:
             targetEntity: ResourceFile
             joinColumn:
-                name: resource_id
+                name: source_resource_id
                 referencedColumnName: id
             cascade: ["all"]
+    manyToMany:
+        resources:
+            targetEntity: ResourceFile
+            joinTable:
+                name: media_resources
+                joinColumns:
+                    media_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    resource_id:
+                        referencedColumnName: id
+                        unique: true
     lifecycleCallbacks:
         preRemove: [ removeThumbnail ]

@@ -2,10 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
-use Doctrine\Common\EventManager;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Media
@@ -80,10 +79,22 @@ class Media implements MediaInterface
     private $metaData;
 
     /**
-     *
      * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
      */
-    private $resource;
+    private $sourceResource;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $resources;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->resources = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -260,26 +271,59 @@ class Media implements MediaInterface
     }
 
     /**
-     * Set resource
+     * Set sourceResource
      *
-     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resource
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $sourceResource
      * @return Media
      */
-    public function setResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $resource = null)
+    public function setSourceResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $sourceResource = null)
     {
-        $this->resource = $resource;
+        $this->sourceResource = $sourceResource;
 
         return $this;
     }
 
     /**
-     * Get resource
+     * Get sourceResource
      *
      * @return \IMDC\TerpTubeBundle\Entity\ResourceFile
      */
-    public function getResource()
+    public function getSourceResource()
     {
-        return $this->resource;
+        return $this->sourceResource;
+    }
+
+    /**
+     * Add resources
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resources
+     * @return Media
+     */
+    public function addResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $resources)
+    {
+        $this->resources[] = $resources;
+
+        return $this;
+    }
+
+    /**
+     * Remove resources
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resources
+     */
+    public function removeResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $resources)
+    {
+        $this->resources->removeElement($resources);
+    }
+
+    /**
+     * Get resources
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getResources()
+    {
+        return $this->resources;
     }
 
     public function getThumbnailDir()
