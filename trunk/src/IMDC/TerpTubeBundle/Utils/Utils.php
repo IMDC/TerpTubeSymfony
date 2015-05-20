@@ -10,9 +10,9 @@ use IMDC\TerpTubeBundle\Entity\Media;
 
 class Utils
 {
-	public static function getUploadedFileType($uploadedFile)
+	public static function getUploadedFileType($mimeType)
 	{
-		$mimeType = $uploadedFile->getMimeType();
+		/*$mimeType = $uploadedFile->getMimeType();
 		$resourcePath = $uploadedFile->getRealPath();
 		
 		if ($mimeType == 'application/octet-stream') {
@@ -26,7 +26,7 @@ class Utils
 		
 			$processOutput = $process->getOutput();
 			$mimeType = substr($processOutput, strrpos($processOutput, ":") + 2);
-		}
+		}*/
 		
 		$type = Media::TYPE_OTHER;
 		if (preg_match("/^video\/.*/", $mimeType))

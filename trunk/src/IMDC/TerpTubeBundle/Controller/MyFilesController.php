@@ -180,7 +180,46 @@ class MyFilesController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $uploadedFile = $media->getResource()->getFile();
-            $media->setTitle($uploadedFile->getClientOriginalName()); // TODO clean this filename
+            $mediaType = Utils::getUploadedFileType($uploadedFile->getMimeType());
+
+            $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
+            $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
+
+            $media->setType($mediaType);
+
+            /** @var $transcoder Transcoder */
+            $transcoder = $this->get('imdc_terptube.transcoder');
+
+            // check if ffmpeg supports an otherwise misidentified video/audio file
+            $ffprobe = $transcoder->getFFprobe();
+
+            try {
+                /** @var $streams FFProbe\DataMapping\StreamCollection */
+                $streams = $ffprobe->streams($uploadedFile->getRealPath());
+                $media->setType(
+                    $streams->videos()->count() > 0
+                        ? Media::TYPE_VIDEO
+                        : ($streams->audios()->count() > 0
+                            ? Media::TYPE_AUDIO
+                            : null));
+            } catch (\Exception $e) {
+                $media->setType(null);
+            }
+
+            // check if unix file cmd and ffmpeg agreed
+            if ($media->getType() == null && ($mediaType == Media::TYPE_VIDEO || $mediaType == Media::TYPE_AUDIO)) {
+                // Wrong audio/video type. return error
+                //TODO generic message factory
+                return new Response(json_encode(array(
+                    'wasUploaded' => false,
+                    'error' => Transcoder::INVALID_AUDIO_VIDEO_ERROR
+                )), 200, array(
+                    'Content-Type' => 'application/json'
+                ));
+                // throw new \Exception(Transcoder::INVALID_AUDIO_VIDEO_ERROR);
+            }
+
+            $media->setTitle($uploadedFile->getClientOriginalName()); //TODO clean this filename
             $media->setOwner($user);
 
             // Get Mime Type
@@ -188,12 +227,11 @@ class MyFilesController extends Controller
             // $mimeType = finfo_file($finfo, $uploadedFile->getRealPath());
             // finfo_close($finfo);
 
-            $resourcePath = $uploadedFile->getRealPath();
+            /*$resourcePath = $uploadedFile->getRealPath();
             $fs = new Filesystem();
 
             $type = Utils::getUploadedFileType($uploadedFile);
             $isValid = true;
-            $transcoder = $this->container->get('imdc_terptube.transcoder');
             if ($type == Media::TYPE_AUDIO) {
                 $isValid = $transcoder->checkAudioFile($uploadedFile);
             } else
@@ -211,7 +249,7 @@ class MyFilesController extends Controller
                 $media->setType($type);
                 $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
                 $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
-                $originalExtension = $uploadedFile->getClientOriginalExtension();
+                $originalExtension = $uploadedFile->getClientOriginalExtension();*/
 
                 $user->addResourceFile($media);
 
@@ -235,7 +273,7 @@ class MyFilesController extends Controller
                     'wasUploaded' => true,
                     'media' => json_decode($serializer->serialize($media, 'json'), true)
                 );
-            }
+            //}
         } else {
             $content = array(
                 'wasUploaded' => false,
