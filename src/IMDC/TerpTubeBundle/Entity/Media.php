@@ -25,7 +25,7 @@ class Media implements MediaInterface
 
     const READY_WEBM = 1;
 
-    const READY_MPEG = 2;
+    const READY_MP4 = 2;
 
     const READY_YES = 3;
 
@@ -302,7 +302,7 @@ class Media implements MediaInterface
             $fs = new Filesystem();
             $fs->remove($this->getThumbnailPath());
             $this->setThumbnailPath(NULL);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error($e->getTraceAsString());
         }
     }
