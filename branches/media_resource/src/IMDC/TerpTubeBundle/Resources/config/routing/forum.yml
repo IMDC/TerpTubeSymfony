@@ -1,0 +1,30 @@
+imdc_forum_list:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:list }
+
+imdc_forum_new:
+  pattern: /new/{groupId}
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:new, groupId: null }
+  requirements:
+    groupId: \d+
+
+imdc_forum_view:
+  pattern: /{forumid}
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:view }
+  requirements:
+    forumid: \d+
+
+imdc_forum_edit:
+  pattern: /{forumid}/edit
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:edit }
+  requirements:
+    forumid: \d+
+
+imdc_forum_delete:
+  pattern: /{forumid}/delete
+  defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
+  methods: [POST]
+  requirements:
+    forumid: \d+
+  options:
+    expose: true

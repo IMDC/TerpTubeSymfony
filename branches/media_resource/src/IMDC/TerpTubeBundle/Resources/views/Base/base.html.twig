@@ -1,0 +1,46 @@
+{% extends 'IMDCTerpTubeBundle:Base:core.html.twig' %}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% block core_content %}
+    <div class="col-lg-1 center-block text-center tt-navbar-side">
+        <div>
+            <div {% block sidebarlinks_forums %}{% endblock %}>
+                <a href="{{ path('imdc_forum_list') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/icon_forums.png') }}" /><span>Forums</span></a>
+            </div>
+        </div>
+         <div>
+            <div {% block sidebarlinks_groups %}{% endblock %}>
+                <a href="{{ path('imdc_group_list') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/icon_groups.png') }}" /><span>Groups</span></a>
+            </div>
+        </div>
+         <div>
+            <div {% block sidebarlinks_members %}{% endblock %}>
+                <a href="{{ path('imdc_member_list') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/icon_members.png') }}" /><span>Members</span></a>
+            </div>
+        </div>
+        <div>
+            <div {% block sidebarlinks_help %}{% endblock %}>
+                <a href="{{ path('imdc_help_index') }}"><img class="img-responsive center-block" src="{{ asset('bundles/imdcterptube/img/icon_help.png') }}" /><span>Help</span></a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-offset-1 col-lg-11">
+        {% block flashmessages %}
+            {% for type, messages in app.session.flashbag.all %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ message|trans({}, 'FOSUserBundle') }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endblock flashmessages %}
+        <div class="row">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </div>
+{% endblock core_content %}

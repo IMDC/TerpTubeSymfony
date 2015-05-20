@@ -1,0 +1,280 @@
+# Group
+group:
+    edit:
+        submit: Update group
+    show:
+        name: Group name
+    new:
+        submit: Create group
+    flash:
+        updated: The group has been updated
+        created: The group has been created
+        deleted: The group has been deleted
+
+# Security
+"Bad credentials": Invalid username or password
+
+security:
+    login:
+        username: "Username:"
+        password: "Password:"
+        remember_me: Remember me
+        submit: Login
+        not_registered: "Not registered?"
+        register_here: "Click here to register!"
+        forgot_password: "Forgot your password?"
+        password_reset: "Click here to reset it!"
+        not_logged_in: "Not logged in/Session expired! Please log in again"
+
+# Profile
+profile:
+    show:
+        username: Username
+        email: Email
+    edit:
+        submit: Update
+    flash:
+        updated: The profile has been updated
+
+# Password change
+change_password:
+    submit: Change password
+    flash:
+        success: The password has been changed
+
+# Registration
+registration:
+    check_email: An email has been sent to %email%. It contains an activation link you must click to activate your account.
+    confirmed: Congrats %username%, your account is now activated.
+    back: Back to the originating page.
+    submit: Register
+    flash:
+        user_created: The user has been created successfully
+    email:
+        subject: Welcome %username%!
+        message: |
+            Hello %username%!
+
+            To finish activating your account - please visit %confirmationUrl%
+
+            Regards,
+            the Team.
+
+# Password resetting
+resetting:
+    password_already_requested: The password for this user has already been requested within the last 24 hours.
+    check_email: An email has been sent to %email%. It contains a link you must click to reset your password.
+    request:
+        invalid_username: The username or email address "%username%" does not exist.
+        username: "Username or email address:"
+        submit: Reset password
+    reset:
+        submit: Change password
+    flash:
+        success: The password has been reset successfully
+    email:
+        subject: Reset Password
+        message: |
+            Hello %username%!
+
+            To reset your password - please visit %confirmationUrl%
+
+            Regards,
+            the Team.
+
+nav:
+    terptube_home: "Terptube Home"
+    my_files: "My Files"
+    my_friends: "My Friends" 
+    my_groups: "My Groups"
+    my_interpretations: "My Interpretations"
+    admin: "Admin Dashboard"
+    invitations: "Invitations"
+    inbox: "Inbox"
+    my_profile: "My Profile"
+# Global strings
+layout:
+    logout: Logout
+    login: Login/Register
+    register: Register
+    logged_in_as: Logged in as %username%
+    user_inbox: Inbox
+
+interpretationsGateway:
+    title: "My Interpretations"
+    type:
+        0: "Simultaneous"
+        1: "Consecutive"
+
+mediachooser:
+    form:
+        record_video:
+            default: 'Record a new video'
+            post: 'Record a comment'
+            post_reply: 'Record a reply'
+        upload_file: 'Upload a file'
+        select: 'Select from My Files'
+
+filesGateway:
+    noFiles: "You have not added any files yet. Use the above buttons to add files."
+    deleteLink: "Delete"
+    deleteConfirmMessage: "Are you sure you want to delete this file?"
+    deleteMediaInUseConfirmation:
+        finalMessage: "This media is being used in %mediaUsedLocations%. Deleting it will remove it from there as well. Confirm delete?"
+        forum: "a forum"
+        message: "a message"
+        post: "a post"
+        thread: "a thread"
+        avatar: "your profile avatar"
+    
+    previewLink: "Preview"
+    shareLink: "Post this"
+# Form field labels
+form:
+    group_name: "Group name:"
+    username: "Username:"
+    email: "Email:"
+    current_password: "Current password:"
+    password: "Password:"
+    password_confirmation: "Verification:"
+    new_password: "New password:"
+    new_password_confirmation: "Verification:"
+    
+    media:
+        title: "Name your file"
+        upload: "Upload"
+        record: "Record"
+        
+    
+    profile:
+        firstName: "First name:"
+        lastName: "Last name:" 
+        middleName: "Middle name:" 
+        birthDate: 
+            title: "Birth date:"
+            empty: "Not set"
+            invalid: 'You entered an invalid date'
+        languages:
+            title: "Languages:"
+        language:
+            edit: "Edit"
+            delete: "Delete"
+            add: "Add a Language"
+            title: "Language:"
+            type: 
+                title: "Type"
+                0: "Sign"
+                1: "Spoken"
+            name: "Name"
+            proficiency: #Using ILR scale: http://en.wikipedia.org/wiki/ILR_scale
+                title: "Level of Proficiency"
+                1: "Elementary"
+                2: "Limited"
+                3: "Professional"
+                4: "Fully Professional"
+                5: "Native or Bilingual"
+        city: "City:"
+        country: "Country:"
+        gender:
+            title: "Gender:" 
+            m: "Male"
+            f: "Female"
+            empty: "Not set"
+        textBio: "Tell us a little bit about yourself"
+        skypeName: "Skype name"
+        interestedInMentoredByMentor:
+            title: "Are you interested in being mentored by a Sign language mentor?"
+        interestedInMentoredByInterpreter:
+            title: "Are you interested in being mentored by a Sign language interpreter?"
+        interestedInMentoringSignLanguage:
+            title: "Are you interested in being a Sign language mentor?"
+        interestedInMentoredingInterpreter:
+            title: "Are you interested in being a Sign language interpreter mentor?"
+        interestedInMentoringMentor:
+            title: "Are you interested in mentoring other mentors?"
+        profileVisibleToPublic:
+            title: "Would you like your profile to appear in the public directory?"
+            
+    generic:
+        allFieldsRequired: 'All fields are required!'
+        empty: 'Not set'
+        yes: 'Yes'
+        no: 'No'
+        1: 'Yes'
+        0: 'No'
+        null: 'Not set'
+        cancel: "Cancel"
+        submit: "Submit"
+        
+    upload:
+        maxFileSizeExceeded: 'The file you are trying to upload is too big (%fileSize%). Please select a different file. The maximum allowed upload size is (%maxUploadSize%).' 
+    
+profile:
+    show:
+        userName:   "User name"
+        firstName: "First name"
+        lastName: "Last name" 
+        middleName: "Middle name" 
+        birthDate: "Birth date"
+        city: "City"
+        country: "Country"
+        gender:
+            title: "Gender" 
+            m: "Male"
+            f: "Female"
+            null: "Not set"
+        ownAvatar: "Edit profile picture"
+        avatar: "Profile picture"
+        skypeName: "Skype name"
+        interestedInMentoredByMentor:
+            title: "Interested in being mentored by a Sign language mentor"
+        interestedInMentoredByInterpreter:
+            title: "Interested in being mentored by a Sign language interpreter"
+        interestedInMentoringSignLanguage:
+            title: "Interested in being a Sign language mentor"
+        interestedInMentoringInterpreter:
+            title: "Interested in being a Sign language interpreter mentor"
+        interestedInMentoringMentor:
+            title: "Interested in mentoring other mentors"
+        profileVisibleToPublic:
+            title: "Profile is shown on the public directory"
+        textBio: "Bio"
+        postCount: "Post Count"
+        languages:
+            title: "Languages"
+            empty: "No languages provided"
+        mentors:
+            title: "Current Mentors"
+            empty: "No mentors assigned"
+        mentees:
+            title: "Current Mentees"
+            empty: "No mentees assigned"
+            
+    edit:
+        submit: "Edit"
+        changePassword: "Change your password"
+        avatar:
+            submit: "Update profile picture"
+            cancel: "Cancel"
+            title: "Choose a new profile picture"  
+        language:
+            add:
+                submit: "Add language"  
+        generic:
+            cancel: "Cancel"
+
+player:
+    recording: 
+        recordingButton: "Record"
+        forwardButton: "Crop Recorded video"
+        doneButton: "Finish recording"
+        doneAndPostButton: "Finish recording and submit" 
+    previewing:
+        backToRecordingButton: "Back To Recording"
+        doneButton: "Crop"
+        doneAndPostButton: "Crop and submit"
+
+member:
+    infoBlock:
+        joined: "Joined"
+        postCount: "Posts"        

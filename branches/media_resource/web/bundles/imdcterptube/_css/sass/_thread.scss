@@ -1,0 +1,18 @@
+.tt-thread-op-container {
+  /*overflow-y: scroll;*/ /* scroll threadOpContainer */
+}
+
+.tt-thread-content {
+  padding: 3px;
+  margin-bottom: 15px;
+  min-height: 4em;
+  max-height: 900px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  overflow-x: auto;
+  background-color: #fff;
+}
+
+.tt-thread-reply-container {
+  overflow-y: scroll; /* scroll threadReplyContainer */
+}

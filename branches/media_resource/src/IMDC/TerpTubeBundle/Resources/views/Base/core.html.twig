@@ -1,0 +1,223 @@
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>{% block title %}{% endblock %} | TerpTube</title>
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="{{ asset('js/html5shiv.min.js') }}"></script>
+        <![endif]-->
+        
+        <!-- Add in the favicon icon -->
+        <link rel="shortcut icon" href="{{ asset('bundles/imdcterptube/img/tt_logo_favicon.ico') }}" type="image/x-icon">
+        
+        <link rel="icon" href="{{ asset('bundles/imdcterptube/img/tt_logo_favicon.ico') }}" type="image/x-icon">
+
+        <!--  Bootstrap has to come before font awesome for everything to work right -->
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap.css') }}">
+
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/bmatznerfontawesome/css/font-awesome.min.css') }}" />
+
+        <script src="{{ asset('js/jquery.js') }}"></script>
+        
+        <script src="{{ asset('js/jquery-ui.js') }}"></script>
+
+        <script src="{{ asset('js/bootstrap.js') }}"></script>
+         
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/sonatajquery/themes/flick/jquery-ui-1.10.4.custom.css') }}">
+
+        <script src="{{ asset('js/jquery.autosize.min.js') }}"></script>
+        
+        <script type="text/javascript" src="{{ asset('bundles/ibrowsxeditable/javascript/bootstrap.editable-1.5.1.js') }}"></script>
+        <script type="text/javascript" src="{{ asset('bundles/ibrowsxeditable/javascript/xeditable.js') }}"></script>
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/ibrowsxeditable/css/bootstrap-editable.css') }}">
+        
+
+        <script src="{{ asset('js/tag-it.min.js') }}"></script>
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/jquery.tagit.css') }}">
+
+        <!-- Recorder for web-rtc -->
+        <script src="{{ asset('js/RecordRTC.js') }}"></script>
+
+        <script src="{{ asset('js/require.js') }}"></script>
+
+        <!--  FOS js routing script -->
+        <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+        <!-- JS Translator bundle -->
+        <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
+        <script src="{{ url('bazinga_jstranslation_js', { 'domain': 'IMDCTerpTubeBundle' }) }}"></script>
+        
+        {% block header %}
+            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}?version={{ version }}">
+            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube.css') }}?version={{ version }}">
+
+            <script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}?version={{ version }}"></script>
+            {% if app.environment == 'dev' %}
+                <script type="text/javascript">
+                    requirejs.config({
+                        baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
+                        paths: {
+                            dust: 'lib/dust-full.min',
+                            'dust-helpers': 'lib/dust-helpers.min',
+                            underscore: 'lib/underscore-min',
+                            Sortable: 'lib/Sortable.min',
+                            templates: 'template/templates',
+                            extra: 'lib/extra'
+                        },
+                        shim: {
+                            'dust-helpers': {
+                                deps: ['dust']
+                            },
+                            underscore: {
+                                exports: '_'
+                            },
+                            Sortable: {
+                                exports: 'Sortable'
+                            },
+                            templates: {
+                                deps: ['dust-helpers']
+                            },
+                            main: {
+                                deps: ['underscore', 'templates', 'extra']
+                            }
+                        }
+                    });
+
+                    require(['main']);
+                </script>
+            {% else %}
+                <script src="{{ asset('bundles/imdcterptube/_js/terptube.js') }}?version={{ version }}"></script>
+            {% endif %}
+
+            <script type="text/javascript">
+                require(['component/recorderComponent'], function(RecorderComponent) {
+                    $('a.navbar-link.main-recorder').on('click', function (e) {
+                        RecorderComponent.render({}, function (e) {
+                            $tt._recorder = e.recorderComponent;
+                            $tt._recorder.subscribe(RecorderComponent.Event.DONE, function (e) {
+                                $tt._recorder.hide();
+                            }.bind(this));
+                            $tt._recorder.subscribe(RecorderComponent.Event.HIDDEN, function(e) {
+                                $tt._recorder.destroy();
+                            }.bind(this));
+                            $tt._recorder.show();
+                        }.bind(this));
+                    }.bind(this));
+                });
+            </script>
+            
+            <!-- Register an error handler for Ajax calls to reload the page on a 403 error (Usually when user is not logged in)-->
+            <script type="text/javascript">
+	            $(document).ready(function() {
+	        	    $(document).ajaxError(function (event, jqXHR, settings, thrownError) {
+	        	        if (403 === jqXHR.status) {
+		        	        alert(jqXHR.responseText);
+	        	            window.location.reload();
+	        	        }
+	        	    });
+	        	});
+            </script>
+        {% endblock header %}
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="navbar navbar-inverse navbar-fixed-top tt-navbar-top">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-1 navbar-left">
+                                <div class="navbar-header tt-navbar-header">
+                                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#tt-navbar-collapse-1">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <a href="{{ path('imdc_home_user_home') }}" title="{{ 'nav.terptube_home' | trans  }}">
+                                        <img class="img-responsive center-block tt-navbar-logo" src="{{ asset('bundles/imdcterptube/img/logo_inverse.png') }}">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-11" style="padding-left: 0;">
+                                <div class="collapse navbar-collapse" id="tt-navbar-collapse-1">
+                                    {% if app.user and is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                                        <ul class="nav navbar-nav tt-navbar-nav-top">
+                                            <li {% block nav_ul_my_files %}{% endblock %}>
+                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_myfiles_list') }}" title="{{ 'nav.my_files' | trans  }}"><i class="fa fa-folder-open fa-2x"></i></a>
+                                            </li>
+                                            <!-- TODO interpretations disabled for now
+                                            <li {% block nav_ul_authenticated_my_interpretations %}{% endblock %}>
+                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{#{ path('imdc_myfiles_list_interpretations') }#}"><i class="fa fa-film fa-2x"></i></a>
+                                            </li>-->
+                                            <li {% block nav_ul_contacts %}{% endblock %}>
+                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/create.gif') }}'/>" href="{{ path('imdc_contact_list') }}" title="My Contacts"><i class="fa fa-user fa-2x"></i></a>
+                                            </li>
+                                            <li {% block nav_ul_my_groups %}{% endblock %}>
+                                                <a class="navbar-link sign-popover" data-placement="bottom" data-content="<img src='{{ asset('bundles/imdcterptube/img/info.gif') }}'/>" href="{{ path('imdc_group_my_groups') }}" title="{{ 'nav.my_groups' | trans  }}"><i class="fa fa-users fa-2x"></i></a>
+                                            </li>
+                                            <li>
+                                                <a class="navbar-link main-recorder" href="#" title="{{ 'mediachooser.form.record_video.default'|trans }}"><i class="fa fa-video-camera fa-2x"></i></a>
+                                            </li>
+                                            {% if app.user and is_granted('ROLE_SUPER_ADMIN') %}
+                                                <li {% block nav_ul_authenticated_admin %}{% endblock %}>
+                                                    <a class="navbar-link" href="{{ path('sonata_admin_dashboard') }}"><i class="fa fa-cogs fa-2x"></i></a>
+                                                </li>
+                                            {% endif %}
+                                        </ul>
+                                        <ul class="nav navbar-nav navbar-right tt-navbar-nav-top tt-navbar-right-top">
+                                            <li>
+                                                <a class="navbar-link" href="{{ path('imdc_profile_me') }}" title="{{ 'nav.my_profile' | trans  }}">
+                                                    <i class="fa fa-user fa-lg"></i> {{ app.user.username }}
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="navbar-link toolpop" href="{{ path('imdc_message_inbox') }}" title="{{ 'nav.inbox' | trans  }}">
+                                                    <i class="fa fa-envelope fa-lg"></i> <span class="badge badge-{{ app.user.getNumUnreadPMs > 0 ? 'success': 'inverse' }}">{{ app.user.getNumUnreadPMs }}</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="navbar-link toolpop" href="{{ path('imdc_invitation_list') }}" title="{{ 'nav.invitations' | trans  }}">
+                                                    <i class="fa fa-inbox fa-lg"></i> <span class="badge badge-{{ app.user.getNumActiveInvitations > 0 ? 'success': 'inverse' }}">{{ app.user.getNumActiveInvitations }}</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="navbar-link" href="{{ path('fos_user_security_logout') }}">
+                                                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }} <i class="fa fa-sign-out fa-lg"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    {% else %}
+                                        {% render controller('IMDCTerpTubeBundle:Security:login') %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container-fluid">
+                    <div class="row">
+                        {% block core_content %}
+                        {% endblock core_content %}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="navbar navbar-inverse navbar-fixed-bottom tt-navbar-bottom">
+                    <div class="container-fluid">
+                        <div class="text-center tt-copyright">
+                            &copy; IMDC, EKU 2014
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% block javascripts %}
+        {% endblock javascripts %}
+    </body>
+</html>

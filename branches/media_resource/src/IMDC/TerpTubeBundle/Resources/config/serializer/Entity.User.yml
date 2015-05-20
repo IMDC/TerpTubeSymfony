@@ -1,0 +1,9 @@
+IMDC\TerpTubeBundle\Entity\User:
+  exclusion_policy: ALL
+  properties:
+    profile:
+      expose: true
+    joinDate:
+      expose: true
+    postCount:
+      expose: true

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <parameters>
+        <parameter key="file_filter.constant.nofilter" type="constant">IMDC\TerpTubeBundle\Filter\FileFilter::FILTER_NOFILTER</parameter>
+        <parameter key="file_filter.constant.image" type="constant">IMDC\TerpTubeBundle\Filter\FileFilter::FILTER_IMAGE</parameter>
+        <parameter key="file_filter.constant.video" type="constant">IMDC\TerpTubeBundle\Filter\FileFilter::FILTER_VIDEO</parameter>
+        <parameter key="file_filter.constant.audio" type="constant">IMDC\TerpTubeBundle\Filter\FileFilter::FILTER_AUDIO</parameter>
+        <parameter key="file_filter.constant.record" type="constant">IMDC\TerpTubeBundle\Filter\FileFilter::FILTER_RECORD</parameter>
+    </parameters>
+</container>

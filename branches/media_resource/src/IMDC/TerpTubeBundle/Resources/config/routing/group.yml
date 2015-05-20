@@ -1,0 +1,65 @@
+imdc_group_list:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:list }
+
+imdc_group_new:
+  pattern: /new
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:new }
+  options:
+    expose: true
+
+imdc_group_view:
+  pattern: /{groupId}
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:view }
+  requirements:
+    groupId: \d+
+
+imdc_group_edit:
+  pattern: /{groupId}/edit
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:edit }
+  requirements:
+    groupId: \d+
+
+imdc_group_delete:
+  pattern: /{groupId}/delete
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:delete }
+  methods: [POST]
+  requirements:
+    groupId: \d+
+  options:
+    expose: true
+
+imdc_group_my_groups:
+  pattern: /myGroups
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:listMyGroups }
+
+imdc_group_join:
+  pattern: /{groupId}/join
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:join }
+  requirements:
+    groupId: \d+
+
+imdc_group_leave:
+  pattern: /{groupId}/leave
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:leave }
+  requirements:
+    groupId: \d+
+
+imdc_group_message:
+  pattern: /{groupId}/message
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:message }
+  requirements:
+    groupId: \d+
+
+imdc_group_manage:
+  pattern: /{groupId}/manage
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:manage }
+  requirements:
+    groupId: \d+
+
+imdc_group_invite_member:
+  pattern: /{groupId}/invite/{userId}
+  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:inviteMember }
+  requirements:
+    groupId: \d+
+    userId: \d+

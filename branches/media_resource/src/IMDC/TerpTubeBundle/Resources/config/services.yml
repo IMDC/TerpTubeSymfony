@@ -1,0 +1,180 @@
+parameters:
+#    imdc_terp_tube.example.class: IMDC\TerpTubeBundle\Example
+    imdc_terptube.component.authentication.handler.login_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LoginSuccessHandler
+    imdc_terptube.component.authentication.handler.logout_success_handler.class: IMDC\TerpTubeBundle\Component\Authentication\Handler\LogoutSuccessHandler
+
+services:
+#    imdc_terp_tube.example:
+#        class: %imdc_terp_tube.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
+
+    upload_video_service:
+        class: IMDC\TerpTubeBundle\Consumer\UploadVideoConsumer
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder"]
+        tags:
+            - { name: 'monolog.logger', channel: 'imdc' }
+            
+    upload_audio_service:
+        class: IMDC\TerpTubeBundle\Consumer\UploadAudioConsumer
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder"]
+        tags:
+            - { name: 'monolog.logger', channel: 'imdc' }
+
+    imdc_terptube.authentication_manager:
+        class: IMDC\TerpTubeBundle\Utils\AuthenticationManager
+        arguments: ["@security.context"]
+            
+    imdc_terptube_user.registration.form.type:
+        class: IMDC\TerpTubeBundle\Form\Type\RegistrationFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: imdc_terptube_user_registration }
+              
+    imdc_terptube_user.profile.form.type:
+        class: IMDC\TerpTubeBundle\Form\Type\ProfileFormType
+        arguments: [%fos_user.model.user.class%]
+        tags:
+            - { name: form.type, alias: imdc_terptube_user_profile }
+              
+    imdc_terptube.component.authentication.handler.login_success_handler:
+        class: %imdc_terptube.component.authentication.handler.login_success_handler.class%
+        arguments: ["@router", "@security.context"]
+        tags:
+            - {name: 'monolog.logger', channel: 'security' }
+              
+    imdc_terptube.component.authentication.handler.logout_success_handler:
+        class: %imdc_terptube.component.authentication.handler.logout_success_handler.class%
+        arguments: ["@router", "@security.context"]
+        tags:
+            - {name: 'monolog.logger', channel: 'security' }
+              
+    imdc_terptube.upload_resource_listener:
+        class: IMDC\TerpTubeBundle\EventListener\UploadListener
+        arguments: ["@logger", "@doctrine.orm.entity_manager", "@old_sound_rabbit_mq.upload_video_producer", "@old_sound_rabbit_mq.upload_audio_producer", "@imdc_terptube.transcoder"]
+        tags:
+            - { name: kernel.event_subscriber}
+            - { name: 'monolog.logger', channel: 'imdc' }
+     
+    imdc_terptube.fos_user_listener:
+        class: IMDC\TerpTubeBundle\EventListener\FOSUserListener
+        arguments: ["@logger", "@doctrine", "@router", "@fos_user.user_manager"]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: 'monolog.logger', channel: 'imdc' }
+                
+    imdc_terptube.new_group_founder_listener:
+        class: IMDC\TerpTubeBundle\EventListener\GroupListener
+        arguments: ["@logger", "@doctrine", "@router", "@security.context"]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: 'monolog.logger', channel: 'imdc' }
+    
+    imdc_terptube.transcoder_listener:
+        class: IMDC\TerpTubeBundle\EventListener\TranscodeListener
+        arguments: ["@logger", "@doctrine", "@router", "@security.context"]
+        tags:
+            - { name: kernel.event_subscriber }
+            - { name: 'monolog.logger', channel: 'imdc' }
+     
+    imdc_terptube.transcoder:
+        class: IMDC\TerpTubeBundle\Transcoding\Transcoder
+        arguments: ["@logger", "@transcoder", "%imdc_ffmpeg.config%"]
+        tags:
+            - { name: 'monolog.logger', channel: 'imdc' }
+    
+    # enable the truncate extension in twig
+    twig.extension.text:
+        class: Twig_Extensions_Extension_Text
+        tags:
+            - { name: twig.extension }
+            
+    transcoding.preset.ffmpeg.x264_720p_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\X264Video720pPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+            
+    transcoding.preset.ffmpeg.webm_720p_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideo720pPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.x264_vga_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\X264VideoVGAPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.webm_vga_video:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMVideoVGAPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.aac_audio:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\AACAudioPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    transcoding.preset.ffmpeg.webm_audio:
+        class: IMDC\TerpTubeBundle\Transcoding\Preset\FFmpeg\WebMAudioPreset
+        scope: prototype
+        tags:
+            - {name: transcoding.preset}
+    
+    imdc.utils.user_manipulator:
+        class: IMDC\TerpTubeBundle\Utils\UserManipulator
+        arguments: [@fos_user.user_manager]
+        
+    imdc.utils.maxUploadSizeExtension:
+        class: IMDC\TerpTubeBundle\Extensions\Twig\maxUploadSizeHelper
+        tags:
+            - {name: twig.extension }
+
+    imdc_terptube.security.acl.access_provider:
+        class: IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider
+        arguments: [@doctrine.orm.entity_manager, @security.acl.provider]
+
+    imdc_terptube.security.acl.access_voter:
+        class: IMDC\TerpTubeBundle\Security\Acl\Voter\AccessVoter
+        arguments: [@imdc_terptube.security.acl.access_provider, @service_container]
+        public: false
+        tags:
+            - { name: security.voter }
+
+    imdc_terptube.form.type.access_type:
+        class: IMDC\TerpTubeBundle\Form\Type\AccessTypeType
+        arguments: [@doctrine.orm.entity_manager, @security.context]
+        tags:
+            - { name: form.type, alias: access_type }
+
+    imdc_terptube.form.type.media:
+        class: IMDC\TerpTubeBundle\Form\Type\MediaChooserType
+        arguments: [@doctrine.orm.entity_manager, @form.factory]
+        tags:
+            - { name: form.type, alias: media_chooser }
+
+    imdc_terptube.helper.multi_pagination_helper:
+        class: IMDC\TerpTubeBundle\Helper\MultiPaginationHelper
+        tags:
+            - { name: knp_paginator.injectable, paginator: @knp_paginator }
+
+    imdc_terptube.validator.contraints.owns_media_validator:
+        class: IMDC\TerpTubeBundle\Validator\Constraints\OwnsMediaValidator
+        arguments: [@security.context]
+        tags:
+            - { name: validator.constraint_validator, alias: owns_media }
+            
+    mdc_terptube.validator.contraints.user_exists_validator:
+        class: IMDC\TerpTubeBundle\Validator\Constraints\UserExistsValidator
+        arguments: [@doctrine.orm.entity_manager]
+        tags:
+            - { name: validator.constraint_validator, alias: user_exists }
+            
+    imdc_terptube.ajax_authentication_listener:
+        class: IMDC\TerpTubeBundle\EventListener\AjaxAuthenticationListener
+        arguments: ["@imdc_terptube.authentication_manager", @translator]
+        tags:
+             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
