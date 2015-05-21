@@ -8,7 +8,7 @@ define([
         this.controller = controller;
 
         //this.bind__onChangeAccessType = this._onChangeAccessType.bind(this);
-        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onSubmitForm = this._onSubmitForm.bind(this);
         this.bind__onUploadStart = this._onUploadStart.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -20,7 +20,7 @@ define([
         this.$submit = this.$container.find(NewView.Binder.SUBMIT);
 
         //this.$accessTypes.on('change', this.bind__onChangeAccessType);
-        this.$submit.on('click', this.bind__onClickSubmit);
+        this.$form.on('submit', this.bind__onSubmitForm);
 
         //this.$accessTypes.filter(':checked').trigger('change');
 
@@ -72,7 +72,7 @@ define([
         }
     };*/
 
-    NewView.prototype._onClickSubmit = function (e) {
+    NewView.prototype._onSubmitForm = function (e) {
         if (this.$form[0].checkValidity()) {
             this.$submit.button('loading');
         }
