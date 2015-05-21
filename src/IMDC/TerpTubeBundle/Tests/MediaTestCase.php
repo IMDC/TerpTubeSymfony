@@ -84,8 +84,6 @@ class MediaTestCase extends WebTestCase
         $this->media->setIsReady(Media::READY_WEBM);
         $this->media->setResource($resourceFile);
 
-        $resourceFile->setMedia($this->media);
-
         $this->entityManager->persist($resourceFile);
         $this->entityManager->persist($this->media);
         $this->entityManager->flush();

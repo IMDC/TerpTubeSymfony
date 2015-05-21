@@ -1,5 +1,5 @@
 IMDC\TerpTubeBundle\Entity\Media:
-    type:  entity
+    type: entity
     inheritanceType: JOINED
     discriminatorColumn:
         name: discr
@@ -30,7 +30,6 @@ IMDC\TerpTubeBundle\Entity\Media:
             type: string
             length: 10
             nullable: true
-        
     manyToOne:
         owner:
             targetEntity: User
@@ -38,7 +37,6 @@ IMDC\TerpTubeBundle\Entity\Media:
             joinColumn:
                 name: owner_id
                 referencedColumnName: id
-                
     oneToOne:
         metaData: #metadata object to hold the information about the data
             targetEntity: MetaData
@@ -46,13 +44,11 @@ IMDC\TerpTubeBundle\Entity\Media:
                 name: meta_data
                 referencedColumnName: id
             cascade: ["all"]
-                
         resource: #resource object to hold the data
             targetEntity: ResourceFile
             joinColumn:
                 name: resource_id
                 referencedColumnName: id
             cascade: ["all"]
-            
     lifecycleCallbacks:
         preRemove: [ removeThumbnail ]

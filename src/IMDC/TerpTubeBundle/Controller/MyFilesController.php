@@ -12,8 +12,6 @@ use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -112,7 +110,7 @@ class MyFilesController extends Controller
 
         $resourceFile = new ResourceFile();
         $resourceFile->setFile($mergedFile);
-        $resourceFile->setWebmExtension('webm');
+        //$resourceFile->setWebmExtension('webm');
 
         if ($isInterpretation) {
             $media = new Interpretation();
@@ -128,7 +126,6 @@ class MyFilesController extends Controller
         $media->setIsReady(Media::READY_WEBM);
         $media->setResource($resourceFile);
 
-        $resourceFile->setMedia($media);
         $user->addResourceFile($media);
 
         $em->persist($resourceFile);
@@ -138,7 +135,7 @@ class MyFilesController extends Controller
 
         // FIXME: transcoder seems to do this already. no need to rename and persist
         // Need to rename to webm since in some cases the recording is done as a .bin file
-        $resource = $media->getResource();
+        /*$resource = $media->getResource();
         $resourceFile = new File($resource->getAbsolutePath());
         $targetFile = $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm';
         if (!file_exists($targetFile)) {
@@ -147,7 +144,7 @@ class MyFilesController extends Controller
         }
         $resource->setPath("webm");
         // $em->persist ( $resourceFile );
-        $em->flush();
+        $em->flush();*/
 
         $eventDispatcher = $this->container->get('event_dispatcher');
         $uploadEvent = new UploadEvent($media);
@@ -181,7 +178,51 @@ class MyFilesController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $uploadedFile = $media->getResource()->getFile();
-            $media->setTitle($uploadedFile->getClientOriginalName()); // TODO clean this filename
+            $mediaTypeGuess1 = Utils::getUploadedFileType($uploadedFile->getMimeType());
+
+            $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
+            $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
+
+            /** @var $transcoder Transcoder */
+            $transcoder = $this->get('imdc_terptube.transcoder');
+
+            // check if ffmpeg supports an otherwise misidentified video/audio file
+            $ffprobe = $transcoder->getFFprobe();
+
+            $mediaTypeGuess2 = null;
+            try {
+                /** @var $streams FFProbe\DataMapping\StreamCollection */
+                $streams = $ffprobe->streams($uploadedFile->getRealPath());
+                $mediaTypeGuess2 =
+                    $streams->videos()->count() > 0
+                        ? Media::TYPE_VIDEO
+                        : ($streams->audios()->count() > 0
+                        ? Media::TYPE_AUDIO
+                        : null);
+            } catch (\Exception $e) {
+            }
+
+            // check if unix file cmd and ffmpeg agreed
+            if (($mediaTypeGuess1 == Media::TYPE_VIDEO || $mediaTypeGuess1 == Media::TYPE_AUDIO) &&
+                $mediaTypeGuess2 == null
+            ) {
+                // Wrong audio/video type. return error
+                //TODO generic message factory
+                return new Response(json_encode(array(
+                    'wasUploaded' => false,
+                    'error' => Transcoder::INVALID_AUDIO_VIDEO_ERROR
+                )), 200, array(
+                    'Content-Type' => 'application/json'
+                ));
+                // throw new \Exception(Transcoder::INVALID_AUDIO_VIDEO_ERROR);
+            }
+
+            $media->setType(
+                $mediaTypeGuess2 == null
+                    ? $mediaTypeGuess1
+                    : $mediaTypeGuess2);
+
+            $media->setTitle($uploadedFile->getClientOriginalName()); //TODO clean this filename
             $media->setOwner($user);
 
             // Get Mime Type
@@ -189,12 +230,11 @@ class MyFilesController extends Controller
             // $mimeType = finfo_file($finfo, $uploadedFile->getRealPath());
             // finfo_close($finfo);
 
-            $resourcePath = $uploadedFile->getRealPath();
+            /*$resourcePath = $uploadedFile->getRealPath();
             $fs = new Filesystem();
 
             $type = Utils::getUploadedFileType($uploadedFile);
             $isValid = true;
-            $transcoder = $this->container->get('imdc_terptube.transcoder');
             if ($type == Media::TYPE_AUDIO) {
                 $isValid = $transcoder->checkAudioFile($uploadedFile);
             } else
@@ -212,31 +252,31 @@ class MyFilesController extends Controller
                 $media->setType($type);
                 $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
                 $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
-                $originalExtension = $uploadedFile->getClientOriginalExtension();
+                $originalExtension = $uploadedFile->getClientOriginalExtension();*/
 
-                $user->addResourceFile($media);
+            $user->addResourceFile($media);
 
-                $em->persist($media);
-                $em->persist($user);
-                $em->flush();
+            $em->persist($media);
+            $em->persist($user);
+            $em->flush();
 
-                $resourcePath = $media->getResource()->getAbsolutePath();
-                if ($media->getResource()->getPath() == "bin") {
-                    $fs->rename($resourcePath,
-                        substr($resourcePath, 0, strrpos($resourcePath, ".")) . "." . $originalExtension, true);
-                    $media->getResource()->setPath($originalExtension);
-                }
-                $em->flush();
-
-                $dispatcher = $this->get('event_dispatcher');
-                $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD, new UploadEvent($media));
-
-                $serializer = $this->get('jms_serializer');
-                $content = array(
-                    'wasUploaded' => true,
-                    'media' => json_decode($serializer->serialize($media, 'json'), true)
-                );
+            /*$resourcePath = $media->getResource()->getAbsolutePath();
+            if ($media->getResource()->getPath() == "bin") {
+                $fs->rename($resourcePath,
+                    substr($resourcePath, 0, strrpos($resourcePath, ".")) . "." . $originalExtension, true);
+                $media->getResource()->setPath($originalExtension);
             }
+            $em->flush();*/
+
+            $dispatcher = $this->get('event_dispatcher');
+            $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD, new UploadEvent($media));
+
+            $serializer = $this->get('jms_serializer');
+            $content = array(
+                'wasUploaded' => true,
+                'media' => json_decode($serializer->serialize($media, 'json'), true)
+            );
+            //}
         } else {
             $content = array(
                 'wasUploaded' => false,
