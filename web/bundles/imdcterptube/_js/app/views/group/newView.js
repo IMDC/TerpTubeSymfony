@@ -4,7 +4,7 @@ define(['component/mediaChooserComponent'], function (MediaChooserComponent) {
     var NewView = function (controller, options) {
         this.controller = controller;
 
-        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onSubmitForm = this._onSubmitForm.bind(this);
         this.bind__onUploadStart = this._onUploadStart.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -14,7 +14,7 @@ define(['component/mediaChooserComponent'], function (MediaChooserComponent) {
         this.$form = this.$container.find('form[name^=' + NewView.FORM_NAME + ']');
         this.$submit = this.$container.find(NewView.Binder.SUBMIT);
 
-        this.$submit.on('click', this.bind__onClickSubmit);
+        this.$form.on('submit', this.bind__onSubmitForm);
 
         this.mcCmp = MediaChooserComponent.render(this.$form);
         this.mcCmp.subscribe(MediaChooserComponent.Event.UPLOAD_START, this.bind__onUploadStart);
@@ -47,7 +47,7 @@ define(['component/mediaChooserComponent'], function (MediaChooserComponent) {
         return this.$form.find('#' + NewView.FORM_NAME + '_' + fieldName);
     };
 
-    NewView.prototype._onClickSubmit = function (e) {
+    NewView.prototype._onSubmitForm = function (e) {
         if (this.$form[0].checkValidity()) {
             this.$submit.button('loading');
         }
