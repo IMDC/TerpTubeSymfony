@@ -138,6 +138,9 @@ define([
 
         this.media.push(media);
 
+        if (this.$gallery.length == 0)
+            return;
+
         this.$gallery.slideDown();
         this.galleryCmp.addMedia(media);
         this.galleryCmp.show(true);
