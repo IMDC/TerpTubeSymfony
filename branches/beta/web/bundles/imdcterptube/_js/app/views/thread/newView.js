@@ -7,7 +7,7 @@ define([
     var NewView = function (controller, options) {
         this.controller = controller;
 
-        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onSubmitForm = this._onSubmitForm.bind(this);
         this.bind__onUploadStart = this._onUploadStart.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
         this.bind__onReset = this._onReset.bind(this);
@@ -17,7 +17,7 @@ define([
         this.$form = this.$container.find('form[name^=' + NewView.FORM_NAME + ']');
         this.$submit = this.$container.find(NewView.Binder.SUBMIT);
 
-        this.$submit.on('click', this.bind__onClickSubmit);
+        this.$form.on('submit', this.bind__onSubmitForm);
 
         this.atCmp = AccessTypeComponent.render(this.$form);
 
@@ -52,7 +52,7 @@ define([
         return this.$form.find('#' + NewView.FORM_NAME + '_' + fieldName);
     };
 
-    NewView.prototype._onClickSubmit = function (e) {
+    NewView.prototype._onSubmitForm = function (e) {
         if (this.$form[0].checkValidity()) {
             this.$submit.button('loading');
         }
