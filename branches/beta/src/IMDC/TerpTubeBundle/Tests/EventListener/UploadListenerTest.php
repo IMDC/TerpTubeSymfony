@@ -62,11 +62,11 @@ class UploadListenerTestCase extends MediaTestCase
     private function getUploadListener()
     {
         $logger = $this->container->get('logger');
-        $doctrine = $this->container->get('doctrine');
+        $entityManager = $this->container->get('doctrine.orm.entity_manager');
         $upload_video_producer = $this->container->get('old_sound_rabbit_mq.upload_video_producer');
         $upload_audio_producer = $this->container->get('old_sound_rabbit_mq.upload_audio_producer');
         $transcoder = $this->container->get('imdc_terptube.transcoder');
 
-        return new UploadListener($logger, $doctrine, $upload_video_producer, $upload_audio_producer, $transcoder);
+        return new UploadListener($logger, $entityManager, $upload_video_producer, $upload_audio_producer, $transcoder);
     }
 }

@@ -27,7 +27,8 @@ class MediaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'IMDC\TerpTubeBundle\Entity\Media'
+            'data_class' => 'IMDC\TerpTubeBundle\Entity\Media',
+            'intention' => $this->getName() // for dynamic csrf token generation
         ));
     }
 

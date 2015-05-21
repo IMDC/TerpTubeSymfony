@@ -287,8 +287,9 @@ class MediaController extends Controller
         // FIXME if video is being transcoded, need to queue the operation to execute once it completes
         // FIXME check if start/end times are proper values
         $resourceFile = $media->getResource();
-        $webmFile = $resourceFile->getAbsolutePathWebm();
-        $mp4File = $resourceFile->getAbsolutePath();
+        //$webmFile = $resourceFile->getAbsolutePathWebm();
+        $webmFile = $resourceFile->getAbsolutePath();
+        //$mp4File = $resourceFile->getAbsolutePath();
         $ffprobe = FFProbe::create();
         $metaData = $media->getMetaData();
         $transcoder = $this->container->get('imdc_terptube.transcoder');
@@ -298,9 +299,10 @@ class MediaController extends Controller
 
         if ($media->getIsReady() == Media::READY_YES) {
             $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
-            $resultMp4 = $transcoder->trimVideo($mp4File, $startTime, $endTime);
+            //$resultMp4 = $transcoder->trimVideo($mp4File, $startTime, $endTime);
 
-            $success = $resultWebM && $resultMp4;
+            //$success = $resultWebM && $resultMp4;
+            $success = !!$resultWebM;
         }
 
         if ($media->getIsReady() == Media::READY_WEBM) {

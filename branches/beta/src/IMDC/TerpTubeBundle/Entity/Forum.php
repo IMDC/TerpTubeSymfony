@@ -87,14 +87,6 @@ class Forum
         $this->forumAdmins      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->forumModerators  = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
-    public function __toString() 
-    {
-        //FIXME title being optional causes nulls (ex. new from media)
-        //return $this->getTitleText();
-
-        return $this->getId() . ':' . $this->getTitleText();
-    }
         
     /**
      * Get id
@@ -432,5 +424,13 @@ class Forum
     public function getOrderedMedia()
     {
         return Utils::orderMedia($this->getTitleMedia(), $this->getMediaDisplayOrder());
+    }
+
+    public function __toString()
+    {
+        //FIXME title being optional causes nulls (ex. new from media)
+        //return $this->getTitleText();
+
+        return $this->getId() . ':' . $this->getTitleText();
     }
 }
