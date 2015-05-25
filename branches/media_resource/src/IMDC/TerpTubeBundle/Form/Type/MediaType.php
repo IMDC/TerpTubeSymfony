@@ -18,7 +18,7 @@ class MediaType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('resource', new ResourceFileFormType());
+        $builder->add('source_resource', new ResourceFileFormType());
     }
 
     /**
