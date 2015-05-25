@@ -2,8 +2,10 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
+use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -19,9 +21,9 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
     protected $logger;
 
     /**
-     * @var
+     * @var EntityManager
      */
-    protected $doctrine;
+    protected $entityManager;
 
     /**
      * @var Transcoder
@@ -41,15 +43,14 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
     public function __construct($logger, $doctrine, $transcoder)
     {
         $this->logger = $logger;
-        $this->doctrine = $doctrine;
+        $this->entityManager = $doctrine->getManager();
         $this->transcoder = $transcoder;
         $this->fs = new Filesystem();
     }
 
     protected function checkForPendingOperations($mediaId)
     {
-        $em = $this->doctrine->getManager();
-        $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        $media = $this->entityManager->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if ($media->getPendingOperations() != null && count($media->getPendingOperations()) > 0)
             return true;
         else
@@ -58,24 +59,26 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
 
     protected function executePendingOperations($mediaId)
     {
-        $em = $this->doctrine->getManager();
-        $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        /** @var $media Media */
+        $media = $this->entityManager->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         $pendingOperations = $media->getPendingOperations();
         foreach ($pendingOperations as $pendingOperation) {
             $operation = explode(",", $pendingOperation);
             $operationType = $operation [0];
             if ($operationType == "trim") {
-                $operationMediaType = $operation [1];
-                $resource = $media->getResource();
+                /*$operationMediaType = $operation [1];
                 if ($operationMediaType == "mp4") {
                     $inputFile = $resource->getAbsolutePath();
                 } else if ($operationMediaType == "webm") {
-                    //$inputFile = $resource->getAbsolutePathWebm ();
                     $inputFile = $resource->getAbsolutePath();
+                }*/
+                // regardless of $operationMediaType
+                foreach ($media->getResources() as $resource) {
+                    $inputFile = $resource->getAbsolutePath();
+                    $startTime = $operation [2];
+                    $endTime = $operation [3];
+                    $this->transcoder->trimVideo($inputFile, $startTime, $endTime);
                 }
-                $startTime = $operation [2];
-                $endTime = $operation [3];
-                $this->transcoder->trimVideo($inputFile, $startTime, $endTime);
                 $this->logger->info("Transcoding operation " . $pendingOperation . " completed!");
             } else {
                 $this->logger->error("Unknown operation " . $pendingOperation . "!");
@@ -84,17 +87,17 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
         // FIXME may have a race condition if pending operations are updated elsewhere
         $pendingOperations = array();
         $media->setPendingOperations($pendingOperations);
-        $em->flush();
+        $this->entityManager->flush();
     }
 
-    public function updateMetaData()
+    public function updateMetaData(ResourceFile $resourceFile)
     {
         $mediaType = $this->media->getType();
 
         switch ($mediaType) {
             case Media::TYPE_VIDEO:
             case Media::TYPE_AUDIO:
-                $file = new File($this->media->getResource()->getAbsolutePath());
+                $file = new File($resourceFile->getAbsolutePath());
                 $ffprobe = $this->transcoder->getFFprobe();
                 $format = $ffprobe->format($file->getRealPath());
 
@@ -121,6 +124,27 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
         }
     }
 
+    public function createResource(File $file)
+    {
+        // Correct the permissions to 664
+        $old = umask(0);
+        chmod($file->getRealPath(), 0664);
+        umask($old);
+
+        $resource = ResourceFile::fromFile($file);
+        // explicitly set the extension to that of the transcoded file (ext won't be guessed)
+        $resource->setPath($file->getExtension());
+
+        // make it immediately usable
+        $this->entityManager->persist($resource);
+        $this->entityManager->flush();
+
+        $this->updateMetaData($resource);
+        $this->entityManager->persist($resource);
+
+        return $resource;
+    }
+
     public function execute(AMQPMessage $msg)
     {
         $message = unserialize($msg->body);
@@ -128,23 +152,38 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
             return true;
 
         $mediaId = $message['media_id'];
-        $em = $this->doctrine->getManager();
 
-        $this->media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        $this->media = $this->entityManager->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (empty($this->media)) {
             // Can happen if media is deleted before transcoding can be executed
             $this->logger->info(sprintf("Media with ID=%d does not exist and cannot be transcoded!", $mediaId));
             return true;
         }
 
-        $mediaType = $this->media->getType();
+        $transcodingType = $this->media->getIsReady();
+        if (/*($transcodingType != Media::READY_MP4 &&
+                $transcodingType != Media::READY_NO &&
+                $transcodingType != Media::READY_WEBM) ||*/
+            $transcodingType == Media::READY_YES
+        ) {
+            // Already Transcoded should not be here
+            $this->logger->error("Should not be in this place of transcoding when everything is already completed!");
+            return true;
+        }
 
+        $mediaType = $this->media->getType();
         switch ($mediaType) {
             case Media::TYPE_VIDEO:
             case Media::TYPE_AUDIO:
                 try {
+                    // for video/audio files, the source file may be deleted after transcoding
+                    // so check for it
+                    $sourceResource = $this->media->getSourceResource();
+                    if (!file_exists($sourceResource->getAbsolutePath()))
+                        throw new \Exception('file not found'); // TODO make me better
+
                     /** @var $streams StreamCollection */
-                    $streams = $this->transcoder->getFFprobe()->streams($this->media->getResource()->getAbsolutePath());
+                    $streams = $this->transcoder->getFFprobe()->streams($sourceResource->getAbsolutePath());
                     if (($mediaType == Media::TYPE_VIDEO && $streams->videos()->count() == 0)
                         || ($mediaType == Media::TYPE_AUDIO && $streams->audios()->count() == 0)
                     ) {

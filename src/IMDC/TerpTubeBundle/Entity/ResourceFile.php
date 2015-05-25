@@ -3,8 +3,10 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\HttpFoundation\File\File as BaseFile;
 use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
 
 class ResourceFile
@@ -28,6 +30,7 @@ class ResourceFile
 
     /**
      * Unmapped property to handle file uploads
+     * @var BaseUploadedFile|BaseFile
      */
     private $file;
 
@@ -122,14 +125,19 @@ class ResourceFile
     /**
      * Sets file. **From cookbook**
      *
-     * @param BaseUploadedFile $file
+     * @param BaseUploadedFile|File $file
      * @return ResourceFile
      */
-    public function setFile(BaseUploadedFile $file = null)
+    public function setFile($file = null)
     {
-        $this->file = null === $file
-            ? null
-            : UploadedFile::fromUploadedFile($file);
+        if (!($file instanceof BaseUploadedFile || $file instanceof BaseFile))
+            $this->file = null;
+
+        if ($file instanceof BaseUploadedFile) {
+            $this->file = UploadedFile::fromUploadedFile($file);
+        } else if ($file instanceof BaseFile) {
+            $this->file = File::fromFile($file);
+        }
 
         // check if we have an old image path
         if (is_file($this->getAbsolutePath())) {
@@ -154,9 +162,8 @@ class ResourceFile
 
     public function preUpload()
     {
-        if (null === $this->getFile()) {
+        if (null === $this->getFile() || $this->path !== 'initial')
             return;
-        }
 
         $this->path = $this->getFile()->guessExtension();
     }
@@ -167,9 +174,8 @@ class ResourceFile
     public function upload()
     {
         // the file property can be empty if the field is not required
-        if (null === $this->getFile()) {
+        if (null === $this->getFile())
             return;
-        }
 
         // check if we have an old image
         if (isset($this->temp)) {
@@ -207,6 +213,15 @@ class ResourceFile
     public function refreshUpdated()
     {
         $this->setUpdated(new \DateTime('NOW'));
+    }
+
+    public static function fromFile($file)
+    {
+        $resource = new self();
+        $resource->setFile($file);
+        $resource->setUpdated(new \DateTime('now'));
+
+        return $resource;
     }
 
     /**

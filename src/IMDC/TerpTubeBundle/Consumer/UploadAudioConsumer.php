@@ -20,53 +20,47 @@ class UploadAudioConsumer extends MediaBaseConsumer
         // Process video upload.
         // $msg will be an instance of `PhpAmqpLib\Message\AMQPMessage` with the $msg->body being the data sent over RabbitMQ.
         try {
-            $resource = $this->media->getResource();
-            $resourceFile = new File($resource->getAbsolutePath());
+            $sourceResource = $this->media->getSourceResource();
+            $sourceFile = new File($sourceResource->getAbsolutePath());
 
             $transcodingType = $this->media->getIsReady();
 
-            if ($transcodingType == Media::READY_NO) {
-                $this->logger->info("Transcoding " . $resourceFile->getRealPath());
-                $mp4File = $this->transcoder->transcodeAudioToX264($resourceFile, 'ffmpeg.aac_audio');
-                $webmFile = $this->transcoder->transcodeAudioToWebM($resourceFile, 'ffmpeg.webm_audio');
-            } else if ($transcodingType == Media::READY_MP4) {
-                $this->logger->info("Transcoding " . $resourceFile->getRealPath());
-                $webmFile = $this->transcoder->transcodeAudioToWebM($resourceFile, 'ffmpeg.webm_audio');
-                $mp4File = $resourceFile;
-            } else if ($transcodingType == Media::READY_WEBM) {
-                $this->logger->info("Transcoding " . $resourceFile->getRealPath());
-                $mp4File = $this->transcoder->transcodeAudioToX264($resourceFile, 'ffmpeg.aac_audio');
-                $webmFile = $resourceFile;
-            } else {
-                // Already Transcoded should not be here
-                $this->logger->error("Should not be in this place of transcoding when everything is already completed!");
-                $webmFile = $resourceFile;
-                $mp4File = $resourceFile;
+            if ($transcodingType == Media::READY_MP4 || $transcodingType == Media::READY_NO) {
+                $this->logger->info("Transcoding " . $sourceFile->getRealPath());
+                $webmFile = $this->transcoder->transcodeAudioToWebM($sourceFile, 'ffmpeg.webm_audio');
             }
 
-            // Correct the permissions to 664
-            $old = umask(0);
-            chmod($mp4File->getRealPath(), 0664);
-            chmod($webmFile->getRealPath(), 0664);
-            umask($old);
+            if ($transcodingType == Media::READY_WEBM || $transcodingType == Media::READY_NO) {
+                $this->logger->info("Transcoding " . $sourceFile->getRealPath());
+                $mp4File = $this->transcoder->transcodeAudioToX264($sourceFile, 'ffmpeg.aac_audio');
+            }
 
-            if ($resourceFile->getRealPath() != $mp4File->getRealPath() && $resourceFile->getRealPath() != $webmFile->getRealPath())
-                unlink($resourceFile->getRealPath());
+            if ($webmFile == null && $mp4File == null) {
+                $this->logger->error("Could not transcode the audio for some reason");
+                return false;
+            }
 
-            if ($resourceFile->getRealPath() != $webmFile->getRealPath())
-                $this->fs->rename($webmFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
-            if ($resourceFile->getRealPath() != $mp4File->getRealPath())
-                $this->fs->rename($mp4File, $resource->getUploadRootDir() . '/' . $resource->getId() . '.m4a');
+            // done with the source file. do (not) delete the file itself, but keep the entity
+            //unlink($sourceFile->getRealPath());
 
-            $resource->setPath('m4a');
-            $resource->setUpdated(new \DateTime('now'));
+            if ($transcodingType == Media::READY_MP4 || $transcodingType == Media::READY_NO) {
+                $this->logger->info("Resource webm does not exist");
+
+                $webmResource = $this->createResource($webmFile);
+                $this->media->addResource($webmResource);
+            }
+
+            if ($transcodingType == Media::READY_WEBM || $transcodingType == Media::READY_NO) {
+                $this->logger->info("Resource m4a does not exist");
+
+                $mp4Resource = $this->createResource($mp4File);
+                $this->media->addResource($mp4Resource);
+            }
+
             $this->media->setIsReady(Media::READY_YES);
 
-            $this->updateMetaData();
-
-            $em = $this->doctrine->getManager();
-            $em->persist($this->media);
-            $em->flush();
+            $this->entityManager->persist($this->media);
+            $this->entityManager->flush();
 
             if ($this->checkForPendingOperations($this->media->getId())) {
                 $this->executePendingOperations($this->media->getId());

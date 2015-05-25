@@ -49,8 +49,9 @@ class UploadListener implements EventSubscriberInterface
     public function onUpload(UploadEvent $event)
     {
         $media = $event->getMedia();
+        $sourceResource = $media->getSourceResource();
         $message = null;
-        $fileSize = filesize($media->getResource()->getAbsolutePath());
+        $fileSize = filesize($sourceResource->getAbsolutePath());
 
         // Transcode the different types and populate the metadata for the proper type
 
@@ -79,7 +80,7 @@ class UploadListener implements EventSubscriberInterface
             case Media::TYPE_IMAGE:
                 $this->logger->info('Uploaded an image');
 
-                $imageSize = getimagesize($media->getResource()->getAbsolutePath());
+                $imageSize = getimagesize($sourceResource->getAbsolutePath());
 
                 $metaData->setSize($fileSize);
                 $metaData->setWidth($imageSize[0]);
@@ -87,13 +88,12 @@ class UploadListener implements EventSubscriberInterface
 
                 $media->setIsReady(Media::READY_YES);
 
+                // duplicate of this in UploadVideoConsumer
                 try {
-                    $thumbnailTempFile = $this->transcoder->createThumbnail(
-                        $media->getResource()
-                            ->getAbsolutePath(), Media::TYPE_IMAGE);
-                    $thumbnailFile = $media->getThumbnailRootDir() . "/" . $media->getResource()->getId() . ".png";
+                    $thumbnailTempFile = $this->transcoder->createThumbnail($sourceResource->getAbsolutePath(), Media::TYPE_IMAGE);
+                    $thumbnailFile = $media->getThumbnailRootDir() . "/" . $sourceResource->getId() . ".png";
                     $this->fs->rename($thumbnailTempFile, $thumbnailFile, true);
-                    $media->setThumbnailPath($media->getResource()->getId() . ".png");
+                    $media->setThumbnailPath($sourceResource->getId() . ".png");
                 } catch (IOException $e) {
                     $this->logger->error($e->getTraceAsString());
                 }

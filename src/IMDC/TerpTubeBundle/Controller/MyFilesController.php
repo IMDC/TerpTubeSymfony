@@ -92,6 +92,7 @@ class MyFilesController extends Controller
             throw new \Exception('no media data found in request');
         }
 
+        /** @var $transcoder Transcoder */
         $transcoder = $this->container->get('imdc_terptube.transcoder');
 
         $isInterpretation = filter_var($request->request->get('isInterpretation'), FILTER_VALIDATE_BOOLEAN);
@@ -110,7 +111,6 @@ class MyFilesController extends Controller
 
         $resourceFile = new ResourceFile();
         $resourceFile->setFile($mergedFile);
-        //$resourceFile->setWebmExtension('webm');
 
         if ($isInterpretation) {
             $media = new Interpretation();
@@ -124,7 +124,7 @@ class MyFilesController extends Controller
         $media->setType(Media::TYPE_VIDEO);
         $media->setTitle('Recording-' . $currentTime->format('Y-m-d-H:i'));
         $media->setIsReady(Media::READY_WEBM);
-        $media->setResource($resourceFile);
+        $media->setSourceResource($resourceFile);
 
         $user->addResourceFile($media);
 
@@ -132,19 +132,6 @@ class MyFilesController extends Controller
         $em->persist($media);
         $em->persist($user);
         $em->flush();
-
-        // FIXME: transcoder seems to do this already. no need to rename and persist
-        // Need to rename to webm since in some cases the recording is done as a .bin file
-        /*$resource = $media->getResource();
-        $resourceFile = new File($resource->getAbsolutePath());
-        $targetFile = $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm';
-        if (!file_exists($targetFile)) {
-            $fs = new Filesystem();
-            $fs->rename($resourceFile, $resource->getUploadRootDir() . '/' . $resource->getId() . '.webm');
-        }
-        $resource->setPath("webm");
-        // $em->persist ( $resourceFile );
-        $em->flush();*/
 
         $eventDispatcher = $this->container->get('event_dispatcher');
         $uploadEvent = new UploadEvent($media);
@@ -177,7 +164,7 @@ class MyFilesController extends Controller
             $user = $this->getUser();
             $em = $this->getDoctrine()->getManager();
 
-            $uploadedFile = $media->getResource()->getFile();
+            $uploadedFile = $media->getSourceResource()->getFile();
             $mediaTypeGuess1 = Utils::getUploadedFileType($uploadedFile->getMimeType());
 
             $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
@@ -225,48 +212,11 @@ class MyFilesController extends Controller
             $media->setTitle($uploadedFile->getClientOriginalName()); //TODO clean this filename
             $media->setOwner($user);
 
-            // Get Mime Type
-            // $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            // $mimeType = finfo_file($finfo, $uploadedFile->getRealPath());
-            // finfo_close($finfo);
-
-            /*$resourcePath = $uploadedFile->getRealPath();
-            $fs = new Filesystem();
-
-            $type = Utils::getUploadedFileType($uploadedFile);
-            $isValid = true;
-            if ($type == Media::TYPE_AUDIO) {
-                $isValid = $transcoder->checkAudioFile($uploadedFile);
-            } else
-                if ($type == Media::TYPE_VIDEO) {
-                    $isValid = $transcoder->checkVideoFile($uploadedFile);
-                }
-            if (!$isValid) {
-                // Wrong audio/video type. return error
-                $content = array(
-                    'wasUploaded' => false,
-                    'error' => Transcoder::INVALID_AUDIO_VIDEO_ERROR
-                );
-                // throw new \Exception(Transcoder::INVALID_AUDIO_VIDEO_ERROR);
-            } else {
-                $media->setType($type);
-                $this->get('logger')->info('Extension: ' . $uploadedFile->guessExtension());
-                $this->get('logger')->info('Client Extension: ' . $uploadedFile->getClientOriginalExtension());
-                $originalExtension = $uploadedFile->getClientOriginalExtension();*/
-
             $user->addResourceFile($media);
 
             $em->persist($media);
             $em->persist($user);
             $em->flush();
-
-            /*$resourcePath = $media->getResource()->getAbsolutePath();
-            if ($media->getResource()->getPath() == "bin") {
-                $fs->rename($resourcePath,
-                    substr($resourcePath, 0, strrpos($resourcePath, ".")) . "." . $originalExtension, true);
-                $media->getResource()->setPath($originalExtension);
-            }
-            $em->flush();*/
 
             $dispatcher = $this->get('event_dispatcher');
             $dispatcher->dispatch(UploadEvent::EVENT_UPLOAD, new UploadEvent($media));
@@ -276,7 +226,6 @@ class MyFilesController extends Controller
                 'wasUploaded' => true,
                 'media' => json_decode($serializer->serialize($media, 'json'), true)
             );
-            //}
         } else {
             $content = array(
                 'wasUploaded' => false,

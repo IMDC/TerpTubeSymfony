@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Utils;
 
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\File\MimeType\FileBinaryMimeTypeGuesser;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
@@ -10,6 +11,12 @@ use IMDC\TerpTubeBundle\Entity\Media;
 
 class Utils
 {
+	public static function getMimeType($path)
+	{
+		$guesser = new FileBinaryMimeTypeGuesser();
+		return $guesser->guess($path);
+	}
+
 	public static function getUploadedFileType($mimeType)
 	{
 		/*$mimeType = $uploadedFile->getMimeType();
