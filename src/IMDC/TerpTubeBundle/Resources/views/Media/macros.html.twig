@@ -61,28 +61,34 @@
                     {% if enable_controls %} controls {% endif %}
                     {% if media.source.getThumbnailPath is not empty %} poster="{{ asset(media.source.getThumbnailPath) }}" {% endif %}
                    preload="{% if preload_media %}auto{% else %}none{% endif %}">
-                <source src="{{ asset(media.source.getResource.getWebPath) }}" />
+                {% for resource in media.source.getResources %}
+                    <source src="{{ asset(resource.getWebPath) }}" />
+                {% endfor %}
             </video>
         {% endif %}
         <video class="tt-media-video"
                 {% if enable_controls %} controls {% endif %}
                 {% if media.getThumbnailPath is not empty %} poster="{{ asset(media.getThumbnailPath) }}" {% endif %}
                preload="{% if preload_media %}auto{% else %}none{% endif %}">
-            <source src="{{ asset(media.getResource.getWebPath) }}" />
+            {% for resource in media.getResources %}
+                <source src="{{ asset(resource.getWebPath) }}" />
+            {% endfor %}
         </video>
     {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
         <audio class="tt-media-audio"
                 {% if enable_controls %} controls {% endif %}
                preload="{% if preload_media %}auto{% else %}none{% endif %}">
-            <source src="{{ asset(media.getResource.getWebPath) }}" />
+            {% for resource in media.getResources %}
+                <source src="{{ asset(resource.getWebPath) }}" />
+            {% endfor %}
             Your browser does not support the audio element, please upgrade to Google Chrome
         </audio>
     {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
-        <img class="img-responsive center-block tt-media-img" src="{{ asset(media.getResource.getWebPath) }}" alt="{{ media.title }}" title="{{ media.title }}" />
+        <img class="img-responsive center-block tt-media-img" src="{{ asset(media.getSourceResource.getWebPath) }}" alt="{{ media.title }}" title="{{ media.title }}" />
     {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
         <div class="row">
             <div class="col-md-3 thumbnail text-center">
-                <a href="{{ asset(media.getResource.getWebPath) }}">
+                <a href="{{ asset(media.getSourceResource.getWebPath) }}">
                     <p><i class="fa fa-file fa-5x"></i></p>
                     <div>{{ media.title }}</div>
                 </a>
