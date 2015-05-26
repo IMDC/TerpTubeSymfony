@@ -6,11 +6,19 @@
     {{ parent() }}
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            require(['main'], function() {
-                var message = new $tt.Controller.Message({page: $tt.Controller.Message.Page.VIEW});
-                message.bindUIEvents();
-            });
+        require([
+            'bootstrap',
+            'model/messageModel', 'controller/messageController', 'views/message/viewView',
+            'main'
+        ], function (bootstrap, MessageModel, MessageController, MessageView) {
+            bootstrap(
+                    new MessageModel({{ message|serialize('json')|raw }}),
+                    MessageController,
+                    MessageView,
+                    {
+                        container: $('body')
+                    }
+            );
         });
     </script>
 {% endblock header %}
