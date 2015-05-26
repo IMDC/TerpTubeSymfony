@@ -44,7 +44,22 @@
                                 </span>
                                 <span>
                                     <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
-                                    <a class="btn btn-default" href="{{ asset(m.getResource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ m.getResource.getPath }}"><i class="fa fa-download"></i></a>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-download"></i> <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" role="menu">
+                                            {% for resource in m.getResources %}
+                                                <li><a href="{{ asset(resource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ resource.getPath }}">{{ resource.getPath|upper }}</a></li>
+                                            {% endfor %}
+                                            {% if m.getResources|length > 0 and m.getSourceResource %}
+                                                <li class="divider"></li>
+                                            {% endif %}
+                                            {% if m.getSourceResource %}
+                                                <li><a href="{{ asset(m.getSourceResource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ m.getSourceResource.getPath }}">Original</a></li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
                                     <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': m.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
                                 </span>
                             </td>
@@ -88,7 +103,22 @@
                             </span>
                             <span>
                                 <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
-                                <a class="btn btn-default" href="{{ asset(m.getResource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ m.getResource.getPath }}"><i class="fa fa-download"></i></a>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa fa-download"></i> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        {% for resource in m.getResources %}
+                                            <li><a href="{{ asset(resource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ resource.getPath }}">{{ resource.getPath|upper }}</a></li>
+                                        {% endfor %}
+                                        {% if m.getResources|length > 0 and m.getSourceResource %}
+                                            <li class="divider"></li>
+                                        {% endif %}
+                                        {% if m.getSourceResource %}
+                                            <li><a href="{{ asset(m.getSourceResource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ m.getSourceResource.getPath }}">Original</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
                                 <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': m.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
                             </span>
                         </div>

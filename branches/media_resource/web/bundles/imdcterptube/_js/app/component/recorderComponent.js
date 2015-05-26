@@ -517,7 +517,8 @@ define([
     RecorderComponent.prototype._injectMedia = function (video, media) {
         var source = video.find('source');
         video.removeAttr('src');
-        source.attr('src', Helper.generateUrl(media.get('resource.web_path')));
+        source.attr('src', Helper.generateUrl(media.get('resources.0.web_path')));
+        //TODO generate source elements for all resources
     };
 
     RecorderComponent.prototype.setSourceMedia = function (media) {
