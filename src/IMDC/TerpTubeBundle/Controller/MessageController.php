@@ -318,7 +318,7 @@ class MessageController extends Controller
 		$mid = $request->request->get ( 'msgId' );
 		
 		$repository = $this->getDoctrine ()->getRepository ( 'IMDCTerpTubeBundle:Message' );
-		$message = $repository->findOneById ( $mid );
+		$message = $repository->findOneById ( $messageid );
 		
 		if ($message->isMessageRead ( $user ))
 		{
@@ -407,10 +407,9 @@ class MessageController extends Controller
 			return $this->redirect ( $this->generateUrl ( 'imdc_message_inbox' ) );
 		}
 		
-		return $this->render ( 'IMDCTerpTubeBundle:Message:new.html.twig', array (
+		return $this->render ( 'IMDCTerpTubeBundle:Message:reply.html.twig', array (
 				'form' => $form->createView (),
-				'message' => $message,
-				'isReply' => true 
+				'message' => $message
 		) );
 	}
 }
