@@ -37,26 +37,17 @@
                 {{ form_row(form.recipients) }}
                 {{ form_row(form.subject, {'value': 'Re: ' ~ message.subject}) }}
                 {{ form_widget(form.attachedMedia) }}
-                {{ form_row(form.content,
-                {'value': "\n\n\n\n" ~
+                {{ form_row(form.content, {
+                'value':
+                "\n\n\n\n" ~
                 '>From: ' ~ message.owner ~ "\n" ~
                 '>To: ' ~ message.recipients|join(', ') ~ "\n" ~
                 '>Subject: ' ~ message.subject ~ "\n" ~
                 '>Sent: ' ~ message.sentDate|date('g:ia M j') ~ "\n>\n" ~
                 ">----Original Message below----\n\n" ~
-                message.content, 'attr': {'class': 'autosize' }})
-                }}
-                {% if message.attachedMedia|length > 0 %}
-                    <div style="margin-bottom: 15px">
-                        <p><strong>This message has the following attached Media</strong></p>
-
-                        <div class="tt-media-element">
-                            {% for mediaFile in message.attachedMedia %}
-                                {% include 'IMDCTerpTubeBundle:Media:element.html.twig' %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
+                message.content,
+                'attr': {'class': 'autosize'}
+                })}}
                 <button class="btn btn-success message-submit"><i class="fa fa-envelope"></i> Send</button>
                 <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
                 {{ form_end(form) }}
