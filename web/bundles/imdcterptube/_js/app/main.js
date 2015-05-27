@@ -3,11 +3,7 @@
  */
 
 define([
-    'controller/message',
-    'controller/profile',
-
-
-
+    // init
     'bootstrap',
     'service',
 
@@ -20,6 +16,7 @@ define([
     'factory/forumFactory',
     'factory/groupFactory',
     'factory/mediaFactory',
+    'factory/messageFactory',
     'factory/myFilesFactory',
     'factory/postFactory',
     'factory/threadFactory',
@@ -32,6 +29,7 @@ define([
     'model/forumModel',
     'model/groupModel',
     'model/mediaModel',
+    'model/messageModel',
     'model/myFilesModel',
     'model/postModel',
     'model/threadModel',
@@ -40,8 +38,10 @@ define([
     'controller/contactController',
     'controller/forumController',
     'controller/groupController',
+    'controller/messageController',
     'controller/myFilesController',
     'controller/postController',
+    'controller/profileController',
     'controller/threadController',
 
     // component
@@ -64,11 +64,17 @@ define([
     'views/group/viewView',
     'views/group/manageView',
 
+    'views/message/newView',
+    'views/message/replyView',
+    'views/message/viewView',
+
     'views/myFiles/listView',
 
     'views/post/newView',
     'views/post/editView',
     'views/post/viewView',
+
+    'views/profile/editView',
 
     'views/thread/newView',
     'views/thread/editView',
@@ -77,10 +83,6 @@ define([
     'use strict';
 
     var TerpTube = {};
-
-    TerpTube.Controller = {};
-    TerpTube.Controller.Message = require('controller/message');
-    TerpTube.Controller.Profile = require('controller/profile');
 
     TerpTube._services = [];
     TerpTube._instances = [];
