@@ -323,6 +323,7 @@ class MessageController extends Controller
 		if ($message->isMessageRead ( $user ))
 		{
 			$return = array (
+				'wasEdited' => true,
 					'responseCode' => 200,
 					'feedback' => 'Message marked as read' 
 			);
@@ -330,8 +331,9 @@ class MessageController extends Controller
 		else
 		{
 			$return = array (
+				'wasEdited' => false,
 					'responseCode' => 400,
-					'feedback' => 'Error marking message as read' 
+					'feedback' => 'Error marking message as read'
 			);
 		}
 		

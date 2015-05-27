@@ -15,7 +15,8 @@ define([
     Message.TAG = 'Message';
 
     Message.prototype.onViewLoaded = function () {
-        this.markAsRead();
+        if (this.model.get('id'))
+            this.markAsRead();
     };
 
     Message.prototype.markAsRead = function () {
