@@ -127,7 +127,6 @@
 					<div class="col-md-12">
                         {% if thread.mediaIncluded|length != 0 %}
                             <div class="thread-media-element" style="position: relative;">
-                                {#{% include 'IMDCTerpTubeBundle:Thread:mediaElement.html.twig' with {'mediaFile': thread.mediaIncluded[0], 'preloadMedia': true} %}#}
                                 {{ _media.element(thread.getOrderedMedia[0], false, true) }}
                                 {{ _media.video_controls }}
                             </div>
