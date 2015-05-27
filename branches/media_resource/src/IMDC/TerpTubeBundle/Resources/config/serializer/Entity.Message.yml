@@ -1,0 +1,4 @@
+IMDC\TerpTubeBundle\Entity\Message:
+  virtual_properties:
+    getOrderedMedia:
+      serialized_name: ordered_media

@@ -6,11 +6,19 @@
     {{ parent() }}
 
     <script type="text/javascript">
-        $(document).ready(function() {
-            require(['main'], function() {
-                var message = new $tt.Controller.Message({page: $tt.Controller.Message.Page.VIEW});
-                message.bindUIEvents();
-            });
+        require([
+            'bootstrap',
+            'model/messageModel', 'controller/messageController', 'views/message/viewView',
+            'main'
+        ], function (bootstrap, MessageModel, MessageController, MessageView) {
+            bootstrap(
+                    new MessageModel({{ message|serialize('json')|raw }}),
+                    MessageController,
+                    MessageView,
+                    {
+                        container: $('body')
+                    }
+            );
         });
     </script>
 {% endblock header %}
@@ -62,17 +70,15 @@
                         <div class="col-md-2">Subject</div>
                         <div class="col-md-10">{{ message.subject }}</div>
                     </div>
-                    {% if message.attachedMedia|length > 0 %}
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="tt-media-element">
-                                    {% for mediaFile in message.attachedMedia %}
-                                        {% include 'IMDCTerpTubeBundle:Media:element.html.twig' %}
-                                    {% endfor %}
-                                </div>
-                            </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% if message.getAttachedMedia|length > 0 %}
+                                <div class="message-gallery" style="height: 500px; width: 100%;"></div>
+                            {% else %}
+                                <p>No media</p>
+                            {% endif %}
                         </div>
-                    {% endif %}
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             {#FIXME is this safe? nope#}
