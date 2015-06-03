@@ -212,23 +212,15 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
             vhost:     '/'
             lazy:      false
     producers:
-        upload_video:
+        transcode:
             connection: default
-            exchange_options: {name: 'upload-video', type: direct}
-        upload_audio:
-            connection: default
-            exchange_options: {name: 'upload-audio', type: direct}
+            exchange_options: {name: 'transcode', type: direct}
     consumers:
-        upload_video:
+        transcode:
             connection: default
-            exchange_options: {name: 'upload-video', type: direct}
-            queue_options:    {name: 'upload-video'}
-            callback:         upload_video_service
-        upload_audio:
-            connection: default
-            exchange_options: {name: 'upload-audio', type: direct}
-            queue_options:    {name: 'upload-audio'}
-            callback:         upload_audio_service
+            exchange_options: {name: 'transcode', type: direct}
+            queue_options:    {name: 'transcode'}
+            callback:         transcode_service
 
 knp_time: ~ # Enable the helper for use in templates
 

@@ -22,7 +22,7 @@ startAudioConsumer()
 
 startVideoConsumer()
 {
-	php "${SYMFONY_DIR}/app/console" rabbitmq:consumer upload_video &
+	php "${SYMFONY_DIR}/app/console" rabbitmq:consumer transcode &
 	process2=$!
 	echo $process2>$PID2_FILE
 }
@@ -30,16 +30,16 @@ startVideoConsumer()
 if [ -d $SYMFONY_DIR ]
 then
 #NEED TO ADD LOGGIN TO THE LOG_DAEMON
-	if [ -f $PID1_FILE ] || [ -L $PID1_FILE ]
-	then
-		read PID1 <$PID1_FILE
-		if ! ps -p $PID1 >/dev/null
-		then
-			startAudioConsumer
-		fi
-	else
-		startAudioConsumer
-	fi
+#	if [ -f $PID1_FILE ] || [ -L $PID1_FILE ]
+#	then
+#		read PID1 <$PID1_FILE
+#		if ! ps -p $PID1 >/dev/null
+#		then
+#			startAudioConsumer
+#		fi
+#	else
+#		startAudioConsumer
+#	fi
 	if [ -f $PID2_FILE ] || [ -L $PID2_FILE ]
 	then
 		read PID2 <$PID2_FILE
