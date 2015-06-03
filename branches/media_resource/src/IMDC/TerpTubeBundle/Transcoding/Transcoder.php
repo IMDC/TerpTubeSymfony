@@ -402,6 +402,29 @@ class Transcoder
         return true;
     }
 
+    public function transcode($container, $mediaType, File $inputFile, $preset)
+    {
+        switch ($container)
+        {
+            case TranscodeContainer::WEBM:
+                if ($mediaType == Media::TYPE_VIDEO)
+                    return $this->transcodeToWebM($inputFile, $preset);
+
+                if ($mediaType == Media::TYPE_AUDIO)
+                    return $this->transcodeAudioToWebM($inputFile, $preset);
+            case TranscodeContainer::MP4:
+                if ($mediaType == Media::TYPE_VIDEO)
+                    return $this->transcodeToX264($inputFile, $preset);
+
+                if ($mediaType == Media::TYPE_AUDIO)
+                    return $this->transcodeAudioToX264($inputFile, $preset);
+            default:
+                throw new \Exception("unknown container");
+        }
+
+        throw new \Exception("unsupported media type");
+    }
+
     /**
      * Function that takes a file and converts it to WebM using the selected preset and returns the resulting file.
      * The returned file is a temporary file that needs to be moved after receiving it.

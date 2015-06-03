@@ -2,33 +2,44 @@
 
 namespace IMDC\TerpTubeBundle\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
+use IMDC\TerpTubeBundle\Transcoding\TranscodeContainer;
+use IMDC\TerpTubeBundle\Transcoding\Transcoder;
+use Monolog\Logger;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
 
 class UploadListener implements EventSubscriberInterface
 {
-
+    /**
+     * @var Logger
+     */
     private $logger;
 
+    /**
+     * @var EntityManager
+     */
     private $entityManager;
 
-    private $transcode_producer;
-
+    /**
+     * @var Transcoder
+     */
     private $transcoder;
 
-    private $fs;
+    /**
+     * @var Producer
+     */
+    private $transcodeProducer;
 
-    public function __construct($logger, $entityManager, $transcode_producer, $transcoder)
+    public function __construct($logger, $entityManager, $transcoder, $transcodeProducer)
     {
         $this->logger = $logger;
         $this->entityManager = $entityManager;
-        $this->transcode_producer = $transcode_producer;
         $this->transcoder = $transcoder;
-        $this->fs = new Filesystem();
+        $this->transcodeProducer = $transcodeProducer;
     }
 
     public static function getSubscribedEvents()
@@ -61,13 +72,13 @@ class UploadListener implements EventSubscriberInterface
                 $messages[] = array(
                     'media_id' => $media->getId(),
                     'transcodeOpts' => array(
-                        'container' => 'webm',
+                        'container' => TranscodeContainer::WEBM,
                         'preset' => 'ffmpeg.webm_720p_video'
                     ));
                 $messages[] = array(
                     'media_id' => $media->getId(),
                     'transcodeOpts' => array(
-                        'container' => 'mp4',
+                        'container' => TranscodeContainer::MP4,
                         'preset' => 'ffmpeg.x264_720p_video'
                     ));
 
@@ -81,13 +92,13 @@ class UploadListener implements EventSubscriberInterface
                 $messages[] = array(
                     'media_id' => $media->getId(),
                     'transcodeOpts' => array(
-                        'container' => 'webm', //TODO container consts
+                        'container' => TranscodeContainer::WEBM,
                         'preset' => 'ffmpeg.webm_audio'
                     ));
                 $messages[] = array(
                     'media_id' => $media->getId(),
                     'transcodeOpts' => array(
-                        'container' => 'mp4',
+                        'container' => TranscodeContainer::MP4,
                         'preset' => 'ffmpeg.aac_audio'
                     ));
 
@@ -125,7 +136,7 @@ class UploadListener implements EventSubscriberInterface
             case Media::TYPE_VIDEO:
             case Media::TYPE_AUDIO:
                 foreach ($messages as $message)
-                    $this->transcode_producer->publish(serialize($message));
+                    $this->transcodeProducer->publish(serialize($message));
 
                 break;
         }

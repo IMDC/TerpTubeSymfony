@@ -5,7 +5,6 @@ namespace IMDC\TerpTubeBundle\Consumer;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File;
 use IMDC\TerpTubeBundle\Entity\Media;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Component\Filesystem\Exception\IOException;
 
 class TranscodeConsumer extends MediaBaseConsumer
 {
@@ -35,34 +34,10 @@ class TranscodeConsumer extends MediaBaseConsumer
         try {
             $this->logger->info("Transcoding " . $sourceFile->getRealPath());
 
-            switch ($mediaType) {
-                case Media::TYPE_VIDEO:
-                    // still check this?
-                    //if ($transcodingType == Media::READY_MP4 || $transcodingType == Media::READY_NO)
-                    if ($transcodeOpts['container'] == 'webm')
-                        //TODO make the transcoder choose the codec/format based on the container
-                        $transcodedFile = $this->transcoder->transcodeToWebM($sourceFile, $transcodeOpts['preset']);
-
-                    // still check this?
-                    //if ($transcodingType == Media::READY_WEBM || $transcodingType == Media::READY_NO)
-                    else if ($transcodeOpts['container'] == 'mp4')
-                        $transcodedFile = $this->transcoder->transcodeToX264($sourceFile, $transcodeOpts['preset']);
-
-                    break;
-                case Media::TYPE_AUDIO:
-                    // still check this?
-                    //if ($transcodingType == Media::READY_MP4 || $transcodingType == Media::READY_NO)
-                    if ($transcodeOpts['container'] == 'webm')
-                        $transcodedFile = $this->transcoder->transcodeAudioToWebM($sourceFile, $transcodeOpts['preset']);
-
-                    // still check this?
-                    //if ($transcodingType == Media::READY_WEBM || $transcodingType == Media::READY_NO)
-                    else if ($transcodeOpts['container'] == 'mp4')
-                        $transcodedFile = $this->transcoder->transcodeAudioToX264($sourceFile, $transcodeOpts['preset']);
-
-                    break;
-            }
-
+            // still check this?
+            //if ($transcodingType == Media::READY_MP4 || $transcodingType == Media::READY_NO)
+            //if ($transcodingType == Media::READY_WEBM || $transcodingType == Media::READY_NO)
+            $transcodedFile = $this->transcoder->transcode($transcodeOpts['container'], $mediaType, $sourceFile, $transcodeOpts['preset']);
             if ($transcodedFile == null)
                 throw new \Exception("Could not transcode the video for some reason");
 
