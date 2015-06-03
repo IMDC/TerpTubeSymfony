@@ -16,20 +16,17 @@ class UploadListener implements EventSubscriberInterface
 
     private $entityManager;
 
-    private $video_producer;
-
-    private $audio_producer;
+    private $transcode_producer;
 
     private $transcoder;
 
     private $fs;
 
-    public function __construct($logger, $entityManager, $video_producer, $audio_producer, $transcoder)
+    public function __construct($logger, $entityManager, $transcode_producer, $transcoder)
     {
         $this->logger = $logger;
         $this->entityManager = $entityManager;
-        $this->video_producer = $video_producer;
-        $this->audio_producer = $audio_producer;
+        $this->transcode_producer = $transcode_producer;
         $this->transcoder = $transcoder;
         $this->fs = new Filesystem();
     }
@@ -115,10 +112,8 @@ class UploadListener implements EventSubscriberInterface
 
         switch ($media->getType()) {
             case Media::TYPE_VIDEO:
-                $this->video_producer->publish(serialize($message));
-                break;
             case Media::TYPE_AUDIO:
-                $this->audio_producer->publish(serialize($message));
+                $this->transcode_producer->publish(serialize($message));
                 break;
         }
     }
