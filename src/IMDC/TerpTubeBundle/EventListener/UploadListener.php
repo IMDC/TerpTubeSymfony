@@ -47,7 +47,7 @@ class UploadListener implements EventSubscriberInterface
     {
         $media = $event->getMedia();
         $sourceResource = $media->getSourceResource();
-        $message = null;
+        $messages = array();
         $fileSize = filesize($sourceResource->getAbsolutePath());
 
         // Transcode the different types and populate the metadata for the proper type
@@ -60,18 +60,36 @@ class UploadListener implements EventSubscriberInterface
             case Media::TYPE_VIDEO:
                 $this->logger->info('Uploaded a video');
 
-                $message = array(
-                    'media_id' => $media->getId()
-                );
+                $messages[] = array(
+                    'media_id' => $media->getId(),
+                    'transcodeOpts' => array(
+                        'container' => 'webm',
+                        'preset' => 'ffmpeg.webm_720p_video'
+                    ));
+                $messages[] = array(
+                    'media_id' => $media->getId(),
+                    'transcodeOpts' => array(
+                        'container' => 'mp4',
+                        'preset' => 'ffmpeg.x264_720p_video'
+                    ));
 
                 break;
             case Media::TYPE_AUDIO:
                 // TODO look into resizing images
                 $this->logger->info('Uploaded an audio');
 
-                $message = array(
-                    'media_id' => $media->getId()
-                );
+                $messages[] = array(
+                    'media_id' => $media->getId(),
+                    'transcodeOpts' => array(
+                        'container' => 'webm', //TODO container consts
+                        'preset' => 'ffmpeg.webm_audio'
+                    ));
+                $messages[] = array(
+                    'media_id' => $media->getId(),
+                    'transcodeOpts' => array(
+                        'container' => 'mp4',
+                        'preset' => 'ffmpeg.aac_audio'
+                    ));
 
                 break;
             case Media::TYPE_IMAGE:
@@ -85,7 +103,7 @@ class UploadListener implements EventSubscriberInterface
 
                 $media->setIsReady(Media::READY_YES);
 
-                // duplicate of this in UploadVideoConsumer
+                //TODO consolidate with call in TranscodeConsumer
                 try {
                     $thumbnailTempFile = $this->transcoder->createThumbnail($sourceResource->getAbsolutePath(), Media::TYPE_IMAGE);
                     $thumbnailFile = $media->getThumbnailRootDir() . "/" . $sourceResource->getId() . ".png";
@@ -113,7 +131,9 @@ class UploadListener implements EventSubscriberInterface
         switch ($media->getType()) {
             case Media::TYPE_VIDEO:
             case Media::TYPE_AUDIO:
-                $this->transcode_producer->publish(serialize($message));
+                foreach ($messages as $message)
+                    $this->transcode_producer->publish(serialize($message));
+
                 break;
         }
     }

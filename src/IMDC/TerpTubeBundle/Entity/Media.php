@@ -20,6 +20,7 @@ class Media implements MediaInterface
 
     const TYPE_OTHER = 9;
 
+    // TODO change to more meaning full names (state?/status?)
     const READY_NO = 0;
 
     const READY_WEBM = 1;
