@@ -3,7 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Symfony\Component\Filesystem\Filesystem;
 
 /**
@@ -337,12 +337,23 @@ class Media implements MediaInterface
         return __DIR__ . '/../../../../web/' . $this->getThumbnailDir();
     }
 
-    /**
-     * @ORM\PreRemove
-     */
+    public function createThumbnail(Transcoder $transcoder)
+    {
+        try {
+            $sourceResource = $this->getSourceResource();
+            $fs = new Filesystem();
+
+            $thumbnailTempFile = $transcoder->createThumbnail($sourceResource->getAbsolutePath(), $this->getType());
+            $thumbnailFile = $this->getThumbnailRootDir() . '/' . $sourceResource->getId() . '.png';
+            $fs->rename($thumbnailTempFile, $thumbnailFile, true);
+            $this->setThumbnailPath($sourceResource->getId() . '.png');
+        } catch (\Exception $e) {
+            $this->logger->error($e->getTraceAsString());
+        }
+    }
+
     public function removeThumbnail()
     {
-        // Add your code here
         try {
             $fs = new Filesystem();
             $fs->remove($this->getThumbnailPath());

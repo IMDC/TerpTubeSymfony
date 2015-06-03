@@ -46,9 +46,7 @@ class UploadListener implements EventSubscriberInterface
     public function onUpload(UploadEvent $event)
     {
         $media = $event->getMedia();
-        $sourceResource = $media->getSourceResource();
         $messages = array();
-        $fileSize = filesize($sourceResource->getAbsolutePath());
 
         // Transcode the different types and populate the metadata for the proper type
 
@@ -73,6 +71,8 @@ class UploadListener implements EventSubscriberInterface
                         'preset' => 'ffmpeg.x264_720p_video'
                     ));
 
+                $media->createThumbnail($this->transcoder);
+
                 break;
             case Media::TYPE_AUDIO:
                 // TODO look into resizing images
@@ -95,29 +95,22 @@ class UploadListener implements EventSubscriberInterface
             case Media::TYPE_IMAGE:
                 $this->logger->info('Uploaded an image');
 
-                $imageSize = getimagesize($sourceResource->getAbsolutePath());
+                $sourceResourcePath = $media->getSourceResource()->getAbsolutePath();
+                $imageSize = getimagesize($sourceResourcePath);
 
-                $metaData->setSize($fileSize);
+                $metaData->setSize(filesize($sourceResourcePath));
                 $metaData->setWidth($imageSize[0]);
                 $metaData->setHeight($imageSize[1]);
 
-                $media->setIsReady(Media::READY_YES);
+                $media->createThumbnail($this->transcoder);
 
-                //TODO consolidate with call in TranscodeConsumer
-                try {
-                    $thumbnailTempFile = $this->transcoder->createThumbnail($sourceResource->getAbsolutePath(), Media::TYPE_IMAGE);
-                    $thumbnailFile = $media->getThumbnailRootDir() . "/" . $sourceResource->getId() . ".png";
-                    $this->fs->rename($thumbnailTempFile, $thumbnailFile, true);
-                    $media->setThumbnailPath($sourceResource->getId() . ".png");
-                } catch (IOException $e) {
-                    $this->logger->error($e->getTraceAsString());
-                }
+                $media->setIsReady(Media::READY_YES);
 
                 break;
             default:
                 $this->logger->info('Uploaded something');
 
-                $metaData->setSize($fileSize);
+                $metaData->setSize(filesize($media->getSourceResource()->getAbsolutePath()));
 
                 $media->setIsReady(Media::READY_YES);
         }

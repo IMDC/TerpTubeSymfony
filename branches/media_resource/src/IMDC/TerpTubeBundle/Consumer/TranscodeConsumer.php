@@ -48,9 +48,6 @@ class TranscodeConsumer extends MediaBaseConsumer
                     else if ($transcodeOpts['container'] == 'mp4')
                         $transcodedFile = $this->transcoder->transcodeToX264($sourceFile, $transcodeOpts['preset']);
 
-                    //TODO move to UploadListener after consolidation
-                    $this->createThumbnail($sourceResource);
-
                     break;
                 case Media::TYPE_AUDIO:
                     // still check this?
@@ -93,19 +90,5 @@ class TranscodeConsumer extends MediaBaseConsumer
         }
 
         return true;
-    }
-
-    private function createThumbnail($sourceResource)
-    {
-        //TODO consolidate with call in UploadListener
-        try {
-            // Get a thumbnail
-            $thumbnailTempFile = $this->transcoder->createThumbnail($sourceResource->getAbsolutePath(), $this->media->getType());
-            $thumbnailFile = $this->media->getThumbnailRootDir() . "/" . $sourceResource->getId() . ".png";
-            $this->fs->rename($thumbnailTempFile, $thumbnailFile, true);
-            $this->media->setThumbnailPath($sourceResource->getId() . ".png");
-        } catch (IOException $e) {
-            $this->logger->error($e->getTraceAsString());
-        }
     }
 }
