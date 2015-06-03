@@ -35,6 +35,8 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
      */
     protected $fs;
 
+    protected $message;
+
     /**
      * @var Media
      */
@@ -147,11 +149,11 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
 
     public function execute(AMQPMessage $msg)
     {
-        $message = unserialize($msg->body);
-        if (empty($message))
+        $this->message = unserialize($msg->body);
+        if (empty($this->message))
             return true;
 
-        $mediaId = $message['media_id'];
+        $mediaId = $this->message['media_id'];
 
         $this->media = $this->entityManager->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (empty($this->media)) {
@@ -160,16 +162,17 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
             return true;
         }
 
-        $transcodingType = $this->media->getIsReady();
+        //TODO add state/status check to determine if ready?
+        /*$transcodingType = $this->media->getIsReady();
         if (/*($transcodingType != Media::READY_MP4 &&
                 $transcodingType != Media::READY_NO &&
-                $transcodingType != Media::READY_WEBM) ||*/
+                $transcodingType != Media::READY_WEBM) ||*
             $transcodingType == Media::READY_YES
         ) {
             // Already Transcoded should not be here
             $this->logger->error("Should not be in this place of transcoding when everything is already completed!");
             return true;
-        }
+        }*/
 
         $mediaType = $this->media->getType();
         switch ($mediaType) {
