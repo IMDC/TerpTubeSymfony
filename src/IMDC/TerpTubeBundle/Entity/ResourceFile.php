@@ -162,6 +162,8 @@ class ResourceFile
 
     public function preUpload()
     {
+        $this->setUpdated(new \DateTime('now'));
+
         if (null === $this->getFile() || $this->path !== 'initial')
             return;
 
@@ -208,9 +210,10 @@ class ResourceFile
     }
 
     /**
-     * Updates the hash value to force the preUpdate and postUpdate events to fire
+     * Updates the hash value to force the preUpdate and postUpdate events to fire.
+     * only called from Admin\ResourceFileAdmin::manageFileUpload
      */
-    public function refreshUpdated()
+    public function refreshUpdated() //TODO delete?
     {
         $this->setUpdated(new \DateTime('NOW'));
     }
@@ -219,7 +222,6 @@ class ResourceFile
     {
         $resource = new self();
         $resource->setFile($file);
-        $resource->setUpdated(new \DateTime('now'));
 
         return $resource;
     }

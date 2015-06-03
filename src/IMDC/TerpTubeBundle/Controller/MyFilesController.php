@@ -190,8 +190,8 @@ class MyFilesController extends Controller
             }
 
             // check if unix file cmd and ffmpeg agreed
-            if (($mediaTypeGuess1 == Media::TYPE_VIDEO || $mediaTypeGuess1 == Media::TYPE_AUDIO) &&
-                $mediaTypeGuess2 == null
+            if (($mediaTypeGuess1 == Media::TYPE_VIDEO || $mediaTypeGuess1 == Media::TYPE_AUDIO)
+                && $mediaTypeGuess2 == null
             ) {
                 // Wrong audio/video type. return error
                 //TODO generic message factory
@@ -202,6 +202,13 @@ class MyFilesController extends Controller
                     'Content-Type' => 'application/json'
                 ));
                 // throw new \Exception(Transcoder::INVALID_AUDIO_VIDEO_ERROR);
+            }
+
+            // set path (extension) explicitly if guessed is probably incorrect
+            if (($mediaTypeGuess1 == Media::TYPE_OTHER && $uploadedFile->guessExtension() == 'bin')
+                || $mediaTypeGuess2 != null
+            ) {
+                $media->getSourceResource()->setPath(strtolower($uploadedFile->getClientOriginalExtension())); //TODO clean me
             }
 
             $media->setType(
