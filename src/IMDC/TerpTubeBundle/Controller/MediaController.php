@@ -3,10 +3,11 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use FFMpeg\FFProbe;
+use IMDC\TerpTubeBundle\Consumer\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Utils\Utils;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -268,84 +269,31 @@ class MediaController extends Controller
             ));
         }
 
-        //TODO revise everything below
-
-        if ($media->getIsReady() != Media::READY_YES &&
-            $media->getIsReady() != Media::READY_WEBM
-        ) {
+        $startTime = floatval($request->get('startTime', 0));
+        $endTime = floatval($request->get('endTime', 0));
+        if ($startTime == 0 && $endTime == 0) {
             return new Response(json_encode(array(
                 'responseCode' => 400,
-                'feedback' => 'This should not happen!'
+                'feedback' => 'invalid argument'
             )), 200, array(
                 'Content-Type' => 'application/json'
             ));
         }
 
-        $startTime = floatval($request->get('startTime', 0));
-        $endTime = floatval($request->get('endTime', 0));
+        $trimOpts = new TrimConsumerOptions();
+        $trimOpts->mediaId = $media->getId();
+        $trimOpts->startTime = $startTime;
+        $trimOpts->endTime = $endTime;
+        $trimOpts->timestamp = time();
 
-        // FIXME if video is being transcoded, need to queue the operation to execute once it completes
-        // FIXME check if start/end times are proper values
-        $resourceFile = $media->getResource();
-        //$webmFile = $resourceFile->getAbsolutePathWebm();
-        $webmFile = $resourceFile->getAbsolutePath();
-        //$mp4File = $resourceFile->getAbsolutePath();
-        $ffprobe = FFProbe::create();
-        $metaData = $media->getMetaData();
-        $transcoder = $this->container->get('imdc_terptube.transcoder');
-        // FIXME Throws exception at rename when trying to move the mp4 file.
+        /** @var Producer $trimProducer */
+        $trimProducer = $this->container->get('old_sound_rabbit_mq.trim_producer');
+        $trimProducer->publish($trimOpts->pack());
 
-        $success = false;
-
-        if ($media->getIsReady() == Media::READY_YES) {
-            $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
-            //$resultMp4 = $transcoder->trimVideo($mp4File, $startTime, $endTime);
-
-            //$success = $resultWebM && $resultMp4;
-            $success = !!$resultWebM;
-        }
-
-        if ($media->getIsReady() == Media::READY_WEBM) {
-            // FIXME this will encode a second time since the video was already queued for transcoding
-            // FIXME need to find out how to dequeue an item from the RabbitMQ queue
-            $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
-            $pendingOperations = $media->getPendingOperations();
-            if ($pendingOperations == null)
-                $pendingOperations = array();
-            array_push($pendingOperations, "trim,mp4," . $startTime . "," . $endTime);
-            $media->setPendingOperations($pendingOperations);
-
-            $success = !!$resultWebM;
-        }
-
-        $finalFile = new File($webmFile);
-        $videoDuration = 0;
-        if ($ffprobe->format($finalFile->getRealPath())
-            ->has('duration')
-        )
-            $videoDuration = $ffprobe->format($finalFile->getRealPath())
-                ->get('duration');;
-        $fileSize = filesize($finalFile->getRealPath());
-        $metaData->setDuration($videoDuration);
-        $metaData->setSize($fileSize);
-        $em->flush();
-        // $eventDispatcher = $this->container->get ( 'event_dispatcher' );
-        // $uploadedEvent = new UploadEvent ( $media );
-        // $eventDispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, $uploadedEvent );
-
-        if ($success) {
-            $serializer = $this->get('jms_serializer');
-            $content = array(
-                'responseCode' => 200,
-                'feedback' => 'Successfully trimmed media!',
-                'media' => json_decode($serializer->serialize($media, 'json'), true)
-            );
-        } else {
-            $content = array(
-                'responseCode' => 400,
-                'feedback' => 'Trimming media failed!.'
-            );
-        }
+        $content = array(
+            'responseCode' => 200,
+            'feedback' => 'trim queued'
+        );
 
         return new Response(json_encode($content), 200, array(
             'Content-Type' => 'application/json'

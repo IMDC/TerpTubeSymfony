@@ -3,11 +3,11 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File;
-use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile as IMDCUploadedFile;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\File\File as BaseFile;
-use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceFile
 {
@@ -30,7 +30,7 @@ class ResourceFile
 
     /**
      * Unmapped property to handle file uploads
-     * @var BaseUploadedFile|BaseFile
+     * @var UploadedFile|File
      */
     private $file;
 
@@ -125,18 +125,18 @@ class ResourceFile
     /**
      * Sets file. **From cookbook**
      *
-     * @param BaseUploadedFile|File $file
+     * @param UploadedFile|File $file
      * @return ResourceFile
      */
     public function setFile($file = null)
     {
-        if (!($file instanceof BaseUploadedFile || $file instanceof BaseFile))
+        if (!($file instanceof UploadedFile || $file instanceof File))
             $this->file = null;
 
-        if ($file instanceof BaseUploadedFile) {
-            $this->file = UploadedFile::fromUploadedFile($file);
-        } else if ($file instanceof BaseFile) {
-            $this->file = File::fromFile($file);
+        if ($file instanceof UploadedFile) {
+            $this->file = IMDCUploadedFile::fromUploadedFile($file);
+        } else if ($file instanceof File) {
+            $this->file = IMDCFile::fromFile($file);
         }
 
         // check if we have an old image path
@@ -153,7 +153,7 @@ class ResourceFile
     /**
      * Get file.
      *
-     * @return UploadedFile
+     * @return UploadedFile|File
      */
     public function getFile()
     {

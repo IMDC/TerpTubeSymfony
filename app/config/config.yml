@@ -213,14 +213,22 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
             lazy:      false
     producers:
         transcode:
-            connection: default
-            exchange_options: {name: 'transcode', type: direct}
+            connection:         default
+            exchange_options:   {name: 'transcode', type: direct}
+        trim:
+            connection:         default
+            exchange_options:   {name: 'trim', type: direct}
     consumers:
         transcode:
-            connection: default
-            exchange_options: {name: 'transcode', type: direct}
-            queue_options:    {name: 'transcode'}
-            callback:         transcode_service
+            connection:         default
+            exchange_options:   {name: 'transcode', type: direct}
+            queue_options:      {name: 'transcode'}
+            callback:           transcode_service
+        trim:
+            connection:         default
+            exchange_options:   {name: 'trim', type: direct}
+            queue_options:      {name: 'trim'}
+            callback:           trim_service
 
 knp_time: ~ # Enable the helper for use in templates
 

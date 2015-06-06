@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\Common\Collections\Criteria;
 use FFMpeg\FFProbe;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
 use IMDC\TerpTubeBundle\Entity\Interpretation;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
@@ -12,6 +13,7 @@ use IMDC\TerpTubeBundle\Form\Type\MediaType;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -86,14 +88,13 @@ class MyFilesController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $isFirefox = filter_var($request->request->get('isFirefox'), FILTER_VALIDATE_BOOLEAN);
+        /** @var UploadedFile $video */
         $video = $request->files->get('video-blob', null);
+        /** @var UploadedFile $audio */
         $audio = $request->files->get('audio-blob', null);
         if (($isFirefox && empty($audio)) || (!$isFirefox && (empty($video) || empty($audio)))) {
             throw new \Exception('no media data found in request');
         }
-
-        /** @var $transcoder Transcoder */
-        $transcoder = $this->container->get('imdc_terptube.transcoder');
 
         $isInterpretation = filter_var($request->request->get('isInterpretation'), FILTER_VALIDATE_BOOLEAN);
         $sourceStartTime = floatval($request->request->get('sourceStartTime', 0));
@@ -106,11 +107,16 @@ class MyFilesController extends Controller
             }
         }
 
+        /** @var $transcoder Transcoder */
+        /*$transcoder = $this->container->get('imdc_terptube.transcoder');
         $mergedFile = $isFirefox ? $transcoder->remuxWebM($audio) : $transcoder->mergeAudioVideo($audio, $video);
-        $mergedFile = $transcoder->removeFirstFrame($mergedFile);
+        $mergedFile = $transcoder->removeFirstFrame($mergedFile);*/
 
-        $resourceFile = new ResourceFile();
-        $resourceFile->setFile($mergedFile);
+        /*if (!$isFirefox)
+            $video->move(__DIR__ . '/../../../../web/' . ResourceFile::UPLOAD_DIR);
+        $audio->move(__DIR__ . '/../../../../web/' . ResourceFile::UPLOAD_DIR);*/
+
+        //$resourceFile = ResourceFile::fromFile($mergedFile);
 
         if ($isInterpretation) {
             $media = new Interpretation();
@@ -123,7 +129,9 @@ class MyFilesController extends Controller
         $media->setOwner($user);
         $media->setType(Media::TYPE_VIDEO);
         $media->setTitle('Recording-' . $currentTime->format('Y-m-d-H:i'));
-        $media->setIsReady(Media::READY_WEBM);
+
+        $resourceFile = ResourceFile::fromFile(new IMDCFile(tempnam('/tmp', 'hello')));
+        $resourceFile->setPath('placeholder');
         $media->setSourceResource($resourceFile);
 
         $user->addResourceFile($media);
@@ -135,6 +143,9 @@ class MyFilesController extends Controller
 
         $eventDispatcher = $this->container->get('event_dispatcher');
         $uploadEvent = new UploadEvent($media);
+        if (!$isFirefox)
+            $uploadEvent->setTmpVideoPath($video->getPathname());
+        $uploadEvent->setTmpAudioPath($audio->getPathname());
         $eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadEvent);
 
         $serializer = $this->get('jms_serializer');

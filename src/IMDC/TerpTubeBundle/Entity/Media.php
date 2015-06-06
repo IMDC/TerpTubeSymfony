@@ -53,7 +53,7 @@ class Media implements MediaInterface
      *
      * @var integer
      */
-    private $isReady = 0;
+    private $isReady;
 
     /**
      *
@@ -94,6 +94,7 @@ class Media implements MediaInterface
      */
     public function __construct()
     {
+        $this->isReady = MediaStateConst::UNPROCESSED;
         $this->resources = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -339,28 +340,20 @@ class Media implements MediaInterface
 
     public function createThumbnail(Transcoder $transcoder)
     {
-        try {
-            $sourceResource = $this->getSourceResource();
-            $fs = new Filesystem();
+        $sourceResource = $this->getSourceResource();
+        $fs = new Filesystem();
 
-            $thumbnailTempFile = $transcoder->createThumbnail($sourceResource->getAbsolutePath(), $this->getType());
-            $thumbnailFile = $this->getThumbnailRootDir() . '/' . $sourceResource->getId() . '.png';
-            $fs->rename($thumbnailTempFile, $thumbnailFile, true);
-            $this->setThumbnailPath($sourceResource->getId() . '.png');
-        } catch (\Exception $e) {
-            $this->logger->error($e->getTraceAsString());
-        }
+        $thumbnailTempFile = $transcoder->createThumbnail($sourceResource->getAbsolutePath(), $this->getType());
+        $thumbnailFile = $this->getThumbnailRootDir() . '/' . $sourceResource->getId() . '.png';
+        $fs->rename($thumbnailTempFile, $thumbnailFile, true);
+        $this->setThumbnailPath($sourceResource->getId() . '.png');
     }
 
     public function removeThumbnail()
     {
-        try {
-            $fs = new Filesystem();
-            $fs->remove($this->getThumbnailPath());
-            $this->setThumbnailPath(NULL);
-        } catch (\Exception $e) {
-            $this->logger->error($e->getTraceAsString());
-        }
+        $fs = new Filesystem();
+        $fs->remove($this->getThumbnailPath());
+        $this->setThumbnailPath(NULL);
     }
 
     public function isInterpretation()

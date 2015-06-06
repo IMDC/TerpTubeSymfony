@@ -29,7 +29,7 @@ class MyFilesControllerTest extends MediaTestCase
         Common::login($this->client);
     }
 
-    public function testList()
+    /*public function testList()
     {
         $crawler = $this->client->request('GET', '/myFiles/');
 
@@ -63,8 +63,8 @@ class MyFilesControllerTest extends MediaTestCase
 
     public function testAddRecording_Chrome()
     {
-        $videoBlob = $this->createUploadedFile('case02_video_1316.918333s_480p_1000k.webm');
-        $audioBlob = $this->createUploadedFile('case02_audio_1316.918333s.wav');
+        $videoBlob = $this->createUploadedFile('video.webm');
+        $audioBlob = $this->createUploadedFile('audio.wav');
 
         $this->client->request('POST', '/myFiles/add/recording', array(), array(
             'video-blob' => $videoBlob,
@@ -89,11 +89,11 @@ class MyFilesControllerTest extends MediaTestCase
 
         // find media to have it removed at tear down
         $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
-    }
+    }*/
 
     public function testAddRecording_Firefox()
     {
-        $audioBlob = $this->createUploadedFile('case02_video+audio_1316.918333s_480p_1000k.webm');
+        $audioBlob = $this->createUploadedFile('video_audio.webm');
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isFirefox' => true
@@ -121,7 +121,7 @@ class MyFilesControllerTest extends MediaTestCase
         $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
     }
 
-    public function testAddRecording_ChromeInterpretation()
+    /*public function testAddRecording_ChromeInterpretation()
     {
         $videoBlob = $this->createUploadedFile('case02_video_1316.918333s_480p_1000k.webm');
         $audioBlob = $this->createUploadedFile('case02_audio_1316.918333s.wav');
@@ -219,5 +219,5 @@ class MyFilesControllerTest extends MediaTestCase
 
         // find media to have it removed at tear down
         $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
-    }
+    }*/
 }
