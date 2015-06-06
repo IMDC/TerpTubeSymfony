@@ -3,6 +3,8 @@
 namespace IMDC\TerpTubeBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Consumer\MultiplexConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\MultiplexOperation;
 use IMDC\TerpTubeBundle\Consumer\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
@@ -36,11 +38,12 @@ class UploadListener implements EventSubscriberInterface
      */
     private $transcodeProducer;
 
-    public function __construct($logger, $entityManager, $transcoder, $transcodeProducer)
+    public function __construct($logger, $entityManager, $transcoder, $multiplexProducer, $transcodeProducer)
     {
         $this->logger = $logger;
         $this->entityManager = $entityManager;
         $this->transcoder = $transcoder;
+        $this->multiplexProducer = $multiplexProducer;
         $this->transcodeProducer = $transcodeProducer;
     }
 
@@ -59,7 +62,8 @@ class UploadListener implements EventSubscriberInterface
     public function onUpload(UploadEvent $event)
     {
         $media = $event->getMedia();
-        $messages = array();
+        $multiplexMessages = array();
+        $transcodeMessages = array();
 
         // Transcode the different types and populate the metadata for the proper type
 
@@ -74,23 +78,36 @@ class UploadListener implements EventSubscriberInterface
                 $mux = is_file($event->getTmpVideoPath()) && is_file($event->getTmpAudioPath());
                 $remux = !is_file($event->getTmpVideoPath()) && is_file($event->getTmpAudioPath());
 
+                if ($mux || $remux) {
+                    $opts = new MultiplexConsumerOptions();
+                    $opts->mediaId = $media->getId();
+                    $opts->operation = $mux ? MultiplexOperation::MUX : MultiplexOperation::REMUX;
+                    $opts->videoPath = $event->getTmpVideoPath();
+                    $opts->audioPath = $event->getTmpAudioPath();
+
+                    $opts->transcodeOptions = new TranscodeConsumerOptions();
+                    $opts->transcodeOptions->mediaId = $media->getId();
+                    $opts->transcodeOptions->container = ContainerConst::WEBM;
+                    $opts->transcodeOptions->preset = 'ffmpeg.webm_720p_video';
+
+                    $multiplexMessages[] = $opts->pack();
+
+                    // make thumbnail and queue for transcode later in MultiplexConsumer
+
+                    break;
+                }
+
                 $opts = new TranscodeConsumerOptions();
                 $opts->mediaId = $media->getId();
                 $opts->container = ContainerConst::WEBM;
                 $opts->preset = 'ffmpeg.webm_720p_video';
-                $opts->mux = $mux;
-                $opts->remux = $remux;
-                $opts->videoPath = $event->getTmpVideoPath();
-                $opts->audioPath = $event->getTmpAudioPath();
-                $messages[] = $opts->pack();
+                $transcodeMessages[] = $opts->pack();
 
                 $opts->container = ContainerConst::MP4;
                 $opts->preset = 'ffmpeg.x264_720p_video';
-                $messages[] = $opts->pack();
+                $transcodeMessages[] = $opts->pack();
 
-                if (!$mux && !$remux)
-                    // make it later in TranscodeConsumer
-                    $media->createThumbnail($this->transcoder);
+                $media->createThumbnail($this->transcoder);
 
                 break;
             case Media::TYPE_AUDIO:
@@ -100,11 +117,11 @@ class UploadListener implements EventSubscriberInterface
                 $opts->mediaId = $media->getId();
                 $opts->container = ContainerConst::WEBM;
                 $opts->preset = 'ffmpeg.webm_audio';
-                $messages[] = $opts->pack();
+                $transcodeMessages[] = $opts->pack();
 
                 $opts->container = ContainerConst::MP4;
                 $opts->preset = 'ffmpeg.aac_audio';
-                $messages[] = $opts->pack();
+                $transcodeMessages[] = $opts->pack();
 
                 break;
             case Media::TYPE_IMAGE:
@@ -137,13 +154,11 @@ class UploadListener implements EventSubscriberInterface
 
         $this->entityManager->flush();
 
-        switch ($media->getType()) {
-            case Media::TYPE_VIDEO:
-            case Media::TYPE_AUDIO:
-                foreach ($messages as $message)
-                    $this->transcodeProducer->publish($message);
 
-                break;
-        }
+        foreach ($multiplexMessages as $message)
+            $this->multiplexProducer->publish($message);
+
+        foreach ($transcodeMessages as $message)
+            $this->transcodeProducer->publish($message);
     }
 }

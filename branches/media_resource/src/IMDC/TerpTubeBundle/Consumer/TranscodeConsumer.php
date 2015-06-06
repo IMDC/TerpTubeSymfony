@@ -19,13 +19,6 @@ class TranscodeConsumer extends AbstractMediaConsumer
         if (empty($this->media))
             return $result;
 
-        //TODO change to a class?
-        /*$transcodeOpts = array_key_exists('transcodeOpts', $this->message) ? $this->message['transcodeOpts'] : null;
-        if (empty($transcodeOpts)) {
-            $this->logger->error("no transcode options specified");
-            return true;
-        }*/
-
         if (!($this->message instanceof TranscodeConsumerOptions)) {
             $this->logger->error("no transcode options specified");
             return true;
@@ -39,39 +32,6 @@ class TranscodeConsumer extends AbstractMediaConsumer
         $em->persist($this->media);
         $em->flush();
         //$em->close();
-
-        //TODO move to separate consumer?
-        if (($transcodeOpts->mux || $transcodeOpts->remux)
-            && $this->media->getSourceResource()->getPath() === 'placeholder' // if not already done
-        ) {
-            try {
-                $resourceFile = null;
-
-                if ($transcodeOpts->mux)
-                    $resourceFile = $this->transcoder->mergeAudioVideo($transcodeOpts->audio, $transcodeOpts->video);
-
-                if ($transcodeOpts->remux)
-                    $resourceFile = $this->transcoder->remuxWebM($transcodeOpts->audio);
-
-                if ($resourceFile != null) {
-                    $em = $this->doctrine->getManager();
-
-                    $resourceFile = $this->media->getSourceResource()
-                        ->setFile(IMDCFile::fromFile($resourceFile))
-                        ->setPath($resourceFile->getExtension());
-                    $em->persist($resourceFile);
-                    $em->flush();
-
-                    $this->updateMetaData($resourceFile);
-                    $this->media->createThumbnail($this->transcoder);
-                    $em->persist($this->media);
-                    $em->flush();
-                }
-            } catch (\Exception $e) {
-                $this->logger->error($e->getTraceAsString());
-                return true;
-            }
-        }
 
         $sourceFile = new File($this->media->getSourceResource()->getAbsolutePath());
         $transcodedFile = null;
@@ -106,10 +66,6 @@ class TranscodeConsumer extends AbstractMediaConsumer
         $em->persist($this->media);
         $em->flush();
         //$em->close();
-
-        /*if ($this->checkForPendingOperations($this->media->getId())) {
-            $this->executePendingOperations($this->media->getId());
-        }*/
 
         return true;
     }

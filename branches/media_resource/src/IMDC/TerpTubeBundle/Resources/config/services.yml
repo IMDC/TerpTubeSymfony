@@ -8,6 +8,12 @@ services:
 #        class: %imdc_terp_tube.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
 
+    multiplex_service:
+        class: IMDC\TerpTubeBundle\Consumer\MultiplexConsumer
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.transcode_producer"]
+        tags:
+            - { name: 'monolog.logger', channel: 'imdc' }
+
     transcode_service:
         class: IMDC\TerpTubeBundle\Consumer\TranscodeConsumer
         arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder"]
@@ -50,7 +56,7 @@ services:
               
     imdc_terptube.upload_resource_listener:
         class: IMDC\TerpTubeBundle\EventListener\UploadListener
-        arguments: ["@logger", "@doctrine.orm.entity_manager", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.transcode_producer"]
+        arguments: ["@logger", "@doctrine.orm.entity_manager", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.multiplex_producer", "@old_sound_rabbit_mq.transcode_producer"]
         tags:
             - { name: kernel.event_subscriber}
             - { name: 'monolog.logger', channel: 'imdc' }

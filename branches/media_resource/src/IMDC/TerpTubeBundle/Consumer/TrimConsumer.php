@@ -21,13 +21,6 @@ class TrimConsumer extends AbstractMediaConsumer
             return true;
         }
 
-        //TODO change to a class?
-        /*$trimOpts = array_key_exists('trimOpts', $this->message) ? $this->message['trimOpts'] : null;
-        if (empty($trimOpts)) {
-            $this->logger->error("no trim options specified");
-            return true;
-        }*/
-
         if (!($this->message instanceof TrimConsumerOptions)) {
             $this->logger->error("no trim options specified");
             return true;

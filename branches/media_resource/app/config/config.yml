@@ -212,6 +212,9 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
             vhost:     '/'
             lazy:      false
     producers:
+        multiplex:
+            connection:         default
+            exchange_options:   {name: 'multiplex', type: direct}
         transcode:
             connection:         default
             exchange_options:   {name: 'transcode', type: direct}
@@ -219,6 +222,11 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
             connection:         default
             exchange_options:   {name: 'trim', type: direct}
     consumers:
+        multiplex:
+            connection:         default
+            exchange_options:   {name: 'multiplex', type: direct}
+            queue_options:      {name: 'multiplex'}
+            callback:           multiplex_service
         transcode:
             connection:         default
             exchange_options:   {name: 'transcode', type: direct}

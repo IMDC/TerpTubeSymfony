@@ -53,48 +53,6 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         $this->fs = new Filesystem();
     }
 
-    protected function checkForPendingOperations($mediaId)
-    {
-        $media = $this->entityManager->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
-        if ($media->getPendingOperations() != null && count($media->getPendingOperations()) > 0)
-            return true;
-        else
-            return false;
-    }
-
-    protected function executePendingOperations($mediaId)
-    {
-        /** @var $media Media */
-        $media = $this->entityManager->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
-        $pendingOperations = $media->getPendingOperations();
-        foreach ($pendingOperations as $pendingOperation) {
-            $operation = explode(",", $pendingOperation);
-            $operationType = $operation [0];
-            if ($operationType == "trim") {
-                /*$operationMediaType = $operation [1];
-                if ($operationMediaType == "mp4") {
-                    $inputFile = $resource->getAbsolutePath();
-                } else if ($operationMediaType == "webm") {
-                    $inputFile = $resource->getAbsolutePath();
-                }*/
-                // regardless of $operationMediaType
-                foreach ($media->getResources() as $resource) {
-                    $inputFile = $resource->getAbsolutePath();
-                    $startTime = $operation [2];
-                    $endTime = $operation [3];
-                    $this->transcoder->trimVideo($inputFile, $startTime, $endTime);
-                }
-                $this->logger->info("Transcoding operation " . $pendingOperation . " completed!");
-            } else {
-                $this->logger->error("Unknown operation " . $pendingOperation . "!");
-            }
-        }
-        // FIXME may have a race condition if pending operations are updated elsewhere
-        $pendingOperations = array();
-        $media->setPendingOperations($pendingOperations);
-        $this->entityManager->flush();
-    }
-
     public function updateMetaData(ResourceFile $resourceFile)
     {
         $mediaType = $this->media->getType();
@@ -170,18 +128,6 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         }
         //$em->close();
 
-        //TODO add state/status check to determine if ready?
-        /*$transcodingType = $this->media->getIsReady();
-        if (/*($transcodingType != Media::READY_MP4 &&
-                $transcodingType != Media::READY_NO &&
-                $transcodingType != Media::READY_WEBM) ||*
-            $transcodingType == Media::READY_YES
-        ) {
-            // Already Transcoded should not be here
-            $this->logger->error("Should not be in this place of transcoding when everything is already completed!");
-            return true;
-        }*/
-
         $mediaType = $this->media->getType();
         switch ($mediaType) {
             case Media::TYPE_VIDEO:
@@ -194,7 +140,7 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
                         throw new \Exception('file not found'); // TODO make me better
 
                     // break for placeholder files
-                    // placeholders are used for pending transcodes that need preprocessing
+                    // placeholders are used for media that need preprocessing
                     if ($sourceResource->getPath() === 'placeholder')
                         break;
 
