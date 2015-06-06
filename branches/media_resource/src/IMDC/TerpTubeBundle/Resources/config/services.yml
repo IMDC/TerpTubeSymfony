@@ -14,6 +14,12 @@ services:
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 
+    trim_service:
+        class: IMDC\TerpTubeBundle\Consumer\TrimConsumer
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder"]
+        tags:
+            - { name: 'monolog.logger', channel: 'imdc' }
+
     imdc_terptube.authentication_manager:
         class: IMDC\TerpTubeBundle\Utils\AuthenticationManager
         arguments: ["@security.context"]

@@ -3,10 +3,12 @@
 namespace IMDC\TerpTubeBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Consumer\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
-use IMDC\TerpTubeBundle\Transcoding\TranscodeContainer;
+use IMDC\TerpTubeBundle\Transcoding\ContainerConst;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
@@ -69,41 +71,44 @@ class UploadListener implements EventSubscriberInterface
             case Media::TYPE_VIDEO:
                 $this->logger->info('Uploaded a video');
 
-                $messages[] = array(
-                    'media_id' => $media->getId(),
-                    'transcodeOpts' => array(
-                        'container' => TranscodeContainer::WEBM,
-                        'preset' => 'ffmpeg.webm_720p_video'
-                    ));
-                $messages[] = array(
-                    'media_id' => $media->getId(),
-                    'transcodeOpts' => array(
-                        'container' => TranscodeContainer::MP4,
-                        'preset' => 'ffmpeg.x264_720p_video'
-                    ));
+                $mux = is_file($event->getTmpVideoPath()) && is_file($event->getTmpAudioPath());
+                $remux = !is_file($event->getTmpVideoPath()) && is_file($event->getTmpAudioPath());
 
-                $media->createThumbnail($this->transcoder);
+                $opts = new TranscodeConsumerOptions();
+                $opts->mediaId = $media->getId();
+                $opts->container = ContainerConst::WEBM;
+                $opts->preset = 'ffmpeg.webm_720p_video';
+                $opts->mux = $mux;
+                $opts->remux = $remux;
+                $opts->videoPath = $event->getTmpVideoPath();
+                $opts->audioPath = $event->getTmpAudioPath();
+                $messages[] = $opts->pack();
+
+                $opts->container = ContainerConst::MP4;
+                $opts->preset = 'ffmpeg.x264_720p_video';
+                $messages[] = $opts->pack();
+
+                if (!$mux && !$remux)
+                    // make it later in TranscodeConsumer
+                    $media->createThumbnail($this->transcoder);
 
                 break;
             case Media::TYPE_AUDIO:
-                // TODO look into resizing images
                 $this->logger->info('Uploaded an audio');
 
-                $messages[] = array(
-                    'media_id' => $media->getId(),
-                    'transcodeOpts' => array(
-                        'container' => TranscodeContainer::WEBM,
-                        'preset' => 'ffmpeg.webm_audio'
-                    ));
-                $messages[] = array(
-                    'media_id' => $media->getId(),
-                    'transcodeOpts' => array(
-                        'container' => TranscodeContainer::MP4,
-                        'preset' => 'ffmpeg.aac_audio'
-                    ));
+                $opts = new TranscodeConsumerOptions();
+                $opts->mediaId = $media->getId();
+                $opts->container = ContainerConst::WEBM;
+                $opts->preset = 'ffmpeg.webm_audio';
+                $messages[] = $opts->pack();
+
+                $opts->container = ContainerConst::MP4;
+                $opts->preset = 'ffmpeg.aac_audio';
+                $messages[] = $opts->pack();
 
                 break;
             case Media::TYPE_IMAGE:
+                // TODO look into resizing images
                 $this->logger->info('Uploaded an image');
 
                 $sourceResourcePath = $media->getSourceResource()->getAbsolutePath();
@@ -115,7 +120,7 @@ class UploadListener implements EventSubscriberInterface
 
                 $media->createThumbnail($this->transcoder);
 
-                $media->setIsReady(Media::READY_YES);
+                $media->setIsReady(MediaStateConst::READY);
 
                 break;
             default:
@@ -123,7 +128,7 @@ class UploadListener implements EventSubscriberInterface
 
                 $metaData->setSize(filesize($media->getSourceResource()->getAbsolutePath()));
 
-                $media->setIsReady(Media::READY_YES);
+                $media->setIsReady(MediaStateConst::READY);
         }
 
         $this->entityManager->persist($metaData);
@@ -136,7 +141,7 @@ class UploadListener implements EventSubscriberInterface
             case Media::TYPE_VIDEO:
             case Media::TYPE_AUDIO:
                 foreach ($messages as $message)
-                    $this->transcodeProducer->publish(serialize($message));
+                    $this->transcodeProducer->publish($message);
 
                 break;
         }

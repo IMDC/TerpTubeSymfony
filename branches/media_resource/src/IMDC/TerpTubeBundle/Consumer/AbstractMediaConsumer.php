@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
 use IMDC\TerpTubeBundle\Entity\Media;
@@ -9,11 +10,10 @@ use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
-class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
+abstract class AbstractMediaConsumer implements MediaConsumerInterface
 {
     /**
      * @var Logger
@@ -21,9 +21,9 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
     protected $logger;
 
     /**
-     * @var EntityManager
+     * @var ManagerRegistry
      */
-    protected $entityManager;
+    protected $doctrine;
 
     /**
      * @var Transcoder
@@ -35,6 +35,9 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
      */
     protected $fs;
 
+    /**
+     * @var ConsumerOptions
+     */
     protected $message;
 
     /**
@@ -45,7 +48,7 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
     public function __construct($logger, $doctrine, $transcoder)
     {
         $this->logger = $logger;
-        $this->entityManager = $doctrine->getManager();
+        $this->doctrine = $doctrine;
         $this->transcoder = $transcoder;
         $this->fs = new Filesystem();
     }
@@ -126,7 +129,7 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
         }
     }
 
-    public function createResource(File $file)
+    protected function createResource(File $file)
     {
         // Correct the permissions to 664
         $old = umask(0);
@@ -138,29 +141,34 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
         $resource->setPath($file->getExtension());
 
         // make it immediately usable
-        $this->entityManager->persist($resource);
-        $this->entityManager->flush();
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $em->persist($resource);
+        $em->flush();
 
         $this->updateMetaData($resource);
-        $this->entityManager->persist($resource);
+        $em->persist($resource);
+        $em->flush();
+        //$em->close();
 
         return $resource;
     }
 
     public function execute(AMQPMessage $msg)
     {
-        $this->message = unserialize($msg->body);
+        $this->message = ConsumerOptions::unpack($msg->body);
         if (empty($this->message))
             return true;
 
-        $mediaId = $this->message['media_id'];
-
-        $this->media = $this->entityManager->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $this->media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($this->message->mediaId);
         if (empty($this->media)) {
             // Can happen if media is deleted before transcoding can be executed
-            $this->logger->info(sprintf("Media with ID=%d does not exist and cannot be transcoded!", $mediaId));
+            $this->logger->info(sprintf("Media with ID=%d does not exist and cannot be transcoded!", $this->message->mediaId));
             return true;
         }
+        //$em->close();
 
         //TODO add state/status check to determine if ready?
         /*$transcodingType = $this->media->getIsReady();
@@ -185,6 +193,11 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
                     if (!file_exists($sourceResource->getAbsolutePath()))
                         throw new \Exception('file not found'); // TODO make me better
 
+                    // break for placeholder files
+                    // placeholders are used for pending transcodes that need preprocessing
+                    if ($sourceResource->getPath() === 'placeholder')
+                        break;
+
                     /** @var $streams StreamCollection */
                     $streams = $this->transcoder->getFFprobe()->streams($sourceResource->getAbsolutePath());
                     if (($mediaType == Media::TYPE_VIDEO && $streams->videos()->count() == 0)
@@ -194,9 +207,9 @@ class MediaBaseConsumer extends ContainerAware implements MediaConsumerInterface
                     }
                 } catch (\Exception $e) {
                     // TODO need to send an event to alert the user that this is an invalid video/audio
-                    $this->media = null; // null it so that child classes don't attempt any work
                     // not a video so don't hold up the queue
                     $this->logger->error(sprintf("Error. Not a valid video/audio file %d!", $this->media->getId()));
+                    $this->media = null; // null it so that child classes don't attempt any work
                     return true;
                 }
 

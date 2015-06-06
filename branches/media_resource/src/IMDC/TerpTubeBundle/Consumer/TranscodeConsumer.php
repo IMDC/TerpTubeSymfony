@@ -2,11 +2,13 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
-use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File;
-use IMDC\TerpTubeBundle\Entity\Media;
+use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
+use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use PhpAmqpLib\Message\AMQPMessage;
+use Symfony\Component\HttpFoundation\File\File;
 
-class TranscodeConsumer extends MediaBaseConsumer
+class TranscodeConsumer extends AbstractMediaConsumer
 {
     public function execute(AMQPMessage $msg)
     {
@@ -17,27 +19,68 @@ class TranscodeConsumer extends MediaBaseConsumer
         if (empty($this->media))
             return $result;
 
-        if (!array_key_exists('transcodeOpts', $this->message)) {
+        //TODO change to a class?
+        /*$transcodeOpts = array_key_exists('transcodeOpts', $this->message) ? $this->message['transcodeOpts'] : null;
+        if (empty($transcodeOpts)) {
+            $this->logger->error("no transcode options specified");
+            return true;
+        }*/
+
+        if (!($this->message instanceof TranscodeConsumerOptions)) {
             $this->logger->error("no transcode options specified");
             return true;
         }
+        /** @var TranscodeConsumerOptions $transcodeOpts */
+        $transcodeOpts = TranscodeConsumerOptions::unpack($msg->body);
 
-        //TODO change to a class?
-        $transcodeOpts = $this->message['transcodeOpts'];
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $this->media->setIsReady(MediaStateConst::PROCESSING);
+        $em->persist($this->media);
+        $em->flush();
+        //$em->close();
 
-        $mediaType = $this->media->getType();
-        //$transcodingType = $this->media->getIsReady();
-        $sourceResource = $this->media->getSourceResource();
-        $sourceFile = new File($sourceResource->getAbsolutePath());
+        //TODO move to separate consumer?
+        if (($transcodeOpts->mux || $transcodeOpts->remux)
+            && $this->media->getSourceResource()->getPath() === 'placeholder' // if not already done
+        ) {
+            try {
+                $resourceFile = null;
+
+                if ($transcodeOpts->mux)
+                    $resourceFile = $this->transcoder->mergeAudioVideo($transcodeOpts->audio, $transcodeOpts->video);
+
+                if ($transcodeOpts->remux)
+                    $resourceFile = $this->transcoder->remuxWebM($transcodeOpts->audio);
+
+                if ($resourceFile != null) {
+                    $em = $this->doctrine->getManager();
+
+                    $resourceFile = $this->media->getSourceResource()
+                        ->setFile(IMDCFile::fromFile($resourceFile))
+                        ->setPath($resourceFile->getExtension());
+                    $em->persist($resourceFile);
+                    $em->flush();
+
+                    $this->updateMetaData($resourceFile);
+                    $this->media->createThumbnail($this->transcoder);
+                    $em->persist($this->media);
+                    $em->flush();
+                }
+            } catch (\Exception $e) {
+                $this->logger->error($e->getTraceAsString());
+                return true;
+            }
+        }
+
+        $sourceFile = new File($this->media->getSourceResource()->getAbsolutePath());
         $transcodedFile = null;
 
         try {
             $this->logger->info("Transcoding " . $sourceFile->getRealPath());
 
-            // still check this?
-            //if ($transcodingType == Media::READY_MP4 || $transcodingType == Media::READY_NO)
-            //if ($transcodingType == Media::READY_WEBM || $transcodingType == Media::READY_NO)
-            $transcodedFile = $this->transcoder->transcode($transcodeOpts['container'], $mediaType, $sourceFile, $transcodeOpts['preset']);
+            $transcodedFile = $this->transcoder->transcode(
+                $transcodeOpts->container, $this->media->getType(), $sourceFile, $transcodeOpts->preset);
             if ($transcodedFile == null)
                 throw new \Exception("Could not transcode the video for some reason");
 
@@ -50,20 +93,41 @@ class TranscodeConsumer extends MediaBaseConsumer
         // done with the source file. do (not) delete the file itself, but keep the entity
         //unlink($sourceFile->getRealPath());
 
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $em->refresh($this->media);
+
         $transcodeResource = $this->createResource($transcodedFile);
         $this->media->addResource($transcodeResource);
 
-        //TODO at least one transcode = ready?
-        //TODO add state/status check to determine if ready?
-        $this->media->setIsReady(Media::READY_YES);
+        if ($this->isReady())
+            $this->media->setIsReady(MediaStateConst::READY);
 
-        $this->entityManager->persist($this->media);
-        $this->entityManager->flush();
+        $em->persist($this->media);
+        $em->flush();
+        //$em->close();
 
-        if ($this->checkForPendingOperations($this->media->getId())) {
+        /*if ($this->checkForPendingOperations($this->media->getId())) {
             $this->executePendingOperations($this->media->getId());
-        }
+        }*/
 
         return true;
+    }
+
+    /**
+     * check for webm and mp4 containers
+     * @return bool
+     */
+    private function isReady()
+    {
+        $count = 0;
+
+        /** @var ResourceFile $resource */
+        foreach ($this->media->getResources() as $resource) {
+            if ($resource->getPath() === 'webm' || $resource->getPath() === 'mp4')
+                $count++;
+        }
+
+        return ($count >= 2);
     }
 }

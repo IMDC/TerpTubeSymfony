@@ -2,7 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Transcoding;
 
-abstract class TranscodeContainer
+abstract class ContainerConst
 {
     const WEBM = 0;
     const MP4 = 1;
