@@ -37,24 +37,12 @@ class MultiplexConsumerOptions extends ConsumerOptions
      */
     public $audio;
 
-    /**
-     * @var TranscodeConsumerOptions
-     */
-    public $transcodeOptions;
-
     public function pack()
     {
         $this->video = null;
         $this->audio = null;
 
-        $temp = $this->transcodeOptions;
-        $this->transcodeOptions = $this->transcodeOptions->pack();
-
-        $serialized = serialize($this);
-
-        $this->transcodeOptions = $temp;
-
-        return $serialized;
+        return serialize($this);
     }
 
     public static function unpack($serialized)
@@ -65,8 +53,6 @@ class MultiplexConsumerOptions extends ConsumerOptions
             $opts->video = new File($opts->videoPath);
         if (is_file($opts->audioPath))
             $opts->audio = new File($opts->audioPath);
-
-        $opts->transcodeOptions = TranscodeConsumerOptions::unpack($opts->transcodeOptions);
 
         return $opts;
     }

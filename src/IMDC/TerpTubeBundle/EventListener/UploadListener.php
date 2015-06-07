@@ -62,8 +62,6 @@ class UploadListener implements EventSubscriberInterface
     public function onUpload(UploadEvent $event)
     {
         $media = $event->getMedia();
-        $multiplexMessages = array();
-        $transcodeMessages = array();
 
         // Transcode the different types and populate the metadata for the proper type
 
@@ -85,12 +83,7 @@ class UploadListener implements EventSubscriberInterface
                     $opts->videoPath = $event->getTmpVideoPath();
                     $opts->audioPath = $event->getTmpAudioPath();
 
-                    $opts->transcodeOptions = new TranscodeConsumerOptions();
-                    $opts->transcodeOptions->mediaId = $media->getId();
-                    $opts->transcodeOptions->container = ContainerConst::WEBM;
-                    $opts->transcodeOptions->preset = 'ffmpeg.webm_720p_video';
-
-                    $multiplexMessages[] = $opts->pack();
+                    $this->multiplexProducer->publish($opts->pack());
 
                     // make thumbnail and queue for transcode later in MultiplexConsumer
 
@@ -101,11 +94,11 @@ class UploadListener implements EventSubscriberInterface
                 $opts->mediaId = $media->getId();
                 $opts->container = ContainerConst::WEBM;
                 $opts->preset = 'ffmpeg.webm_720p_video';
-                $transcodeMessages[] = $opts->pack();
+                $this->transcodeProducer->publish($opts->pack());
 
                 $opts->container = ContainerConst::MP4;
                 $opts->preset = 'ffmpeg.x264_720p_video';
-                $transcodeMessages[] = $opts->pack();
+                $this->transcodeProducer->publish($opts->pack());
 
                 $media->createThumbnail($this->transcoder);
 
@@ -117,11 +110,11 @@ class UploadListener implements EventSubscriberInterface
                 $opts->mediaId = $media->getId();
                 $opts->container = ContainerConst::WEBM;
                 $opts->preset = 'ffmpeg.webm_audio';
-                $transcodeMessages[] = $opts->pack();
+                $this->transcodeProducer->publish($opts->pack());
 
                 $opts->container = ContainerConst::MP4;
                 $opts->preset = 'ffmpeg.aac_audio';
-                $transcodeMessages[] = $opts->pack();
+                $this->transcodeProducer->publish($opts->pack());
 
                 break;
             case Media::TYPE_IMAGE:
@@ -153,12 +146,5 @@ class UploadListener implements EventSubscriberInterface
         $media->setMetaData($metaData);
 
         $this->entityManager->flush();
-
-
-        foreach ($multiplexMessages as $message)
-            $this->multiplexProducer->publish($message);
-
-        foreach ($transcodeMessages as $message)
-            $this->transcodeProducer->publish($message);
     }
 }
