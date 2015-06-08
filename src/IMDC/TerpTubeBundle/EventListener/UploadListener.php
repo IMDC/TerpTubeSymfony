@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Consumer\AbstractMediaConsumer;
 use IMDC\TerpTubeBundle\Consumer\MultiplexConsumerOptions;
 use IMDC\TerpTubeBundle\Consumer\MultiplexOperation;
 use IMDC\TerpTubeBundle\Consumer\TranscodeConsumerOptions;
@@ -62,12 +63,9 @@ class UploadListener implements EventSubscriberInterface
     public function onUpload(UploadEvent $event)
     {
         $media = $event->getMedia();
+        $media->getSourceResource()->setMetaData(new MetaData());
 
         // Transcode the different types and populate the metadata for the proper type
-
-        $metaData = new MetaData();
-        $metaData->setSize(-1);
-        $metaData->setTimeUploaded(new \DateTime('now'));
 
         switch ($media->getType()) {
             case Media::TYPE_VIDEO:
@@ -121,30 +119,22 @@ class UploadListener implements EventSubscriberInterface
                 // TODO look into resizing images
                 $this->logger->info('Uploaded an image');
 
-                $sourceResourcePath = $media->getSourceResource()->getAbsolutePath();
-                $imageSize = getimagesize($sourceResourcePath);
-
-                $metaData->setSize(filesize($sourceResourcePath));
-                $metaData->setWidth($imageSize[0]);
-                $metaData->setHeight($imageSize[1]);
-
                 $media->createThumbnail($this->transcoder);
 
-                $media->setIsReady(MediaStateConst::READY);
-
-                break;
+            // no break
             default:
-                $this->logger->info('Uploaded something');
+                if ($media->getType() != Media::TYPE_IMAGE)
+                    $this->logger->info('Uploaded something');
 
-                $metaData->setSize(filesize($media->getSourceResource()->getAbsolutePath()));
+                AbstractMediaConsumer::_updateMetaData(
+                    $this->media->getType(),
+                    $media->getSourceResource(),
+                    $this->transcoder);
 
                 $media->setIsReady(MediaStateConst::READY);
         }
 
-        $this->entityManager->persist($metaData);
-
-        $media->setMetaData($metaData);
-
+        $this->entityManager->persist($media);
         $this->entityManager->flush();
     }
 }

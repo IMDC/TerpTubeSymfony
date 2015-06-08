@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
@@ -53,23 +54,29 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         $this->fs = new Filesystem();
     }
 
-    public function updateMetaData(ResourceFile $resourceFile)
+    //TODO move?
+    public static function _updateMetaData($mediaType, ResourceFile $resourceFile, Transcoder $transcoder)
     {
-        $mediaType = $this->media->getType();
+        $metaData = $resourceFile->getMetaData();
+        if ($metaData == null) {
+            $metaData = new MetaData();
+            $resourceFile->setMetaData($metaData);
+        }
+
+        if (!is_file($resourceFile->getAbsolutePath()))
+            return; //TODO throw exception?
+
+        $metaData->setSize(filesize($resourceFile->getAbsolutePath()));
 
         switch ($mediaType) {
             case Media::TYPE_VIDEO:
             case Media::TYPE_AUDIO:
                 $file = new File($resourceFile->getAbsolutePath());
-                $ffprobe = $this->transcoder->getFFprobe();
+                $ffprobe = $transcoder->getFFprobe();
                 $format = $ffprobe->format($file->getRealPath());
 
                 $duration = $format->has('duration') ? $format->get('duration') : 0;
-                $fileSize = filesize($file->getRealPath());
-
-                $metaData = $this->media->getMetaData();
                 $metaData->setDuration($duration);
-                $metaData->setSize($fileSize);
 
                 if ($mediaType == Media::TYPE_VIDEO) {
                     /** @var $streams StreamCollection */
@@ -84,7 +91,19 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
                 }
 
                 break;
+            case Media::TYPE_IMAGE:
+                $imageSize = getimagesize($resourceFile->getAbsolutePath());
+
+                $metaData->setWidth($imageSize[0]);
+                $metaData->setHeight($imageSize[1]);
+
+                break;
         }
+    }
+
+    public function updateMetaData(ResourceFile $resourceFile)
+    {
+        self::_updateMetaData($this->media->getType(), $resourceFile, $this->transcoder);
     }
 
     protected function createResource(File $file)

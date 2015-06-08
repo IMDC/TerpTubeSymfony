@@ -33,12 +33,14 @@ class MetaData
      * @var double
      */
     private $duration;
-    
-    /**
-     * @var \DateTime
-     */
-    private $timeUploaded;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->size = -1;
+    }
 
     /**
      * Get id
@@ -143,32 +145,9 @@ class MetaData
     {
         return $this->duration;
     }
-
-    /**
-     * Set timeUploaded
-     *
-     * @param \DateTime $timeUploaded
-     * @return MetaData
-     */
-    public function setTimeUploaded($timeUploaded)
-    {
-        $this->timeUploaded = $timeUploaded;
-    
-        return $this;
-    }
-
-    /**
-     * Get timeUploaded
-     *
-     * @return \DateTime 
-     */
-    public function getTimeUploaded()
-    {
-        return $this->timeUploaded;
-    }
     
     public function __toString() 
     {
-        return 'id: ' . $this->id . ', uploaded: ' . $this->getTimeUploaded()->format('Y-m-d H:i:s');
+        return 'id: ' . $this->id;
     }
 }

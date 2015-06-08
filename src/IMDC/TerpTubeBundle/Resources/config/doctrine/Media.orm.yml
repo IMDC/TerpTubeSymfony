@@ -38,12 +38,6 @@ IMDC\TerpTubeBundle\Entity\Media:
                 name: owner_id
                 referencedColumnName: id
     oneToOne:
-        metaData: #metadata object to hold the information about the data
-            targetEntity: MetaData
-            joinColumn:
-                name: meta_data
-                referencedColumnName: id
-            cascade: ["all"]
         sourceResource:
             targetEntity: ResourceFile
             joinColumn:
@@ -62,5 +56,6 @@ IMDC\TerpTubeBundle\Entity\Media:
                     resource_id:
                         referencedColumnName: id
                         unique: true
+            cascade: ["all"]
     lifecycleCallbacks:
         preRemove: [ removeThumbnail ]
