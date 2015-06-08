@@ -74,12 +74,6 @@ class Media implements MediaInterface
     private $owner;
 
     /**
-     *
-     * @var \IMDC\TerpTubeBundle\Entity\MetaData
-     */
-    private $metaData;
-
-    /**
      * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
      */
     private $sourceResource;
@@ -224,29 +218,6 @@ class Media implements MediaInterface
             return $this->getThumbnailDir() . "/" . $this->thumbnailPath;
         else
             return NULL;
-    }
-
-    /**
-     * Set metaData
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\MetaData $metaData
-     * @return Media
-     */
-    public function setMetaData(\IMDC\TerpTubeBundle\Entity\MetaData $metaData = null)
-    {
-        $this->metaData = $metaData;
-
-        return $this;
-    }
-
-    /**
-     * Get metaData
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\MetaData
-     */
-    public function getMetaData()
-    {
-        return $this->metaData;
     }
 
     /**

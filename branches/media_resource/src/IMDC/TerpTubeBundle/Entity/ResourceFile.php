@@ -26,7 +26,18 @@ class ResourceFile
     /**
      * @var \DateTime
      */
+    private $created;
+
+    /**
+     * @var \DateTime
+     */
     private $updated;
+
+    /**
+     *
+     * @var \IMDC\TerpTubeBundle\Entity\MetaData
+     */
+    private $metaData;
 
     /**
      * Unmapped property to handle file uploads
@@ -73,6 +84,29 @@ class ResourceFile
     }
 
     /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return ResourceFile
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
      * Set updated
      *
      * @param \DateTime $updated
@@ -93,6 +127,29 @@ class ResourceFile
     public function getUpdated()
     {
         return $this->updated;
+    }
+
+    /**
+     * Set metaData
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\MetaData $metaData
+     * @return ResourceFile
+     */
+    public function setMetaData(\IMDC\TerpTubeBundle\Entity\MetaData $metaData = null)
+    {
+        $this->metaData = $metaData;
+
+        return $this;
+    }
+
+    /**
+     * Get metaData
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\MetaData
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
     }
 
     public function getFilename()
@@ -222,6 +279,7 @@ class ResourceFile
     {
         $resource = new self();
         $resource->setFile($file);
+        $resource->setCreated(new \DateTime('now'));
 
         return $resource;
     }

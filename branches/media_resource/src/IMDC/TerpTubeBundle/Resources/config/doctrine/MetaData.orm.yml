@@ -18,9 +18,3 @@ IMDC\TerpTubeBundle\Entity\MetaData:
         duration:
             type: float
             nullable: true
-        timeUploaded:
-            type: datetime
-            
-        
-
-                
