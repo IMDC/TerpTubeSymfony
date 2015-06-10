@@ -10,7 +10,7 @@ abstract class MultiplexOperation
     const REMUX = 1;
 }
 
-class MultiplexConsumerOptions extends ConsumerOptions
+class MultiplexConsumerOptions extends AbstractMediaConsumerOptions
 {
     /**
      * @var MultiplexOperation

@@ -2,7 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
-class TrimConsumerOptions extends ConsumerOptions
+class TrimConsumerOptions extends AbstractMediaConsumerOptions
 {
     /**
      * @var float

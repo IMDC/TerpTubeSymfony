@@ -10,8 +10,8 @@ use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
 
 abstract class AbstractMediaConsumer implements MediaConsumerInterface
@@ -32,26 +32,26 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
     protected $transcoder;
 
     /**
-     * @var Filesystem
-     */
-    protected $fs;
-
-    /**
-     * @var ConsumerOptions
+     * @var AbstractMediaConsumerOptions
      */
     protected $message;
+
+    /**
+     * @var Producer
+     */
+    protected $entityStatusProducer;
 
     /**
      * @var Media
      */
     protected $media;
 
-    public function __construct($logger, $doctrine, $transcoder)
+    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer)
     {
         $this->logger = $logger;
         $this->doctrine = $doctrine;
         $this->transcoder = $transcoder;
-        $this->fs = new Filesystem();
+        $this->entityStatusProducer = $entityStatusProducer;
     }
 
     //TODO move?
@@ -133,7 +133,7 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
 
     public function execute(AMQPMessage $msg)
     {
-        $this->message = ConsumerOptions::unpack($msg->body);
+        $this->message = AbstractMediaConsumerOptions::unpack($msg->body);
         if (empty($this->message))
             return true;
 

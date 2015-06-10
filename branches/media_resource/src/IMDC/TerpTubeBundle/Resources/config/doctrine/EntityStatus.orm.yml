@@ -1,0 +1,17 @@
+IMDC\TerpTubeBundle\Entity\EntityStatus:
+    type: entity
+    table: entity_status
+    id:
+        identifier:
+            type: string
+            generator:
+                strategy: NONE
+    fields:
+        status:
+            type: string
+        who:
+            type: string
+        what:
+            type: string
+        timestamp:
+            type: string
