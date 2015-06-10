@@ -10,21 +10,25 @@ services:
 
     multiplex_service:
         class: IMDC\TerpTubeBundle\Consumer\MultiplexConsumer
-        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.transcode_producer"]
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer", "@old_sound_rabbit_mq.transcode_producer"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 
     transcode_service:
         class: IMDC\TerpTubeBundle\Consumer\TranscodeConsumer
-        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder"]
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 
     trim_service:
         class: IMDC\TerpTubeBundle\Consumer\TrimConsumer
-        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder"]
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
+
+    status_service:
+        class: IMDC\TerpTubeBundle\Consumer\StatusConsumer
+        arguments: ["@doctrine"]
 
     imdc_terptube.authentication_manager:
         class: IMDC\TerpTubeBundle\Utils\AuthenticationManager

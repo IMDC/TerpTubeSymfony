@@ -16,9 +16,9 @@ class MultiplexConsumer extends AbstractMediaConsumer
      */
     protected $transcodeProducer;
 
-    public function __construct($logger, $doctrine, $transcoder, $transcodeProducer)
+    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer, $transcodeProducer)
     {
-        parent::__construct($logger, $doctrine, $transcoder);
+        parent::__construct($logger, $doctrine, $transcoder, $entityStatusProducer);
 
         $this->transcodeProducer = $transcodeProducer;
     }
@@ -96,6 +96,13 @@ class MultiplexConsumer extends AbstractMediaConsumer
         $opts->container = ContainerConst::MP4;
         $opts->preset = 'ffmpeg.x264_720p_video';
         $this->transcodeProducer->publish($opts->pack());
+
+        $opts = new StatusConsumerOptions();
+        $opts->status = 'done';
+        $opts->who = get_class($this);
+        $opts->what = get_class($this->media);
+        $opts->identifier = $this->media->getId();
+        $this->entityStatusProducer->publish($opts->pack());
 
         return true;
     }

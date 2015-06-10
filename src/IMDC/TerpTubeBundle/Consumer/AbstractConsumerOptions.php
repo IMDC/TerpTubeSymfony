@@ -2,13 +2,8 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
-class ConsumerOptions implements ConsumerOptionsInterface
+abstract class AbstractConsumerOptions implements ConsumerOptionsInterface
 {
-    /**
-     * @var integer
-     */
-    public $mediaId;
-
     public function pack()
     {
         return serialize($this);

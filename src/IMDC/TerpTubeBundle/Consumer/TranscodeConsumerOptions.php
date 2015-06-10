@@ -2,7 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
-class TranscodeConsumerOptions extends ConsumerOptions
+class TranscodeConsumerOptions extends AbstractMediaConsumerOptions
 {
     /**
      * @var string
