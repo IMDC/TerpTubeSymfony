@@ -30,7 +30,7 @@
             <tbody>
                 {% if media|length > 0 %}
                     {% for m in media %}
-                        {% set preview_disabled = m.getIsReady != constant('IMDC\\TerpTubeBundle\\Entity\\MediaStateConst::READY') ? 'disabled' : '' %}
+                        {% set preview_disabled = m.getState != constant('IMDC\\TerpTubeBundle\\Entity\\MediaStateConst::READY') ? 'disabled' : '' %}
                         <tr>
                             <td class="tt-list-table-col-item">
                                 <input type="checkbox" class="table-component-item" data-mid="{{ m.id }}" />
@@ -88,7 +88,7 @@
                 {% if loop.index % 4 == 1 %}
                     <div class="row">
                 {% endif %}
-                {% set preview_disabled = m.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\MediaStateConst::READY') ? 'disabled' : '' %}
+                {% set preview_disabled = m.getState == constant('IMDC\\TerpTubeBundle\\Entity\\MediaStateConst::READY') ? 'disabled' : '' %}
                 <div class="col-md-3">
                     <div class="thumbnail tt-grid-div-body">
                         <div class="tt-grid-div-item">

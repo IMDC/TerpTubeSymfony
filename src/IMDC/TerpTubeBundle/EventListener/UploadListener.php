@@ -131,7 +131,7 @@ class UploadListener implements EventSubscriberInterface
                     $media->getSourceResource(),
                     $this->transcoder);
 
-                $media->setIsReady(MediaStateConst::READY);
+                $media->setState(MediaStateConst::READY);
         }
 
         $this->entityManager->persist($media);

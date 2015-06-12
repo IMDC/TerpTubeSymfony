@@ -20,15 +20,6 @@ class Media implements MediaInterface
 
     const TYPE_OTHER = 9;
 
-    // TODO change to more meaning full names (state?/status?)
-    const READY_NO = 0;
-
-    const READY_WEBM = 1;
-
-    const READY_MP4 = 2;
-
-    const READY_YES = 3;
-
     const THUMBNAIL_HEIGHT = 240;
 
     /**
@@ -53,13 +44,7 @@ class Media implements MediaInterface
      *
      * @var integer
      */
-    private $isReady;
-
-    /**
-     *
-     * @var array
-     */
-    private $pendingOperations;
+    private $state;
 
     /**
      *
@@ -88,7 +73,7 @@ class Media implements MediaInterface
      */
     public function __construct()
     {
-        $this->isReady = MediaStateConst::UNPROCESSED;
+        $this->state = MediaStateConst::UNPROCESSED;
         $this->resources = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -149,49 +134,26 @@ class Media implements MediaInterface
     }
 
     /**
-     * Set isReady
+     * Set state
      *
-     * @param integer $isReady
+     * @param integer $state
      * @return Media
      */
-    public function setIsReady($isReady)
+    public function setState($state)
     {
-        $this->isReady = $isReady;
+        $this->state = $state;
 
         return $this;
     }
 
     /**
-     * Get isReady
+     * Get state
      *
      * @return integer
      */
-    public function getIsReady()
+    public function getState()
     {
-        return $this->isReady;
-    }
-
-    /**
-     * Set pendingOperations
-     *
-     * @param array $pendingOperations
-     * @return Media
-     */
-    public function setPendingOperations($pendingOperations)
-    {
-        $this->pendingOperations = $pendingOperations;
-
-        return $this;
-    }
-
-    /**
-     * Get pendingOperations
-     *
-     * @return array
-     */
-    public function getPendingOperations()
-    {
-        return $this->pendingOperations;
+        return $this->state;
     }
 
     /**

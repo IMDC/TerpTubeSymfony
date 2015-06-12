@@ -16,7 +16,7 @@ class TrimConsumer extends AbstractMediaConsumer
         if (empty($this->media))
             return $result;
 
-        if ($this->media->getIsReady() !== MediaStateConst::READY) {
+        if ($this->media->getState() !== MediaStateConst::READY) {
             $this->logger->error("media must be in a ready state");
             return true;
         }
@@ -35,7 +35,7 @@ class TrimConsumer extends AbstractMediaConsumer
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
-        $this->media->setIsReady(MediaStateConst::PROCESSING);
+        $this->media->setState(MediaStateConst::PROCESSING);
         $em->persist($this->media);
         $em->flush();
         //$em->close();
@@ -67,7 +67,7 @@ class TrimConsumer extends AbstractMediaConsumer
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
         $em->refresh($this->media);
-        $this->media->setIsReady(MediaStateConst::READY);
+        $this->media->setState(MediaStateConst::READY);
         $em->persist($this->media);
         $em->flush();
         //$em->close();
