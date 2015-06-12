@@ -1,11 +1,13 @@
 define([
     'core/subscriber',
+    'service',
     'component/myFilesSelectorComponent',
     'model/mediaModel',
     'factory/mediaFactory',
+    'service/rabbitmqWebStompService',
     'core/helper',
     'extra'
-], function (Subscriber, MyFilesSelectorComponent, MediaModel, MediaFactory, Helper) {
+], function (Subscriber, Service, MyFilesSelectorComponent, MediaModel, MediaFactory, RabbitmqWebStompService, Helper) {
     'use strict';
 
     var RecorderComponent = function (options) {
@@ -17,6 +19,7 @@ define([
         this.recorder = null;
         this.sourceMedia = null;
         this.recordedMedia = null;
+        this.rabbitmqWebStompService = Service.get('rabbitmqWebStomp');
 
         this.forwardButton = '<button class="forwardButton"></button>';
         this.doneButton = '<button class="doneButton"></button>';
@@ -69,6 +72,26 @@ define([
         this.$normalTitle.blur(this.bind__onBlurPlayerTitle);
         this.$interpSelect.on('click', this.bind__onClickInterpSelect);
         this.$interpTitle.blur(this.bind__onBlurPlayerTitle);
+
+        // listen for status updates
+        this.messages = [];
+        this.rabbitmqWebStompService.subscribe(
+            null,
+            RabbitmqWebStompService.Event.CONNECTED,
+            function (e) {
+                this.rabbitmqWebStompService.subscribe(
+                    '/exchange/entity-status',
+                    RabbitmqWebStompService.Event.MESSAGE,
+                    function (e) {
+                        console.log(e.message);
+
+                        // store the messages, since a request (_onRecordingSuccess) may not have completed yet
+                        this.messages.push(e.message);
+
+                        this._checkMessages();
+                    }.bind(this));
+            }.bind(this));
+        this.rabbitmqWebStompService.connect();
 
         //TODO interp preview/edit/trim
         if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
@@ -301,7 +324,44 @@ define([
         console.log('%s: %s- mediaId=%d', RecorderComponent.TAG, '_onRecordingSuccess', data.media.id);
 
         //this.tempMedia = data.media;
-        this.setRecordedMedia(new MediaModel(data.media));
+
+        var media = new MediaModel(data.media);
+
+        if (media.get('is_ready') == 2) {
+            this.setRecordedMedia(media);
+        } else {
+            console.log('waiting for multiplex consumer');
+
+            this.tempMedia = media;
+            this._checkMessages();
+        }
+    };
+
+    RecorderComponent.prototype._checkMessages = function () {
+        if (!this.tempMedia)
+            return;
+
+        while (this.messages.length > 0) {
+            var message = this.messages.pop();
+
+            if (message.status == 'done' &&
+                message.who.indexOf('\MultiplexConsumer') > -1 &&
+                (message.what.indexOf('\Media') > -1 || message.what.indexOf('\Interpretation')) &&
+                message.identifier == this.tempMedia.get('id')
+            ) {
+                console.log('done');
+
+                //TODO replace with MediaFactory.get()
+                MediaFactory.list([this.tempMedia.get('id')])
+                    .done(function (data) {
+                        this.tempMedia = null;
+                        this.setRecordedMedia(data.media[0]);
+                    }.bind(this))
+                    .fail(function () {
+                        //TODO
+                    });
+            }
+        };
     };
 
     RecorderComponent.prototype._onRecordingError = function (e) {
@@ -435,7 +495,7 @@ define([
 
             // 220px are needed for all the other things in the window except the video. Then using 4*3 aspect ratio we
             // set the width of the pop-up
-            width : 4 * ($(window).height() * 0.9 - 220) / 3
+            width: 4 * ($(window).height() * 0.9 - 220) / 3
         }, {
             complete: this.bind__onPageAnimate
         });
@@ -517,7 +577,9 @@ define([
     RecorderComponent.prototype._injectMedia = function (video, media) {
         var source = video.find('source');
         video.removeAttr('src');
-        source.attr('src', Helper.generateUrl(media.get('resources.0.web_path')));
+        //TODO user source_resource for new recordings
+        source.attr('src', Helper.generateUrl(media.get('source_resource.web_path')));
+        //source.attr('src', Helper.generateUrl(media.get('resources.0.web_path')));
         //TODO generate source elements for all resources
     };
 
@@ -554,8 +616,8 @@ define([
         }
         this._togglePlayerTitle();
     };
-    
-    RecorderComponent.prototype._getElement = function(binder) {
+
+    RecorderComponent.prototype._getElement = function (binder) {
         return this.$container.find(binder);
     };
 
