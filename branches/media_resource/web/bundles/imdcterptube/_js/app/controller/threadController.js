@@ -90,13 +90,13 @@ define([
         this.keyPointService.dispatch(keyPointId, KeyPointService.Event.HOVER, args);
     };
 
-    Thread.prototype.clickKeyPoint = function (keyPointId) {
+    Thread.prototype.rightClickKeyPoint = function (keyPointId) {
         this.model.setKeyPointProperty(keyPointId, 'isPlayerPlaying', true);
         setTimeout(function () {
             this.model.setKeyPointProperty(keyPointId, 'isPlayerPlaying', false, false);
         }.bind(this), 100);
 
-        this.keyPointService.dispatch(keyPointId, KeyPointService.Event.CLICK);
+        this.keyPointService.dispatch(keyPointId, KeyPointService.Event.CLICK, {which: 'right'});
     };
 
     Thread.prototype.adjustVideoSpeed = function () {

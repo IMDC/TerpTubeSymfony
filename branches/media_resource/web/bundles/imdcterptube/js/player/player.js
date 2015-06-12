@@ -734,8 +734,6 @@ Player.prototype.checkStop = function()
 	{
 	    $(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
 	}
-	console.log("max time: " + this.currentMaxTimeSelected)
-	console.log("current time: " + $(this.videoID)[0].currentTime)
 
 	// this.jumpTo(this.currentMinTimeSelected);
 	console.log("Checkstop");
@@ -950,6 +948,10 @@ Player.prototype.checkKeyPointHover = function(event)
 	    continue;
 	var startX = this.getXForTime(keyPoint.startTime);
 	var endX = this.getXForTime(keyPoint.endTime);
+	if (typeof startX == "undefined" || typeof endX == "undefined")
+	{
+	    continue;
+	}
 	if (startX > coords.x || endX < coords.x || coords.y < this.trackPadding
 		|| coords.y > this.trackPadding + this.trackHeight)
 	{
@@ -1087,11 +1089,17 @@ Player.prototype.setMouseDownThumb = function(event)
 	    // if (coords.y < trackPadding + trackHeight)
 	    // {
 	    if (coords.x >= instance.currentMinSelected && coords.x <= instance.currentMaxSelected)
+	    {
 		instance.setVideoTimeFromCoordinate(coords.x);
+	    }
 	    else if (coords.x < instance.currentMinSelected)
+	    {
 		instance.setVideoTime(instance.currentMinTimeSelected);
+	    }
 	    else
+	    {
 		instance.setVideoTime(instance.currentMaxTimeSelected);
+	    }
 	    // }
 	});
 	if (coords.x >= instance.currentMinSelected && coords.x <= instance.currentMaxSelected)
@@ -1923,10 +1931,15 @@ Player.prototype.seek = function(time)
 
 Player.prototype.setVideoTime = function(time)
 {
+    time = Number(time);
     if (time < this.currentMinTime)
+    {
 	time = this.currentMinTime;
+    }
     else if (time > this.currentMaxTime)
+    {
 	time = this.currentMaxTime;
+    }
 
     if (time != $(this.videoID)[0].currentTime)
     {
