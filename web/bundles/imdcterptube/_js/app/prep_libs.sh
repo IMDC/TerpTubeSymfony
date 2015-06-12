@@ -6,6 +6,8 @@ libs=(
     'underscore/underscore-min.js'
     'underscore/underscore-min.map'
     'Sortable/Sortable.min.js'
+    'sockjs-client/dist/sockjs.min.js'
+    'stomp-websocket/lib/stomp.min.js'
 )
 
 libs_test=(

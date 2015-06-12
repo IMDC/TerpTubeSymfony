@@ -112,9 +112,10 @@ class MyFilesController extends Controller
         $mergedFile = $isFirefox ? $transcoder->remuxWebM($audio) : $transcoder->mergeAudioVideo($audio, $video);
         $mergedFile = $transcoder->removeFirstFrame($mergedFile);*/
 
-        /*if (!$isFirefox)
-            $video->move(__DIR__ . '/../../../../web/' . ResourceFile::UPLOAD_DIR);
-        $audio->move(__DIR__ . '/../../../../web/' . ResourceFile::UPLOAD_DIR);*/
+        //TODO revise? will the uploaded file container always be webm or wav?
+        if (!$isFirefox)
+            $video = $video->move('/tmp/terptube-recordings', tempnam('', 'hello_video_') . '.webm');
+        $audio = $audio->move('/tmp/terptube-recordings', tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
 
         //$resourceFile = ResourceFile::fromFile($mergedFile);
 
@@ -130,7 +131,7 @@ class MyFilesController extends Controller
         $media->setType(Media::TYPE_VIDEO);
         $media->setTitle('Recording-' . $currentTime->format('Y-m-d-H:i'));
 
-        $resourceFile = ResourceFile::fromFile(new IMDCFile(tempnam('/tmp', 'hello')));
+        $resourceFile = ResourceFile::fromFile(new IMDCFile(tempnam('/tmp', 'hello_')));
         $resourceFile->setPath('placeholder');
         $media->setSourceResource($resourceFile);
 
