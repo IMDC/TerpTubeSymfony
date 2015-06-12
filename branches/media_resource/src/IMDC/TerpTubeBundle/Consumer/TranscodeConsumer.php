@@ -28,7 +28,7 @@ class TranscodeConsumer extends AbstractMediaConsumer
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
-        $this->media->setIsReady(MediaStateConst::PROCESSING);
+        $this->media->setState(MediaStateConst::PROCESSING);
         $em->persist($this->media);
         $em->flush();
         //$em->close();
@@ -61,7 +61,7 @@ class TranscodeConsumer extends AbstractMediaConsumer
         $this->media->addResource($transcodeResource);
 
         if ($this->isReady())
-            $this->media->setIsReady(MediaStateConst::READY);
+            $this->media->setState(MediaStateConst::READY);
 
         $em->persist($this->media);
         $em->flush();

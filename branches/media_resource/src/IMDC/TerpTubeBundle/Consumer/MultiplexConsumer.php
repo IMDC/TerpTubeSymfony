@@ -41,7 +41,7 @@ class MultiplexConsumer extends AbstractMediaConsumer
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
-        $this->media->setIsReady(MediaStateConst::PROCESSING);
+        $this->media->setState(MediaStateConst::PROCESSING);
         $em->persist($this->media);
         $em->flush();
         //$em->close();
