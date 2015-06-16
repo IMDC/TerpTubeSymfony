@@ -15,7 +15,7 @@ class TrimConsumerOptions extends AbstractMediaConsumerOptions
     public $endTime;
 
     /**
-     * @var integer
+     * @var float
      */
-    public $timestamp;
+    public $currentDuration;
 }

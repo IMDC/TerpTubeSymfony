@@ -28,7 +28,8 @@ class TrimConsumer extends AbstractMediaConsumer
         /** @var TrimConsumerOptions $trimOpts */
         $trimOpts = TrimConsumerOptions::unpack($msg->body);
 
-        if (!$this->isValid(intval($trimOpts->timestamp))) {
+        //TODO check me. may not work as expected
+        if (!$this->isValid($trimOpts->currentDuration)) {
             $this->logger->error("one or more resources have changed since this trim was requested. discarding");
             return true;
         }
@@ -76,24 +77,14 @@ class TrimConsumer extends AbstractMediaConsumer
     }
 
     /**
-     * check if resources have changed since the trim was requested
+     * check if resource at index 0 has been trimmed since the current trim was requested
      * @return bool
      */
-    private function isValid($timestamp)
+    private function isValid($duration)
     {
-        $containerCount = 0;
-        $count = 0;
-
         /** @var ResourceFile $resource */
-        foreach ($this->media->getResources() as $resource) {
-            if ($resource->getPath() === 'webm' || $resource->getPath() === 'mp4') {
-                $containerCount++;
+        $resource = $this->media->getResources()->get(0);
 
-                if ($timestamp >= $resource->getUpdated()->getTimestamp())
-                    $count++;
-            }
-        }
-
-        return ($containerCount == $count);
+        return ($duration == $resource->getMetaData()->getDuration());
     }
 }
