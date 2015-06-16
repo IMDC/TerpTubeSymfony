@@ -1,0 +1,3 @@
+{#resources}
+    <source src="{@generateUrl path=web_path /}" />
+{/resources}

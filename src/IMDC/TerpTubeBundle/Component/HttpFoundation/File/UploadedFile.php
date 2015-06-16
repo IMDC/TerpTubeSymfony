@@ -2,13 +2,11 @@
 
 namespace IMDC\TerpTubeBundle\Component\HttpFoundation\File;
 
-use Symfony\Component\HttpFoundation\File\MimeType\FileBinaryMimeTypeGuesser;
+use IMDC\TerpTubeBundle\Utils\Utils;
 use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
 
 class UploadedFile extends BaseUploadedFile
 {
-    private $mimeType;
-
     public static function fromUploadedFile(BaseUploadedFile $uploadedFile)
     {
         $class = new \ReflectionClass($uploadedFile);
@@ -25,17 +23,8 @@ class UploadedFile extends BaseUploadedFile
         );
     }
 
-    /**
-     * Use 'file' command every time
-     * @return string|void
-     */
     public function getMimeType()
     {
-        if ($this->mimeType === null) {
-            $guesser = new FileBinaryMimeTypeGuesser();
-            $this->mimeType = $guesser->guess($this->getRealPath());
-        }
-
-        return $this->mimeType;
+        return Utils::getMimeType($this->getRealPath());
     }
 }

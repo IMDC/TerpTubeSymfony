@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Tests;
 
 use Doctrine\ORM\EntityManager;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -81,7 +82,7 @@ class MediaTestCase extends WebTestCase
         //$this->media->setOwner($user);
         $this->media->setType($type);
         $this->media->setTitle('test:' . rand());
-        $this->media->setIsReady(Media::READY_WEBM);
+        $this->media->setState(MediaStateConst::UNPROCESSED);
         $this->media->setResource($resourceFile);
 
         $this->entityManager->persist($resourceFile);
