@@ -26,7 +26,7 @@ define([
         this.$container = this.options.$container;
         this.$containerUpload = this.$container.find(MediaChooserComponent.Binder.CONTAINER_UPLOAD);
         this.$uploadForm = $(this.$containerUpload.data('form'));
-        this.$resourceFile = this._getFormField('resource_file');
+        this.$resourceFile = this._getFormField('source_resource_file');
         this.$recordVideo = this.$container.find(MediaChooserComponent.Binder.RECORD_VIDEO);
         this.$uploadFile = this.$container.find(MediaChooserComponent.Binder.UPLOAD_FILE);
         this.$select = this.$container.find(MediaChooserComponent.Binder.SELECT);

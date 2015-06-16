@@ -16,9 +16,7 @@
                             <div class="tt-media-preview-title">
                                 <input class="recorder-normal-title" style="display: none;" type="text" value="" />
                             </div>
-                            <video class="recorder-normal-video" width="100%" preload="auto" muted="muted">
-                                <source src="" />
-                            </video>
+                            <video class="recorder-normal-video" width="100%" preload="auto" muted="muted"></video>
                         </div>
                         <div class="tab-pane recorder-interp">
                             <div style="border: 2px dashed #ccc; line-height: 200px; height: 200px; text-align: center; display: none;">
@@ -26,17 +24,13 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <video class="recorder-interp-video-p" style="display: none;" width="100%" preload="auto" muted="muted">
-                                        <source src="" />
-                                    </video>
+                                    <video class="recorder-interp-video-p" style="display: none;" width="100%" preload="auto" muted="muted"></video>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="tt-media-preview-title">
                                         <input class="recorder-interp-title" style="display: none;" type="text" value="" />
                                     </div>
-                                    <video class="recorder-interp-video-r" style="display: none;" width="100%" preload="auto" muted="muted">
-                                        <source src="" />
-                                    </video>
+                                    <video class="recorder-interp-video-r" style="display: none;" width="100%" preload="auto" muted="muted"></video>
                                 </div>
                             </div>
                         </div>

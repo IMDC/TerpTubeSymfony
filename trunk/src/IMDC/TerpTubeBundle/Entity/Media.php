@@ -2,10 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Entity;
 
-use Doctrine\Common\EventManager;
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 /**
  * Media
@@ -20,14 +19,6 @@ class Media implements MediaInterface
     const TYPE_AUDIO = 2;
 
     const TYPE_OTHER = 9;
-
-    const READY_NO = 0;
-
-    const READY_WEBM = 1;
-
-    const READY_MP4 = 2;
-
-    const READY_YES = 3;
 
     const THUMBNAIL_HEIGHT = 240;
 
@@ -53,13 +44,7 @@ class Media implements MediaInterface
      *
      * @var integer
      */
-    private $isReady = 0;
-
-    /**
-     *
-     * @var array
-     */
-    private $pendingOperations;
+    private $state;
 
     /**
      *
@@ -74,16 +59,23 @@ class Media implements MediaInterface
     private $owner;
 
     /**
-     *
-     * @var \IMDC\TerpTubeBundle\Entity\MetaData
-     */
-    private $metaData;
-
-    /**
-     *
      * @var \IMDC\TerpTubeBundle\Entity\ResourceFile
      */
-    private $resource;
+    private $sourceResource;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $resources;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->state = MediaStateConst::UNPROCESSED;
+        $this->resources = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -142,49 +134,26 @@ class Media implements MediaInterface
     }
 
     /**
-     * Set isReady
+     * Set state
      *
-     * @param integer $isReady
+     * @param integer $state
      * @return Media
      */
-    public function setIsReady($isReady)
+    public function setState($state)
     {
-        $this->isReady = $isReady;
+        $this->state = $state;
 
         return $this;
     }
 
     /**
-     * Get isReady
+     * Get state
      *
      * @return integer
      */
-    public function getIsReady()
+    public function getState()
     {
-        return $this->isReady;
-    }
-
-    /**
-     * Set pendingOperations
-     *
-     * @param array $pendingOperations
-     * @return Media
-     */
-    public function setPendingOperations($pendingOperations)
-    {
-        $this->pendingOperations = $pendingOperations;
-
-        return $this;
-    }
-
-    /**
-     * Get pendingOperations
-     *
-     * @return array
-     */
-    public function getPendingOperations()
-    {
-        return $this->pendingOperations;
+        return $this->state;
     }
 
     /**
@@ -214,29 +183,6 @@ class Media implements MediaInterface
     }
 
     /**
-     * Set metaData
-     *
-     * @param \IMDC\TerpTubeBundle\Entity\MetaData $metaData
-     * @return Media
-     */
-    public function setMetaData(\IMDC\TerpTubeBundle\Entity\MetaData $metaData = null)
-    {
-        $this->metaData = $metaData;
-
-        return $this;
-    }
-
-    /**
-     * Get metaData
-     *
-     * @return \IMDC\TerpTubeBundle\Entity\MetaData
-     */
-    public function getMetaData()
-    {
-        return $this->metaData;
-    }
-
-    /**
      * Set owner
      *
      * @param \IMDC\TerpTubeBundle\Entity\User $owner
@@ -260,26 +206,59 @@ class Media implements MediaInterface
     }
 
     /**
-     * Set resource
+     * Set sourceResource
      *
-     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resource
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $sourceResource
      * @return Media
      */
-    public function setResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $resource = null)
+    public function setSourceResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $sourceResource = null)
     {
-        $this->resource = $resource;
+        $this->sourceResource = $sourceResource;
 
         return $this;
     }
 
     /**
-     * Get resource
+     * Get sourceResource
      *
      * @return \IMDC\TerpTubeBundle\Entity\ResourceFile
      */
-    public function getResource()
+    public function getSourceResource()
     {
-        return $this->resource;
+        return $this->sourceResource;
+    }
+
+    /**
+     * Add resources
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resources
+     * @return Media
+     */
+    public function addResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $resources)
+    {
+        $this->resources[] = $resources;
+
+        return $this;
+    }
+
+    /**
+     * Remove resources
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\ResourceFile $resources
+     */
+    public function removeResource(\IMDC\TerpTubeBundle\Entity\ResourceFile $resources)
+    {
+        $this->resources->removeElement($resources);
+    }
+
+    /**
+     * Get resources
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getResources()
+    {
+        return $this->resources;
     }
 
     public function getThumbnailDir()
@@ -292,19 +271,22 @@ class Media implements MediaInterface
         return __DIR__ . '/../../../../web/' . $this->getThumbnailDir();
     }
 
-    /**
-     * @ORM\PreRemove
-     */
+    public function createThumbnail(Transcoder $transcoder)
+    {
+        $sourceResource = $this->getSourceResource();
+        $fs = new Filesystem();
+
+        $thumbnailTempFile = $transcoder->createThumbnail($sourceResource->getAbsolutePath(), $this->getType());
+        $thumbnailFile = $this->getThumbnailRootDir() . '/' . $sourceResource->getId() . '.png';
+        $fs->rename($thumbnailTempFile, $thumbnailFile, true);
+        $this->setThumbnailPath($sourceResource->getId() . '.png');
+    }
+
     public function removeThumbnail()
     {
-        // Add your code here
-        try {
-            $fs = new Filesystem();
-            $fs->remove($this->getThumbnailPath());
-            $this->setThumbnailPath(NULL);
-        } catch (\Exception $e) {
-            $this->logger->error($e->getTraceAsString());
-        }
+        $fs = new Filesystem();
+        $fs->remove($this->getThumbnailPath());
+        $this->setThumbnailPath(NULL);
     }
 
     public function isInterpretation()

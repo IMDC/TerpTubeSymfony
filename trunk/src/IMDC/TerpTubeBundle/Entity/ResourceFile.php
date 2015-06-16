@@ -3,9 +3,12 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile as IMDCUploadedFile;
+use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceFile
 {
@@ -24,10 +27,22 @@ class ResourceFile
     /**
      * @var \DateTime
      */
+    private $created;
+
+    /**
+     * @var \DateTime
+     */
     private $updated;
 
     /**
+     *
+     * @var \IMDC\TerpTubeBundle\Entity\MetaData
+     */
+    private $metaData;
+
+    /**
      * Unmapped property to handle file uploads
+     * @var UploadedFile|File
      */
     private $file;
 
@@ -70,6 +85,29 @@ class ResourceFile
     }
 
     /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return ResourceFile
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
      * Set updated
      *
      * @param \DateTime $updated
@@ -90,6 +128,29 @@ class ResourceFile
     public function getUpdated()
     {
         return $this->updated;
+    }
+
+    /**
+     * Set metaData
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\MetaData $metaData
+     * @return ResourceFile
+     */
+    public function setMetaData(\IMDC\TerpTubeBundle\Entity\MetaData $metaData = null)
+    {
+        $this->metaData = $metaData;
+
+        return $this;
+    }
+
+    /**
+     * Get metaData
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\MetaData
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
     }
 
     public function getFilename()
@@ -122,14 +183,19 @@ class ResourceFile
     /**
      * Sets file. **From cookbook**
      *
-     * @param BaseUploadedFile $file
+     * @param UploadedFile|File $file
      * @return ResourceFile
      */
-    public function setFile(BaseUploadedFile $file = null)
+    public function setFile($file = null)
     {
-        $this->file = null === $file
-            ? null
-            : UploadedFile::fromUploadedFile($file);
+        if (!($file instanceof UploadedFile || $file instanceof File))
+            $this->file = null;
+
+        if ($file instanceof UploadedFile) {
+            $this->file = IMDCUploadedFile::fromUploadedFile($file);
+        } else if ($file instanceof File) {
+            $this->file = IMDCFile::fromFile($file);
+        }
 
         // check if we have an old image path
         if (is_file($this->getAbsolutePath())) {
@@ -145,7 +211,7 @@ class ResourceFile
     /**
      * Get file.
      *
-     * @return UploadedFile
+     * @return UploadedFile|File
      */
     public function getFile()
     {
@@ -154,9 +220,10 @@ class ResourceFile
 
     public function preUpload()
     {
-        if (null === $this->getFile()) {
+        $this->setUpdated(new \DateTime('now'));
+
+        if (null === $this->getFile() || $this->path !== 'initial')
             return;
-        }
 
         $this->path = $this->getFile()->guessExtension();
     }
@@ -167,9 +234,8 @@ class ResourceFile
     public function upload()
     {
         // the file property can be empty if the field is not required
-        if (null === $this->getFile()) {
+        if (null === $this->getFile())
             return;
-        }
 
         // check if we have an old image
         if (isset($this->temp)) {
@@ -202,11 +268,67 @@ class ResourceFile
     }
 
     /**
-     * Updates the hash value to force the preUpdate and postUpdate events to fire
+     * Updates the hash value to force the preUpdate and postUpdate events to fire.
+     * only called from Admin\ResourceFileAdmin::manageFileUpload
      */
-    public function refreshUpdated()
+    public function refreshUpdated() //TODO delete?
     {
         $this->setUpdated(new \DateTime('NOW'));
+    }
+
+    public static function fromFile($file)
+    {
+        $resource = new self();
+        $resource->setFile($file);
+        $resource->setCreated(new \DateTime('now'));
+
+        return $resource;
+    }
+
+    public function updateMetaData($mediaType, Transcoder $transcoder)
+    {
+        $metaData = $this->getMetaData();
+        if ($metaData == null) {
+            $metaData = new MetaData();
+            $this->setMetaData($metaData);
+        }
+
+        if (!is_file($this->getAbsolutePath()))
+            return; //TODO throw exception?
+
+        $metaData->setSize(filesize($this->getAbsolutePath()));
+
+        switch ($mediaType) {
+            case Media::TYPE_VIDEO:
+            case Media::TYPE_AUDIO:
+                $file = new File($this->getAbsolutePath());
+                $ffprobe = $transcoder->getFFprobe();
+                $format = $ffprobe->format($file->getRealPath());
+
+                $duration = $format->has('duration') ? $format->get('duration') : 0;
+                $metaData->setDuration($duration);
+
+                if ($mediaType == Media::TYPE_VIDEO) {
+                    /** @var $streams StreamCollection */
+                    $streams = $ffprobe->streams($file->getRealPath());
+
+                    $firstVideo = $streams->videos()->first();
+                    $videoWidth = $firstVideo->get('width');
+                    $videoHeight = $firstVideo->get('height');
+
+                    $metaData->setWidth($videoWidth);
+                    $metaData->setHeight($videoHeight);
+                }
+
+                break;
+            case Media::TYPE_IMAGE:
+                $imageSize = getimagesize($this->getAbsolutePath());
+
+                $metaData->setWidth($imageSize[0]);
+                $metaData->setHeight($imageSize[1]);
+
+                break;
+        }
     }
 
     /**
