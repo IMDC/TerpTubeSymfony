@@ -10,7 +10,6 @@ define([
 
         this.ws = null;
         this.client = null;
-        this.subscribeIds = [];
 
         this.bind__messageCallback = this._messageCallback.bind(this);
     };
@@ -23,8 +22,12 @@ define([
         MESSAGE: 'eventMessage'
     };
 
+    RabbitmqWebStompService.prototype.isConnected = function () {
+        return (this.ws && this.client);
+    };
+
     RabbitmqWebStompService.prototype.connect = function () {
-        if (this.ws && this.client)
+        if (this.isConnected())
             return;
 
         //TODO proper url
@@ -48,12 +51,10 @@ define([
     };
 
     RabbitmqWebStompService.prototype.disconnect = function () {
-
         this.client.disconnect(function () {
             this._dispatch(RabbitmqWebStompService.Event.DISCONNECTED);
         }.bind(this));
 
-        this.subscribeIds = -1;
         this.client = null;
         this.ws = null;
     };
@@ -72,18 +73,14 @@ define([
         if (!destination)
             return;
 
-        var subscribeId = this.client.subscribe(destination, this.bind__messageCallback);
-        this.subscribeIds.push(subscribeId);
-
-        return subscribeId;
+        return this.client.subscribe(destination, this.bind__messageCallback);
     };
 
-    RabbitmqWebStompService.prototype.unsubscribe = function (subscribeId, callback) {
+    RabbitmqWebStompService.prototype.unsubscribe = function (subscription, callback) {
         Subscriber.prototype.unsubscribe.call(this, callback);
 
-        this.client.unsubscribe(subscribeId);
-
-        //TODO remove subscribeId from this.subscribeIds
+        if (subscription)
+            this.client.unsubscribe(subscription.id);
     };
 
     return RabbitmqWebStompService;
