@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use IMDC\TerpTubeBundle\Utils\Utils;
 
 /**
  * Message
@@ -286,5 +287,10 @@ class Message
     public function getMediaDisplayOrder()
     {
         return $this->mediaDisplayOrder;
+    }
+
+    public function getOrderedMedia()
+    {
+        return Utils::orderMedia($this->getAttachedMedia(), $this->getMediaDisplayOrder());
     }
 }

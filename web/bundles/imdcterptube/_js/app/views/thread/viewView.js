@@ -15,7 +15,7 @@ define([
         this.bind__onAreaSelectionChanged = this._onAreaSelectionChanged.bind(this);
         this.bind__onMouseOverKeyPoint = this._onMouseOverKeyPoint.bind(this);
         this.bind__onMouseOutKeyPoint = this._onMouseOutKeyPoint.bind(this);
-        this.bind__onClickKeyPoint = this._onClickKeyPoint.bind(this);
+        this.bind__onRightClickKeyPoint = this._onRightClickKeyPoint.bind(this);
         this.bind__onEndKeyPoint = this._onEndKeyPoint.bind(this);
         this.bind__onPlaybackStarted = this._onPlaybackStarted.bind(this);
         this.bind__onPlaybackStopped = this._onPlaybackStopped.bind(this);
@@ -77,7 +77,7 @@ define([
         $(this.player).on(Player.EVENT_AREA_SELECTION_CHANGED, this.bind__onAreaSelectionChanged);
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OVER, this.bind__onMouseOverKeyPoint);
         $(this.player).on(Player.EVENT_KEYPOINT_MOUSE_OUT, this.bind__onMouseOutKeyPoint);
-        $(this.player).on(Player.EVENT_KEYPOINT_CLICK, this.bind__onClickKeyPoint);
+        $(this.player).on(Player.EVENT_KEYPOINT_RIGHT_CLICK, this.bind__onRightClickKeyPoint);
         $(this.player).on(Player.EVENT_KEYPOINT_END, this.bind__onEndKeyPoint);
         $(this.player).on(Player.EVENT_PLAYBACK_STARTED, this.bind__onPlaybackStarted);
         $(this.player).on(Player.EVENT_PLAYBACK_STOPPED, this.bind__onPlaybackStopped);
@@ -111,10 +111,10 @@ define([
         this.controller.hoverKeyPoint(keyPoint.id, {isMouseOver: false});
     };
 
-    ViewView.prototype._onClickKeyPoint = function (e, keyPoint, coords) {
-        console.log("%s: %s- keyPoint=%o, coords=%o", ViewView.TAG, Player.EVENT_KEYPOINT_CLICK, keyPoint, coords);
+    ViewView.prototype._onRightClickKeyPoint = function (e, keyPoint, coords) {
+        console.log("%s: %s- keyPoint=%o, coords=%o", ViewView.TAG, Player.EVENT_KEYPOINT_RIGHT_CLICK, keyPoint, coords);
 
-        this.controller.clickKeyPoint(keyPoint.id);
+        this.controller.rightClickKeyPoint(keyPoint.id);
     };
 
     ViewView.prototype._onEndKeyPoint = function (e, keyPoint) {

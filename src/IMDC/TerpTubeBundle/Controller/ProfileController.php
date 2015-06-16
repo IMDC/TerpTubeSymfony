@@ -223,7 +223,8 @@ class ProfileController extends Controller
 		}
 
 		return $this->render('IMDCTerpTubeBundle:Profile:edit.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+			'profile' => $user->getProfile()
         ));
 	}
 }
