@@ -3,7 +3,6 @@
 namespace IMDC\TerpTubeBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
-use IMDC\TerpTubeBundle\Consumer\AbstractMediaConsumer;
 use IMDC\TerpTubeBundle\Consumer\MultiplexConsumerOptions;
 use IMDC\TerpTubeBundle\Consumer\MultiplexOperation;
 use IMDC\TerpTubeBundle\Consumer\TranscodeConsumerOptions;
@@ -126,9 +125,8 @@ class UploadListener implements EventSubscriberInterface
                 if ($media->getType() != Media::TYPE_IMAGE)
                     $this->logger->info('Uploaded something');
 
-                AbstractMediaConsumer::_updateMetaData(
+                $media->getSourceResource()->updateMetaData(
                     $this->media->getType(),
-                    $media->getSourceResource(),
                     $this->transcoder);
 
                 $media->setState(MediaStateConst::READY);

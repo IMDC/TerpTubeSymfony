@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile as IMDCUploadedFile;
+use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -282,6 +283,52 @@ class ResourceFile
         $resource->setCreated(new \DateTime('now'));
 
         return $resource;
+    }
+
+    public function updateMetaData($mediaType, Transcoder $transcoder)
+    {
+        $metaData = $this->getMetaData();
+        if ($metaData == null) {
+            $metaData = new MetaData();
+            $this->setMetaData($metaData);
+        }
+
+        if (!is_file($this->getAbsolutePath()))
+            return; //TODO throw exception?
+
+        $metaData->setSize(filesize($this->getAbsolutePath()));
+
+        switch ($mediaType) {
+            case Media::TYPE_VIDEO:
+            case Media::TYPE_AUDIO:
+                $file = new File($this->getAbsolutePath());
+                $ffprobe = $transcoder->getFFprobe();
+                $format = $ffprobe->format($file->getRealPath());
+
+                $duration = $format->has('duration') ? $format->get('duration') : 0;
+                $metaData->setDuration($duration);
+
+                if ($mediaType == Media::TYPE_VIDEO) {
+                    /** @var $streams StreamCollection */
+                    $streams = $ffprobe->streams($file->getRealPath());
+
+                    $firstVideo = $streams->videos()->first();
+                    $videoWidth = $firstVideo->get('width');
+                    $videoHeight = $firstVideo->get('height');
+
+                    $metaData->setWidth($videoWidth);
+                    $metaData->setHeight($videoHeight);
+                }
+
+                break;
+            case Media::TYPE_IMAGE:
+                $imageSize = getimagesize($this->getAbsolutePath());
+
+                $metaData->setWidth($imageSize[0]);
+                $metaData->setHeight($imageSize[1]);
+
+                break;
+        }
     }
 
     /**

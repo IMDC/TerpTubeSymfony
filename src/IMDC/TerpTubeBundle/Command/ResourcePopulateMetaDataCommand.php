@@ -3,7 +3,6 @@
 namespace IMDC\TerpTubeBundle\Command;
 
 use Doctrine\ORM\EntityManager;
-use IMDC\TerpTubeBundle\Consumer\AbstractMediaConsumer;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -48,12 +47,12 @@ class ResourcePopulateMetaDataCommand extends ContainerAwareCommand
             /** @var ResourceFile $resource */
             if ($media->getSourceResource() != null) {
                 $output->writeln(sprintf('source_resource_id=%d', $media->getSourceResource()->getId()));
-                AbstractMediaConsumer::_updateMetaData($mediaType, $media->getSourceResource(), $transcoder);
+                $media->getSourceResource()->updateMetaData($mediaType, $transcoder);
             }
 
             foreach ($media->getResources() as $resource) {
                 $output->writeln(sprintf('resource_id=%d', $resource->getId()));
-                AbstractMediaConsumer::_updateMetaData($mediaType, $resource, $transcoder);
+                $resource->updateMetaData($mediaType, $transcoder);
             }
 
             $em->persist($media);
