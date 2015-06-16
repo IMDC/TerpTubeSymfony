@@ -18,12 +18,12 @@ class TrimConsumer extends AbstractMediaConsumer
 
         if ($this->media->getState() !== MediaStateConst::READY) {
             $this->logger->error("media must be in a ready state");
-            return true;
+            return self::MSG_REJECT_REQUEUE;
         }
 
         if (!($this->message instanceof TrimConsumerOptions)) {
             $this->logger->error("no trim options specified");
-            return true;
+            return self::MSG_REJECT;
         }
         /** @var TrimConsumerOptions $trimOpts */
         $trimOpts = TrimConsumerOptions::unpack($msg->body);
@@ -31,7 +31,7 @@ class TrimConsumer extends AbstractMediaConsumer
         //TODO check me. may not work as expected
         if (!$this->isValid($trimOpts->currentDuration)) {
             $this->logger->error("one or more resources have changed since this trim was requested. discarding");
-            return true;
+            return self::MSG_REJECT;
         }
 
         /** @var EntityManager $em */
@@ -39,7 +39,6 @@ class TrimConsumer extends AbstractMediaConsumer
         $this->media->setState(MediaStateConst::PROCESSING);
         $em->persist($this->media);
         $em->flush();
-        //$em->close();
 
         /** @var ResourceFile $resource */
         foreach ($this->media->getResources() as $resource) {
@@ -50,7 +49,7 @@ class TrimConsumer extends AbstractMediaConsumer
                     throw new \Exception("trim failed");
             } catch (\Exception $e) {
                 $this->logger->error($e->getTraceAsString());
-                return true;
+                return self::MSG_REJECT;
             }
 
             // source file is now the trimmed file. refresh
@@ -59,10 +58,9 @@ class TrimConsumer extends AbstractMediaConsumer
             /** @var EntityManager $em */
             $em = $this->doctrine->getManager();
             $em->refresh($resource);
-            $this->updateMetaData($resource);
+            $resource->updateMetaData($this->media->getType(), $this->transcoder);
             $em->persist($resource);
             $em->flush();
-            //$em->close();
         }
 
         /** @var EntityManager $em */
@@ -71,13 +69,13 @@ class TrimConsumer extends AbstractMediaConsumer
         $this->media->setState(MediaStateConst::READY);
         $em->persist($this->media);
         $em->flush();
-        //$em->close();
 
-        return true;
+        return self::MSG_ACK;
     }
 
     /**
      * check if resource at index 0 has been trimmed since the current trim was requested
+     * @param $duration
      * @return bool
      */
     private function isValid($duration)

@@ -34,7 +34,7 @@ class MultiplexConsumer extends AbstractMediaConsumer
 
         if (!($this->message instanceof MultiplexConsumerOptions)) {
             $this->logger->error("no multiplex options specified");
-            return true;
+            return self::MSG_REJECT;
         }
         /** @var MultiplexConsumerOptions $multiplexOpts */
         $multiplexOpts = MultiplexConsumerOptions::unpack($msg->body);
@@ -44,12 +44,11 @@ class MultiplexConsumer extends AbstractMediaConsumer
         $this->media->setState(MediaStateConst::PROCESSING);
         $em->persist($this->media);
         $em->flush();
-        //$em->close();
 
         // if not already done
         if ($this->media->getSourceResource()->getPath() !== 'placeholder') {
             $this->logger->error("expected source resource to be a placeholder.");
-            return true;
+            return self::MSG_REJECT;
         }
 
         try {
@@ -77,13 +76,13 @@ class MultiplexConsumer extends AbstractMediaConsumer
             $em->persist($resourceFile);
             $em->flush();
 
-            $this->updateMetaData($resourceFile);
+            $resourceFile->updateMetaData($this->media->getType(), $this->transcoder);
             $this->media->createThumbnail($this->transcoder);
             $em->persist($this->media);
             $em->flush();
         } catch (\Exception $e) {
             $this->logger->error($e->getTraceAsString());
-            return true;
+            return self::MSG_REJECT;
         }
 
         // queue for transcode
@@ -104,6 +103,6 @@ class MultiplexConsumer extends AbstractMediaConsumer
         $opts->identifier = $this->media->getId();
         $this->entityStatusProducer->publish($opts->pack());
 
-        return true;
+        return self::MSG_ACK;
     }
 }

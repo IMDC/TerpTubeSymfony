@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
 use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
@@ -54,58 +53,6 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         $this->entityStatusProducer = $entityStatusProducer;
     }
 
-    //TODO move?
-    public static function _updateMetaData($mediaType, ResourceFile $resourceFile, Transcoder $transcoder)
-    {
-        $metaData = $resourceFile->getMetaData();
-        if ($metaData == null) {
-            $metaData = new MetaData();
-            $resourceFile->setMetaData($metaData);
-        }
-
-        if (!is_file($resourceFile->getAbsolutePath()))
-            return; //TODO throw exception?
-
-        $metaData->setSize(filesize($resourceFile->getAbsolutePath()));
-
-        switch ($mediaType) {
-            case Media::TYPE_VIDEO:
-            case Media::TYPE_AUDIO:
-                $file = new File($resourceFile->getAbsolutePath());
-                $ffprobe = $transcoder->getFFprobe();
-                $format = $ffprobe->format($file->getRealPath());
-
-                $duration = $format->has('duration') ? $format->get('duration') : 0;
-                $metaData->setDuration($duration);
-
-                if ($mediaType == Media::TYPE_VIDEO) {
-                    /** @var $streams StreamCollection */
-                    $streams = $ffprobe->streams($file->getRealPath());
-
-                    $firstVideo = $streams->videos()->first();
-                    $videoWidth = $firstVideo->get('width');
-                    $videoHeight = $firstVideo->get('height');
-
-                    $metaData->setWidth($videoWidth);
-                    $metaData->setHeight($videoHeight);
-                }
-
-                break;
-            case Media::TYPE_IMAGE:
-                $imageSize = getimagesize($resourceFile->getAbsolutePath());
-
-                $metaData->setWidth($imageSize[0]);
-                $metaData->setHeight($imageSize[1]);
-
-                break;
-        }
-    }
-
-    public function updateMetaData(ResourceFile $resourceFile)
-    {
-        self::_updateMetaData($this->media->getType(), $resourceFile, $this->transcoder);
-    }
-
     protected function createResource(File $file)
     {
         // Correct the permissions to 664
@@ -123,10 +70,9 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         $em->persist($resource);
         $em->flush();
 
-        $this->updateMetaData($resource);
+        $resource->updateMetaData($this->media->getType(), $this->transcoder);
         $em->persist($resource);
         $em->flush();
-        //$em->close();
 
         return $resource;
     }
@@ -135,7 +81,7 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
     {
         $this->message = AbstractMediaConsumerOptions::unpack($msg->body);
         if (empty($this->message))
-            return true;
+            return self::MSG_REJECT;
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -143,9 +89,8 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         if (empty($this->media)) {
             // Can happen if media is deleted before transcoding can be executed
             $this->logger->info(sprintf("Media with ID=%d does not exist and cannot be transcoded!", $this->message->mediaId));
-            return true;
+            return self::MSG_REJECT;
         }
-        //$em->close();
 
         $mediaType = $this->media->getType();
         switch ($mediaType) {
@@ -175,12 +120,12 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
                     // not a video so don't hold up the queue
                     $this->logger->error(sprintf("Error. Not a valid video/audio file %d!", $this->media->getId()));
                     $this->media = null; // null it so that child classes don't attempt any work
-                    return true;
+                    return self::MSG_REJECT;
                 }
 
                 break;
         }
 
-        return true;
+        return self::MSG_ACK;
     }
 }

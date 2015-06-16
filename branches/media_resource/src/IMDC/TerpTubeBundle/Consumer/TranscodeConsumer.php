@@ -3,7 +3,6 @@
 namespace IMDC\TerpTubeBundle\Consumer;
 
 use Doctrine\ORM\EntityManager;
-use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\HttpFoundation\File\File;
@@ -21,7 +20,7 @@ class TranscodeConsumer extends AbstractMediaConsumer
 
         if (!($this->message instanceof TranscodeConsumerOptions)) {
             $this->logger->error("no transcode options specified");
-            return true;
+            return self::MSG_REJECT;
         }
         /** @var TranscodeConsumerOptions $transcodeOpts */
         $transcodeOpts = TranscodeConsumerOptions::unpack($msg->body);
@@ -31,7 +30,6 @@ class TranscodeConsumer extends AbstractMediaConsumer
         $this->media->setState(MediaStateConst::PROCESSING);
         $em->persist($this->media);
         $em->flush();
-        //$em->close();
 
         $sourceFile = new File($this->media->getSourceResource()->getAbsolutePath());
         $transcodedFile = null;
@@ -47,7 +45,7 @@ class TranscodeConsumer extends AbstractMediaConsumer
             $this->logger->info("Transcoding complete!");
         } catch (\Exception $e) {
             $this->logger->error($e->getTraceAsString());
-            return true;
+            return self::MSG_REJECT;
         }
 
         // done with the source file. do (not) delete the file itself, but keep the entity
@@ -65,9 +63,8 @@ class TranscodeConsumer extends AbstractMediaConsumer
 
         $em->persist($this->media);
         $em->flush();
-        //$em->close();
 
-        return true;
+        return self::MSG_ACK;
     }
 
     /**

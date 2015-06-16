@@ -30,8 +30,7 @@ define([
         if (this.isConnected())
             return;
 
-        //TODO proper url
-        this.ws = new SockJS('https://' + window.location.hostname + '/stomp');
+        this.ws = new SockJS(window.location.protocol + '//' + window.location.hostname + '/stomp');
         this.client = Stomp.over(this.ws);
 
         // SockJS does not support heart-beat: disable heart-beats
