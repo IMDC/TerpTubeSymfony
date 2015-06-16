@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 use FFMpeg\FFProbe;
 use IMDC\TerpTubeBundle\Consumer\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -280,11 +281,14 @@ class MediaController extends Controller
             ));
         }
 
+        /** @var ResourceFile $resource */
+        $resource = $media->getResources()->get(0);
+
         $trimOpts = new TrimConsumerOptions();
         $trimOpts->mediaId = $media->getId();
         $trimOpts->startTime = $startTime;
         $trimOpts->endTime = $endTime;
-        $trimOpts->timestamp = time();
+        $trimOpts->currentDuration = $resource->getMetaData()->getDuration();
 
         /** @var Producer $trimProducer */
         $trimProducer = $this->container->get('old_sound_rabbit_mq.trim_producer');
