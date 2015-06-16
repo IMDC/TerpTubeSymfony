@@ -75,23 +75,28 @@ define([
 
         // listen for status updates
         this.messages = [];
-        this.rabbitmqWebStompService.subscribe(
-            null,
-            RabbitmqWebStompService.Event.CONNECTED,
-            function (e) {
-                this.rabbitmqWebStompService.subscribe(
-                    '/exchange/entity-status',
-                    RabbitmqWebStompService.Event.MESSAGE,
-                    function (e) {
-                        console.log(e.message);
+        this.bind__onMessage = function (e) {
+            console.log(e.message);
 
-                        // store the messages, since a request (_onRecordingSuccess) may not have completed yet
-                        this.messages.push(e.message);
+            // store the messages, since a request (_onRecordingSuccess) may not have completed yet
+            this.messages.push(e.message);
 
-                        this._checkMessages();
-                    }.bind(this));
-            }.bind(this));
-        this.rabbitmqWebStompService.connect();
+            this._checkMessages();
+        }.bind(this);
+        this.bind__onConnect = function (e) {
+            this.subscription = this.rabbitmqWebStompService.subscribe(
+                '/exchange/entity-status',
+                RabbitmqWebStompService.Event.MESSAGE, this.bind__onMessage);
+        }.bind(this);
+
+        if (!this.rabbitmqWebStompService.isConnected()) {
+            this.rabbitmqWebStompService.subscribe(
+                null,
+                RabbitmqWebStompService.Event.CONNECTED, this.bind__onConnect);
+            this.rabbitmqWebStompService.connect();
+        } else {
+            this.bind__onConnect(null);
+        }
 
         //TODO interp preview/edit/trim
         if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
@@ -322,8 +327,6 @@ define([
 
     RecorderComponent.prototype._onRecordingSuccess = function (data) {
         console.log('%s: %s- mediaId=%d', RecorderComponent.TAG, '_onRecordingSuccess', data.media.id);
-
-        //this.tempMedia = data.media;
 
         var media = new MediaModel(data.media);
 
@@ -571,23 +574,29 @@ define([
     };
 
     RecorderComponent.prototype.destroy = function () {
+        this.rabbitmqWebStompService.unsubscribe(this.subscription, this.bind__onMessage);
+        this.rabbitmqWebStompService.unsubscribe(null, this.bind__onConnect);
+
         this.$modalDialog.remove();
     };
 
-    RecorderComponent.prototype._injectMedia = function (video, media) {
-        var source = video.find('source');
-        video.removeAttr('src');
-        //TODO user source_resource for new recordings
-        source.attr('src', Helper.generateUrl(media.get('source_resource.web_path')));
-        //source.attr('src', Helper.generateUrl(media.get('resources.0.web_path')));
-        //TODO generate source elements for all resources
+    RecorderComponent.prototype._injectMedia = function (video, media, isRecording) {
+        var options = {};
+
+        options.resources = isRecording
+                ? [media.get('source_resource')]
+                : media.get('resources')
+
+        dust.render('recorder_source', options, function (err, out) {
+            video.html(out);
+        });
     };
 
     RecorderComponent.prototype.setSourceMedia = function (media) {
         this.sourceMedia = media;
 
         if (this.sourceMedia != null) {
-            this._injectMedia(this.$interpVideoP, this.sourceMedia);
+            this._injectMedia(this.$interpVideoP, this.sourceMedia, false);
         }
         this._destroyPlayers();
         this._loadPage();
@@ -612,7 +621,7 @@ define([
             this._injectMedia(this.options.tab == RecorderComponent.Tab.NORMAL
                     ? this.$normalVideo
                     : this.$interpVideoR,
-                this.recordedMedia);
+                this.recordedMedia, true);
         }
         this._togglePlayerTitle();
     };
