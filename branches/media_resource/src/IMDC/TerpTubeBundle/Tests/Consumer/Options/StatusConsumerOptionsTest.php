@@ -4,6 +4,11 @@ namespace IMDC\TerpTubeBundle\Tests\Consumer;
 
 use IMDC\TerpTubeBundle\Consumer\Options\StatusConsumerOptions;
 
+/**
+ * Class StatusConsumerOptionsTest
+ * @package IMDC\TerpTubeBundle\Tests\Consumer
+ * @author Jamal Edey <jamal.edey@ryerson.ca>
+ */
 class StatusConsumerOptionsTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -22,15 +27,14 @@ class StatusConsumerOptionsTest extends \PHPUnit_Framework_TestCase
 
     public function testPack()
     {
-        $serialized = $this->opts->pack();
-
-        $this->assertNotNull($serialized);
+        $json = $this->opts->pack();
+        $this->assertNotNull($json);
     }
 
     public function testUnpack()
     {
-        $serialized = $this->opts->pack();
-        $opts = StatusConsumerOptions::unpack($serialized);
+        $json = $this->opts->pack();
+        $opts = StatusConsumerOptions::unpack($json);
 
         $this->assertNotNull($opts);
         $this->assertEquals($this->opts->status, $opts->status);

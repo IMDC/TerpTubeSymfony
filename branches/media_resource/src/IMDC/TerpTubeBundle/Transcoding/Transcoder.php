@@ -17,6 +17,9 @@ class Transcoder
 
     private $ffmpeg;
 
+    /**
+     * @var FFProbe
+     */
     private $ffprobe;
 
     private $transcoder;

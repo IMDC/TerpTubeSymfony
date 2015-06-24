@@ -126,7 +126,7 @@ class UploadListener implements EventSubscriberInterface
                     $this->logger->info('Uploaded something');
 
                 $media->getSourceResource()->updateMetaData(
-                    $this->media->getType(),
+                    $media->getType(),
                     $this->transcoder);
 
                 $media->setState(MediaStateConst::READY);

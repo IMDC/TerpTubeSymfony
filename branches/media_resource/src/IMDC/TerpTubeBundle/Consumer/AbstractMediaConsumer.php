@@ -54,6 +54,7 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         $this->entityStatusProducer = $entityStatusProducer;
     }
 
+    //TODO move to transcode consumer?
     protected function createResource(File $file)
     {
         // Correct the permissions to 664
