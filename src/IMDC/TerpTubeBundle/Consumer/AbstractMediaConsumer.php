@@ -7,12 +7,10 @@ use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
 use IMDC\TerpTubeBundle\Consumer\Options\AbstractMediaConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Component\HttpFoundation\File\File;
 
 abstract class AbstractMediaConsumer implements MediaConsumerInterface
 {
@@ -52,31 +50,6 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         $this->doctrine = $doctrine;
         $this->transcoder = $transcoder;
         $this->entityStatusProducer = $entityStatusProducer;
-    }
-
-    //TODO move to transcode consumer?
-    protected function createResource(File $file)
-    {
-        // Correct the permissions to 664
-        $old = umask(0);
-        chmod($file->getRealPath(), 0664);
-        umask($old);
-
-        $resource = ResourceFile::fromFile($file);
-        // explicitly set the extension to that of the transcoded file (ext won't be guessed)
-        $resource->setPath($file->getExtension());
-
-        // make it immediately usable
-        /** @var EntityManager $em */
-        $em = $this->doctrine->getManager();
-        $em->persist($resource);
-        $em->flush();
-
-        $resource->updateMetaData($this->media->getType(), $this->transcoder);
-        $em->persist($resource);
-        $em->flush();
-
-        return $resource;
     }
 
     public function execute(AMQPMessage $msg)

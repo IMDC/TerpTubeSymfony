@@ -23,6 +23,7 @@ define([
 
     // service
     'service/keyPointService',
+    'service/rabbitmqWebStompService',
     'service/subscriberService',
 
     // model
