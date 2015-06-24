@@ -29,7 +29,7 @@ class MyFilesControllerTest extends MediaTestCase
         Common::login($this->client);
     }
 
-    /*public function testList()
+    public function testList()
     {
         $crawler = $this->client->request('GET', '/myFiles/');
 
@@ -86,10 +86,7 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertFalse($response['media']['is_interpretation']);
         $this->assertFileExists(
             static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
-    }*/
+    }
 
     public function testAddRecording_Firefox()
     {
@@ -116,12 +113,9 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertFalse($response['media']['is_interpretation']);
         $this->assertFileExists(
             static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
     }
 
-    /*public function testAddRecording_ChromeInterpretation()
+    public function testAddRecording_ChromeInterpretation()
     {
         $videoBlob = $this->createUploadedFile('case02_video_1316.918333s_480p_1000k.webm');
         $audioBlob = $this->createUploadedFile('case02_audio_1316.918333s.wav');
@@ -150,9 +144,6 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertTrue($response['media']['is_interpretation']);
         $this->assertFileExists(
             static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
     }
 
     public function testAddRecording_FirefoxInterpretation()
@@ -183,9 +174,6 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertTrue($response['media']['is_interpretation']);
         $this->assertFileExists(
             static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
     }
 
     public function testAddAction()
@@ -216,8 +204,5 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertTrue($response['wasUploaded']);
         $this->assertFileExists(
             static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
-    }*/
+    }
 }

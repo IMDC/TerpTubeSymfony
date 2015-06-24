@@ -24,36 +24,37 @@ class UploadListenerTestCase extends MediaTestCase
 
     public function testOnUpload_Video()
     {
-        $this->createMedia('video_audio.webm', Media::TYPE_VIDEO);
+        $media = $this->createUploadedMedia('video_audio.webm', Media::TYPE_VIDEO);
 
         $uploadListener = $this->getUploadListener();
-        $uploadListener->onUpload(new UploadEvent($this->media));
+        $uploadListener->onUpload(new UploadEvent($media));
 
-        $metaData = $this->media->getMetaData();
+        $this->assertNotNull($media->getSourceResource()->getMetaData());
 
-        $this->assertNotNull($metaData);
-        $this->assertNotNull($metaData->getTimeUploaded());
+        $this->deleteUploadedMedia($media);
     }
 
     public function testOnUpload_Image()
     {
-        $this->createMedia('pic1.jpg', Media::TYPE_IMAGE);
+        $media = $this->createUploadedMedia('pic1.jpg', Media::TYPE_IMAGE);
 
         $uploadListener = $this->getUploadListener();
-        $uploadListener->onUpload(new UploadEvent($this->media));
+        $uploadListener->onUpload(new UploadEvent($media));
 
-        $metaData = $this->media->getMetaData();
-        $imageSize = getimagesize($this->media->getResource()->getAbsolutePath());
+        $resource = $media->getSourceResource();
+        $metaData = $resource->getMetaData();
+        $imageSize = getimagesize($resource->getAbsolutePath());
 
-        $this->assertTrue(file_exists('web/' . $this->media->getThumbnailPath()));
-        $this->assertGreaterThan(0, filesize('web/' . $this->media->getThumbnailPath()));
+        $this->assertTrue(file_exists('web/' . $media->getThumbnailPath()));
+        $this->assertGreaterThan(0, filesize('web/' . $media->getThumbnailPath()));
 
         $this->assertNotNull($metaData);
-        $this->assertEquals(filesize($this->media->getResource()->getAbsolutePath()), $metaData->getSize());
+        $this->assertEquals(filesize($resource->getAbsolutePath()), $metaData->getSize());
         $this->assertEquals($imageSize[0], $metaData->getWidth());
         $this->assertEquals($imageSize[1], $metaData->getHeight());
         $this->assertNull($metaData->getDuration());
-        $this->assertNotNull($metaData->getTimeUploaded());
+
+        $this->deleteUploadedMedia($media);
     }
 
     /**
@@ -63,10 +64,10 @@ class UploadListenerTestCase extends MediaTestCase
     {
         $logger = $this->container->get('logger');
         $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $upload_video_producer = $this->container->get('old_sound_rabbit_mq.upload_video_producer');
-        $upload_audio_producer = $this->container->get('old_sound_rabbit_mq.upload_audio_producer');
         $transcoder = $this->container->get('imdc_terptube.transcoder');
+        $multiplexProducer = $this->container->get('old_sound_rabbit_mq.multiplex_producer');
+        $transcodeProducer = $this->container->get('old_sound_rabbit_mq.transcode_producer');
 
-        return new UploadListener($logger, $entityManager, $upload_video_producer, $upload_audio_producer, $transcoder);
+        return new UploadListener($logger, $entityManager, $transcoder, $multiplexProducer, $transcodeProducer);
     }
 }

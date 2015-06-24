@@ -6,6 +6,11 @@ use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File;
 use IMDC\TerpTubeBundle\Consumer\Options\MultiplexConsumerOptions;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+/**
+ * Class MultiplexConsumerOptionsTest
+ * @package IMDC\TerpTubeBundle\Tests\Consumer
+ * @author Jamal Edey <jamal.edey@ryerson.ca>
+ */
 class MultiplexConsumerOptionsTest extends WebTestCase
 {
     /**
@@ -16,12 +21,12 @@ class MultiplexConsumerOptionsTest extends WebTestCase
     /**
      * @var string
      */
-    private $video;
+    private $videoPath;
 
     /**
      * @var string
      */
-    private $audio;
+    private $audioPath;
 
     public function setUp()
     {
@@ -29,17 +34,17 @@ class MultiplexConsumerOptionsTest extends WebTestCase
         static::$kernel->boot();
 
         $this->rootDir = static::$kernel->getRootDir() . '/';
-        $this->video = $this->rootDir . '../../test_files/video.webm';
-        $this->audio = $this->rootDir . '../../test_files/audio.wav';
+        $this->videoPath = $this->rootDir . '../../test_files/video.webm';
+        $this->audioPath = $this->rootDir . '../../test_files/audio.wav';
     }
 
     public function testPack()
     {
         $opts = new MultiplexConsumerOptions();
-        $opts->videoPath = $this->video;
-        $opts->audioPath = $this->audio;
-        $opts->video = new File($this->video);
-        $opts->audio = new File($this->audio);
+        $opts->videoPath = $this->videoPath;
+        $opts->audioPath = $this->audioPath;
+        $opts->video = new File($this->videoPath);
+        $opts->audio = new File($this->audioPath);
         $serialized = $opts->pack();
 
         $this->assertNull($opts->video);
@@ -50,16 +55,16 @@ class MultiplexConsumerOptionsTest extends WebTestCase
     public function testUnpack()
     {
         $opts = new MultiplexConsumerOptions();
-        $opts->videoPath = $this->video;
-        $opts->audioPath = $this->audio;
+        $opts->videoPath = $this->videoPath;
+        $opts->audioPath = $this->audioPath;
         $serialized = $opts->pack();
 
         /** @var MultiplexConsumerOptions $cOpts */
         $cOpts = MultiplexConsumerOptions::unpack($serialized);
 
         $this->assertNotNull($cOpts);
-        $this->assertEquals($this->video, $cOpts->videoPath);
-        $this->assertEquals($this->audio, $cOpts->audioPath);
+        $this->assertEquals($this->videoPath, $cOpts->videoPath);
+        $this->assertEquals($this->audioPath, $cOpts->audioPath);
         $this->assertNotNull($cOpts->video);
         $this->assertNotNull($cOpts->audio);
     }
