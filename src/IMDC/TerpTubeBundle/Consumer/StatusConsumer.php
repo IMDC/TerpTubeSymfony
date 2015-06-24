@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Consumer;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Consumer\Options\StatusConsumerOptions;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 

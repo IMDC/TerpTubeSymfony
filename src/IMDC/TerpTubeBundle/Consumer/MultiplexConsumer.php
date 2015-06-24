@@ -4,6 +4,10 @@ namespace IMDC\TerpTubeBundle\Consumer;
 
 use Doctrine\ORM\EntityManager;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
+use IMDC\TerpTubeBundle\Consumer\Options\MultiplexConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\MultiplexOperation;
+use IMDC\TerpTubeBundle\Consumer\Options\StatusConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use IMDC\TerpTubeBundle\Transcoding\ContainerConst;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;

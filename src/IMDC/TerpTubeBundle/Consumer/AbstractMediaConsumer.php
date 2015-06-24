@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Consumer;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
+use IMDC\TerpTubeBundle\Consumer\Options\AbstractMediaConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;

@@ -3,9 +3,9 @@
 namespace IMDC\TerpTubeBundle\EventListener;
 
 use Doctrine\ORM\EntityManager;
-use IMDC\TerpTubeBundle\Consumer\MultiplexConsumerOptions;
-use IMDC\TerpTubeBundle\Consumer\MultiplexOperation;
-use IMDC\TerpTubeBundle\Consumer\TranscodeConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\MultiplexConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\MultiplexOperation;
+use IMDC\TerpTubeBundle\Consumer\Options\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use IMDC\TerpTubeBundle\Entity\MetaData;

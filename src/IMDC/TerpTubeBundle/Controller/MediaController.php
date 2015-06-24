@@ -3,7 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use FFMpeg\FFProbe;
-use IMDC\TerpTubeBundle\Consumer\TrimConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Utils\Utils;

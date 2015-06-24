@@ -1,6 +1,6 @@
 <?php
 
-namespace IMDC\TerpTubeBundle\Consumer;
+namespace IMDC\TerpTubeBundle\Consumer\Options;
 
 interface ConsumerOptionsInterface
 {
