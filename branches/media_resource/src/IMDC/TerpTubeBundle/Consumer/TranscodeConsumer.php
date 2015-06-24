@@ -5,6 +5,7 @@ namespace IMDC\TerpTubeBundle\Consumer;
 use Doctrine\ORM\EntityManager;
 use IMDC\TerpTubeBundle\Consumer\Options\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -66,6 +67,30 @@ class TranscodeConsumer extends AbstractMediaConsumer
         $em->flush();
 
         return self::MSG_ACK;
+    }
+
+    protected function createResource(File $file)
+    {
+        // Correct the permissions to 664
+        $old = umask(0);
+        chmod($file->getRealPath(), 0664);
+        umask($old);
+
+        $resource = ResourceFile::fromFile($file);
+        // explicitly set the extension to that of the transcoded file (ext won't be guessed)
+        $resource->setPath($file->getExtension());
+
+        // make it immediately usable
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $em->persist($resource);
+        $em->flush();
+
+        $resource->updateMetaData($this->media->getType(), $this->transcoder);
+        $em->persist($resource);
+        $em->flush();
+
+        return $resource;
     }
 
     /**
