@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
+use IMDC\TerpTubeBundle\Consumer\Options\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use PhpAmqpLib\Message\AMQPMessage;

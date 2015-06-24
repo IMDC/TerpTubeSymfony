@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Consumer;
 
 use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Consumer\Options\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\HttpFoundation\File\File;
