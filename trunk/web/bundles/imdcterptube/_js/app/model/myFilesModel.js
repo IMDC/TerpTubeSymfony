@@ -38,6 +38,20 @@ define([
 
     MyFilesModel.extend(Model);
 
+    MyFilesModel.prototype.addMedia = function (element) {
+	var media = new MediaModel(element);
+	media.subscribe(Model.Event.CHANGE, function (e) {
+            var cIndex = _.findIndex(this.data.media, e.model);
+            if (cIndex > -1) {
+                // bubble for model changes. prefix this collection's keypath
+                this._dispatch(Model.Event.CHANGE, 'media.' + cIndex);
+            }
+        }.bind(this));
+
+        this.data.media.push(media);
+//        this.forceChange();
+    };
+    
     MyFilesModel.prototype.getMedia = function (mediaId) {
         return _.find(this.data.media, function (media) {
             return media.get('id') == mediaId;
