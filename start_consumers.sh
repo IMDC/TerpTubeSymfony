@@ -6,7 +6,7 @@ then
     SYMFONY_DIR=$1
 elif [ $# = 0 ]
 then
-    SYMFONY_DIR="${CURRENT_DIR}/../../../../"
+    SYMFONY_DIR="${CURRENT_DIR}"
 else
     echo "Usage $0 [ SYMFONY_DIR ]"
     exit 1

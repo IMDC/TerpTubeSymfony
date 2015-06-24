@@ -39,6 +39,13 @@ define([
         SELECTION_CHANGE: 'eventSelectionChange',
         CLICK_BULK_ACTION: 'eventClickBulkAction'
     };
+    
+    TableComponent.prototype.updateElements = function (elements) {
+	this.$items.off('change');
+	this.$table = elements;
+	this.$items = this.$table.find(TableComponent.Binder.ITEM);
+	this.$items.on('change', this.bind__onChangeItems);
+    }
 
     TableComponent.prototype._dispatchToggleEvent = function (e) {
         var $checked = this.getSelection();
