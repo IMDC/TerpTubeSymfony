@@ -60,9 +60,11 @@ class MultiplexConsumer extends AbstractMediaConsumer
 
             switch ($multiplexOpts->operation) {
                 case MultiplexOperation::MUX:
+                    $this->sendStatusUpdate('Multiplexing');
                     $resourceFile = $this->transcoder->mergeAudioVideo($multiplexOpts->audio, $multiplexOpts->video);
                     break;
                 case MultiplexOperation::REMUX:
+                    $this->sendStatusUpdate('Re-multiplexing');
                     $resourceFile = $this->transcoder->remuxWebM($multiplexOpts->audio);
                     break;
                 default:
@@ -86,6 +88,7 @@ class MultiplexConsumer extends AbstractMediaConsumer
             $em->flush();
         } catch (\Exception $e) {
             $this->logger->error($e->getTraceAsString());
+            $this->sendStatusUpdate('Error');
             return self::MSG_REJECT;
         }
 
@@ -100,12 +103,7 @@ class MultiplexConsumer extends AbstractMediaConsumer
         $opts->preset = 'ffmpeg.x264_720p_video';
         $this->transcodeProducer->publish($opts->pack());
 
-        $opts = new StatusConsumerOptions();
-        $opts->status = 'done';
-        $opts->who = get_class($this);
-        $opts->what = get_class($this->media);
-        $opts->identifier = $this->media->getId();
-        $this->entityStatusProducer->publish($opts->pack());
+        $this->sendStatusUpdate('Done');
 
         return self::MSG_ACK;
     }

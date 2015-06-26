@@ -39,6 +39,8 @@ class TranscodeConsumer extends AbstractMediaConsumer
         try {
             $this->logger->info("Transcoding " . $sourceFile->getRealPath());
 
+            $this->sendStatusUpdate('Transcoding');
+
             $transcodedFile = $this->transcoder->transcode(
                 $transcodeOpts->container, $this->media->getType(), $sourceFile, $transcodeOpts->preset);
             if ($transcodedFile == null)
@@ -47,6 +49,7 @@ class TranscodeConsumer extends AbstractMediaConsumer
             $this->logger->info("Transcoding complete!");
         } catch (\Exception $e) {
             $this->logger->error($e->getTraceAsString());
+            $this->sendStatusUpdate('Error');
             return self::MSG_REJECT;
         }
 
@@ -65,6 +68,8 @@ class TranscodeConsumer extends AbstractMediaConsumer
 
         $em->persist($this->media);
         $em->flush();
+
+        $this->sendStatusUpdate('Done');
 
         return self::MSG_ACK;
     }

@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
 use IMDC\TerpTubeBundle\Consumer\Options\AbstractMediaConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\StatusConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
@@ -102,5 +103,14 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         }
 
         return self::MSG_ACK;
+    }
+
+    protected function sendStatusUpdate($status) {
+        $opts = new StatusConsumerOptions();
+        $opts->status = $status;
+        $opts->who = get_class($this);
+        $opts->what = get_class($this->media);
+        $opts->identifier = $this->media->getId();
+        $this->entityStatusProducer->publish($opts->pack());
     }
 }
