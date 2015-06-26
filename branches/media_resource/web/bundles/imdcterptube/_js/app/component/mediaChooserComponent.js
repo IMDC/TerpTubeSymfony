@@ -188,6 +188,7 @@ define([
         };
 
         this._dispatch(event, args);
+        
     };
 
     MediaChooserComponent.prototype._onClickRecordVideo = function (e) {
@@ -258,7 +259,7 @@ define([
             }.bind(this))
             .done(function (data) {
                 //if (this.$selected.length > 0)
-                    this._addSelectedMedia(data.media);
+                this._addSelectedMedia(data.media);
                 this._invokeSuccess();
                 this._toggleForm(false);
             }.bind(this))

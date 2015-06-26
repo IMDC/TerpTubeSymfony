@@ -76,6 +76,7 @@ define([
         // listen for status updates
         this.messages = [];
         this.bind__onMessage = function (e) {
+            console.log("Message:");
             console.log(e.message);
 
             // store the messages, since a request (_onRecordingSuccess) may not have completed yet
@@ -329,8 +330,8 @@ define([
         console.log('%s: %s- mediaId=%d', RecorderComponent.TAG, '_onRecordingSuccess', data.media.id);
 
         var media = new MediaModel(data.media);
-
-        if (media.get('is_ready') == 2) {
+        console.log(media);
+        if (media.get('state') == 2) {
             this.setRecordedMedia(media);
         } else {
             console.log('waiting for multiplex consumer');
