@@ -19,6 +19,8 @@ class TrimConsumer extends AbstractMediaConsumer
 
         if ($this->media->getState() !== MediaStateConst::READY) {
             $this->logger->error("media must be in a ready state");
+            $em = $this->doctrine->getManager();
+            $em->clear();
             return self::MSG_REJECT_REQUEUE;
         }
 
@@ -30,10 +32,10 @@ class TrimConsumer extends AbstractMediaConsumer
         $trimOpts = TrimConsumerOptions::unpack($msg->body);
 
         //TODO check me. may not work as expected
-        if (!$this->isValid($trimOpts->currentDuration)) {
+        /*if (!$this->isValid($trimOpts->currentDuration)) {
             $this->logger->error("one or more resources have changed since this trim was requested. discarding");
             return self::MSG_REJECT;
-        }
+        }*/
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();

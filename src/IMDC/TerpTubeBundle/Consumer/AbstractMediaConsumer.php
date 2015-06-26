@@ -30,14 +30,14 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
     protected $transcoder;
 
     /**
-     * @var AbstractMediaConsumerOptions
-     */
-    protected $message;
-
-    /**
      * @var Producer
      */
     protected $entityStatusProducer;
+
+    /**
+     * @var AbstractMediaConsumerOptions
+     */
+    protected $message;
 
     /**
      * @var Media
