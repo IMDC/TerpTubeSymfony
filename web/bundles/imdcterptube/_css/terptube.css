@@ -600,6 +600,15 @@ a:hover, a:focus, a:visited {
   margin-bottom: initial;
 }
 
+/* line 64, sass/_media.scss */
+.tt-media-preview-title {
+  margin-bottom: 10px;
+}
+/* line 67, sass/_media.scss */
+.tt-media-preview-title input {
+  width: 100%;
+}
+
 /* line 11, sass/_message.scss */
 .tt-message-div div.row {
   border-top: 1px solid #ddd;

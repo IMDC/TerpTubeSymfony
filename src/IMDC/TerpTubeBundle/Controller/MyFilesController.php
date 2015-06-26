@@ -96,6 +96,7 @@ class MyFilesController extends Controller
             throw new \Exception('no media data found in request');
         }
 
+        $title = $request->request->get('title', 'Recording-' . $currentTime->format('Y-m-d-H:i'));
         $isInterpretation = filter_var($request->request->get('isInterpretation'), FILTER_VALIDATE_BOOLEAN);
         $sourceStartTime = floatval($request->request->get('sourceStartTime', 0));
         $sourceId = $request->request->get('sourceId', null);
@@ -122,7 +123,7 @@ class MyFilesController extends Controller
 
         $media->setOwner($user);
         $media->setType(Media::TYPE_VIDEO);
-        $media->setTitle('Recording-' . $currentTime->format('Y-m-d-H:i'));
+        $media->setTitle($title);
 
         $resourceFile = ResourceFile::fromFile(new IMDCFile(tempnam('/tmp/terptube-recordings', 'hello_')));
         $resourceFile->setPath('placeholder');
