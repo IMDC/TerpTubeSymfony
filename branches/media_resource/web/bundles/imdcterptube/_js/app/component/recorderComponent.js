@@ -55,6 +55,7 @@ define([
         this.$normalTitle = this.$container.find(RecorderComponent.Binder.NORMAL_TITLE);
         this.$normalVideo = this.$container.find(RecorderComponent.Binder.NORMAL_VIDEO);
         this.$interpSelect = this.$container.find(RecorderComponent.Binder.INTERP_SELECT);
+        this.$interpMain = this.$container.find(RecorderComponent.Binder.INTERP_MAIN);
         this.$interpVideoP = this.$container.find(RecorderComponent.Binder.INTERP_VIDEO_P);
         this.$interpTitle = this.$container.find(RecorderComponent.Binder.INTERP_TITLE);
         this.$interpVideoR = this.$container.find(RecorderComponent.Binder.INTERP_VIDEO_R);
@@ -73,9 +74,12 @@ define([
         this.$modalDialog.on('hidden.bs.modal', this.bind__onHiddenModal);
         this.$tabPanes.on('show.bs.tab', this.bind__onShowTab);
         this.$tabPanes.on('shown.bs.tab', this.bind__onShownTab);
-        this.$normalTitle.blur(this.bind__onBlurPlayerTitle);
         this.$interpSelect.on('click', this.bind__onClickInterpSelect);
-        this.$interpTitle.blur(this.bind__onBlurPlayerTitle);
+        // prevent media renaming if in record mode
+        if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
+            this.$normalTitle.blur(this.bind__onBlurPlayerTitle);
+            this.$interpTitle.blur(this.bind__onBlurPlayerTitle);
+        }
 
         this._clearCurrents();
         this._setupRabbitmq();
@@ -102,7 +106,7 @@ define([
         NORMAL_TITLE: '.recorder-normal-title',
         NORMAL_VIDEO: '.recorder-normal-video',
         INTERP_SELECT: '.recorder-interp-select',
-        INTERP_MY_FILES_SELECTOR: '.recorder-interp-my-files-selector',
+        INTERP_MAIN: '.recorder-interp-main',
         INTERP_VIDEO_P: '.recorder-interp-video-p',
         INTERP_TITLE: '.recorder-interp-title',
         INTERP_VIDEO_R: '.recorder-interp-video-r',
@@ -151,6 +155,11 @@ define([
         } else {
             this.bind__onConnect(null);
         }
+    };
+
+    RecorderComponent.prototype._cleanupRabbitmq = function () {
+        this.rabbitmqWebStompService.unsubscribe(this.subscription, this.bind__onMessage);
+        this.rabbitmqWebStompService.unsubscribe(null, this.bind__onConnect);
     };
 
     RecorderComponent.prototype._createPlayer = function (inPreviewMode, wasRecording) {
@@ -375,16 +384,19 @@ define([
         if (this.currentRecording.video == null && this.currentRecording.audio == null)
             return null;
 
-        var interpretationData = null;
+        var params = {
+            video: this.currentRecording.video,
+            audio: this.currentRecording.audio,
+            title: this.isOnNormalTab ? this.$normalTitle.val() : this.$interpTitle.val()
+        };
+
         if (this.isOnInterpTab) {
-            interpretationData = {
-                isInterpretation: true,
-                sourceStartTime: this.currentRecording.sourceStartTime,
-                sourceId: this.sourceMedia.get('id')
-            };
+            params.isInterpretation = true;
+            params.sourceStartTime = this.currentRecording.sourceStartTime;
+            params.sourceId = this.sourceMedia.get('id');
         }
 
-        return MyFilesFactory.addRecording(this.currentRecording.video, this.currentRecording.audio, interpretationData)
+        return MyFilesFactory.addRecording(params)
             .progress(function (percent) {
                 Helper.updateProgressBar(this._getElement(RecorderComponent.Binder.CONTAINER_UPLOAD).show(), percent);
             }.bind(this))
@@ -548,12 +560,10 @@ define([
         if (this.isOnInterpTab) {
             if (this.sourceMedia != null) {
                 this.$interpSelect.parent().hide();
-                this.$interpVideoP.show();
-                this.$interpVideoR.show();
+                this.$interpMain.show();
             } else {
                 this.$interpSelect.parent().show();
-                this.$interpVideoP.hide();
-                this.$interpVideoR.hide();
+                this.$interpMain.hide();
             }
         }
 
@@ -643,8 +653,8 @@ define([
     };
 
     RecorderComponent.prototype.destroy = function () {
-        this.rabbitmqWebStompService.unsubscribe(this.subscription, this.bind__onMessage);
-        this.rabbitmqWebStompService.unsubscribe(null, this.bind__onConnect);
+        this._clearCurrents();
+        this._cleanupRabbitmq();
 
         this.$modalDialog.remove();
     };
@@ -686,18 +696,6 @@ define([
         this._loadPage();
     };
 
-    RecorderComponent.prototype._togglePlayerTitle = function () {
-        var title = this.recordedMedia != null ? this.recordedMedia.get('title') : '';
-
-        if (this.isOnNormalTab) {
-            this.$interpTitle.hide().val('');
-            this.$normalTitle.toggle().val(title);
-        } else {
-            this.$normalTitle.hide().val('');
-            this.$interpTitle.toggle().val(title);
-        }
-    };
-
     RecorderComponent.prototype.setRecordedMedia = function (media) {
         this.recordedMedia = media;
 
@@ -707,7 +705,6 @@ define([
                     : this.$interpVideoR,
                 this.recordedMedia, true);
         }
-        this._togglePlayerTitle();
     };
 
     RecorderComponent.prototype._getElement = function (binder) {
