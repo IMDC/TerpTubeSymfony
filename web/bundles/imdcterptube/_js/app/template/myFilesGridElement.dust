@@ -1,0 +1,41 @@
+<div class="col-md-3">
+	<div class="thumbnail tt-grid-div-body">
+	    <div class="tt-grid-div-item">
+	        <input type="checkbox" class="table-component-item" data-mid="{media.id}" />
+	    </div>
+	    <div class="tt-grid-div-thumbnail my-files-selector-file" data-mid="{media.id}" disabled>
+	        <div>
+		        <span class="fa-stack fa-lg">
+		            <i class="fa fa-file-o fa-stack-2x"></i>
+		            <i class="fa fa-play-circle fa-stack-1x"></i>
+	        	</span>
+        	</div>
+	    </div>
+	    <div class="tt-grid-div-primary">
+	        <span class="edit-title my-files-selector-file" title="{previewTitle}" data-mid="{media.id}" data-type="text" data-title="{editTitle}" disabled>
+	            <i class="fa {mediaIcon.icon} fa-2x" title="{mediaIcon.text}"></i>
+	            {media.title}
+	        </span>
+	        <span>
+	            <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+	            <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-download"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+	                    {#media.resources}
+	                    	<li><a href="{@generateUrl  path=web_path /} download="{media.title}.{path}">{path}</a></li>{~n}
+	                    {/media.resources}
+                        {@if cond="'{media.resources}'.length > 0 && '{media.source_resource}'.length"}
+                            <li class="divider"></li>
+                        {/if}
+                        {?media.source_resource}
+                            <li><a href="{@generateUrl  path=media.source_resource.web_path /}" download="{media.title}.{media.source_resource.path}">Original</a></li>
+                        {/media.source_resource}
+                    </ul>
+                </div>
+	            <a class="btn btn-default" target="_blank" href="{shareUrl}" title="{shareTitle}"><i class="fa fa-share-square-o"></i></a>
+	        </span>
+	    </div>
+	</div>
+</div>
