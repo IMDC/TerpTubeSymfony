@@ -281,14 +281,14 @@ class MediaController extends Controller
             ));
         }
 
-        /** @var ResourceFile $resource */
-        $resource = $media->getResources()->get(0);
+        //** @var ResourceFile $resource */
+        //$resource = $media->getResources()->get(0);
 
         $trimOpts = new TrimConsumerOptions();
         $trimOpts->mediaId = $media->getId();
         $trimOpts->startTime = $startTime;
         $trimOpts->endTime = $endTime;
-        $trimOpts->currentDuration = $resource->getMetaData()->getDuration();
+        //$trimOpts->currentDuration = $resource->getMetaData()->getDuration();
 
         /** @var Producer $trimProducer */
         $trimProducer = $this->container->get('old_sound_rabbit_mq.trim_producer');
