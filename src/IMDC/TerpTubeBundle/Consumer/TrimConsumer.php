@@ -47,11 +47,14 @@ class TrimConsumer extends AbstractMediaConsumer
         foreach ($this->media->getResources() as $resource) {
             $sourceFile = new File($resource->getAbsolutePath());
 
+            $this->sendStatusUpdate('Trimming');
+
             try {
                 if (!$this->transcoder->trimVideo($sourceFile, $trimOpts->startTime, $trimOpts->endTime))
                     throw new \Exception("trim failed");
             } catch (\Exception $e) {
                 $this->logger->error($e->getTraceAsString());
+                $this->sendStatusUpdate('Error');
                 return self::MSG_REJECT;
             }
 
@@ -72,6 +75,8 @@ class TrimConsumer extends AbstractMediaConsumer
         $this->media->setState(MediaStateConst::READY);
         $em->persist($this->media);
         $em->flush();
+
+        $this->sendStatusUpdate('Done');
 
         return self::MSG_ACK;
     }
