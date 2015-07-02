@@ -24,10 +24,9 @@ imdc_post_edit:
     expose: true
 
 imdc_post_delete:
-  pattern: /{pid}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:Post:delete }
-  methods: [POST]
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\PostController
   requirements:
-    pid: \d+
+    postId: \d+
   options:
     expose: true

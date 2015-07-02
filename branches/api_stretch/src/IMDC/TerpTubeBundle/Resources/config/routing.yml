@@ -38,6 +38,7 @@ IMDCTerpTubeBundle_myFiles:
   prefix: /myFiles
 
 IMDCTerpTubeBundle_post:
+  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/post.yml"
   prefix: /post
 

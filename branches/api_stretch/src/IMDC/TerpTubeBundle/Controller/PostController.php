@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\FOSRestController;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -16,7 +17,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class PostController extends Controller
+class PostController extends FOSRestController
 {
     /**
      * @param Request $request
@@ -223,12 +224,13 @@ class PostController extends Controller
 	}
 
     /**
+     * @Rest\View()
+     *
      * @param Request $request
-     * @param $pid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @param $postId
+     * @return \FOS\RestBundle\View\View|RedirectResponse
      */
-    public function deleteAction(Request $request, $pid) //TODO api?
+    public function deleteAction(Request $request, $postId)
     {
         // check if the user is logged in
         if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
@@ -236,14 +238,22 @@ class PostController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            throw new \Exception('post not found');
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'post not found'
+            )), 500); //TODO decide status code
         }
 
         $user = $this->getUser();
         if (!$post->getAuthor() == $user) {
-            throw new AccessDeniedException();
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'access denied'
+            )), 500); //TODO decide status code
         }
 
         $user->removePost($post);
@@ -253,12 +263,10 @@ class PostController extends Controller
         $em->remove($post);
         $em->flush();
 
-        $content = array(
-            'wasDeleted' => true
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        return $this->view(array('status' => array(
+            'code' => 0,
+            'message' => 'deleted',
+            'wasDeleted' => true //TODO drop wasWhatevers
+        )), 200);
     }
 }

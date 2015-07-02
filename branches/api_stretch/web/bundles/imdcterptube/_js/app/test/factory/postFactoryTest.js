@@ -153,7 +153,7 @@ define([
                     assert.isTrue(data.wasDeleted, 'key:wasDeleted should be true');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });

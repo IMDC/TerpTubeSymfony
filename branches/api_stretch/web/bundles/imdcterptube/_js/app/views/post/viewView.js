@@ -133,7 +133,7 @@ define([
                     }.bind(this));
                 }
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$container
                     .find('.modal-body')
                     .prepend('Something went wrong. Try again.');
