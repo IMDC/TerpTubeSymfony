@@ -258,7 +258,7 @@ define([
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.isNull(kpsCallbackResult, 'key point event should be null');
 
                     var kIndex = KeyPointService._kIndex(model.get('id'));
@@ -280,7 +280,7 @@ define([
                     assert.equal(kpsCallbackResult.type, KeyPointService.Event.REMOVE, 'key point event type should equal');
                     assert.equal(kpsCallbackResult.keyPoint, model.get('keyPoint'), 'key point should equal');
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
         });

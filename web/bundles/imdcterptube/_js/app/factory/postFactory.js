@@ -88,21 +88,17 @@ define(function () {
     PostFactory.delete = function (model) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_post_delete', {pid: model.get('id')}),
-            type: 'POST'
+            method: 'DELETE',
+            url: Routing.generate('imdc_post_delete', {postId: model.get('id')})
         };
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                if (data.wasDeleted) {
-                    deferred.resolve(data);
-                } else {
-                    deferred.reject();
-                }
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
