@@ -1,0 +1,29 @@
+{% macro _controls(style) %}
+    <button class="btn btn-default table-component-bulk-action" title="Send Message" data-action="3" disabled><i class="fa fa-envelope"></i></button>
+    <button class="btn btn-default table-component-bulk-action" title="Create group" data-action="2" disabled><i class="fa fa-users"></i></button>
+    <button class="btn btn-danger table-component-bulk-action" title="Delete" data-action="1" disabled><i class="fa fa-trash-o"></i></button>
+    {% if style == 'grid' %}
+        {% set style = 'list' %}
+        {% set style_icon = 'fa-th-list' %}
+        <button class="btn btn-default table-component-toggle-selection" title="Toggle selection"><i class="fa fa-check-square-o"></i></button>
+    {% else %}
+        {% set style = 'grid' %}
+        {% set style_icon = 'fa-th-large' %}
+    {% endif %}
+    <a class="btn btn-default" href="{{ path('imdc_contact_list', {'style': style}) }}"><i class="fa {{ style_icon }}"></i></a>
+{% endmacro %}
+
+{% macro list_users(style, users) %}
+    {% import _self as _contact %}
+    {% import 'IMDCTerpTubeBundle:Member:macros.html.twig' as _member %}
+
+    <div class="row">
+        <div class="col-md-12 text-right">{{ _contact._controls(style) }}</div>
+    </div>
+    {% if style == 'list' %}
+        {{ _member.list_users_list(users, true) }}
+    {% else %}
+        {{ _member.list_users_grid(users, true) }}
+    {% endif %}
+    <div class="text-center">{{ knp_pagination_render(users) }}</div>
+{% endmacro %}

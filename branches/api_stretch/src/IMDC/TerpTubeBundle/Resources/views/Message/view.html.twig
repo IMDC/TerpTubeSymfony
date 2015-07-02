@@ -1,0 +1,93 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}{{ message.subject }}{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/messageModel', 'controller/messageController', 'views/message/viewView',
+            'main'
+        ], function (bootstrap, MessageModel, MessageController, MessageView) {
+            bootstrap(
+                    new MessageModel({{ message|serialize('json')|raw }}),
+                    MessageController,
+                    MessageView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <hr class="tt-separator-top" />
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-4">
+                <p>
+                    <a class="btn btn-danger" href="{{ path('imdc_message_delete', {'messageid': message.id}) }}"><i class="fa fa-trash-o"></i> Delete</a>
+                    <a class="btn btn-default" href="{{ path('imdc_message_archive_message', {'messageid': message.id}) }}"><i class="fa fa-archive"></i> Archive</a>
+                </p>
+            </div>
+            <div class="col-md-4 text-right">
+                <p>
+                    <a class="btn btn-default" href="{{ path('imdc_message_inbox') }}"><i class="fa fa-inbox"></i> Inbox</a>
+                    <a class="btn btn-default" href="{{ path('imdc_message_reply', {'messageid': message.id}) }}"><i class="fa fa-reply"></i> Reply</a>
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <div class="container-fluid tt-message-div" data-mid="{{ message.id }}">
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">Sent</div>
+                        <div class="col-md-10">{{ message.sentDate|date('g:ia F j Y') }}</div>
+                    </div>
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">From</div>
+                        <div class="col-md-10">
+                            {% if message.owner == 'noreply' %}
+                                {{ message.owner }}
+                            {% else %}
+                                <a href="{{ path('imdc_profile_user', {'userName': message.owner }) }}">{{ message.owner }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">To</div>
+                        <div class="col-md-10">{{ message.recipients|join(', ') }}</div>
+                    </div>
+                    <div class="row tt-message-div-header">
+                        <div class="col-md-2">Subject</div>
+                        <div class="col-md-10">{{ message.subject }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% if message.getAttachedMedia|length > 0 %}
+                                <div class="message-gallery" style="height: 500px; width: 100%;"></div>
+                            {% else %}
+                                <p>No media</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {#FIXME is this safe? nope#}
+                            {{ message.content|raw }}
+                        </div>
+                    </div>
+                </div>
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+{% endblock content %}

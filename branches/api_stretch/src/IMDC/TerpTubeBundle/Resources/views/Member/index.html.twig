@@ -1,0 +1,55 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% block title %}Members{% endblock %}
+
+{% block sidebarlinks_members %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <!-- all members -->
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <hr class="tt-separator-top" />
+                {% if members|length > 0 %}
+                    {% set pagParams = members.getParams %}
+                    <div class="btn-group" style="margin-bottom: 10px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            Sort by
+                            {% if members.isSorted('u.username') %}{{ 'profile.show.userName'|trans }}
+                            {% elseif members.isSorted('p.interestedInMentoredByMentor') %}{{ 'profile.show.interestedInMentoredByMentor.title'|trans }}
+                            {% elseif members.isSorted('p.interestedInMentoredByInterpreter') %}{{ 'profile.show.interestedInMentoredByInterpreter.title'|trans }}
+                            {% elseif members.isSorted('p.interestedInMentoringSignLanguage') %}{{ 'profile.show.interestedInMentoringSignLanguage.title'|trans }}
+                            {% elseif members.isSorted('p.interestedInMentoringInterpreter') %}{{ 'profile.show.interestedInMentoringInterpreter.title'|trans }}
+                            {% elseif members.isSorted('p.interestedInMentoringMentor') %}{{ 'profile.show.interestedInMentoringMentor.title'|trans }}
+                            {% endif %}
+                            {% if 'asc' in pagParams %}(ascending)
+                            {% elseif 'desc' in pagParams %}(descending)
+                            {% endif %}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>{{ knp_pagination_sortable(members, 'profile.show.userName'|trans, 'u.username') }}</li>
+                            <li>{{ knp_pagination_sortable(members, 'profile.show.interestedInMentoredByMentor.title'|trans, 'p.interestedInMentoredByMentor') }}</li>
+                            <li>{{ knp_pagination_sortable(members, 'profile.show.interestedInMentoredByInterpreter.title'|trans, 'p.interestedInMentoredByInterpreter') }}</li>
+                            <li>{{ knp_pagination_sortable(members, 'profile.show.interestedInMentoringSignLanguage.title'|trans, 'p.interestedInMentoringSignLanguage') }}</li>
+                            <li>{{ knp_pagination_sortable(members, 'profile.show.interestedInMentoringInterpreter.title'|trans, 'p.interestedInMentoringInterpreter') }}</li>
+                            <li>{{ knp_pagination_sortable(members, 'profile.show.interestedInMentoringMentor.title'|trans, 'p.interestedInMentoringMentor') }}</li>
+                        </ul>
+                    </div>
+                {% endif %}
+                {% if members|length > 0 %}
+                    {% include 'IMDCTerpTubeBundle:Member:thumbnail.html.twig' %}
+                    {{ knp_pagination_render(members) }}
+                {% endif %}
+                <hr class="tt-separator-bottom" />
+            </div>
+        </div>
+    </div>
+{% endblock content %}

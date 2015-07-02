@@ -1,0 +1,79 @@
+IMDC\TerpTubeBundle\Entity\UserGroup:
+    type: entity
+    table: fos_group
+    repositoryClass: IMDC\TerpTubeBundle\Entity\UserGroupRepository
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        description:
+            type: text
+            nullable: true
+        dateCreated:
+            type: datetime
+        visibleToPublic:
+            type: boolean
+            nullable: true
+        visibleToRegisteredUsers:
+            type: boolean
+            nullable: true
+        openForNewMembers:
+            type: boolean
+            nullable: true
+        joinByInvitationOnly:
+            type: boolean
+            nullable: true
+        membersCanAddForums:
+            type: boolean
+            nullable: true
+        mediaDisplayOrder:
+            type: array
+    oneToMany:
+        forums:
+            targetEntity: Forum
+            mappedBy: group
+            cascade: ["remove"]
+    manyToOne:
+        userFounder:
+            targetEntity: User
+            joinColumn:
+                name: userFounder_id
+                referencedColumnName: id
+    manyToMany:
+        members:
+            targetEntity: User
+            mappedBy: userGroups
+        moderators:
+            targetEntity: User
+            joinTable:
+                name: usergroup_moderators_users
+                joinColumns:
+                    usergroup_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        admins:
+            targetEntity: User
+            joinTable:
+                name: usergroup_admins_users
+                joinColumns:
+                    usergroup_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    user_id:
+                        referencedColumnName: id
+        media:
+            targetEntity: Media
+            joinTable:
+                name: usergroup_media
+                joinColumns:
+                    group_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    media_id:
+                        referencedColumnName: id
+    lifecycleCallbacks: 
+        prePersist: [setDateCreatedToNow]

@@ -1,0 +1,150 @@
+IMDC\TerpTubeBundle\Entity\User:
+    type:  entity
+    table: fos_user
+    repositoryClass: IMDC\TerpTubeBundle\Entity\UserRepository
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        joinDate:
+            type: datetime
+        postCount:
+            type: integer
+            nullable: true
+    lifecycleCallbacks: 
+        prePersist: [setJoinDateToNow]
+    oneToMany:
+        sentMessages:
+            targetEntity: Message
+            mappedBy: owner
+            orderBy:
+                sentDate: DESC
+        resourceFiles:
+            targetEntity: Media
+            mappedBy: owner
+        posts:
+            targetEntity: Post
+            mappedBy: author
+        threads:
+            targetEntity: Thread
+            mappedBy: creator
+        forums:
+            targetEntity: Forum
+            mappedBy: creator
+        editedPosts:
+            targetEntity: Post
+            mappedBy: editedBy
+        editedThreads:
+            targetEntity: Thread
+            mappedBy: editedBy
+        createdInvitations:
+            targetEntity: Invitation
+            mappedBy: creator
+            orderBy:
+                dateCreated: DESC
+        receivedInvitations:
+            targetEntity: Invitation
+            mappedBy: recipient
+            orderBy:
+                dateCreated: DESC
+    oneToOne:
+        profile:
+            targetEntity: UserProfile
+            joinColumn:
+                name: profile_id
+                referencedColumnName: id
+            cascade: ["all"]
+    manyToMany:
+        #functions as many to many
+        receivedMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_received_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+            orderBy:
+                sentDate: DESC
+        #functions as many to many
+        readMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_read_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+        #functions as many to many
+        archivedMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_archived_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+            orderBy:
+                sentDate: DESC
+        #functions as many to many
+        deletedMessages:
+            targetEntity: Message
+            joinTable:
+                name: users_deleted_messages
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    message_id:
+                        referencedColumnName: id
+        #functions as many To Many
+        userGroups:
+            targetEntity: UserGroup
+            inversedBy: members
+            joinTable:
+                name: fos_user_group
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    group_id:
+                        referencedColumnName: id
+        #many to many
+        friendsList:
+            targetEntity: User
+            joinTable:
+                name: user_friends
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    friend_user_id:
+                        referencedColumnName: id
+        mentorList:
+            targetEntity: User
+            joinTable:
+                name: user_mentor
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    mentor_user_id:
+                        referencedColumnName: id
+        menteeList:
+            targetEntity: User
+            joinTable:
+                name: user_mentee
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    mentee_user_id:
+                        referencedColumnName: id

@@ -1,0 +1,51 @@
+{#
+included by:
+Thread:view.html.twig
+#}
+
+<div class="row post-container{% if is_post_reply %} tt-post-container tt-post-reply-container" style="margin-bottom: 15px;{% endif %}" data-pid="{{ post.id }}">
+    <div class="{% if is_post_reply %}col-md-offset-1 col-md-11{% else %}col-md-12{% endif %}">
+        {% if is_post_reply %}
+        <div class="row tt-post-container-inner tt-post-reply-container-inner">
+            <div class="col-md-12">
+                {% endif %}
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_widget(form.attachedFile) }}
+                {% if form.startTime is defined %}
+                    {{ form_widget(form.startTime) }}
+                    {{ form_widget(form.endTime) }}
+                {% endif %}
+                {{ form_row(form.content) }}
+                <button class="btn btn-success post-submit-new" href="#" data-pid="{{ post.id }}" data-loading-text="Creating reply..."><i class="fa fa-check"></i> Reply</button>
+                <a class="btn btn-danger post-reset" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Reset</a>
+                {% if is_post_reply %}
+                    <a class="btn btn-danger post-cancel-new" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
+                {% endif %}
+                {{ form_end(form) }}
+                {% if is_post_reply %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# no js for include from Thread:view.html.twig #}
+{% if is_not_ajax is not defined %}
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/postModel', 'controller/postController', 'views/post/newView',
+            'core/helper', 'main'
+        ], function(bootstrap, PostModel, PostController, PostView, Helper) {
+            bootstrap(
+                    new PostModel({{ post|serialize('json')|raw }}),
+                    PostController,
+                    PostView,
+                    {}
+            );
+
+            Helper.autoSize();
+        });
+    </script>
+{% endif %}

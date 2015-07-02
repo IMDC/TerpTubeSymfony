@@ -1,0 +1,57 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Re: {{ message.subject }}{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/messageModel', 'controller/messageController', 'views/message/replyView',
+            'main'
+        ], function (bootstrap, MessageModel, MessageController, MessageView) {
+            bootstrap(
+                    new MessageModel({{ message|serialize('json')|raw }}),
+                    MessageController,
+                    MessageView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block content %}
+    <div class="col-md-offset-2 col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <img class="img-responsive center-block" src=""/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.recipients) }}
+                {{ form_row(form.subject, {'value': 'Re: ' ~ message.subject}) }}
+                {{ form_widget(form.attachedMedia) }}
+                {{ form_row(form.content, {
+                'value':
+                "\n\n\n\n" ~
+                '>From: ' ~ message.owner ~ "\n" ~
+                '>To: ' ~ message.recipients|join(', ') ~ "\n" ~
+                '>Subject: ' ~ message.subject ~ "\n" ~
+                '>Sent: ' ~ message.sentDate|date('g:ia M j') ~ "\n>\n" ~
+                ">----Original Message below----\n\n" ~
+                message.content,
+                'attr': {'class': 'autosize'}
+                })}}
+                <button class="btn btn-success message-submit"><i class="fa fa-envelope"></i> Send</button>
+                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

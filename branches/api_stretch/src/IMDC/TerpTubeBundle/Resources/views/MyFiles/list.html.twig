@@ -1,0 +1,52 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% trans_default_domain 'IMDCTerpTubeBundle' %}
+
+{% use 'IMDCTerpTubeBundle:Form:fields.html.twig' %}
+
+{% import 'IMDCTerpTubeBundle:MyFiles:macros.html.twig' as _my_files %}
+
+{% block title %}My Files{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/myFilesModel', 'controller/myFilesController', 'views/myFiles/listView',
+            'main'
+        ], function(bootstrap, MyFilesModel, MyFilesController, MyFilesView) {
+            bootstrap(
+                    new MyFilesModel({
+                        media: {{ media.items.getArrayCopy|serialize('json')|raw }}
+                    }),
+                    MyFilesController,
+                    MyFilesView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block nav_ul_my_files %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ _my_files.list_files(style, media) }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,105 @@
+{#
+included by:
+_Post:view.html.twig
+_Thread:view.html.twig
+#}
+
+<div class="row post-container tt-post-container{% if is_post_reply %} tt-post-reply-container{% endif %}" style="margin-bottom: 15px;" data-pid="{{ post.id }}" data-starttime="{{ post.startTime }}" data-endtime="{{ post.endTime }}" data-istemporal={{ post.isTemporal ? 'true' : 'false' }}>
+    <div class="{% if is_post_reply %}col-md-offset-1 col-md-11{% else %}col-md-12{% endif %}">
+        <div class="row tt-post-container-inner{% if is_post_reply %} tt-post-reply-container-inner{% endif %}">
+            <!-- user info -->
+            <div class="col-md-2 text-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': post.author} %}
+                        {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': post.author} %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        {% include 'IMDCTerpTubeBundle:Member:connectTools.html.twig' with {'member': post.author} %}
+                    </div>
+                </div>
+            </div>
+            <!-- post content -->
+            <div class="col-md-9 tt-post-content-container">
+                {% block post_content %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="text-right tt-date">
+                                {{ post.created|date('Y-m-d g:i a') }}
+                                {% if post.editedBy %}
+                                    (edited {{ post.editedAt|date('Y-m-d g:i a') }} by {{ post.editedBy.username }})
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            {% if post.isTemporal %}
+                                <div class="tt-post-timeline-container">
+                                    <div class="tt-post-timeline">
+                                        <div class="tt-post-timeline-keypoint post-timeline-keypoint" data-pid="{{ post.id }}"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if post.getAttachedFile|length != 0 %}
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="post-gallery" style="margin-bottom: 10px; height: 400px; width: 100%;"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <p>{{ post.content|nl2br }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock post_content %}
+            </div>
+            <!-- post tools -->
+            <div class="col-md-1 pull-right">
+                {% block post_tools %}
+                    <ul class="list-unstyled">
+                        {% if post.isTemporal %}
+                            <li><a class="post-timeline-keypoint" href="#" title="Jump to selected timeline region" data-pid="{{ post.id }}"><i class="fa fa-clock-o"></i></a></li>
+                        {% endif %}
+                        {% if post.author.id == app.user.id %}
+                            <li><a class="post-edit" href="#" title="Edit this post" data-pid="{{ post.id }}"><i class="fa fa-pencil"></i></a></li>
+                            <li><a href="#" title="Delete this post" data-toggle="modal" data-target=".post-delete-modal[data-pid={{ post.id }}]"><i class="fa fa-trash-o"></i></a></li>
+                        {% endif %}
+                    </ul>
+                    <div class="modal fade post-delete-modal" data-pid="{{ post.id }}">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                    <h4 class="modal-title">Delete this post</h4>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p>
+                                        This post will be permanently deleted.<br />
+                                        This action cannot be undone.<br />
+                                        Are you sure?
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
+                                    <a class="btn btn-danger post-delete" data-pid="{{ post.id }}" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock post_tools %}
+            </div>
+        </div>
+        {% if not is_post_reply %}
+            <!-- post reply -->
+            {% block post_reply %}
+                <div class="row">
+                    <div class="col-md-1 col-md-offset-11">
+                        <p><a class="post-new" href="#" title="Reply to this post" data-pid="{{ post.id }}"><i class="fa fa-reply fa-rotate-180 fa-lg"></i></a></p>
+                    </div>
+                </div>
+            {% endblock %}
+        {% endif %}
+    </div>
+</div>

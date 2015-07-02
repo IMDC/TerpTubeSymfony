@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <parameters>
+        <parameter key="upload_event.constant.uploadEvent" type="constant">IMDC\TerpTubeBundle\Event\UploadEvent::EVENT_UPLOAD</parameter>
+    </parameters>
+</container>

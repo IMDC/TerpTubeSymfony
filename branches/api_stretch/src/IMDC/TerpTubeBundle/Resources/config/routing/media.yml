@@ -1,0 +1,32 @@
+imdc_media_list:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:Media:list }
+  options:
+    expose: true
+
+imdc_media_edit:
+  pattern: /{mediaId}/edit
+  defaults: { _controller: IMDCTerpTubeBundle:Media:edit }
+  methods: [POST]
+  requirements:
+    mediaId: \d+
+  options:
+    expose: true
+
+imdc_media_delete:
+  pattern: /{mediaId}/delete
+  defaults: { _controller: IMDCTerpTubeBundle:Media:delete }
+  methods: [POST]
+  requirements:
+    mediaId: \d+
+  options:
+    expose: true
+
+imdc_media_trim:
+  pattern: /{mediaId}/trim
+  defaults: { _controller: IMDCTerpTubeBundle:Media:trim }
+  methods: [POST]
+  requirements:
+    mediaId: \d+
+  options:
+    expose: true

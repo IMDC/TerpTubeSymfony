@@ -1,0 +1,61 @@
+/* used as a selector */
+.tt-post-container {
+  border: 1px solid #ddd;
+  border-collapse: collapse;
+  border-radius: 4px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin: 0 0 15px 0;
+  background-color: #fff;
+}
+
+.tt-post-container-highlight {
+  border: 1px solid red !important;
+}
+
+.tt-post-container-inner {
+  margin-bottom: 15px;
+}
+
+.tt-post-reply-container {
+  @extend .tt-post-container;
+  /* reset all */
+  border: initial;
+  border-collapse: initial;
+  border-radius: initial;
+  padding-top: initial;
+  padding-bottom: initial;
+  margin: initial;
+  background-color: initial;
+}
+
+.tt-post-reply-container-inner {
+  @extend .tt-post-container; /* imitate the primary container */
+
+  border-top: 1px dashed #999;
+  border-radius: 4px 0 0 4px;
+  margin-bottom: 0;
+}
+
+.tt-post-content-container {
+  min-height: 180px;
+}
+
+.tt-post-timeline-container {
+  height: 15px;
+}
+
+.tt-post-timeline {
+  background: #ddd;
+  border: 1px solid #bbb;
+  height: 10px;
+  width: 100%;
+}
+
+.tt-post-timeline-keypoint {
+  height: 100%;
+  width: 0; /* this'll be adjusted based on the keypoint */
+  position: relative;
+  cursor: pointer;
+  background: red;
+}

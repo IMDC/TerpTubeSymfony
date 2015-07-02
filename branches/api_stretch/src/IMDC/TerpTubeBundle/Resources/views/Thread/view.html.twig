@@ -1,0 +1,197 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as _media %}
+
+{% block title %}{{ thread.title|truncate(50) }}{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/threadModel', 'controller/threadController', 'views/thread/viewView',
+            'model/postModel', 'controller/postController', 'views/post/newView', 'views/post/viewView',
+            'main'
+        ], function (bootstrap, ThreadModel, ThreadController, ThreadView, PostModel, PostController, PostNewView, PostViewView) {
+            bootstrap(
+                    new ThreadModel({{ thread|serialize('json')|raw }}),
+                    ThreadController,
+                    ThreadView,
+                    {
+                        container: $("#threadOpContainer"),
+                        player: {
+                            playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
+                            speedImages: {
+                                normal: "{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}",
+                                fast: "{{ asset('bundles/imdcterptube/img/player/playback-speed-fast.png') }}",
+                                slow: "{{ asset('bundles/imdcterptube/img/player/playback-speed-slow.png') }}"
+                            },
+                            captionImages: {
+                                off: "{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}",
+                                on: "{{ asset('bundles/imdcterptube/img/player/closedCaptioningDown.jpg') }}"
+                            }
+                        }
+                    }
+            );
+
+            bootstrap(
+                    new PostModel({{ post|serialize('json')|raw }}),
+                    PostController,
+                    PostNewView,
+                    {}
+            );
+
+            $.each({{ thread.posts|serialize('json')|raw }}, function (index, post) {
+                bootstrap(
+                        new PostModel(post),
+                        PostController,
+                        PostViewView,
+                        {}
+                );
+            });
+        });
+
+        $(document).ready(function() {
+            //
+            // following is layout specific. keep it here
+            //
+            var bodyPaddingTop = parseInt($("body").css("padding-top"), 10);
+            var bodyPaddingBottom = parseInt($("body").css("padding-bottom"), 10);
+
+            var replyContainerHeight;
+            var plusHeight;
+            var scrollTop = $("#threadOpContainer").offset().top - bodyPaddingTop;
+            var lastReplyHeight = $("#threadReplyContainer div.tt-post-container").last().height();
+            $("#threadReplyContainer div div").first().append("<div id=\"replyContainerSpacer\"></div>");
+
+            $(window).on("scroll", function(e) {
+                if ($(window).scrollTop() > scrollTop) {
+                    $("#threadReplyContainer").css({
+                        "top": $(window).scrollTop() - scrollTop,
+                        "height": replyContainerHeight + scrollTop
+                    });
+                    $("#replyContainerSpacer").height(plusHeight);
+                } else {
+                    $("#threadReplyContainer").css({
+                        "top": 0,
+                        "height": replyContainerHeight + $(window).scrollTop()
+                    });
+                    $("#replyContainerSpacer").height(plusHeight - scrollTop);
+                }
+            });
+
+            $(window).on("resize", function(e) {
+                replyContainerHeight = $(window).height() - $("#threadOpContainer").offset().top - bodyPaddingBottom;
+                plusHeight = replyContainerHeight - lastReplyHeight;
+
+                $(window).trigger("scroll");
+            });
+
+            $(window).trigger("resize");
+        });
+    </script>
+{% endblock header %}
+
+{% block sidebarlinks_forums %}class="active"{% endblock %}
+
+{% block content %}
+	<div class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="{{ path('imdc_forum_list') }}">Forums</a></li>
+			<li><a href="{{ path('imdc_forum_view', {'forumid': thread.getParentForum.getId }) }}">{{ thread.getParentForum.getTitleText|truncate(20) }}</a></li>
+			<li class="active">{{ thread.title|truncate(30) }}</li>
+		</ol>
+		<div class="row">
+			<!-- left side -->
+			<div class="col-md-5 tt-thread-op-container" id="threadOpContainer">
+				<div class="row">
+					<!-- thread owner controls -->
+					<div class="col-md-6 pull-left">
+						<ul class="list-unstyled list-inline">
+							{% if app.user == thread.creator %}
+								<li><a href="{{ path('imdc_thread_edit', {'threadid': thread.id}) }}"><i class="fa fa-scissors"></i> Edit</a></li>
+							{% endif %}
+							<li>{% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': thread} %}</li>
+						</ul>
+					</div>
+					<!-- post controls -->
+					{#<div class="col-md-6 pull-right text-right">
+						<ul class="list-unstyled list-inline">
+							<li><a href="#"><i class="fa fa-flag"></i> Report</a></li>
+							<li><a href="#"><i class="fa fa-paperclip"></i> Follow</a></li>
+						</ul>
+					</div>#}
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+                        {% if thread.mediaIncluded|length != 0 %}
+                            <div class="thread-media-element" style="position: relative;">
+                                {{ _media.element(thread.getOrderedMedia[0], false, true) }}
+                                {{ _media.video_controls }}
+                            </div>
+                        {% else %}
+                            <div class="lead text-center" style="padding-top: 30px;">No Media</div>
+                        {% endif %}
+                    </div>
+				</div>
+                <!-- post reply form -->
+                {% include 'IMDCTerpTubeBundle:Post:ajax.reply.html.twig' with {'is_not_ajax': true} %}
+				<div class="row">
+					<div class="col-md-12">
+						<h1>{{ thread.title }}</h1>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						{% if thread.content|length > 0 %}
+							<p>{{ thread.content|nl2br }}</p>
+						{% else %}
+						    <p><i>No description given</i></p>
+						{%  endif %}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<ul class="list-unstyled">
+							<li><span class="tt-date" title="{{ thread.creationDate|date('Y-m-d g:i a') }}">Created {{ time_diff(thread.creationDate)}}</span></li>
+							{% if thread.editedBy %}
+								<li><span class="tt-date" title="{{ thread.editedAt|date('Y-m-d g:i a') }}">Edited by {{ thread.editedBy }} {{ time_diff(thread.editedAt) }}</span></li>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						{% include 'IMDCTerpTubeBundle:Member:infoBlock.html.twig' with {'member': thread.creator} %}
+					</div>
+				</div>
+			</div>
+			<!-- right side -->
+			<div class="col-md-7 tt-thread-reply-container" id="threadReplyContainer">
+                <!-- thread replies -->
+				<div class="row">
+					<div class="col-md-12">
+                        {% if thread.posts|length > 0 %}
+                            {% for post in thread.posts if not post.parentPost %}
+                                <!-- post -->
+                                {% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
+                                <!-- post replies -->
+                                {% for post_reply in post.replies %}
+                                    {% include 'IMDCTerpTubeBundle:Post:view.html.twig' with {'is_post_reply': true, 'post': post_reply} %}
+                                {% endfor %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
+                        {% endif %}
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div>
+    {% if app.environment == 'test' %}
+        <div style="display: none;">
+            <div id="__testModel">{{ thread|serialize('json')|raw }}</div>
+        </div>
+    {% endif %}
+{% endblock content %}

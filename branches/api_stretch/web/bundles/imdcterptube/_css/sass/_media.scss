@@ -1,0 +1,62 @@
+.tt-media-element {
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+
+  > div {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.tt-media-thumbnail {
+  @extend .tt-media-element;
+
+  $height: 230px;
+
+  height: $height;
+
+  > div {
+    video, img {
+      max-height: $height;
+    }
+  }
+}
+
+.tt-media-video, .tt-media-audio {
+  width: 100%;
+}
+
+.tt-media-pip-video {
+  position: absolute;
+  top: 0;
+  height: 25%;
+  z-index: 1;
+}
+
+.tt-media-img {
+
+}
+
+.tt-media-video-controls {
+  $padding: 10px;
+  $max-width: 24px;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: $padding;
+  max-width: $max-width + ($padding * 2);
+  text-align: center;
+
+  img {
+    max-width: $max-width;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    &:last-of-type {
+      margin-bottom: initial;
+    }
+  }
+}

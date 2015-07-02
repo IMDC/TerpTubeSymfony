@@ -1,0 +1,33 @@
+IMDC\TerpTubeBundle\Entity\ResourceFile:
+    type: entity
+    table: resource_file
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        path:
+            type: string
+            length: 255
+            nullable: true
+        created:
+            type: datetime
+            nullable: true
+        updated:
+            type: datetime
+            nullable: true
+    oneToOne:
+        metaData:
+            targetEntity: MetaData
+            joinColumn:
+                name: meta_data
+                referencedColumnName: id
+            cascade: ["all"]
+    lifecycleCallbacks:
+        prePersist: [ preUpload ]
+        postPersist: [ upload ]
+        preUpdate: [ preUpload ]
+        postUpdate: [ upload ]
+        preRemove: [ storeFilenameForRemove ]
+        postRemove: [ removeUpload ]

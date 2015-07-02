@@ -1,0 +1,39 @@
+imdc_invitation_list:
+  pattern: /
+  defaults: { _controller: IMDCTerpTubeBundle:Invitation:list }
+
+imdc_invitation_mentor:
+  pattern: /mentor/{id}
+  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:createMentorInvitation" }
+  requirements:
+    id: \d+
+
+imdc_invitation_mentee:
+  pattern: /mentee/{id}
+  defaults: { _controller: "IMDCTerpTubeBundle:Invitation:createMenteeInvitation" }
+  requirements:
+    id: \d+
+
+imdc_invitation_accept:
+  pattern: /{id}/accept
+  defaults: { _controller: IMDCTerpTubeBundle:Invitation:accept }
+  requirements:
+    id: \d+
+
+imdc_invitation_decline:
+  pattern: /{id}/decline
+  defaults: { _controller: IMDCTerpTubeBundle:Invitation:decline }
+  requirements:
+    id: \d+
+
+imdc_invitation_cancel:
+  pattern: /{id}/cancel
+  defaults: { _controller: IMDCTerpTubeBundle:Invitation:cancel }
+  requirements:
+    id: \d+
+
+imdc_invitation_reactivate:
+  pattern: /{id}/reactivate
+  defaults: { _controller: IMDCTerpTubeBundle:Invitation:reactivate }
+  requirements:
+    id: \d+

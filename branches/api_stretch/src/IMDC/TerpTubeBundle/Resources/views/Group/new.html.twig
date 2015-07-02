@@ -1,0 +1,56 @@
+{% extends 'IMDCTerpTubeBundle:Base:base.html.twig' %}
+
+{% block title %}Create a new Group{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/groupModel', 'controller/groupController', 'views/group/newView',
+            'main'
+        ], function(bootstrap, GroupModel, GroupController, GroupView) {
+            bootstrap(
+                    new GroupModel(),
+                    GroupController,
+                    GroupView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
+{% block sidebarlinks_groups %}class="active"{% endblock %}
+
+{% block content %}
+    <div class="col-md-offset-2 col-md-8">
+        <div class="row">
+            <div class="col-md-12">
+                <img class="img-responsive center-block" src="" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_widget(form.media) }}
+                {{ form_row(form.name) }}
+                {{ form_row(form.description) }}
+                {{ form_row(form.visibleToPublic) }}
+                {{ form_row(form.visibleToRegisteredUsers) }}
+                {{ form_row(form.openForNewMembers) }}
+                {{ form_row(form.joinByInvitationOnly) }}
+                {{ form_row(form.membersCanAddForums) }}
+                {% if form.members is defined %}
+                    {{ form_row(form.members) }}
+                {% endif %}
+                <button class="btn btn-success group-submit"><i class="fa fa-check"></i> Create</button>
+                <a class="btn btn-danger" onclick="history.back();"><i class="fa fa-times"></i> Cancel</a>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock content %}
