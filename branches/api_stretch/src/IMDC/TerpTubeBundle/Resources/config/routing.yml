@@ -26,8 +26,8 @@ IMDCTerpTubeBundle_contact:
   prefix: /contacts
 
 IMDCTerpTubeBundle_media:
+  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/media.yml"
-  prefix: /media
 
 IMDCTerpTubeBundle_message:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/message.yml"

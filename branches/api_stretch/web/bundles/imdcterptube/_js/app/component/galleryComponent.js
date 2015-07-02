@@ -71,7 +71,7 @@ define([
                     this.options.media = data.media;
                     this._populate();
                 }.bind(this))
-                .fail(function () {
+                .fail(function (data) {
                     console.error('%s: media factory list', GalleryComponent.TAG);
                 });
         }

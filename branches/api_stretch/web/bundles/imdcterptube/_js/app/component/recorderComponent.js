@@ -361,7 +361,7 @@ define([
                         this.tempMedia = null;
                         this.setRecordedMedia(data.media[0]);
                     }.bind(this))
-                    .fail(function () {
+                    .fail(function (data) {
                         //TODO
                     });
             }
