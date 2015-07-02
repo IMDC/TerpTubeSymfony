@@ -39,7 +39,7 @@ define([
                     assert.operator(data.media.length, '>=', 1, 'key:media should greater than or equal to 1');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
@@ -57,7 +57,7 @@ define([
                     model = data.media[2];
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });

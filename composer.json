@@ -53,7 +53,8 @@
 		"willdurand/js-translation-bundle" : "~2.1",
 		"jquery/jquerymap" : "1.10.2",
 		"jms/serializer-bundle" : "0.*",
-		"webfactory/exceptions-bundle": "@stable"
+		"webfactory/exceptions-bundle": "@stable",
+		"friendsofsymfony/rest-bundle": "^1.7"
 	},
 	"scripts" : {
 		"post-install-cmd" : [

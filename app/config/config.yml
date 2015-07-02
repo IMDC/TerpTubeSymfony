@@ -283,3 +283,18 @@ jms_serializer:
             FOSUserBundle:
                 namespace_prefix: "FOS\\UserBundle"
                 path: "%kernel.root_dir%/Resources/FOSUserBundle/config/serializer"
+
+sensio_framework_extra:
+    view: { annotations: false }
+
+fos_rest:
+    routing_loader:
+        default_format: json
+        include_format: false
+    view:
+        formats:
+            json: true
+            xml: false
+            rss: false
+            html: false
+        view_response_listener: true

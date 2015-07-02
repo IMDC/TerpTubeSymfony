@@ -1,31 +1,36 @@
 imdc_media_list:
-  pattern: /
-  defaults: { _controller: IMDCTerpTubeBundle:Media:list }
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\MediaController
+  options:
+    expose: true
+
+imdc_media_get:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\MediaController
+  requirements:
+    mediaId: \d+
   options:
     expose: true
 
 imdc_media_edit:
-  pattern: /{mediaId}/edit
-  defaults: { _controller: IMDCTerpTubeBundle:Media:edit }
-  methods: [POST]
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\MediaController
   requirements:
     mediaId: \d+
   options:
     expose: true
 
 imdc_media_delete:
-  pattern: /{mediaId}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:Media:delete }
-  methods: [POST]
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\MediaController
   requirements:
     mediaId: \d+
   options:
     expose: true
 
 imdc_media_trim:
-  pattern: /{mediaId}/trim
-  defaults: { _controller: IMDCTerpTubeBundle:Media:trim }
-  methods: [POST]
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\MediaController
   requirements:
     mediaId: \d+
   options:
