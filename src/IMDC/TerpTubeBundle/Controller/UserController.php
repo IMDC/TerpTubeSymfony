@@ -31,12 +31,6 @@ class UserController extends Controller
 	 */
 	public function indexAction(Request $request, $page = null)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$em = $this->getDoctrine ()->getManager ();
 		
 		/**

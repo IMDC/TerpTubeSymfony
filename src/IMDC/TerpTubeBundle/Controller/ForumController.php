@@ -28,11 +28,6 @@ class ForumController extends Controller
      */
     public function listAction(Request $request)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('IMDCTerpTubeBundle:Forum');
         $user = $this->getUser();
@@ -68,11 +63,6 @@ class ForumController extends Controller
      */
     public function newAction(Request $request, $groupId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
 
         $group = null;
@@ -158,11 +148,6 @@ class ForumController extends Controller
      */
     public function viewAction(Request $request, $forumid)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
         if (!$forum) {
@@ -206,11 +191,6 @@ class ForumController extends Controller
      */
     public function editAction(Request $request, $forumid)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $user = $this->getUser();
 
@@ -283,11 +263,6 @@ class ForumController extends Controller
      */
     public function deleteAction(Request $request, $forumid) //TODO api?
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
         if (!$forum) {
