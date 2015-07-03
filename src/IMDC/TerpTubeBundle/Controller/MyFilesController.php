@@ -25,10 +25,6 @@ class MyFilesController extends Controller
 
     public function listAction(Request $request)
     {
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $criteria = Criteria::create()->orderBy(array("id" => Criteria::DESC));
         $type = $request->query->get('type', false);
         $style = $request->query->get('style', 'grid');
@@ -79,11 +75,6 @@ class MyFilesController extends Controller
     //TODO move to MediaController. when in trunk
     public function addRecordingAction(Request $request) //TODO api?
     {
-        // check if user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $user = $this->getUser();
         $currentTime = new \DateTime('now');
         $em = $this->getDoctrine()->getManager();
@@ -158,11 +149,6 @@ class MyFilesController extends Controller
     //TODO move to MediaController. when in trunk
     public function addAction(Request $request) //TODO api?
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $media = new Media();
         $form = $this->createForm(new MediaType(), $media);
         $form->handleRequest($request);

@@ -24,11 +24,6 @@ class ContactController extends Controller
      */
     public function listAction(Request $request)
     {
-        // check if user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $style = $this->get('request')->query->get('style', 'list');
 
         // pagination
@@ -106,11 +101,6 @@ class ContactController extends Controller
      */
     public function deleteAction(Request $request) //TODO api?
     {
-        // check if user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         try {
             $userIds = $request->get('userIds', array());
             $contactList = strtolower((string)$request->get('contactList'));
@@ -178,11 +168,6 @@ class ContactController extends Controller
      */
     public function addAction(Request $request, $userid)
     {
-
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $user = new \IMDC\TerpTubeBundle\Entity\User;
 
         $user = $this->getUser();
@@ -213,10 +198,6 @@ class ContactController extends Controller
      */
     public function removeAction(Request $request, $userid, $redirect)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
         $user = new \IMDC\TerpTubeBundle\Entity\User;
 
         $user = $this->getUser();
