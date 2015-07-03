@@ -28,11 +28,6 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
      */
     public function cgetAction(Request $request)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $ids = array_filter(explode(',', $request->get('id', '')));
 
         $em = $this->getDoctrine()->getManager();
@@ -82,11 +77,6 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
      */
     public function editAction(Request $request, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $mediaPayload = json_decode($request->get('media'), true);
 
         $em = $this->getDoctrine()->getManager();
@@ -128,11 +118,6 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
      */
     public function deleteAction(Request $request, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
@@ -250,11 +235,6 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
      */
     public function trimAction(Request $request, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
