@@ -27,11 +27,6 @@ class PostController extends Controller
      */
     public function newAction(Request $request, $threadId, $pid) //TODO api?
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $thread = null;
         $postParent = null;
@@ -133,11 +128,6 @@ class PostController extends Controller
      */
     public function viewAction(Request $request, $pid) //TODO api?
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
         if (!$post) {
@@ -163,12 +153,7 @@ class PostController extends Controller
      */
     public function editAction(Request $request, $pid) //TODO api?
 	{
-        // check if the user is logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-			return $this->redirect($this->generateUrl('fos_user_security_login'));
-		}
-
-		$em = $this->getDoctrine()->getManager();
+        $em = $this->getDoctrine()->getManager();
 		$post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
         if (!$post) {
             throw new \Exception('post not found');
@@ -230,11 +215,6 @@ class PostController extends Controller
      */
     public function deleteAction(Request $request, $pid) //TODO api?
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
         if (!$post) {

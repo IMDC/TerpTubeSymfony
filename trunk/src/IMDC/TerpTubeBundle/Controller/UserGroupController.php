@@ -35,11 +35,6 @@ class UserGroupController extends Controller
      */
     public function listAction(Request $request)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('IMDCTerpTubeBundle:UserGroup');
         $user = $this->getUser();
@@ -59,11 +54,6 @@ class UserGroupController extends Controller
      */
     public function newAction(Request $request)
     {
-        // check if user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
 
         $usersSelectForm = $this->createForm(new UsersSelectType(), null, array('em' => $em));
@@ -135,11 +125,6 @@ class UserGroupController extends Controller
      */
     public function viewAction(Request $request, $groupId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
@@ -182,11 +167,6 @@ class UserGroupController extends Controller
      */
     public function editAction(Request $request, $groupId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
@@ -231,11 +211,6 @@ class UserGroupController extends Controller
      */
     public function deleteAction(Request $request, $groupId) //TODO api?
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
@@ -276,11 +251,6 @@ class UserGroupController extends Controller
      */
     public function listMyGroupsAction(Request $request)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         return $this->render('IMDCTerpTubeBundle:Group:list.html.twig', array(
             'groups' => $this->getUser()->getUserGroups(),
             'isMyGroups' => true
@@ -295,11 +265,6 @@ class UserGroupController extends Controller
      */
     public function joinAction(Request $request, $groupId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
@@ -372,11 +337,6 @@ class UserGroupController extends Controller
      */
     public function leaveAction(Request $request, $groupId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
@@ -403,10 +363,6 @@ class UserGroupController extends Controller
      */
     public function messageAction(Request $request, $groupId)
     {
-        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
@@ -433,10 +389,6 @@ class UserGroupController extends Controller
      */
     public function manageAction(Request $request, $groupId)
     {
-        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
@@ -685,10 +637,6 @@ class UserGroupController extends Controller
 
     public function inviteMemberAction(Request $request, $groupId, $userId)
     {
-        if (!$this->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         $newMember = $em->getRepository('IMDCTerpTubeBundle:User')->find($userId);

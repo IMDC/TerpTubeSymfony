@@ -32,11 +32,6 @@ class ThreadController extends Controller
      */
     public function newAction(Request $request, $forumid, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $forum = null;
         $media = null;
@@ -137,11 +132,6 @@ class ThreadController extends Controller
      */
     public function viewAction(Request $request, $threadid)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-        
         $em = $this->getDoctrine()->getManager();
         $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
         if (!$thread) {
@@ -178,11 +168,6 @@ class ThreadController extends Controller
      */
     public function editAction(Request $request, $threadid)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
         if (!$thread) {
@@ -256,11 +241,6 @@ class ThreadController extends Controller
      */
     public function deleteAction(Request $request, $threadid) //TODO api?
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
         if (!$thread) {

@@ -38,12 +38,6 @@ class MessageController extends Controller
 	 */
 	public function newAction(Request $request, $username = null, $recipients = null)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$em = $this->getDoctrine ()->getManager ();
 		$usersSelectForm = $this->createForm ( new UsersSelectType (), null, array (
 				'em' => $em 
@@ -109,12 +103,6 @@ class MessageController extends Controller
 	}
 	public function viewAllPrivateMessagesAction(Request $request, $feedbackmsg = NULL)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$user = $this->getUser ();
 		
 		$em = $this->getDoctrine ()->getManager ();
@@ -130,14 +118,7 @@ class MessageController extends Controller
 	}
 	public function messageSuccessAction(Request $request)
 	{
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		else
-		{
-			$response = $this->forward ( 'IMDCTerpTubeBundle:Message:viewAllMessages', 'Your message has been sent succesfully' );
-		}
+		$response = $this->forward ( 'IMDCTerpTubeBundle:Message:viewAllMessages', 'Your message has been sent succesfully' );
 	}
 	
 	/**
@@ -152,12 +133,6 @@ class MessageController extends Controller
 	 */
 	public function deleteMessageAction(Request $request, $messageid)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		// FIXME ensure that the message is only removed from the users sent/received/archived list
 		
 		$user = $this->getUser ();
@@ -195,12 +170,6 @@ class MessageController extends Controller
 	}
 	public function archiveMessageAction(Request $request, $messageid)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$user = $this->getUser ();
 		
 		$messages = $user->getReceivedMessages ();
@@ -231,12 +200,6 @@ class MessageController extends Controller
 	}
 	public function viewSentMessagesAction(Request $request)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$user = $this->getUser ();
 		
 		$messages = $user->getSentMessages ();
@@ -248,12 +211,6 @@ class MessageController extends Controller
 	}
 	public function viewArchivedMessagesAction(Request $request)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$user = $this->getUser ();
 		
 		// todo: implement message archive system
@@ -266,12 +223,6 @@ class MessageController extends Controller
 	}
 	public function viewMessageAction(Request $request, $messageid)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$user = $this->getUser ();
 		
 		$message = $this->getDoctrine ()->getRepository ( 'IMDCTerpTubeBundle:Message' )->findOneBy ( array (
@@ -344,12 +295,6 @@ class MessageController extends Controller
 	}
 	public function replyToMessageAction(Request $request, $messageid)
 	{
-		// check if the user is logged in
-		if (! $this->container->get ( 'imdc_terptube.authentication_manager' )->isAuthenticated ( $request ))
-		{
-			return $this->redirect ( $this->generateUrl ( 'fos_user_security_login' ) );
-		}
-		
 		$em = $this->getDoctrine ()->getManager ();
 		$origMessage = $this->getDoctrine ()->getRepository ( 'IMDCTerpTubeBundle:Message' )->find ( $messageid );
 		if (! $origMessage)
