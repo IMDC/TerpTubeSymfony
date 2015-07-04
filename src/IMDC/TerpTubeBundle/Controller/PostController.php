@@ -245,8 +245,7 @@ class PostController extends FOSRestController
 
         return $this->view(array('status' => array(
             'code' => 0,
-            'message' => 'deleted',
-            'wasDeleted' => true //TODO drop wasWhatevers
+            'message' => 'deleted'
         )), 200);
     }
 }
