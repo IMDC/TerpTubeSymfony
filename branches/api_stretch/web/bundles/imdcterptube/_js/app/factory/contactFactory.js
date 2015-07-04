@@ -6,8 +6,8 @@ define(function () {
     ContactFactory.delete = function (userIds, contactList) {
         var deferred = $.Deferred();
         var settings = {
+            method: 'DELETE',
             url: Routing.generate('imdc_contact_delete'),
-            type: 'POST',
             data: {
                 userIds: userIds,
                 contactList: contactList
@@ -16,15 +16,11 @@ define(function () {
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                if (data.success) {
-                    deferred.resolve(data);
-                } else {
-                    deferred.reject(data);
-                }
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();

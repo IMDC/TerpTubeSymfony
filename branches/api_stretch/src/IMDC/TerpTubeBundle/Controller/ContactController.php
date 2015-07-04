@@ -2,11 +2,11 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\FOSRestController;
 use IMDC\TerpTubeBundle\Entity;
 use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ContactController extends Controller
+class ContactController extends FOSRestController
 {
     /**
      * @param Request $request
@@ -96,67 +96,67 @@ class ContactController extends Controller
     }
 
     /**
+     * @Rest\View()
+     *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return \FOS\RestBundle\View\View
      */
-    public function deleteAction(Request $request) //TODO api?
+    public function deleteAction(Request $request)
     {
-        try {
-            $userIds = $request->get('userIds', array());
-            $contactList = strtolower((string)$request->get('contactList'));
-            if (empty($contactList)) {
-                throw new \Exception('contact list must not be empty');
-            }
-
-            $user = $this->getUser();
-            $em = $this->getDoctrine()->getManager();
-
-            $transformer = new UserCollectionToIntArrayTransformer($em);
-            $contacts = $transformer->reverseTransform($userIds);
-
-            foreach ($contacts as $contact) {
-                switch ($contactList) {
-                    case 'all':
-                        $user->getMentorList()->removeElement($contact);
-                        $user->getMenteeList()->removeElement($contact);
-                        $user->getFriendsList()->removeElement($contact);
-                        $contact->getMenteeList()->removeElement($user);
-                        $contact->getMentorList()->removeElement($user);
-                        $contact->getFriendsList()->removeElement($user);
-                        break;
-                    case 'mentors':
-                        $user->getMentorList()->removeElement($contact);
-                        $contact->getMenteeList()->removeElement($user);
-                        break;
-                    case 'mentees':
-                        $user->getMenteeList()->removeElement($contact);
-                        $contact->getMentorList()->removeElement($user);
-                        break;
-                    case 'friends':
-                        $user->getFriendsList()->removeElement($contact);
-//                         $contact->getFriendsList()->removeElement($user);
-                        break;
-                    default:
-                        throw new \Exception('invalid contact list');
-                }
-            }
-
-            $em->persist($user);
-            $em->flush();
-
-            $content = array(
-                'success' => true
-            );
-        } catch (\Exception $ex) {
-            $content = array(
-                'success' => false,
-                'message' => $ex->getMessage()
-            );
+        $userIds = $request->get('userIds', array());
+        $contactList = strtolower((string)$request->get('contactList'));
+        if (empty($contactList)) {
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'contact list must not be empty'
+            )), 500); //TODO decide status code
         }
 
-        return new Response (json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+
+        $transformer = new UserCollectionToIntArrayTransformer($em);
+        $contacts = $transformer->reverseTransform($userIds);
+
+        foreach ($contacts as $contact) {
+            switch ($contactList) {
+                case 'all':
+                    $user->getMentorList()->removeElement($contact);
+                    $user->getMenteeList()->removeElement($contact);
+                    $user->getFriendsList()->removeElement($contact);
+                    $contact->getMenteeList()->removeElement($user);
+                    $contact->getMentorList()->removeElement($user);
+                    $contact->getFriendsList()->removeElement($user);
+                    break;
+                case 'mentors':
+                    $user->getMentorList()->removeElement($contact);
+                    $contact->getMenteeList()->removeElement($user);
+                    break;
+                case 'mentees':
+                    $user->getMenteeList()->removeElement($contact);
+                    $contact->getMentorList()->removeElement($user);
+                    break;
+                case 'friends':
+                    $user->getFriendsList()->removeElement($contact);
+//                         $contact->getFriendsList()->removeElement($user);
+                    break;
+                default:
+                    //TODO api exception
+                    return $this->view(array('error' => array(
+                        'code' => 0,
+                        'message' => 'invalid contact list'
+                    )), 500); //TODO decide status code
+            }
+        }
+
+        $em->persist($user);
+        $em->flush();
+
+        return $this->view(array('status' => array(
+            'code' => 0,
+            'message' => 'deleted'
+        )), 200);
     }
 
     /**
