@@ -25,11 +25,10 @@ imdc_thread_edit:
     threadid: \d+
 
 imdc_thread_delete:
-  pattern: /{threadid}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:Thread:delete }
-  methods: [POST]
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\ThreadController
   requirements:
-    threadid: \d+
+    threadId: \d+
   options:
     expose: true
 

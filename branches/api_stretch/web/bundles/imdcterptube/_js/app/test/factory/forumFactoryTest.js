@@ -35,7 +35,7 @@ define([
                     assert.property(data, 'redirectUrl', 'result should have key:redirectUrl');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });

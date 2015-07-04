@@ -161,10 +161,8 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_thread_delete', {threadid: model.get('id')}),
-                responseText: {
-                    wasDeleted: false
-                }
+                url: Routing.generate('imdc_thread_delete', {threadId: model.get('id')}),
+                responseText: {}
             });
 
             // don't return promise
@@ -172,16 +170,15 @@ define([
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.isUndefined(pageUrl, 'pageUrl should be null');
                 });
         });
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_thread_delete', {threadid: model.get('id')}),
+                url: Routing.generate('imdc_thread_delete', {threadId: model.get('id')}),
                 responseText: {
-                    wasDeleted: true,
                     redirectUrl: Common.BASE_URL + '/forum/'
                 }
             });
@@ -190,7 +187,7 @@ define([
                 .done(function (data) {
                     assert.equal(pageUrl, data.redirectUrl, 'pageUrl should equal key:redirectUrl');
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
         });
