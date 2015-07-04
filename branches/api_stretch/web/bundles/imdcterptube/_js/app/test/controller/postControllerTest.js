@@ -248,9 +248,7 @@ define([
         it('should not have deleted and deregistered and dispatched "remove" key point event', function () {
             $.mockjax({
                 url: Routing.generate('imdc_post_delete', {pid: model.get('id')}),
-                responseText: {
-                    wasDeleted: false
-                }
+                responseText: {}
             });
 
             // don't return promise
@@ -270,9 +268,7 @@ define([
         it('should have deleted and deregistered and dispatched "remove" key point event', function () {
             $.mockjax({
                 url: Routing.generate('imdc_post_delete', {pid: model.get('id')}),
-                responseText: {
-                    wasDeleted: true
-                }
+                responseText: {}
             });
 
             return controller.delete()

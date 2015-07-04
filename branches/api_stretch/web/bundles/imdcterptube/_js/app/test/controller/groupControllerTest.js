@@ -52,7 +52,7 @@ define([
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.isUndefined(pageUrl, 'pageUrl should be null');
                 });
         });
@@ -69,7 +69,7 @@ define([
                 .done(function (data) {
                     assert.equal(pageUrl, data.redirectUrl, 'pageUrl should equal key:redirectUrl');
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
         });

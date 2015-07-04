@@ -148,9 +148,6 @@ define([
             return PostFactory.delete(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasDeleted', 'result should have key:wasDeleted');
-
-                    assert.isTrue(data.wasDeleted, 'key:wasDeleted should be true');
                     done();
                 })
                 .fail(function (data) {
