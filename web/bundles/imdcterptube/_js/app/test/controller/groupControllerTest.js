@@ -44,9 +44,7 @@ define([
         it('should not have redirected', function () {
             $.mockjax({
                 url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
-                responseText: {
-                    wasDeleted: false
-                }
+                responseText: {}
             });
 
             // don't return promise
@@ -63,7 +61,6 @@ define([
             $.mockjax({
                 url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
                 responseText: {
-                    wasDeleted: true,
                     redirectUrl: Common.BASE_URL + '/group/'
                 }
             });

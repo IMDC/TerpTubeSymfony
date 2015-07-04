@@ -6,6 +6,7 @@ IMDCTerpTubeBundle_forum:
   prefix: /forum
 
 IMDCTerpTubeBundle_group:
+  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/group.yml"
   prefix: /group
 

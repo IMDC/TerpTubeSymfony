@@ -3,6 +3,7 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use Doctrine\ORM\Query\Expr\Join;
+use FOS\RestBundle\Controller\FOSRestController;
 use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
 use IMDC\TerpTubeBundle\Entity\Message;
@@ -12,7 +13,6 @@ use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +27,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class UserGroupController extends Controller
+class UserGroupController extends FOSRestController
 {
     /**
      * @param Request $request
@@ -203,23 +203,31 @@ class UserGroupController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @Rest\View()
+     *
      * @param $groupId
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @return \FOS\RestBundle\View\View
      * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
      */
-    public function deleteAction(Request $request, $groupId) //TODO api?
+    public function deleteAction($groupId)
     {
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
-            throw new \Exception('group not found');
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'group not found'
+            )), 500); //TODO decide status code
         }
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('DELETE', $group) === false) {
-            throw new AccessDeniedException();
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'access denied'
+            )), 500); //TODO decide status code
         }
 
         foreach ($group->getMembers() as $member) {
@@ -235,14 +243,11 @@ class UserGroupController extends Controller
 
         $em->flush();
 
-        $content = array(
-            'wasDeleted' => true,
+        return $this->view(array('status' => array(
+            'code' => 0,
+            'message' => 'deleted',
             'redirectUrl' => $this->generateUrl('imdc_group_list')
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        )), 200);
     }
 
     /**
