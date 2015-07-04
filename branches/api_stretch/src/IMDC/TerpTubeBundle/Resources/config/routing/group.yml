@@ -21,9 +21,8 @@ imdc_group_edit:
     groupId: \d+
 
 imdc_group_delete:
-  pattern: /{groupId}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:UserGroup:delete }
-  methods: [POST]
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\UserGroupController
   requirements:
     groupId: \d+
   options:
