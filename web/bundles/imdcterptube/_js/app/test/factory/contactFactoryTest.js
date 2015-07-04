@@ -39,10 +39,7 @@ define([
                 })
                 .fail(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'success', 'result should have key:success');
                     assert.property(data, 'message', 'result should have key:message');
-
-                    assert.isFalse(data.success, 'key:success should be false');
                     done();
                 });
         });
@@ -51,9 +48,6 @@ define([
             return ContactFactory.delete(userIds, 'friends')
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'success', 'result should have key:success');
-
-                    assert.isTrue(data.success, 'key:success should be true');
                     done();
                 })
                 .fail(function (data) {
@@ -62,7 +56,7 @@ define([
                 });
         });
 
-        after(function () {
+        after(function (data) {
             userIds = null;
         });
 
