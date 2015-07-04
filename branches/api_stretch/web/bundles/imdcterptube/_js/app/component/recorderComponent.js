@@ -355,11 +355,10 @@ define([
             ) {
                 console.log('done');
 
-                //TODO replace with MediaFactory.get()
-                MediaFactory.list([this.tempMedia.get('id')])
+                MediaFactory.get(this.tempMedia)
                     .done(function (data) {
+                        this.setRecordedMedia(this.tempMedia);
                         this.tempMedia = null;
-                        this.setRecordedMedia(data.media[0]);
                     }.bind(this))
                     .fail(function (data) {
                         //TODO

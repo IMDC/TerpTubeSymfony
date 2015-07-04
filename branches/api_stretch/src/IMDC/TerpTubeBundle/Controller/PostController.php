@@ -2,10 +2,10 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,7 +90,7 @@ class PostController extends FOSRestController
 //             $this->get('session')->getFlashBag()->add(
 //                 'success', 'Reply created successfully!'
 //             );
-            
+
 
             $serializer = $this->get('jms_serializer');
             $content = array(
@@ -98,9 +98,9 @@ class PostController extends FOSRestController
                 'post' => json_decode($serializer->serialize($post, 'json'), true),
                 'redirectUrl' => $this->generateUrl('imdc_thread_view', array(
                     'threadid' => $thread->getId())),
-            	'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-            			'post' => $post,
-            			'is_post_reply' => $isPostReply))
+                'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
+                    'post' => $post,
+                    'is_post_reply' => $isPostReply))
             );
         } else {
             $post->setId(-rand());
@@ -153,15 +153,15 @@ class PostController extends FOSRestController
      * @throws \Exception
      */
     public function editAction(Request $request, $pid) //TODO api?
-	{
+    {
         $em = $this->getDoctrine()->getManager();
-		$post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
         if (!$post) {
             throw new \Exception('post not found');
         }
 
         $user = $this->getUser();
-		if (!$post->getAuthor() == $user) {
+        if (!$post->getAuthor() == $user) {
             throw new AccessDeniedException();
         }
 
@@ -206,7 +206,7 @@ class PostController extends FOSRestController
         return new Response(json_encode($content), 200, array(
             'Content-Type' => 'application/json'
         ));
-	}
+    }
 
     /**
      * @Rest\View()

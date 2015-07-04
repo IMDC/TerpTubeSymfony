@@ -63,6 +63,21 @@ define([
                 });
         });
 
+        it('should get the specified media', function (done) {
+            return MediaFactory.get(mediaIds[0])
+                .done(function (data) {
+                    assert.isObject(data, 'result should be an object');
+                    assert.property(data, 'media', 'result should have key:media');
+
+                    assert.equal(model.get('id'), mediaIds[0], 'media id should be equal');
+                    done();
+                })
+                .fail(function (data) {
+                    assert.fail('fail', 'done', 'request should not have failed');
+                    done();
+                });
+        });
+
         it('should edit the media', function (done) {
             var oldId = model.get('id');
             var oldTitle = model.get('title');

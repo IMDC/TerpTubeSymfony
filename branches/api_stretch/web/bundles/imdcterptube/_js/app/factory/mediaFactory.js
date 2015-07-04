@@ -1,5 +1,6 @@
 define([
-    'model/mediaModel'
+    'model/mediaModel',
+    'underscore'
 ], function (MediaModel) {
     'use strict';
 
@@ -31,6 +32,32 @@ define([
         return deferred.promise();
     };
 
+    MediaFactory.get = function (model) {
+        var deferred = $.Deferred();
+        var isModel = _.isObject(model);
+        var id = isModel ? model.get('id') : model;
+        var settings = {
+            url: Routing.generate('imdc_media_get', {mediaId: id})
+        };
+
+        $.ajax(settings)
+            .then(function (data, textStatus, jqXHR) {
+                if (isModel) {
+                    model.update(data.media);
+                    data.media = model;
+                } else {
+                    data.media = new MediaModel(data.media);
+                }
+                deferred.resolve(data);
+            },
+            function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.responseText);
+                deferred.reject(jqXHR.responseJSON);
+            });
+
+        return deferred.promise();
+    };
+
     MediaFactory.edit = function (model) {
         var deferred = $.Deferred();
         var settings = {
@@ -41,8 +68,8 @@ define([
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                //model = new MediaModel(data.media);
                 model.update(data.media);
+                data.media = model;
                 deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {

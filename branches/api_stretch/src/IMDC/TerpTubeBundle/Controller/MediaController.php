@@ -50,11 +50,6 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
      */
     public function getAction(Request $request, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
