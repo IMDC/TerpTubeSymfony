@@ -2,12 +2,12 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\FOSRestController;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ForumController extends Controller
+class ForumController extends FOSRestController
 {
     /**
      * @param Request $request
@@ -256,22 +256,30 @@ class ForumController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param $forumid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @Rest\View()
+     *
+     * @param $forumId
+     * @return \FOS\RestBundle\View\View
      */
-    public function deleteAction(Request $request, $forumid) //TODO api?
+    public function deleteAction($forumId)
     {
         $em = $this->getDoctrine()->getManager();
-        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
+        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumId);
         if (!$forum) {
-            throw new \Exception('forum not found');
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'forum not found'
+            )), 500); //TODO decide status code
         }
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('DELETE', $forum) === false) {
-            throw new AccessDeniedException();
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'access denied'
+            )), 500); //TODO decide status code
         }
 
         $user = $this->getUser();
@@ -287,13 +295,10 @@ class ForumController extends Controller
 
         $em->flush();
 
-        $content = array(
-            'wasDeleted' => true,
+        return $this->view(array('status' => array(
+            'code' => 0,
+            'message' => 'deleted',
             'redirectUrl' => $this->generateUrl('imdc_forum_list')
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        )), 200);
     }
 }

@@ -2,6 +2,7 @@ IMDCTerpTubeBundle_default:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/default.yml"
 
 IMDCTerpTubeBundle_forum:
+  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/forum.yml"
   prefix: /forum
 
