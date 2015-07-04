@@ -21,10 +21,9 @@ imdc_forum_edit:
     forumid: \d+
 
 imdc_forum_delete:
-  pattern: /{forumid}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
-  methods: [POST]
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\ForumController
   requirements:
-    forumid: \d+
+    forumId: \d+
   options:
     expose: true

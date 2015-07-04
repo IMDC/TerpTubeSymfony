@@ -211,11 +211,10 @@ class PostController extends FOSRestController
     /**
      * @Rest\View()
      *
-     * @param Request $request
      * @param $postId
      * @return \FOS\RestBundle\View\View|RedirectResponse
      */
-    public function deleteAction(Request $request, $postId)
+    public function deleteAction($postId)
     {
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
