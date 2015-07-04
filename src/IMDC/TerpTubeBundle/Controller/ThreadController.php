@@ -2,13 +2,13 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\FOSRestController;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Form\Type\ThreadType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +21,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ThreadController extends Controller
+class ThreadController extends FOSRestController
 {
     /**
      * @param Request $request
@@ -151,7 +151,7 @@ class ThreadController extends Controller
         $post = new Post();
         $post->setId(-rand());
         $post->setParentThread($thread);
-        
+
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
             'form' => $form->createView(),
             'thread' => $thread,
@@ -226,7 +226,7 @@ class ThreadController extends Controller
                 'threadid' => $thread->getId()
             )));
         }
-         
+
         return $this->render('IMDCTerpTubeBundle:Thread:edit.html.twig', array(
             'form' => $form->createView(),
             'thread' => $thread
@@ -234,22 +234,30 @@ class ThreadController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param $threadid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @Rest\View()
+     *
+     * @param $threadId
+     * @return \FOS\RestBundle\View\View
      */
-    public function deleteAction(Request $request, $threadid) //TODO api?
+    public function deleteAction($threadId)
     {
         $em = $this->getDoctrine()->getManager();
-        $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
+        $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadId);
         if (!$thread) {
-            throw new \Exception('thread not found');
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'thread not found'
+            )), 500); //TODO decide status code
         }
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('DELETE', $thread) === false) {
-            throw new AccessDeniedException();
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'access denied'
+            )), 500); //TODO decide status code
         }
 
         $user = $this->getUser();
@@ -269,12 +277,11 @@ class ThreadController extends Controller
 
         $em->flush();
 
-        $content = array(
-            'wasDeleted' => true,
+        return $this->view(array('status' => array(
+            'code' => 0,
+            'message' => 'deleted',
             'redirectUrl' => $this->generateUrl('imdc_forum_view', array(
-                'forumid' => $forum->getId()))
-        );
-
-        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
+                'forumId' => $forum->getId()))
+        )), 200);
     }
 }

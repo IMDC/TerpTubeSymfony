@@ -212,7 +212,7 @@ class PostController extends FOSRestController
      * @Rest\View()
      *
      * @param $postId
-     * @return \FOS\RestBundle\View\View|RedirectResponse
+     * @return \FOS\RestBundle\View\View
      */
     public function deleteAction($postId)
     {

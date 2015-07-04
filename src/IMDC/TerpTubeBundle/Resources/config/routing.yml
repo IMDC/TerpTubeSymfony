@@ -49,6 +49,7 @@ IMDCTerpTubeBundle_profile:
   prefix: /profile
 
 IMDCTerpTubeBundle_thread:
+  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/thread.yml"
   prefix: /thread
 
