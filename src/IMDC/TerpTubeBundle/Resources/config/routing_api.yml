@@ -12,7 +12,7 @@ IMDCTerpTubeBundle_group:
 
 IMDCTerpTubeBundle_media:
   type: rest
-  resource: "@IMDCTerpTubeBundle/Resources/config/routing/media.yml"
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing_api/media.yml"
 
 IMDCTerpTubeBundle_post:
   type: rest
