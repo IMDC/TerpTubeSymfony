@@ -3,6 +3,8 @@ IMDC\TerpTubeBundle\Entity\Post:
   virtual_properties:
     getOrderedMedia:
       serialized_name: ordered_media
+    isPostReply:
+      serialized_name: is_post_reply
   properties:
     id:
       expose: true

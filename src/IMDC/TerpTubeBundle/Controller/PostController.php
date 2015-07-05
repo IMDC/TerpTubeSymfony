@@ -46,11 +46,12 @@ class PostController extends FOSRestController implements ClassResourceInterface
             throw new \Exception('thread/post not found');
         }
 
-        $isPostReply = !!$postParent;
         $post = new Post();
+        $post->setParentThread($thread);
+        $post->setParentPost($postParent);
         $form = $this->createForm(new PostType(), $post, array(
-            'canTemporal' => !$isPostReply ? ($thread->getType() == 1) : false,
-            'is_post_reply' => $isPostReply
+            'canTemporal' => !$post->isPostReply() ? ($thread->getType() == 1) : false,
+            'is_post_reply' => $post->isPostReply()
         ));
         $form->handleRequest($request);
 
@@ -62,7 +63,7 @@ class PostController extends FOSRestController implements ClassResourceInterface
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
             $post->setMediaDisplayOrder($form->get('attachedFile')->getViewData());
 
-            if (!$isPostReply) {
+            if (!$post->isPostReply()) {
                 $post->setParentThread($thread);
             } else {
                 $post->setParentPost($postParent);
@@ -72,7 +73,7 @@ class PostController extends FOSRestController implements ClassResourceInterface
             $em->persist($post);
             $em->flush();
 
-            if ($isPostReply && !$thread)
+            if ($post->isPostReply() && !$thread)
                 $thread = $postParent->getParentThread();
 
             $thread->setLastPostAt($currentDateTime);
@@ -103,20 +104,14 @@ class PostController extends FOSRestController implements ClassResourceInterface
                 'redirectUrl' => $this->generateUrl('imdc_thread_view', array(
                     'threadid' => $thread->getId())),
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                    'post' => $post,
-                    'is_post_reply' => $isPostReply))
+                    'post' => $post))
             );
         } else {
-            $post->setId(-rand());
-            $post->setParentThread($thread);
-            $post->setParentPost($postParent);
-
             $content = array(
                 'wasReplied' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
                     'form' => $form->createView(),
-                    'post' => $post,
-                    'is_post_reply' => $isPostReply))
+                    'post' => $post))
             );
         }
 
@@ -174,8 +169,6 @@ class PostController extends FOSRestController implements ClassResourceInterface
         ));
         $form->handleRequest($request);
 
-        $isPostReply = !!$post->getParentPost();
-
         if ($form->isValid()) {
             $post->setEditedAt(new \DateTime('now'));
             $post->setEditedBy($user);
@@ -194,16 +187,14 @@ class PostController extends FOSRestController implements ClassResourceInterface
                 'wasEdited' => true,
                 'post' => json_decode($serializer->serialize($post, 'json'), true),
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                    'post' => $post,
-                    'is_post_reply' => $isPostReply))
+                    'post' => $post))
             );
         } else {
             $content = array(
                 'wasEdited' => false,
                 'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
                     'form' => $form->createView(),
-                    'post' => $post,
-                    'is_post_reply' => $isPostReply))
+                    'post' => $post))
             );
         }
 
