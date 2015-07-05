@@ -2,7 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity;
 use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
@@ -12,11 +14,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class ContactController
+ *
+ * @Rest\NoRoute()
+ *
  * @package IMDC\TerpTubeBundle\Controller
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ContactController extends FOSRestController
+class ContactController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * @param Request $request
@@ -96,6 +101,7 @@ class ContactController extends FOSRestController
     }
 
     /**
+     * @Rest\Route()
      * @Rest\View()
      *
      * @param Request $request

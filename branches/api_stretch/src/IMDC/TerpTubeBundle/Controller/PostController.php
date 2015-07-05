@@ -4,6 +4,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -13,11 +14,14 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Post related actions including creating, deleting, editing and replying
+ *
+ * @Rest\NoRoute()
+ *
  * @package IMDC\TerpTubeBundle\Controller
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class PostController extends FOSRestController
+class PostController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * @param Request $request
@@ -209,6 +213,7 @@ class PostController extends FOSRestController
     }
 
     /**
+     * @Rest\Route()
      * @Rest\View()
      *
      * @param $postId

@@ -7,7 +7,7 @@ define(function () {
         var deferred = $.Deferred();
         var settings = {
             method: 'DELETE',
-            url: Routing.generate('imdc_contact_delete'),
+            url: Routing.generate('imdc_delete_contact'),
             data: {
                 userIds: userIds,
                 contactList: contactList

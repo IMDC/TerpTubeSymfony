@@ -19,11 +19,3 @@ imdc_forum_edit:
   defaults: { _controller: IMDCTerpTubeBundle:Forum:edit }
   requirements:
     forumid: \d+
-
-imdc_forum_delete:
-  type: rest
-  resource: IMDC\TerpTubeBundle\Controller\ForumController
-  requirements:
-    forumId: \d+
-  options:
-    expose: true

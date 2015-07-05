@@ -247,7 +247,7 @@ define([
 
         it('should not have deleted and deregistered and dispatched "remove" key point event', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_delete', {pid: model.get('id')}),
+                url: Routing.generate('imdc_delete_post', {pid: model.get('id')}),
                 responseText: {}
             });
 
@@ -267,7 +267,7 @@ define([
 
         it('should have deleted and deregistered and dispatched "remove" key point event', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_delete', {pid: model.get('id')}),
+                url: Routing.generate('imdc_delete_post', {pid: model.get('id')}),
                 responseText: {}
             });
 

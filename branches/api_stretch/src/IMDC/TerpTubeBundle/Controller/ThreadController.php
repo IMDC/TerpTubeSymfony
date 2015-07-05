@@ -2,7 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
@@ -18,10 +20,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Thread related actions including new, edit, delete
+ *
+ * @Rest\NoRoute()
+ *
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ThreadController extends FOSRestController
+class ThreadController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * @param Request $request
@@ -234,6 +239,7 @@ class ThreadController extends FOSRestController
     }
 
     /**
+     * @Rest\Route()
      * @Rest\View()
      *
      * @param $threadId

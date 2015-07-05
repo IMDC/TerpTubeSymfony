@@ -161,7 +161,7 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_thread_delete', {threadId: model.get('id')}),
+                url: Routing.generate('imdc_delete_thread', {threadId: model.get('id')}),
                 responseText: {}
             });
 
@@ -177,7 +177,7 @@ define([
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_thread_delete', {threadId: model.get('id')}),
+                url: Routing.generate('imdc_delete_thread', {threadId: model.get('id')}),
                 responseText: {
                     redirectUrl: Common.BASE_URL + '/forum/'
                 }
