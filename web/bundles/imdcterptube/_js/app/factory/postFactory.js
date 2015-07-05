@@ -89,7 +89,7 @@ define(function () {
         var deferred = $.Deferred();
         var settings = {
             method: 'DELETE',
-            url: Routing.generate('imdc_post_delete', {postId: model.get('id')})
+            url: Routing.generate('imdc_delete_post', {postId: model.get('id')})
         };
 
         $.ajax(settings)

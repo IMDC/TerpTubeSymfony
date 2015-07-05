@@ -7,7 +7,7 @@ define(function () {
         var deferred = $.Deferred();
         var settings = {
             method: 'DELETE',
-            url: Routing.generate('imdc_group_delete', {groupId: model.get('id')})
+            url: Routing.generate('imdc_delete_user_group', {groupId: model.get('id')})
         };
 
         $.ajax(settings)

@@ -1,15 +1,21 @@
+IMDCTerpTubeBundle_contact:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/contact.yml"
+  prefix: /contacts
+
 IMDCTerpTubeBundle_default:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/default.yml"
 
 IMDCTerpTubeBundle_forum:
-  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/forum.yml"
   prefix: /forum
 
 IMDCTerpTubeBundle_group:
-  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/group.yml"
   prefix: /group
+
+IMDCTerpTubeBundle_help:
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/help.yml"
+  prefix: /help
 
 IMDCTerpTubeBundle_home:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/home.yml"
@@ -23,14 +29,6 @@ IMDCTerpTubeBundle_member:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/member.yml"
   prefix: /member
 
-IMDCTerpTubeBundle_contact:
-  resource: "@IMDCTerpTubeBundle/Resources/config/routing/contact.yml"
-  prefix: /contacts
-
-IMDCTerpTubeBundle_media:
-  type: rest
-  resource: "@IMDCTerpTubeBundle/Resources/config/routing/media.yml"
-
 IMDCTerpTubeBundle_message:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/message.yml"
   prefix: /message
@@ -40,7 +38,6 @@ IMDCTerpTubeBundle_myFiles:
   prefix: /myFiles
 
 IMDCTerpTubeBundle_post:
-  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/post.yml"
   prefix: /post
 
@@ -49,10 +46,5 @@ IMDCTerpTubeBundle_profile:
   prefix: /profile
 
 IMDCTerpTubeBundle_thread:
-  type: rest
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/thread.yml"
   prefix: /thread
-
-IMDCTerpTubeBundle_help:
-  resource: "@IMDCTerpTubeBundle/Resources/config/routing/help.yml"
-  prefix: /help

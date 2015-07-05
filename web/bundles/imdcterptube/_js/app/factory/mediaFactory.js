@@ -9,7 +9,7 @@ define([
     MediaFactory.list = function (ids) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_media_list'),
+            url: Routing.generate('imdc_cget_media'),
             data: {}
         };
 
@@ -37,7 +37,7 @@ define([
         var isModel = _.isObject(model);
         var id = isModel ? model.get('id') : model;
         var settings = {
-            url: Routing.generate('imdc_media_get', {mediaId: id})
+            url: Routing.generate('imdc_get_media', {mediaId: id})
         };
 
         $.ajax(settings)
@@ -62,7 +62,7 @@ define([
         var deferred = $.Deferred();
         var settings = {
             method: 'POST',
-            url: Routing.generate('imdc_media_edit', {mediaId: model.get('id')}),
+            url: Routing.generate('imdc_edit_media', {mediaId: model.get('id')}),
             data: {media: JSON.stringify(model.data)} // TODO add method to model to get json representation of underlying data
         };
 
@@ -84,7 +84,7 @@ define([
         var deferred = $.Deferred();
         var settings = {
             method: 'DELETE',
-            url: Routing.generate('imdc_media_delete', {mediaId: model.get('id')}),
+            url: Routing.generate('imdc_delete_media', {mediaId: model.get('id')}),
             data: {confirm: confirmed || false}
         };
 
@@ -118,7 +118,7 @@ define([
         var deferred = $.Deferred();
         var settings = {
             method: 'PATCH',
-            url: Routing.generate('imdc_media_trim', {mediaId: model.get('id')}),
+            url: Routing.generate('imdc_trim_media', {mediaId: model.get('id')}),
             data: {
                 startTime: startTime,
                 endTime: endTime

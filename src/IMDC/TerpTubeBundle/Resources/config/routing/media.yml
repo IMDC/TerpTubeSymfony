@@ -1,6 +1,7 @@
 imdc_media_list:
   type: rest
   resource: IMDC\TerpTubeBundle\Controller\MediaController
+  name_prefix: imdc_
   options:
     expose: true
 
@@ -9,6 +10,7 @@ imdc_media_get:
   resource: IMDC\TerpTubeBundle\Controller\MediaController
   requirements:
     mediaId: \d+
+  name_prefix: imdc_
   options:
     expose: true
 
@@ -17,6 +19,7 @@ imdc_media_edit:
   resource: IMDC\TerpTubeBundle\Controller\MediaController
   requirements:
     mediaId: \d+
+  name_prefix: imdc_
   options:
     expose: true
 
@@ -25,6 +28,7 @@ imdc_media_delete:
   resource: IMDC\TerpTubeBundle\Controller\MediaController
   requirements:
     mediaId: \d+
+  name_prefix: imdc_
   options:
     expose: true
 
@@ -33,5 +37,6 @@ imdc_media_trim:
   resource: IMDC\TerpTubeBundle\Controller\MediaController
   requirements:
     mediaId: \d+
+  name_prefix: imdc_
   options:
     expose: true

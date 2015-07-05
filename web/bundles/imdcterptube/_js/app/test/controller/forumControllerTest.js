@@ -43,7 +43,7 @@ define([
 
         it('should not have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_forum_delete', {forumId: model.get('id')}),
+                url: Routing.generate('imdc_delete_forum', {forumId: model.get('id')}),
                 responseText: {}
             });
 
@@ -59,7 +59,7 @@ define([
 
         it('should have redirected', function () {
             $.mockjax({
-                url: Routing.generate('imdc_forum_delete', {forumId: model.get('id')}),
+                url: Routing.generate('imdc_delete_forum', {forumId: model.get('id')}),
                 responseText: {
                     redirectUrl: Common.BASE_URL + '/forum/'
                 }

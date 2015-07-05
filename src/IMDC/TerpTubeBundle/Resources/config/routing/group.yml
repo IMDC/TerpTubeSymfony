@@ -20,14 +20,6 @@ imdc_group_edit:
   requirements:
     groupId: \d+
 
-imdc_group_delete:
-  type: rest
-  resource: IMDC\TerpTubeBundle\Controller\UserGroupController
-  requirements:
-    groupId: \d+
-  options:
-    expose: true
-
 imdc_group_my_groups:
   pattern: /myGroups
   defaults: { _controller: IMDCTerpTubeBundle:UserGroup:listMyGroups }

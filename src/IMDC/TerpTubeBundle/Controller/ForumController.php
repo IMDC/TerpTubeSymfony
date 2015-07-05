@@ -2,7 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
@@ -17,10 +19,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Forum object related actions such as new, edit, delete
+ *
+ * @Rest\NoRoute()
+ *
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ForumController extends FOSRestController
+class ForumController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * @param Request $request
@@ -256,6 +261,7 @@ class ForumController extends FOSRestController
     }
 
     /**
+     * @Rest\Route()
      * @Rest\View()
      *
      * @param $forumId

@@ -1,0 +1,23 @@
+IMDCTerpTubeBundle_contact:
+  type: rest
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing_api/contact.yml"
+
+IMDCTerpTubeBundle_forum:
+  type: rest
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing_api/forum.yml"
+
+IMDCTerpTubeBundle_group:
+  type: rest
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing_api/group.yml"
+
+IMDCTerpTubeBundle_media:
+  type: rest
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing/media.yml"
+
+IMDCTerpTubeBundle_post:
+  type: rest
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing_api/post.yml"
+
+IMDCTerpTubeBundle_thread:
+  type: rest
+  resource: "@IMDCTerpTubeBundle/Resources/config/routing_api/thread.yml"

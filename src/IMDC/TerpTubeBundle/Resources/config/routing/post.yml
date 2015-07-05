@@ -22,11 +22,3 @@ imdc_post_edit:
     pid: \d+
   options:
     expose: true
-
-imdc_post_delete:
-  type: rest
-  resource: IMDC\TerpTubeBundle\Controller\PostController
-  requirements:
-    postId: \d+
-  options:
-    expose: true

@@ -24,14 +24,6 @@ imdc_thread_edit:
   requirements:
     threadid: \d+
 
-imdc_thread_delete:
-  type: rest
-  resource: IMDC\TerpTubeBundle\Controller\ThreadController
-  requirements:
-    threadId: \d+
-  options:
-    expose: true
-
 imdc_thread_new_post:
   pattern: /{threadId}/reply
   defaults: { _controller: IMDCTerpTubeBundle:Post:new, pid: null }
