@@ -95,7 +95,85 @@ define([
     var Helper = require('core/helper');
     Helper.autoSize();
 
+    //TODO: move to core
     dust.helpers.generateUrl = function (chunk, context, bodies, params) {
+        if (!params || !params.hasOwnProperty('path'))
+            return chunk;
+
         return chunk.write(Helper.generateUrl(params.path));
+    };
+
+    dust.helpers.generateRouteUrl = function (chunk, context, bodies, params) {
+        if (!params || !params.hasOwnProperty('name') || !params.hasOwnProperty('str_params'))
+            return chunk;
+
+        var str_params = params.str_params.split('|');
+        var opt_params = {};
+
+        str_params.forEach(function (element, index, array) {
+            var keyContext = element.split(':');
+            opt_params[keyContext[0]] = context.get(keyContext[1]);
+        });
+
+        return chunk.write(Routing.generate(params.name, opt_params, params.absolute));
+    };
+
+    // http://stackoverflow.com/a/21230338
+    dust.helpers.sizeOf = function (chunk, context, bodies, params) {
+        // pass a dummy chunk object so that @size doesn't write the resulting value,
+        // so it doesn't render if bodies.block is present but its context(s) return(s) false
+        var value = this.size({
+            write: function () {
+            }
+        }, context, bodies, params);
+        if (bodies && bodies.block) {
+            chunk.render(bodies.block, context.push({key: value}))
+        } else {
+            chunk = chunk.write(value);
+        }
+        return chunk;
+    };
+
+    dust.helpers.isLoggedInUser = function (chunk, context, bodies, params) {
+        if (!params || !params.hasOwnProperty('id') || !window.user)
+            return chunk;
+
+        var result = params.id == window.user.get('id');
+        if (params.inverse)
+            result = !result;
+        if (bodies) {
+            if (result && bodies.block)
+                chunk.render(bodies.block, context);
+            if (!result && bodies.else)
+                chunk.render(bodies.else, context);
+        } else {
+            chunk = chunk.write(result ? 'Yes' : 'No');
+        }
+        return chunk;
+    };
+
+    dust.helpers.isNotLoggedInUser = function (chunk, context, bodies, params) {
+        params.inverse = true;
+        return this.isLoggedInUser(chunk, context, bodies, params);
+    };
+
+    dust.helpers.isInUserOnList = function (chunk, context, bodies, params) {
+        if (!params || !params.hasOwnProperty('list') || !params.hasOwnProperty('username') || !window.user)
+            return chunk;
+
+        var result = window.user['isUserOn' + params.list + 'List'](params.username);
+        if (bodies) {
+            if (result && bodies.block)
+                chunk.render(bodies.block, context);
+            if (!result && bodies.else)
+                chunk.render(bodies.else, context);
+        } else {
+            chunk = chunk.write(result ? 'Yes' : 'No');
+        }
+        return chunk;
+    };
+
+    dust.filters.nl2br = function (value) {
+        return value.replace(/(?:\r\n|\r|\n)/g, '<br />');
     };
 });

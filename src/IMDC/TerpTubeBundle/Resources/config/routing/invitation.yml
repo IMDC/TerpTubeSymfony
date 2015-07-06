@@ -7,12 +7,16 @@ imdc_invitation_mentor:
   defaults: { _controller: "IMDCTerpTubeBundle:Invitation:createMentorInvitation" }
   requirements:
     id: \d+
+  options:
+    expose: true
 
 imdc_invitation_mentee:
   pattern: /mentee/{id}
   defaults: { _controller: "IMDCTerpTubeBundle:Invitation:createMenteeInvitation" }
   requirements:
     id: \d+
+  options:
+    expose: true
 
 imdc_invitation_accept:
   pattern: /{id}/accept
