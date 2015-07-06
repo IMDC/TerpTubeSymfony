@@ -1,0 +1,103 @@
+{#post}
+    <div class="row post-container tt-post-container {?is_post_reply} tt-post-reply-container{/is_post_reply}" style="margin-bottom: 15px;" data-pid="{id}">
+        <div class="{?is_post_reply}col-md-offset-1 col-md-11{:else}col-md-12{/is_post_reply}">
+            <div class="row tt-post-container-inner{?is_post_reply} tt-post-reply-container-inner{/is_post_reply}">
+                <!-- user info -->
+                <div class="col-md-2 text-center">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {>"user_avatar" user=author /}
+                            {>"user_username" user=author /}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            {>"user_connect_tools" user=author /}
+                        </div>
+                    </div>
+                </div>
+                <!-- post content -->
+                <div class="col-md-9 tt-post-content-container">
+                    {+post_content}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="text-right tt-date">
+                                    {created}
+                                    {?edited_by}
+                                        (edited {edited_at} by {edited_by.username})
+                                    {/edited_by}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                {?is_temporal}
+                                    <div class="tt-post-timeline-container">
+                                        <div class="tt-post-timeline">
+                                            <div class="tt-post-timeline-keypoint post-timeline-keypoint"></div>
+                                        </div>
+                                    </div>
+                                {/is_temporal}
+                                {@sizeOf key=ordered_media}
+                                    {@gt value=0}
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="post-gallery" style="margin-bottom: 10px; height: 400px; width: 100%;"></div>
+                                            </div>
+                                        </div>
+                                    {/gt}
+                                {/sizeOf}
+                                <div>
+                                    <p>{content|nl2br|s}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {/post_content}
+                </div>
+                <!-- post tools -->
+                <div class="col-md-1 pull-right">
+                    {+post_tools}
+                        <ul class="list-unstyled">
+                            {?is_temporal}
+                                <li><a class="post-timeline-keypoint" href="#" title="Jump to selected timeline region"><i class="fa fa-clock-o"></i></a></li>
+                            {/is_temporal}
+                            {!@isCurrentUser id=author.id!}
+                                <li><a class="post-edit" href="#" title="Edit this post"><i class="fa fa-pencil"></i></a></li>
+                                <li><a href="#" title="Delete this post" data-toggle="modal" data-target=".post-delete-modal[data-pid={id}]"><i class="fa fa-trash-o"></i></a></li>
+                            {!/isCurrentUser!}
+                        </ul>
+                        <div class="modal fade post-delete-modal" data-pid="{id}">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                        <h4 class="modal-title">Delete this post</h4>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <p>
+                                            This post will be permanently deleted.<br />
+                                            This action cannot be undone.<br />
+                                            Are you sure?
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</a>
+                                        <a class="btn btn-danger post-delete" data-loading-text="<i class=&quot;fa fa-spinner fa-spin&quot;></i> Deleting..."><i class="fa fa-trash-o"></i> Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {/post_tools}
+                </div>
+            </div>
+            {^is_post_reply}
+                <!-- post reply -->
+                {+post_reply}
+                    <div class="row">
+                        <div class="col-md-1 col-md-offset-11">
+                            <p><a class="post-new" href="#" title="Reply to this post"><i class="fa fa-reply fa-rotate-180 fa-lg"></i></a></p>
+                        </div>
+                    </div>
+                {/post_reply}
+            {/is_post_reply}
+        </div>
+    </div>
+{/post}

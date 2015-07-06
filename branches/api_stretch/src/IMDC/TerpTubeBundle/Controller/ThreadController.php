@@ -11,6 +11,8 @@ use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Form\Type\ThreadType;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -157,11 +159,21 @@ class ThreadController extends FOSRestController implements ClassResourceInterfa
         $post->setId(-rand());
         $post->setParentThread($thread);
 
+        /** @var UserExclusionStrategy $strategy */
+        $strategy = $this->get('imdc_terptube.serializer.exclusion.user_strategy');
+        $strategy->checkUser($this->getUser());
+        $context = new SerializationContext();
+        $context->addExclusionStrategy($strategy);
+        /** @var Serializer $serializer */
+        $serializer = $this->get('jms_serializer');
+        $userJson = $serializer->serialize($this->getUser(), 'json', $context);
+        
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
             'form' => $form->createView(),
             'thread' => $thread,
             'post' => $post,
-            'is_post_reply' => false
+            'is_post_reply' => false,
+            'user_json' => $userJson
         ));
     }
 
