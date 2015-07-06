@@ -7,9 +7,13 @@ imdc_member_friend_add:
   defaults: { _controller: IMDCTerpTubeBundle:Contact:add }
   requirements:
     userid: \d+
+  options:
+    expose: true
 
 imdc_member_friend_remove:
   pattern: /friends/{userid}/remove/{redirect}
   defaults: { _controller: IMDCTerpTubeBundle:Contact:remove, redirect:null }
   requirements:
     userid: \d+
+  options:
+    expose: true

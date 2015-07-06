@@ -962,4 +962,47 @@ class User extends BaseUser
 
         return true;
     }
+
+    private static function createShallowUserList($list)
+    {
+        $list = array();
+
+        /** @var User $user */
+        foreach ($list as $user)
+            $list[] = $user->getUsername();
+
+        return $list;
+    }
+
+    public function getShallowFriendsList()
+    {
+        return User::createShallowUserList($this->getFriendsList());
+    }
+
+    public function getShallowMentorList()
+    {
+        return User::createShallowUserList($this->getMenteeList());
+    }
+
+    public function getShallowMenteeList()
+    {
+        return User::createShallowUserList($this->getMenteeList());
+    }
+
+    public function getShallowCreatedInvitations()
+    {
+        $list = array();
+
+        /** @var Invitation $invitation */
+        foreach ($this->getCreatedInvitations() as $invitation)
+            $list[] = array(
+                'creator' => $invitation->getCreator()->getUsername(),
+                'recipient' => $invitation->getRecipient()->getUsername(),
+                'isAccepted' => $invitation->getIsAccepted(),
+                'isCancelled' => $invitation->getIsCancelled(),
+                'isDeclined' => $invitation->getIsDeclined()
+            );
+
+        return $list;
+    }
 }

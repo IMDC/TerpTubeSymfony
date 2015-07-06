@@ -10,6 +10,8 @@ IMDC\TerpTubeBundle\Entity\Post:
       expose: true
     content:
       expose: true
+    edited_at:
+      expose: true
     startTime:
       expose: true
     endTime:
@@ -18,5 +20,9 @@ IMDC\TerpTubeBundle\Entity\Post:
       expose: true
     parentPost:
       expose: true
+    author:
+      expose: true
     parentThread:
+      expose: true
+    editedBy:
       expose: true

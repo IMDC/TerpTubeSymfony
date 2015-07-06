@@ -1,0 +1,3 @@
+{#user}
+    <a href="{@generateRouteUrl name="imdc_profile_user" str_params="userName:username" /}" title="{username}">{username}</a>
+{/user}
