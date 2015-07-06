@@ -53,12 +53,9 @@ define(function() {
         progressBar.html(percentComplete + "%");
     };
 
-    Helper.generateUrl = function(path, root) {
-        root = typeof root !== "undefined" ? root : false;
-        var baseUrl = Routing.getBaseUrl() + "/";
-        return root
-            ? baseUrl + path
-            : baseUrl.replace(/\w+\.php\/$/gi, "")  + path;
+    Helper.generateUrl = function(path) {
+        var baseUrl = Routing.getBaseUrl() + '/';
+        return baseUrl.replace(/\w+\.php\/$/gi, '') + path;
     };
     
     Helper.formatSize = function(size)

@@ -6,6 +6,20 @@ services:
 #        class: %imdc_terp_tube.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
 
+    imdc_terptube.serializer.exclusion.user_strategy:
+        class: IMDC\TerpTubeBundle\Component\Serializer\Exclusion\UserExclusionStrategy
+        arguments: [@security.context]
+
+#    imdc_terptube.serializer.handler.user:
+#        class: IMDC\TerpTubeBundle\Component\Serializer\Handler\UserHandler
+#        tags:
+#            - { name: jms_serializer.subscribing_handler }
+
+#    imdc_terptube.serializer.event_dispatcher.user_subscriber:
+#        class: IMDC\TerpTubeBundle\Component\Serializer\EventDispatcher\UserEventSubscriber
+#        tags:
+#            - { name: jms_serializer.event_subscriber }
+
     imdc_terptube.authentication.manager:
         class: IMDC\TerpTubeBundle\Component\Authentication\AuthenticationManager
         arguments: [@kernel, "@security.context"]
