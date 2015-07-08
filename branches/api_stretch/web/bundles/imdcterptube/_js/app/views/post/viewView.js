@@ -1,8 +1,8 @@
 define([
     'model/model',
     'component/galleryComponent',
-    'views/post/editView'
-], function (Model, GalleryComponent, EditView) {
+    'core/helper'
+], function (Model, GalleryComponent, Helper) {
     'use strict';
 
     var ViewView = function (controller, options) {
@@ -87,9 +87,20 @@ define([
         this.$new.hide();
         this.controller.new(null)
             .done(function (data) {
-                this.$container.after(data.html);
+                //TODO make me better
+                dust.render('post_new', {post: data.post.data}, function (err, out) {
+                    this.$container.after(out);
+                    Helper.autoSize();
+                    // bootstrap
+                    var PostController = require('controller/postController');
+                    var NewView = require('views/post/newView');
+                    var options = {};
+                    var controller = new PostController(data.post, options);
+                    new NewView(controller, options);
+                    controller.onViewLoaded();
+                }.bind(this));
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$new.show();
             }.bind(this));
     };
@@ -100,15 +111,24 @@ define([
         this.controller.edit(null)
             .done(function (data) {
                 //TODO make me better
-                this.$container.replaceWith(data.html);
-                //this.controller.removeKeyPoint();
-                if (this.controller.model.get('is_temporal', false)) {
-                    this.controller.editKeyPoint({cancel: false});
-                }
-                var _self = this;
-                _self = new EditView(this.controller, this.controller.options);
-                this.controller.onViewLoaded();
-            }.bind(this));
+                //FIXME i am a duplicate
+                dust.render('post_edit', {post: this.controller.model.data}, function (err, out) {
+                    this.$container.replaceWith(out);
+                    Helper.autoSize();
+                    if (this.controller.model.get('is_temporal', false)) {
+                        this.controller.editKeyPoint({cancel: false});
+                    }
+                    var _self = this;
+                    var EditView = require('views/post/editView');
+                    _self = new EditView(this.controller, this.controller.options);
+                    this.controller.onViewLoaded();
+                    //FIXME view was not present when model was changed. force it now to update the view
+                    this.controller.model.forceChange();
+                }.bind(this));
+            }.bind(this))
+            .fail(function (data) {
+                //TODO
+            });
     };
 
     ViewView.prototype._onClickDelete = function (e) {

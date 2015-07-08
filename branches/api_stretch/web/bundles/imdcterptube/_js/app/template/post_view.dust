@@ -1,5 +1,5 @@
 {#post}
-    <div class="row post-container tt-post-container {?is_post_reply} tt-post-reply-container{/is_post_reply}" style="margin-bottom: 15px;" data-pid="{id}">
+    <div class="row post-container tt-post-container{?is_post_reply} tt-post-reply-container{/is_post_reply}" style="margin-bottom: 15px;" data-pid="{id}"{?is_post_reply} data-ppid="{parent_post.id}"{/is_post_reply}>
         <div class="{?is_post_reply}col-md-offset-1 col-md-11{:else}col-md-12{/is_post_reply}">
             <div class="row tt-post-container-inner{?is_post_reply} tt-post-reply-container-inner{/is_post_reply}">
                 <!-- user info -->

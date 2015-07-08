@@ -46,11 +46,10 @@ define([
 
         while (path.length > 1) {
             var key = path.shift();
-            if (_.has(list, key)) {
-                list = list[key];
-            } else {
-                list[key] = {};
+            if (!_.has(list, key)) {
+                list[key] = _.isNumber(_.last(path)) ? [] : {};
             }
+            list = list[key];
         }
 
         list[path.shift()] = value;
@@ -89,7 +88,7 @@ define([
                 console.log('update: ' + cKeyPath);
                 this.update(value, cKeyPath);
             } else {
-                console.log('set: ' + cKeyPath);
+                console.log('set: ' + cKeyPath + ' to:' + value);
                 this.set(cKeyPath, value);
             }
         }, this);

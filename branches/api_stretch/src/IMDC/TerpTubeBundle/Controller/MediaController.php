@@ -13,6 +13,13 @@ use IMDC\TerpTubeBundle\Utils\Utils;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class MediaController
+ *
+ * @Rest\View()
+ *
+ * @package IMDC\TerpTubeBundle\Controller
+ */
 class MediaController extends FOSRestController implements ClassResourceInterface
 {
     const FEEDBACK_MESSAGE_NOT_EXIST_MEDIA = 'Media does not exist';
@@ -21,10 +28,8 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
     const FEEDBACK_MESSAGE_MEDIA_DELETE_SUCCESS = 'Successfully removed media!';
 
     /**
-     * @Rest\View()
-     *
      * @param Request $request
-     * @return \FOS\RestBundle\View\View|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return \FOS\RestBundle\View\View
      */
     public function cgetAction(Request $request)
     {
@@ -41,14 +46,10 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
     }
 
     /**
-     * @Rest\View()
-     *
-     * @param Request $request
      * @param $mediaId
-     * @return \FOS\RestBundle\View\View|\Symfony\Component\HttpFoundation\RedirectResponse
-     * @throws \Exception
+     * @return \FOS\RestBundle\View\View
      */
-    public function getAction(Request $request, $mediaId)
+    public function getAction($mediaId)
     {
         $em = $this->getDoctrine()->getManager();
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
@@ -64,11 +65,11 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
     }
 
     /**
-     * @Rest\Post()
+     * @Rest\Put() //TODO api?. decouple rest edit/put
      *
      * @param Request $request
      * @param $mediaId
-     * @return \FOS\RestBundle\View\View|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return \FOS\RestBundle\View\View
      */
     public function editAction(Request $request, $mediaId)
     {
@@ -104,8 +105,6 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
 
     /**
      * Deletes a media of the specific media id
-     *
-     * @Rest\View()
      *
      * @param Request $request
      * @param $mediaId
@@ -222,11 +221,9 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
     /**
      * Trims a media of a specific media id, to the specified start and end times
      *
-     * @Rest\View()
-     *
      * @param Request $request
      * @param $mediaId
-     * @return \FOS\RestBundle\View\View|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return \FOS\RestBundle\View\View
      */
     public function trimAction(Request $request, $mediaId)
     {

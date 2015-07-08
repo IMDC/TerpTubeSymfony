@@ -24,6 +24,7 @@ define([
     // service
     'service/keyPointService',
     'service/subscriberService',
+    'service/threadPostService',
 
     // model
     'model/forumModel',

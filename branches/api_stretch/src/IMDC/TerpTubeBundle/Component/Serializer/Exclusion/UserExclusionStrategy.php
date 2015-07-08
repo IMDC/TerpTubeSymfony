@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\SecurityContext;
 class UserExclusionStrategy implements ExclusionStrategyInterface
 {
     protected static $loggedInOnlyProperties = array(
+        'friendsList',
         'mentorList',
         'menteeList',
         'createdInvitations'

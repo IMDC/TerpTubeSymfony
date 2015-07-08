@@ -1,8 +1,9 @@
 define([
     'factory/postFactory',
     'service',
-    'service/keyPointService'
-], function (PostFactory, Service, KeyPointService) {
+    'service/keyPointService',
+    'service/threadPostService'
+], function (PostFactory, Service, KeyPointService, ThreadPostService) {
     'use strict';
 
     var Post = function (model, options) {
@@ -12,6 +13,7 @@ define([
         this.options = options;
 
         this.keyPointService = Service.get('keyPoint');
+        this.threadPostService = Service.get('threadPost');
 
         this.model.set('keyPoint', new KeyPoint(
             this.model.get('id'),
@@ -20,8 +22,7 @@ define([
             '', {drawOnTimeLine: this.model.get('is_temporal', false)}
         ));
 
-        // KeyPointService
-        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
+        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this); // KeyPointService
 
         $tt._instances.push(this);
     };
@@ -91,27 +92,20 @@ define([
         this.keyPointService.deregister(keyPoint.id);
     };
 
+    Post.prototype.addPostToThread = function (post) {
+        this.threadPostService.dispatch(ThreadPostService.Event.ADD, {post: post});
+    };
+
     Post.prototype.new = function (form) {
-        return PostFactory.new(this.model, form)
-            .done(function (data) {
-                if (data.wasReplied) {
-//                    window.location.replace(data.redirectUrl);
-                }
-            });
+        return PostFactory.new(this.model, form);
     };
 
     Post.prototype.edit = function (form) {
-        return PostFactory.edit(this.model, form)
-            .done(function (data) {
-
-            });
+        return PostFactory.edit(this.model, form);
     };
 
     Post.prototype.view = function () {
-        return PostFactory.view(this.model)
-            .done(function (data) {
-
-            });
+        return PostFactory.get(this.model);
     };
 
     Post.prototype.delete = function () {

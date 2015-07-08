@@ -37,10 +37,6 @@ IMDCTerpTubeBundle_myFiles:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/myFiles.yml"
   prefix: /myFiles
 
-IMDCTerpTubeBundle_post:
-  resource: "@IMDCTerpTubeBundle/Resources/config/routing/post.yml"
-  prefix: /post
-
 IMDCTerpTubeBundle_profile:
   resource: "@IMDCTerpTubeBundle/Resources/config/routing/profile.yml"
   prefix: /profile
