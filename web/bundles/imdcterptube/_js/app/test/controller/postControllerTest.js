@@ -51,6 +51,7 @@ define([
             $.mockjaxSettings.logging = false;
 
             // override to prevent page reloads
+            //TODO delete
             window.location.replace = function(url) {
                 pageUrl = url;
             };
@@ -165,82 +166,72 @@ define([
             assert.equal(kpsCallbackResult.keyPoint, model.get('keyPoint'), 'key point should equal');
         });
 
-        it('should not have redirected', function () {
+        it('should not have ...', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id')}),
+                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread.id')}),
                 responseText: {
-                    wasReplied: false,
-                    html: ''
+                    post: {},
+                    form: ''
                 }
             });
 
             return controller.new()
                 .done(function (data) {
-                    assert.isUndefined(pageUrl, 'pageUrl should be null');
+
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
         });
 
-        it('should have redirected', function () {
+        it('should have ...', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_new', {threadId: model.get('parent_thread.id')}),
+                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread.id')}),
                 responseText: {
-                    wasReplied: true,
-                    post: {},
-                    redirectUrl: Common.BASE_URL + '/thread/' + model.get('parent_thread.id')
+                    post: {}
                 }
             });
 
             return controller.new()
                 .done(function (data) {
-                    assert.equal(pageUrl, data.redirectUrl, 'pageUrl should equal key:redirectUrl');
+
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
         });
 
-        it('should not have edited', function () {
+        it('should not have ...', function () {
             $.mockjax({
-                url: Routing.generate('imdc_post_edit', {pid: model.get('id')}),
+                url: Routing.generate('imdc_edit_post', {pid: model.get('id')}),
                 responseText: {
-                    wasEdited: false,
-                    html: ''
-                }
-            });
-
-            return controller.edit()
-                .done(function (data) {
-                    assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasEdited', 'result should have key:wasEdited');
-
-                    assert.isFalse(data.wasEdited, 'key:wasEdited should be false');
-                })
-                .fail(function () {
-                    assert.fail('fail', 'done', 'request should not have failed');
-                });
-        });
-
-        it('should have edited', function () {
-            $.mockjax({
-                url: Routing.generate('imdc_post_edit', {pid: model.get('id')}),
-                responseText: {
-                    wasEdited: true,
                     post: {},
-                    html: ''
+                    form: ''
                 }
             });
 
             return controller.edit()
                 .done(function (data) {
-                    assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasEdited', 'result should have key:wasEdited');
 
-                    assert.isTrue(data.wasEdited, 'key:wasEdited should be true');
                 })
-                .fail(function () {
+                .fail(function (data) {
+                    assert.fail('fail', 'done', 'request should not have failed');
+                });
+        });
+
+        it('should have ...', function () {
+            $.mockjax({
+                url: Routing.generate('imdc_edit_post', {pid: model.get('id')}),
+                responseText: {
+                    post: {}
+                }
+            });
+
+            return controller.edit()
+                .done(function (data) {
+
+                })
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                 });
         });

@@ -4,18 +4,18 @@ namespace IMDC\TerpTubeBundle\Controller;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Post related actions including creating, deleting, editing and replying
  *
- * @Rest\NoRoute()
+ * @Rest\View()
  *
  * @package IMDC\TerpTubeBundle\Controller
  * @author paul
@@ -24,33 +24,41 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class PostController extends FOSRestController implements ClassResourceInterface
 {
     /**
+     * @Rest\Post() //TODO api?. decouple rest new/post
+     * @Rest\QueryParam(name="threadId", requirements="\d+")
+     * @Rest\QueryParam(name="parentPostId", requirements="\d+")
+     *
      * @param Request $request
-     * @param $threadId
-     * @param $pid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @param ParamFetcher $paramFetcher
+     * @return \FOS\RestBundle\View\View
      */
-    public function newAction(Request $request, $threadId, $pid) //TODO api?
+    public function newAction(Request $request, ParamFetcher $paramFetcher)
     {
         $em = $this->getDoctrine()->getManager();
+        $threadId = $paramFetcher->get('threadId');
+        $parentPostId = $paramFetcher->get('parentPostId');
         $thread = null;
         $postParent = null;
         if ($threadId) {
             $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadId);
         }
-        if ($pid) {
-            $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        if ($parentPostId) {
+            $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($parentPostId);
         }
 
         if (!$thread && !$postParent) {
-            throw new \Exception('thread/post not found');
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'thread/post not found'
+            )), 500); //TODO decide status code
         }
 
         $post = new Post();
         $post->setParentThread($thread);
         $post->setParentPost($postParent);
         $form = $this->createForm(new PostType(), $post, array(
-            'canTemporal' => !$post->isPostReply() ? ($thread->getType() == 1) : false,
+            'canTemporal' => (!$post->isPostReply() && $thread->getType() == 1),
             'is_post_reply' => $post->isPostReply()
         ));
         $form->handleRequest($request);
@@ -92,71 +100,54 @@ class PostController extends FOSRestController implements ClassResourceInterface
             $em->persist($user);
             $em->flush();
 
-//             $this->get('session')->getFlashBag()->add(
-//                 'success', 'Reply created successfully!'
-//             );
-
-
-            $serializer = $this->get('jms_serializer');
-            $content = array(
-                'wasReplied' => true,
-                'post' => json_decode($serializer->serialize($post, 'json'), true),
-                'redirectUrl' => $this->generateUrl('imdc_thread_view', array(
-                    'threadid' => $thread->getId())),
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                    'post' => $post))
-            );
-        } else {
-            $content = array(
-                'wasReplied' => false,
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.reply.html.twig', array(
-                    'form' => $form->createView(),
-                    'post' => $post))
-            );
+            return $this->view(array('post' => $post), 200);
         }
 
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        return $this->view(array(
+            'post' => $post,
+            'form' => $this->renderView('IMDCTerpTubeBundle:Post:form.new.html.twig', array(
+                'form' => $form->createView(),
+                'post' => $post))
+        ), 200);
     }
 
     /**
-     * @param Request $request
-     * @param $pid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @param $postId
+     * @return \FOS\RestBundle\View\View
      */
-    public function viewAction(Request $request, $pid) //TODO api?
+    public function getAction($postId)
     {
         $em = $this->getDoctrine()->getManager();
-        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            throw new \Exception('post not found');
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'post not found'
+            )), 500); //TODO decide status code
         }
 
-        $content = array(
-            'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                'post' => $post,
-                'is_post_reply' => !!$post->getParentPost()))
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        return $this->view(array('post' => $post), 200);
     }
 
     /**
+     * @Rest\Post() //TODO api?. decouple rest edit/put
+     *
      * @param Request $request
-     * @param $pid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @param $postId
+     * @return \FOS\RestBundle\View\View
      */
-    public function editAction(Request $request, $pid) //TODO api?
+    public function editAction(Request $request, $postId)
     {
         $em = $this->getDoctrine()->getManager();
-        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($pid);
+        /** @var Post $post */
+        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            throw new \Exception('post not found');
+            //TODO api exception
+            return $this->view(array('error' => array(
+                'code' => 0,
+                'message' => 'post not found'
+            )), 500); //TODO decide status code
         }
 
         $user = $this->getUser();
@@ -165,7 +156,7 @@ class PostController extends FOSRestController implements ClassResourceInterface
         }
 
         $form = $this->createForm(new PostType(), $post, array(
-            'canTemporal' => !$post->getParentPost() ? ($post->getParentThread()->getType() == 1) : false
+            'canTemporal' => (!$post->getParentPost() && $post->getParentThread()->getType() == 1)
         ));
         $form->handleRequest($request);
 
@@ -182,31 +173,20 @@ class PostController extends FOSRestController implements ClassResourceInterface
             $em->persist($forum);
             $em->flush();
 
-            $serializer = $this->get('jms_serializer');
-            $content = array(
-                'wasEdited' => true,
-                'post' => json_decode($serializer->serialize($post, 'json'), true),
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:view.html.twig', array(
-                    'post' => $post))
-            );
-        } else {
-            $content = array(
-                'wasEdited' => false,
-                'html' => $this->renderView('IMDCTerpTubeBundle:Post:ajax.edit.html.twig', array(
-                    'form' => $form->createView(),
-                    'post' => $post))
-            );
+            return $this->view(array('post' => $post), 200);
         }
 
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        //TODO form errors
+
+        return $this->view(array(
+            'post' => $post,
+            'form' => $this->renderView('IMDCTerpTubeBundle:Post:form.edit.html.twig', array(
+                'form' => $form->createView(),
+                'post' => $post))
+        ), 200);
     }
 
     /**
-     * @Rest\Route()
-     * @Rest\View()
-     *
      * @param $postId
      * @return \FOS\RestBundle\View\View
      */

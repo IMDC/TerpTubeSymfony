@@ -25,6 +25,7 @@
                     ThreadView,
                     {
                         container: $("#threadOpContainer"),
+                        post_container: $('#threadReplyContainer'),
                         player: {
                             playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
                             speedImages: {
@@ -44,7 +45,7 @@
                     new PostModel({{ post|serialize('json')|raw }}),
                     PostController,
                     PostNewView,
-                    {}
+                    {is_permanent: true}
             );
 
             $.each({{ thread.posts|serialize('json')|raw }}, function (index, post) {
@@ -183,7 +184,7 @@
                                 {% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
                                 <!-- post replies -->
                                 {% for post_reply in post.replies %}
-                                    {% include 'IMDCTerpTubeBundle:Post:view.html.twig' with {'is_post_reply': true, 'post': post_reply} %}
+                                    {% include 'IMDCTerpTubeBundle:Post:view.html.twig' with {'post': post_reply} %}
                                 {% endfor %}
                             {% endfor %}
                         {% else %}

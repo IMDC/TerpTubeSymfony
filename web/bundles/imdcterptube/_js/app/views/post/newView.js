@@ -1,11 +1,13 @@
 define([
     'model/model',
-    'component/mediaChooserComponent'
-], function (Model, MediaChooserComponent) {
+    'component/mediaChooserComponent',
+    'core/helper'
+], function (Model, MediaChooserComponent, Helper) {
     'use strict';
 
     var NewView = function (controller, options) {
         this.controller = controller;
+        this.options = options;
 
         this.bind__onClickSubmitNew = this._onClickSubmitNew.bind(this);
         this.bind__onClickReset = this._onClickReset.bind(this);
@@ -87,93 +89,95 @@ define([
 
         this.controller.new(this.$form[0])
             .done(function (data) {
-                if (!data.wasReplied) {
-                    this.$container.replaceWith(data.html);
+                //TODO make me better
+
+                this.controller.addPostToThread(data.post);
+
+                if (this.options.is_permanent) {
+                    this._reset();
+                    this._toggleForm(false);
+                } else {
+                    this._destroy();
+                }
+
+                return;
+
+
+
+
+                //Need to add the new post to the list.
+                this.mcCmp.reset();
+                this._getFormField('content').val('');
+                this._getFormField('startTime').val(this.controller.model.get('keyPoint.startTime'));
+                this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
+                this.controller.editKeyPoint({cancel: true});
+                this.controller.editKeyPoint({cancel: false});
+
+                var PostViewView = require('views/post/viewView');
+                var PostController = require('controller/postController');
+                var PostModel = require('model/postModel');
+                var bootstrap = require('bootstrap')
+
+                if (data.post.parent_post) {
+                    this.$container.remove();
+                    this.controller.removeKeyPoint();
+
+                    //Append the new reply after the parent post
+                    $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]').after(data.html);
+                    bootstrap(
+                        new PostModel(data.post),
+                        PostController,
+                        PostViewView,
+                        {}
+                    );
+
+                    //TODO make me better
+                    // a bit hackish but works
+                    $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
+                        .find('.post-new')
+                        .show();
+                }
+                else {
+                    this.$form.trigger("reset");
+                    ;
+                    //Append the new reply as a last post
+                    if ($("#replyContainerSpacer").siblings(".lead").length > 0) {
+                        $("#replyContainerSpacer").siblings(".lead").remove();
+                    }
+                    $("#replyContainerSpacer").before(data.html);
+                    bootstrap(
+                        new PostModel(data.post),
+                        PostController,
+                        PostViewView,
+                        {}
+                    );
+                }
+            }.bind(this))
+            .fail(function (data) {
+                //TODO make me better
+                dust.render('post_new', {post: this.controller.model.data}, function (err, out) {
+                    this.$container.replaceWith(out);
+                    Helper.autoSize();
                     this.controller.removeKeyPoint();
                     var _self = this;
                     _self = new NewView(this.controller, this.controller.options);
                     this.controller.onViewLoaded();
-                }
-                else {
-                    //Need to add the new post to the list.
-                    this.mcCmp.reset();
-                    this._getFormField('content').val('');
-                    this._getFormField('startTime').val(this.controller.model.get('keyPoint.startTime'));
-                    this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
-                    this.controller.editKeyPoint({cancel: true});
-                    this.controller.editKeyPoint({cancel: false});
-                    this._toggleForm(false);
-                    
-                    var PostViewView = require('views/post/viewView');
-                    var PostController = require('controller/postController');
-                    var PostModel = require('model/postModel');
-                    var bootstrap = require('bootstrap')
-                    
-                    if (data.post.parent_post)
-                    {
-                	this.$container.remove();
-                        this.controller.removeKeyPoint();
-                        
-                        //Append the new reply after the parent post
-                        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]').after(data.html);
-                        bootstrap(
-                        	new PostModel(data.post),
-                        	PostController,
-                        	PostViewView,
-                        	{}
-                        );
-
-                        //TODO make me better
-                        // a bit hackish but works
-                        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
-                            .find('.post-new')
-                            .show();
-                    }
-                    else
-                    {
-                	this.$form.trigger("reset");;
-                	//Append the new reply as a last post 
-                	if ($("#replyContainerSpacer").siblings(".lead").length > 0 )
-                	{
-                	    $("#replyContainerSpacer").siblings(".lead").remove();
-            	    	}
-                	$("#replyContainerSpacer").before(data.html);
-                	bootstrap(
-                        	new PostModel(data.post),
-                        	PostController,
-                        	PostViewView,
-                        	{}
-                        );
-                    }
-                }
-            }.bind(this))
-            .fail(function () {
-                this._toggleForm(false);
+                    //FIXME view was not present when model was changed. force it now to update the view
+                    this.controller.model.forceChange();
+                }.bind(this));
             }.bind(this));
     };
 
     NewView.prototype._onClickReset = function (e) {
         e.preventDefault();
 
-        this.mcCmp.reset();
-        this._getFormField('startTime').val(this.controller.model.get('keyPoint.startTime'));
-        this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
-        this._getFormField('content').val('');
-
-        this.controller.editKeyPoint({cancel: true});
+        this._reset();
     };
 
     NewView.prototype._onClickCancelNew = function (e) {
         e.preventDefault();
 
-        this.$container.remove();
-        this.controller.removeKeyPoint();
-
-        //TODO make me better
-        // a bit hackish but works
-        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
-            .find('.post-new')
-            .show();
+        this._destroy();
     };
 
     NewView.prototype._onSelectionTimes = function (startTime, endTime) {
@@ -197,6 +201,26 @@ define([
         );
     };
 
+    NewView.prototype._reset = function () {
+        this.mcCmp.reset();
+        this._getFormField('startTime').val(this.controller.model.get('keyPoint.startTime'));
+        this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
+        this._getFormField('content').val('');
+
+        this.controller.editKeyPoint({cancel: true});
+    };
+
+    NewView.prototype._destroy = function () {
+        this.$container.remove();
+        this.controller.removeKeyPoint();
+
+        //TODO make me better
+        // a bit hackish but works
+        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
+            .find('.post-new')
+            .show();
+    };
+
     NewView.prototype._onUploadStart = function (e) {
         this.$submitNew.attr('disabled', true);
     };
@@ -215,9 +239,9 @@ define([
     NewView.prototype._onReset = function (e) {
         this._updateForm();
     };
-    
+
     NewView.prototype._onError = function (e) {
-	    alert('Error: ' + e.error);
+        alert('Error: ' + e.error);
     };
 
     return NewView;

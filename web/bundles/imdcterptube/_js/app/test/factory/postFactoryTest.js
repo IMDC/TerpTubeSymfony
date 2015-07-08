@@ -34,19 +34,19 @@ define([
         it('should get a new post form', function (done) {
             form = null;
 
+            //TODO check that the factory updated the model
             return PostFactory.new(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasReplied', 'result should have key:wasReplied');
-                    assert.property(data, 'html', 'result should have key:html');
+                    assert.property(data, 'post', 'result should have key:post');
+                    assert.property(data, 'form', 'result should have key:form');
 
-                    assert.isFalse(data.wasReplied, 'key:wasReplied should be false');
-                    assert.include(data.html, 'form  name="post"', 'key:html should contain a post form');
+                    assert.include(data.form, 'form  name="post"', 'key:form should contain a post form');
 
-                    form = $(data.html).find('form');
+                    form = $(data.form).find('form');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
@@ -57,37 +57,31 @@ define([
 
             form.find('textarea[name="post[content]"]').val('testtest_new');
 
+            //TODO check that the factory updated the model
             return PostFactory.new(model, form[0])
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasReplied', 'result should have key:wasReplied');
                     assert.property(data, 'post', 'result should have key:post');
-                    assert.property(data, 'redirectUrl', 'result should have key:redirectUrl');
 
-                    assert.isTrue(data.wasReplied, 'key:wasReplied should be true');
                     assert.isNumber(data.post.id, 'value of key path:post.id should be a number');
-                    assert.match(data.redirectUrl, new RegExp('.*\\/' + model.get('parent_thread.id') + '.*'),
-                        'key:redirectUrl should have matched');
 
                     model.set('id', data.post.id);
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
         });
 
         it('should get post', function (done) {
-            return PostFactory.view(model)
+            //TODO check that the factory updated the model
+            return PostFactory.get(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'html', 'result should have key:html');
-
-                    assert.include(data.html, 'data-pid="' + model.get('id') + '"', 'key:html should contain the post id');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
@@ -96,19 +90,19 @@ define([
         it('should get edit post form', function (done) {
             form = null;
 
+            //TODO check that the factory updated the model
             return PostFactory.edit(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasEdited', 'result should have key:wasEdited');
-                    assert.property(data, 'html', 'result should have key:html');
+                    assert.property(data, 'post', 'result should have key:post');
+                    assert.property(data, 'form', 'result should have key:form');
 
-                    assert.isFalse(data.wasEdited, 'key:wasEdited should be false');
-                    assert.include(data.html, 'form  name="post"', 'key:html should contain a post form');
+                    assert.include(data.form, 'form  name="post"', 'key:form should contain a post form');
 
-                    form = $(data.html).find('form');
+                    form = $(data.form).find('form');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });
@@ -121,15 +115,11 @@ define([
             var contentVal = 'testtest_edit';
             content.val(contentVal);
 
+            //TODO check that the factory updated the model
             return PostFactory.edit(model, form[0])
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasEdited', 'result should have key:wasEdited');
                     assert.property(data, 'post', 'result should have key:post');
-                    assert.property(data, 'html', 'result should have key:html');
-
-                    assert.isTrue(data.wasEdited, 'key:wasEdited should be true');
-                    assert.include(data.html, contentVal, 'key:html should contain submitted post content');
 
                     assert.isUndefined(model.get('start_time'), 'post key:start_time should be undefined');
                     assert.isUndefined(model.get('end_time'), 'post key:end_time should be undefined');
@@ -138,7 +128,7 @@ define([
                     assert.isDefined(model.get('parent_thread'), 'post key:parent_thread should be defined');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });

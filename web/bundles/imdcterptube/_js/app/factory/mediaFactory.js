@@ -61,7 +61,7 @@ define([
     MediaFactory.edit = function (model) {
         var deferred = $.Deferred();
         var settings = {
-            method: 'POST',
+            method: 'PUT',
             url: Routing.generate('imdc_edit_media', {mediaId: model.get('id')}),
             data: {media: JSON.stringify(model.data)} // TODO add method to model to get json representation of underlying data
         };

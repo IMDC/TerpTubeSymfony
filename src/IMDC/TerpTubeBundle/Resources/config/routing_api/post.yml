@@ -1,3 +1,28 @@
+imdc_post_new:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\PostController
+  name_prefix: imdc_
+  options:
+    expose: true
+
+imdc_post_get:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\PostController
+  requirements:
+    postId: \d+
+  name_prefix: imdc_
+  options:
+    expose: true
+
+imdc_post_edit:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\PostController
+  requirements:
+    postId: \d+
+  name_prefix: imdc_
+  options:
+    expose: true
+
 imdc_post_delete:
   type: rest
   resource: IMDC\TerpTubeBundle\Controller\PostController

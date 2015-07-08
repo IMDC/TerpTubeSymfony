@@ -1,10 +1,11 @@
-define(function () {
+define([
+    'model/postModel'
+], function (PostModel) {
     'use strict';
 
     var PostFactory = {};
 
-    PostFactory._prepForFormPost = function (form, settings) {
-        settings.type = 'POST';
+    PostFactory._prepForFormSubmit = function (form, settings) {
         settings.contentType = false;
         if (form) {
             settings.data = new FormData(form);
@@ -13,43 +14,46 @@ define(function () {
     };
 
     PostFactory.new = function (model, form) {
-        var pid = model.get('id', -1);
-        var route = Routing.getRoute('imdc_post_new');
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_post_new', {
+            method: 'POST',
+            url: Routing.generate('imdc_new_post', {
                 threadId: model.get('parent_thread.id'),
-                pid: (model.get('parent_post.id') || (pid > 0 ? pid : null) || route.defaults.pid)
+                parentPostId: model.get('parent_post.id') || model.get('id')
             })
         };
 
-        PostFactory._prepForFormPost(form, settings);
+        PostFactory._prepForFormSubmit(form, settings);
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
+                // don't use model.update since any new post will not remain in the caller's context
+                data.post = new PostModel(data.post);
+                data.post.set('form', data.form);
                 deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
     };
 
-    PostFactory.view = function (model) {
+    PostFactory.get = function (model) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_post_view', {pid: model.get('id')})
+            url: Routing.generate('imdc_get_post', {postId: model.get('id')})
         };
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
+                model.update(data.post);
                 deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
@@ -58,28 +62,23 @@ define(function () {
     PostFactory.edit = function (model, form) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_post_edit', {pid: model.get('id')})
+            method: 'POST',
+            url: Routing.generate('imdc_edit_post', {postId: model.get('id')})
         };
 
-        PostFactory._prepForFormPost(form, settings);
+        PostFactory._prepForFormSubmit(form, settings);
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                if (data.wasEdited) {
-                    //TODO model merge
-                    model.set('start_time', data.post.start_time);
-                    model.set('end_time', data.post.end_time);
-                    model.set('is_temporal', data.post.is_temporal);
-                    model.set('parent_post', data.post.parent_post);
-                    model.set('parent_thread', data.post.parent_thread);
-                    model.set('keyPoint.startTime', model.get('start_time'));
-                    model.set('keyPoint.endTime', model.get('end_time'));
-                }
+                model.update(data.post);
+                model.set('form', data.form);
+                model.set('keyPoint.startTime', model.get('start_time'));
+                model.set('keyPoint.endTime', model.get('end_time'));
                 deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();

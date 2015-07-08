@@ -288,6 +288,7 @@ sensio_framework_extra:
     view: { annotations: false }
 
 fos_rest:
+    param_fetcher_listener: true
     routing_loader:
         default_format: json
         include_format: false

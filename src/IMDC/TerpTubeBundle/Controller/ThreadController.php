@@ -156,7 +156,6 @@ class ThreadController extends FOSRestController implements ClassResourceInterfa
 
         // empty post
         $post = new Post();
-        $post->setId(-rand());
         $post->setParentThread($thread);
 
         /** @var UserExclusionStrategy $strategy */
@@ -172,7 +171,6 @@ class ThreadController extends FOSRestController implements ClassResourceInterfa
             'form' => $form->createView(),
             'thread' => $thread,
             'post' => $post,
-            'is_post_reply' => false,
             'user_json' => $userJson
         ));
     }

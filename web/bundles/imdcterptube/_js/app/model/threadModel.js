@@ -9,6 +9,7 @@ define([
         Model.prototype.constructor.apply(this, arguments);
 
         this.data.keyPoints = [];
+        this.data.posts = [];
     };
 
     ThreadModel.extend(Model);

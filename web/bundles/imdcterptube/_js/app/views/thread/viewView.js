@@ -23,6 +23,7 @@ define([
         this.bind__onModelChange = this._onModelChange.bind(this);
 
         this.$container = options.container;
+        this.$postContainer = options.post_container;
         var $videos = this.$container.find(ViewView.Binder.MEDIA_ELEMENT + ' video');
         this.$video = $videos.eq($videos.length == 2 ? 1 : 0);
         this.$pipVideo = $videos.eq($videos.length == 2 ? 0 : 1);
@@ -171,6 +172,30 @@ define([
     };
 
     ViewView.prototype._onModelChange = function (e) {
+        if (e.keyPath.indexOf('posts.') == 0) { //TODO model.add not supported, so no index in key path
+            //TODO all posts are not re-rendered. changed posts are not re-rendered here. only adding new posts is supported
+            var post = _.last(e.model.get('posts'));
+
+            dust.render('post_view', {post: post.data}, function (err, out) {
+                var parentPostId = post.get('parent_post.id');
+                if (!parentPostId) {
+                    //TODO make me better. empty the container if there are no existing replies
+                    if (this.$postContainer.find('div.tt-post-container').length == 0)
+                        this.$postContainer.find('.lead').remove();
+                    this.$postContainer.find('#replyContainerSpacer').before(out);
+                } else {
+                    this.$postContainer.find('[data-ppid="' + parentPostId + '"]').last().after(out);
+                }
+                // bootstrap
+                var PostController = require('controller/postController');
+                var ViewView = require('views/post/viewView');
+                var options = {};
+                var controller = new PostController(post, options);
+                new ViewView(controller, options);
+                controller.onViewLoaded();
+            }.bind(this));
+        }
+
         if (!this.player)
             return;
 
