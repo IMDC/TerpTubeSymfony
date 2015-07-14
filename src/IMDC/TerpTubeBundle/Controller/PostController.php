@@ -8,9 +8,12 @@ use FOS\RestBundle\Request\ParamFetcher;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
-use Symfony\Component\Form\FormError;
+use IMDC\TerpTubeBundle\Rest\Exception\PostException;
+use IMDC\TerpTubeBundle\Rest\PostResponse;
+use IMDC\TerpTubeBundle\Rest\Response;
+use IMDC\TerpTubeBundle\Rest\StatusResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Controller for all Post related actions including creating, deleting, editing and replying
@@ -24,7 +27,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class PostController extends FOSRestController implements ClassResourceInterface
 {
     /**
-     * @Rest\Post() //TODO api?. decouple rest new/post
+     * @Rest\Post() //TODO api? decouple rest new/post
      * @Rest\QueryParam(name="threadId", requirements="\d+")
      * @Rest\QueryParam(name="parentPostId", requirements="\d+")
      *
@@ -47,11 +50,7 @@ class PostController extends FOSRestController implements ClassResourceInterface
         }
 
         if (!$thread && !$postParent) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'thread/post not found'
-            )), 500); //TODO decide status code
+            throw PostException::NotFound('thread and post not found');
         }
 
         $post = new Post();
@@ -100,8 +99,10 @@ class PostController extends FOSRestController implements ClassResourceInterface
             $em->persist($user);
             $em->flush();
 
-            return $this->view(array('post' => $post), 200);
+            return $this->view(new PostResponse($post), 200);
         }
+
+        //TODO form errors
 
         return $this->view(array(
             'post' => $post,
@@ -120,22 +121,19 @@ class PostController extends FOSRestController implements ClassResourceInterface
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'post not found'
-            )), 500); //TODO decide status code
+            throw PostException::NotFound();
         }
 
-        return $this->view(array('post' => $post), 200);
+        return $this->view(new PostResponse($post), 200);
     }
 
     /**
-     * @Rest\Post() //TODO api?. decouple rest edit/put
+     * @Rest\Post() //TODO api? decouple rest edit/put
      *
      * @param Request $request
      * @param $postId
      * @return \FOS\RestBundle\View\View
+     * @throws AccessDeniedException
      */
     public function editAction(Request $request, $postId)
     {
@@ -143,16 +141,12 @@ class PostController extends FOSRestController implements ClassResourceInterface
         /** @var Post $post */
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'post not found'
-            )), 500); //TODO decide status code
+            throw PostException::NotFound();
         }
 
         $user = $this->getUser();
         if (!$post->getAuthor() == $user) {
-            throw new AccessDeniedException();
+            throw PostException::AccessDenied();
         }
 
         $form = $this->createForm(new PostType(), $post, array(
@@ -173,7 +167,7 @@ class PostController extends FOSRestController implements ClassResourceInterface
             $em->persist($forum);
             $em->flush();
 
-            return $this->view(array('post' => $post), 200);
+            return $this->view(new PostResponse($post), 200);
         }
 
         //TODO form errors
@@ -195,20 +189,12 @@ class PostController extends FOSRestController implements ClassResourceInterface
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'post not found'
-            )), 500); //TODO decide status code
+            throw PostException::NotFound();
         }
 
         $user = $this->getUser();
         if (!$post->getAuthor() == $user) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'access denied'
-            )), 500); //TODO decide status code
+            throw PostException::AccessDenied();
         }
 
         $user->removePost($post);
@@ -218,9 +204,6 @@ class PostController extends FOSRestController implements ClassResourceInterface
         $em->remove($post);
         $em->flush();
 
-        return $this->view(array('status' => array(
-            'code' => 0,
-            'message' => 'deleted'
-        )), 200);
+        return $this->view(new StatusResponse(0, 'deleted'));
     }
 }

@@ -9,6 +9,9 @@ use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Consumer\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
+use IMDC\TerpTubeBundle\Rest\Exception\MediaException;
+use IMDC\TerpTubeBundle\Rest\MediaResponse;
+use IMDC\TerpTubeBundle\Rest\StatusResponse;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +45,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         }
         $media = Utils::orderMedia($qb->getQuery()->getResult(), $ids);
 
-        return $this->view(array('media' => $media), 200);
+        return $this->view(new MediaResponse($media), 200);
     }
 
     /**
@@ -54,14 +57,10 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $em = $this->getDoctrine()->getManager();
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
-            )), 500); //TODO decide status code
+            throw MediaException::NotFound();
         }
 
-        return $this->view(array('media' => $media), 200);
+        return $this->view(new MediaResponse($media), 200);
     }
 
     /**
@@ -79,20 +78,12 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media || !$mediaPayload || !array_key_exists('title', $mediaPayload)) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
-            )), 500); //TODO decide status code
+            throw MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_NOT_OWNER
-            )), 500); //TODO decide status code
+            throw MediaException::AccessDenied();
         }
 
         $media->setTitle($mediaPayload['title']);
@@ -100,7 +91,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $em->persist($media);
         $em->flush();
 
-        return $this->view(array('media' => $media), 200);
+        return $this->view(new MediaResponse($media), 200);
     }
 
     /**
@@ -109,6 +100,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
      * @param Request $request
      * @param $mediaId
      * @return \FOS\RestBundle\View\View
+     * @throws \Exception
      */
     public function deleteAction(Request $request, $mediaId)
     {
@@ -116,20 +108,12 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
-            )), 500); //TODO decide status code
+            throw MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_NOT_OWNER
-            )), 500); //TODO decide status code
+            throw MediaException::AccessDenied();
         }
 
         //TODO revise everything below
@@ -181,12 +165,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $confirm = filter_var($request->request->get('confirm', false), FILTER_VALIDATE_BOOLEAN);
         $this->get('logger')->info("confirm: " . $confirm);
         if ($needsConfirmation && !$confirm) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_MEDIA_IN_USE,
-                'mediaInUse' => $mediaInUse
-            )), 500); //TODO decide status code
+            throw MediaException::Exception(MediaException::MESSAGE_IN_USE);
         }
 
         // User has confirmed, remove the media from all the places and then remove it
@@ -212,10 +191,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $em->remove($media);
         $em->flush();
 
-        return $this->view(array('status' => array(
-            'code' => 0,
-            'message' => self::FEEDBACK_MESSAGE_MEDIA_DELETE_SUCCESS
-        )), 200);
+        return $this->view(new StatusResponse(0, MediaResponse::MESSAGE_DELETE_SUCCESS));
     }
 
     /**
@@ -231,30 +207,19 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
-            )), 500); //TODO decide status code
+            throw MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => self::FEEDBACK_MESSAGE_NOT_OWNER
-            )), 500); //TODO decide status code
+            throw MediaException::NotFound();
         }
 
-        $startTime = floatval($request->get('startTime', 0));
-        $endTime = floatval($request->get('endTime', 0));
+        $startTime = Math . max(floatval($request->get('startTime', 0)), 0);
+        $endTime = Math . max(floatval($request->get('endTime', 0)), 0);
         if ($startTime == 0 && $endTime == 0) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'invalid argument'
-            )), 500); //TODO decide status code
+            throw MediaException::InvalidArgument(
+                'both start and end times must be specified, and not equal to zero');
         }
 
         /** @var ResourceFile $resource */
@@ -271,6 +236,6 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $trimProducer->publish($trimOpts->pack());
 
         //TODO return OK only since the entity would not have changed in this method
-        return $this->view(array('media' => $media), 200);
+        return $this->view(new MediaResponse($media), 200);
     }
 }
