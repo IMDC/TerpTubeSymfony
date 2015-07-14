@@ -299,3 +299,5 @@ fos_rest:
             rss: false
             html: false
         view_response_listener: true
+    exception:
+        enabled: true
