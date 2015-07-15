@@ -12,8 +12,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceFile
 {
-    const UPLOAD_DIR = 'uploads/media'; //TODO move to app config
-
     /**
      * @var integer
      */
@@ -50,6 +48,22 @@ class ResourceFile
      * @var string
      */
     private $temp;
+
+    /**
+     * @var string
+     */
+    private $webRootPath;
+
+    /**
+     * @var string
+     */
+    private $uploadPath;
+
+    public function __construct($config)
+    {
+        $this->webRootPath = $config['web_root_path'];
+        $this->uploadPath = $config['upload_path'];
+    }
 
     /**
      * Get id
@@ -158,26 +172,56 @@ class ResourceFile
         return $this->id . '.' . $this->path;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getWebRootPath()
+    {
+        return $this->webRootPath;
+    }
+
+    /**
+     * @param mixed $webRootPath
+     */
+    public function setWebRootPath($webRootPath)
+    {
+        $this->webRootPath = $webRootPath;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUploadPath()
+    {
+        return $this->uploadPath;
+    }
+
+    /**
+     * @param mixed $uploadPath
+     */
+    public function setUploadPath($uploadPath)
+    {
+        $this->uploadPath = $uploadPath;
+    }
+
     public function getWebPath()
     {
         return null === $this->path
             ? null
-            : static::UPLOAD_DIR . '/' . $this->getFilename();
+            : $this->getUploadPath() . '/' . $this->getFilename();
     }
 
-    public function getUploadRootDir()
+    public function getUploadRootPath()
     {
-        // the absolute directory path where uploaded
-        // documents should be saved
-        //TODO move to app config
-        return __DIR__ . '/../../../../web/' . static::UPLOAD_DIR;
+        // the absolute directory path where uploaded documents should be saved
+        return $this->getWebRootPath() . '/' . $this->getUploadPath();
     }
 
     public function getAbsolutePath()
     {
         return null === $this->path
             ? null
-            : $this->getUploadRootDir() . '/' . $this->getFilename();
+            : $this->getUploadRootPath() . '/' . $this->getFilename();
     }
 
     /**
@@ -249,7 +293,7 @@ class ResourceFile
         // so that the entity is not persisted to the database
         // which the UploadedFile move() method does
         $this->getFile()->move(
-            $this->getUploadRootDir(),
+            $this->getUploadRootPath(),
             $this->getFilename()
         );
 
@@ -274,15 +318,6 @@ class ResourceFile
     public function refreshUpdated() //TODO delete?
     {
         $this->setUpdated(new \DateTime('NOW'));
-    }
-
-    public static function fromFile($file)
-    {
-        $resource = new self();
-        $resource->setFile($file);
-        $resource->setCreated(new \DateTime('now'));
-
-        return $resource;
     }
 
     public function updateMetaData($mediaType, Transcoder $transcoder)
@@ -329,6 +364,15 @@ class ResourceFile
 
                 break;
         }
+    }
+
+    public static function fromFile($file, $config)
+    {
+        $resource = new self($config);
+        $resource->setFile($file);
+        $resource->setCreated(new \DateTime());
+
+        return $resource;
     }
 
     /**

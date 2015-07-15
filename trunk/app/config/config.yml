@@ -172,6 +172,9 @@ imdc_terp_tube:
         ffmpeg_binary: /usr/local/bin/ffmpeg
         ffprobe_binary: /usr/local/bin/ffprobe
         timeout: 3600
+    resource_file:
+        web_root_path: "%kernel.root_dir%/../web"
+        upload_path: "uploads/media"
 
 ac_transcoding:
     ffmpeg: 

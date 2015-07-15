@@ -121,6 +121,10 @@ class User extends BaseUser
     {
         parent::__construct();
 
+        $profile = new UserProfile();
+        $profile->setProfileVisibleToPublic(true);
+        $this->profile = $profile;
+
         $this->sentMessages         = new \Doctrine\Common\Collections\ArrayCollection();
         $this->receivedMessages     = new \Doctrine\Common\Collections\ArrayCollection();
         $this->readMessages         = new \Doctrine\Common\Collections\ArrayCollection();

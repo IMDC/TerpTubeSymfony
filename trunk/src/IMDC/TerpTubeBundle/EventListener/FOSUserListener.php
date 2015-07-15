@@ -49,7 +49,11 @@ class FOSUserListener implements EventSubscriberInterface
 		);
 	}
 
-    public function onRegistrationInitialize(GetResponseUserEvent $event)
+	/**
+	 * @param GetResponseUserEvent $event
+	 * @deprecated
+	 */
+    public function onRegistrationInitialize(GetResponseUserEvent $event) //TODO delete. moved to User constructor
     {
         if (!$event->getUser() instanceof User) {
             return;
