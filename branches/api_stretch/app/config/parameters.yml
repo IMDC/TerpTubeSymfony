@@ -13,6 +13,3 @@ parameters:
     locale: en
     secret: 7c21e2f982644a4db7ef6b7d7d9d0775
     database_path: null
-
-    jms_serializer.serializer.class: IMDC\TerpTubeBundle\Component\Serializer\Serializer
-    fos_rest.view.exception_wrapper_handler: IMDC\TerpTubeBundle\View\ExceptionWrapperHandler

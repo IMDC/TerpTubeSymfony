@@ -35,6 +35,11 @@
                 var newContent = content.find('#' + id);
                 $(this).html(newContent.html());
                 $(this).data('form', newContent.data('form'));
+
+
+                var event = new CustomEvent("xeditable-ajax-success", {'detail' : response});
+                elem.get(0).dispatchEvent(event);
+
             } : null;
 
             var error = isIbrowsXeditableForm ? function (response, form) {
