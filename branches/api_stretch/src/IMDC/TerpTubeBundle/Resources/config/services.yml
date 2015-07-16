@@ -44,19 +44,19 @@ services:
 
     multiplex_service:
         class: IMDC\TerpTubeBundle\Consumer\MultiplexConsumer
-        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer", "@old_sound_rabbit_mq.transcode_producer"]
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer", "%imdc_terptube.resource_file%", "@old_sound_rabbit_mq.transcode_producer"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 
     transcode_service:
         class: IMDC\TerpTubeBundle\Consumer\TranscodeConsumer
-        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer"]
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer", "%imdc_terptube.resource_file%"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 
     trim_service:
         class: IMDC\TerpTubeBundle\Consumer\TrimConsumer
-        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer"]
+        arguments: ["@logger", "@doctrine", "@imdc_terptube.transcoder", "@old_sound_rabbit_mq.entity_status_producer", "%imdc_terptube.resource_file%"]
         tags:
             - { name: 'monolog.logger', channel: 'imdc' }
 
@@ -200,3 +200,10 @@ services:
         arguments: [@doctrine.orm.entity_manager]
         tags:
             - { name: validator.constraint_validator, alias: user_exists }
+
+    imdc_terptube.resource_file_listener:
+        class: IMDC\TerpTubeBundle\EventListener\ResourceFileListener
+        arguments: ["%imdc_terptube.resource_file%"]
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: postLoad }

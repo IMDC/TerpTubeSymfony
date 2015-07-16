@@ -116,7 +116,9 @@ class MyFilesController extends Controller
         $media->setType(Media::TYPE_VIDEO);
         $media->setTitle('Recording-' . $currentTime->format('Y-m-d-H:i'));
 
-        $resourceFile = ResourceFile::fromFile(new IMDCFile(tempnam('/tmp/terptube-recordings', 'hello_')));
+        $resourceFile = ResourceFile::fromFile(
+            new IMDCFile(tempnam('/tmp/terptube-recordings', 'hello_')),
+            $this->container->getParameter('imdc_terptube.resource_file'));
         $resourceFile->setPath('placeholder');
         $media->setSourceResource($resourceFile);
 

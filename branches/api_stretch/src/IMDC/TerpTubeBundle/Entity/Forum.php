@@ -82,10 +82,11 @@ class Forum
      */
     public function __construct()
     {
-        $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->titleMedia       = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->forumAdmins      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->forumModerators  = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->mediaDisplayOrder = array();
+        $this->threads           = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->titleMedia        = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forumAdmins       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forumModerators   = new \Doctrine\Common\Collections\ArrayCollection();
     }
         
     /**

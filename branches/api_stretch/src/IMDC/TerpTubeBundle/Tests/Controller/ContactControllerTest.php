@@ -2,44 +2,50 @@
 
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
+use IMDC\TerpTubeBundle\Entity\User;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * Class ContactControllerTest
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ContactControllerTest extends WebTestCase
+class ContactControllerWebTest extends BaseWebTestCase
 {
-    private static $userIds = array(13, 14);
-
-    /**
-     * @var Client
-     */
-    private $client;
-
     public function setUp()
     {
-        $this->client = static::createClient();
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUsers'
+        ));
 
-        Common::login($this->client);
+        $this->client = static::createClient();
+        /** @var User $user1 */
+        $user1 = $this->referenceRepo->getReference('test_user_1');
+
+        Common::login($this->client, $user1->getUsername());
 
         // add users to friends list
-        foreach (self::$userIds as $userId) {
-            $this->client->request('GET', '/member/friends/' . $userId . '/add');
-        }
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        $user3 = $this->referenceRepo->getReference('test_user_3');
+
+        $user1->addFriendsList($user2);
+        $user1->addFriendsList($user3);
+
+        $this->entityManager->persist($user1);
+        $this->entityManager->flush();
     }
-    
+
     public function testList()
     {
         // list style
         $crawler = $this->client->request('GET', '/contacts/?style=list');
+        $this->logResponse(__FUNCTION__, 'list');
         $tableCount = $crawler->filter('.tab-pane[id^=tab]');
 
         // grid style
         $crawler = $this->client->request('GET', '/contacts/?style=grid');
+        $this->logResponse(__FUNCTION__, 'grid');
         $gridCount = $crawler->filter('.tab-pane[id^=tab]');
 
         // four tables/divs (all, mentors, mentees, friends)
@@ -49,10 +55,16 @@ class ContactControllerTest extends WebTestCase
 
     public function testDelete_Fail()
     {
+        /** @var User $user2 */
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        /** @var User $user3 */
+        $user3 = $this->referenceRepo->getReference('test_user_3');
+
         $this->client->request('POST', '/contacts/remove', array(
-            'userIds' => self::$userIds,
+            'userIds' => array($user2->getId(), $user3->getId()),
             'contactList' => 'error'
         ));
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('success', $response);
@@ -62,10 +74,16 @@ class ContactControllerTest extends WebTestCase
 
     public function testDelete_Success()
     {
+        /** @var User $user2 */
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        /** @var User $user3 */
+        $user3 = $this->referenceRepo->getReference('test_user_3');
+
         $this->client->request('POST', '/contacts/remove', array(
-            'userIds' => self::$userIds,
+            'userIds' => array($user2->getId(), $user3->getId()),
             'contactList' => 'friends'
         ));
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('success', $response);
