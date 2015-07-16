@@ -205,4 +205,5 @@ services:
         class: IMDC\TerpTubeBundle\EventListener\ResourceFileListener
         arguments: ["%imdc_terptube.resource_file%"]
         tags:
+            - { name: doctrine.event_listener, event: prePersist }
             - { name: doctrine.event_listener, event: postLoad }
