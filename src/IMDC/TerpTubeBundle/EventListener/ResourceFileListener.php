@@ -17,7 +17,17 @@ class ResourceFileListener
         $this->resourceFileConfig = $resourceFileConfig;
     }
 
+    public function prePersist(LifecycleEventArgs $args)
+    {
+        $this->injectConfig($args);
+    }
+
     public function postLoad(LifecycleEventArgs $args)
+    {
+        $this->injectConfig($args);
+    }
+
+    private function injectConfig(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
 
