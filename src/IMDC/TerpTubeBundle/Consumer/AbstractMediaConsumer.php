@@ -41,16 +41,22 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
     protected $entityStatusProducer;
 
     /**
+     * @var array
+     */
+    protected $resourceFileConfig;
+
+    /**
      * @var Media
      */
     protected $media;
 
-    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer)
+    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer, $resourceFileConfig)
     {
         $this->logger = $logger;
         $this->doctrine = $doctrine;
         $this->transcoder = $transcoder;
         $this->entityStatusProducer = $entityStatusProducer;
+        $this->resourceFileConfig = $resourceFileConfig;
     }
 
     protected function createResource(File $file)
@@ -60,7 +66,7 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         chmod($file->getRealPath(), 0664);
         umask($old);
 
-        $resource = ResourceFile::fromFile($file);
+        $resource = ResourceFile::fromFile($file, $this->resourceFileConfig);
         // explicitly set the extension to that of the transcoded file (ext won't be guessed)
         $resource->setPath($file->getExtension());
 

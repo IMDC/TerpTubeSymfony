@@ -1,11 +1,17 @@
 # This file is auto-generated during the composer install
 parameters:
+    # doctrine:prod
     database_driver: pdo_mysql
     database_host: localhost
     database_port: null
     database_name: terptube_symfony
     database_user: symfonyuser
     database_password: FztmbMuUREfAJdWv
+
+    # doctrine:test
+    database_test_name: terptube_symfony_test
+
+    # swiftmailer
     mailer_transport: gmail
     mailer_host: null
     mailer_user: terptubetest
