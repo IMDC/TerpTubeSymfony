@@ -1,7 +1,5 @@
 <?php
-
 namespace IMDC\TerpTubeBundle\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile as IMDCUploadedFile;
@@ -59,10 +57,13 @@ class ResourceFile
      */
     private $uploadPath;
 
-    public function __construct($config)
+    public function __construct($config = null)
     {
-        $this->webRootPath = $config['web_root_path'];
-        $this->uploadPath = $config['upload_path'];
+        if ($config)
+        {
+            $this->webRootPath = $config['web_root_path'];
+            $this->uploadPath = $config['upload_path'];
+        }
     }
 
     /**
