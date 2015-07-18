@@ -14,8 +14,7 @@ define([
 
     ThreadPostService.Event = {
         ADD: 'eventAdd',
-        EDIT: 'eventEdit',
-        VIEW: 'eventView',
+        REPLACE: 'eventUpdate',
         REMOVE: 'eventRemove'
     };
 

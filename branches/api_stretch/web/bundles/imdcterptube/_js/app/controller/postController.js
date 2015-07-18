@@ -109,14 +109,7 @@ define([
     };
 
     Post.prototype.updateInThread = function (view) {
-        var event = ThreadPostService.Event.VIEW;
-
-        if (view == 'new')
-            event = ThreadPostService.Event.ADD;
-        if (view == 'edit')
-            event = ThreadPostService.Event.EDIT;
-
-        this.threadPostService.dispatch(event, {post: this.model});
+        this.threadPostService.dispatch(ThreadPostService.Event.REPLACE, {post: this.model, view: view});
     };
 
     Post.prototype.removeFromThread = function () {

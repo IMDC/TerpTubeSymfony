@@ -69,7 +69,7 @@ class PostController extends FOSRestController implements ClassResourceInterface
 
         $post = $this->getNew($em, $threadId, $parentPostId);
         $form = $this->getForm($post);
-        //$form->handleRequest($request);
+        $form->handleRequest($request);
 
         if ($form->isValid()) {
             $user = $this->getUser();
