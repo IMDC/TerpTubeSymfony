@@ -18,8 +18,8 @@ define([
         var settings = {
             method: 'POST',
             url: Routing.generate('imdc_new_post', {
-                threadId: model.get('parent_thread.id'),
-                parentPostId: model.get('parent_post.id') || model.get('id')
+                threadId: model.get('parent_thread_id'),
+                parentPostId: model.get('parent_post_id') || model.get('id')
             })
         };
 

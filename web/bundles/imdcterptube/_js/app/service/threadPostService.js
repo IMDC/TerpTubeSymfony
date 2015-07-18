@@ -1,5 +1,6 @@
 define([
-    'core/subscriber'
+    'core/subscriber',
+    'underscore'
 ], function (Subscriber) {
     'use strict';
 
@@ -12,7 +13,16 @@ define([
     ThreadPostService.extend(Subscriber);
 
     ThreadPostService.Event = {
-        ADD: 'eventAdd'
+        ADD: 'eventAdd',
+        EDIT: 'eventEdit',
+        VIEW: 'eventView',
+        REMOVE: 'eventRemove'
+    };
+
+    ThreadPostService.prototype.subscribe = function (callback) {
+        _.each(ThreadPostService.Event, function (value, key, list) {
+            Subscriber.prototype.subscribe.call(this, value, callback);
+        }.bind(this));
     };
 
     ThreadPostService.prototype.dispatch = function (event, args) {

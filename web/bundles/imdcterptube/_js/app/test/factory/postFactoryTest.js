@@ -21,9 +21,7 @@ define([
 
         before(function (done) {
             model = new PostModel({
-                parent_thread: {
-                    id: 17
-                }
+                parent_thread_id: 17
             });
 
             Common.login(done);
@@ -125,7 +123,7 @@ define([
                     assert.isUndefined(model.get('end_time'), 'post key:end_time should be undefined');
                     assert.isFalse(model.get('is_temporal'), 'post key:is_temporal should be false');
                     assert.isUndefined(model.get('parent_post'), 'post key:parent_post should be undefined');
-                    assert.isDefined(model.get('parent_thread'), 'post key:parent_thread should be defined');
+                    assert.isDefined(model.get('parent_thread_id'), 'post key:parent_thread_id should be defined');
                     done();
                 })
                 .fail(function (data) {

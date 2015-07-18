@@ -48,14 +48,14 @@
                     {is_permanent: true}
             );
 
-            $.each({{ thread.posts|serialize('json')|raw }}, function (index, post) {
+            /*$.each({#{ thread.posts|serialize('json')|raw }#}, function (index, post) {
                 bootstrap(
                         new PostModel(post),
                         PostController,
                         PostViewView,
                         {}
                 );
-            });
+            });*/
         });
 
         $(document).ready(function() {
@@ -174,25 +174,7 @@
 				</div>
 			</div>
 			<!-- right side -->
-			<div class="col-md-7 tt-thread-reply-container" id="threadReplyContainer">
-                <!-- thread replies -->
-				<div class="row">
-					<div class="col-md-12">
-                        {% if thread.posts|length > 0 %}
-                            {% for post in thread.posts if not post.parentPost %}
-                                <!-- post -->
-                                {% include 'IMDCTerpTubeBundle:Post:view.html.twig' %}
-                                <!-- post replies -->
-                                {% for post_reply in post.replies %}
-                                    {% include 'IMDCTerpTubeBundle:Post:view.html.twig' with {'post': post_reply} %}
-                                {% endfor %}
-                            {% endfor %}
-                        {% else %}
-                            <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
-                        {% endif %}
-                    </div>
-                </div>
-			</div>
+			<div class="col-md-7 tt-thread-reply-container" id="threadReplyContainer"></div>
 		</div>
 	</div>
     {% if app.environment == 'test' %}

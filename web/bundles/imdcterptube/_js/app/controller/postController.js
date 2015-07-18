@@ -92,8 +92,16 @@ define([
         this.keyPointService.deregister(keyPoint.id);
     };
 
-    Post.prototype.addPostToThread = function (post) {
+    Post.prototype.addToThread = function (post) {
         this.threadPostService.dispatch(ThreadPostService.Event.ADD, {post: post});
+    };
+
+    Post.prototype.updateInThread = function (isEditing) {
+        this.threadPostService.dispatch(isEditing ? ThreadPostService.Event.EDIT : ThreadPostService.Event.VIEW, {post: this.model});
+    };
+
+    Post.prototype.removeFromThread = function () {
+        this.threadPostService.dispatch(ThreadPostService.Event.REMOVE, {post: this.model});
     };
 
     Post.prototype.new = function (form) {
@@ -104,7 +112,7 @@ define([
         return PostFactory.edit(this.model, form);
     };
 
-    Post.prototype.view = function () {
+    Post.prototype.get = function () {
         return PostFactory.get(this.model);
     };
 

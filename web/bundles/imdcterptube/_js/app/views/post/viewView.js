@@ -88,17 +88,7 @@ define([
         this.controller.new(null)
             .done(function (data) {
                 //TODO make me better
-                dust.render('post_new', {post: data.post.data}, function (err, out) {
-                    this.$container.after(out);
-                    Helper.autoSize();
-                    // bootstrap
-                    var PostController = require('controller/postController');
-                    var NewView = require('views/post/newView');
-                    var options = {};
-                    var controller = new PostController(data.post, options);
-                    new NewView(controller, options);
-                    controller.onViewLoaded();
-                }.bind(this));
+                this.controller.addToThread(data.post);
             }.bind(this))
             .fail(function (data) {
                 this.$new.show();
@@ -111,8 +101,13 @@ define([
         this.controller.edit(null)
             .done(function (data) {
                 //TODO make me better
+                this.controller.updateInThread(true);
+
+                if (this.controller.model.get('is_temporal', false)) {
+                    this.controller.editKeyPoint({cancel: false});
+                }
                 //FIXME i am a duplicate
-                dust.render('post_edit', {post: this.controller.model.data}, function (err, out) {
+                /*dust.render('post_edit', {post: this.controller.model.data}, function (err, out) {
                     this.$container.replaceWith(out);
                     Helper.autoSize();
                     if (this.controller.model.get('is_temporal', false)) {
@@ -124,7 +119,7 @@ define([
                     this.controller.onViewLoaded();
                     //FIXME view was not present when model was changed. force it now to update the view
                     this.controller.model.forceChange();
-                }.bind(this));
+                }.bind(this));*/
             }.bind(this))
             .fail(function (data) {
                 //TODO
@@ -143,14 +138,11 @@ define([
 
                 if (this.$deleteModal.data('bs.modal').isShown) {
                     this.$deleteModal.on('hidden.bs.modal', function (e) {
-                        this.$container.remove();
+                        this.controller.removeFromThread();
                     }.bind(this));
                     this.$deleteModal.modal('hide');
-                    this.$container.fadeOut('slow');
                 } else {
-                    this.$container.fadeOut('slow', function (e) {
-                        this.$container.remove();
-                    }.bind(this));
+                    this.controller.removeFromThread();
                 }
             }.bind(this))
             .fail(function (data) {
