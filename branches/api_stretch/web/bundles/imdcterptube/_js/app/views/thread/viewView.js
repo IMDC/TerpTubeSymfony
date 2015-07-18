@@ -1,6 +1,8 @@
 define([
-    'model/model'
-], function (Model) {
+    'model/model',
+    'core/helper',
+    'bootstrap'
+], function (Model, Helper, bootstrap) {
     'use strict';
 
     var ViewView = function (controller, options) {
@@ -45,6 +47,19 @@ define([
         }
 
         this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
+
+        //TODO model: get collection data as json array
+        var posts = [];
+        _.each(this.controller.model.get('posts'), function (element, index, list) {
+            posts.push(element.data);
+        });
+
+        dust.render('thread_view_posts', {posts: posts}, function (err, out) {
+            this.$postContainer.html(out);
+            _.each(this.controller.model.get('posts'), function (element, index, list) {
+                bootstrap(element, 'post', 'post/view', {});
+            });
+        }.bind(this));
 
         $tt._instances.push(this);
     };
@@ -172,28 +187,72 @@ define([
     };
 
     ViewView.prototype._onModelChange = function (e) {
-        if (e.keyPath.indexOf('posts.') == 0) { //TODO model.add not supported, so no index in key path
-            //TODO all posts are not re-rendered. changed posts are not re-rendered here. only adding new posts is supported
-            var post = _.last(e.model.get('posts'));
+        if (e.keyPath.indexOf('posts.') == 0 && e.view) { // trailing dot is for an element of the array/object
+            var post = e.model.get(e.keyPath);
 
-            dust.render('post_view', {post: post.data}, function (err, out) {
-                var parentPostId = post.get('parent_post.id');
-                if (!parentPostId) {
-                    //TODO make me better. empty the container if there are no existing replies
-                    if (this.$postContainer.find('div.tt-post-container').length == 0)
-                        this.$postContainer.find('.lead').remove();
-                    this.$postContainer.find('#replyContainerSpacer').before(out);
-                } else {
-                    this.$postContainer.find('[data-ppid="' + parentPostId + '"]').last().after(out);
-                }
-                // bootstrap
-                var PostController = require('controller/postController');
-                var ViewView = require('views/post/viewView');
-                var options = {};
-                var controller = new PostController(post, options);
-                new ViewView(controller, options);
-                controller.onViewLoaded();
-            }.bind(this));
+            if (e.view == 'new') {
+                dust.render('post_new', post.data, function (err, out) {
+                    var $parentPost = this.$postContainer.find('.post-container[data-pid="' + post.get('parent_post_id') + '"]');
+                    $parentPost.after(out);
+                    Helper.autoSize();
+                    bootstrap(post, 'post', 'post/new', {});
+                }.bind(this));
+            }
+
+            if (e.view == 'edit') {
+                dust.render('post_edit', post.data, function (err, out) {
+                    var $post = this.$postContainer.find('.post-container[data-pid="' + post.get('id') + '"]');
+                    $post.replaceWith(out);
+                    Helper.autoSize();
+                    bootstrap(post, 'post', 'post/edit', {});
+                }.bind(this));
+            }
+
+            if (e.view == 'view') {
+                dust.render('post_view', post.data, function (err, out) {
+                    if (e.isNew) {
+                        //TODO make me better
+                        var parentPostId = post.get('parent_post_id');
+                        if (!parentPostId) {
+                            //TODO make me better. empty the container if there are no existing replies
+                            if (this.$postContainer.find('div.tt-post-container').length == 0)
+                                this.$postContainer.find('.lead').remove();
+                            this.$postContainer.find('#replyContainerSpacer').before(out);
+                        } else {
+                            var $lastPost = this.$postContainer.find('.post-container[data-ppid="' + parentPostId + '"]').last();
+                            if ($lastPost.length == 0)
+                                $lastPost = this.$postContainer.find('.post-container[data-pid="' + parentPostId + '"]');
+                            $lastPost.after(out);
+                        }
+                    } else {
+                        var $post = this.$postContainer.find('.post-container[data-pid="' + post.get('id') + '"]');
+                        $post.replaceWith(out);
+                    }
+                    bootstrap(post, 'post', 'post/view', {});
+                }.bind(this));
+            }
+        }
+
+        if (e.keyPath == 'posts') {
+            var $posts = this.$postContainer.find('.post-container[data-pid]');
+            var postIds = [];
+            var postsToRemove = [];
+
+            _.each(e.model.get('posts'), function (element, index, list) {
+                postIds.push(element.get('id'));
+            });
+
+            postsToRemove = _.filter($posts, function (post) {
+                // ignore new post forms (pid < 0)
+                return parseInt($(post).data('pid'), 10) > 0 && !_.contains(postIds, $(post).data('pid'));
+            });
+
+            _.each(postsToRemove, function (element, index, list) {
+                var $post = $(element);
+                $post.fadeOut('slow', function (e) {
+                    $post.remove();
+                });
+            });
         }
 
         if (!this.player)

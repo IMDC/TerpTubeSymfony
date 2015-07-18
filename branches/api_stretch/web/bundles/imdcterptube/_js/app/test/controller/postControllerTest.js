@@ -43,9 +43,7 @@ define([
                 start_time: 100,
                 end_time: 200,
                 is_temporal: true,
-                parent_thread: {
-                    id: 17
-                }
+                parent_thread_id: 17
             });
             model.subscribe(Model.Event.CHANGE, mCallback);
             $.mockjaxSettings.logging = false;
@@ -168,7 +166,7 @@ define([
 
         it('should not have ...', function () {
             $.mockjax({
-                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread.id')}),
+                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread_id')}),
                 responseText: {
                     post: {},
                     form: ''
@@ -186,7 +184,7 @@ define([
 
         it('should have ...', function () {
             $.mockjax({
-                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread.id')}),
+                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread_id')}),
                 responseText: {
                     post: {}
                 }

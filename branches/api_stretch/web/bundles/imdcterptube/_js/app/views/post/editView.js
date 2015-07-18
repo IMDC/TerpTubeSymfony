@@ -38,8 +38,13 @@ define([
         this.controller.edit(this.$form[0])
             .done(function (data) {
                 //TODO make me better
+                this.controller.updateInThread(false);
+
+                if (this.controller.model.get('is_temporal', false)) {
+                    this.controller.editKeyPoint({cancel: true});
+                }
                 //FIXME i am a duplicate
-                dust.render('post_view', {post: this.controller.model.data}, function (err, out) {
+                /*dust.render('post_view', {post: this.controller.model.data}, function (err, out) {
                     this.$container.replaceWith(out);
                     if (this.controller.model.get('is_temporal', false)) {
                         this.controller.editKeyPoint({cancel: true});
@@ -50,24 +55,10 @@ define([
                     this.controller.onViewLoaded();
                     //FIXME view was not present when model was changed. force it now to update the view
                     this.controller.model.forceChange();
-                }.bind(this));
+                }.bind(this));*/
             }.bind(this))
             .fail(function (data) {
-                //TODO make me better
-                //FIXME i am a duplicate
-                dust.render('post_edit', {post: this.controller.model.data}, function (err, out) {
-                    this.$container.replaceWith(out);
-                    Helper.autoSize();
-                    if (this.controller.model.get('is_temporal', false)) {
-                        this.controller.editKeyPoint({cancel: false});
-                    }
-                    var _self = this;
-                    var EditView = require('views/post/editView');
-                    _self = new EditView(this.controller, this.controller.options);
-                    this.controller.onViewLoaded();
-                    //FIXME view was not present when model was changed. force it now to update the view
-                    this.controller.model.forceChange();
-                }.bind(this));
+                //TODO
             }.bind(this));
     };
 
@@ -77,8 +68,13 @@ define([
         this.controller.get()
             .done(function (data) {
                 //TODO make me better
+                this.controller.updateInThread(false);
+
+                if (this.controller.model.get('is_temporal', false)) {
+                    this.controller.editKeyPoint({cancel: true});
+                }
                 //FIXME i am a duplicate
-                dust.render('post_view', {post: this.controller.model.data}, function (err, out) {
+                /*dust.render('post_view', {post: this.controller.model.data}, function (err, out) {
                     this.$container.replaceWith(out);
                     if (this.controller.model.get('is_temporal', false)) {
                         this.controller.editKeyPoint({cancel: true});
@@ -89,7 +85,7 @@ define([
                     this.controller.onViewLoaded();
                     //FIXME view was not present when model was changed. force it now to update the view
                     this.controller.model.forceChange();
-                }.bind(this));
+                }.bind(this));*/
             }.bind(this))
             .fail(function (data) {
                 //TODO

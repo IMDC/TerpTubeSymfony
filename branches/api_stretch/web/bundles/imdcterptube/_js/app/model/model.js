@@ -94,9 +94,18 @@ define([
         }, this);
     };
 
-    Model.prototype.forceChange = function (keyPath) {
+    Model.prototype.forceChange = function (keyPath, args) {
         keyPath = typeof keyPath !== 'undefined' ? keyPath : '';
-        this._dispatch(Model.Event.CHANGE, keyPath);
+        this._dispatch(Model.Event.CHANGE, keyPath, args);
+    };
+
+    //TODO move to collection
+    Model.prototype.find = function (value, keyPath, collection) {
+        for (var index in collection) {
+            if (collection[index].get(keyPath) == value)
+                return index;
+        }
+        return undefined;
     };
 
     return Model;

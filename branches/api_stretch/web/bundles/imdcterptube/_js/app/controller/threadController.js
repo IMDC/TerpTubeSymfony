@@ -20,6 +20,9 @@ define([
         this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this); // KeyPointService
         this.bind__onThreadPostEvent = this._onThreadPostEvent.bind(this); // ThreadPostService
 
+        this.keyPointService.subscribe('all', this.bind__onKeyPointEvent);
+        this.threadPostService.subscribe(this.bind__onThreadPostEvent);
+
         $tt._instances.push(this);
     };
 
@@ -70,16 +73,22 @@ define([
     Thread.prototype._onThreadPostEvent = function (e) {
         switch (e.type) {
             case ThreadPostService.Event.ADD:
-                //TODO add model.add method?
-                var posts = this.model.get('posts');
-                this.model.set('posts.' + posts.length, e.post);
+                this.model.addPost(e.post, e.post.get('id') < 0 ? 'new' : 'view');
+                break;
+            case ThreadPostService.Event.EDIT:
+                this.model.forceChangePost(e.post, 'edit');
+                break;
+            case ThreadPostService.Event.VIEW:
+                this.model.forceChangePost(e.post, 'view');
+                break;
+            case ThreadPostService.Event.REMOVE:
+                this.model.removePost(e.post);
                 break;
         }
     };
 
     Thread.prototype.onViewLoaded = function () {
-        this.keyPointService.subscribe('all', this.bind__onKeyPointEvent);
-        this.threadPostService.subscribe(ThreadPostService.Event.ADD, this.bind__onThreadPostEvent);
+
     };
 
     Thread.prototype.updateKeyPointDuration = function (duration) {

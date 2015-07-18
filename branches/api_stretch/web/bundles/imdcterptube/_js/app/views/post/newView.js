@@ -90,8 +90,7 @@ define([
         this.controller.new(this.$form[0])
             .done(function (data) {
                 //TODO make me better
-
-                this.controller.addPostToThread(data.post);
+                this.controller.addToThread(data.post);
 
                 if (this.options.is_permanent) {
                     this._reset();
@@ -99,72 +98,9 @@ define([
                 } else {
                     this._destroy();
                 }
-
-                return;
-
-
-
-
-                //Need to add the new post to the list.
-                this.mcCmp.reset();
-                this._getFormField('content').val('');
-                this._getFormField('startTime').val(this.controller.model.get('keyPoint.startTime'));
-                this._getFormField('endTime').val(this.controller.model.get('keyPoint.endTime'));
-                this.controller.editKeyPoint({cancel: true});
-                this.controller.editKeyPoint({cancel: false});
-
-                var PostViewView = require('views/post/viewView');
-                var PostController = require('controller/postController');
-                var PostModel = require('model/postModel');
-                var bootstrap = require('bootstrap')
-
-                if (data.post.parent_post) {
-                    this.$container.remove();
-                    this.controller.removeKeyPoint();
-
-                    //Append the new reply after the parent post
-                    $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]').after(data.html);
-                    bootstrap(
-                        new PostModel(data.post),
-                        PostController,
-                        PostViewView,
-                        {}
-                    );
-
-                    //TODO make me better
-                    // a bit hackish but works
-                    $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
-                        .find('.post-new')
-                        .show();
-                }
-                else {
-                    this.$form.trigger("reset");
-                    ;
-                    //Append the new reply as a last post
-                    if ($("#replyContainerSpacer").siblings(".lead").length > 0) {
-                        $("#replyContainerSpacer").siblings(".lead").remove();
-                    }
-                    $("#replyContainerSpacer").before(data.html);
-                    bootstrap(
-                        new PostModel(data.post),
-                        PostController,
-                        PostViewView,
-                        {}
-                    );
-                }
             }.bind(this))
             .fail(function (data) {
-                //TODO make me better
-                dust.render('post_new', {post: this.controller.model.data}, function (err, out) {
-                    this.$container.replaceWith(out);
-                    Helper.autoSize();
-                    this.controller.removeKeyPoint();
-                    var _self = this;
-                    _self = new NewView(this.controller, this.controller.options);
-                    this.controller.onViewLoaded();
-                    //FIXME view was not present when model was changed. force it now to update the view
-                    this.controller.model.forceChange();
-                }.bind(this));
+                //TODO
             }.bind(this));
     };
 
@@ -213,10 +149,11 @@ define([
     NewView.prototype._destroy = function () {
         this.$container.remove();
         this.controller.removeKeyPoint();
+        this.controller.removeFromThread();
 
         //TODO make me better
         // a bit hackish but works
-        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post.id') + '"]')
+        $(NewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('parent_post_id') + '"]')
             .find('.post-new')
             .show();
     };
