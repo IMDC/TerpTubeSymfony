@@ -2,7 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Rest\Exception;
 
-class MediaException extends Exception
+class MediaException extends RestException
 {
     const AREA = 'media';
     const CODE_PREFIX = 920;
@@ -14,16 +14,11 @@ class MediaException extends Exception
 
     public static function NotFound()
     {
-        return parent::NotFound(self::MESSAGE_NOT_EXIST_MEDIA);
+        parent::NotFound(self::MESSAGE_NOT_EXIST_MEDIA);
     }
 
     public static function AccessDenied()
     {
-        return parent::AccessDenied(self::MESSAGE_NOT_OWNER);
-    }
-
-    public static function InvalidArgument()
-    {
-        return parent::InvalidArgument(self::MESSAGE_NOT_OWNER);
+        parent::AccessDenied(self::MESSAGE_NOT_OWNER);
     }
 }

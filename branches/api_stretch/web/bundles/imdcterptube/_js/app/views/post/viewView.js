@@ -96,9 +96,9 @@ define([
     ViewView.prototype._onClickEdit = function (e) {
         e.preventDefault();
 
-        this.controller.edit(null)
+        this.controller.edit()
             .done(function (data) {
-                this.controller.updateInThread(true);
+                this.controller.updateInThread('edit');
 
                 if (this.controller.model.get('is_temporal', false)) {
                     this.controller.editKeyPoint({cancel: false});

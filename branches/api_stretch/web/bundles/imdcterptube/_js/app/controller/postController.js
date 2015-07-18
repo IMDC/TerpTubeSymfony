@@ -108,24 +108,39 @@ define([
         this.threadPostService.dispatch(ThreadPostService.Event.ADD, {post: post});
     };
 
-    Post.prototype.updateInThread = function (isEditing) {
-        this.threadPostService.dispatch(isEditing ? ThreadPostService.Event.EDIT : ThreadPostService.Event.VIEW, {post: this.model});
+    Post.prototype.updateInThread = function (view) {
+        var event = ThreadPostService.Event.VIEW;
+
+        if (view == 'new')
+            event = ThreadPostService.Event.ADD;
+        if (view == 'edit')
+            event = ThreadPostService.Event.EDIT;
+
+        this.threadPostService.dispatch(event, {post: this.model});
     };
 
     Post.prototype.removeFromThread = function () {
         this.threadPostService.dispatch(ThreadPostService.Event.REMOVE, {post: this.model});
     };
 
-    Post.prototype.new = function (form) {
-        return PostFactory.new(this.model, form);
+    Post.prototype.new = function () {
+        return PostFactory.new(this.model);
     };
 
-    Post.prototype.edit = function (form) {
-        return PostFactory.edit(this.model, form);
+    Post.prototype.post = function (form) {
+        return PostFactory.post(this.model, form);
     };
 
     Post.prototype.get = function () {
         return PostFactory.get(this.model);
+    };
+
+    Post.prototype.edit = function () {
+        return PostFactory.edit(this.model);
+    };
+
+    Post.prototype.put = function (form) {
+        return PostFactory.put(this.model, form);
     };
 
     Post.prototype.delete = function () {

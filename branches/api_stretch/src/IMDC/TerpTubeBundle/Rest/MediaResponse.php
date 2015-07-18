@@ -2,7 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Rest;
 
-class MediaResponse
+class MediaResponse extends RestResponse
 {
     const MESSAGE_DELETE_SUCCESS = 'Successfully removed media!';
 

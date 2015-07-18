@@ -2,16 +2,13 @@
 
 namespace IMDC\TerpTubeBundle\Rest;
 
-class StatusResponse
+class StatusResponse extends RestResponse
 {
+    const OK = 200;
     const MESSAGE_OK = 'OK';
 
-    protected $code;
-    protected $message;
-
-    public function __construct($code, $message = self::MESSAGE_OK)
+    public function __construct($code = self::OK, $message = self::MESSAGE_OK)
     {
-        $this->code = $code;
-        $this->message = $message;
+        parent::_construct($code, $message);
     }
 }

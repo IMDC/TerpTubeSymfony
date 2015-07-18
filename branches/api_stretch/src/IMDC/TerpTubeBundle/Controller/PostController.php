@@ -27,7 +27,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class PostController extends FOSRestController implements ClassResourceInterface
 {
     /**
-     * @Rest\Post() //TODO api? decouple rest new/post
      * @Rest\QueryParam(name="threadId", requirements="\d+")
      * @Rest\QueryParam(name="parentPostId", requirements="\d+")
      *
@@ -38,29 +37,39 @@ class PostController extends FOSRestController implements ClassResourceInterface
     public function newAction(Request $request, ParamFetcher $paramFetcher)
     {
         $em = $this->getDoctrine()->getManager();
+
         $threadId = $paramFetcher->get('threadId');
         $parentPostId = $paramFetcher->get('parentPostId');
-        $thread = null;
-        $postParent = null;
-        if ($threadId) {
-            $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadId);
-        }
-        if ($parentPostId) {
-            $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($parentPostId);
-        }
 
-        if (!$thread && !$postParent) {
-            throw PostException::NotFound('thread and post not found');
-        }
+        $post = $this->getNew($em, $threadId, $parentPostId);
+        $form = $this->getForm($post);
 
-        $post = new Post();
-        $post->setParentThread($thread);
-        $post->setParentPost($postParent);
-        $form = $this->createForm(new PostType(), $post, array(
-            'canTemporal' => (!$post->isPostReply() && $thread->getType() == 1),
-            'is_post_reply' => $post->isPostReply()
-        ));
-        $form->handleRequest($request);
+        return $this->view(array(
+            'post' => $post,
+            'form' => $this->renderView('IMDCTerpTubeBundle:Post:form.new.html.twig', array(
+                'form' => $form->createView(),
+                'post' => $post))
+        ), 200);
+    }
+
+    /**
+     * @Rest\QueryParam(name="threadId", requirements="\d+")
+     * @Rest\QueryParam(name="parentPostId", requirements="\d+")
+     *
+     * @param Request $request
+     * @param ParamFetcher $paramFetcher
+     * @return \FOS\RestBundle\View\View
+     */
+    public function postAction(Request $request, ParamFetcher $paramFetcher)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $threadId = $paramFetcher->get('threadId');
+        $parentPostId = $paramFetcher->get('parentPostId');
+
+        $post = $this->getNew($em, $threadId, $parentPostId);
+        $form = $this->getForm($post);
+        //$form->handleRequest($request);
 
         if ($form->isValid()) {
             $user = $this->getUser();
@@ -70,19 +79,10 @@ class PostController extends FOSRestController implements ClassResourceInterface
             $post->setIsTemporal(is_float($post->getStartTime()) && is_float($post->getEndTime()));
             $post->setMediaDisplayOrder($form->get('attachedFile')->getViewData());
 
-            if (!$post->isPostReply()) {
-                $post->setParentThread($thread);
-            } else {
-                $post->setParentPost($postParent);
-                $post->setParentThread($postParent->getParentThread());
-            }
-
             $em->persist($post);
             $em->flush();
 
-            if ($post->isPostReply() && !$thread)
-                $thread = $postParent->getParentThread();
-
+            $thread = $post->getParentThread();
             $thread->setLastPostAt($currentDateTime);
             $thread->setLastPostID($post->getId());
 
@@ -93,8 +93,6 @@ class PostController extends FOSRestController implements ClassResourceInterface
 
             $em->persist($post);
             $em->persist($thread);
-            if ($postParent)
-                $em->persist($postParent);
             $em->persist($forum);
             $em->persist($user);
             $em->flush();
@@ -102,14 +100,39 @@ class PostController extends FOSRestController implements ClassResourceInterface
             return $this->view(new PostResponse($post), 200);
         }
 
-        //TODO form errors
+        return PostException::InvalidForm($this->renderView('IMDCTerpTubeBundle:Post:form.new.html.twig', array(
+            'form' => $form->createView(),
+            'post' => $post)));
+    }
 
-        return $this->view(array(
-            'post' => $post,
-            'form' => $this->renderView('IMDCTerpTubeBundle:Post:form.new.html.twig', array(
-                'form' => $form->createView(),
-                'post' => $post))
-        ), 200);
+    private function getNew($em, $threadId, $parentPostId)
+    {
+        $thread = null;
+        $postParent = null;
+        if ($threadId) {
+            $thread = $em->getRepository('IMDC\TerpTubeBundle\Entity\Thread')->find($threadId);
+        }
+        if ($parentPostId) {
+            $postParent = $em->getRepository('IMDCTerpTubeBundle:Post')->find($parentPostId);
+        }
+
+        if (!$thread && !$postParent) {
+            PostException::NotFound('thread and post not found');
+        }
+
+        $post = new Post();
+        $post->setParentThread($thread);
+        $post->setParentPost($postParent);
+
+        return $post;
+    }
+
+    private function getForm(Post $post)
+    {
+        return $this->createForm(new PostType(), $post, array(
+            'canTemporal' => (!$post->isPostReply() && $post->getParentThread()->getType() == 1),
+            'is_post_reply' => $post->isPostReply()
+        ));
     }
 
     /**
@@ -121,15 +144,13 @@ class PostController extends FOSRestController implements ClassResourceInterface
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            throw PostException::NotFound();
+            PostException::NotFound();
         }
 
         return $this->view(new PostResponse($post), 200);
     }
 
     /**
-     * @Rest\Post() //TODO api? decouple rest edit/put
-     *
      * @param Request $request
      * @param $postId
      * @return \FOS\RestBundle\View\View
@@ -141,17 +162,47 @@ class PostController extends FOSRestController implements ClassResourceInterface
         /** @var Post $post */
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            throw PostException::NotFound();
+            PostException::NotFound();
         }
 
         $user = $this->getUser();
         if (!$post->getAuthor() == $user) {
-            throw PostException::AccessDenied();
+            PostException::AccessDenied();
         }
 
-        $form = $this->createForm(new PostType(), $post, array(
-            'canTemporal' => (!$post->getParentPost() && $post->getParentThread()->getType() == 1)
-        ));
+        $form = $this->getForm($post);
+
+        return $this->view(array(
+            'post' => $post,
+            'form' => $this->renderView('IMDCTerpTubeBundle:Post:form.edit.html.twig', array(
+                'form' => $form->createView(),
+                'post' => $post))
+        ), 200);
+    }
+
+    /**
+     * @Rest\Post()
+     *
+     * @param Request $request
+     * @param $postId
+     * @return \FOS\RestBundle\View\View
+     * @throws AccessDeniedException
+     */
+    public function putAction(Request $request, $postId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        /** @var Post $post */
+        $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
+        if (!$post) {
+            PostException::NotFound();
+        }
+
+        $user = $this->getUser();
+        if (!$post->getAuthor() == $user) {
+            PostException::AccessDenied();
+        }
+
+        $form = $this->getForm($post);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -170,14 +221,9 @@ class PostController extends FOSRestController implements ClassResourceInterface
             return $this->view(new PostResponse($post), 200);
         }
 
-        //TODO form errors
-
-        return $this->view(array(
-            'post' => $post,
-            'form' => $this->renderView('IMDCTerpTubeBundle:Post:form.edit.html.twig', array(
-                'form' => $form->createView(),
-                'post' => $post))
-        ), 200);
+        return PostException::InvalidForm($this->renderView('IMDCTerpTubeBundle:Post:form.edit.html.twig', array(
+            'form' => $form->createView(),
+            'post' => $post)));
     }
 
     /**
@@ -189,12 +235,12 @@ class PostController extends FOSRestController implements ClassResourceInterface
         $em = $this->getDoctrine()->getManager();
         $post = $em->getRepository('IMDCTerpTubeBundle:Post')->find($postId);
         if (!$post) {
-            throw PostException::NotFound();
+            PostException::NotFound();
         }
 
         $user = $this->getUser();
         if (!$post->getAuthor() == $user) {
-            throw PostException::AccessDenied();
+            PostException::AccessDenied();
         }
 
         $user->removePost($post);
@@ -204,6 +250,6 @@ class PostController extends FOSRestController implements ClassResourceInterface
         $em->remove($post);
         $em->flush();
 
-        return $this->view(new StatusResponse(0, 'deleted'));
+        return $this->view(new StatusResponse());
     }
 }

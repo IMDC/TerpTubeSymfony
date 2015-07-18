@@ -57,7 +57,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $em = $this->getDoctrine()->getManager();
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            throw MediaException::NotFound();
+            MediaException::NotFound();
         }
 
         return $this->view(new MediaResponse($media), 200);
@@ -78,12 +78,12 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media || !$mediaPayload || !array_key_exists('title', $mediaPayload)) {
-            throw MediaException::NotFound();
+            MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            throw MediaException::AccessDenied();
+            MediaException::AccessDenied();
         }
 
         $media->setTitle($mediaPayload['title']);
@@ -108,12 +108,12 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            throw MediaException::NotFound();
+            MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            throw MediaException::AccessDenied();
+            MediaException::AccessDenied();
         }
 
         //TODO revise everything below
@@ -165,7 +165,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $confirm = filter_var($request->request->get('confirm', false), FILTER_VALIDATE_BOOLEAN);
         $this->get('logger')->info("confirm: " . $confirm);
         if ($needsConfirmation && !$confirm) {
-            throw MediaException::Exception(MediaException::MESSAGE_IN_USE);
+            MediaException::Exception(MediaException::MESSAGE_IN_USE);
         }
 
         // User has confirmed, remove the media from all the places and then remove it
@@ -191,7 +191,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $em->remove($media);
         $em->flush();
 
-        return $this->view(new StatusResponse(0, MediaResponse::MESSAGE_DELETE_SUCCESS));
+        return $this->view(new StatusResponse(StatusResponse::OK, MediaResponse::MESSAGE_DELETE_SUCCESS));
     }
 
     /**
@@ -207,18 +207,18 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            throw MediaException::NotFound();
+            MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            throw MediaException::NotFound();
+            MediaException::NotFound();
         }
 
         $startTime = Math . max(floatval($request->get('startTime', 0)), 0);
         $endTime = Math . max(floatval($request->get('endTime', 0)), 0);
         if ($startTime == 0 && $endTime == 0) {
-            throw MediaException::InvalidArgument(
+            MediaException::BadRequest(
                 'both start and end times must be specified, and not equal to zero');
         }
 
