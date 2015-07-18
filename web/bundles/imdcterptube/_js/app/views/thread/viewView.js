@@ -80,6 +80,7 @@ define([
                     bootstrap(element, 'post', 'post/view', {});
                 }
             });
+            $(window).trigger('resize');
         }.bind(this));
     };
 
@@ -217,6 +218,7 @@ define([
                     Helper.autoSize();
                     // is permanent if it's the permanent new post form that's in the thread OP container
                     bootstrap(post, 'post', 'post/new', {is_permanent: $.contains(this.$opContainer[0], $post[0])});
+                    $(window).trigger('resize');
                 }.bind(this));
             }
 
@@ -226,12 +228,13 @@ define([
                     $post.replaceWith(out);
                     Helper.autoSize();
                     bootstrap(post, 'post', 'post/edit', {});
+                    $(window).trigger('resize');
                 }.bind(this));
             }
 
             if (e.view == 'view') {
                 var $posts = this.$postContainer.find('.post-container[data-pid]');
-                // render the entire container for the first post
+                // render the entire container it's the first post
                 var template = $posts.length == 0 ? 'thread_view_posts' : 'post_view';
                 var data = template == 'thread_view_posts' ? {posts: [post.data]} : post.data;
                 dust.render(template, data, function (err, out) {
@@ -254,6 +257,7 @@ define([
                         }
                     }
                     bootstrap(post, 'post', 'post/view', {});
+                    $(window).trigger('resize');
                 }.bind(this));
             }
         }
@@ -285,11 +289,16 @@ define([
                     $post.remove();
 
                     // the last post to be removed has been removed.
-                    // render the container if it's expected to have no posts
-                    if (index == ($posts.length - 1) && $posts.length == $postsToRemove.length) {
-                        dust.render('thread_view_posts', {}, function (err, out) {
-                            this.$postContainer.html(out);
-                        }.bind(this));
+                    if ($posts.length == $postsToRemove.length) {
+                        // render the container if it's expected to have no posts
+                        if (index == ($posts.length - 1)) {
+                            dust.render('thread_view_posts', {}, function (err, out) {
+                                this.$postContainer.html(out);
+                                $(window).trigger('resize');
+                            }.bind(this));
+                        } else {
+                            $(window).trigger('resize');
+                        }
                     }
                 }.bind(this));
             }.bind(this));
