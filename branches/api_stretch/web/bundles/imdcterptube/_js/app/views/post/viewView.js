@@ -1,8 +1,7 @@
 define([
     'model/model',
-    'component/galleryComponent',
-    'core/helper'
-], function (Model, GalleryComponent, Helper) {
+    'component/galleryComponent'
+], function (Model, GalleryComponent) {
     'use strict';
 
     var ViewView = function (controller, options) {
@@ -87,7 +86,6 @@ define([
         this.$new.hide();
         this.controller.new(null)
             .done(function (data) {
-                //TODO make me better
                 this.controller.addToThread(data.post);
             }.bind(this))
             .fail(function (data) {
@@ -100,26 +98,11 @@ define([
 
         this.controller.edit(null)
             .done(function (data) {
-                //TODO make me better
                 this.controller.updateInThread(true);
 
                 if (this.controller.model.get('is_temporal', false)) {
                     this.controller.editKeyPoint({cancel: false});
                 }
-                //FIXME i am a duplicate
-                /*dust.render('post_edit', {post: this.controller.model.data}, function (err, out) {
-                    this.$container.replaceWith(out);
-                    Helper.autoSize();
-                    if (this.controller.model.get('is_temporal', false)) {
-                        this.controller.editKeyPoint({cancel: false});
-                    }
-                    var _self = this;
-                    var EditView = require('views/post/editView');
-                    _self = new EditView(this.controller, this.controller.options);
-                    this.controller.onViewLoaded();
-                    //FIXME view was not present when model was changed. force it now to update the view
-                    this.controller.model.forceChange();
-                }.bind(this));*/
             }.bind(this))
             .fail(function (data) {
                 //TODO
@@ -194,6 +177,7 @@ define([
         this._clickKeyPoint(
             e.model.get('keyPoint.isPlayerPlaying', false)
         );
+        this.$new.show();
     };
 
     return ViewView;

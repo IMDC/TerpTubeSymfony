@@ -1,4 +1,4 @@
-Function.prototype.extend = function (parent) {
+Function.prototype.extend = (function () {
     /*for (var p in parent)
         this[p] = parent[p];
 
@@ -10,10 +10,18 @@ Function.prototype.extend = function (parent) {
 
     return this;*/
 
-    for (var p in parent) {
-        this[p] = parent[p];
-    }
+    return function (parent) {
+        var _self = this;
+        Object.keys(parent).forEach(function (key) {
+            var value = parent[key];
+            if (_.isObject(value)) { //TODO add support for arrays or refactor all classes to use only simple types
+                _self[key] = _.clone(value);
+            } else {
+                _self[key] = value;
+            }
+        });
 
-    this.prototype = Object.create(parent.prototype);
-    this.prototype.constructor = this;
-};
+        this.prototype = Object.create(parent.prototype);
+        this.prototype.constructor = this;
+    }
+})();
