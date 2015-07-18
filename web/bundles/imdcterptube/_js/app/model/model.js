@@ -57,7 +57,7 @@ define([
 
     Model.prototype._dispatch = function (event, keyPath, args) {
         args = _.extend(args || {}, {
-            keyPath: keyPath,
+            keyPath: keyPath || '',
             model: this
         });
 
@@ -95,17 +95,14 @@ define([
     };
 
     Model.prototype.forceChange = function (keyPath, args) {
-        keyPath = typeof keyPath !== 'undefined' ? keyPath : '';
         this._dispatch(Model.Event.CHANGE, keyPath, args);
     };
 
     //TODO move to collection
     Model.prototype.find = function (value, keyPath, collection) {
-        for (var index in collection) {
-            if (collection[index].get(keyPath) == value)
-                return index;
-        }
-        return undefined;
+        return _.findIndex(collection, function (model) {
+            return model.get(keyPath) == value;
+        });
     };
 
     return Model;

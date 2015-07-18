@@ -17,7 +17,7 @@
   "dependencies": {
     "dustjs-linkedin": "~2.7.2",
     "dustjs-linkedin-helpers": "~1.7.0",
-    "underscore": "~1.7.0",
+    "underscore": "~1.8.3",
     "Sortable": "~1.1.1",
     "sockjs-client": "~1.0.0",
     "stomp-websocket": "~2.3.4"

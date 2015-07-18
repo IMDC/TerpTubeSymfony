@@ -23,6 +23,7 @@ define([
         ));
 
         this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this); // KeyPointService
+        this.bind__onThreadPostEvent = this._onThreadPostEvent.bind(this); // ThreadPostService
 
         $tt._instances.push(this);
     };
@@ -54,8 +55,19 @@ define([
         }
     };
 
+    Post.prototype._onThreadPostEvent = function (e) {
+        switch (e.type) {
+            case ThreadPostService.Event.REMOVE:
+                // watch for new post forms being removed
+                if (e.post.get('id') < 0 && e.post.get('parent_post_id') == this.model.get('id'))
+                    this.model.forceChange();
+                break;
+        }
+    };
+
     Post.prototype.onViewLoaded = function () {
         this.addKeyPoint();
+        this.threadPostService.subscribe(this.bind__onThreadPostEvent);
     };
 
     Post.prototype.addKeyPoint = function () {

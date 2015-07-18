@@ -2,7 +2,7 @@ define(['underscore'], function () {
     'use strict';
 
     var Subscriber = function () {
-        this.subscriptions = [];
+        this.subscriptions = {};
     };
 
     Subscriber.prototype._dispatch = function (event, args) {
@@ -25,7 +25,7 @@ define(['underscore'], function () {
     };
 
     Subscriber.prototype.subscribe = function (event, callback) {
-        if (!_.contains(this.subscriptions, event)) {
+        if (!_.has(this.subscriptions, event)) {
             this.subscriptions[event] = [];
         }
 

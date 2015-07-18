@@ -1,35 +1,34 @@
 define([
-    'views/post/newView',
-    'core/helper'
-], function (NewView, Helper) {
+    'views/post/newView'
+], function (NewView) {
     'use strict';
 
     var EditView = function (controller, options) {
         NewView.prototype.constructor.apply(this, arguments);
 
-        this.bind__onClickSubmitEdit = this._onClickSubmitEdit.bind(this);
-        this.bind__onClickCancelEdit = this._onClickCancelEdit.bind(this);
+        this.bind__onClickSubmit = this._onClickSubmit.bind(this);
+        this.bind__onClickCancel = this._onClickCancel.bind(this);
 
-        this.$submitEdit = this.$container.find(EditView.Binder.SUBMIT_EDIT);
-        this.$cancelEdit = this.$container.find(EditView.Binder.CANCEL_EDIT);
+        this.$submit = this.$container.find(EditView.Binder.SUBMIT);
+        this.$cancel = this.$container.find(EditView.Binder.CANCEL);
 
-        this.$submitEdit.on("click", this.bind__onClickSubmitEdit);
-        this.$cancelEdit.on("click", this.bind__onClickCancelEdit);
+        this.$submit.on("click", this.bind__onClickSubmit);
+        this.$cancel.on("click", this.bind__onClickCancel);
     };
 
     EditView.extend(NewView);
 
     EditView.TAG = 'PostEditView';
 
-    EditView.Binder.SUBMIT_EDIT = '.post-submit-edit';
-    EditView.Binder.CANCEL_EDIT = '.post-cancel-edit';
+    EditView.Binder.SUBMIT = '.post-submit-edit';
+    EditView.Binder.CANCEL = '.post-cancel-edit';
 
     EditView.prototype._toggleForm = function (disabled) {
-        this.$submitEdit.button(disabled ? 'loading' : 'reset');
-        this.$cancelEdit.attr('disabled', disabled);
+        this.$submit.button(disabled ? 'loading' : 'reset');
+        this.$cancel.attr('disabled', disabled);
     };
 
-    EditView.prototype._onClickSubmitEdit = function (e) {
+    EditView.prototype._onClickSubmit = function (e) {
         e.preventDefault();
 
         if (!this._preSubmit())
@@ -37,55 +36,27 @@ define([
 
         this.controller.edit(this.$form[0])
             .done(function (data) {
-                //TODO make me better
                 this.controller.updateInThread(false);
 
                 if (this.controller.model.get('is_temporal', false)) {
                     this.controller.editKeyPoint({cancel: true});
                 }
-                //FIXME i am a duplicate
-                /*dust.render('post_view', {post: this.controller.model.data}, function (err, out) {
-                    this.$container.replaceWith(out);
-                    if (this.controller.model.get('is_temporal', false)) {
-                        this.controller.editKeyPoint({cancel: true});
-                    }
-                    var _self = this;
-                    var ViewView = require('views/post/viewView');
-                    _self = new ViewView(this.controller, this.controller.options);
-                    this.controller.onViewLoaded();
-                    //FIXME view was not present when model was changed. force it now to update the view
-                    this.controller.model.forceChange();
-                }.bind(this));*/
             }.bind(this))
             .fail(function (data) {
                 //TODO
             }.bind(this));
     };
 
-    EditView.prototype._onClickCancelEdit = function (e) {
+    EditView.prototype._onClickCancel = function (e) {
         e.preventDefault();
 
         this.controller.get()
             .done(function (data) {
-                //TODO make me better
                 this.controller.updateInThread(false);
 
                 if (this.controller.model.get('is_temporal', false)) {
                     this.controller.editKeyPoint({cancel: true});
                 }
-                //FIXME i am a duplicate
-                /*dust.render('post_view', {post: this.controller.model.data}, function (err, out) {
-                    this.$container.replaceWith(out);
-                    if (this.controller.model.get('is_temporal', false)) {
-                        this.controller.editKeyPoint({cancel: true});
-                    }
-                    var _self = this;
-                    var ViewView = require('views/post/viewView');
-                    _self = new ViewView(this.controller, this.controller.options);
-                    this.controller.onViewLoaded();
-                    //FIXME view was not present when model was changed. force it now to update the view
-                    this.controller.model.forceChange();
-                }.bind(this));*/
             }.bind(this))
             .fail(function (data) {
                 //TODO
