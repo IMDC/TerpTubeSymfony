@@ -13,5 +13,6 @@
         {:else}
             <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
         {/posts}
+        <div class="thread-reply-spacer"></div>
     </div>
 </div>

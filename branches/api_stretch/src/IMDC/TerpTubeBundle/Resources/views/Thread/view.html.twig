@@ -50,39 +50,42 @@
             //
             // following is layout specific. keep it here
             //
-            var bodyPaddingTop = parseInt($("body").css("padding-top"), 10);
-            var bodyPaddingBottom = parseInt($("body").css("padding-bottom"), 10);
+            var reload = function (e) {
+                var $opContainer = $('#threadOpContainer');
+                var $postContainer = $('#threadReplyContainer');
+                var $postSpacer = $postContainer.find('.thread-reply-spacer');
+                
+                var bodyPaddingTop = parseInt($('body').css('padding-top'), 10);
+                var bodyPaddingBottom = parseInt($('body').css('padding-bottom'), 10);
+                var scrollTop = $opContainer.offset().top - bodyPaddingTop;
+                var lastReplyHeight = $postContainer.find('.tt-post-container').last().height();
+                var replyContainerHeight;
+                var plusHeight;
 
-            var replyContainerHeight;
-            var plusHeight;
-            var scrollTop = $("#threadOpContainer").offset().top - bodyPaddingTop;
-            var lastReplyHeight = $("#threadReplyContainer div.tt-post-container").last().height();
-            $("#threadReplyContainer div div").first().append("<div id=\"replyContainerSpacer\"></div>");
-
-            $(window).on("scroll", function(e) {
-                if ($(window).scrollTop() > scrollTop) {
-                    $("#threadReplyContainer").css({
-                        "top": $(window).scrollTop() - scrollTop,
-                        "height": replyContainerHeight + scrollTop
-                    });
-                    $("#replyContainerSpacer").height(plusHeight);
-                } else {
-                    $("#threadReplyContainer").css({
-                        "top": 0,
-                        "height": replyContainerHeight + $(window).scrollTop()
-                    });
-                    $("#replyContainerSpacer").height(plusHeight - scrollTop);
-                }
-            });
-
-            $(window).on("resize", function(e) {
-                replyContainerHeight = $(window).height() - $("#threadOpContainer").offset().top - bodyPaddingBottom;
+                // window resize
+                replyContainerHeight = $(window).height() - $opContainer.offset().top - bodyPaddingBottom;
                 plusHeight = replyContainerHeight - lastReplyHeight;
 
-                $(window).trigger("scroll");
-            });
+                // window scroll
+                if ($(window).scrollTop() > scrollTop) {
+                    $postContainer.css({
+                        top: $(window).scrollTop() - scrollTop,
+                        height: replyContainerHeight + scrollTop
+                    });
+                    $postSpacer.height(plusHeight);
+                } else {
+                    $postContainer.css({
+                        top: 0,
+                        height: replyContainerHeight + $(window).scrollTop()
+                    });
+                    $postSpacer.height(plusHeight - scrollTop);
+                }
+            };
 
-            $(window).trigger("resize");
+            $(window).on('scroll', reload);
+            $(window).on('resize', reload);
+
+            $(window).trigger('resize');
         });
     </script>
 {% endblock header %}
