@@ -9,6 +9,6 @@ class StatusResponse extends RestResponse
 
     public function __construct($code = self::OK, $message = self::MESSAGE_OK)
     {
-        parent::_construct($code, $message);
+        parent::__construct($code, $message);
     }
 }

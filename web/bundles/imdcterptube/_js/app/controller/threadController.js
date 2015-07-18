@@ -75,11 +75,8 @@ define([
             case ThreadPostService.Event.ADD:
                 this.model.addPost(e.post, e.post.get('id') < 0 ? 'new' : 'view');
                 break;
-            case ThreadPostService.Event.EDIT:
-                this.model.forceChangePost(e.post, 'edit');
-                break;
-            case ThreadPostService.Event.VIEW:
-                this.model.forceChangePost(e.post, 'view');
+            case ThreadPostService.Event.REPLACE:
+                this.model.forceChangePost(e.post, e.view);
                 break;
             case ThreadPostService.Event.REMOVE:
                 this.model.removePost(e.post);

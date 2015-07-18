@@ -16,15 +16,19 @@
         require([
             'bootstrap',
             'model/threadModel', 'controller/threadController', 'views/thread/viewView',
-            'model/postModel', 'controller/postController', 'views/post/newView', 'views/post/viewView',
+            'model/postModel', 'controller/postController', 'views/post/newView',
             'main'
-        ], function (bootstrap, ThreadModel, ThreadController, ThreadView, PostModel, PostController, PostNewView, PostViewView) {
+        ], function (bootstrap, ThreadModel, ThreadController, ThreadView, PostModel, PostController, PostNewView) {
+            var thread = {{ thread|serialize('json')|raw }};
+            thread.posts.push({{ post|serialize('json')|raw }});
+
             bootstrap(
-                    new ThreadModel({{ thread|serialize('json')|raw }}),
+                    new ThreadModel(thread),
                     ThreadController,
                     ThreadView,
                     {
-                        container: $("#threadOpContainer"),
+                        container: $('body'),
+                        op_container: $('#threadOpContainer'),
                         post_container: $('#threadReplyContainer'),
                         player: {
                             playHeadImage: "{{ asset('bundles/imdcterptube/img/player/add.png') }}",
@@ -40,22 +44,6 @@
                         }
                     }
             );
-
-            bootstrap(
-                    new PostModel({{ post|serialize('json')|raw }}),
-                    PostController,
-                    PostNewView,
-                    {is_permanent: true}
-            );
-
-            /*$.each({#{ thread.posts|serialize('json')|raw }#}, function (index, post) {
-                bootstrap(
-                        new PostModel(post),
-                        PostController,
-                        PostViewView,
-                        {}
-                );
-            });*/
         });
 
         $(document).ready(function() {
