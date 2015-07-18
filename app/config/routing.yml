@@ -5,7 +5,7 @@ imdc_terp_tube:
 
 imdc_terp_tube_api:
     resource: "@IMDCTerpTubeBundle/Resources/config/routing_api.yml"
-    prefix:   /api
+    prefix:   /api/v1
     schemes:  [https]
 
 fos_user_security:

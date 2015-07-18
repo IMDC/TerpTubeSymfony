@@ -103,7 +103,7 @@ define([
         if (!this._preSubmit())
             return;
 
-        this.controller.new(this.$form[0])
+        this.controller.post(this.$form[0])
             .done(function (data) {
                 this.controller.addToThread(data.post);
 
@@ -115,7 +115,7 @@ define([
                 }
             }.bind(this))
             .fail(function (data) {
-                //TODO
+                this.controller.updateInThread('new');
             }.bind(this));
     };
 

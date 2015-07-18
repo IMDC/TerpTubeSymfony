@@ -34,16 +34,16 @@ define([
         if (!this._preSubmit())
             return;
 
-        this.controller.edit(this.$form[0])
+        this.controller.put(this.$form[0])
             .done(function (data) {
-                this.controller.updateInThread(false);
+                this.controller.updateInThread('view');
 
                 if (this.controller.model.get('is_temporal', false)) {
                     this.controller.editKeyPoint({cancel: true});
                 }
             }.bind(this))
             .fail(function (data) {
-                //TODO
+                this.controller.updateInThread('edit');
             }.bind(this));
     };
 
@@ -52,7 +52,7 @@ define([
 
         this.controller.get()
             .done(function (data) {
-                this.controller.updateInThread(false);
+                this.controller.updateInThread('view');
 
                 if (this.controller.model.get('is_temporal', false)) {
                     this.controller.editKeyPoint({cancel: true});

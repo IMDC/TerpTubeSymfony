@@ -192,8 +192,13 @@ define([
 
             if (e.view == 'new') {
                 dust.render('post_new', post.data, function (err, out) {
-                    var $parentPost = this.$postContainer.find('.post-container[data-pid="' + post.get('parent_post_id') + '"]');
-                    $parentPost.after(out);
+                    var $post = this.$postContainer.find('.post-container[data-pid="' + post.get('id') + '"]');
+                    if ($post.length > 0) {
+                        $post.replaceWith(out);
+                    } else {
+                        var $parentPost = this.$postContainer.find('.post-container[data-pid="' + post.get('parent_post_id') + '"]');
+                        $parentPost.after(out);
+                    }
                     Helper.autoSize();
                     bootstrap(post, 'post', 'post/new', {});
                 }.bind(this));

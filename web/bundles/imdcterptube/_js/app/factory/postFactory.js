@@ -13,17 +13,8 @@ define([
         settings.processData = false;
     };
 
-    PostFactory.new = function (model, form) {
+    PostFactory._newPost = function (model, settings, isPost) {
         var deferred = $.Deferred();
-        var settings = {
-            method: 'POST',
-            url: Routing.generate('imdc_new_post', {
-                threadId: model.get('parent_thread_id'),
-                parentPostId: model.get('parent_post_id') || model.get('id')
-            })
-        };
-
-        PostFactory._prepForFormSubmit(form, settings);
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
@@ -34,10 +25,37 @@ define([
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
+                if (isPost)
+                    model.set('form', jqXHR.responseJSON.form);
                 deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
+    };
+
+    PostFactory.new = function (model) {
+        var settings = {
+            url: Routing.generate('imdc_new_post', {
+                threadId: model.get('parent_thread_id'),
+                parentPostId: model.get('parent_post_id') || model.get('id')
+            })
+        };
+
+        return PostFactory._newPost(model, settings, false);
+    };
+
+    PostFactory.post = function (model, form) {
+        var settings = {
+            method: 'POST',
+            url: Routing.generate('imdc_post_post', {
+                threadId: model.get('parent_thread_id'),
+                parentPostId: model.get('parent_post_id') || model.get('id')
+            })
+        };
+
+        PostFactory._prepForFormSubmit(form, settings);
+
+        return PostFactory._newPost(model, settings, true);
     };
 
     PostFactory.get = function (model) {
@@ -59,14 +77,8 @@ define([
         return deferred.promise();
     };
 
-    PostFactory.edit = function (model, form) {
+    PostFactory._editPut = function (model, settings, isPut) {
         var deferred = $.Deferred();
-        var settings = {
-            method: 'POST',
-            url: Routing.generate('imdc_edit_post', {postId: model.get('id')})
-        };
-
-        PostFactory._prepForFormSubmit(form, settings);
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
@@ -78,10 +90,31 @@ define([
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
+                if (isPut)
+                    model.set('form', jqXHR.responseJSON.form);
                 deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
+    };
+
+    PostFactory.edit = function (model) {
+        var settings = {
+            url: Routing.generate('imdc_edit_post', {postId: model.get('id')})
+        };
+
+        return PostFactory._editPut(model, settings, false);
+    };
+
+    PostFactory.put = function (model, form) {
+        var settings = {
+            method: 'POST',
+            url: Routing.generate('imdc_put_post', {postId: model.get('id')})
+        };
+
+        PostFactory._prepForFormSubmit(form, settings);
+
+        return PostFactory._editPut(model, settings, true);
     };
 
     PostFactory.delete = function (model) {
