@@ -1,14 +1,23 @@
 parameters:
+    # doctrine
     database_driver: pdo_mysql
     database_host: localhost
     database_port: null
     database_name: terptube_symfony
     database_user: symfonyuser
     database_password: FztmbMuUREfAJdWv
+    database_path: null
+
+    # doctrine:test
+    database_test_name: terptube_symfony_test
+
+    # swiftmailer
     mailer_transport: smtp
     mailer_host: 127.0.0.1
     mailer_user: null
     mailer_password: null
     locale: en
     secret: 7c21e2f982644a4db7ef6b7d7d9d0775
-    database_path: null
+
+    jms_serializer.serializer.class: IMDC\TerpTubeBundle\Component\Serializer\Serializer
+    fos_rest.view.exception_wrapper_handler: IMDC\TerpTubeBundle\View\ExceptionWrapperHandler

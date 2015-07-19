@@ -8,6 +8,8 @@ use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
+use IMDC\TerpTubeBundle\Rest\Exception\ForumException;
+use IMDC\TerpTubeBundle\Rest\ForumResponse;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -272,20 +274,12 @@ class ForumController extends FOSRestController implements ClassResourceInterfac
         $em = $this->getDoctrine()->getManager();
         $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumId);
         if (!$forum) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'forum not found'
-            )), 500); //TODO decide status code
+            ForumException::NotFound();
         }
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('DELETE', $forum) === false) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'access denied'
-            )), 500); //TODO decide status code
+            ForumException::AccessDenied();
         }
 
         $user = $this->getUser();
@@ -301,10 +295,8 @@ class ForumController extends FOSRestController implements ClassResourceInterfac
 
         $em->flush();
 
-        return $this->view(array('status' => array(
-            'code' => 0,
-            'message' => 'deleted',
-            'redirectUrl' => $this->generateUrl('imdc_forum_list')
-        )), 200);
+        $resp = new ForumResponse();
+        $resp->setRedirectUrl($this->generateUrl('imdc_forum_list'));
+        return $this->view($resp, 200);
     }
 }

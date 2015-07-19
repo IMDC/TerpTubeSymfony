@@ -32,7 +32,7 @@ define([
             return ThreadFactory.delete(thread)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'redirectUrl', 'result should have key:redirectUrl');
+                    assert.property(data, 'redirect_url', 'result should have key:redirect_url');
                     done();
                 })
                 .fail(function (data) {

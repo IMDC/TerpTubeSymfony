@@ -139,10 +139,10 @@ define([
                 })
                 .fail(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'mediaInUse', 'result should have key:mediaInUse');
+                    assert.property(data, 'in_use', 'result should have key:in_use');
                     assert.property(data, 'confirmText', 'result should have key:confirmText');
 
-                    assert.isArray(data.mediaInUse, 'key:mediaInUse should be an array');
+                    assert.isArray(data.in_use, 'key:in_use should be an array');
                     assert.isString(data.confirmText, 'key:confirmText should be a string');
                     done();
                 });

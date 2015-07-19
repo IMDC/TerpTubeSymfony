@@ -80,6 +80,7 @@ define([
                     bootstrap(element, 'post', 'post/view', {});
                 }
             });
+            //TODO layout bindings
             $(window).trigger('resize');
         }.bind(this));
     };
@@ -218,6 +219,7 @@ define([
                     Helper.autoSize();
                     // is permanent if it's the permanent new post form that's in the thread OP container
                     bootstrap(post, 'post', 'post/new', {is_permanent: $.contains(this.$opContainer[0], $post[0])});
+                    //TODO layout bindings
                     $(window).trigger('resize');
                 }.bind(this));
             }
@@ -228,6 +230,7 @@ define([
                     $post.replaceWith(out);
                     Helper.autoSize();
                     bootstrap(post, 'post', 'post/edit', {});
+                    //TODO layout bindings
                     $(window).trigger('resize');
                 }.bind(this));
             }
@@ -257,6 +260,7 @@ define([
                         }
                     }
                     bootstrap(post, 'post', 'post/view', {});
+                    //TODO layout bindings
                     $(window).trigger('resize');
                 }.bind(this));
             }
@@ -294,9 +298,11 @@ define([
                         if (index == ($posts.length - 1)) {
                             dust.render('thread_view_posts', {}, function (err, out) {
                                 this.$postContainer.html(out);
+                                //TODO layout bindings
                                 $(window).trigger('resize');
                             }.bind(this));
                         } else {
+                            //TODO layout bindings
                             $(window).trigger('resize');
                         }
                     }

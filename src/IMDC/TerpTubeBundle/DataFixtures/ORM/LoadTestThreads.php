@@ -6,18 +6,18 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use IMDC\TerpTubeBundle\Entity\AccessType;
-use IMDC\TerpTubeBundle\Entity\Forum;
+use IMDC\TerpTubeBundle\Entity\Thread;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class LoadTestForums
+ * Class LoadTestThreads
  * @package IMDC\TerpTubeBundle\DataFixtures\ORM
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class LoadTestForums extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadTestThreads extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
-    const NUM_TEST_FORUMS = 5;
+    const NUM_TEST_THREADS = 5;
 
     /**
      * @var ContainerInterface
@@ -41,20 +41,21 @@ class LoadTestForums extends AbstractFixture implements OrderedFixtureInterface,
             return;
         }
 
-        for ($count = 1; $count <= self::NUM_TEST_FORUMS; $count++) {
-            $title = 'test_forum_' . $count;
+        for ($count = 1; $count <= self::NUM_TEST_THREADS; $count++) {
+            $title = 'test_thread_' . $count;
             $currentDate = new \DateTime();
             $accessType = $manager->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC);
 
-            $forum = new Forum();
-            $forum->setTitleText($title);
-            $forum->setLastActivity($currentDate);
-            $forum->setCreationDate($currentDate);
-            $forum->setAccessType($accessType);
+            $thread = new Thread();
+            $thread->setTitle($title);
+            $thread->setCreationDate($currentDate);
+            $thread->setLocked(false);
+            $thread->setSticky(false);
+            $thread->setAccessType($accessType);
 
-            $manager->persist($forum);
+            $manager->persist($thread);
 
-            $this->addReference($title, $forum);
+            $this->addReference($title, $thread);
         }
 
         $manager->flush();
@@ -65,6 +66,6 @@ class LoadTestForums extends AbstractFixture implements OrderedFixtureInterface,
      */
     public function getOrder()
     {
-        return 3;
+        return 5;
     }
 }

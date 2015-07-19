@@ -99,7 +99,7 @@ define([
                 //TODO move. should be done at view level
                 var data = jqXHR.responseJSON;
                 var mediaInUseTexts = [];
-                data.mediaInUse.forEach(function(element, index, array) {
+                data.in_use.forEach(function(element, index, array) {
                     mediaInUseTexts.push(
                         Translator.trans('filesGateway.deleteMediaInUseConfirmation.' + element)
                     );

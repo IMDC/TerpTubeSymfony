@@ -18,7 +18,7 @@ class RestException
     const ACCESS_DENIED = 2;
     const BAD_REQUEST = 3;
 
-    const MESSAGE_INITIAL = 'n/a';
+    const MESSAGE_INITIAL = 'unknown';
     const MESSAGE_NOT_FOUND = 'not found';
     const MESSAGE_ACCESS_DENIED = 'access denied';
     const MESSAGE_INVALID_ARGUMENT = 'invalid argument';
@@ -31,19 +31,19 @@ class RestException
         self::BAD_REQUEST => self::MESSAGE_BAD_REQUEST
     );
 
-    protected static function getMessage($message = self::MESSAGE_INITIAL)
+    public static function getMessage($message = self::MESSAGE_INITIAL)
     {
         return static::AREA . '|' . $message;
     }
 
-    protected static function getCode($code = self::INITIAL)
+    public static function getCode($code = self::INITIAL)
     {
         return intval(static::CODE_PREFIX . $code);
     }
 
     protected static function prepare($code, $message)
     {
-        $message = strlen($message) > 0 ? $message : self::getMessage(static::$messageMap[$code]);
+        $message = static::getMessage(strlen($message) > 0 ? $message : static::$messageMap[$code]);
         $code = static::getCode($code);
         return new RestResponse($code, $message);
     }
