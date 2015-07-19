@@ -101,6 +101,7 @@ class PostControllerTest extends BaseWebTestCase
 
         $this->assertArrayHasKey('post', $response);
         $this->assertNotNull($response['post']['id']);
+        $this->assertArrayHasKey('ordered_media', $response['post']);
         $this->assertMedia($response['post']['ordered_media'], $mediaIds);
     }
 
@@ -182,6 +183,7 @@ class PostControllerTest extends BaseWebTestCase
         $this->assertArrayHasKey('post', $response);
         $this->assertEquals($post->getId(), $response['post']['id']);
         $this->assertEquals($content, $response['post']['content']);
+        $this->assertArrayHasKey('ordered_media', $response['post']);
         $this->assertMedia($response['post']['ordered_media'], $mediaIds);
     }
 

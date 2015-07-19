@@ -27,7 +27,7 @@ class ForumControllerWebTest extends BaseWebTestCase
     {
         $this->reloadDatabase(array(
             'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUsers',
-            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestGroups',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUserGroups',
             'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestForums',
             'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
         ));
@@ -87,8 +87,7 @@ class ForumControllerWebTest extends BaseWebTestCase
         $crawler = $this->client->followRedirect();
         $model = Common::getModel($crawler);
 
-        $this->assertTrue(is_array($model['ordered_media']));
-        $this->assertCount(count($mediaIds), $model['ordered_media']);
+        $this->assertArrayHasKey('ordered_media', $model);
         $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
@@ -238,8 +237,7 @@ class ForumControllerWebTest extends BaseWebTestCase
         $crawler = $this->client->followRedirect();
         $model = Common::getModel($crawler);
 
-        $this->assertTrue(is_array($model['ordered_media']));
-        $this->assertCount(count($mediaIds), $model['ordered_media']);
+        $this->assertArrayHasKey('ordered_media', $model);
         $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
@@ -258,6 +256,7 @@ class ForumControllerWebTest extends BaseWebTestCase
 
         $this->assertArrayHasKey('code', $response);
         $this->assertEquals(ForumResponse::OK, $response['code']);
+        $this->assertArrayHasKey('redirect_url', $response);
         $this->assertRegExp('/\/forum\/$/', $response['redirect_url']);
     }
 }

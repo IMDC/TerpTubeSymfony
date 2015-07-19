@@ -212,6 +212,7 @@ class UserGroupController extends FOSRestController implements ClassResourceInte
     /**
      * @Rest\Route()
      * @Rest\View()
+     * @Rest\Delete("/groups/{groupId}")
      *
      * @param $groupId
      * @return \FOS\RestBundle\View\View
@@ -582,13 +583,17 @@ class UserGroupController extends FOSRestController implements ClassResourceInte
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         $groupMemberIds = $usersToIntArray->transform($group->getMembers());
 
-        $nonMembers = $nonMembersQb
+        $nonMembersQb
             ->leftJoin('u.profile', 'p', Join::WITH, $nonMembersQb->expr()->eq('u.profile', 'p.id'))
             ->andWhere($nonMembersQb->expr()->eq('p.profileVisibleToPublic', ':public'))
-            ->andWhere($nonMembersQb->expr()->notIn('u.id', ':groupMemberIds'))
-            ->setParameter('public', 1)
-            ->setParameter('groupMemberIds', $groupMemberIds)
-            ->getQuery()->getResult();
+            ->setParameter('public', 1);
+
+        if (!empty($groupMemberIds))
+            $nonMembersQb
+                ->andWhere($nonMembersQb->expr()->notIn('u.id', ':groupMemberIds'))
+                ->setParameter('groupMemberIds', $groupMemberIds);
+
+        $nonMembers = $nonMembersQb->getQuery()->getResult();
 
         // exclude users that have a pending invitation for the group
         $numNonMembers = count($nonMembers);

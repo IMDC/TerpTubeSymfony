@@ -24,7 +24,6 @@ class ContactControllerWebTest extends BaseWebTestCase
         $this->client = static::createClient();
         /** @var User $user1 */
         $user1 = $this->referenceRepo->getReference('test_user_1');
-
         Common::login($this->client, $user1->getUsername());
 
         // add users to friends list
