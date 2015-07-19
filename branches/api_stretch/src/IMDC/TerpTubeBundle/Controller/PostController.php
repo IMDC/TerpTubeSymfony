@@ -11,7 +11,7 @@ use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Rest\Exception\PostException;
 use IMDC\TerpTubeBundle\Rest\PostResponse;
 use IMDC\TerpTubeBundle\Rest\Response;
-use IMDC\TerpTubeBundle\Rest\StatusResponse;
+use IMDC\TerpTubeBundle\Rest\RestResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -250,6 +250,6 @@ class PostController extends FOSRestController implements ClassResourceInterface
         $em->remove($post);
         $em->flush();
 
-        return $this->view(new StatusResponse());
+        return $this->view(new RestResponse());
     }
 }

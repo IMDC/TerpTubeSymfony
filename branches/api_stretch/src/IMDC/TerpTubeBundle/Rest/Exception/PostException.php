@@ -16,6 +16,7 @@ class PostException extends RestException
 
         $resp = new PostResponse(null, $prepared->getCode(), $prepared->getMessage());
         $resp->setForm($form);
+
         return View::create($resp, 400);
     }
 }

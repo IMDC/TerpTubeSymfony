@@ -11,7 +11,7 @@ use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Rest\Exception\MediaException;
 use IMDC\TerpTubeBundle\Rest\MediaResponse;
-use IMDC\TerpTubeBundle\Rest\StatusResponse;
+use IMDC\TerpTubeBundle\Rest\RestResponse;
 use IMDC\TerpTubeBundle\Utils\Utils;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\HttpFoundation\Request;
@@ -165,7 +165,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $confirm = filter_var($request->request->get('confirm', false), FILTER_VALIDATE_BOOLEAN);
         $this->get('logger')->info("confirm: " . $confirm);
         if ($needsConfirmation && !$confirm) {
-            MediaException::Exception(MediaException::MESSAGE_IN_USE);
+            return MediaException::InUse($mediaInUse);
         }
 
         // User has confirmed, remove the media from all the places and then remove it
@@ -191,7 +191,7 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
         $em->remove($media);
         $em->flush();
 
-        return $this->view(new StatusResponse(StatusResponse::OK, MediaResponse::MESSAGE_DELETE_SUCCESS));
+        return $this->view(new MediaResponse(null, RestResponse::OK, MediaResponse::MESSAGE_DELETE_SUCCESS));
     }
 
     /**
@@ -215,8 +215,8 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
             MediaException::NotFound();
         }
 
-        $startTime = Math . max(floatval($request->get('startTime', 0)), 0);
-        $endTime = Math . max(floatval($request->get('endTime', 0)), 0);
+        $startTime = max(floatval($request->get('startTime', 0)), 0);
+        $endTime = max(floatval($request->get('endTime', 0)), 0);
         if ($startTime == 0 && $endTime == 0) {
             MediaException::BadRequest(
                 'both start and end times must be specified, and not equal to zero');

@@ -9,6 +9,8 @@ use IMDC\TerpTubeBundle\Entity;
 use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
+use IMDC\TerpTubeBundle\Rest\Exception\ContactException;
+use IMDC\TerpTubeBundle\Rest\RestResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -112,11 +114,7 @@ class ContactController extends FOSRestController implements ClassResourceInterf
         $userIds = $request->get('userIds', array());
         $contactList = strtolower((string)$request->get('contactList'));
         if (empty($contactList)) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'contact list must not be empty'
-            )), 500); //TODO decide status code
+            ContactException::BadRequest(ContactException::MESSAGE_INVALID_LIST);
         }
 
         $user = $this->getUser();
@@ -148,21 +146,14 @@ class ContactController extends FOSRestController implements ClassResourceInterf
 //                         $contact->getFriendsList()->removeElement($user);
                     break;
                 default:
-                    //TODO api exception
-                    return $this->view(array('error' => array(
-                        'code' => 0,
-                        'message' => 'invalid contact list'
-                    )), 500); //TODO decide status code
+                    ContactException::BadRequest(ContactException::MESSAGE_INVALID_LIST);
             }
         }
 
         $em->persist($user);
         $em->flush();
 
-        return $this->view(array('status' => array(
-            'code' => 0,
-            'message' => 'deleted'
-        )), 200);
+        return $this->view(new RestResponse());
     }
 
     /**

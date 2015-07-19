@@ -2,6 +2,9 @@
 
 namespace IMDC\TerpTubeBundle\Rest\Exception;
 
+use FOS\RestBundle\View\View;
+use IMDC\TerpTubeBundle\Rest\MediaResponse;
+
 class MediaException extends RestException
 {
     const AREA = 'media';
@@ -20,5 +23,15 @@ class MediaException extends RestException
     public static function AccessDenied()
     {
         parent::AccessDenied(self::MESSAGE_NOT_OWNER);
+    }
+
+    public static function InUse($media)
+    {
+        $prepared = static::prepare(self::INITIAL, self::MESSAGE_IN_USE);
+
+        $resp = new MediaResponse(null, $prepared->getCode(), $prepared->getMessage());
+        $resp->setInUse($media);
+
+        return View::create($resp, 500);
     }
 }

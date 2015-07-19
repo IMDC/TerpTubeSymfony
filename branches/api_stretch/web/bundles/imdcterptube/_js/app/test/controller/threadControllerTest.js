@@ -179,13 +179,13 @@ define([
             $.mockjax({
                 url: Routing.generate('imdc_delete_thread', {threadId: model.get('id')}),
                 responseText: {
-                    redirectUrl: Common.BASE_URL + '/forum/'
+                    redirect_url: Common.BASE_URL + '/forum/'
                 }
             });
 
             return controller.delete()
                 .done(function (data) {
-                    assert.equal(pageUrl, data.redirectUrl, 'pageUrl should equal key:redirectUrl');
+                    assert.equal(pageUrl, data.redirect_url, 'pageUrl should equal key:redirect_url');
                 })
                 .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');

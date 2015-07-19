@@ -10,10 +10,16 @@ class ExceptionWrapper
 
     public function __construct($data)
     {
-        $this->code = $data['exception']->getCode();
-
         $message = explode('|', $data['message']);
-        $this->area = $message[0];
-        $this->message = $message[1];
+
+        if (count($message) == 2) {
+            $this->code = $data['exception']->getCode();
+            $this->area = $message[0];
+            $this->message = $message[1];
+        } else {
+            $this->code = $data['status_code'];
+            $this->area = 'unknown';
+            $this->message = $message;
+        }
     }
 }

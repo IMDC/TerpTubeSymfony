@@ -1,11 +1,10 @@
-<!-- thread replies -->
 <div class="row">
     <div class="col-md-12">
         {#posts}
             {^is_post_reply}
-                <!-- post -->
+                {! post !}
                 {>"post_view" post=. /}
-                <!-- post replies -->
+                {! post replies !}
                 {#replies}
                     {>"post_view" post=. /}
                 {/replies}

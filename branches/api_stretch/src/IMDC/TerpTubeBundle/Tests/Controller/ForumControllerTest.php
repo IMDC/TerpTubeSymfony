@@ -6,6 +6,7 @@ use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\User;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
+use IMDC\TerpTubeBundle\Rest\ForumResponse;
 use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
@@ -72,6 +73,7 @@ class ForumControllerWebTest extends BaseWebTestCase
     public function testNew_SubmitFormWithMedia()
     {
         $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
+
         $crawler = $this->client->request('GET', '/forum/new');
         $this->logResponse(__FUNCTION__, 'form');
 
@@ -83,19 +85,11 @@ class ForumControllerWebTest extends BaseWebTestCase
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
-
         $model = Common::getModel($crawler);
 
         $this->assertTrue(is_array($model['ordered_media']));
         $this->assertCount(count($mediaIds), $model['ordered_media']);
-        // check existence
-        foreach ($model['ordered_media'] as $m) {
-            $this->assertContains($m['id'], $mediaIds);
-        }
-        // check order
-        foreach ($mediaIds as $key => $mediaId) {
-            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
-        }
+        $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
     /**
@@ -104,13 +98,15 @@ class ForumControllerWebTest extends BaseWebTestCase
     public function testNew_SubmitFormWithTitle()
     {
         $title = 'test:new';
+
         $crawler = $this->client->request('GET', '/forum/new');
-        $this->logResponse(__FUNCTION__);
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="forum"] > button:contains("Create")')->form(array(
             'forum[titleText]' => $title
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
@@ -146,19 +142,19 @@ class ForumControllerWebTest extends BaseWebTestCase
         $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
         $this->entityManager->persist($group);
         $this->entityManager->flush();
-
         $title = 'test:new';
+
         $crawler = $this->client->request('GET', '/forum/new/' . $group->getId());
-        $this->logResponse(__FUNCTION__);
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="forum"] > button:contains("Create")')->form(array(
             'forum[titleText]' => $title
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
-
         $model = Common::getModel($crawler);
 
         $this->assertCount(1, $crawler->filter('title:contains("' . $title . '")'));
@@ -169,6 +165,7 @@ class ForumControllerWebTest extends BaseWebTestCase
     {
         /** @var Forum $forum */
         $forum = $this->referenceRepo->getReference('test_forum_1');
+
         $crawler = $this->client->request('GET', '/forum/' . $forum->getId());
         $this->logResponse(__FUNCTION__);
 
@@ -201,15 +198,16 @@ class ForumControllerWebTest extends BaseWebTestCase
         $this->grantAccessToObject($forum, $this->loggedInUser);
         $this->entityManager->persist($forum);
         $this->entityManager->flush();
-
         $title = 'test:edit';
+
         $crawler = $this->client->request('GET', '/forum/' . $forum->getId() . '/edit');
-        $this->logResponse(__FUNCTION__);
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="forum"] > div > div > button:contains("Save")')->form(array(
             'forum[titleText]' => $title
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
@@ -225,8 +223,8 @@ class ForumControllerWebTest extends BaseWebTestCase
         $this->grantAccessToObject($forum, $this->loggedInUser);
         $this->entityManager->persist($forum);
         $this->entityManager->flush();
-
         $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
+
         $crawler = $this->client->request('GET', '/forum/' . $forum->getId() . '/edit');
         $this->logResponse(__FUNCTION__, 'form');
 
@@ -238,19 +236,11 @@ class ForumControllerWebTest extends BaseWebTestCase
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
-
         $model = Common::getModel($crawler);
 
         $this->assertTrue(is_array($model['ordered_media']));
         $this->assertCount(count($mediaIds), $model['ordered_media']);
-        // check existence
-        foreach ($model['ordered_media'] as $m) {
-            $this->assertContains($m['id'], $mediaIds);
-        }
-        // check order
-        foreach ($mediaIds as $key => $mediaId) {
-            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
-        }
+        $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
     public function testDelete()
@@ -262,13 +252,12 @@ class ForumControllerWebTest extends BaseWebTestCase
         $this->entityManager->persist($forum);
         $this->entityManager->flush();
 
-        $this->client->request('POST', '/forum/' . $forum->getId() . '/delete');
+        $this->client->request('DELETE', '/api/v1/forums/' . $forum->getId());
         $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasDeleted', $response);
-        $this->assertArrayHasKey('redirectUrl', $response);
-        $this->assertTrue($response['wasDeleted']);
-        $this->assertRegExp('/\/forum\/$/', $response['redirectUrl']);
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(ForumResponse::OK, $response['code']);
+        $this->assertRegExp('/\/forum\/$/', $response['redirect_url']);
     }
 }

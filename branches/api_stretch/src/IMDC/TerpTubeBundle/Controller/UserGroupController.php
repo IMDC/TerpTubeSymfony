@@ -15,6 +15,8 @@ use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
 use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
+use IMDC\TerpTubeBundle\Rest\Exception\UserGroupException;
+use IMDC\TerpTubeBundle\Rest\UserGroupResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -220,20 +222,12 @@ class UserGroupController extends FOSRestController implements ClassResourceInte
         $em = $this->getDoctrine()->getManager();
         $group = $em->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
         if (!$group) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'group not found'
-            )), 500); //TODO decide status code
+            UserGroupException::NotFound();
         }
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('DELETE', $group) === false) {
-            //TODO api exception
-            return $this->view(array('error' => array(
-                'code' => 0,
-                'message' => 'access denied'
-            )), 500); //TODO decide status code
+            UserGroupException::AccessDenied();
         }
 
         foreach ($group->getMembers() as $member) {
@@ -249,11 +243,9 @@ class UserGroupController extends FOSRestController implements ClassResourceInte
 
         $em->flush();
 
-        return $this->view(array('status' => array(
-            'code' => 0,
-            'message' => 'deleted',
-            'redirectUrl' => $this->generateUrl('imdc_group_list')
-        )), 200);
+        $resp = new UserGroupResponse();
+        $resp->setRedirectUrl($this->generateUrl('imdc_group_list'));
+        return $this->view($resp, 200);
     }
 
     /**
