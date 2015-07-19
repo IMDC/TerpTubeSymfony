@@ -97,8 +97,7 @@ class ThreadControllerTest extends BaseWebTestCase
         $crawler = $this->client->followRedirect();
         $model = Common::getModel($crawler);
 
-        $this->assertTrue(is_array($model['ordered_media']));
-        $this->assertCount(count($mediaIds), $model['ordered_media']);
+        $this->assertArrayHasKey('ordered_media', $model);
         $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
@@ -207,6 +206,7 @@ class ThreadControllerTest extends BaseWebTestCase
 
         $this->assertArrayHasKey('code', $response);
         $this->assertEquals(ThreadResponse::OK, $response['code']);
+        $this->assertArrayHasKey('redirect_url', $response);
         $this->assertRegExp('/\/forum\/\d+$/', $response['redirect_url']);
     }
 }

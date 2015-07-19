@@ -11,13 +11,13 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class LoadTestGroups
+ * Class LoadTestUserGroups
  * @package IMDC\TerpTubeBundle\DataFixtures\ORM
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class LoadTestGroups extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadTestUserGroups extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
-    const NUM_TEST_GROUPS = 5;
+    const NUM_TEST_USER_GROUPS = 5;
 
     /**
      * @var ContainerInterface
@@ -44,7 +44,7 @@ class LoadTestGroups extends AbstractFixture implements OrderedFixtureInterface,
         /** @var GroupManager $groupManager */
         $groupManager = $this->container->get('fos_user.group_manager');
 
-        for ($count = 1; $count <= self::NUM_TEST_GROUPS; $count++) {
+        for ($count = 1; $count <= self::NUM_TEST_USER_GROUPS; $count++) {
             $name = 'test_group_' . $count;
 
             /** @var UserGroup $group */

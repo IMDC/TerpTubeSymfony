@@ -69,8 +69,6 @@ class MediaControllerTest extends BaseWebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('media', $response);
-        $this->assertTrue(is_array($response['media']));
-        $this->assertCount(count($mediaIds), $response['media']);
         $this->assertMedia($response['media'], $mediaIds);
     }
 

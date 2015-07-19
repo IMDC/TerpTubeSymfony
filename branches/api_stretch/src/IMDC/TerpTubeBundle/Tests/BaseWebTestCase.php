@@ -133,6 +133,8 @@ class BaseWebTestCase extends WebTestCase
 
     protected function assertMedia($media, $mediaIds)
     {
+        $this->assertTrue(is_array($media));
+        $this->assertCount(count($mediaIds), $media);
         // check existence
         foreach ($media as $m) {
             $this->assertContains($m['id'], $mediaIds);
