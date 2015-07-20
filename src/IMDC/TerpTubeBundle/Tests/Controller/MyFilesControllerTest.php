@@ -2,10 +2,12 @@
 
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
+use IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia;
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\User;
 use IMDC\TerpTubeBundle\Form\Type\MediaType;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
-use IMDC\TerpTubeBundle\Tests\MediaTestCase;
-use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -13,25 +15,53 @@ use Symfony\Component\DomCrawler\Crawler;
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class MyFilesControllerTest extends MediaTestCase
+class MyFilesControllerTest extends BaseWebTestCase
 {
     /**
-     * @var Client
+     * @var User
      */
-    private $client;
+    private $loggedInUser;
+
+    /**
+     * @var string
+     */
+    private $filesPath;
+
+    /**
+     * @var string
+     */
+    private $resourceUploadPath;
 
     public function setUp()
     {
-        parent::setUp();
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUsers',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
 
         $this->client = static::createClient();
+        /** @var User $user */
+        $user = $this->referenceRepo->getReference('test_user_1');
+        Common::login($this->client, $user->getUsername());
+        $this->loggedInUser = $user;
 
-        Common::login($this->client);
+        // give logged in user media
+        for ($i = 1; $i <= 2; $i++) {
+            /** @var Media $media */
+            $media = $this->referenceRepo->getReference('test_media_1_' . $i);
+            $media->setOwner($this->loggedInUser);
+            $this->entityManager->persist($media);
+        }
+        $this->entityManager->flush();
+
+        $this->filesPath = $this->getContainer()->getParameter('imdc_terptube.tests.files_path');
+        $this->resourceUploadPath = implode('/', $this->getContainer()->getParameter('imdc_terptube.resource_file'));
     }
 
-    /*public function testList()
+    public function testList()
     {
         $crawler = $this->client->request('GET', '/myFiles/');
+        $this->logResponse(__FUNCTION__);
 
         $this->assertCount(1, $crawler->filter(
             '.tt-myFiles-list-table, .tt-myFiles-grid-div'
@@ -47,13 +77,12 @@ class MyFilesControllerTest extends MediaTestCase
         $this->client->request('GET', '/myFiles/', array(), array(), array(
             'HTTP_X-Requested-With' => 'XMLHttpRequest'
         ));
-
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
+
         $this->assertArrayHasKey('page', $response);
 
-        $crawler = new Crawler();
-        $crawler->addContent($response['page']);
-
+        $crawler = new Crawler($response['page']);
         $this->assertCount(1, $crawler->filter(
             '.tt-myFiles-list-table, .tt-myFiles-grid-div'
         ), 'list-table or grid-div should be present');
@@ -63,19 +92,14 @@ class MyFilesControllerTest extends MediaTestCase
 
     public function testAddRecording_Chrome()
     {
-        $videoBlob = $this->createUploadedFile('video.webm');
-        $audioBlob = $this->createUploadedFile('audio.wav');
+        $videoBlob = LoadTestMedia::createUploadedFile($this->filesPath, 'video.webm');
+        $audioBlob = LoadTestMedia::createUploadedFile($this->filesPath, 'audio.wav');
 
         $this->client->request('POST', '/myFiles/add/recording', array(), array(
             'video-blob' => $videoBlob,
             'audio-blob' => $audioBlob
         ));
-
-        file_put_contents(
-            '../test_logs/MyFilesControllerTest.testAddRecording_Chrome.html',
-            $this->client->getResponse()->getContent()
-        );
-
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('responseCode', $response);
@@ -84,28 +108,19 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertEquals(200, $response['responseCode']);
         $this->assertEquals('media added', $response['feedback']);
         $this->assertFalse($response['media']['is_interpretation']);
-        $this->assertFileExists(
-            static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
-    }*/
+        $this->assertFileExists($this->resourceUploadPath . '/' . $response['media']['source_resource']['id'] . '.placeholder');
+    }
 
     public function testAddRecording_Firefox()
     {
-        $audioBlob = $this->createUploadedFile('video_audio.webm');
+        $audioBlob = LoadTestMedia::createUploadedFile($this->filesPath, 'video_audio.webm');
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isFirefox' => true
         ), array(
             'audio-blob' => $audioBlob
         ));
-
-        file_put_contents(
-            '../test_logs/MyFilesControllerTest.testAddRecording_Firefox.html',
-            $this->client->getResponse()->getContent()
-        );
-
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('responseCode', $response);
@@ -114,17 +129,13 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertEquals(200, $response['responseCode']);
         $this->assertEquals('media added', $response['feedback']);
         $this->assertFalse($response['media']['is_interpretation']);
-        $this->assertFileExists(
-            static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
+        $this->assertFileExists($this->resourceUploadPath . '/' . $response['media']['source_resource']['id'] . '.placeholder');
     }
 
-    /*public function testAddRecording_ChromeInterpretation()
+    public function testAddRecording_ChromeInterpretation()
     {
-        $videoBlob = $this->createUploadedFile('case02_video_1316.918333s_480p_1000k.webm');
-        $audioBlob = $this->createUploadedFile('case02_audio_1316.918333s.wav');
+        $videoBlob = LoadTestMedia::createUploadedFile($this->filesPath, 'case02_video_1316.918333s_480p_1000k.webm');
+        $audioBlob = LoadTestMedia::createUploadedFile($this->filesPath, 'case02_audio_1316.918333s.wav');
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isInterpretation' => true,
@@ -134,12 +145,7 @@ class MyFilesControllerTest extends MediaTestCase
             'video-blob' => $videoBlob,
             'audio-blob' => $audioBlob
         ));
-
-        file_put_contents(
-            '../test_logs/MyFilesControllerTest.testAddRecording_ChromeInterpretation.html',
-            $this->client->getResponse()->getContent()
-        );
-
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('responseCode', $response);
@@ -148,16 +154,13 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertEquals(200, $response['responseCode']);
         $this->assertEquals('media added', $response['feedback']);
         $this->assertTrue($response['media']['is_interpretation']);
-        $this->assertFileExists(
-            static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
+        $this->assertFileExists($this->resourceUploadPath . '/' . $response['media']['source_resource']['id'] . '.placeholder');
     }
 
     public function testAddRecording_FirefoxInterpretation()
     {
-        $audioBlob = $this->createUploadedFile('case02_video+audio_1316.918333s_480p_1000k.webm');
+        $audioBlob = LoadTestMedia::createUploadedFile($this->filesPath,
+            'case02_video+audio_1316.918333s_480p_1000k.webm');
 
         $this->client->request('POST', '/myFiles/add/recording', array(
             'isFirefox' => true,
@@ -167,12 +170,7 @@ class MyFilesControllerTest extends MediaTestCase
         ), array(
             'audio-blob' => $audioBlob
         ));
-
-        file_put_contents(
-            '../test_logs/MyFilesControllerTest.testAddRecording_FirefoxInterpretation.html',
-            $this->client->getResponse()->getContent()
-        );
-
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('responseCode', $response);
@@ -181,16 +179,12 @@ class MyFilesControllerTest extends MediaTestCase
         $this->assertEquals(200, $response['responseCode']);
         $this->assertEquals('media added', $response['feedback']);
         $this->assertTrue($response['media']['is_interpretation']);
-        $this->assertFileExists(
-            static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
+        $this->assertFileExists($this->resourceUploadPath . '/' . $response['media']['source_resource']['id'] . '.placeholder');
     }
 
     public function testAddAction()
     {
-        $file = $this->createUploadedFile('case02_video+audio_1316.918333s_480p_1000k.webm');
+        $file = LoadTestMedia::createUploadedFile($this->filesPath, 'case02_video+audio_1316.918333s_480p_1000k.webm');
 
         $form = $this->client->getContainer()
             ->get('form.factory')
@@ -207,17 +201,14 @@ class MyFilesControllerTest extends MediaTestCase
 
         $this->client->request('POST', '/myFiles/add', $values, array(
             'media' => array(
-                'resource' => array(
+                'source_resource' => array(
                     'file' => $file))));
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('wasUploaded', $response);
         $this->assertArrayHasKey('media', $response);
         $this->assertTrue($response['wasUploaded']);
-        $this->assertFileExists(
-            static::$kernel->getRootDir() . '/../web/uploads/media/' . $response['media']['resource']['id'] . '.webm');
-
-        // find media to have it removed at tear down
-        $this->media = $this->entityManager->find('IMDCTerpTubeBundle:Media', $response['media']['id']);
-    }*/
+        $this->assertFileExists($this->resourceUploadPath . '/' . $response['media']['source_resource']['id'] . '.placeholder');
+    }
 }

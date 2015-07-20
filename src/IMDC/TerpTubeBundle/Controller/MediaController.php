@@ -6,7 +6,7 @@ use FFMpeg\FFProbe;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use IMDC\TerpTubeBundle\Consumer\TrimConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Rest\Exception\MediaException;
@@ -222,14 +222,14 @@ class MediaController extends FOSRestController implements ClassResourceInterfac
                 'both start and end times must be specified, and not equal to zero');
         }
 
-        /** @var ResourceFile $resource */
-        $resource = $media->getResources()->get(0);
+        //** @var ResourceFile $resource */
+        //$resource = $media->getResources()->get(0);
 
         $trimOpts = new TrimConsumerOptions();
         $trimOpts->mediaId = $media->getId();
         $trimOpts->startTime = $startTime;
         $trimOpts->endTime = $endTime;
-        $trimOpts->currentDuration = $resource->getMetaData()->getDuration();
+        //$trimOpts->currentDuration = $resource->getMetaData()->getDuration();
 
         /** @var Producer $trimProducer */
         $trimProducer = $this->container->get('old_sound_rabbit_mq.trim_producer');

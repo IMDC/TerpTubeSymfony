@@ -1,6 +1,6 @@
 <?php
 
-namespace IMDC\TerpTubeBundle\Consumer;
+namespace IMDC\TerpTubeBundle\Consumer\Options;
 
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -13,7 +13,7 @@ abstract class MultiplexOperation
 class MultiplexConsumerOptions extends AbstractMediaConsumerOptions
 {
     /**
-     * @var MultiplexOperation
+     * @var \IMDC\TerpTubeBundle\Consumer\Options\MultiplexOperation
      */
     public $operation;
 
