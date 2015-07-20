@@ -5,13 +5,13 @@ namespace IMDC\TerpTubeBundle\Consumer;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
+use IMDC\TerpTubeBundle\Consumer\Options\AbstractMediaConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\StatusConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Monolog\Logger;
 use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use PhpAmqpLib\Message\AMQPMessage;
-use Symfony\Component\HttpFoundation\File\File;
 
 abstract class AbstractMediaConsumer implements MediaConsumerInterface
 {
@@ -31,14 +31,14 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
     protected $transcoder;
 
     /**
-     * @var AbstractMediaConsumerOptions
-     */
-    protected $message;
-
-    /**
      * @var Producer
      */
     protected $entityStatusProducer;
+
+    /**
+     * @var AbstractMediaConsumerOptions
+     */
+    protected $message;
 
     /**
      * @var array
@@ -133,5 +133,14 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         }
 
         return self::MSG_ACK;
+    }
+
+    protected function sendStatusUpdate($status) {
+        $opts = new StatusConsumerOptions();
+        $opts->status = $status;
+        $opts->who = get_class($this);
+        $opts->what = get_class($this->media);
+        $opts->identifier = $this->media->getId();
+        $this->entityStatusProducer->publish($opts->pack());
     }
 }

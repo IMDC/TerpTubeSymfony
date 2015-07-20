@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Consumer;
 
+use IMDC\TerpTubeBundle\Consumer\Options\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -18,6 +19,8 @@ class TrimConsumer extends AbstractMediaConsumer
 
         if ($this->media->getState() !== MediaStateConst::READY) {
             $this->logger->error("media must be in a ready state");
+            $em = $this->doctrine->getManager();
+            $em->clear();
             return self::MSG_REJECT_REQUEUE;
         }
 
@@ -29,10 +32,10 @@ class TrimConsumer extends AbstractMediaConsumer
         $trimOpts = TrimConsumerOptions::unpack($msg->body);
 
         //TODO check me. may not work as expected
-        if (!$this->isValid($trimOpts->currentDuration)) {
+        /*if (!$this->isValid($trimOpts->currentDuration)) {
             $this->logger->error("one or more resources have changed since this trim was requested. discarding");
             return self::MSG_REJECT;
-        }
+        }*/
 
         /** @var EntityManager $em */
         $em = $this->doctrine->getManager();
@@ -44,11 +47,14 @@ class TrimConsumer extends AbstractMediaConsumer
         foreach ($this->media->getResources() as $resource) {
             $sourceFile = new File($resource->getAbsolutePath());
 
+            $this->sendStatusUpdate('Trimming');
+
             try {
                 if (!$this->transcoder->trimVideo($sourceFile, $trimOpts->startTime, $trimOpts->endTime))
                     throw new \Exception("trim failed");
             } catch (\Exception $e) {
                 $this->logger->error($e->getTraceAsString());
+                $this->sendStatusUpdate('Error');
                 return self::MSG_REJECT;
             }
 
@@ -69,6 +75,8 @@ class TrimConsumer extends AbstractMediaConsumer
         $this->media->setState(MediaStateConst::READY);
         $em->persist($this->media);
         $em->flush();
+
+        $this->sendStatusUpdate('Done');
 
         return self::MSG_ACK;
     }

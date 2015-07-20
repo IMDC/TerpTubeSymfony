@@ -1,6 +1,6 @@
 <?php
 
-namespace IMDC\TerpTubeBundle\Consumer;
+namespace IMDC\TerpTubeBundle\Consumer\Options;
 
 class StatusConsumerOptions extends AbstractConsumerOptions
 {
@@ -38,7 +38,7 @@ class StatusConsumerOptions extends AbstractConsumerOptions
     {
         $optsArray = json_decode($json, true);
 
-        $getKey = function($key, $default) use ($optsArray) {
+        $getKey = function ($key, $default) use ($optsArray) {
             return array_key_exists($key, $optsArray) ? $optsArray[$key] : $default;
         };
 

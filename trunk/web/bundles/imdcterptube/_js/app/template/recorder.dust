@@ -2,46 +2,54 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                </button>
                 <h4 class="modal-title">Recorder</h4>
             </div>
             <div class="modal-body">
-                <div class="recorder-container-record">
-                    <ul class="nav nav-tabs" role="tablist">
-                        <li class="active"><a href=".recorder-normal" role="tab" data-toggle="tab">Normal</a></li>
-                        <li><a href=".recorder-interp" role="tab" data-toggle="tab">Interpretation</a></li>
-                    </ul>
-                    <div class="tab-content" style="padding-top: 15px;">
-                        <div class="tab-pane active recorder-normal">
-                            <div class="tt-media-preview-title">
-                                <input class="recorder-normal-title" style="display: none;" type="text" value="" />
-                            </div>
-                            <video class="recorder-normal-video" width="100%" preload="auto" muted="muted"></video>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="active"><a href=".recorder-normal" role="tab" data-toggle="tab">Normal</a></li>
+                    <li><a href=".recorder-interp" role="tab" data-toggle="tab">Interpretation</a></li>
+                </ul>
+                <div class="tab-content" style="padding-top: 15px;">
+                    <div class="tab-pane active recorder-normal recorder-container-record">
+                        <div class="tt-media-preview-title">
+                            <input class="recorder-normal-title" type="text" value="My Recording"/>
                         </div>
-                        <div class="tab-pane recorder-interp">
-                            <div style="border: 2px dashed #ccc; line-height: 200px; height: 200px; text-align: center; display: none;">
-                                <button class="btn btn-primary btn-lg recorder-interp-select">Select a video to interpret</button>
+                        <video class="recorder-normal-video" width="100%" preload="auto" muted="muted"></video>
+                    </div>
+                    <div class="tab-pane recorder-interp recorder-container-record">
+                        <div style="border: 2px dashed #ccc; line-height: 200px; height: 200px; text-align: center; display: none;">
+                            <button class="btn btn-primary btn-lg recorder-interp-select">
+                                Select a video to interpret
+                            </button>
+                        </div>
+                        <div class="row recorder-interp-main" style="display: none;">
+                            <div class="col-md-offset-6 col-md-6">
+                                <div class="tt-media-preview-title">
+                                    <input class="recorder-interp-title" type="text" value="My Recording"/>
+                                </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <video class="recorder-interp-video-p" style="display: none;" width="100%" preload="auto" muted="muted"></video>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="tt-media-preview-title">
-                                        <input class="recorder-interp-title" style="display: none;" type="text" value="" />
-                                    </div>
-                                    <video class="recorder-interp-video-r" style="display: none;" width="100%" preload="auto" muted="muted"></video>
-                                </div>
+                            <div class="col-md-6">
+                                <video class="recorder-interp-video-p" width="100%" preload="auto"
+                                       muted="muted"></video>
+                            </div>
+                            <div class="col-md-6">
+                                <video class="recorder-interp-video-r" width="100%" preload="auto"
+                                       muted="muted"></video>
                             </div>
                         </div>
                     </div>
-                    <div class="recorder-controls"></div>
-                </div>
-                <div class="recorder-container-upload" style="display: none;">
-                    <label>Uploading...</label>
-                    <div class="progress">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-                            0%
+                    <div class="recorder-controls recorder-container-record"></div>
+                    <div class="recorder-container-upload" style="display: none;">
+                        <label>Uploading...</label>
+
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                 aria-valuemax="100" style="width: 0%;">
+                                0%
+                            </div>
                         </div>
                     </div>
                 </div>

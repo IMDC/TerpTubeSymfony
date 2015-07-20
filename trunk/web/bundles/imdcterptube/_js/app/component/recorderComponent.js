@@ -4,22 +4,30 @@ define([
     'component/myFilesSelectorComponent',
     'model/mediaModel',
     'factory/mediaFactory',
+    'factory/myFilesFactory',
     'service/rabbitmqWebStompService',
     'core/helper',
     'extra'
-], function (Subscriber, Service, MyFilesSelectorComponent, MediaModel, MediaFactory, RabbitmqWebStompService, Helper) {
+], function (Subscriber, Service, MyFilesSelectorComponent, MediaModel, MediaFactory, MyFilesFactory,
+             RabbitmqWebStompService, Helper) {
     'use strict';
 
     var RecorderComponent = function (options) {
         Subscriber.prototype.constructor.apply(this);
 
         this.options = options;
-        //this.inPreviewMode = false;
+        this.isOnNormalTab = this.options.tab == RecorderComponent.Tab.NORMAL;
+        this.isOnInterpTab = this.options.tab == RecorderComponent.Tab.INTERPRETATION;
         this.player = null;
         this.recorder = null;
+        this.currentRecording = null;
+        this.currentTrim = null;
         this.sourceMedia = null;
         this.recordedMedia = null;
+        this.messages = [];
         this.rabbitmqWebStompService = Service.get('rabbitmqWebStomp');
+        this.isDonePostponed = false;
+        this.doPost = false;
 
         this.forwardButton = '<button class="forwardButton"></button>';
         this.doneButton = '<button class="doneButton"></button>';
@@ -35,10 +43,6 @@ define([
         this.bind__onPageAnimate = this._onPageAnimate.bind(this);
         this.bind__onRecordingStarted = this._onRecordingStarted.bind(this);
         this.bind__onRecordingStopped = this._onRecordingStopped.bind(this);
-        this.bind__onRecordingUploadProgress = this._onRecordingUploadProgress.bind(this);
-        this.bind__onRecordingUploaded = this._onRecordingUploaded.bind(this);
-        this.bind__onRecordingSuccess = this._onRecordingSuccess.bind(this);
-        this.bind__onRecordingError = this._onRecordingError.bind(this);
         this.bind__preview = this._preview.bind(this);
         this.bind__cut = this._cut.bind(this);
         this.bind__back = this._back.bind(this);
@@ -48,15 +52,18 @@ define([
         this.$container = this.options.$container;
         this.$modalDialog = this.$container.find(RecorderComponent.Binder.MODAL_DIALOG);
         this.$tabPanes = this.$container.find(RecorderComponent.Binder.TAB_PANES);
+        this.$containerRecord = this.$container.find(RecorderComponent.Binder.CONTAINER_RECORD);
         this.$normalTitle = this.$container.find(RecorderComponent.Binder.NORMAL_TITLE);
         this.$normalVideo = this.$container.find(RecorderComponent.Binder.NORMAL_VIDEO);
         this.$interpSelect = this.$container.find(RecorderComponent.Binder.INTERP_SELECT);
+        this.$interpMain = this.$container.find(RecorderComponent.Binder.INTERP_MAIN);
         this.$interpVideoP = this.$container.find(RecorderComponent.Binder.INTERP_VIDEO_P);
         this.$interpTitle = this.$container.find(RecorderComponent.Binder.INTERP_TITLE);
         this.$interpVideoR = this.$container.find(RecorderComponent.Binder.INTERP_VIDEO_R);
         this.$controls = this.$container.find(RecorderComponent.Binder.CONTROLS);
+        this.$containerUpload = this.$container.find(RecorderComponent.Binder.CONTAINER_UPLOAD);
 
-        var tab = this.options.tab == RecorderComponent.Tab.NORMAL
+        var tab = this.isOnNormalTab
             ? RecorderComponent.Binder.NORMAL
             : RecorderComponent.Binder.INTERP;
         this.$modalDialog.find('a[href!="' + tab + '"]').parent().removeClass('active');
@@ -69,35 +76,15 @@ define([
         this.$modalDialog.on('hidden.bs.modal', this.bind__onHiddenModal);
         this.$tabPanes.on('show.bs.tab', this.bind__onShowTab);
         this.$tabPanes.on('shown.bs.tab', this.bind__onShownTab);
-        this.$normalTitle.blur(this.bind__onBlurPlayerTitle);
         this.$interpSelect.on('click', this.bind__onClickInterpSelect);
-        this.$interpTitle.blur(this.bind__onBlurPlayerTitle);
-
-        // listen for status updates
-        this.messages = [];
-        this.bind__onMessage = function (e) {
-            console.log("Message:");
-            console.log(e.message);
-
-            // store the messages, since a request (_onRecordingSuccess) may not have completed yet
-            this.messages.push(e.message);
-
-            this._checkMessages();
-        }.bind(this);
-        this.bind__onConnect = function (e) {
-            this.subscription = this.rabbitmqWebStompService.subscribe(
-                '/exchange/entity-status',
-                RabbitmqWebStompService.Event.MESSAGE, this.bind__onMessage);
-        }.bind(this);
-
-        if (!this.rabbitmqWebStompService.isConnected()) {
-            this.rabbitmqWebStompService.subscribe(
-                null,
-                RabbitmqWebStompService.Event.CONNECTED, this.bind__onConnect);
-            this.rabbitmqWebStompService.connect();
-        } else {
-            this.bind__onConnect(null);
+        // prevent media renaming if in record mode
+        if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
+            this.$normalTitle.blur(this.bind__onBlurPlayerTitle);
+            this.$interpTitle.blur(this.bind__onBlurPlayerTitle);
         }
+
+        this._clearCurrents();
+        this._setupRabbitmq();
 
         //TODO interp preview/edit/trim
         if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
@@ -121,7 +108,7 @@ define([
         NORMAL_TITLE: '.recorder-normal-title',
         NORMAL_VIDEO: '.recorder-normal-video',
         INTERP_SELECT: '.recorder-interp-select',
-        INTERP_MY_FILES_SELECTOR: '.recorder-interp-my-files-selector',
+        INTERP_MAIN: '.recorder-interp-main',
         INTERP_VIDEO_P: '.recorder-interp-video-p',
         INTERP_TITLE: '.recorder-interp-title',
         INTERP_VIDEO_R: '.recorder-interp-video-r',
@@ -145,14 +132,46 @@ define([
         HIDDEN: 'eventHidden'
     };
 
-    RecorderComponent.prototype._createPlayer = function (inPreviewMode) {
+    RecorderComponent.prototype._setupRabbitmq = function () {
+        // listen for status updates
+        this.bind__onMessage = function (e) {
+            console.log(e.message);
+
+            // store the messages, since a request (_onRecordingSuccess) may not have completed yet
+            this.messages.push(e.message);
+
+            this._checkMessages();
+        }.bind(this);
+        this.bind__onConnect = function (e) {
+            this.subscription = this.rabbitmqWebStompService.subscribe(
+                '/exchange/entity-status',
+                RabbitmqWebStompService.Event.MESSAGE, this.bind__onMessage);
+        }.bind(this);
+
+        if (!this.rabbitmqWebStompService.isConnected()) {
+            this.rabbitmqWebStompService.subscribe(
+                null,
+                RabbitmqWebStompService.Event.CONNECTED, this.bind__onConnect);
+            this.rabbitmqWebStompService.connect();
+        } else {
+            this.bind__onConnect(null);
+        }
+    };
+
+    RecorderComponent.prototype._cleanupRabbitmq = function () {
+        this.rabbitmqWebStompService.unsubscribe(this.subscription, this.bind__onMessage);
+        this.rabbitmqWebStompService.unsubscribe(null, this.bind__onConnect);
+    };
+
+    RecorderComponent.prototype._createPlayer = function (inPreviewMode, wasRecording) {
         console.log('%s: %s', RecorderComponent.TAG, '_createPlayer');
 
         inPreviewMode = typeof inPreviewMode != 'undefined' ? inPreviewMode : false;
+        wasRecording = typeof wasRecording != 'undefined' ? wasRecording : false;
 
         var forwardButtons = [];
         var forwardFunctions = [];
-        if (this.options.tab == RecorderComponent.Tab.NORMAL || inPreviewMode) {
+        if (this.isOnNormalTab || inPreviewMode) {
             forwardButtons.push(this.doneButton);
             forwardFunctions.push(inPreviewMode ? this.bind__cut : this.bind__done);
         }
@@ -163,12 +182,12 @@ define([
 
         var backButtons;
         var backFunctions;
-        if (inPreviewMode && this.wasRecording) {
+        if (inPreviewMode && wasRecording) {
             backButtons = [this.backButton];
             backFunctions = [this.bind__back];
         }
 
-        var container = this.options.tab == RecorderComponent.Tab.NORMAL
+        var container = this.isOnNormalTab
             ? this.$normalVideo
             : inPreviewMode ? this.$interpVideoR : this.$interpVideoP;
 
@@ -216,9 +235,11 @@ define([
         console.log('Cutting to Min/Max Times %s %s', currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
             currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
 
-        MediaFactory.trim(this.recordedMedia,
-            currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
-            currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime);
+        // a trim request will be attempted only if the recording is successfully uploaded
+        this.currentTrim = {
+            startTime: currentMinMaxTimes.minTime - previousMinMaxTimes.minTime,
+            endTime: currentMinMaxTimes.maxTime - previousMinMaxTimes.minTime
+        };
 
         //cut should always also call the done function
         this._done(e);
@@ -230,15 +251,10 @@ define([
 
         this._destroyPlayers();
 
-        // delete the current media!
-        MediaFactory.delete(this.recordedMedia);
-
         // Go back to recording
         this.setRecordedMedia(null);
-        this.wasRecording = false;
         this.options.mode = RecorderComponent.Mode.RECORD;
-        //this.inPreviewMode = false;
-        if (this.options.tab == RecorderComponent.Tab.INTERPRETATION)
+        if (this.isOnInterpTab)
             this._createPlayer();
         this._createRecorder();
     };
@@ -253,17 +269,14 @@ define([
             forwardFunctions.push(this.bind__doneAndPost);
         }
 
-        var container;
-        var additionalDataToPost = {};
-        if (this.options.tab == RecorderComponent.Tab.NORMAL) {
-            container = this.$normalVideo;
-        } else {
-            container = this.$interpVideoR;
-            additionalDataToPost = {
-                isInterpretation: true,
-                sourceId: this.sourceMedia.get('id')
-            }
-        }
+        var container = this.isOnNormalTab
+            ? this.$normalVideo
+            : this.$interpVideoR;
+
+        //TODO remove after player.js changes. force invoke post upload success
+        Player.prototype.postRecordings = function() {
+            this.recording_recordingStopped(true, {});
+        };
 
         this.recorder = new Player(container, {
             areaSelectionEnabled: false,
@@ -273,19 +286,15 @@ define([
             type: Player.DENSITY_BAR_TYPE_RECORDER,
             volumeControl: false,
             maxRecordingTime: RecorderComponent.MAX_RECORDING_TIME,
-            recordingSuccessFunction: this.bind__onRecordingSuccess,
-            recordingErrorFunction: this.bind__onRecordingError,
-            recordingPostURL: Routing.generate('imdc_myfiles_add_recording'),
-            additionalDataToPost: additionalDataToPost,
+            //TODO remove after player.js changes. force invoke post upload success
+            recordingSuccessFunction: (function () {}),
+            recordingErrorFunction: (function () {}),
+            //
             forwardButtons: forwardButtons,
             forwardFunctions: forwardFunctions
         });
-        if (this.options.tab == RecorderComponent.Tab.INTERPRETATION) {
-            $(this.recorder).on(Player.EVENT_RECORDING_STARTED, this.bind__onRecordingStarted);
-            $(this.recorder).on(Player.EVENT_RECORDING_STOPPED, this.bind__onRecordingStopped);
-        }
-        $(this.recorder).on(Player.EVENT_RECORDING_UPLOAD_PROGRESS, this.bind__onRecordingUploadProgress);
-        $(this.recorder).on(Player.EVENT_RECORDING_UPLOADED, this.bind__onRecordingUploaded);
+        $(this.recorder).on(Player.EVENT_RECORDING_STARTED, this.bind__onRecordingStarted);
+        $(this.recorder).on(Player.EVENT_RECORDING_STOPPED, this.bind__onRecordingStopped);
         this.recorder.createControls();
 
         $(this.recorder.elementID)
@@ -308,37 +317,39 @@ define([
     RecorderComponent.prototype._onRecordingStarted = function () {
         console.log('%s: %s', RecorderComponent.TAG, '_onRecordingStarted');
 
-        this.player.setControlsEnabled(false);
-        this.recorder.options.additionalDataToPost.sourceStartTime = this.player.getCurrentTime();
-        this.player.play();
+        this._clearCurrents();
+
+        if (this.isOnInterpTab) {
+            this.currentRecording.sourceStartTime = this.player.getCurrentTime();
+            this.player.setControlsEnabled(false);
+            this.player.play();
+        }
     };
 
     RecorderComponent.prototype._onRecordingStopped = function () {
-        this.player.pause();
-        this.player.setControlsEnabled(true);
-    };
+        this.currentRecording.video = this.recorder.recordVideo.getBlob();
+        this.currentRecording.audio = this.recorder.recordAudio.getBlob();
 
-    RecorderComponent.prototype._onRecordingUploadProgress = function (e, percentComplete) {
-        Helper.updateProgressBar(this._getElement(RecorderComponent.Binder.CONTAINER_UPLOAD).show(), percentComplete);
-    };
-
-    RecorderComponent.prototype._onRecordingUploaded = function (data) {
-        Helper.updateProgressBar(this._getElement(RecorderComponent.Binder.CONTAINER_UPLOAD).hide(), 0);
-    };
-
-    RecorderComponent.prototype._onRecordingSuccess = function (data) {
-        console.log('%s: %s- mediaId=%d', RecorderComponent.TAG, '_onRecordingSuccess', data.media.id);
-
-        var media = new MediaModel(data.media);
-        console.log(media);
-        if (media.get('state') == 2) {
-            this.setRecordedMedia(media);
-        } else {
-            console.log('waiting for multiplex consumer');
-
-            this.tempMedia = media;
-            this._checkMessages();
+        if (this.isOnInterpTab) {
+            this.player.pause();
+            this.player.setControlsEnabled(true);
         }
+    };
+
+    RecorderComponent.prototype._preview = function (e) {
+        console.log('%s: %s', RecorderComponent.TAG, '_preview');
+        e.preventDefault();
+
+        this._destroyPlayers();
+
+        this._injectCurrentRecording(this.isOnNormalTab
+            ? this.$normalVideo
+            : this.$interpVideoR);
+
+        if (this.isOnInterpTab)
+            this._createPlayer();
+        this.options.mode = RecorderComponent.Mode.PREVIEW;
+        this._createPlayer(true, true);
     };
 
     RecorderComponent.prototype._checkMessages = function () {
@@ -348,80 +359,171 @@ define([
         while (this.messages.length > 0) {
             var message = this.messages.pop();
 
-            if (message.status == 'done' &&
-                message.who.indexOf('\MultiplexConsumer') > -1 &&
+            if (message.who.indexOf('\MultiplexConsumer') > -1 &&
                 (message.what.indexOf('\Media') > -1 || message.what.indexOf('\Interpretation')) &&
                 message.identifier == this.tempMedia.get('id')
             ) {
-                console.log('done');
+                if (message.status != 'Done') {
+                    this.$containerUpload.find('label').eq(0).html(message.status + '...');
+                } else {
+                    console.log('done');
+                    this.$containerUpload.find('label').eq(0).html('Cleaning up...');
 
-                MediaFactory.get(this.tempMedia)
-                    .done(function (data) {
-                        this.setRecordedMedia(this.tempMedia);
-                        this.tempMedia = null;
-                    }.bind(this))
-                    .fail(function (data) {
-                        //TODO
-                    });
+                    MediaFactory.get(this.tempMedia.get('id'))
+                        .done(function (data) {
+                            this.tempMedia = null;
+                            this.setRecordedMedia(data.media);
+
+                            // was waiting for us?
+                            if (this.isDonePostponed) {
+                                setTimeout(function () {
+                                    this._dispatchDone();
+                                }.bind(this), 2000);
+                            }
+                        }.bind(this))
+                        .fail(function (data) {
+                            //TODO
+                        });
+                }
             }
+        }
+    };
+
+    RecorderComponent.prototype._addRecording = function () {
+        if (this.currentRecording.video == null && this.currentRecording.audio == null)
+            return null;
+
+        var params = {
+            video: this.currentRecording.video,
+            audio: this.currentRecording.audio,
+            title: this.isOnNormalTab ? this.$normalTitle.val() : this.$interpTitle.val()
         };
+
+        if (this.isOnInterpTab) {
+            params.isInterpretation = true;
+            params.sourceStartTime = this.currentRecording.sourceStartTime;
+            params.sourceId = this.sourceMedia.get('id');
+        }
+
+        this.$containerUpload.find('label').eq(0).html('Uploading recording...');
+
+        return MyFilesFactory.addRecording(params)
+            .progress(function (percent) {
+                Helper.updateProgressBar(this.$containerUpload, percent);
+            }.bind(this))
+            .done(function (data) {
+                console.log(data.media);
+
+                this.$containerUpload.find('.progress-bar').eq(0)
+                    .addClass('progress-bar-striped active')
+                    .html('');
+
+                if (data.media.get('state') == 2) {
+                    this.setRecordedMedia(data.media);
+                } else {
+                    console.log('waiting for multiplex consumer');
+                    this.$containerUpload.find('label').eq(0).html('Processing...');
+
+                    this.tempMedia = data.media;
+                    this._checkMessages();
+                }
+            }.bind(this))
+            .fail(function () {
+                //TODO
+            });
     };
 
-    RecorderComponent.prototype._onRecordingError = function (e) {
-        console.log('%s: %s- e=%s', RecorderComponent.TAG, '_onRecordingError', e);
+    RecorderComponent.prototype._trim = function (media) {
+        if (this.currentTrim.startTime == null || this.currentTrim.endTime == null)
+            return null;
+
+        this.$containerUpload.find('label').eq(0).html('Queuing trim...');
+
+        return MediaFactory.trim(media, this.currentTrim.startTime, this.currentTrim.endTime)
+            .fail(function () {
+                //TODO
+            });
     };
 
-    RecorderComponent.prototype._preview = function (e) {
-        console.log('%s: %s', RecorderComponent.TAG, '_preview');
-        e.preventDefault();
-
-        this._destroyPlayers();
-
-        //this.setRecordedMedia(this.tempMedia);
-        if (this.options.tab == RecorderComponent.Tab.INTERPRETATION)
-            this._createPlayer();
-        this.wasRecording = true;
-        this.options.mode = RecorderComponent.Mode.PREVIEW;
-        //this.inPreviewMode = true;
-        this._createPlayer(true);
+    RecorderComponent.prototype._dispatchDone = function () {
+        this._dispatch(RecorderComponent.Event.DONE, {
+            media: this.recordedMedia,
+            doPost: this.doPost,
+            recorderComponent: this
+        });
     };
 
     RecorderComponent.prototype._done = function (e) {
         console.log('%s: %s', RecorderComponent.TAG, '_done');
         e.preventDefault();
 
-        this._dispatch(RecorderComponent.Event.DONE, {
-            media: this.recordedMedia,
-            doPost: false,
-            recorderComponent: this
-        });
+        this.$containerRecord.hide();
+        this.$containerUpload.show();
+        this._destroyPlayers();
+
+        var done = function () {
+            this.$containerUpload.find('label').eq(0).html('Cleaning up...');
+
+            // if recorded media is not set, then
+            // we're waiting to hear from the multiplex consumer
+            if (this.recordedMedia) {
+                setTimeout(function () {
+                    this._dispatchDone();
+                }.bind(this), 2000);
+            } else {
+                this.isDonePostponed = true;
+            }
+        }.bind(this);
+
+        var ap = this._addRecording();
+        if (!ap) {
+            done();
+            return;
+        }
+
+        ap.done(function (data) {
+            // upload was successful, so send trim request, if any
+            var rp = this._trim(data.media);
+            if (!rp) {
+                done();
+                return;
+            }
+
+            rp.done(function (data) {
+                done();
+            }.bind(this));
+        }.bind(this));
     };
 
     RecorderComponent.prototype._doneAndPost = function (e) {
-        console.log('%s: %s', RecorderComponent.TAG, '_doneAndPost');
-        e.preventDefault();
+        this.doPost = true;
+        this._done(e);
+    };
 
-        this._dispatch(RecorderComponent.Event.DONE, {
-            media: this.recordedMedia,
-            doPost: true,
-            recorderComponent: this
-        });
+    RecorderComponent.prototype._clearCurrents = function () {
+        this.currentRecording = {video: null, audio: null, sourceStartTime: null};
+        this.currentTrim = {startTime: null, endTime: null};
     };
 
     RecorderComponent.prototype._destroyPlayers = function () {
         console.log('%s: %s', RecorderComponent.TAG, '_destroyPlayers');
 
-        var reset = (function (normal) {
-            var old = normal.parent();
-            normal.removeAttr('src');
-            old.hide();
-            old.after(normal.detach());
-            old.remove();
-        }).bind(this);
+        var reset = function ($normal) {
+            var $old = $normal.parent();
+            /*$.each($normal.find('source'), function (index, element) {
+             var e = $(element);
+             if (e.attr('src').indexOf('blob:') == 0)
+             URL.revokeObjectURL(e.attr('src'));
+             });*/
+            $normal.removeAttr('src');
+            $old.hide();
+            $old.after($normal.detach());
+            $old.remove();
+        }.bind(this);
 
         if (this.player != null) {
             this.player.destroyRecorder();
-            if (this.options.tab == RecorderComponent.Tab.NORMAL) {
+            if (this.isOnNormalTab) {
                 reset(this.$normalVideo);
             } else {
                 if (this.sourceMedia != null)
@@ -432,7 +534,7 @@ define([
 
         if (this.recorder != null) {
             this.recorder.destroyRecorder();
-            if (this.options.tab == RecorderComponent.Tab.NORMAL) {
+            if (this.isOnNormalTab) {
                 reset(this.$normalVideo);
             } else {
                 if (this.sourceMedia != null)
@@ -447,13 +549,13 @@ define([
     RecorderComponent.prototype._onPageAnimate = function () {
         try {
             if (this.options.mode == RecorderComponent.Mode.PREVIEW && this.recordedMedia != null) {
-                if (this.options.tab == RecorderComponent.Tab.INTERPRETATION && this.sourceMedia != null) {
+                if (this.isOnInterpTab && this.sourceMedia != null) {
                     return; //TODO interp preview/edit/trim
                 }
 
                 this._createPlayer(true);
             } else {
-                if (this.options.tab == RecorderComponent.Tab.INTERPRETATION) {
+                if (this.isOnInterpTab) {
                     if (this.sourceMedia != null) {
                         this._createPlayer();
                     } else {
@@ -461,17 +563,7 @@ define([
                     }
                 }
 
-                // $('.modal-content').css('height',$( window ).height()*0.9);
-                // $('.modal-body').css('height','100%');
-                // $('.modal-body').css('max-height','100%');
-                //
-                // var h = $( window ).height()*0.8 - 210;
-                // var w = 4*h/3
-                // console.log("height: " + h + "width: " + w );
-
                 this._createRecorder();
-
-                //console.log(this._getElement(Recorder.Binder.MODAL_DIALOG).find(".modal-dialog").height());
             }
         } catch (err) {
             console.error('%s: %s- err=%o', RecorderComponent.TAG, '_loadPage', err);
@@ -479,19 +571,15 @@ define([
     };
 
     RecorderComponent.prototype._loadPage = function () {
-        if (this.options.tab == RecorderComponent.Tab.INTERPRETATION) {
+        if (this.isOnInterpTab) {
             if (this.sourceMedia != null) {
                 this.$interpSelect.parent().hide();
-                this.$interpVideoP.show();
-                this.$interpVideoR.show();
+                this.$interpMain.show();
             } else {
                 this.$interpSelect.parent().show();
-                this.$interpVideoP.hide();
-                this.$interpVideoR.hide();
+                this.$interpMain.hide();
             }
         }
-
-        //console.log(this._getElement(Recorder.Binder.MODAL_DIALOG).find(".modal-dialog").height());
 
         this.$modalDialog.find('.modal-dialog').animate({
             //width: this.page == Recorder.Page.NORMAL ? "900px" : (this.sourceMedia != null ? "90%" : "900px") //FIXME use css classes
@@ -526,6 +614,9 @@ define([
         this.options.tab = $(e.target).attr('href') == RecorderComponent.Binder.NORMAL
             ? RecorderComponent.Tab.NORMAL
             : RecorderComponent.Tab.INTERPRETATION;
+
+        this.isOnNormalTab = this.options.tab == RecorderComponent.Tab.NORMAL;
+        this.isOnInterpTab = this.options.tab == RecorderComponent.Tab.INTERPRETATION;
 
         this._loadPage();
     };
@@ -574,21 +665,36 @@ define([
     };
 
     RecorderComponent.prototype.destroy = function () {
-        this.rabbitmqWebStompService.unsubscribe(this.subscription, this.bind__onMessage);
-        this.rabbitmqWebStompService.unsubscribe(null, this.bind__onConnect);
+        this._clearCurrents();
+        this._cleanupRabbitmq();
 
         this.$modalDialog.remove();
     };
 
-    RecorderComponent.prototype._injectMedia = function (video, media, isRecording) {
-        var options = {};
-
-        options.resources = isRecording
-                ? [media.get('source_resource')]
-                : media.get('resources')
+    RecorderComponent.prototype._injectCurrentRecording = function (element) {
+        //FIXME only video will play audio would need its own element and then playback needs to synced
+        //TODO test with firefox
+        var options = {
+            resources: [
+                {web_path: URL.createObjectURL(this.currentRecording.video)},
+                {web_path: URL.createObjectURL(this.currentRecording.audio)}
+            ]
+        };
 
         dust.render('recorder_source', options, function (err, out) {
-            video.html(out);
+            element.html(out);
+        });
+    };
+
+    RecorderComponent.prototype._injectMedia = function (element, media, isRecording) {
+        var options = {
+            resources: isRecording
+                ? [media.get('source_resource')]
+                : media.get('resources')
+        };
+
+        dust.render('recorder_source', options, function (err, out) {
+            element.html(out);
         });
     };
 
@@ -602,32 +708,15 @@ define([
         this._loadPage();
     };
 
-    RecorderComponent.prototype._togglePlayerTitle = function () {
-        var title = this.recordedMedia != null ? this.recordedMedia.get('title') : '';
-
-        if (this.options.tab == RecorderComponent.Tab.NORMAL) {
-            this.$interpTitle.hide().val('');
-            this.$normalTitle.toggle().val(title);
-        } else {
-            this.$normalTitle.hide().val('');
-            this.$interpTitle.toggle().val(title);
-        }
-    };
-
     RecorderComponent.prototype.setRecordedMedia = function (media) {
         this.recordedMedia = media;
 
         if (this.recordedMedia != null) {
-            this._injectMedia(this.options.tab == RecorderComponent.Tab.NORMAL
+            this._injectMedia(this.isOnNormalTab
                     ? this.$normalVideo
                     : this.$interpVideoR,
                 this.recordedMedia, true);
         }
-        this._togglePlayerTitle();
-    };
-
-    RecorderComponent.prototype._getElement = function (binder) {
-        return this.$container.find(binder);
     };
 
     RecorderComponent.render = function (options, callback) {

@@ -1,5 +1,6 @@
 <?php
 namespace IMDC\TerpTubeBundle\Entity;
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Mapping as ORM;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile as IMDCUploadedFile;
@@ -324,10 +325,8 @@ class ResourceFile
     public function updateMetaData($mediaType, Transcoder $transcoder)
     {
         $metaData = $this->getMetaData();
-        if ($metaData == null) {
+        if ($metaData == null)
             $metaData = new MetaData();
-            $this->setMetaData($metaData);
-        }
 
         if (!is_file($this->getAbsolutePath()))
             return; //TODO throw exception?
@@ -339,6 +338,7 @@ class ResourceFile
             case Media::TYPE_AUDIO:
                 $file = new File($this->getAbsolutePath());
                 $ffprobe = $transcoder->getFFprobe();
+                $ffprobe->setCache(new ArrayCache());
                 $format = $ffprobe->format($file->getRealPath());
 
                 $duration = $format->has('duration') ? $format->get('duration') : 0;
@@ -365,6 +365,8 @@ class ResourceFile
 
                 break;
         }
+
+        $this->setMetaData($metaData);
     }
 
     public static function fromFile($file, $config)

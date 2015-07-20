@@ -3,7 +3,9 @@
 namespace IMDC\TerpTubeBundle\Consumer;
 
 use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Consumer\Options\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\MediaStateConst;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use PhpAmqpLib\Message\AMQPMessage;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -37,6 +39,8 @@ class TranscodeConsumer extends AbstractMediaConsumer
         try {
             $this->logger->info("Transcoding " . $sourceFile->getRealPath());
 
+            $this->sendStatusUpdate('Transcoding');
+
             $transcodedFile = $this->transcoder->transcode(
                 $transcodeOpts->container, $this->media->getType(), $sourceFile, $transcodeOpts->preset);
             if ($transcodedFile == null)
@@ -45,6 +49,7 @@ class TranscodeConsumer extends AbstractMediaConsumer
             $this->logger->info("Transcoding complete!");
         } catch (\Exception $e) {
             $this->logger->error($e->getTraceAsString());
+            $this->sendStatusUpdate('Error');
             return self::MSG_REJECT;
         }
 
@@ -64,7 +69,33 @@ class TranscodeConsumer extends AbstractMediaConsumer
         $em->persist($this->media);
         $em->flush();
 
+        $this->sendStatusUpdate('Done');
+
         return self::MSG_ACK;
+    }
+
+    protected function createResource(File $file)
+    {
+        // Correct the permissions to 664
+        $old = umask(0);
+        chmod($file->getRealPath(), 0664);
+        umask($old);
+
+        $resource = ResourceFile::fromFile($file, $this->resourceFileConfig);
+        // explicitly set the extension to that of the transcoded file (ext won't be guessed)
+        $resource->setPath($file->getExtension());
+
+        // make it immediately usable
+        /** @var EntityManager $em */
+        $em = $this->doctrine->getManager();
+        $em->persist($resource);
+        $em->flush();
+
+        $resource->updateMetaData($this->media->getType(), $this->transcoder);
+        $em->persist($resource);
+        $em->flush();
+
+        return $resource;
     }
 
     /**
