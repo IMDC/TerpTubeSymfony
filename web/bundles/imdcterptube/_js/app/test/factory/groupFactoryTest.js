@@ -4,6 +4,7 @@ define([
     'model/groupModel',
     'factory/groupFactory',
     'jquery',
+    'jquery-mockjax',
     'fos_routes'
 ], function (chai, Common, GroupModel, GroupFactory) {
     'use strict';
@@ -12,26 +13,33 @@ define([
 
     describe('GroupFactory', function () {
 
-        this.timeout(Common.PAGE_LOAD_TIMEOUT * 2);
-
-        Common.ajaxSetup();
-
         var model;
 
-        before(function (done) {
+        before(function () {
             model = new GroupModel({
-                id: 41 // this must be set to an existing group id
+                id: 1
             });
+            $.mockjaxSettings.logging = false;
+        });
 
-            Common.login(done);
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
+        beforeEach(function () {
+            $.mockjax.clear();
         });
 
         it('should delete the group', function (done) {
+            $.mockjax({
+                method: 'DELETE',
+                url: Routing.generate('imdc_delete_user_group', {groupId: model.get('id')}),
+                responseText: {
+                    code: 200,
+                    redirect_url: Common.BASE_URL + '/group/'
+                }
+            });
+
             return GroupFactory.delete(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
+                    assert.property(data, 'code', 'result should have key:code');
                     assert.property(data, 'redirect_url', 'result should have key:redirect_url');
                     done();
                 })

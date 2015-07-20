@@ -73,7 +73,7 @@ define([
             keyPointService.unsubscribe(keyPoints[0].id, callback);
             keyPointService.deregister(keyPoints[0].id);
 
-            expect(callbackResult).to.be.null();
+            expect(callbackResult).to.be.null;
         });
 
         it('should not have dispatched for unknown event', function () {
@@ -85,7 +85,7 @@ define([
             keyPointService.unsubscribe(keyPoints[0].id, callback);
             keyPointService.deregister(keyPoints[0].id);
 
-            expect(callbackResult).to.be.null();
+            expect(callbackResult).to.be.null;
         });
 
         it('should have dispatched single key point with args', function () {

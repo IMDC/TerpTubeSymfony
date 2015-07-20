@@ -3,6 +3,7 @@ define([
     'test/common',
     'factory/myFilesFactory',
     'jquery',
+    'jquery-mockjax',
     'fos_routes'
 ], function (chai, Common, MyFilesFactory) {
     'use strict';
@@ -11,38 +12,37 @@ define([
 
     describe('MyFilesFactory', function () {
 
-        this.timeout(Common.PAGE_LOAD_TIMEOUT * 3);
-
-        Common.ajaxSetup();
-
         var video;
         var audio;
         var interpretationData;
 
-        before(function (done) {
-            //TODO separate test data for video and audio
-            //FIXME test is for firefox
-            // use native XMLHttpRequest
-            var request = new XMLHttpRequest();
-            request.onload = function () {
-                audio = request.response;
-                console.log(audio);
-            };
-            request.open('GET', Common.SCHEME_HOST + '/test_files/video_audio.webm');
-            request.responseType = 'blob';
-            request.send();
-
+        before(function () {
+            video = new Blob(['video'], {type: 'video/webm'});
+            audio = new Blob(['audio'], {type: 'audio/wav'});
             interpretationData = {
                 sourceStartTime: '0.2',
-                sourceId: 4 // an existing media id
+                sourceId: 1
             };
+        });
 
-            Common.login(done);
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
+        beforeEach(function () {
+            $.mockjax.clear();
         });
 
         it('should add recording', function (done) {
+            var media = {
+                id: 1,
+                is_interpretation: false
+            };
+
+            $.mockjax({
+                method: 'POST',
+                url: Routing.generate('imdc_myfiles_add_recording'),
+                responseText: {
+                    media: media
+                }
+            });
+
             return MyFilesFactory.addRecording(video, audio)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
@@ -58,6 +58,23 @@ define([
         });
 
         it('should add interpretation recording', function (done) {
+            var media = {
+                id: 1,
+                is_interpretation: false,
+                source_start_time: interpretationData.sourceStartTime,
+                source: {
+                    id: interpretationData.sourceId
+                }
+            };
+
+            $.mockjax({
+                method: 'POST',
+                url: Routing.generate('imdc_myfiles_add_recording'),
+                responseText: {
+                    media: media
+                }
+            });
+
             return MyFilesFactory.addRecording(video, audio, interpretationData)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');

@@ -4,6 +4,7 @@ define([
     'model/postModel',
     'factory/postFactory',
     'jquery',
+    'jquery-mockjax',
     'fos_routes'
 ], function (chai, Common, PostModel, PostFactory) {
     'use strict';
@@ -12,36 +13,41 @@ define([
 
     describe('PostFactory', function () {
 
-        this.timeout(Common.PAGE_LOAD_TIMEOUT * 7);
-
-        Common.ajaxSetup();
-
+        var post;
         var model;
-        var form;
 
-        before(function (done) {
-            model = new PostModel({
-                parent_thread_id: 17
-            });
+        before(function () {
+            $.mockjaxSettings.logging = false;
+        });
 
-            Common.login(done);
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
+        beforeEach(function () {
+            post = {
+                is_temporal: false,
+                parent_thread_id: 1
+            };
+            model = new PostModel(_.clone(post));
+            $.mockjax.clear();
         });
 
         it('should get a new post form', function (done) {
-            form = null;
+            $.mockjax({
+                url: Routing.generate('imdc_new_post', {
+                    threadId: model.get('parent_thread_id'),
+                    parentPostId: model.get('parent_post_id') || model.get('id')
+                }),
+                responseText: {
+                    post: post,
+                    form: 'form'
+                }
+            });
 
-            //TODO check that the factory updated the model
             return PostFactory.new(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'post', 'result should have key:post');
                     assert.property(data, 'form', 'result should have key:form');
 
-                    assert.include(data.form, 'form  name="post"', 'key:form should contain a post form');
-
-                    form = $(data.form).find('form');
+                    assert.isDefined(data.post.get('form'), 'post key:form should be defined');
                     done();
                 })
                 .fail(function (data) {
@@ -51,19 +57,24 @@ define([
         });
 
         it('should create a new post', function (done) {
-            assert.notStrictEqual(form.length, 0, 'should not be of length 0. a previous test has failed');
+            $.mockjax({
+                method: 'POST',
+                url: Routing.generate('imdc_post_post', {
+                    threadId: model.get('parent_thread_id'),
+                    parentPostId: model.get('parent_post_id') || model.get('id')
+                }),
+                responseText: {
+                    post: post
+                }
+            });
 
-            form.find('textarea[name="post[content]"]').val('testtest_new');
-
-            //TODO check that the factory updated the model
-            return PostFactory.new(model, form[0])
+            return PostFactory.post(model, '')
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'post', 'result should have key:post');
 
-                    assert.isNumber(data.post.id, 'value of key path:post.id should be a number');
-
-                    model.set('id', data.post.id);
+                    assert.isFalse(model.get('is_temporal'), 'post key:is_temporal should be false');
+                    assert.isDefined(model.get('parent_thread_id'), 'post key:parent_thread_id should be defined');
                     done();
                 })
                 .fail(function (data) {
@@ -73,31 +84,17 @@ define([
         });
 
         it('should get post', function (done) {
-            //TODO check that the factory updated the model
+            $.mockjax({
+                url: Routing.generate('imdc_get_post', {postId: model.get('id')}),
+                responseText: {
+                    post: post
+                }
+            });
+
             return PostFactory.get(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    done();
-                })
-                .fail(function (data) {
-                    assert.fail('fail', 'done', 'request should not have failed');
-                    done();
-                });
-        });
-
-        it('should get edit post form', function (done) {
-            form = null;
-
-            //TODO check that the factory updated the model
-            return PostFactory.edit(model)
-                .done(function (data) {
-                    assert.isObject(data, 'result should be an object');
                     assert.property(data, 'post', 'result should have key:post');
-                    assert.property(data, 'form', 'result should have key:form');
-
-                    assert.include(data.form, 'form  name="post"', 'key:form should contain a post form');
-
-                    form = $(data.form).find('form');
                     done();
                 })
                 .fail(function (data) {
@@ -107,14 +104,39 @@ define([
         });
 
         it('should edit post', function (done) {
-            assert.notStrictEqual(form.length, 0, 'should not be of length 0. a previous test has failed');
+            $.mockjax({
+                url: Routing.generate('imdc_edit_post', {postId: model.get('id')}),
+                responseText: {
+                    post: post,
+                    form: 'form'
+                }
+            });
 
-            var content = form.find('textarea[name="post[content]"]');
-            var contentVal = 'testtest_edit';
-            content.val(contentVal);
+            return PostFactory.edit(model)
+                .done(function (data) {
+                    assert.isObject(data, 'result should be an object');
+                    assert.property(data, 'post', 'result should have key:post');
+                    assert.property(data, 'form', 'result should have key:form');
 
-            //TODO check that the factory updated the model
-            return PostFactory.edit(model, form[0])
+                    assert.isDefined(model.get('form'), 'post key:form should be defined');
+                    done();
+                })
+                .fail(function (data) {
+                    assert.fail('fail', 'done', 'request should not have failed');
+                    done();
+                });
+        });
+
+        it('should put post', function (done) {
+            $.mockjax({
+                method: 'POST',
+                url: Routing.generate('imdc_put_post', {postId: model.get('id')}),
+                responseText: {
+                    post: post
+                }
+            });
+
+            return PostFactory.put(model, '')
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
                     assert.property(data, 'post', 'result should have key:post');
@@ -133,9 +155,18 @@ define([
         });
 
         it('should delete the post', function (done) {
+            $.mockjax({
+                method: 'DELETE',
+                url: Routing.generate('imdc_delete_post', {postId: model.get('id')}),
+                responseText: {
+                    code: 200
+                }
+            });
+
             return PostFactory.delete(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
+                    assert.property(data, 'code', 'result should have key:code');
                     done();
                 })
                 .fail(function (data) {
@@ -145,8 +176,8 @@ define([
         });
 
         after(function () {
+            post = null;
             model = null;
-            form = null;
         });
 
     });

@@ -1,5 +1,6 @@
 define([
     'chai',
+    'q',
     'test/common',
     'service',
     'model/model',
@@ -10,7 +11,7 @@ define([
     'jquery-mockjax',
     'fos_routes',
     'es5-shim'
-], function (chai, Common, Service, Model, PostModel, PostController, KeyPointService) {
+], function (chai, Q, Common, Service, Model, PostModel, PostController, KeyPointService) {
     'use strict';
 
     var assert = chai.assert;
@@ -27,7 +28,6 @@ define([
         var mCallbackResult;
         var mCallback;
         var model;
-        var pageUrl;
         var controller;
 
         before(function () {
@@ -47,18 +47,11 @@ define([
             });
             model.subscribe(Model.Event.CHANGE, mCallback);
             $.mockjaxSettings.logging = false;
-
-            // override to prevent page reloads
-            //TODO delete
-            window.location.replace = function(url) {
-                pageUrl = url;
-            };
         });
 
         beforeEach(function () {
             kpsCallbackResult = null;
             mCallbackResult = null;
-            pageUrl = undefined;
             $.mockjax.clear();
         });
 
@@ -113,7 +106,7 @@ define([
             assert.isFalse(mCallbackResult.model.get('keyPoint.isHovering'), 'key point property should be false');
         });
 
-        it('should have dispatched "click" key point event', function (done) {
+        it('should have dispatched "click" key point event', function () {
             controller.clickKeyPoint({isDblClick: false});
 
             assert.equal(kpsCallbackResult.type, KeyPointService.Event.CLICK, 'key point event type should equal');
@@ -121,13 +114,16 @@ define([
             assert.isFalse(kpsCallbackResult.isDblClick, 'key:isDblClick should be false');
 
             assert.isTrue(mCallbackResult.model.get('keyPoint.isSeeking'), 'key point property should be true');
-            setTimeout(function () {
-                assert.isFalse(mCallbackResult.model.get('keyPoint.isSeeking'), 'key point property should be false');
-                done();
-            }, 200);
+
+            var promise = Q.promise(function(resolve) {
+                setTimeout(function () {
+                    resolve(mCallbackResult.model.get('keyPoint.isSeeking'));
+                }, 200);
+            });
+            return assert.eventually.isFalse(promise, 'key point property should be false');
         });
 
-        it('should have dispatched "click" (double) key point event', function (done) {
+        it('should have dispatched "click" (double) key point event', function () {
             controller.clickKeyPoint({isDblClick: true});
 
             assert.equal(kpsCallbackResult.type, KeyPointService.Event.CLICK, 'key point event type should equal');
@@ -135,10 +131,13 @@ define([
             assert.isTrue(kpsCallbackResult.isDblClick, 'key:isDblClick should be true');
 
             assert.isTrue(mCallbackResult.model.get('keyPoint.isPlaying'), 'key point property should be true');
-            setTimeout(function () {
-                assert.isFalse(mCallbackResult.model.get('keyPoint.isPlaying'), 'key point property should be false');
-                done();
-            }, 200);
+
+            var promise = Q.promise(function(resolve) {
+                setTimeout(function () {
+                    resolve(mCallbackResult.model.get('keyPoint.isPlaying'));
+                }, 200);
+            });
+            return assert.eventually.isFalse(promise, 'key point property should be false');
         });
 
         it('should have dispatched "edit" key point event', function () {
@@ -164,86 +163,16 @@ define([
             assert.equal(kpsCallbackResult.keyPoint, model.get('keyPoint'), 'key point should equal');
         });
 
-        it('should not have ...', function () {
+        it('should not have deleted and deregistered and dispatched "remove" key point event', function (done) {
             $.mockjax({
-                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread_id')}),
-                responseText: {
-                    post: {},
-                    form: ''
-                }
+                url: Routing.generate('imdc_delete_post', {postId: model.get('id')}),
+                status: 400
             });
 
-            return controller.new()
-                .done(function (data) {
-
-                })
-                .fail(function (data) {
-                    assert.fail('fail', 'done', 'request should not have failed');
-                });
-        });
-
-        it('should have ...', function () {
-            $.mockjax({
-                url: Routing.generate('imdc_new_post', {threadId: model.get('parent_thread_id')}),
-                responseText: {
-                    post: {}
-                }
-            });
-
-            return controller.new()
-                .done(function (data) {
-
-                })
-                .fail(function (data) {
-                    assert.fail('fail', 'done', 'request should not have failed');
-                });
-        });
-
-        it('should not have ...', function () {
-            $.mockjax({
-                url: Routing.generate('imdc_edit_post', {pid: model.get('id')}),
-                responseText: {
-                    post: {},
-                    form: ''
-                }
-            });
-
-            return controller.edit()
-                .done(function (data) {
-
-                })
-                .fail(function (data) {
-                    assert.fail('fail', 'done', 'request should not have failed');
-                });
-        });
-
-        it('should have ...', function () {
-            $.mockjax({
-                url: Routing.generate('imdc_edit_post', {pid: model.get('id')}),
-                responseText: {
-                    post: {}
-                }
-            });
-
-            return controller.edit()
-                .done(function (data) {
-
-                })
-                .fail(function (data) {
-                    assert.fail('fail', 'done', 'request should not have failed');
-                });
-        });
-
-        it('should not have deleted and deregistered and dispatched "remove" key point event', function () {
-            $.mockjax({
-                url: Routing.generate('imdc_delete_post', {pid: model.get('id')}),
-                responseText: {}
-            });
-
-            // don't return promise
-            controller.delete()
+            return controller.delete()
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
+                    done();
                 })
                 .fail(function (data) {
                     assert.isNull(kpsCallbackResult, 'key point event should be null');
@@ -251,12 +180,13 @@ define([
                     var kIndex = KeyPointService._kIndex(model.get('id'));
                     var keyPoint = keyPointService.keyPoints[kIndex];
                     assert.equal(keyPoint, controller.model.get('keyPoint'), 'key point should still be registered');
+                    done();
                 });
         });
 
-        it('should have deleted and deregistered and dispatched "remove" key point event', function () {
+        it('should have deleted and deregistered and dispatched "remove" key point event', function (done) {
             $.mockjax({
-                url: Routing.generate('imdc_delete_post', {pid: model.get('id')}),
+                url: Routing.generate('imdc_delete_post', {postId: model.get('id')}),
                 responseText: {}
             });
 
@@ -264,9 +194,11 @@ define([
                 .done(function (data) {
                     assert.equal(kpsCallbackResult.type, KeyPointService.Event.REMOVE, 'key point event type should equal');
                     assert.equal(kpsCallbackResult.keyPoint, model.get('keyPoint'), 'key point should equal');
+                    done();
                 })
                 .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
+                    done();
                 });
         });
 
@@ -278,7 +210,6 @@ define([
             mCallbackResult = null;
             mCallback = null;
             model = null;
-            pageUrl = null;
             controller = null;
         });
 

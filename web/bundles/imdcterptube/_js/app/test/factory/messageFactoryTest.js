@@ -4,6 +4,7 @@ define([
     'model/messageModel',
     'factory/messageFactory',
     'jquery',
+    'jquery-mockjax',
     'fos_routes'
 ], function (chai, Common, MessageModel, MessageFactory) {
     'use strict';
@@ -12,23 +13,29 @@ define([
 
     describe('MessageFactory', function () {
 
-        this.timeout(Common.PAGE_LOAD_TIMEOUT * 2);
-
-        Common.ajaxSetup();
-
         var model;
 
-        before(function (done) {
+        before(function () {
             model = new MessageModel({
-                id: 22 // this must be set to an existing message id
+                id: 1
             });
+        });
 
-            Common.login(done);
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
+        beforeEach(function () {
+            $.mockjax.clear();
         });
 
         it('should mark message as read', function (done) {
+            $.mockjax({
+                method: 'POST',
+                url: Routing.generate('imdc_message_mark_as_read', {messageid: model.get('id')}),
+                responseText: {
+                    wasEdited: true,
+                    responseCode: 200,
+                    feedback: ''
+                }
+            });
+
             return MessageFactory.edit(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
