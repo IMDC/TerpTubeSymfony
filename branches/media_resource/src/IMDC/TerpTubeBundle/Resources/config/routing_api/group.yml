@@ -1,0 +1,8 @@
+imdc_group_delete:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\UserGroupController
+  requirements:
+    groupId: \d+
+  name_prefix: imdc_
+  options:
+    expose: true

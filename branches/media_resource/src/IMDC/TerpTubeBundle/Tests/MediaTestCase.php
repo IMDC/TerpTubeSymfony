@@ -41,8 +41,9 @@ class MediaTestCase extends WebTestCase
     /**
      * @param $fileName
      * @return UploadedFile
+     * @deprecated
      */
-    protected function createUploadedFile($fileName)
+    protected function createUploadedFile($fileName) //TODO moved to fixtures
     {
         $rootDir = static::$kernel->getRootDir() . '/';
         $filePath = '/tmp/' . rand() . $fileName;

@@ -41,16 +41,22 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
     protected $message;
 
     /**
+     * @var array
+     */
+    protected $resourceFileConfig;
+
+    /**
      * @var Media
      */
     protected $media;
 
-    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer)
+    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer, $resourceFileConfig)
     {
         $this->logger = $logger;
         $this->doctrine = $doctrine;
         $this->transcoder = $transcoder;
         $this->entityStatusProducer = $entityStatusProducer;
+        $this->resourceFileConfig = $resourceFileConfig;
     }
 
     public function execute(AMQPMessage $msg)

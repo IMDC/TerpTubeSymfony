@@ -3,20 +3,22 @@
 namespace IMDC\TerpTubeBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
 
-class InvitationTypes implements FixtureInterface
+class LoadInvitationTypes implements FixtureInterface, OrderedFixtureInterface
 {
     /**
      * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
-        $types = [
-            [InvitationType::TYPE_MENTOR, 'Mentor'],
-            [InvitationType::TYPE_MENTEE, 'Mentee'],
-            [InvitationType::TYPE_GROUP, 'Group']];
+        $types = array(
+            array(InvitationType::TYPE_MENTOR, 'Mentor'),
+            array(InvitationType::TYPE_MENTEE, 'Mentee'),
+            array(InvitationType::TYPE_GROUP, 'Group')
+        );
 
         foreach ($types as $type) {
             $exists = $manager->getRepository('IMDCTerpTubeBundle:InvitationType')->find($type[0]);
@@ -32,5 +34,13 @@ class InvitationTypes implements FixtureInterface
         }
 
         $manager->flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOrder()
+    {
+        return 2;
     }
 }

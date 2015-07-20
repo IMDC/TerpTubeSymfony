@@ -31,13 +31,13 @@ define([
 
         it('should not return media', function () {
             var media = model.getMedia(99);
-            expect(media).to.be.undefined();
+            expect(media).to.be.undefined;
         });
 
         it('should return media', function () {
             var media = model.getMedia(media1.id);
 
-            expect(media).to.not.be.undefined();
+            expect(media).to.not.be.undefined;
             expect(media).to.be.an.instanceof(MediaModel);
             expect(media.get('id')).to.equal(media1.id);
         });

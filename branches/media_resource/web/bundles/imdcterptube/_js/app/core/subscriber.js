@@ -2,7 +2,7 @@ define(['underscore'], function () {
     'use strict';
 
     var Subscriber = function () {
-        this.subscriptions = [];
+        this.subscriptions = {};
     };
 
     Subscriber.prototype._dispatch = function (event, args) {
@@ -25,7 +25,7 @@ define(['underscore'], function () {
     };
 
     Subscriber.prototype.subscribe = function (event, callback) {
-        if (!_.contains(this.subscriptions, event)) {
+        if (!_.has(this.subscriptions, event)) {
             this.subscriptions[event] = [];
         }
 
@@ -35,7 +35,7 @@ define(['underscore'], function () {
     };
 
     Subscriber.prototype.unsubscribe = function (callback) {
-        _.each(this.subscriptions, function (callbacks, index, list) {
+        _.each(this.subscriptions, function (callbacks, key, list) {
             if (_.contains(callbacks, callback)) {
                 var cbIndex = _.indexOf(callbacks, callback);
                 callbacks.splice(cbIndex, 1);

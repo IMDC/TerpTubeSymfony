@@ -81,7 +81,7 @@ class TranscodeConsumer extends AbstractMediaConsumer
         chmod($file->getRealPath(), 0664);
         umask($old);
 
-        $resource = ResourceFile::fromFile($file);
+        $resource = ResourceFile::fromFile($file, $this->resourceFileConfig);
         // explicitly set the extension to that of the transcoded file (ext won't be guessed)
         $resource->setPath($file->getExtension());
 

@@ -1,0 +1,10 @@
+{>"post_view" /}
+{<post_content}
+    <div class="row">
+        <div class="col-md-12">
+            {form|s}
+        </div>
+    </div>
+{/post_content}
+{<post_tools}{/post_tools}
+{<post_reply}{/post_reply}

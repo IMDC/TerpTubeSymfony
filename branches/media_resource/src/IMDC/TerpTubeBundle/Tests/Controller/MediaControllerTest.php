@@ -2,35 +2,57 @@
 
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
+use IMDC\TerpTubeBundle\Entity\Forum;
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\MetaData;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
+use IMDC\TerpTubeBundle\Entity\User;
+use IMDC\TerpTubeBundle\Rest\Exception\MediaException;
+use IMDC\TerpTubeBundle\Rest\MediaResponse;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use JMS\Serializer\Serializer;
 
 /**
  * Class MediaControllerTest
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class MediaControllerTest extends WebTestCase
+class MediaControllerTest extends BaseWebTestCase
 {
-    // index 2 must not be in use. index 3 must be in use
-    private static $mediaIds = array(4, 1, 234, 349); // shuffle for order check
-
     /**
-     * @var Client
+     * @var User
      */
-    private $client;
+    private $loggedInUser;
 
     public function setUp()
     {
-        $this->client = static::createClient();
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUsers',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestForums',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
 
-        Common::login($this->client);
+        $this->client = static::createClient();
+        /** @var User $user */
+        $user = $this->referenceRepo->getReference('test_user_1');
+        Common::login($this->client, $user->getUsername());
+        $this->loggedInUser = $user;
+
+        // give logged in user media
+        for ($i = 1; $i <= 2; $i++) {
+            /** @var Media $media */
+            $media = $this->referenceRepo->getReference('test_media_' . $i);
+            $media->setOwner($this->loggedInUser);
+            $this->entityManager->persist($media);
+        }
+        $this->entityManager->flush();
     }
 
     public function testList_All()
     {
-        $this->client->request('GET', '/media/');
+        $this->client->request('GET', '/api/v1/media');
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('media', $response);
@@ -38,110 +60,109 @@ class MediaControllerTest extends WebTestCase
         $this->assertGreaterThanOrEqual(1, count($response['media']));
     }
 
-    /**
-     * @return array
-     */
     public function testList_SpecificIds()
     {
-        $this->client->request('GET', '/media/?id=' . implode(',', self::$mediaIds));
+        $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
+
+        $this->client->request('GET', '/api/v1/media?id=' . implode(',', $mediaIds));
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         $this->assertArrayHasKey('media', $response);
-        $this->assertTrue(is_array($response['media']));
-        $this->assertCount(count(self::$mediaIds), $response['media']);
-        // check order
-        foreach (self::$mediaIds as $key => $mediaId) {
-            $this->assertEquals($response['media'][$key]['id'], $mediaId);
-        }
-
-        return $response['media'][2];
+        $this->assertMedia($response['media'], $mediaIds);
     }
 
-    /**
-     * @depends testList_SpecificIds
-     * @param $model
-     * @return array
-     */
-    public function testEdit($model)
+    public function testEdit()
     {
-        $model['title'] = 'test:edit:' . rand();
+        /** @var Media $media */
+        $media = $this->loggedInUser->getResourceFiles()->get(0);
+        $media->setTitle('test:edit:' . rand());
+        /** @var Serializer $serializer */
+        $serializer = $this->getContainer()->get('jms_serializer');
 
-        $this->client->request('POST', '/media/' . $model['id'] . '/edit', array(
-            'media' => json_encode($model)
+        $this->client->request('PUT', '/api/v1/media/' . $media->getId() . '/edit', array(
+            'media' => $serializer->serialize($media, 'json')
         ));
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('responseCode', $response);
-        $this->assertEquals(200, $response['responseCode']);
         $this->assertArrayHasKey('media', $response);
-        $this->assertEquals($model['id'], $response['media']['id']);
-        $this->assertEquals($model['title'], $response['media']['title']);
-
-        return $response['media'];
+        $this->assertEquals($media->getId(), $response['media']['id']);
+        $this->assertEquals($media->getTitle(), $response['media']['title']);
     }
 
-    /**
-     * @depends testEdit
-     * @param $model
-     * @return array
-     */
-    public function testTrim($model)
+    public function testTrim()
     {
-        $this->client->request('POST', '/media/' . $model['id'] . '/trim', array(
+        /** @var Media $media */
+        $media = $this->loggedInUser->getResourceFiles()->get(0);
+        $resource = new ResourceFile();
+        $metaData = new MetaData();
+        $metaData->setDuration(100);
+        $resource->setMetaData($metaData);
+        $media->addResource($resource);
+        $this->entityManager->persist($media);
+        $this->entityManager->flush();
+
+        $this->client->request('PATCH', '/api/v1/media/' . $media->getId() . '/trim', array(
             'startTime' => '0.4',
             'endTime' => '2.2'
         ));
-
-        file_put_contents(
-            '../MediaControllerTest.testTrim.html',
-            $this->client->getResponse()->getContent()
-        );
-
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('responseCode', $response);
-        $this->assertEquals(200, $response['responseCode']);
         $this->assertArrayHasKey('media', $response);
-        $this->assertEquals($model['id'], $response['media']['id']);
-
-        return $response['media'];
+        $this->assertEquals($media->getId(), $response['media']['id']);
     }
 
-    /**
-     * @depends testTrim
-     * @param $model
-     */
-    public function testDelete_NotInUseSuccess($model)
+    public function testDelete_NotInUseSuccess()
     {
-        $this->client->request('POST', '/media/' . $model['id'] . '/delete');
+        /** @var Media $media */
+        $media = $this->loggedInUser->getResourceFiles()->get(0);
+
+        $this->client->request('DELETE', '/api/v1/media/' . $media->getId());
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('responseCode', $response);
-        $this->assertEquals(200, $response['responseCode']);
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(MediaResponse::OK, $response['code']);
     }
 
     public function testDelete_InUseFail()
     {
-        $this->client->request('POST', '/media/' . self::$mediaIds[3] . '/delete');
+        /** @var Media $media */
+        $media = $this->loggedInUser->getResourceFiles()->get(0);
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        $forum->addTitleMedia($media);
+        $this->entityManager->persist($forum);
+        $this->entityManager->flush();
+
+        $this->client->request('DELETE', '/api/v1/media/' . $media->getId());
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('responseCode', $response);
-        $this->assertArrayHasKey('mediaInUse', $response);
-        $this->assertEquals(400, $response['responseCode']);
-        $this->assertTrue(is_array($response['mediaInUse']));
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(MediaException::getCode(), $response['code']);
+        $this->assertArrayHasKey('in_use', $response);
     }
 
-    /**
-     * @depends testDelete_InUseFail
-     */
     public function testDelete_InUseSuccess()
     {
-        $this->client->request('POST', '/media/' . self::$mediaIds[3] . '/delete', array(
+        /** @var Media $media */
+        $media = $this->loggedInUser->getResourceFiles()->get(0);
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        $forum->addTitleMedia($media);
+        $this->entityManager->persist($forum);
+        $this->entityManager->flush();
+
+        $this->client->request('DELETE', '/api/v1/media/' . $media->getId(), array(
             'confirm' => true
         ));
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('responseCode', $response);
-        $this->assertEquals(200, $response['responseCode']);
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(MediaResponse::OK, $response['code']);
     }
 }

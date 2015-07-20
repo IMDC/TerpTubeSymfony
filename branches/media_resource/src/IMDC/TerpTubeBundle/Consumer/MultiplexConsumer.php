@@ -20,9 +20,9 @@ class MultiplexConsumer extends AbstractMediaConsumer
      */
     protected $transcodeProducer;
 
-    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer, $transcodeProducer)
+    public function __construct($logger, $doctrine, $transcoder, $entityStatusProducer, $resourceFileConfig, $transcodeProducer)
     {
-        parent::__construct($logger, $doctrine, $transcoder, $entityStatusProducer);
+        parent::__construct($logger, $doctrine, $transcoder, $entityStatusProducer,$resourceFileConfig);
 
         $this->transcodeProducer = $transcodeProducer;
     }

@@ -40,10 +40,6 @@ class ProfileController extends Controller
 	{
 	    $request = $this->container->get('request'); //edited to match fosuserbundle declaration
 		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
-		}
 
         return $this->forward('IMDCTerpTubeBundle:Profile:showSpecific', array(
             'userName' => $user->getUsername()
@@ -59,10 +55,6 @@ class ProfileController extends Controller
 	public function showSpecificAction(Request $request, $userName)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
-		}
 		$userManager = $this->container->get('fos_user.user_manager');
 		$userObject = $userManager->findUserByUsername($userName);
 		if ($userObject == null)
@@ -79,10 +71,6 @@ class ProfileController extends Controller
 	public function updateAvatarAction(Request $request/*, $userName*/)
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
-		}
 		/*if ($user->getUsername() != $userName)
 		{
 			$response = new RedirectResponse(
@@ -157,10 +145,6 @@ class ProfileController extends Controller
 	public function editAction(Request $request) //edit to match fosuserbundle declaration
 	{
 		$user = $this->container->get('security.context')->getToken()->getUser();
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request))
-		{
-			return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
-		}
 		
 		/*
 		$userName = $request->query->get('userName');

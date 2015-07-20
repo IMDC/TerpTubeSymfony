@@ -10,3 +10,5 @@ IMDC\TerpTubeBundle\Entity\Thread:
       expose: true
     type:
       expose: true
+    posts:
+      expose: true

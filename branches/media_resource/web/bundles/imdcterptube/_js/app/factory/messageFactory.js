@@ -1,6 +1,3 @@
-/**
- * Created by imdc on 26/05/2015.
- */
 define(function () {
     'use strict';
 
@@ -9,8 +6,8 @@ define(function () {
     MessageFactory.edit = function (model) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_message_mark_as_read', {messageid: model.get('id')}),
-            type: 'POST'
+            method: 'POST',
+            url: Routing.generate('imdc_message_mark_as_read', {messageid: model.get('id')})
         };
 
         $.ajax(settings)
@@ -18,12 +15,12 @@ define(function () {
                 if (data.wasEdited) {
                     deferred.resolve(data);
                 } else {
-                    deferred.reject();
+                    deferred.reject(data);
                 }
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
