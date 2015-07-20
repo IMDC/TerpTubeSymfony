@@ -59,30 +59,6 @@ abstract class AbstractMediaConsumer implements MediaConsumerInterface
         $this->resourceFileConfig = $resourceFileConfig;
     }
 
-    protected function createResource(File $file)
-    {
-        // Correct the permissions to 664
-        $old = umask(0);
-        chmod($file->getRealPath(), 0664);
-        umask($old);
-
-        $resource = ResourceFile::fromFile($file, $this->resourceFileConfig);
-        // explicitly set the extension to that of the transcoded file (ext won't be guessed)
-        $resource->setPath($file->getExtension());
-
-        // make it immediately usable
-        /** @var EntityManager $em */
-        $em = $this->doctrine->getManager();
-        $em->persist($resource);
-        $em->flush();
-
-        $resource->updateMetaData($this->media->getType(), $this->transcoder);
-        $em->persist($resource);
-        $em->flush();
-
-        return $resource;
-    }
-
     public function execute(AMQPMessage $msg)
     {
         $this->message = AbstractMediaConsumerOptions::unpack($msg->body);
