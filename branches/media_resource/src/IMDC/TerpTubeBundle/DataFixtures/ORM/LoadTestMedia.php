@@ -119,7 +119,7 @@ class LoadTestMedia extends AbstractFixture implements OrderedFixtureInterface, 
      * @param $filename
      * @return UploadedFile
      */
-    public static function createUploadedFile($filesPath, $filename) //TODO make protected
+    public static function createUploadedFile($filesPath, $filename)
     {
         $filePath = tempnam('/tmp', 'hello_') . $filename;
         copy($filesPath . '/' . $filename, $filePath);

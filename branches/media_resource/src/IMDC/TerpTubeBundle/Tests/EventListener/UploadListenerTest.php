@@ -2,7 +2,6 @@
 
 namespace IMDC\TerpTubeBundle\Tests\EventListener;
 
-use IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
 use IMDC\TerpTubeBundle\EventListener\UploadListener;
@@ -32,7 +31,6 @@ class UploadListenerTest extends BaseWebTestCase
 
     public function testOnUpload_Video()
     {
-        //$media = $this->createUploadedMedia('video_audio.webm', Media::TYPE_VIDEO);
         /** @var Media $media */
         $media = $this->referenceRepo->getReference('test_media_1_1');
 
@@ -44,7 +42,6 @@ class UploadListenerTest extends BaseWebTestCase
 
     public function testOnUpload_Image()
     {
-        //$media = $this->createUploadedMedia('pic1.jpg', Media::TYPE_IMAGE);
         /** @var Media $media */
         $media = $this->referenceRepo->getReference('test_media_0_1');
 
