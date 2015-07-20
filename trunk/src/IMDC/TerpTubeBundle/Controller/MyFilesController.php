@@ -72,7 +72,8 @@ class MyFilesController extends Controller
         return $response;
     }
 
-    public function addRecordingAction(Request $request)
+    //TODO move to MediaController. when in trunk
+    public function addRecordingAction(Request $request) //TODO api?
     {
         $user = $this->getUser();
         $currentTime = new \DateTime('now');
@@ -147,7 +148,8 @@ class MyFilesController extends Controller
         ));
     }
 
-    public function addAction(Request $request)
+    //TODO move to MediaController. when in trunk
+    public function addAction(Request $request) //TODO api?
     {
         $media = new Media();
         $form = $this->createForm(new MediaType(), $media);
@@ -187,7 +189,7 @@ class MyFilesController extends Controller
                 && $mediaTypeGuess2 == null
             ) {
                 // Wrong audio/video type. return error
-                //TODO generic message factory
+                //TODO api exception
                 return new Response(json_encode(array(
                     'wasUploaded' => false,
                     'error' => Transcoder::INVALID_AUDIO_VIDEO_ERROR

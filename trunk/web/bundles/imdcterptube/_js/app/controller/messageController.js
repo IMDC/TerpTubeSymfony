@@ -19,6 +19,7 @@ define([
             this.markAsRead();
     };
 
+    //TODO rename to 'edit' after php controller changes
     Message.prototype.markAsRead = function () {
         return MessageFactory.edit(this.model);
     };

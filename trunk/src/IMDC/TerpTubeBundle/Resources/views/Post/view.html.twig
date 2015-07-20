@@ -4,7 +4,7 @@ _Post:view.html.twig
 _Thread:view.html.twig
 #}
 
-<div class="row post-container tt-post-container{% if post.isPostReply %} tt-post-reply-container{% endif %}" style="margin-bottom: 15px;" data-pid="{{ post.id }}" data-starttime="{{ post.startTime }}" data-endtime="{{ post.endTime }}" data-istemporal={{ post.isTemporal ? 'true' : 'false' }}>
+<div class="row post-container tt-post-container{% if post.isPostReply %} tt-post-reply-container{% endif %}" style="margin-bottom: 15px;" data-pid="{{ post.id }}"{% if post.isPostReply %} data-ppid="{{ post.getParentPost.getId }}"{% endif %}>
     <div class="{% if post.isPostReply %}col-md-offset-1 col-md-11{% else %}col-md-12{% endif %}">
         <div class="row tt-post-container-inner{% if post.isPostReply %} tt-post-reply-container-inner{% endif %}">
             <!-- user info -->

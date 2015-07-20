@@ -505,4 +505,14 @@ class Post
     {
         return !!$this->getParentPost();
     }
+
+    public function getShallowParentPost()
+    {
+        return !$this->isPostReply() ? null : $this->getParentPost()->getId();
+    }
+
+    public function getShallowParentThread()
+    {
+        return $this->getParentThread()->getId();
+    }
 }

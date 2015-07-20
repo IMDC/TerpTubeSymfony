@@ -24,6 +24,7 @@ define([
     // service
     'service/keyPointService',
     'service/subscriberService',
+    'service/threadPostService',
 
     // model
     'model/forumModel',
@@ -122,14 +123,16 @@ define([
     dust.helpers.sizeOf = function (chunk, context, bodies, params) {
         // pass a dummy chunk object so that @size doesn't write the resulting value,
         // so it doesn't render if bodies.block is present but its context(s) return(s) false
-        var value = this.size({
-            write: function () {
+        var result;
+        this.size({
+            write: function (value) {
+                result = value;
             }
         }, context, bodies, params);
         if (bodies && bodies.block) {
-            chunk.render(bodies.block, context.push({key: value}))
+            chunk.render(bodies.block, context.push({key: result}));
         } else {
-            chunk = chunk.write(value);
+            chunk = chunk.write(result);
         }
         return chunk;
     };

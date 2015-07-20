@@ -1,0 +1,6 @@
+imdc_contact_delete:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\ContactController
+  name_prefix: imdc_
+  options:
+    expose: true

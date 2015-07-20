@@ -3,6 +3,8 @@
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
 use IMDC\TerpTubeBundle\Entity\User;
+use IMDC\TerpTubeBundle\Rest\Exception\ContactException;
+use IMDC\TerpTubeBundle\Rest\RestResponse;
 use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
 
@@ -22,7 +24,6 @@ class ContactControllerWebTest extends BaseWebTestCase
         $this->client = static::createClient();
         /** @var User $user1 */
         $user1 = $this->referenceRepo->getReference('test_user_1');
-
         Common::login($this->client, $user1->getUsername());
 
         // add users to friends list
@@ -60,16 +61,15 @@ class ContactControllerWebTest extends BaseWebTestCase
         /** @var User $user3 */
         $user3 = $this->referenceRepo->getReference('test_user_3');
 
-        $this->client->request('POST', '/contacts/remove', array(
+        $this->client->request('DELETE', '/api/v1/contact', array(
             'userIds' => array($user2->getId(), $user3->getId()),
             'contactList' => 'error'
         ));
         $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('success', $response);
-        $this->assertArrayHasKey('message', $response);
-        $this->assertFalse($response['success']);
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(ContactException::getCode(ContactException::BAD_REQUEST), $response['code']);
     }
 
     public function testDelete_Success()
@@ -79,14 +79,14 @@ class ContactControllerWebTest extends BaseWebTestCase
         /** @var User $user3 */
         $user3 = $this->referenceRepo->getReference('test_user_3');
 
-        $this->client->request('POST', '/contacts/remove', array(
+        $this->client->request('DELETE', '/api/v1/contact', array(
             'userIds' => array($user2->getId(), $user3->getId()),
             'contactList' => 'friends'
         ));
         $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('success', $response);
-        $this->assertTrue($response['success']);
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(RestResponse::OK, $response['code']);
     }
 }

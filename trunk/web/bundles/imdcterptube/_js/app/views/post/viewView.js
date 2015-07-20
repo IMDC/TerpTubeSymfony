@@ -1,8 +1,7 @@
 define([
     'model/model',
-    'component/galleryComponent',
-    'views/post/editView'
-], function (Model, GalleryComponent, EditView) {
+    'component/galleryComponent'
+], function (Model, GalleryComponent) {
     'use strict';
 
     var ViewView = function (controller, options) {
@@ -87,9 +86,9 @@ define([
         this.$new.hide();
         this.controller.new(null)
             .done(function (data) {
-                this.$container.after(data.html);
+                this.controller.addToThread(data.post);
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$new.show();
             }.bind(this));
     };
@@ -97,18 +96,17 @@ define([
     ViewView.prototype._onClickEdit = function (e) {
         e.preventDefault();
 
-        this.controller.edit(null)
+        this.controller.edit()
             .done(function (data) {
-                //TODO make me better
-                this.$container.replaceWith(data.html);
-                //this.controller.removeKeyPoint();
+                this.controller.updateInThread('edit');
+
                 if (this.controller.model.get('is_temporal', false)) {
                     this.controller.editKeyPoint({cancel: false});
                 }
-                var _self = this;
-                _self = new EditView(this.controller, this.controller.options);
-                this.controller.onViewLoaded();
-            }.bind(this));
+            }.bind(this))
+            .fail(function (data) {
+                //TODO
+            });
     };
 
     ViewView.prototype._onClickDelete = function (e) {
@@ -123,17 +121,14 @@ define([
 
                 if (this.$deleteModal.data('bs.modal').isShown) {
                     this.$deleteModal.on('hidden.bs.modal', function (e) {
-                        this.$container.remove();
+                        this.controller.removeFromThread();
                     }.bind(this));
                     this.$deleteModal.modal('hide');
-                    this.$container.fadeOut('slow');
                 } else {
-                    this.$container.fadeOut('slow', function (e) {
-                        this.$container.remove();
-                    }.bind(this));
+                    this.controller.removeFromThread();
                 }
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$container
                     .find('.modal-body')
                     .prepend('Something went wrong. Try again.');
@@ -182,6 +177,7 @@ define([
         this._clickKeyPoint(
             e.model.get('keyPoint.isPlayerPlaying', false)
         );
+        this.$new.show();
     };
 
     return ViewView;

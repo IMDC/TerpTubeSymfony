@@ -18,11 +18,23 @@ IMDC\TerpTubeBundle\Entity\Post:
       expose: true
     isTemporal:
       expose: true
-    parentPost:
+    replies:
       expose: true
+    parentPost:
+      access_type: public_method
+      accessor:
+        getter: getShallowParentPost
+      type: integer
+      serialized_name: parent_post_id
+      read_only: true
     author:
       expose: true
     parentThread:
-      expose: true
+      access_type: public_method
+      accessor:
+        getter: getShallowParentThread
+      type: integer
+      serialized_name: parent_thread_id
+      read_only: true
     editedBy:
       expose: true
