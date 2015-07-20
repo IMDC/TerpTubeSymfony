@@ -16,7 +16,8 @@ class AuthenticationManager
         'fos_user_security_.*',
         'fos_user_registration_.*',
         'fos_user_resetting_.*',
-        'fos_js_routing_.*',
+        'fos_js_routing_js',
+        'bazinga_jstranslation_js',
         'imdc_index'
     );
 

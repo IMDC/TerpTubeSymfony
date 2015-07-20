@@ -1,5 +1,6 @@
 define([
     'chai',
+    'q',
     'test/common',
     'service',
     'model/model',
@@ -10,7 +11,7 @@ define([
     'jquery-mockjax',
     'fos_routes',
     'es5-shim'
-], function (chai, Common, Service, Model, ThreadModel, ThreadController, KeyPointService) {
+], function (chai, Q, Common, Service, Model, ThreadModel, ThreadController, KeyPointService) {
     'use strict';
 
     var assert = chai.assert;
@@ -43,7 +44,7 @@ define([
                 mCallbackResult = e;
             };
             model = new ThreadModel({
-                id: 17
+                id: 1
             });
             model.subscribe(Model.Event.CHANGE, mCallback);
             $.mockjaxSettings.logging = false;
@@ -121,17 +122,20 @@ define([
             assert.isFalse(mCallbackResult.model.get('keyPoints.0.isPlayerHovering'), 'key point property should be false');
         });
 
-        it('should have dispatched "click" (double) key point event', function (done) {
-            controller.clickKeyPoint(keyPoint.id);
+        it('should have dispatched "right click" key point event', function () {
+            controller.rightClickKeyPoint(keyPoint.id);
 
             assert.equal(kpsCallbackResult.type, KeyPointService.Event.CLICK, 'key point event type should equal');
             assert.equal(kpsCallbackResult.keyPoint, keyPoint, 'key point should equal');
 
             assert.isTrue(mCallbackResult.model.get('keyPoints.0.isPlayerPlaying'), 'key point property should be true');
-            setTimeout(function () {
-                assert.isFalse(mCallbackResult.model.get('keyPoints.0.isPlayerPlaying'), 'key point property should be false');
-                done();
-            }, 200);
+
+            var promise = Q.promise(function(resolve) {
+                setTimeout(function () {
+                    resolve(mCallbackResult.model.get('keyPoints.0.isPlayerPlaying'));
+                }, 200);
+            });
+            return assert.eventually.isFalse(promise, 'key point property should be false');
         });
 
         it('should have started editing key point', function () {
@@ -148,50 +152,52 @@ define([
             assert.isTrue(mCallbackResult.model.get('keyPoints.0.options.drawOnTimeLine'), 'key point property should be true');
         });
 
-        it('should have removed key point', function (done) {
+        it('should have removed key point', function () {
             keyPointService.dispatch(keyPoint.id, KeyPointService.Event.REMOVE);
 
-            setTimeout(function () {
-                assert.lengthOf(mCallbackResult.model.get(mCallbackResult.keyPath), 0, 'key point array should be empty');
-                done();
-            }, 200);
+            var promise = Q.promise(function(resolve) {
+                setTimeout(function () {
+                    resolve(mCallbackResult.model.get(mCallbackResult.keyPath));
+                }, 200);
+            });
+            return assert.eventually.lengthOf(promise, 0, 'key point array should be empty');
         });
 
         //TODO controller.adjustVideoSpeed()
 
-        it('should not have redirected', function () {
+        it('should not have redirected', function (done) {
             $.mockjax({
-                url: Routing.generate('imdc_thread_delete', {threadid: model.get('id')}),
-                responseText: {
-                    wasDeleted: false
-                }
+                url: Routing.generate('imdc_delete_thread', {threadId: model.get('id')}),
+                status: 400
             });
 
-            // don't return promise
-            controller.delete()
+            return controller.delete()
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
+                    done();
                 })
-                .fail(function () {
-                    assert.isUndefined(pageUrl, 'pageUrl should be null');
+                .fail(function (data) {
+                    assert.isUndefined(pageUrl, 'pageUrl should be undefined');
+                    done();
                 });
         });
 
-        it('should have redirected', function () {
+        it('should have redirected', function (done) {
             $.mockjax({
-                url: Routing.generate('imdc_thread_delete', {threadid: model.get('id')}),
+                url: Routing.generate('imdc_delete_thread', {threadId: model.get('id')}),
                 responseText: {
-                    wasDeleted: true,
-                    redirectUrl: Common.BASE_URL + '/forum/'
+                    redirect_url: Common.BASE_URL + '/forum/'
                 }
             });
 
             return controller.delete()
                 .done(function (data) {
-                    assert.equal(pageUrl, data.redirectUrl, 'pageUrl should equal key:redirectUrl');
+                    assert.equal(pageUrl, data.redirect_url, 'pageUrl should equal key:redirect_url');
+                    done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
+                    done();
                 });
         });
 

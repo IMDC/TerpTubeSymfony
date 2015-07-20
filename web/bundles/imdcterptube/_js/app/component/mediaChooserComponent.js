@@ -316,7 +316,7 @@ define([
                 }.bind(this));
                 this._invokeSuccess();
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$working.hide();
                 this._toggleForm(false);
 

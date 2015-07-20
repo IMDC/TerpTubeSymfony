@@ -134,7 +134,7 @@ define([
                     myFilesSelectorComponent: this
                 });
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$selectSelected.button('reset');
 
                 console.error('%s: media factory list', MyFilesSelectorComponent.TAG);

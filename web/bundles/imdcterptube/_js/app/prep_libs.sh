@@ -10,14 +10,17 @@ libs=(
     'stomp-websocket/lib/stomp.min.js'
 )
 
-libs_test=(
+libs_test_bower=(
     '../../../../fosjsrouting/js/router.js'
     '../../../../bazingajstranslation/js/translator.min.js'
-    'chai/chai.js'
     'jquery/dist/jquery.min.js'
     'jquery-mockjax/jquery.mockjax.js'
     'es5-shim/es5-shim.min.js'
     'es5-shim/es5-shim.map'
+)
+
+libs_test_npm=(
+    'q/q.js'
 )
 
 mkdir -p lib
@@ -31,9 +34,15 @@ done
 
 if [ "$1" = "test" ]
 then
-    for l in ${libs_test[@]}
+    for l in ${libs_test_bower[@]}
     do
         echo 'bower_components/'${l}' > test/lib/'
         cp 'bower_components/'${l} 'test/lib/'
+    done
+
+    for l in ${libs_test_npm[@]}
+    do
+        echo 'node_modules/'${l}' > test/lib/'
+        cp 'node_modules/'${l} 'test/lib/'
     done
 fi

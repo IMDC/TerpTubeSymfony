@@ -10,7 +10,7 @@ module.exports = function(config) {
 
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: ['mocha', 'requirejs'],
+    frameworks: ['mocha', 'requirejs', 'chai-as-promised', 'chai'],
 
 
     // list of files / patterns to load in the browser
@@ -33,8 +33,11 @@ module.exports = function(config) {
 
     // list of files to exclude
     exclude: [
-        'test/view/**/*Test.js', // view tests are handled by CasperJS
-        // exclude for faster testing
+        /*'test/controller/forum*',
+        'test/controller/group*',
+        'test/controller/message*',
+        'test/controller/post*',
+        'test/controller/thread*',
         'test/factory/contact*',
         'test/factory/forum*',
         'test/factory/group*',
@@ -42,7 +45,10 @@ module.exports = function(config) {
         'test/factory/message*',
         'test/factory/myFiles*',
         'test/factory/post*',
-        'test/factory/thread*'
+        'test/factory/thread*',
+        'test/model/!*Test.js',
+        'test/service/!*Test.js',*/
+        'test/view/**/*Test.js' // view tests are handled by CasperJS
     ],
 
 
@@ -68,7 +74,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_DEBUG,
 
 
     // enable / disable watching file and executing tests whenever any file changes

@@ -1,0 +1,8 @@
+imdc_thread_delete:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\ThreadController
+  requirements:
+    threadId: \d+
+  name_prefix: imdc_
+  options:
+    expose: true

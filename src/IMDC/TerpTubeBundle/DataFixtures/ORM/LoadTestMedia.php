@@ -58,7 +58,6 @@ class LoadTestMedia extends AbstractFixture implements OrderedFixtureInterface, 
         foreach ($types as $type) {
             for ($count = 1; $count <= self::NUM_TEST_MEDIA_PER_TYPE; $count++) {
                 $title = 'test_media_' . $count;
-                //$user = $this->getReference('test_user_1');// . rand(1, LoadTestUsers::NUM_TEST_USERS));
                 //TODO random files based on media type. move flush to end
                 $resourceFile = ResourceFile::fromFile(
                     $this->createUploadedFile('case03_video_698.733333s_480p_500k.webm'), $resourceFileConfig);
@@ -69,7 +68,6 @@ class LoadTestMedia extends AbstractFixture implements OrderedFixtureInterface, 
                 $media->setTitle($title);
                 $media->setState(MediaStateConst::UNPROCESSED);
                 $media->setSourceResource($resourceFile);
-                //$media->setOwner($user);
 
                 $manager->persist($media);
 

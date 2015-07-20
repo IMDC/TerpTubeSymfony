@@ -44,14 +44,12 @@ class LoadTestForums extends AbstractFixture implements OrderedFixtureInterface,
         for ($count = 1; $count <= self::NUM_TEST_FORUMS; $count++) {
             $title = 'test_forum_' . $count;
             $currentDate = new \DateTime();
-            //$user = $this->getReference('test_user_1');
             $accessType = $manager->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC);
 
             $forum = new Forum();
             $forum->setTitleText($title);
             $forum->setLastActivity($currentDate);
             $forum->setCreationDate($currentDate);
-            //$forum->setCreator($user);
             $forum->setAccessType($accessType);
 
             $manager->persist($forum);

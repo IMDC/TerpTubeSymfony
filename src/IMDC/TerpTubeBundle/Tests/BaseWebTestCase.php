@@ -118,7 +118,7 @@ class BaseWebTestCase extends WebTestCase
      * @param $media
      * @return array
      */
-    public static function getShuffledMediaIds($media)
+    protected static function getShuffledMediaIds($media)
     {
         $mediaIds = array();
 
@@ -129,5 +129,19 @@ class BaseWebTestCase extends WebTestCase
         shuffle($mediaIds);
 
         return $mediaIds;
+    }
+
+    protected function assertMedia($media, $mediaIds)
+    {
+        $this->assertTrue(is_array($media));
+        $this->assertCount(count($mediaIds), $media);
+        // check existence
+        foreach ($media as $m) {
+            $this->assertContains($m['id'], $mediaIds);
+        }
+        // check order
+        foreach ($mediaIds as $key => $mediaId) {
+            $this->assertEquals($media[$key]['id'], $mediaId);
+        }
     }
 }

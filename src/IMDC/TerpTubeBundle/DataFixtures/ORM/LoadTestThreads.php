@@ -5,19 +5,19 @@ namespace IMDC\TerpTubeBundle\DataFixtures\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use FOS\UserBundle\Doctrine\GroupManager;
-use IMDC\TerpTubeBundle\Entity\UserGroup;
+use IMDC\TerpTubeBundle\Entity\AccessType;
+use IMDC\TerpTubeBundle\Entity\Thread;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class LoadTestGroups
+ * Class LoadTestThreads
  * @package IMDC\TerpTubeBundle\DataFixtures\ORM
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class LoadTestGroups extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
+class LoadTestThreads extends AbstractFixture implements OrderedFixtureInterface, ContainerAwareInterface
 {
-    const NUM_TEST_GROUPS = 5;
+    const NUM_TEST_THREADS = 5;
 
     /**
      * @var ContainerInterface
@@ -41,20 +41,21 @@ class LoadTestGroups extends AbstractFixture implements OrderedFixtureInterface,
             return;
         }
 
-        /** @var GroupManager $groupManager */
-        $groupManager = $this->container->get('fos_user.group_manager');
+        for ($count = 1; $count <= self::NUM_TEST_THREADS; $count++) {
+            $title = 'test_thread_' . $count;
+            $currentDate = new \DateTime();
+            $accessType = $manager->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC);
 
-        for ($count = 1; $count <= self::NUM_TEST_GROUPS; $count++) {
-            $name = 'test_group_' . $count;
+            $thread = new Thread();
+            $thread->setTitle($title);
+            $thread->setCreationDate($currentDate);
+            $thread->setLocked(false);
+            $thread->setSticky(false);
+            $thread->setAccessType($accessType);
 
-            /** @var UserGroup $group */
-            $group = $groupManager->createGroup($name);
+            $manager->persist($thread);
 
-            $groupManager->updateGroup($group, false);
-
-            $manager->persist($group);
-
-            $this->addReference($name, $group);
+            $this->addReference($title, $thread);
         }
 
         $manager->flush();
@@ -65,6 +66,6 @@ class LoadTestGroups extends AbstractFixture implements OrderedFixtureInterface,
      */
     public function getOrder()
     {
-        return 2;
+        return 5;
     }
 }

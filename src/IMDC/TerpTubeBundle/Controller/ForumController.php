@@ -2,12 +2,16 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Entity\AccessType;
 use IMDC\TerpTubeBundle\Entity\Forum;
 use IMDC\TerpTubeBundle\Form\Type\ForumType;
+use IMDC\TerpTubeBundle\Rest\Exception\ForumException;
+use IMDC\TerpTubeBundle\Rest\ForumResponse;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,10 +21,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Forum object related actions such as new, edit, delete
+ *
+ * @Rest\NoRoute()
+ *
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ForumController extends Controller
+class ForumController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * @param Request $request
@@ -256,22 +263,23 @@ class ForumController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param $forumid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @Rest\Route()
+     * @Rest\View()
+     *
+     * @param $forumId
+     * @return \FOS\RestBundle\View\View
      */
-    public function deleteAction(Request $request, $forumid) //TODO api?
+    public function deleteAction($forumId)
     {
         $em = $this->getDoctrine()->getManager();
-        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumid);
+        $forum = $em->getRepository('IMDCTerpTubeBundle:Forum')->find($forumId);
         if (!$forum) {
-            throw new \Exception('forum not found');
+            ForumException::NotFound();
         }
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('DELETE', $forum) === false) {
-            throw new AccessDeniedException();
+            ForumException::AccessDenied();
         }
 
         $user = $this->getUser();
@@ -287,13 +295,8 @@ class ForumController extends Controller
 
         $em->flush();
 
-        $content = array(
-            'wasDeleted' => true,
-            'redirectUrl' => $this->generateUrl('imdc_forum_list')
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        $resp = new ForumResponse();
+        $resp->setRedirectUrl($this->generateUrl('imdc_forum_list'));
+        return $this->view($resp, 200);
     }
 }

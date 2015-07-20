@@ -1,13 +1,13 @@
-<div class="row post-container{?post.is_post_reply} tt-post-container tt-post-reply-container" style="margin-bottom: 15px;{/post.is_post_reply}" data-pid="{post.id}">
-    <div class="{?post.is_post_reply}col-md-offset-1 col-md-11{:else}col-md-12{/post.is_post_reply}">
-        {?post.is_post_reply}
+<div class="row post-container{?is_post_reply} tt-post-container tt-post-reply-container" style="margin-bottom: 15px;{/is_post_reply}" data-pid="{id}">
+    <div class="{?is_post_reply}col-md-offset-1 col-md-11{:else}col-md-12{/is_post_reply}">
+        {?is_post_reply}
             <div class="row tt-post-container-inner tt-post-reply-container-inner">
                 <div class="col-md-12">
-        {/post.is_post_reply}
-        {post.form|s}
-        {?post.is_post_reply}
+        {/is_post_reply}
+        {form|s}
+        {?is_post_reply}
                 </div>
             </div>
-        {/post.is_post_reply}
+        {/is_post_reply}
     </div>
 </div>
