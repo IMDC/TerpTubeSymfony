@@ -41,7 +41,7 @@ class ForumControllerWebTest extends BaseWebTestCase
         // give logged in user media
         for ($i = 1; $i <= 2; $i++) {
             /** @var Media $media */
-            $media = $this->referenceRepo->getReference('test_media_' . $i);
+            $media = $this->referenceRepo->getReference('test_media_1_' . $i);
             $media->setOwner($this->loggedInUser);
             $this->entityManager->persist($media);
         }

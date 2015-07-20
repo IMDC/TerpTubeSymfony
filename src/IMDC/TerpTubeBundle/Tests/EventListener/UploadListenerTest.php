@@ -2,18 +2,26 @@
 
 namespace IMDC\TerpTubeBundle\Tests\EventListener;
 
+use IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
 use IMDC\TerpTubeBundle\EventListener\UploadListener;
-use IMDC\TerpTubeBundle\Tests\MediaTestCase;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 
 /**
  * Class UploadListenerTest
  * @package IMDC\TerpTubeBundle\Tests\EventListener
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class UploadListenerTestCase extends MediaTestCase
+class UploadListenerTest extends BaseWebTestCase
 {
+    public function setUp()
+    {
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
+    }
+
     public function testInstantiate()
     {
         $uploadListener = $this->getUploadListener();
@@ -24,19 +32,21 @@ class UploadListenerTestCase extends MediaTestCase
 
     public function testOnUpload_Video()
     {
-        $media = $this->createUploadedMedia('video_audio.webm', Media::TYPE_VIDEO);
+        //$media = $this->createUploadedMedia('video_audio.webm', Media::TYPE_VIDEO);
+        /** @var Media $media */
+        $media = $this->referenceRepo->getReference('test_media_1_1');
 
         $uploadListener = $this->getUploadListener();
         $uploadListener->onUpload(new UploadEvent($media));
 
         $this->assertNotNull($media->getSourceResource()->getMetaData());
-
-        $this->deleteUploadedMedia($media);
     }
 
     public function testOnUpload_Image()
     {
-        $media = $this->createUploadedMedia('pic1.jpg', Media::TYPE_IMAGE);
+        //$media = $this->createUploadedMedia('pic1.jpg', Media::TYPE_IMAGE);
+        /** @var Media $media */
+        $media = $this->referenceRepo->getReference('test_media_0_1');
 
         $uploadListener = $this->getUploadListener();
         $uploadListener->onUpload(new UploadEvent($media));
@@ -53,8 +63,6 @@ class UploadListenerTestCase extends MediaTestCase
         $this->assertEquals($imageSize[0], $metaData->getWidth());
         $this->assertEquals($imageSize[1], $metaData->getHeight());
         $this->assertNull($metaData->getDuration());
-
-        $this->deleteUploadedMedia($media);
     }
 
     /**
@@ -62,11 +70,11 @@ class UploadListenerTestCase extends MediaTestCase
      */
     private function getUploadListener()
     {
-        $logger = $this->container->get('logger');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $transcoder = $this->container->get('imdc_terptube.transcoder');
-        $multiplexProducer = $this->container->get('old_sound_rabbit_mq.multiplex_producer');
-        $transcodeProducer = $this->container->get('old_sound_rabbit_mq.transcode_producer');
+        $logger = $this->getContainer()->get('logger');
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $transcoder = $this->getContainer()->get('imdc_terptube.transcoder');
+        $multiplexProducer = $this->getContainer()->get('old_sound_rabbit_mq.multiplex_producer');
+        $transcodeProducer = $this->getContainer()->get('old_sound_rabbit_mq.transcode_producer');
 
         return new UploadListener($logger, $entityManager, $transcoder, $multiplexProducer, $transcodeProducer);
     }
