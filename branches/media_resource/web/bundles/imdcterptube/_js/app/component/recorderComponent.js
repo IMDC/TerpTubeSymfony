@@ -273,6 +273,11 @@ define([
             ? this.$normalVideo
             : this.$interpVideoR;
 
+        //TODO remove after player.js changes. force invoke post upload success
+        Player.prototype.postRecordings = function() {
+            this.recording_recordingStopped(true, {});
+        };
+
         this.recorder = new Player(container, {
             areaSelectionEnabled: false,
             audioBar: false,
@@ -281,10 +286,10 @@ define([
             type: Player.DENSITY_BAR_TYPE_RECORDER,
             volumeControl: false,
             maxRecordingTime: RecorderComponent.MAX_RECORDING_TIME,
-            /*recordingSuccessFunction: this.bind__onRecordingSuccess,
-             recordingErrorFunction: this.bind__onRecordingError,
-             recordingPostURL: Routing.generate('imdc_myfiles_add_recording'),
-             additionalDataToPost: additionalDataToPost,*/
+            //TODO remove after player.js changes. force invoke post upload success
+            recordingSuccessFunction: (function () {}),
+            recordingErrorFunction: (function () {}),
+            //
             forwardButtons: forwardButtons,
             forwardFunctions: forwardFunctions
         });
@@ -329,9 +334,6 @@ define([
             this.player.pause();
             this.player.setControlsEnabled(true);
         }
-
-        //TODO remove after player.js changes. force invoke post upload success
-        //this.recorder.recording_recordingStopped(true);
     };
 
     RecorderComponent.prototype._preview = function (e) {
@@ -367,11 +369,10 @@ define([
                     console.log('done');
                     this.$containerUpload.find('label').eq(0).html('Cleaning up...');
 
-                    //TODO replace with MediaFactory.get()
-                    MediaFactory.list([this.tempMedia.get('id')])
+                    MediaFactory.get(this.tempMedia.get('id'))
                         .done(function (data) {
                             this.tempMedia = null;
-                            this.setRecordedMedia(data.media[0]);
+                            this.setRecordedMedia(data.media);
 
                             // was waiting for us?
                             if (this.isDonePostponed) {
@@ -380,7 +381,7 @@ define([
                                 }.bind(this), 2000);
                             }
                         }.bind(this))
-                        .fail(function () {
+                        .fail(function (data) {
                             //TODO
                         });
                 }

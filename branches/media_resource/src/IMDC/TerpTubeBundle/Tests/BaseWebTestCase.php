@@ -6,7 +6,10 @@ use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
+use IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\MediaStateConst;
+use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
@@ -38,8 +41,15 @@ class BaseWebTestCase extends WebTestCase
      */
     protected $client;
 
+    /**
+     * @var string
+     */
     private $logsPath;
 
+    /**
+     * @param array $fixtures
+     * @throws \Doctrine\ORM\Tools\ToolsException
+     */
     protected function reloadDatabase(array $fixtures)
     {
         $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -62,6 +72,9 @@ class BaseWebTestCase extends WebTestCase
         $this->referenceRepo = $executor->getReferenceRepository();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function postFixtureSetup()
     {
         // flush acls and aces. see IMDC\TerpTubeBundle\Command\GenerateAclsCommand::execute
@@ -75,6 +88,12 @@ class BaseWebTestCase extends WebTestCase
             SET FOREIGN_KEY_CHECKS = 1;");
     }
 
+    /**
+     * @param $object
+     * @param $user
+     * @param null $mask
+     * @throws \Symfony\Component\Security\Acl\Exception\InvalidDomainObjectException
+     */
     protected function grantAccessToObject($object, $user, $mask = null)
     {
         if ($object instanceof UserGroup) {
@@ -101,6 +120,11 @@ class BaseWebTestCase extends WebTestCase
         }
     }
 
+    /**
+     * @param $function
+     * @param string $suffix
+     * @param null $class
+     */
     protected function logResponse($function, $suffix = '', $class = null)
     {
         $class = $class ?: get_class($this);
@@ -131,6 +155,10 @@ class BaseWebTestCase extends WebTestCase
         return $mediaIds;
     }
 
+    /**
+     * @param $media
+     * @param $mediaIds
+     */
     protected function assertMedia($media, $mediaIds)
     {
         $this->assertTrue(is_array($media));

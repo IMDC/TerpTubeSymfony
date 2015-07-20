@@ -4,7 +4,8 @@ namespace IMDC\TerpTubeBundle\Tests\Consumer;
 
 use IMDC\TerpTubeBundle\Consumer\MediaConsumer;
 use IMDC\TerpTubeBundle\Consumer\Options\MediaConsumerOptions;
-use IMDC\TerpTubeBundle\Tests\MediaTestCase;
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -13,9 +14,14 @@ use PhpAmqpLib\Message\AMQPMessage;
  * @package IMDC\TerpTubeBundle\Tests\Consumer
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class AbstractMediaConsumerTest extends MediaTestCase
+class AbstractMediaConsumerTest extends BaseWebTestCase
 {
-    private static $mediaIds = array(1, 999999);
+    public function setUp()
+    {
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
+    }
 
     public function testInstantiate()
     {
@@ -28,18 +34,20 @@ class AbstractMediaConsumerTest extends MediaTestCase
 
     public function testExecute()
     {
+        /** @var Media $media */
+        $media = $this->referenceRepo->getReference('test_media_1_1');
         $opts = new MediaConsumerOptions();
         $consumer = $this->getMediaConsumer();
 
         // test existing
-        $opts->mediaId = self::$mediaIds[0];
+        $opts->mediaId = $media->getId();
         $serialized = $opts->pack();
 
         $result = $consumer->execute(new AMQPMessage($serialized));
         $this->assertEquals(ConsumerInterface::MSG_ACK, $result);
 
         // test non-existing
-        $opts->mediaId = self::$mediaIds[1];
+        $opts->mediaId = 999999;
         $serialized = $opts->pack();
 
         $result = $consumer->execute(new AMQPMessage($serialized));
@@ -51,11 +59,12 @@ class AbstractMediaConsumerTest extends MediaTestCase
      */
     private function getMediaConsumer()
     {
-        $logger = $this->container->get('logger');
-        $doctrine = $this->container->get('doctrine');
-        $transcoder = $this->container->get('imdc_terptube.transcoder');
-        $entityStatusProducer = $this->container->get('old_sound_rabbit_mq.entity_status_producer');
+        $logger = $this->getContainer()->get('logger');
+        $doctrine = $this->getContainer()->get('doctrine');
+        $transcoder = $this->getContainer()->get('imdc_terptube.transcoder');
+        $entityStatusProducer = $this->getContainer()->get('old_sound_rabbit_mq.entity_status_producer');
+        $resourceFileConfig = $this->getContainer()->getParameter('imdc_terptube.resource_file');
 
-        return new MediaConsumer($logger, $doctrine, $transcoder, $entityStatusProducer);
+        return new MediaConsumer($logger, $doctrine, $transcoder, $entityStatusProducer, $resourceFileConfig);
     }
 }

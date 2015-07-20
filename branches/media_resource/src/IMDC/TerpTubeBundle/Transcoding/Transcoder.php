@@ -393,6 +393,7 @@ class Transcoder
         }
         catch (\Exception $e)
         {
+            throw $e;
             $this->logger->error($e->getTraceAsString());
             if ($this->fs->exists($tempFileName))
                 $this->fs->remove($tempFileName);

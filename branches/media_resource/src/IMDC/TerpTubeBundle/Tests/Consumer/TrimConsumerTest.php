@@ -4,8 +4,8 @@ namespace IMDC\TerpTubeBundle\Tests\Consumer;
 
 use IMDC\TerpTubeBundle\Consumer\Options\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Consumer\TrimConsumer;
-use IMDC\TerpTubeBundle\Entity\ResourceFile;
-use IMDC\TerpTubeBundle\Tests\MediaTestCase;
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use OldSound\RabbitMqBundle\RabbitMq\ConsumerInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -14,8 +14,15 @@ use PhpAmqpLib\Message\AMQPMessage;
  * @package IMDC\TerpTubeBundle\Tests\Consumer
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class TrimConsumerTest extends MediaTestCase
+class TrimConsumerTest extends BaseWebTestCase
 {
+    public function setUp()
+    {
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
+    }
+
     public function testInstantiate()
     {
         $consumer = $this->getTrimConsumer();
@@ -27,7 +34,9 @@ class TrimConsumerTest extends MediaTestCase
 
     public function testExecute()
     {
-        $media = $this->createTranscodedMedia('video_audio.webm');
+        //$media = $this->createTranscodedMedia('video_audio.webm');
+        /** @var Media $media */
+        $media = $this->referenceRepo->getReference('test_transcoded_1_1');
 
         //** @var ResourceFile $resource */
         //$resource = $media->getResources()->get(0);
@@ -42,12 +51,10 @@ class TrimConsumerTest extends MediaTestCase
         $consumer = $this->getTrimConsumer();
         $result = $consumer->execute(new AMQPMessage($serialized));
 
-        $this->entityManager->refresh($media);
+        //$this->entityManager->refresh($media);
 
         $this->assertEquals(ConsumerInterface::MSG_ACK, $result);
         //$this->assertLessThan($opts->currentDuration, $resource->getMetaData()->getDuration());
-
-        $this->deleteTranscodedMedia($media);
     }
 
     /**
@@ -55,11 +62,12 @@ class TrimConsumerTest extends MediaTestCase
      */
     private function getTrimConsumer()
     {
-        $logger = $this->container->get('logger');
-        $doctrine = $this->container->get('doctrine');
-        $transcoder = $this->container->get('imdc_terptube.transcoder');
-        $entityStatusProducer = $this->container->get('old_sound_rabbit_mq.entity_status_producer');
+        $logger = $this->getContainer()->get('logger');
+        $doctrine = $this->getContainer()->get('doctrine');
+        $transcoder = $this->getContainer()->get('imdc_terptube.transcoder');
+        $entityStatusProducer = $this->getContainer()->get('old_sound_rabbit_mq.entity_status_producer');
+        $resourceFileConfig = $this->getContainer()->getParameter('imdc_terptube.resource_file');
 
-        return new TrimConsumer($logger, $doctrine, $transcoder, $entityStatusProducer);
+        return new TrimConsumer($logger, $doctrine, $transcoder, $entityStatusProducer, $resourceFileConfig);
     }
 }
