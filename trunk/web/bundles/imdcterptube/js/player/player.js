@@ -1683,14 +1683,19 @@ Player.prototype.recording_stopRecording = function()
     var instance = this;
     var callback = function()
     {
-	console.log(instance.recordAudio.getBlob());
-	if (!instance.isFirefox)
-	{
-	    console.log(instance.recordVideo.getBlob());
-	}
+//	console.log(instance.recordAudio.getBlob());
+//	if (!instance.isFirefox)
+//	{
+//	    console.log(instance.recordVideo.getBlob());
+//	}
 
+	instance.setInputEnabled(recordButton, true);
+	instance.setInputEnabled(backButton, true);
+
+	instance.setInputEnabled(forwardButtons, true);
+	
 	$(instance).trigger(Player.EVENT_RECORDING_STOPPED);
-	instance.postRecordings(instance.options.recordingPostURL, instance.options.additionalDataToPost);
+//	instance.postRecordings(instance.options.recordingPostURL, instance.options.additionalDataToPost);
     };
     this.recordAudio.stopRecording(function()
     {
