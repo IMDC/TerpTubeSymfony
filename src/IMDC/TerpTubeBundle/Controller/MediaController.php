@@ -8,7 +8,6 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use IMDC\TerpTubeBundle\Consumer\Options\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
-use IMDC\TerpTubeBundle\Entity\ResourceFile;
 use IMDC\TerpTubeBundle\Rest\Exception\MediaException;
 use IMDC\TerpTubeBundle\Rest\MediaResponse;
 use IMDC\TerpTubeBundle\Rest\RestResponse;

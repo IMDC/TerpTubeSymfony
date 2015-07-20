@@ -2,10 +2,10 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
-use IMDC\TerpTubeBundle\Component\Serializer\Exclusion\UserExclusionStrategy;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use IMDC\TerpTubeBundle\Component\Serializer\Exclusion\UserExclusionStrategy;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
@@ -16,7 +16,6 @@ use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
 use JMS\Serializer\SerializationContext;
 use JMS\Serializer\Serializer;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
