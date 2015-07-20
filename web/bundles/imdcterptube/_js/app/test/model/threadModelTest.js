@@ -33,7 +33,7 @@ define([
 
         it('should not have found key point', function () {
             var index = model._findKeyPoint(keyPoint.id);
-            expect(index).to.be.undefined();
+            expect(index).to.be.undefined;
         });
 
         it('should have added new key point', function () {
@@ -64,10 +64,10 @@ define([
 
         it('should have dispatched change event', function () {
             model.forceChangeKeyPoint(keyPoint.id);
-            expect(callbackResult).to.be.undefined();
+            expect(callbackResult).to.be.undefined;
 
             model.forceChangeKeyPoint(keyPoint.id, 'nested.nonExist');
-            expect(callbackResult).to.be.undefined();
+            expect(callbackResult).to.be.undefined;
 
             model.forceChangeKeyPoint(keyPoint.id, 'startTime');
             expect(callbackResult).to.equal(keyPoint.startTime);

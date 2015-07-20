@@ -4,7 +4,7 @@ imports:
 framework:
     test: ~
     session:
-        storage_id: session.storage.mock_file
+        storage_id: session.storage.filesystem
     profiler:
         enabled: false
 
@@ -12,5 +12,18 @@ web_profiler:
     toolbar: false
     intercept_redirects: false
 
+doctrine:
+    dbal:
+        dbname: %database_test_name%
+
 swiftmailer:
     disable_delivery: true
+
+imdc_terp_tube:
+    resource_file:
+        upload_path: "uploads/test_media"
+    tests:
+        files_path: "%kernel.root_dir%/../../test_files"
+        logs_path: "%kernel.root_dir%/../../test_logs"
+
+liip_functional_test: ~

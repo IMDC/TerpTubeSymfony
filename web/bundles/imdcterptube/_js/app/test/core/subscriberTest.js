@@ -31,21 +31,21 @@ define([
             subscriber.subscribe(event, callback);
             var subs = subscriber.subscriptions[event];
 
-            expect(subs).to.not.be.undefined();
-            expect(subs[0]).to.not.be.undefined();
+            expect(subs).to.not.be.undefined;
+            expect(subs[0]).to.not.be.undefined;
             expect(subs[0]).to.equal(callback);
-        });
-
-        it('should have unsubscribed from event', function () {
-            subscriber.unsubscribe(callback);
-            expect(subscriber.subscriptions.length).to.equal(0);
         });
 
         it('should have dispatched event with args', function () {
             subscriber._dispatch(event, args);
 
-            expect(callbackResult).to.not.be.undefined();
+            expect(callbackResult).to.not.be.undefined;
             expect(callbackResult.foo).to.equal(args.foo);
+        });
+
+        it('should have unsubscribed from event', function () {
+            subscriber.unsubscribe(callback);
+            expect(_.size(subscriber.subscriptions[event])).to.equal(0);
         });
 
         after(function () {

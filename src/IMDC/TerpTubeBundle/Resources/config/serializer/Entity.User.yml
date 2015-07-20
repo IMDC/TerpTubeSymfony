@@ -3,7 +3,31 @@ IMDC\TerpTubeBundle\Entity\User:
   properties:
     profile:
       expose: true
+    friendsList:
+      access_type: public_method
+      accessor:
+        getter: getShallowFriendsList
+      type: array
+      read_only: true
     joinDate:
       expose: true
     postCount:
       expose: true
+    mentorList:
+      access_type: public_method
+      accessor:
+        getter: getShallowMentorList
+      type: array
+      read_only: true
+    menteeList:
+      access_type: public_method
+      accessor:
+        getter: getShallowMenteeList
+      type: array
+      read_only: true
+    createdInvitations:
+      access_type: public_method
+      accessor:
+        getter: getShallowCreatedInvitations
+      type: array
+      read_only: true

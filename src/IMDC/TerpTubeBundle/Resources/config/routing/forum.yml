@@ -19,12 +19,3 @@ imdc_forum_edit:
   defaults: { _controller: IMDCTerpTubeBundle:Forum:edit }
   requirements:
     forumid: \d+
-
-imdc_forum_delete:
-  pattern: /{forumid}/delete
-  defaults: { _controller: IMDCTerpTubeBundle:Forum:delete }
-  methods: [POST]
-  requirements:
-    forumid: \d+
-  options:
-    expose: true

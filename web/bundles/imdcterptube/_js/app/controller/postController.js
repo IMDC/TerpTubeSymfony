@@ -1,8 +1,9 @@
 define([
     'factory/postFactory',
     'service',
-    'service/keyPointService'
-], function (PostFactory, Service, KeyPointService) {
+    'service/keyPointService',
+    'service/threadPostService'
+], function (PostFactory, Service, KeyPointService, ThreadPostService) {
     'use strict';
 
     var Post = function (model, options) {
@@ -12,6 +13,7 @@ define([
         this.options = options;
 
         this.keyPointService = Service.get('keyPoint');
+        this.threadPostService = Service.get('threadPost');
 
         this.model.set('keyPoint', new KeyPoint(
             this.model.get('id'),
@@ -20,8 +22,8 @@ define([
             '', {drawOnTimeLine: this.model.get('is_temporal', false)}
         ));
 
-        // KeyPointService
-        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
+        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this); // KeyPointService
+        this.bind__onThreadPostEvent = this._onThreadPostEvent.bind(this); // ThreadPostService
 
         $tt._instances.push(this);
     };
@@ -53,8 +55,19 @@ define([
         }
     };
 
+    Post.prototype._onThreadPostEvent = function (e) {
+        switch (e.type) {
+            case ThreadPostService.Event.REMOVE:
+                // watch for new post forms being removed
+                if (e.post.get('id') < 0 && e.post.get('parent_post_id') == this.model.get('id'))
+                    this.model.forceChange();
+                break;
+        }
+    };
+
     Post.prototype.onViewLoaded = function () {
         this.addKeyPoint();
+        this.threadPostService.subscribe(this.bind__onThreadPostEvent);
     };
 
     Post.prototype.addKeyPoint = function () {
@@ -91,27 +104,36 @@ define([
         this.keyPointService.deregister(keyPoint.id);
     };
 
-    Post.prototype.new = function (form) {
-        return PostFactory.new(this.model, form)
-            .done(function (data) {
-                if (data.wasReplied) {
-//                    window.location.replace(data.redirectUrl);
-                }
-            });
+    Post.prototype.addToThread = function (post) {
+        this.threadPostService.dispatch(ThreadPostService.Event.ADD, {post: post});
     };
 
-    Post.prototype.edit = function (form) {
-        return PostFactory.edit(this.model, form)
-            .done(function (data) {
-
-            });
+    Post.prototype.updateInThread = function (view) {
+        this.threadPostService.dispatch(ThreadPostService.Event.REPLACE, {post: this.model, view: view});
     };
 
-    Post.prototype.view = function () {
-        return PostFactory.view(this.model)
-            .done(function (data) {
+    Post.prototype.removeFromThread = function () {
+        this.threadPostService.dispatch(ThreadPostService.Event.REMOVE, {post: this.model});
+    };
 
-            });
+    Post.prototype.new = function () {
+        return PostFactory.new(this.model);
+    };
+
+    Post.prototype.post = function (form) {
+        return PostFactory.post(this.model, form);
+    };
+
+    Post.prototype.get = function () {
+        return PostFactory.get(this.model);
+    };
+
+    Post.prototype.edit = function () {
+        return PostFactory.edit(this.model);
+    };
+
+    Post.prototype.put = function (form) {
+        return PostFactory.put(this.model, form);
     };
 
     Post.prototype.delete = function () {
