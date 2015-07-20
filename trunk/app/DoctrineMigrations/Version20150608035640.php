@@ -20,25 +20,12 @@ class Version20150608035640 extends AbstractMigration
         $this->addSql('ALTER TABLE media DROP FOREIGN KEY FK_6A2CA10C3E558020');
         $this->addSql('DROP INDEX UNIQ_6A2CA10C3E558020 ON media');
         $this->addSql('UPDATE resource_file LEFT JOIN media_resources ON (resource_file.id = media_resources.resource_id) INNER JOIN media ON (media.id = media_resources.media_id) SET resource_file.meta_data = media.meta_data');
+        $this->addSql('UPDATE resource_file INNER JOIN media ON (media.source_resource_id = resource_file.id) SET resource_file.meta_data = media.meta_data');
         $this->addSql('UPDATE resource_file INNER JOIN meta_data ON (resource_file.meta_data = meta_data.id) SET resource_file.created = meta_data.timeUploaded ');
 //         $this->addSql('CREATE UNIQUE INDEX UNIQ_83BF96AA3E558020 ON resource_file (meta_data)');
         $this->addSql('ALTER TABLE media DROP meta_data');
         $this->addSql('ALTER TABLE meta_data DROP timeUploaded');
     }
-    
-//     public function postUp(Schema $schema)
-//     {
-//         $em = $this->container->get('doctrine.orm.entity_manager');
-    
-//         $em->getConnection()->executeUpdate("UPDATE resource_file INNER JOIN media ON (media.resource = resource_file.id) SET resource_file.meta_data = media.meta_data, resource_file.created = media.timeUploaded ");
-//     }
-    
-//     public function postUp(Schema $schema)
-//     {
-//         $em = $this->container->get('doctrine.orm.entity_manager');
-    
-//         $em->getConnection()->executeUpdate("UPDATE resource_file INNER JOIN media ON (media.resource = resource_file.id) SET resource_file.meta_data = media.meta_data, resource_file.created = media.timeUploaded ");
-//     }
 
     public function down(Schema $schema)
     {
@@ -50,7 +37,8 @@ class Version20150608035640 extends AbstractMigration
         $this->addSql('CREATE UNIQUE INDEX UNIQ_6A2CA10C3E558020 ON media (meta_data)');
         $this->addSql('ALTER TABLE meta_data ADD timeUploaded DATETIME NOT NULL');
         $this->addSql('UPDATE meta_data INNER JOIN resource_file ON (resource_file.meta_data = meta_data.id) SET meta_data.timeUploaded = resource_file.created ');
-        $this->addSql('UPDATE media LEFT JOIN media_resources ON (media.id = media_resources.media_id) INNER JOIN resource_file ON (media_resources.media_id = media_resources.resource_id) SET media.meta_data = resource_file.meta_data ');
+        $this->addSql('UPDATE media LEFT JOIN media_resources ON (media.id = media_resources.media_id) INNER JOIN resource_file ON (resource_file.id = media_resources.resource_id) SET media.meta_data = resource_file.meta_data ');
+        $this->addSql('UPDATE media INNER JOIN resource_file ON (media.source_resource_id = resource_file.id) SET media.meta_data = resource_file.meta_data ');
         $this->addSql('ALTER TABLE resource_file DROP FOREIGN KEY FK_83BF96AA3E558020');
 //         $this->addSql('DROP INDEX UNIQ_83BF96AA3E558020 ON resource_file');
         $this->addSql('ALTER TABLE resource_file DROP meta_data, DROP created');
