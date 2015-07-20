@@ -4,20 +4,15 @@ namespace IMDC\TerpTubeBundle\Tests\Consumer;
 
 use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File;
 use IMDC\TerpTubeBundle\Consumer\Options\MultiplexConsumerOptions;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 
 /**
  * Class MultiplexConsumerOptionsTest
  * @package IMDC\TerpTubeBundle\Tests\Consumer
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class MultiplexConsumerOptionsTest extends WebTestCase
+class MultiplexConsumerOptionsTest extends BaseWebTestCase
 {
-    /**
-     * @var string
-     */
-    private $rootDir;
-
     /**
      * @var string
      */
@@ -30,12 +25,9 @@ class MultiplexConsumerOptionsTest extends WebTestCase
 
     public function setUp()
     {
-        static::$kernel = static::createKernel();
-        static::$kernel->boot();
-
-        $this->rootDir = static::$kernel->getRootDir() . '/';
-        $this->videoPath = $this->rootDir . '../../test_files/video.webm';
-        $this->audioPath = $this->rootDir . '../../test_files/audio.wav';
+        $filesPath = $this->getContainer()->getParameter('imdc_terptube.tests.files_path');
+        $this->videoPath = $filesPath . '/video.webm';
+        $this->audioPath = $filesPath . '/audio.wav';
     }
 
     public function testPack()

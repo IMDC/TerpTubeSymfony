@@ -35,8 +35,6 @@ class TranscodeConsumerTest extends BaseWebTestCase
 
     public function testExecute()
     {
-        // after multiplexing, a recorded media should be equivalent to an uploaded one
-        //$media = $this->createUploadedMedia('video_audio.webm', Media::TYPE_VIDEO);
         /** @var Media $media */
         $media = $this->referenceRepo->getReference('test_media_1_1');
 
@@ -49,10 +47,7 @@ class TranscodeConsumerTest extends BaseWebTestCase
         $consumer = $this->getTranscodeConsumer();
         $result = $consumer->execute(new AMQPMessage($serialized));
 
-        //$this->entityManager->refresh($media);
-
         $this->assertEquals(ConsumerInterface::MSG_ACK, $result);
-        //$this->assertEquals(1, $media->getResources()->count());
     }
 
     /**

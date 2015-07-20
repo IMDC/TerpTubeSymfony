@@ -34,12 +34,8 @@ class TrimConsumerTest extends BaseWebTestCase
 
     public function testExecute()
     {
-        //$media = $this->createTranscodedMedia('video_audio.webm');
         /** @var Media $media */
         $media = $this->referenceRepo->getReference('test_transcoded_1_1');
-
-        //** @var ResourceFile $resource */
-        //$resource = $media->getResources()->get(0);
 
         $opts = new TrimConsumerOptions();
         $opts->mediaId = $media->getId();
@@ -50,8 +46,6 @@ class TrimConsumerTest extends BaseWebTestCase
 
         $consumer = $this->getTrimConsumer();
         $result = $consumer->execute(new AMQPMessage($serialized));
-
-        //$this->entityManager->refresh($media);
 
         $this->assertEquals(ConsumerInterface::MSG_ACK, $result);
         //$this->assertLessThan($opts->currentDuration, $resource->getMetaData()->getDuration());
