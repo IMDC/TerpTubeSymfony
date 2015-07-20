@@ -29,7 +29,7 @@ define([
         });
 
         it('should be a new post', function () {
-            expect(model.isNew()).to.be.true();
+            expect(model.isNew()).to.be.true;
         });
 
         after(function () {

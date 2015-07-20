@@ -27,7 +27,7 @@ require.config({
         fos_routes: 'test/exports/fos_routes',
         bazinga_translator: 'test/lib/translator.min',
         bazinga_translations: 'test/exports/bazinga_translations',
-        chai: 'test/lib/chai',
+        q: 'test/lib/q',
         jquery: 'test/lib/jquery.min',
         'jquery-mockjax': 'test/lib/jquery.mockjax',
         'es5-shim': 'test/lib/es5-shim.min'
@@ -54,9 +54,6 @@ require.config({
         },
         bazinga_translations: {
             deps: ['bazinga_translator']
-        },
-        chai: {
-            exports: 'chai.assert'
         },
         jquery: {
             exports: '$'
