@@ -35,6 +35,7 @@ define([
         this.backButton = '<button class="backButton"></button>';
 
         this.bind__onShownModal = this._onShownModal.bind(this);
+        this.bind__onShowModal = this._onShowModal.bind(this);
         this.bind__onHiddenModal = this._onHiddenModal.bind(this);
         this.bind__onShowTab = this._onShowTab.bind(this);
         this.bind__onShownTab = this._onShownTab.bind(this);
@@ -73,6 +74,7 @@ define([
         this.$modalDialog.modal({backdrop: 'static', show: false});
 
         this.$modalDialog.on('shown.bs.modal', this.bind__onShownModal);
+        this.$modalDialog.on('show.bs.modal', this.bind__onShowModal);
         this.$modalDialog.on('hidden.bs.modal', this.bind__onHiddenModal);
         this.$tabPanes.on('show.bs.tab', this.bind__onShowTab);
         this.$tabPanes.on('shown.bs.tab', this.bind__onShownTab);
@@ -584,9 +586,9 @@ define([
         this.$modalDialog.find('.modal-dialog').animate({
             //width: this.page == Recorder.Page.NORMAL ? "900px" : (this.sourceMedia != null ? "90%" : "900px") //FIXME use css classes
 
-            // 220px are needed for all the other things in the window except the video. Then using 4*3 aspect ratio we
+            // 256px are needed for all the other things in the window except the video. Then using 4*3 aspect ratio we
             // set the width of the pop-up
-            width: 4 * ($(window).height() * 0.9 - 220) / 3
+            width: 4 * ($(window).height() * 0.9 - 256) / 3
         }, {
             complete: this.bind__onPageAnimate
         });
@@ -595,6 +597,10 @@ define([
     RecorderComponent.prototype._onShownModal = function (e) {
         this._destroyPlayers();
         this._loadPage();
+    };
+    RecorderComponent.prototype._onShowModal = function (e) {
+	// Width needs to be kept consistent with the loadPage modal animation width to avoid too many sizings of the modal
+	 this.$modalDialog.find('.modal-dialog').width(4 * ($(window).height() * 0.9 - 256) / 3);
     };
 
     RecorderComponent.prototype._onHiddenModal = function (e) {
