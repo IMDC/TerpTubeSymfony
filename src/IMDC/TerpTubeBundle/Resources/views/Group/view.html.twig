@@ -58,29 +58,27 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-4">
                 {% if group.getMedia|length > 0 %}
-                    <div class="group-gallery" style="height: 500px; width: 100%;"></div>
+                    <div class="group-gallery" style="height: 250px; width: 100%;"></div>
                 {% else %}
                     <p>No media</p>
                 {% endif %}
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <h1>{{ group.name }}</h1>
                 <div class="row">
                     <div class="col-xs-3">
                         <table class="table">
                             <tbody>
-                                <tr>
-                                    <td>Members</td>
-                                    <td>{{ group.members|length }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Created</td>
-                                    <td>{{ group.dateCreated|date('g:ia F j Y') }}</td>
-                                </tr>
+                            <tr>
+                                <td>Members</td>
+                                <td>{{ group.members|length }}</td>
+                            </tr>
+                            <tr>
+                                <td>Created</td>
+                                <td>{{ group.dateCreated|date('g:ia F j Y') }}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
