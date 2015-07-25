@@ -51,7 +51,7 @@ class RestException
     public static function Exception($message, $code = self::INITIAL)
     {
         $prepared = static::prepare($code, $message);
-        throw new \Exception($prepared->getMessage(), $prepared->getCode());
+        throw new HttpException(500, $prepared->getMessage(), null, array(), $prepared->getCode());
     }
 
     public static function NotFound($message = '')
