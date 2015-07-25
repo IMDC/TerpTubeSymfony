@@ -27,7 +27,7 @@ define([
 
         this.$filesList.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
-            $(this).parent().prev().editable('toggle');
+            $(this).parent().parent().find('span.edit-title').editable('toggle');
         });
 
         this.$files.not('[disabled]').on('click', this.bind__onClickFile);
@@ -215,7 +215,7 @@ define([
 	}
 	newElement.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
-            $(this).parent().prev().editable('toggle');
+            $(this).parent().parent().find('span.edit-title').editable('toggle');
         });
 	newElement.find('span.edit-title').editable({
             toggle: 'manual',
@@ -265,7 +265,7 @@ define([
 	
 	newElement.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
-            $(this).parent().prev().editable('toggle');
+            $(this).parent().parent().find('span.edit-title').editable('toggle');
         });
 	newElement.find('span.edit-title').editable({
             toggle: 'manual',

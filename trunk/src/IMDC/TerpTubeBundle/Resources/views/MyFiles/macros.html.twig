@@ -98,8 +98,11 @@
                             <div>{{ _media.thumbnail(m.getThumbnailPath) }}</div>
                         </div>
                         <div class="tt-grid-div-primary">
-                            <span class="edit-title my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ m.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}" {{ preview_disabled }}>
-                                {{ _media.type_to_icon(m.type) }}{{ m.title }}
+                            <span class="my-files-selector-file">
+                                {{ _media.type_to_icon(m.type) }}
+                                <span class="edit-title" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ m.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}" {{ preview_disabled }}>
+                                    {{ m.title }}
+                                </span>
                             </span>
                             <span>
                                 <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
