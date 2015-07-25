@@ -144,8 +144,7 @@ define([
 
     ListView.prototype._onClickFile = function (e) {
         e.stopPropagation();
-
-        var media = this.controller.model.getMedia($(e.currentTarget).data('mid'));
+        var media = this.controller.model.getMedia($(e.currentTarget).children('span').eq(0).data('mid'));
         if (!media) {
             throw new Error('media not found');
         }
