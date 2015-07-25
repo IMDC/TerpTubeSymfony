@@ -13,6 +13,7 @@ class AuthenticationManager
      * @var array
      */
     protected static $openRoutes = array(
+        '^_.*',
         'fos_user_security_.*',
         'fos_user_registration_.*',
         'fos_user_resetting_.*',
