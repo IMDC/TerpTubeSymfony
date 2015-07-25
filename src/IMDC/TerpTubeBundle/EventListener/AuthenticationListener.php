@@ -3,8 +3,8 @@
 namespace IMDC\TerpTubeBundle\EventListener;
 
 use IMDC\TerpTubeBundle\Component\Authentication\AuthenticationManager;
+use IMDC\TerpTubeBundle\Rest\Exception\RestException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernel;
@@ -43,8 +43,9 @@ class AuthenticationListener
         $request = $event->getRequest();
 
         if ($this->authenticationManager->resourceRequiresAuthentication($request) && !$this->authenticationManager->isAuthenticated()) {
-            if ($request->isXmlHttpRequest()) {
-                $response = new Response($this->translator->trans('security.login.not_logged_in', array(), 'IMDCTerpTubeBundle'), 403);
+            //FIXME using strpos is a dirty hack
+            if ($request->isXmlHttpRequest() || strpos($request->getPathInfo(), '/api/') == 0) {
+                RestException::Exception($this->translator->trans('security.login.not_logged_in', array(), 'IMDCTerpTubeBundle'));
             } else {
                 $response = new RedirectResponse($this->router->generate('fos_user_security_login'));
             }
