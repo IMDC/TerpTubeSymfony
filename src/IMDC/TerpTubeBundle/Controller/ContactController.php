@@ -5,10 +5,10 @@ namespace IMDC\TerpTubeBundle\Controller;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use IMDC\TerpTubeBundle\Helper\MultiPagination;
 use IMDC\TerpTubeBundle\Entity;
 use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
-use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
 use IMDC\TerpTubeBundle\Rest\Exception\ContactException;
 use IMDC\TerpTubeBundle\Rest\RestResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -36,7 +36,42 @@ class ContactController extends FOSRestController implements ClassResourceInterf
         // pagination
         $defaultPageNum = 1;
         $defaultPageLimit = 24;
-        $pages = array(
+        $pages = self::getPaginationPages($defaultPageNum, $defaultPageLimit, $style);
+
+        $user = $this->getUser();
+        $mentors = $user->getMentorList()->toArray();
+        $mentees = $user->getMenteeList()->toArray();
+        $friends = $user->getFriendsList()->toArray();
+        $all = array_unique(array_merge($mentors, $mentees, $friends), SORT_REGULAR);
+
+        // pagination
+        /* @var $paginator MultiPagination */
+        $paginator = $this->get('imdc_terptube.definition.multi_pagination');
+        $paginator->setPages($pages);
+        $paginator->prepare($request);
+
+        $mentors = $paginator->paginate('mentors', $mentors);
+        $mentees = $paginator->paginate('mentees', $mentees);
+        $friends = $paginator->paginate('friends', $friends);
+        $all = $paginator->paginate('all', $all);
+
+        $usersSelectForm = $this->createForm(new UsersSelectType(), null, array(
+            'em' => $this->getDoctrine()->getManager()
+        ));
+
+        return $this->render('IMDCTerpTubeBundle:Contact:list.html.twig', array(
+            'style' => $style,
+            'mentors' => $mentors,
+            'mentees' => $mentees,
+            'friends' => $friends,
+            'all' => $all,
+            'users_select_form' => $usersSelectForm->createView()
+        ));
+    }
+
+    public static function getPaginationPages($defaultPageNum, $defaultPageLimit, $style)
+    {
+        return array(
             'mentors' => array(
                 'knp' => array('pageParameterName' => 'page_r'),
                 'page' => $defaultPageNum,
@@ -70,36 +105,6 @@ class ContactController extends FOSRestController implements ClassResourceInterf
                 )
             )
         );
-
-        $user = $this->getUser();
-        $mentors = $user->getMentorList()->toArray();
-        $mentees = $user->getMenteeList()->toArray();
-        $friends = $user->getFriendsList()->toArray();
-        $all = array_merge($mentors, $mentees, $friends);
-
-        // pagination
-        /* @var $paginator MultiPaginationHelper */
-        $paginator = $this->get('imdc_terptube.helper.multi_pagination_helper');
-        $paginator->setPages($pages);
-        $paginator->prepare($request);
-
-        $mentors = $paginator->paginate('mentors', $mentors);
-        $mentees = $paginator->paginate('mentees', $mentees);
-        $friends = $paginator->paginate('friends', $friends);
-        $all = $paginator->paginate('all', $all);
-
-        $usersSelectForm = $this->createForm(new UsersSelectType(), null, array(
-            'em' => $this->getDoctrine()->getManager()
-        ));
-
-        return $this->render('IMDCTerpTubeBundle:Contact:list.html.twig', array(
-            'style' => $style,
-            'mentors' => $mentors,
-            'mentees' => $mentees,
-            'friends' => $friends,
-            'all' => $all,
-            'users_select_form' => $usersSelectForm->createView()
-        ));
     }
 
     /**
