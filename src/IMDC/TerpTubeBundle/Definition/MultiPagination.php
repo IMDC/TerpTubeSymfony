@@ -1,6 +1,6 @@
 <?php
 
-namespace IMDC\TerpTubeBundle\Helper;
+namespace IMDC\TerpTubeBundle\Definition;
 
 use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Knp\Component\Pager\Paginator;

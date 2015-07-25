@@ -185,7 +185,7 @@ services:
             - { name: form.type, alias: media_chooser }
 
     imdc_terptube.definition.multi_pagination:
-        class: IMDC\TerpTubeBundle\Helper\MultiPagination
+        class: IMDC\TerpTubeBundle\Definition\MultiPagination
         tags:
             - { name: knp_paginator.injectable, paginator: @knp_paginator }
 
