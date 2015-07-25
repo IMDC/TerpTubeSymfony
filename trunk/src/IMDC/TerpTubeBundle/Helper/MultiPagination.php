@@ -6,7 +6,7 @@ use Knp\Bundle\PaginatorBundle\Definition\PaginatorAwareInterface;
 use Knp\Component\Pager\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 
-class MultiPaginationHelper implements PaginatorAwareInterface
+class MultiPagination implements PaginatorAwareInterface
 {
     /**
      * @var Paginator

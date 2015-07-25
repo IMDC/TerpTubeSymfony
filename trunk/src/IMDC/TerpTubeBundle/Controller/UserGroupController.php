@@ -6,6 +6,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
+use IMDC\TerpTubeBundle\Helper\MultiPagination;
 use IMDC\TerpTubeBundle\Entity\Invitation;
 use IMDC\TerpTubeBundle\Entity\InvitationType;
 use IMDC\TerpTubeBundle\Entity\Message;
@@ -14,7 +15,6 @@ use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer
 use IMDC\TerpTubeBundle\Form\Type\UserGroupManageSearchType;
 use IMDC\TerpTubeBundle\Form\Type\UserGroupType;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
-use IMDC\TerpTubeBundle\Helper\MultiPaginationHelper;
 use IMDC\TerpTubeBundle\Rest\Exception\UserGroupException;
 use IMDC\TerpTubeBundle\Rest\UserGroupResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -425,42 +425,10 @@ class UserGroupController extends FOSRestController implements ClassResourceInte
                 'urlParams' => array(
                     'style' => $style
                 )
-            ),
-            // start: from ContactController::listAction
-            'mentors' => array(
-                'knp' => array('pageParameterName' => 'page_r'),
-                'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'style' => $style
-                )
-            ),
-            'mentees' => array(
-                'knp' => array('pageParameterName' => 'page_e'),
-                'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'style' => $style
-                )
-            ),
-            'friends' => array(
-                'knp' => array('pageParameterName' => 'page_s'),
-                'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'style' => $style
-                )
-            ),
-            'all' => array(
-                'knp' => array('pageParameterName' => 'page_l'),
-                'page' => $defaultPageNum,
-                'pageLimit' => $defaultPageLimit,
-                'urlParams' => array(
-                    'style' => $style
-                )
             )
-            // end: from ContactController::listAction
         );
+        // merge contact pagination pages
+        $pages = array_merge($pages, ContactController::getPaginationPages($defaultPageNum, $defaultPageLimit, $style));
         $resetPage = function () use ($pages, $defaultPageNum) {
             foreach ($pages as &$params) {
                 $params['page'] = $defaultPageNum;
@@ -574,7 +542,7 @@ class UserGroupController extends FOSRestController implements ClassResourceInte
         $mentors = $filterContacts($mentorsQb->getQuery()->getResult());
         $mentees = $filterContacts($menteesQb->getQuery()->getResult());
         $friends = $filterContacts($friendsQb->getQuery()->getResult());
-        $all = array_merge($mentors, $mentees, $friends);
+        $all = array_unique(array_merge($mentors, $mentees, $friends), SORT_REGULAR);
         // end: filter contacts
 
         // start: filter non group members
@@ -615,8 +583,8 @@ class UserGroupController extends FOSRestController implements ClassResourceInte
         // end: filter non group members
 
         // pagination
-        /* @var $paginator MultiPaginationHelper */
-        $paginator = $this->get('imdc_terptube.helper.multi_pagination_helper');
+        /* @var $paginator MultiPagination */
+        $paginator = $this->get('imdc_terptube.definition.multi_pagination');
         $paginator->setPages($pages);
         $paginator->prepare($request);
 
