@@ -5,7 +5,7 @@ namespace IMDC\TerpTubeBundle\Controller;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use IMDC\TerpTubeBundle\Helper\MultiPagination;
+use IMDC\TerpTubeBundle\Definition\MultiPagination;
 use IMDC\TerpTubeBundle\Entity;
 use IMDC\TerpTubeBundle\Form\DataTransformer\UserCollectionToIntArrayTransformer;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
