@@ -44,7 +44,7 @@ class AuthenticationListener
 
         if ($this->authenticationManager->resourceRequiresAuthentication($request) && !$this->authenticationManager->isAuthenticated()) {
             //FIXME using strpos is a dirty hack
-            if ($request->isXmlHttpRequest() || strpos($request->getPathInfo(), '/api/') == 0) {
+            if ($request->isXmlHttpRequest() || strpos($request->getPathInfo(), '/api/') === 0) {
                 RestException::Exception($this->translator->trans('security.login.not_logged_in', array(), 'IMDCTerpTubeBundle'));
             } else {
                 $response = new RedirectResponse($this->router->generate('fos_user_security_login'));
