@@ -227,7 +227,6 @@ $tt-lt-line-height: $tt-lt-row-height;
 
     &.tt-list-table-col-primary {
       width: 60%;
-      overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
