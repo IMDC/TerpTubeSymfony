@@ -18,6 +18,8 @@ define([
         this.options = options;
         this.isOnNormalTab = this.options.tab == RecorderComponent.Tab.NORMAL;
         this.isOnInterpTab = this.options.tab == RecorderComponent.Tab.INTERPRETATION;
+        this.isInRecordMode = this.options.mode == RecorderComponent.Mode.RECORD;
+        this.isInEditMode = this.options.mode == RecorderComponent.Mode.PREVIEW;
         this.player = null;
         this.recorder = null;
         this.currentRecording = null;
@@ -80,7 +82,7 @@ define([
         this.$tabPanes.on('shown.bs.tab', this.bind__onShownTab);
         this.$interpSelect.on('click', this.bind__onClickInterpSelect);
         // prevent media renaming if in record mode
-        if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
+        if (this.isInEditMode) {
             this.$normalTitle.blur(this.bind__onBlurPlayerTitle);
             this.$interpTitle.blur(this.bind__onBlurPlayerTitle);
         }
@@ -89,7 +91,7 @@ define([
         this._setupRabbitmq();
 
         //TODO interp preview/edit/trim
-        if (this.options.mode == RecorderComponent.Mode.PREVIEW) {
+        if (this.isInEditMode) {
             this.$modalDialog.find('a[href="' + RecorderComponent.Binder.INTERP + '"]').hide();
         }
     };
@@ -398,7 +400,7 @@ define([
         var params = {
             video: this.currentRecording.video,
             audio: this.currentRecording.audio,
-            title: this.isOnNormalTab ? this.$normalTitle.val() : this.$interpTitle.val()
+            title: this._getCurrentTitleElement().val()
         };
 
         if (this.isOnInterpTab) {
@@ -407,6 +409,7 @@ define([
             params.sourceId = this.sourceMedia.get('id');
         }
 
+        //TODO progress updater
         this.$containerUpload.find('label').eq(0).html('Uploading recording...');
 
         return MyFilesFactory.addRecording(params)
@@ -416,14 +419,15 @@ define([
             .done(function (data) {
                 console.log(data.media);
 
-                this.$containerUpload.find('.progress-bar').eq(0)
-                    .addClass('progress-bar-striped active')
-                    .html('');
-
                 if (data.media.get('state') == 2) {
                     this.setRecordedMedia(data.media);
                 } else {
                     console.log('waiting for multiplex consumer');
+
+                    //TODO progress updater
+                    this.$containerUpload.find('.progress-bar').eq(0)
+                        .addClass('progress-bar-striped active')
+                        .html('');
                     this.$containerUpload.find('label').eq(0).html('Processing...');
 
                     this.tempMedia = data.media;
@@ -439,6 +443,7 @@ define([
         if (this.currentTrim.startTime == null || this.currentTrim.endTime == null)
             return null;
 
+        //TODO progress updater
         this.$containerUpload.find('label').eq(0).html('Queuing trim...');
 
         return MediaFactory.trim(media, this.currentTrim.startTime, this.currentTrim.endTime)
@@ -464,6 +469,7 @@ define([
         this._destroyPlayers();
 
         var done = function () {
+            //TODO progress updater
             this.$containerUpload.find('label').eq(0).html('Cleaning up...');
 
             // if recorded media is not set, then
@@ -477,24 +483,39 @@ define([
             }
         }.bind(this);
 
-        var ap = this._addRecording();
-        if (!ap) {
-            done();
-            return;
-        }
-
-        ap.done(function (data) {
-            // upload was successful, so send trim request, if any
-            var rp = this._trim(data.media);
-            if (!rp) {
+        var arDone = function (media) {
+            // send trim request, if any
+            var tp = this._trim(media);
+            if (!tp) {
+                // nothing to trim, so finish up
                 done();
                 return;
             }
 
-            rp.done(function (data) {
+            tp.done(function (data) {
+                // finish up
                 done();
-            }.bind(this));
-        }.bind(this));
+            });
+        }.bind(this);
+
+        var arp = this._addRecording();
+        if (!arp) {
+            // no recording to upload. go on to trim if in edit mode and recoding is set
+            if (this.isInEditMode && this.recordedMedia) {
+                //TODO progress updater
+                Helper.updateProgressBar(this.$containerUpload, 100);
+                this.$containerUpload.find('.progress-bar').eq(0)
+                    .addClass('progress-bar-striped active')
+                    .html('');
+                arDone(this.recordedMedia);
+            }
+            return;
+        }
+
+        arp.done(function (data) {
+            // go on to trim
+            arDone(data.media);
+        });
     };
 
     RecorderComponent.prototype._doneAndPost = function (e) {
@@ -550,7 +571,7 @@ define([
 
     RecorderComponent.prototype._onPageAnimate = function () {
         try {
-            if (this.options.mode == RecorderComponent.Mode.PREVIEW && this.recordedMedia != null) {
+            if (this.isInEditMode && this.recordedMedia != null) {
                 if (this.isOnInterpTab && this.sourceMedia != null) {
                     return; //TODO interp preview/edit/trim
                 }
@@ -692,9 +713,9 @@ define([
         });
     };
 
-    RecorderComponent.prototype._injectMedia = function (element, media, isRecording) {
+    RecorderComponent.prototype._injectMedia = function (element, media) {
         var options = {
-            resources: isRecording
+            resources: this.isInRecordMode
                 ? [media.get('source_resource')]
                 : media.get('resources')
         };
@@ -704,12 +725,18 @@ define([
         });
     };
 
+    RecorderComponent.prototype._getCurrentTitleElement = function () {
+        return this.isOnNormalTab ? this.$normalTitle : this.$interpTitle;
+    };
+
     RecorderComponent.prototype.setSourceMedia = function (media) {
         this.sourceMedia = media;
 
         if (this.sourceMedia != null) {
-            this._injectMedia(this.$interpVideoP, this.sourceMedia, false);
+            this._injectMedia(this.$interpVideoP, this.sourceMedia);
+            this._getCurrentTitleElement().val(this.sourceMedia.get('title'));
         }
+
         this._destroyPlayers();
         this._loadPage();
     };
@@ -721,7 +748,9 @@ define([
             this._injectMedia(this.isOnNormalTab
                     ? this.$normalVideo
                     : this.$interpVideoR,
-                this.recordedMedia, true);
+                this.recordedMedia);
+
+            this._getCurrentTitleElement().val(this.recordedMedia.get('title'));
         }
     };
 

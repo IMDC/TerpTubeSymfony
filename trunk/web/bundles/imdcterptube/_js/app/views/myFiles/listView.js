@@ -4,7 +4,7 @@ define([
     'component/tableComponent',
     'component/mediaChooserComponent',
     'component/galleryComponent',
-    'core/helper',
+    'core/helper'
 ], function (Service, Model, TableComponent, MediaChooserComponent, GalleryComponent, Helper) {
     'use strict';
 
@@ -20,17 +20,17 @@ define([
 
         this.$container = options.container;
         this.$filesList = this.$container.find(ListView.Binder.FILES_LIST);
-        this.$files = this.$container.find(ListView.Binder.FILE);
+        this.$fileButtons = this.$container.find(ListView.Binder.FILE_BUTTON);
 
         this.tblCmp = TableComponent.table(this.$filesList);
         this.tblCmp.subscribe(TableComponent.Event.CLICK_BULK_ACTION, this.bind__onClickBulkAction);
 
         this.$filesList.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
-            $(this).parent().parent().find('span.edit-title').editable('toggle');
+            $(this).parent().parent().parent().find('span.edit-title').editable('toggle');
         });
 
-        this.$files.not('[disabled]').on('click', this.bind__onClickFile);
+        this.$fileButtons.not('[disabled]').on('click', this.bind__onClickFile);
 
         if (this.$filesList.children('div.table-responsive').length > 0)
         {
@@ -62,11 +62,11 @@ define([
             view: this
         });
 
-        // not exactly needed. just an example
+        //TODO update/re-render the entire thumbnail container
         this.controller.model.subscribe(Model.Event.CHANGE, function (e) {
             var media = e.model.get(e.keyPath);
-            var $file = this.$files.filter('span[data-mid="' + media.get('id') + '"]');
-            $file.html(media.get('title'));
+            var $title = this.$filesList.find('span.edit-title[data-mid="' + media.get('id') + '"]');
+            $title.html(media.get('title'));
         }.bind(this));
 
         $tt._instances.push(this);
@@ -77,7 +77,7 @@ define([
     ListView.Binder = {
         TOGGLE_STYLE: '.my-files-selector-toggle-style',
         FILES_LIST: '.my-files-selector-files-list',
-        FILE: '.my-files-selector-file',
+        FILE_BUTTON: '.my-files-selector-file-button',
         STYLE_LIST: 'list',
         STYLE_GRID: 'grid'
     };
@@ -105,8 +105,8 @@ define([
                     
                     var wait = setInterval((function () {
                 	this.$filesList = this.$container.find(ListView.Binder.FILES_LIST);
-                	this.$files = this.$container.find(ListView.Binder.FILE);
-                	var elements = $(this.$files).parent("div.thumbnail.tt-grid-div-body").parent();
+                	this.$fileButtons = this.$container.find(ListView.Binder.FILE_BUTTON);
+                	var elements = $(this.$fileButtons).parent("div.thumbnail.tt-grid-div-body").parent();
                 	if (!$(elements).is(":animated"))
                 	{
                 	    this.tblCmp.updateElements(this.$filesList);
@@ -114,7 +114,7 @@ define([
                 	    if (this.style == ListView.Binder.STYLE_GRID)
                 	    {
                 		var allRows = $(elements).parent();
-                		var count = $(this.$files).parent("div.thumbnail.tt-grid-div-body").length;
+                		var count = $(this.$fileButtons).parent("div.thumbnail.tt-grid-div-body").length;
                 		for (var i=1; i<count; i++)
                 		{
                 		    if (!$(elements[i]).parent().is($(elements[i-1]).parent()) && i % ListView.MAX_PER_ROW !=0)
@@ -144,7 +144,8 @@ define([
 
     ListView.prototype._onClickFile = function (e) {
         e.stopPropagation();
-        var media = this.controller.model.getMedia($(e.currentTarget).children('span').eq(0).data('mid'));
+
+        var media = this.controller.model.getMedia($(e.currentTarget).data('mid'));
         if (!media) {
             throw new Error('media not found');
         }
@@ -170,8 +171,8 @@ define([
 //	console.log ("OnAddGridElement");
 //	console.log (err);
 	var newElement = $(out);
-	var count = $(this.$files).parent("div.thumbnail.tt-grid-div-body").length;
-	var elements = $(this.$files).parent("div.thumbnail.tt-grid-div-body").parent();
+	var count = $(this.$fileButtons).parent("div.thumbnail.tt-grid-div-body").length;
+	var elements = $(this.$fileButtons).parent("div.thumbnail.tt-grid-div-body").parent();
 	if (count >= ListView.MAX_PER_PAGE)
 	{
 //	    console.log("Maximum elements on the page, removing last from view");
@@ -214,7 +215,7 @@ define([
 	}
 	newElement.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
-            $(this).parent().parent().find('span.edit-title').editable('toggle');
+            $(this).parent().parent().parent().find('span.edit-title').editable('toggle');
         });
 	newElement.find('span.edit-title').editable({
             toggle: 'manual',
@@ -226,10 +227,10 @@ define([
                 return this.controller.edit(params.pk, {title: params.value});
             }.bind(this)
         });
-	newElement.find('.my-files-selector-file').not('[disabled]').on('click', this.bind__onClickFile);
+	newElement.find('.my-files-selector-file-click').not('[disabled]').on('click', this.bind__onClickFile);
 	//Reinitialize the files and filesList
 	this.$filesList = this.$container.find(ListView.Binder.FILES_LIST);
-        this.$files = this.$container.find(ListView.Binder.FILE);
+        this.$fileButtons = this.$container.find(ListView.Binder.FILE_BUTTON);
         this.tblCmp.updateElements(this.$filesList);
 	
     }
@@ -239,8 +240,8 @@ define([
 //	console.log (err);
 //	console.log (out);
 	var newElement = $(out);
-	var count = $(this.$files).parent("tr").length;
-	var elements = $(this.$files).parent("tr");
+	var count = $(this.$fileButtons).parent("tr").length;
+	var elements = $(this.$fileButtons).parent("tr");
 	if (count >= ListView.MAX_PER_PAGE)
 	{
 //	    console.log("Maximum elements on the page, removing last from view");
@@ -264,7 +265,7 @@ define([
 	
 	newElement.find('button.edit-title').on('click', function (e) {
             e.stopPropagation();
-            $(this).parent().parent().find('span.edit-title').editable('toggle');
+            $(this).parent().parent().parent().find('span.edit-title').editable('toggle');
         });
 	newElement.find('span.edit-title').editable({
             toggle: 'manual',
@@ -276,10 +277,10 @@ define([
                 return this.controller.edit(params.pk, {title: params.value});
             }.bind(this)
         });
-	newElement.find('.my-files-selector-file').not('[disabled]').on('click', this.bind__onClickFile);
+	newElement.find('.my-files-selector-file-click').not('[disabled]').on('click', this.bind__onClickFile);
 	
 	this.$filesList = this.$container.find(ListView.Binder.FILES_LIST);
-        this.$files = this.$container.find(ListView.Binder.FILE);
+        this.$fileButtons = this.$container.find(ListView.Binder.FILE_BUTTON);
         this.tblCmp.updateElements(this.$filesList);
 	
     }
