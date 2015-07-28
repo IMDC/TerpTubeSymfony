@@ -2,9 +2,14 @@
 
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
+use IMDC\TerpTubeBundle\Entity\Forum;
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\Post;
+use IMDC\TerpTubeBundle\Entity\Thread;
+use IMDC\TerpTubeBundle\Entity\User;
+use IMDC\TerpTubeBundle\Rest\PostResponse;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
 /**
@@ -12,164 +17,192 @@ use Symfony\Component\DomCrawler\Crawler;
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class PostControllerTest extends WebTestCase
+class PostControllerTest extends BaseWebTestCase
 {
-    private static $threadId = 17;
-    private static $mediaIds = array(4, 1); // shuffle for order check
-
     /**
-     * @var Client
+     * @var User
      */
-    private $client;
+    private $loggedInUser;
 
     public function setUp()
     {
-        $this->client = static::createClient();
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUsers',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestForums',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestThreads',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestPosts',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
 
-        Common::login($this->client);
+        $this->client = static::createClient();
+        /** @var User $user */
+        $user = $this->referenceRepo->getReference('test_user_1');
+        Common::login($this->client, $user->getUsername());
+        $this->loggedInUser = $user;
+
+        // give logged in user media
+        for ($i = 1; $i <= 2; $i++) {
+            /** @var Media $media */
+            $media = $this->referenceRepo->getReference('test_media_1_' . $i);
+            $media->setOwner($this->loggedInUser);
+            $this->entityManager->persist($media);
+        }
+        $this->entityManager->flush();
     }
 
     public function testNew_GetForm()
     {
-        $this->client->request('GET', '/post/new/' . self::$threadId);
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+
+        $this->client->request('GET', '/api/v1/posts/new', array(
+            'threadId' => $thread->getId(),
+            'parentPostId' => -rand()
+        ));
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasReplied', $response);
-        $this->assertArrayHasKey('html', $response);
-        $this->assertFalse($response['wasReplied']);
+        $this->assertArrayHasKey('post', $response);
+        $this->assertArrayHasKey('form', $response);
 
-        $crawler = new Crawler($response['html']);
+        $crawler = new Crawler($response['form']);
         $this->assertCount(1, $crawler->filter('form[name="post"]'), 'a single post form should be present');
     }
 
     /**
-     * @return array
+     * @depends testNew_GetForm
      */
     public function testNew_SubmitFormWithMediaAndContent()
     {
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        $thread->setParentForum($forum);
+        $this->entityManager->persist($thread);
+        $this->entityManager->flush();
+        $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
         $content = 'test:new';
-        $this->client->request('GET', '/post/new/' . self::$threadId);
-        $response = json_decode($this->client->getResponse()->getContent(), true);
-        $crawler = new Crawler($response['html'], $this->client->getRequest()->getUri());
 
+        $this->client->request('GET', '/api/v1/posts/new', array(
+            'threadId' => $thread->getId()
+        ));
+        $this->logResponse(__FUNCTION__, 'form');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $crawler = new Crawler($response['form'], $this->client->getRequest()->getUri());
         $form = $crawler->filter('form[name="post"] > button:contains("Reply")')->form();
         $values = $form->getPhpValues();
-        $values['post']['attachedFile'] = self::$mediaIds;
+        $values['post']['attachedFile'] = $mediaIds;
         $values['post']['content'] = $content;
-        $this->client->request($form->getMethod(), $form->getUri(), $values);
+        $this->client->request($form->getMethod(), '/api/v1/posts?threadId=' . $thread->getId(), $values);
+        $this->logResponse(__FUNCTION__, 'result');
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasReplied', $response);
         $this->assertArrayHasKey('post', $response);
-        $this->assertArrayHasKey('redirectUrl', $response);
-        $this->assertTrue($response['wasReplied']);
-
-        $model = $response['post'];
-        $this->assertNotNull($model['id']);
-        // check existence
-        foreach ($model['ordered_media'] as $m) {
-            $this->assertContains($m['id'], self::$mediaIds);
-        }
-        // check order
-        foreach (self::$mediaIds as $key => $mediaId) {
-            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
-        }
-
-        $this->assertRegExp('/.*\\/' . self::$threadId . '.*/', $response['redirectUrl']);
-
-        return $model;
+        $this->assertNotNull($response['post']['id']);
+        $this->assertArrayHasKey('ordered_media', $response['post']);
+        $this->assertMedia($response['post']['ordered_media'], $mediaIds);
     }
 
-    /**
-     * @depends testNew_SubmitFormWithMediaAndContent
-     * @param $model
-     * @return array
-     */
-    public function testView($model)
+    public function testView()
     {
-        $this->client->request('GET', '/post/' . $model['id']);
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        /** @var Post $post */
+        $post = $this->referenceRepo->getReference('test_post_1');
+        $post->setParentThread($thread);
+        $post->setContent('test:view');
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        $this->client->request('GET', '/api/v1/posts/' . $post->getId());
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('html', $response);
-
-        $crawler = new Crawler($response['html']);
-        $this->assertCount(1, $crawler->filter('p:contains("' . $model['content'] . '")'));
-
-        return $model;
+        $this->assertArrayHasKey('post', $response);
+        $this->assertEquals($post->getId(), $response['post']['id']);
+        $this->assertEquals($post->getContent(), $response['post']['content']);
     }
 
-    /**
-     * @depends testView
-     * @param $model
-     * @return array
-     */
-    public function testEdit_GetForm($model)
+    public function testEdit_GetForm()
     {
-        $this->client->request('GET', '/post/' . $model['id'] . '/edit');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        /** @var Post $post */
+        $post = $this->referenceRepo->getReference('test_post_1');
+        $post->setParentThread($thread);
+        $post->setAuthor($this->loggedInUser);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        $this->client->request('GET', '/api/v1/posts/' . $post->getId() . '/edit');
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasEdited', $response);
-        $this->assertArrayHasKey('html', $response);
-        $this->assertFalse($response['wasEdited']);
+        $this->assertArrayHasKey('post', $response);
+        $this->assertArrayHasKey('form', $response);
 
-        $crawler = new Crawler($response['html']);
+        $crawler = new Crawler($response['form']);
         $this->assertCount(1, $crawler->filter('form[name="post"]'), 'a single post form should be present');
-
-        return $model;
     }
 
     /**
      * @depends testEdit_GetForm
-     * @param $model
-     * @return array
      */
-    public function testEdit_SubmitFormWithMediaAndContent($model)
+    public function testEdit_SubmitFormWithMediaAndContent()
     {
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        $thread->setParentForum($forum);
+        /** @var Post $post */
+        $post = $this->referenceRepo->getReference('test_post_1');
+        $post->setParentThread($thread);
+        $post->setAuthor($this->loggedInUser);
+        $this->entityManager->persist($post);
+        $this->entityManager->persist($thread);
+        $this->entityManager->flush();
+        $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
         $content = 'test:edit';
-        $this->client->request('GET', '/post/' . $model['id'] . '/edit');
-        $response = json_decode($this->client->getResponse()->getContent(), true);
-        $crawler = new Crawler($response['html'], $this->client->getRequest()->getUri());
 
+        $this->client->request('GET', '/api/v1/posts/' . $post->getId() . '/edit');
+        $this->logResponse(__FUNCTION__, 'form');
+        $response = json_decode($this->client->getResponse()->getContent(), true);
+
+        $crawler = new Crawler($response['form'], $this->client->getRequest()->getUri());
         $form = $crawler->filter('form[name="post"] > button:contains("Edit")')->form();
         $values = $form->getPhpValues();
-        $values['post']['attachedFile'] = self::$mediaIds;
+        $values['post']['attachedFile'] = $mediaIds;
         $values['post']['content'] = $content;
-        $this->client->request($form->getMethod(), $form->getUri(), $values);
+        $this->client->request($form->getMethod(), '/api/v1/posts/' . $post->getId(), $values);
+        $this->logResponse(__FUNCTION__, 'result');
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasEdited', $response);
         $this->assertArrayHasKey('post', $response);
-        $this->assertArrayHasKey('html', $response);
-        $this->assertTrue($response['wasEdited']);
-
-        $model = $response['post'];
-        $this->assertNotNull($model['id']);
-        // check existence
-        foreach ($model['ordered_media'] as $m) {
-            $this->assertContains($m['id'], self::$mediaIds);
-        }
-        // check order
-        foreach (self::$mediaIds as $key => $mediaId) {
-            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
-        }
-
-        $crawler = new Crawler($response['html']);
-        $this->assertCount(1, $crawler->filter('p:contains("' . $model['content'] . '")'));
-
-        return $model;
+        $this->assertEquals($post->getId(), $response['post']['id']);
+        $this->assertEquals($content, $response['post']['content']);
+        $this->assertArrayHasKey('ordered_media', $response['post']);
+        $this->assertMedia($response['post']['ordered_media'], $mediaIds);
     }
 
-    /**
-     * @depends testEdit_SubmitFormWithMediaAndContent
-     * @param $model
-     * @return array
-     */
-    public function testDelete($model)
+    public function testDelete()
     {
-        $this->client->request('POST', '/post/' . $model['id'] . '/delete');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        /** @var Post $post */
+        $post = $this->referenceRepo->getReference('test_post_1');
+        $post->setParentThread($thread);
+        $post->setAuthor($this->loggedInUser);
+        $this->entityManager->persist($post);
+        $this->entityManager->flush();
+
+        $this->client->request('DELETE', '/api/v1/posts/' . $post->getId());
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasDeleted', $response);
-        $this->assertTrue($response['wasDeleted']);
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(PostResponse::OK, $response['code']);
     }
 }

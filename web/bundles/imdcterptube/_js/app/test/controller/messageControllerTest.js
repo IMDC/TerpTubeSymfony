@@ -23,7 +23,7 @@ define([
 
         before(function () {
             model = new MessageModel({
-                id: 22
+                id: 1
             });
             controller = new MessageController(model, {});
             controller.onViewLoaded();
@@ -34,38 +34,43 @@ define([
             $.mockjax.clear();
         });
 
-        it('should not have marked as read', function () {
+        it('should not have marked as read', function (done) {
             $.mockjax({
+                method: 'POST',
                 url: Routing.generate('imdc_message_mark_as_read', {messageid: model.get('id')}),
                 responseText: {
                     wasEdited: false
                 }
             });
 
-            // don't return promise
-            controller.edit()
+            return controller.markAsRead()
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
+                    done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.isFalse(data.wasEdited, 'key:wasEdited should be false');
+                    done();
                 });
         });
 
-        it('should have marked as read', function () {
+        it('should have marked as read', function (done) {
             $.mockjax({
+                method: 'POST',
                 url: Routing.generate('imdc_message_mark_as_read', {messageid: model.get('id')}),
                 responseText: {
                     wasEdited: true
                 }
             });
 
-            return controller.edit()
+            return controller.markAsRead()
                 .done(function (data) {
                     assert.isTrue(data.wasEdited, 'key:wasEdited should be true');
+                    done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
+                    done();
                 });
         });
 

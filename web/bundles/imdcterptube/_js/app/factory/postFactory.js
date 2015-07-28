@@ -1,10 +1,11 @@
-define(function () {
+define([
+    'model/postModel'
+], function (PostModel) {
     'use strict';
 
     var PostFactory = {};
 
-    PostFactory._prepForFormPost = function (form, settings) {
-        settings.type = 'POST';
+    PostFactory._prepForFormSubmit = function (form, settings) {
         settings.contentType = false;
         if (form) {
             settings.data = new FormData(form);
@@ -12,97 +13,124 @@ define(function () {
         settings.processData = false;
     };
 
-    PostFactory.new = function (model, form) {
-        var pid = model.get('id', -1);
-        var route = Routing.getRoute('imdc_post_new');
+    PostFactory._newPost = function (model, settings, isPost) {
         var deferred = $.Deferred();
+
+        $.ajax(settings)
+            .then(function (data, textStatus, jqXHR) {
+                // don't use model.update since any new post will not remain in the caller's context
+                data.post = new PostModel(data.post);
+                data.post.set('form', data.form);
+                deferred.resolve(data);
+            },
+            function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.responseText);
+                if (isPost)
+                    model.set('form', jqXHR.responseJSON.form);
+                deferred.reject(jqXHR.responseJSON);
+            });
+
+        return deferred.promise();
+    };
+
+    PostFactory.new = function (model) {
         var settings = {
-            url: Routing.generate('imdc_post_new', {
-                threadId: model.get('parent_thread.id'),
-                pid: (model.get('parent_post.id') || (pid > 0 ? pid : null) || route.defaults.pid)
+            url: Routing.generate('imdc_new_post', {
+                threadId: model.get('parent_thread_id'),
+                parentPostId: model.get('parent_post_id') || model.get('id')
             })
         };
 
-        PostFactory._prepForFormPost(form, settings);
+        return PostFactory._newPost(model, settings, false);
+    };
+
+    PostFactory.post = function (model, form) {
+        var settings = {
+            method: 'POST',
+            url: Routing.generate('imdc_post_post', {
+                threadId: model.get('parent_thread_id'),
+                parentPostId: model.get('parent_post_id') || model.get('id')
+            })
+        };
+
+        PostFactory._prepForFormSubmit(form, settings);
+
+        return PostFactory._newPost(model, settings, true);
+    };
+
+    PostFactory.get = function (model) {
+        var deferred = $.Deferred();
+        var settings = {
+            url: Routing.generate('imdc_get_post', {postId: model.get('id')})
+        };
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
+                model.update(data.post);
                 deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
     };
 
-    PostFactory.view = function (model) {
+    PostFactory._editPut = function (model, settings, isPut) {
         var deferred = $.Deferred();
-        var settings = {
-            url: Routing.generate('imdc_post_view', {pid: model.get('id')})
-        };
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
+                model.update(data.post);
+                model.set('form', data.form);
+                model.set('keyPoint.startTime', model.get('start_time'));
+                model.set('keyPoint.endTime', model.get('end_time'));
                 deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                if (isPut)
+                    model.set('form', jqXHR.responseJSON.form);
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();
     };
 
-    PostFactory.edit = function (model, form) {
-        var deferred = $.Deferred();
+    PostFactory.edit = function (model) {
         var settings = {
-            url: Routing.generate('imdc_post_edit', {pid: model.get('id')})
+            url: Routing.generate('imdc_edit_post', {postId: model.get('id')})
         };
 
-        PostFactory._prepForFormPost(form, settings);
+        return PostFactory._editPut(model, settings, false);
+    };
 
-        $.ajax(settings)
-            .then(function (data, textStatus, jqXHR) {
-                if (data.wasEdited) {
-                    //TODO model merge
-                    model.set('start_time', data.post.start_time);
-                    model.set('end_time', data.post.end_time);
-                    model.set('is_temporal', data.post.is_temporal);
-                    model.set('parent_post', data.post.parent_post);
-                    model.set('parent_thread', data.post.parent_thread);
-                    model.set('keyPoint.startTime', model.get('start_time'));
-                    model.set('keyPoint.endTime', model.get('end_time'));
-                }
-                deferred.resolve(data);
-            },
-            function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.responseText);
-                deferred.reject();
-            });
+    PostFactory.put = function (model, form) {
+        var settings = {
+            method: 'POST',
+            url: Routing.generate('imdc_put_post', {postId: model.get('id')})
+        };
 
-        return deferred.promise();
+        PostFactory._prepForFormSubmit(form, settings);
+
+        return PostFactory._editPut(model, settings, true);
     };
 
     PostFactory.delete = function (model) {
         var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_post_delete', {pid: model.get('id')}),
-            type: 'POST'
+            method: 'DELETE',
+            url: Routing.generate('imdc_delete_post', {postId: model.get('id')})
         };
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                if (data.wasDeleted) {
-                    deferred.resolve(data);
-                } else {
-                    deferred.reject();
-                }
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                deferred.reject();
+                deferred.reject(jqXHR.responseJSON);
             });
 
         return deferred.promise();

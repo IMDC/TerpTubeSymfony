@@ -5,7 +5,7 @@ define([
 
     var MyFilesFactory = {};
 
-    MyFilesFactory._prepForFormPost = function (form, settings, deferred) {
+    MyFilesFactory._prepForFormSubmit = function (form, settings, deferred) {
         settings.type = 'POST';
         settings.contentType = false;
         if (form) {
@@ -24,7 +24,7 @@ define([
         }
     };
 
-    MyFilesFactory.addRecording = function (video, audio, interpretationData) {
+    MyFilesFactory.addRecording = function (params) {
         var formData = new FormData();
         var isFirefox = !!navigator.mozGetUserMedia;
         var deferred = $.Deferred();
@@ -34,16 +34,15 @@ define([
 
         formData.append('isFirefox', isFirefox);
         if (!isFirefox) {
-            formData.append('video-blob', video);
+            formData.append('video-blob', params.video);
         }
-        formData.append('audio-blob', audio);
-        if (interpretationData) {
-            formData.append('isInterpretation', true);
-            formData.append('sourceStartTime', interpretationData.sourceStartTime);
-            formData.append('sourceId', interpretationData.sourceId);
-        }
+        formData.append('audio-blob', params.audio);
+        formData.append('title', params.title);
+        formData.append('isInterpretation', params.isInterpretation);
+        formData.append('sourceStartTime', params.sourceStartTime);
+        formData.append('sourceId', params.sourceId);
 
-        MyFilesFactory._prepForFormPost(null, settings, deferred);
+        MyFilesFactory._prepForFormSubmit(null, settings, deferred);
         settings.data = formData;
 
         $.ajax(settings)
@@ -69,7 +68,7 @@ define([
             url: Routing.generate('imdc_myfiles_add')
         };
 
-        MyFilesFactory._prepForFormPost(form, settings, deferred);
+        MyFilesFactory._prepForFormSubmit(form, settings, deferred);
 
         $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {

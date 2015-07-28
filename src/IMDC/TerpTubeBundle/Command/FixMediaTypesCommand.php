@@ -2,6 +2,7 @@
 
 namespace IMDC\TerpTubeBundle\Command;
 
+use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -67,7 +68,7 @@ class FixMediaTypesCommand extends ContainerAwareCommand
 				$output->writeln ( "It is a wrongfully uploaded video" );
 				
 				$media->setType ( $type );
-				$media->setIsReady ( Media::READY_NO );
+				$media->setState ( MediaStateConst::UNPROCESSED );
 				try
 				{
 					$fs->rename ( $resourcePath, substr ( $resourcePath, 0, strrpos ( $resourcePath, "." ) ) . ".avi", true );

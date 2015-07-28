@@ -1,0 +1,8 @@
+imdc_forum_delete:
+  type: rest
+  resource: IMDC\TerpTubeBundle\Controller\ForumController
+  requirements:
+    forumId: \d+
+  name_prefix: imdc_
+  options:
+    expose: true

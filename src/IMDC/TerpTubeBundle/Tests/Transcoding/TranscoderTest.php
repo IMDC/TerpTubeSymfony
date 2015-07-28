@@ -3,8 +3,8 @@
 namespace IMDC\TerpTubeBundle\Tests\Transcoding;
 
 use FFMpeg\FFProbe\DataMapping\StreamCollection;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Transcoding\Transcoder;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\File;
 
 /**
@@ -12,12 +12,13 @@ use Symfony\Component\HttpFoundation\File\File;
  * @package IMDC\TerpTubeBundle\Tests\Transcoding
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class TranscoderTest extends WebTestCase
+class TranscoderTest extends BaseWebTestCase
 {
     public function setUp()
     {
-        static::$kernel = static::createKernel();
-        static::$kernel->boot();
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
     }
 
     public function testInstantiate()
@@ -28,19 +29,19 @@ class TranscoderTest extends WebTestCase
         $this->assertInstanceOf('\IMDC\TerpTubeBundle\Transcoding\Transcoder', $trancoder);
     }
 
-    /**
-     * @returns File
-     */
     public function testMergeAudioVideo()
     {
-        $rootDir = static::$kernel->getRootDir() . '/';
-        copy($rootDir . '../../test_files/video.webm', '/tmp/video.webm');
-        copy($rootDir . '../../test_files/audio.wav', '/tmp/audio.wav');
+        $filesPath = $this->getContainer()->getParameter('imdc_terptube.tests.files_path');
+        $videoFilename = 'video.webm';
+        $audioFilename = 'audio.wav';
+        $tempVideo = tempnam('/tmp', 'hello_') . $videoFilename;
+        $tempAudio = tempnam('/tmp', 'hello_') . $audioFilename;
+        copy($filesPath . '/' . $videoFilename, $tempVideo);
+        copy($filesPath . '/' . $audioFilename, $tempAudio);
+        $video = new File($tempVideo);
+        $audio = new File($tempAudio);
 
-        $video = new File('/tmp/video.webm');
-        $audio = new File('/tmp/audio.wav');
         $transcoder = $this->getTranscoder();
-
         $merged = $transcoder->mergeAudioVideo($audio, $video);
         $this->assertNotNull($merged);
 
@@ -56,16 +57,16 @@ class TranscoderTest extends WebTestCase
         $this->assertCount(1, $streams->audios(), 'there should be 1 audio stream');
         $this->assertTrue($stream0->isAudio(), 'the audio stream should be at index 0');
         $this->assertTrue($stream1->isVideo(), 'the video stream should be at index 1');
-
-        return $merged;
     }
 
-    /**
-     * @depends testMergeAudioVideo
-     * @param $file
-     */
-    public function testTrimVideo($file)
+    public function testTrimVideo()
     {
+        $filesPath = $this->getContainer()->getParameter('imdc_terptube.tests.files_path');
+        $filename = 'video_audio.webm';
+        $temp = tempnam('/tmp', 'hello_') . $filename;
+        copy($filesPath . '/' . $filename, $temp);
+        $file = new File($temp);
+
         $startTime = 0.4;
         $endTime = 2.2;
         $expectedLength = $endTime - $startTime;
@@ -88,13 +89,9 @@ class TranscoderTest extends WebTestCase
      */
     private function getTranscoder()
     {
-        //return static::$kernel->getContainer()->get('imdc_terptube.transcoder');
-
-        $container = static::$kernel->getContainer();
-
-        $logger = $container->get('logger');
-        $transcoder = $container->get('transcoder');
-        $config = $container->getParameter('imdc_ffmpeg.config');
+        $logger = $this->getContainer()->get('logger');
+        $transcoder = $this->getContainer()->get('transcoder');
+        $config = $this->getContainer()->getParameter('imdc_ffmpeg.config');
 
         return new Transcoder($logger, $transcoder, $config);
     }

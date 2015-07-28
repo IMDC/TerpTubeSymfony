@@ -2,36 +2,49 @@
 
 namespace IMDC\TerpTubeBundle\EventListener;
 
+use Doctrine\ORM\EntityManager;
+use IMDC\TerpTubeBundle\Consumer\Options\MultiplexConsumerOptions;
+use IMDC\TerpTubeBundle\Consumer\Options\MultiplexOperation;
+use IMDC\TerpTubeBundle\Consumer\Options\TranscodeConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use IMDC\TerpTubeBundle\Entity\MetaData;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
+use IMDC\TerpTubeBundle\Transcoding\ContainerConst;
+use IMDC\TerpTubeBundle\Transcoding\Transcoder;
+use Monolog\Logger;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Filesystem\Exception\IOException;
-use Symfony\Component\Filesystem\Filesystem;
 
 class UploadListener implements EventSubscriberInterface
 {
-
+    /**
+     * @var Logger
+     */
     private $logger;
 
+    /**
+     * @var EntityManager
+     */
     private $entityManager;
 
-    private $video_producer;
-
-    private $audio_producer;
-
+    /**
+     * @var Transcoder
+     */
     private $transcoder;
 
-    private $fs;
+    /**
+     * @var Producer
+     */
+    private $transcodeProducer;
 
-    public function __construct($logger, $entityManager, $video_producer, $audio_producer, $transcoder)
+    public function __construct($logger, $entityManager, $transcoder, $multiplexProducer, $transcodeProducer)
     {
         $this->logger = $logger;
         $this->entityManager = $entityManager;
-        $this->video_producer = $video_producer;
-        $this->audio_producer = $audio_producer;
         $this->transcoder = $transcoder;
-        $this->fs = new Filesystem();
+        $this->multiplexProducer = $multiplexProducer;
+        $this->transcodeProducer = $transcodeProducer;
     }
 
     public static function getSubscribedEvents()
@@ -49,77 +62,77 @@ class UploadListener implements EventSubscriberInterface
     public function onUpload(UploadEvent $event)
     {
         $media = $event->getMedia();
-        $message = null;
-        $fileSize = filesize($media->getResource()->getAbsolutePath());
+        $media->getSourceResource()->setMetaData(new MetaData());
 
         // Transcode the different types and populate the metadata for the proper type
-
-        $metaData = new MetaData();
-        $metaData->setSize(-1);
-        $metaData->setTimeUploaded(new \DateTime('now'));
 
         switch ($media->getType()) {
             case Media::TYPE_VIDEO:
                 $this->logger->info('Uploaded a video');
 
-                $message = array(
-                    'media_id' => $media->getId()
-                );
+                $mux = is_file($event->getTmpVideoPath()) && is_file($event->getTmpAudioPath());
+                $remux = !is_file($event->getTmpVideoPath()) && is_file($event->getTmpAudioPath());
+
+                if ($mux || $remux) {
+                    $opts = new MultiplexConsumerOptions();
+                    $opts->mediaId = $media->getId();
+                    $opts->operation = $mux ? MultiplexOperation::MUX : MultiplexOperation::REMUX;
+                    $opts->videoPath = $event->getTmpVideoPath();
+                    $opts->audioPath = $event->getTmpAudioPath();
+
+                    $this->multiplexProducer->publish($opts->pack());
+
+                    // make thumbnail and queue for transcode later in MultiplexConsumer
+
+                    break;
+                }
+
+                $opts = new TranscodeConsumerOptions();
+                $opts->mediaId = $media->getId();
+                $opts->container = ContainerConst::WEBM;
+                $opts->preset = 'ffmpeg.webm_720p_video';
+                $this->transcodeProducer->publish($opts->pack());
+
+                $opts->container = ContainerConst::MP4;
+                $opts->preset = 'ffmpeg.x264_720p_video';
+                $this->transcodeProducer->publish($opts->pack());
+
+                $media->createThumbnail($this->transcoder);
 
                 break;
             case Media::TYPE_AUDIO:
-                // TODO look into resizing images
                 $this->logger->info('Uploaded an audio');
 
-                $message = array(
-                    'media_id' => $media->getId()
-                );
+                $opts = new TranscodeConsumerOptions();
+                $opts->mediaId = $media->getId();
+                $opts->container = ContainerConst::WEBM;
+                $opts->preset = 'ffmpeg.webm_audio';
+                $this->transcodeProducer->publish($opts->pack());
+
+                $opts->container = ContainerConst::MP4;
+                $opts->preset = 'ffmpeg.aac_audio';
+                $this->transcodeProducer->publish($opts->pack());
 
                 break;
             case Media::TYPE_IMAGE:
+                // TODO look into resizing images
                 $this->logger->info('Uploaded an image');
 
-                $imageSize = getimagesize($media->getResource()->getAbsolutePath());
+                $media->createThumbnail($this->transcoder);
 
-                $metaData->setSize($fileSize);
-                $metaData->setWidth($imageSize[0]);
-                $metaData->setHeight($imageSize[1]);
-
-                $media->setIsReady(Media::READY_YES);
-
-                try {
-                    $thumbnailTempFile = $this->transcoder->createThumbnail(
-                        $media->getResource()
-                            ->getAbsolutePath(), Media::TYPE_IMAGE);
-                    $thumbnailFile = $media->getThumbnailRootDir() . "/" . $media->getResource()->getId() . ".png";
-                    $this->fs->rename($thumbnailTempFile, $thumbnailFile, true);
-                    $media->setThumbnailPath($media->getResource()->getId() . ".png");
-                } catch (IOException $e) {
-                    $this->logger->error($e->getTraceAsString());
-                }
-
-                break;
+            // no break
             default:
-                $this->logger->info('Uploaded something');
+                if ($media->getType() != Media::TYPE_IMAGE)
+                    $this->logger->info('Uploaded something');
 
-                $metaData->setSize($fileSize);
+                $media->getSourceResource()->updateMetaData(
+                    $media->getType(),
+                    $this->transcoder);
 
-                $media->setIsReady(Media::READY_YES);
+                $media->setState(MediaStateConst::READY);
         }
 
-        $this->entityManager->persist($metaData);
-
-        $media->setMetaData($metaData);
-
+        $this->entityManager->persist($media);
         $this->entityManager->flush();
-
-        switch ($media->getType()) {
-            case Media::TYPE_VIDEO:
-                $this->video_producer->publish(serialize($message));
-                break;
-            case Media::TYPE_AUDIO:
-                $this->audio_producer->publish(serialize($message));
-                break;
-        }
     }
 }

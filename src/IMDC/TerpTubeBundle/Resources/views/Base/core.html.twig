@@ -65,6 +65,8 @@
                             'dust-helpers': 'lib/dust-helpers.min',
                             underscore: 'lib/underscore-min',
                             Sortable: 'lib/Sortable.min',
+                            sockjs: 'lib/sockjs.min',
+                            stomp: 'lib/stomp.min',
                             templates: 'template/templates',
                             extra: 'lib/extra'
                         },
@@ -77,6 +79,9 @@
                             },
                             Sortable: {
                                 exports: 'Sortable'
+                            },
+                            stomp: {
+                                exports: 'Stomp'
                             },
                             templates: {
                                 deps: ['dust-helpers']
@@ -137,7 +142,7 @@
                                         <span class="icon-bar"></span>
                                         <span class="icon-bar"></span>
                                     </button>
-                                    <a href="{{ path('imdc_home_user_home') }}" title="{{ 'nav.terptube_home' | trans  }}">
+                                    <a href="{{ path('imdc_index') }}" title="{{ 'nav.terptube_home' | trans  }}">
                                         <img class="img-responsive center-block tt-navbar-logo" src="{{ asset('bundles/imdcterptube/img/logo_inverse.png') }}">
                                     </a>
                                 </div>

@@ -5,15 +5,22 @@ namespace IMDC\TerpTubeBundle\Tests\EventListener;
 use IMDC\TerpTubeBundle\Entity\Media;
 use IMDC\TerpTubeBundle\Event\UploadEvent;
 use IMDC\TerpTubeBundle\EventListener\UploadListener;
-use IMDC\TerpTubeBundle\Tests\MediaTestCase;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 
 /**
  * Class UploadListenerTest
  * @package IMDC\TerpTubeBundle\Tests\EventListener
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class UploadListenerTestCase extends MediaTestCase
+class UploadListenerTest extends BaseWebTestCase
 {
+    public function setUp()
+    {
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
+    }
+
     public function testInstantiate()
     {
         $uploadListener = $this->getUploadListener();
@@ -24,36 +31,35 @@ class UploadListenerTestCase extends MediaTestCase
 
     public function testOnUpload_Video()
     {
-        $this->createMedia('video_audio.webm', Media::TYPE_VIDEO);
+        /** @var Media $media */
+        $media = $this->referenceRepo->getReference('test_media_1_1');
 
         $uploadListener = $this->getUploadListener();
-        $uploadListener->onUpload(new UploadEvent($this->media));
+        $uploadListener->onUpload(new UploadEvent($media));
 
-        $metaData = $this->media->getMetaData();
-
-        $this->assertNotNull($metaData);
-        $this->assertNotNull($metaData->getTimeUploaded());
+        $this->assertNotNull($media->getSourceResource()->getMetaData());
     }
 
     public function testOnUpload_Image()
     {
-        $this->createMedia('pic1.jpg', Media::TYPE_IMAGE);
+        /** @var Media $media */
+        $media = $this->referenceRepo->getReference('test_media_0_1');
 
         $uploadListener = $this->getUploadListener();
-        $uploadListener->onUpload(new UploadEvent($this->media));
+        $uploadListener->onUpload(new UploadEvent($media));
 
-        $metaData = $this->media->getMetaData();
-        $imageSize = getimagesize($this->media->getResource()->getAbsolutePath());
+        $resource = $media->getSourceResource();
+        $metaData = $resource->getMetaData();
+        $imageSize = getimagesize($resource->getAbsolutePath());
 
-        $this->assertTrue(file_exists('web/' . $this->media->getThumbnailPath()));
-        $this->assertGreaterThan(0, filesize('web/' . $this->media->getThumbnailPath()));
+        $this->assertTrue(file_exists('web/' . $media->getThumbnailPath()));
+        $this->assertGreaterThan(0, filesize('web/' . $media->getThumbnailPath()));
 
         $this->assertNotNull($metaData);
-        $this->assertEquals(filesize($this->media->getResource()->getAbsolutePath()), $metaData->getSize());
+        $this->assertEquals(filesize($resource->getAbsolutePath()), $metaData->getSize());
         $this->assertEquals($imageSize[0], $metaData->getWidth());
         $this->assertEquals($imageSize[1], $metaData->getHeight());
         $this->assertNull($metaData->getDuration());
-        $this->assertNotNull($metaData->getTimeUploaded());
     }
 
     /**
@@ -61,12 +67,12 @@ class UploadListenerTestCase extends MediaTestCase
      */
     private function getUploadListener()
     {
-        $logger = $this->container->get('logger');
-        $entityManager = $this->container->get('doctrine.orm.entity_manager');
-        $upload_video_producer = $this->container->get('old_sound_rabbit_mq.upload_video_producer');
-        $upload_audio_producer = $this->container->get('old_sound_rabbit_mq.upload_audio_producer');
-        $transcoder = $this->container->get('imdc_terptube.transcoder');
+        $logger = $this->getContainer()->get('logger');
+        $entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+        $transcoder = $this->getContainer()->get('imdc_terptube.transcoder');
+        $multiplexProducer = $this->getContainer()->get('old_sound_rabbit_mq.multiplex_producer');
+        $transcodeProducer = $this->getContainer()->get('old_sound_rabbit_mq.transcode_producer');
 
-        return new UploadListener($logger, $entityManager, $upload_video_producer, $upload_audio_producer, $transcoder);
+        return new UploadListener($logger, $entityManager, $transcoder, $multiplexProducer, $transcodeProducer);
     }
 }

@@ -21,7 +21,7 @@ define([
     Forum.prototype.delete = function () {
         return ForumFactory.delete(this.model)
             .done(function (data) {
-                window.location.assign(data.redirectUrl);
+                window.location.assign(data.redirect_url);
             });
     };
 

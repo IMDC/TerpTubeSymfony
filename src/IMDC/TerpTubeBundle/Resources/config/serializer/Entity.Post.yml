@@ -3,10 +3,14 @@ IMDC\TerpTubeBundle\Entity\Post:
   virtual_properties:
     getOrderedMedia:
       serialized_name: ordered_media
+    isPostReply:
+      serialized_name: is_post_reply
   properties:
     id:
       expose: true
     content:
+      expose: true
+    edited_at:
       expose: true
     startTime:
       expose: true
@@ -14,7 +18,23 @@ IMDC\TerpTubeBundle\Entity\Post:
       expose: true
     isTemporal:
       expose: true
+    replies:
+      expose: true
     parentPost:
+      access_type: public_method
+      accessor:
+        getter: getShallowParentPost
+      type: integer
+      serialized_name: parent_post_id
+      read_only: true
+    author:
       expose: true
     parentThread:
+      access_type: public_method
+      accessor:
+        getter: getShallowParentThread
+      type: integer
+      serialized_name: parent_thread_id
+      read_only: true
+    editedBy:
       expose: true
