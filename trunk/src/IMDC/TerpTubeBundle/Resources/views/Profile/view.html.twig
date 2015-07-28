@@ -13,7 +13,7 @@
             <div class="col-md-offset-2 col-md-4">
                 <div class="row">
                     <div class="col-md-4 text-center">
-                        <p><img class="img-responsive center-block tt-avatar" src="{{ profile.avatar ? asset(profile.avatar.getResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></p>
+                        <p><img class="img-responsive center-block tt-avatar" src="{{ profile.avatar ? asset(profile.avatar.getSourceResource.getWebPath) : asset('bundles/imdcterptube/img/no_avatar.jpg')}}" /></p>
                         {% if app.user == user.userName %}
                             <a class="btn btn-default btn-sm"    href="{{ path('imdc_profile_edit_avatar', {'userName': app.user}) }}">Edit Avatar</a>
                         {% endif %}

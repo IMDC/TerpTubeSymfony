@@ -94,8 +94,9 @@ define([
 
     MediaChooserComponent.Event = {
         UPLOAD_START: 'eventUploadStart',
-        SUCCESS: 'eventSuccess',
-        SUCCESS_AND_POST: 'eventSuccessAndPost',
+        SUCCESS: 'eventSuccess', //TODO rename to 'add'
+        SUCCESS_AND_POST: 'eventSuccessAndPost', //TODO rename to 'add'
+        REMOVE: 'eventRemove',
         ERROR: 'eventError',
         RESET: 'eventReset'
     };
@@ -164,8 +165,13 @@ define([
         for (var m in this.media) {
             var mm = this.media[m];
             if (mm.get('id') == media.get('id')) {
-                this.media.splice(m, 1);
+                var media = this.media.splice(m, 1);
                 this.galleryCmp.removeMedia(m);
+
+                this._dispatch(MediaChooserComponent.Event.REMOVE, {
+                    media: media,
+                    mediaChooserComponent: this
+                });
             }
         }
     };
