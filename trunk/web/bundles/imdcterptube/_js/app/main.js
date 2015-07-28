@@ -34,7 +34,9 @@ define([
     'model/messageModel',
     'model/myFilesModel',
     'model/postModel',
+    'model/profileModel',
     'model/threadModel',
+    'model/userModel',
 
     // controller
     'controller/contactController',
