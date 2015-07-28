@@ -19,73 +19,13 @@ group:
 # Security
 "Bad credentials": Invalid username or password
 
-security:
+security: # checked
     login:
-        username: "Username:"
-        password: "Password:"
-        remember_me: Remember me
-        submit: Login
-      #  not_registered: "Not registered?"
-      # register_here: "Click here to register!"
+        not_registered: "Not registered?"
+        register_here: "Click here to register!"
         forgot_password: "Forgot your password?"
-      # password_reset: "Click here to reset it!"
-      # not_logged_in: "Not logged in/Session expired! Please log in again"
-
-# Profile
-profile:
-    show:
-       username: Username
-      #  email: Email
-    edit:
-        submit: Update
-  #  flash:
-      #  updated: The profile has been updated
-
-# Password change
-change_password:
-    # submit: Change password
-  #  flash:
-     #   success: The password has been changed
-
-# Registration
-registration:
-     # check_email: An email has been sent to %email%. It contains an activation link you must click to activate your account.
-    # confirmed: Congrats %username%, your account is now activated.
-    # back: Back to the originating page.
-    submit: Register
-   # flash:
-     #   user_created: The user has been created successfully
-    email:
-      #  subject: Welcome %username%!
-      # message: |
-#            Hello %username%!
-#
-#            To finish activating your account - please visit %confirmationUrl%
-#
-#            Regards,
-#            the Team.
-
-# Password resetting
-resetting:
-   # password_already_requested: The password for this user has already been requested within the last 24 hours.
-   # check_email: An email has been sent to %email%. It contains a link you must click to reset your password.
-   # request:
-      #  invalid_username: The username or email address "%username%" does not exist.
-       # username: "Username or email address:"
-       #  submit: Reset password
-    reset:
-        # submit: Change password
-    flash:
-       # success: The password has been reset successfully
-    email:
-       # subject: Reset Password
-       # message: |
-#            Hello %username%!
-#
-#            To reset your password - please visit %confirmationUrl%
-#
-#            Regards,
-#            the Team.
+        password_reset: "Click here to reset it!"
+        not_logged_in: "Not logged in/Session expired! Please log in again"
 
 nav:
     terptube_home: "Terptube Home"
@@ -111,7 +51,7 @@ interpretationsGateway:
 #        0: "Simultaneous"
 #        1: "Consecutive"
 
-mediachooser:
+mediachooser: # checked
     form:
         record_video:
             default: 'Record a new video'
@@ -152,11 +92,11 @@ form:
         
     
     profile:
-        #firstName: "First name:"
-        #lastName: "Last name:" 
-        #middleName: "Middle name:" 
+        firstName: "First name:" # checked
+        lastName: "Last name:" # checked
+        middleName: "Middle name:" # checked
         birthDate: 
-           # title: "Birth date:"
+            title: "Birth date:" # checked
             empty: "Not set"
            # invalid: 'You entered an invalid date'
        # languages:
@@ -178,28 +118,28 @@ form:
                 3: "Professional"
                 4: "Fully Professional"
                 5: "Native or Bilingual"
-        #city: "City:"
-        #country: "Country:"
-        #gender:
-            #title: "Gender:" 
-            #m: "Male"
-            #f: "Female"
+        city: "City:" # checked
+        country: "Country:" # checked
+        gender:
+            title: "Gender:" # checked
+            m: "Male" # checked
+            f: "Female" # checked
             #empty: "Not set"
-        #textBio: "Tell us a little bit about yourself"
-        #skypeName: "Skype name"
-        #interestedInMentoredByMentor:
-            #title: "Are you interested in being mentored by a Sign language mentor?"
-        #interestedInMentoredByInterpreter:
-            #title: "Are you interested in being mentored by a Sign language interpreter?"
-        #interestedInMentoringSignLanguage:
-            #title: "Are you interested in being a Sign language mentor?"
-        #interestedInMentoredingInterpreter:
-            #title: "Are you interested in being a Sign language interpreter mentor?"
-        #interestedInMentoringMentor:
-            #title: "Are you interested in mentoring other mentors?"
-        #profileVisibleToPublic:
-            #title: "Would you like your profile to appear in the public directory?"
-            
+        textBio: "Tell us a little bit about yourself" # checked
+        skypeName: "Skype name" # checked
+        interestedInMentoredByMentor: # checked
+            title: "Are you interested in being mentored by a Sign language mentor?"
+        interestedInMentoredByInterpreter: # checked
+            title: "Are you interested in being mentored by a Sign language interpreter?"
+        interestedInMentoringSignLanguage: # checked
+            title: "Are you interested in being a Sign language mentor?"
+        interestedInMentoredingInterpreter: # checked
+            title: "Are you interested in being a Sign language interpreter mentor?"
+        interestedInMentoringMentor: # checked
+            title: "Are you interested in mentoring other mentors?"
+        profileVisibleToPublic: # checked
+            title: "Would you like your profile to appear in the public directory?"
+
     generic:
         #allFieldsRequired: 'All fields are required!'
         empty: 'Not set'

@@ -111,6 +111,8 @@ class ForumController extends FOSRestController implements ClassResourceInterfac
         }
 
         if ($form->isValid()) {
+            //TODO both media and title should not be empty
+
             $currentDateTime = new \DateTime('now');
             $forum->setCreator($user);
             $forum->setLastActivity($currentDateTime);

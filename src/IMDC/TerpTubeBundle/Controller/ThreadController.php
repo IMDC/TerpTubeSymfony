@@ -82,6 +82,8 @@ class ThreadController extends FOSRestController implements ClassResourceInterfa
         }
 
         if ($form->isValid()) {
+            //TODO both media and title should not be empty
+
             if ($isNewFromMedia) {
                 $forum = $form->get('forum')->getData();
             }
