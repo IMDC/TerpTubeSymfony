@@ -4,6 +4,7 @@ define([
     'model/forumModel',
     'factory/forumFactory',
     'jquery',
+    'jquery-mockjax',
     'fos_routes'
 ], function (chai, Common, ForumModel, ForumFactory) {
     'use strict';
@@ -12,33 +13,37 @@ define([
 
     describe('ForumFactory', function () {
 
-        this.timeout(Common.PAGE_LOAD_TIMEOUT * 2);
-
-        Common.ajaxSetup();
-
         var model;
 
-        before(function (done) {
+        before(function () {
             model = new ForumModel({
-                id: 120 // this must be set to an existing forum id
+                id: 1
             });
+            $.mockjaxSettings.logging = false;
+        });
 
-            Common.login(done);
-
-            setTimeout(done, Common.PAGE_LOAD_TIMEOUT);
+        beforeEach(function () {
+            $.mockjax.clear();
         });
 
         it('should delete the forum', function (done) {
+            $.mockjax({
+                method: 'DELETE',
+                url: Routing.generate('imdc_delete_forum', {forumId: model.get('id')}),
+                responseText: {
+                    code: 200,
+                    redirect_url: Common.BASE_URL + '/forum/'
+                }
+            });
+
             return ForumFactory.delete(model)
                 .done(function (data) {
                     assert.isObject(data, 'result should be an object');
-                    assert.property(data, 'wasDeleted', 'result should have key:wasDeleted');
-                    assert.property(data, 'redirectUrl', 'result should have key:redirectUrl');
-
-                    assert.isTrue(data.wasDeleted, 'key:wasDeleted should be true');
+                    assert.property(data, 'code', 'result should have key:code');
+                    assert.property(data, 'redirect_url', 'result should have key:redirect_url');
                     done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
                     done();
                 });

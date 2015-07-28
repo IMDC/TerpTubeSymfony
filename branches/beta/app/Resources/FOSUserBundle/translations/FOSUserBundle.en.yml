@@ -1,13 +1,7 @@
-# Global strings
-layout:
-    user_inbox: Inbox
-
 # Form field labels
 form:
     password_confirmation: "Retype password:"
     new_password_confirmation: "Retype password:"
-    firstName: "First name:"
-    lastName: "Last name:"
 
 # Page Titles
 title:

@@ -32,47 +32,44 @@
 			<li class="active">{{ forum.getTitleText|truncate(20) }}</li>
 		</ol>
 		<div class="row">
-			{#<div class="col-md-offset-4 col-md-4">#}
-			<div class="col-md-12">
+			<div class="col-md-4">
 				{% if forum.getTitleMedia|length > 0 %}
-					<div class="forum-gallery" style="height: 500px; width: 100%;"></div>
+					<div class="forum-gallery" style="height: 250px; width: 100%;"></div>
                 {% else %}
 					<p>No media</p>
 				{% endif %}
 			</div>
-		</div>
-        <div class="row">
-            <div class="col-md-12">
-                <h1>{{ forum.getTitleText }}</h1>
-                <div class="row">
-                    <div class="col-xs-3">
-                        <table class="table">
-                            <tbody>
-                            <tr>
-                                <td>Topics</td>
-                                <td>{{ threads|length }}</td>
-                            </tr>
-                            <tr>
-                                <td>Created</td>
-                                <td>{{ forum.getCreationDate|date('g:ia F j Y') }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-xs-9" style="border-left: 1px solid #dddddd;">
-                        <p>{{ forum.getDescription|default('<i>No Description</i>')|raw }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-		<div class="row">
-			<div class="col-md-12">
-				<p>
-					<a class="btn btn-default" href="{{ path('imdc_thread_new', {'forumid': forum.id}) }}"><i class="fa fa-plus"></i> Create New Topic</a>
-					{% if forum in app.user.getForums %}
-						<a class="btn btn-default" href="{{ path('imdc_forum_edit', {'forumid': forum.id}) }}"><i class="fa fa-edit"></i> Edit Forum</a>
-					{% endif %}
-				</p>
+			<div class="col-md-8">
+				<h1>{{ forum.getTitleText }}</h1>
+				<div class="row">
+					<div class="col-xs-3">
+						<table class="table">
+							<tbody>
+							<tr>
+								<td>Topics</td>
+								<td>{{ threads|length }}</td>
+							</tr>
+							<tr>
+								<td>Created</td>
+								<td>{{ forum.getCreationDate|date('g:ia F j Y') }}</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-xs-9" style="border-left: 1px solid #dddddd;">
+						<p>{{ forum.getDescription|default('<i>No Description</i>')|raw }}</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12">
+						<p>
+							<a class="btn btn-default" href="{{ path('imdc_thread_new', {'forumid': forum.id}) }}"><i class="fa fa-plus"></i> Create New Topic</a>
+							{% if forum in app.user.getForums %}
+								<a class="btn btn-default" href="{{ path('imdc_forum_edit', {'forumid': forum.id}) }}"><i class="fa fa-edit"></i> Edit Forum</a>
+							{% endif %}
+						</p>
+					</div>
+				</div>
 			</div>
 		</div>
 		<!-- threads -->

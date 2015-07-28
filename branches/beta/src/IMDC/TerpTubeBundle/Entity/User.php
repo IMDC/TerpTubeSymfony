@@ -121,6 +121,10 @@ class User extends BaseUser
     {
         parent::__construct();
 
+        $profile = new UserProfile();
+        $profile->setProfileVisibleToPublic(true);
+        $this->profile = $profile;
+
         $this->sentMessages         = new \Doctrine\Common\Collections\ArrayCollection();
         $this->receivedMessages     = new \Doctrine\Common\Collections\ArrayCollection();
         $this->readMessages         = new \Doctrine\Common\Collections\ArrayCollection();
@@ -961,5 +965,48 @@ class User extends BaseUser
         }
 
         return true;
+    }
+
+    private static function createShallowUserList($list)
+    {
+        $list = array();
+
+        /** @var User $user */
+        foreach ($list as $user)
+            $list[] = $user->getUsername();
+
+        return $list;
+    }
+
+    public function getShallowFriendsList()
+    {
+        return User::createShallowUserList($this->getFriendsList());
+    }
+
+    public function getShallowMentorList()
+    {
+        return User::createShallowUserList($this->getMenteeList());
+    }
+
+    public function getShallowMenteeList()
+    {
+        return User::createShallowUserList($this->getMenteeList());
+    }
+
+    public function getShallowCreatedInvitations()
+    {
+        $list = array();
+
+        /** @var Invitation $invitation */
+        foreach ($this->getCreatedInvitations() as $invitation)
+            $list[] = array(
+                'creator' => $invitation->getCreator()->getUsername(),
+                'recipient' => $invitation->getRecipient()->getUsername(),
+                'isAccepted' => $invitation->getIsAccepted(),
+                'isCancelled' => $invitation->getIsCancelled(),
+                'isDeclined' => $invitation->getIsDeclined()
+            );
+
+        return $list;
     }
 }

@@ -26,7 +26,7 @@ define([
         this.$container = this.options.$container;
         this.$containerUpload = this.$container.find(MediaChooserComponent.Binder.CONTAINER_UPLOAD);
         this.$uploadForm = $(this.$containerUpload.data('form'));
-        this.$resourceFile = this._getFormField('resource_file');
+        this.$resourceFile = this._getFormField('source_resource_file');
         this.$recordVideo = this.$container.find(MediaChooserComponent.Binder.RECORD_VIDEO);
         this.$uploadFile = this.$container.find(MediaChooserComponent.Binder.UPLOAD_FILE);
         this.$select = this.$container.find(MediaChooserComponent.Binder.SELECT);
@@ -94,8 +94,9 @@ define([
 
     MediaChooserComponent.Event = {
         UPLOAD_START: 'eventUploadStart',
-        SUCCESS: 'eventSuccess',
-        SUCCESS_AND_POST: 'eventSuccessAndPost',
+        SUCCESS: 'eventSuccess', //TODO rename to 'add'
+        SUCCESS_AND_POST: 'eventSuccessAndPost', //TODO rename to 'add'
+        REMOVE: 'eventRemove',
         ERROR: 'eventError',
         RESET: 'eventReset'
     };
@@ -164,8 +165,13 @@ define([
         for (var m in this.media) {
             var mm = this.media[m];
             if (mm.get('id') == media.get('id')) {
-                this.media.splice(m, 1);
+                var media = this.media.splice(m, 1);
                 this.galleryCmp.removeMedia(m);
+
+                this._dispatch(MediaChooserComponent.Event.REMOVE, {
+                    media: media,
+                    mediaChooserComponent: this
+                });
             }
         }
     };
@@ -188,6 +194,7 @@ define([
         };
 
         this._dispatch(event, args);
+        
     };
 
     MediaChooserComponent.prototype._onClickRecordVideo = function (e) {
@@ -258,7 +265,7 @@ define([
             }.bind(this))
             .done(function (data) {
                 //if (this.$selected.length > 0)
-                    this._addSelectedMedia(data.media);
+                this._addSelectedMedia(data.media);
                 this._invokeSuccess();
                 this._toggleForm(false);
             }.bind(this))
@@ -315,7 +322,7 @@ define([
                 }.bind(this));
                 this._invokeSuccess();
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$working.hide();
                 this._toggleForm(false);
 

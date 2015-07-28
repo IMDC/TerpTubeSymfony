@@ -3,6 +3,7 @@
 
 namespace IMDC\TerpTubeBundle\Admin;
 
+use IMDC\TerpTubeBundle\Entity\MediaStateConst;
 use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -53,7 +54,7 @@ class MediaAdmin extends Admin
     {
         // reset media ready status so media is re-encoded
         // todo: fix this so that media is only re-encoded if resource file is changed
-        $media->setIsReady(Media::READY_NO);
+        $media->setState(MediaStateConst::UNPROCESSED);
         $this->triggerEvent($media);
     }
     
@@ -81,7 +82,7 @@ class MediaAdmin extends Admin
             ->add('owner')
             ->add('title')
             ->add('type')
-            ->add('isReady')
+            ->add('state')
         ;
     }
 
@@ -94,7 +95,7 @@ class MediaAdmin extends Admin
             ->addIdentifier('title')
             ->add('type')
             ->add('resource.path')
-            ->add('isReady')
+            ->add('state')
             ->add('metaData.size', null, array('label' => 'Size (bytes)'))
             ->add('metaData.timeUploaded', null, array('label' => 'Time Uploaded'))
         ;

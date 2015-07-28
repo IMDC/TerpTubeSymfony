@@ -24,17 +24,10 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 class DefaultController extends Controller
 {
     /**
-     * Matches the route for /
-     * 
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-	public function indexAction(Request $request)
+	public function indexAction()
 	{
-        if ($this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('imdc_home_user_home'));
-        }
-
         $formFactory = $this->container->get('fos_user.registration.form.factory');
         $form = $formFactory->createForm();
 
@@ -42,5 +35,4 @@ class DefaultController extends Controller
             'form' => $form->createView()
         ));
 	}
-
 }

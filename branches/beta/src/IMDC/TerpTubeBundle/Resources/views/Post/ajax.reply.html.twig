@@ -3,9 +3,9 @@ included by:
 Thread:view.html.twig
 #}
 
-<div class="row post-container{% if is_post_reply %} tt-post-container tt-post-reply-container" style="margin-bottom: 15px;{% endif %}" data-pid="{{ post.id }}">
-    <div class="{% if is_post_reply %}col-md-offset-1 col-md-11{% else %}col-md-12{% endif %}">
-        {% if is_post_reply %}
+<div class="row post-container{% if post.isPostReply %} tt-post-container tt-post-reply-container" style="margin-bottom: 15px;{% endif %}" data-pid="{{ post.id }}">
+    <div class="{% if post.isPostReply %}col-md-offset-1 col-md-11{% else %}col-md-12{% endif %}">
+        {% if post.isPostReply %}
         <div class="row tt-post-container-inner tt-post-reply-container-inner">
             <div class="col-md-12">
                 {% endif %}
@@ -19,11 +19,11 @@ Thread:view.html.twig
                 {{ form_row(form.content) }}
                 <button class="btn btn-success post-submit-new" href="#" data-pid="{{ post.id }}" data-loading-text="Creating reply..."><i class="fa fa-check"></i> Reply</button>
                 <a class="btn btn-danger post-reset" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Reset</a>
-                {% if is_post_reply %}
+                {% if post.isPostReply %}
                     <a class="btn btn-danger post-cancel-new" href="#" data-pid="{{ post.id }}"><i class="fa fa-times"></i> Cancel</a>
                 {% endif %}
                 {{ form_end(form) }}
-                {% if is_post_reply %}
+                {% if post.isPostReply %}
             </div>
         </div>
         {% endif %}

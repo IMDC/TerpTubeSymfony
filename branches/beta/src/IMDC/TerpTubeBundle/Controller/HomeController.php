@@ -15,13 +15,12 @@ use Symfony\Component\HttpFoundation\Response;
 class HomeController extends Controller
 {
     /**
-     * @param Request $request
      * @return RedirectResponse|Response
      */
-    public function indexAction(Request $request)
+    public function indexAction()
 	{
 		// check if the user is logged in
-		if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
+		if (!$this->container->get('imdc_terptube.authentication.manager')->isAuthenticated()) {
 			return $this->redirect($this->generateUrl('imdc_index'));
 		}
 

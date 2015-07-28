@@ -11,6 +11,7 @@ define([
         this.bind__onSubmitForm = this._onSubmitForm.bind(this);
         this.bind__onUploadStart = this._onUploadStart.bind(this);
         this.bind__onSuccess = this._onSuccess.bind(this);
+        this.bind__onRemove = this._onRemove.bind(this);
         this.bind__onReset = this._onReset.bind(this);
         this.bind__onError = this._onError.bind(this);
 
@@ -29,6 +30,7 @@ define([
         this.mcCmp = MediaChooserComponent.render(this.$form);
         this.mcCmp.subscribe(MediaChooserComponent.Event.UPLOAD_START, this.bind__onUploadStart);
         this.mcCmp.subscribe(MediaChooserComponent.Event.SUCCESS, this.bind__onSuccess);
+        this.mcCmp.subscribe(MediaChooserComponent.Event.REMOVE, this.bind__onRemove);
         this.mcCmp.subscribe(MediaChooserComponent.Event.RESET, this.bind__onReset);
         this.mcCmp.subscribe(MediaChooserComponent.Event.ERROR, this.bind__onError);
 
@@ -79,12 +81,22 @@ define([
     };
 
     NewView.prototype._updateForm = function () {
-        var formField = this._getFormField('titleMedia');
-        formField.html(
+        var $formField = this._getFormField('titleMedia');
+        $formField.html(
             this.mcCmp.generateFormData(
-                formField.data('prototype')
+                $formField.data('prototype')
             )
         );
+
+        $formField = this._getFormField('titleText');
+        $formField.attr('required', this.mcCmp.media.length == 0);
+
+        $formField = $formField.parent().find('label');
+        if (this.mcCmp.media.length == 0) {
+            $formField.addClass('required');
+        } else {
+            $formField.removeClass('required');
+        }
     };
 
     NewView.prototype._onUploadStart = function (e) {
@@ -92,25 +104,16 @@ define([
     };
 
     NewView.prototype._onSuccess = function (e) {
+        this._updateForm();
+
         this.$submit.attr('disabled', false);
+    };
 
-        this._getFormField('titleText')
-            .attr('required', false)
-            .parent()
-            .find('label')
-            .removeClass('required');
-
+    NewView.prototype._onRemove = function (e) {
         this._updateForm();
     };
 
     NewView.prototype._onReset = function (e) {
-        if (this.mcCmp.media.length == 0)
-            this._getFormField('titleText')
-                .attr('required', true)
-                .parent()
-                .find('label')
-                .addClass('required');
-
         this._updateForm();
     };
     

@@ -2,39 +2,61 @@
 
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
+use IMDC\TerpTubeBundle\Entity\Forum;
+use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Entity\Thread;
+use IMDC\TerpTubeBundle\Entity\User;
+use IMDC\TerpTubeBundle\Rest\ThreadResponse;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * Class ThreadControllerTest
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ThreadControllerTest extends WebTestCase
+class ThreadControllerTest extends BaseWebTestCase
 {
-    private static $forumId = 145;
-    private static $mediaIds = array(4, 1); // shuffle for order check
-
     /**
-     * @var Client
+     * @var User
      */
-    private $client;
+    private $loggedInUser;
 
     public function setUp()
     {
-        $this->client = static::createClient();
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUsers',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestForums',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestThreads',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestMedia'
+        ));
 
-        Common::login($this->client);
+        $this->client = static::createClient();
+        /** @var User $user */
+        $user = $this->referenceRepo->getReference('test_user_1');
+        Common::login($this->client, $user->getUsername());
+        $this->loggedInUser = $user;
+
+        // give logged in user media
+        for ($i = 1; $i <= 2; $i++) {
+            /** @var Media $media */
+            $media = $this->referenceRepo->getReference('test_media_1_' . $i);
+            $media->setOwner($this->loggedInUser);
+            $this->entityManager->persist($media);
+        }
+        $this->entityManager->flush();
     }
 
     public function testNew_GetFormWithMedia()
     {
-        $crawler = $this->client->request('GET', '/thread/new/myFiles/' . self::$mediaIds[0]);
+        $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
+
+        $crawler = $this->client->request('GET', '/thread/new/myFiles/' . $mediaIds[0]);
+        $this->logResponse(__FUNCTION__);
 
         $this->assertCount(1, $crawler->filter('form[name="thread"]'), 'a single thread form should be present');
         $this->assertCount(1, $crawler->filter('[name^="thread[forum]"]'), 'forum field should be present');
-        $this->assertCount(1, $crawler->filter('[name^="thread[mediaIncluded]"][value="' . self::$mediaIds[0] . '"]'),
+        $this->assertCount(1, $crawler->filter('[name^="thread[mediaIncluded]"][value="' . $mediaIds[0] . '"]'),
             'media should be present');
         $this->assertCount(1, $crawler->filter('#thread_accessType_type_0:checked'),
             '"public" access type should be checked');
@@ -42,7 +64,11 @@ class ThreadControllerTest extends WebTestCase
 
     public function testNew_GetForm()
     {
-        $crawler = $this->client->request('GET', '/thread/new/' . self::$forumId);
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+
+        $crawler = $this->client->request('GET', '/thread/new/' . $forum->getId());
+        $this->logResponse(__FUNCTION__);
 
         $this->assertCount(1, $crawler->filter('form[name="thread"]'), 'a single thread form should be present');
         $this->assertCount(1, $crawler->filter('#thread_accessType_type_0:checked'),
@@ -54,128 +80,133 @@ class ThreadControllerTest extends WebTestCase
      */
     public function testNew_SubmitFormWithMedia()
     {
-        $crawler = $this->client->request('GET', '/thread/new/' . self::$forumId);
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
+
+        $crawler = $this->client->request('GET', '/thread/new/' . $forum->getId());
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="thread"] > button:contains("Create")')->form();
         $values = $form->getPhpValues();
-        $values['thread']['mediaIncluded'] = self::$mediaIds;
+        $values['thread']['mediaIncluded'] = $mediaIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
-
         $model = Common::getModel($crawler);
 
-        $this->assertTrue(is_array($model['ordered_media']));
-        $this->assertCount(count(self::$mediaIds), $model['ordered_media']);
-        // check existence
-        foreach ($model['ordered_media'] as $m) {
-            $this->assertContains($m['id'], self::$mediaIds);
-        }
-        // check order
-        foreach (self::$mediaIds as $key => $mediaId) {
-            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
-        }
-
-        // manually delete
-        $this->delete($model);
+        $this->assertArrayHasKey('ordered_media', $model);
+        $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
     /**
      * @depends testNew_GetForm
-     * @return array
      */
     public function testNew_SubmitFormWithTitle()
     {
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
         $title = 'test:new';
-        $crawler = $this->client->request('GET', '/thread/new/' . self::$forumId);
+
+        $crawler = $this->client->request('GET', '/thread/new/' . $forum->getId());
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="thread"] > button:contains("Create")')->form(array(
             'thread[title]' => $title
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
 
         $this->assertCount(1, $crawler->filter('title:contains("' . $title . '")'));
-
-        return Common::getModel($crawler);
     }
 
-    /**
-     * @depends testNew_SubmitFormWithTitle
-     * @param $model
-     * @return array
-     */
-    public function testView($model)
+    public function testView()
     {
-        $crawler = $this->client->request('GET', '/thread/' . $model['id']);
-        $this->assertCount(1, $crawler->filter('title:contains("' . $model['title'] . '")'));
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        $thread->setParentForum($forum);
+        $thread->setCreator($this->loggedInUser);
+        $this->entityManager->persist($thread);
+        $this->entityManager->flush();
 
-        return $model;
+        $crawler = $this->client->request('GET', '/thread/' . $thread->getId());
+        $this->logResponse(__FUNCTION__);
+
+        $this->assertCount(1, $crawler->filter('title:contains("' . $thread->getTitle() . '")'));
     }
 
-    /**
-     * @depends testView
-     * @param $model
-     * @return array
-     */
-    public function testEdit_GetForm($model)
+    public function testEdit_GetForm()
     {
-        $crawler = $this->client->request('GET', '/thread/' . $model['id'] . '/edit');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        $thread->setCreator($this->loggedInUser);
+        $this->grantAccessToObject($thread, $this->loggedInUser);
+        $this->entityManager->persist($thread);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/thread/' . $thread->getId() . '/edit');
+        $this->logResponse(__FUNCTION__);
+
         $this->assertCount(1, $crawler->filter('form[name="thread"]'), 'a single thread form should be present');
-
-        return $model;
     }
 
     /**
      * @depends testEdit_GetForm
-     * @param $model
-     * @return array
      */
-    public function testEdit_SubmitFormWithTitle($model)
+    public function testEdit_SubmitFormWithTitle()
     {
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        $thread->setParentForum($forum);
+        $thread->setCreator($this->loggedInUser);
+        $this->grantAccessToObject($thread, $this->loggedInUser);
+        $this->entityManager->persist($thread);
+        $this->entityManager->flush();
         $title = 'test:edit';
-        $crawler = $this->client->request('GET', '/thread/' . $model['id'] . '/edit');
+
+        $crawler = $this->client->request('GET', '/thread/' . $thread->getId() . '/edit');
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="thread"] > div > div > button:contains("Save")')->form(array(
             'thread[title]' => $title
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
 
         $this->assertCount(1, $crawler->filter('title:contains("' . $title . '")'));
-
-        return Common::getModel($crawler);
     }
 
-    /**
-     * @depends testEdit_SubmitFormWithTitle
-     * @param $model
-     * @return array
-     */
-    public function testDelete($model)
+    public function testDelete()
     {
-        $this->client->request('POST', '/thread/' . $model['id'] . '/delete');
+        /** @var Forum $forum */
+        $forum = $this->referenceRepo->getReference('test_forum_1');
+        /** @var Thread $thread */
+        $thread = $this->referenceRepo->getReference('test_thread_1');
+        $thread->setParentForum($forum);
+        $thread->setCreator($this->loggedInUser);
+        $this->grantAccessToObject($thread, $this->loggedInUser);
+        $this->entityManager->persist($thread);
+        $this->entityManager->flush();
+
+        $this->client->request('DELETE', '/api/v1/threads/' . $thread->getId());
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasDeleted', $response);
-        $this->assertArrayHasKey('redirectUrl', $response);
-        $this->assertTrue($response['wasDeleted']);
-        $this->assertRegExp('/\/forum\/\d+$/', $response['redirectUrl']);
-    }
-
-    private function delete($model)
-    {
-        // manually delete the thread
-        $em = $this->client->getContainer()
-            ->get('doctrine')
-            ->getManager();
-        $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($model['id']);
-        $em->remove($thread);
-        $em->flush();
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(ThreadResponse::OK, $response['code']);
+        $this->assertArrayHasKey('redirect_url', $response);
+        $this->assertRegExp('/\/forum\/\d+$/', $response['redirect_url']);
     }
 }

@@ -219,57 +219,56 @@ ul.pagination {
 /* line 228, sass/_base.scss */
 .tt-list-table > thead > tr > th.tt-list-table-col-primary, .tt-myFiles-list-table > thead > tr > th.tt-list-table-col-primary, .tt-list-table > tbody > tr > td.tt-list-table-col-primary, .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary {
   width: 60%;
-  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-/* line 235, sass/_base.scss */
+/* line 234, sass/_base.scss */
 .tt-list-table > thead > tr > th .tt-avatar, .tt-myFiles-list-table > thead > tr > th .tt-avatar, .tt-list-table > thead > tr > th .tt-thumbnail, .tt-myFiles-list-table > thead > tr > th .tt-thumbnail, .tt-list-table > tbody > tr > td .tt-avatar, .tt-myFiles-list-table > tbody > tr > td .tt-avatar, .tt-list-table > tbody > tr > td .tt-thumbnail, .tt-myFiles-list-table > tbody > tr > td .tt-thumbnail {
   max-height: 34px;
 }
-/* line 242, sass/_base.scss */
+/* line 241, sass/_base.scss */
 .tt-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary > span:nth-of-type(2) {
   float: right;
   margin-bottom: -1px;
   display: none;
 }
-/* line 248, sass/_base.scss */
+/* line 247, sass/_base.scss */
 .tt-list-table > tbody > tr > td.tt-list-table-col-primary:hover > span:nth-of-type(2), .tt-myFiles-list-table > tbody > tr > td.tt-list-table-col-primary:hover > span:nth-of-type(2) {
   display: inline-block;
 }
 
-/* line 255, sass/_base.scss */
+/* line 254, sass/_base.scss */
 .tt-thumbnail-title {
   font-size: 24px;
 }
 
 /*override bootstrap*/
-/* line 260, sass/_base.scss */
+/* line 259, sass/_base.scss */
 textarea.form-control {
   height: 34px;
   /*bootstrap*/
 }
 
-/* line 265, sass/_base.scss */
+/* line 264, sass/_base.scss */
 a {
   color: #000000;
 }
-/* line 268, sass/_base.scss */
+/* line 267, sass/_base.scss */
 a:hover, a:focus, a:visited {
   text-decoration: none;
 }
 
-/* line 276, sass/_base.scss */
+/* line 275, sass/_base.scss */
 .btn-link:hover, .btn-link:focus {
   text-decoration: none;
 }
 
 @media print {
-  /* line 265, sass/_base.scss */
+  /* line 264, sass/_base.scss */
   a {
     color: #000000;
   }
-  /* line 268, sass/_base.scss */
+  /* line 267, sass/_base.scss */
   a:hover, a:focus, a:visited {
     text-decoration: none;
   }
@@ -598,6 +597,15 @@ a:hover, a:focus, a:visited {
 /* line 58, sass/_media.scss */
 .tt-media-video-controls img:last-of-type {
   margin-bottom: initial;
+}
+
+/* line 64, sass/_media.scss */
+.tt-media-preview-title {
+  margin-bottom: 10px;
+}
+/* line 67, sass/_media.scss */
+.tt-media-preview-title input {
+  width: 100%;
 }
 
 /* line 11, sass/_message.scss */

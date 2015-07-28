@@ -1,16 +1,16 @@
 <?php
-
 namespace IMDC\TerpTubeBundle\Entity;
-
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Mapping as ORM;
-use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\File as IMDCFile;
+use IMDC\TerpTubeBundle\Component\HttpFoundation\File\UploadedFile as IMDCUploadedFile;
+use IMDC\TerpTubeBundle\Transcoding\Transcoder;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\File\UploadedFile as BaseUploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ResourceFile
 {
-    const UPLOAD_DIR = 'uploads/media'; //TODO move to app config
-
     /**
      * @var integer
      */
@@ -24,10 +24,22 @@ class ResourceFile
     /**
      * @var \DateTime
      */
+    private $created;
+
+    /**
+     * @var \DateTime
+     */
     private $updated;
 
     /**
+     *
+     * @var \IMDC\TerpTubeBundle\Entity\MetaData
+     */
+    private $metaData;
+
+    /**
      * Unmapped property to handle file uploads
+     * @var UploadedFile|File
      */
     private $file;
 
@@ -35,6 +47,25 @@ class ResourceFile
      * @var string
      */
     private $temp;
+
+    /**
+     * @var string
+     */
+    private $webRootPath;
+
+    /**
+     * @var string
+     */
+    private $uploadPath;
+
+    public function __construct($config = null)
+    {
+        if ($config)
+        {
+            $this->webRootPath = $config['web_root_path'];
+            $this->uploadPath = $config['upload_path'];
+        }
+    }
 
     /**
      * Get id
@@ -70,6 +101,29 @@ class ResourceFile
     }
 
     /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return ResourceFile
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
      * Set updated
      *
      * @param \DateTime $updated
@@ -92,44 +146,102 @@ class ResourceFile
         return $this->updated;
     }
 
+    /**
+     * Set metaData
+     *
+     * @param \IMDC\TerpTubeBundle\Entity\MetaData $metaData
+     * @return ResourceFile
+     */
+    public function setMetaData(\IMDC\TerpTubeBundle\Entity\MetaData $metaData = null)
+    {
+        $this->metaData = $metaData;
+
+        return $this;
+    }
+
+    /**
+     * Get metaData
+     *
+     * @return \IMDC\TerpTubeBundle\Entity\MetaData
+     */
+    public function getMetaData()
+    {
+        return $this->metaData;
+    }
+
     public function getFilename()
     {
         return $this->id . '.' . $this->path;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWebRootPath()
+    {
+        return $this->webRootPath;
+    }
+
+    /**
+     * @param mixed $webRootPath
+     */
+    public function setWebRootPath($webRootPath)
+    {
+        $this->webRootPath = $webRootPath;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUploadPath()
+    {
+        return $this->uploadPath;
+    }
+
+    /**
+     * @param mixed $uploadPath
+     */
+    public function setUploadPath($uploadPath)
+    {
+        $this->uploadPath = $uploadPath;
     }
 
     public function getWebPath()
     {
         return null === $this->path
             ? null
-            : static::UPLOAD_DIR . '/' . $this->getFilename();
+            : $this->getUploadPath() . '/' . $this->getFilename();
     }
 
-    public function getUploadRootDir()
+    public function getUploadRootPath()
     {
-        // the absolute directory path where uploaded
-        // documents should be saved
-        //TODO move to app config
-        return __DIR__ . '/../../../../web/' . static::UPLOAD_DIR;
+        // the absolute directory path where uploaded documents should be saved
+        return $this->getWebRootPath() . '/' . $this->getUploadPath();
     }
 
     public function getAbsolutePath()
     {
         return null === $this->path
             ? null
-            : $this->getUploadRootDir() . '/' . $this->getFilename();
+            : $this->getUploadRootPath() . '/' . $this->getFilename();
     }
 
     /**
      * Sets file. **From cookbook**
      *
-     * @param BaseUploadedFile $file
+     * @param UploadedFile|File $file
      * @return ResourceFile
      */
-    public function setFile(BaseUploadedFile $file = null)
+    public function setFile($file = null)
     {
-        $this->file = null === $file
-            ? null
-            : UploadedFile::fromUploadedFile($file);
+        if (!($file instanceof UploadedFile || $file instanceof File))
+            $this->file = null;
+
+        if ($file instanceof UploadedFile) {
+            $this->file = IMDCUploadedFile::fromUploadedFile($file);
+        } else if ($file instanceof File) {
+            $this->file = IMDCFile::fromFile($file);
+        }
 
         // check if we have an old image path
         if (is_file($this->getAbsolutePath())) {
@@ -145,7 +257,7 @@ class ResourceFile
     /**
      * Get file.
      *
-     * @return UploadedFile
+     * @return UploadedFile|File
      */
     public function getFile()
     {
@@ -154,9 +266,10 @@ class ResourceFile
 
     public function preUpload()
     {
-        if (null === $this->getFile()) {
+        $this->setUpdated(new \DateTime('now'));
+
+        if (null === $this->getFile() || $this->path !== 'initial')
             return;
-        }
 
         $this->path = $this->getFile()->guessExtension();
     }
@@ -167,9 +280,8 @@ class ResourceFile
     public function upload()
     {
         // the file property can be empty if the field is not required
-        if (null === $this->getFile()) {
+        if (null === $this->getFile())
             return;
-        }
 
         // check if we have an old image
         if (isset($this->temp)) {
@@ -183,7 +295,7 @@ class ResourceFile
         // so that the entity is not persisted to the database
         // which the UploadedFile move() method does
         $this->getFile()->move(
-            $this->getUploadRootDir(),
+            $this->getUploadRootPath(),
             $this->getFilename()
         );
 
@@ -202,11 +314,68 @@ class ResourceFile
     }
 
     /**
-     * Updates the hash value to force the preUpdate and postUpdate events to fire
+     * Updates the hash value to force the preUpdate and postUpdate events to fire.
+     * only called from Admin\ResourceFileAdmin::manageFileUpload
      */
-    public function refreshUpdated()
+    public function refreshUpdated() //TODO delete?
     {
         $this->setUpdated(new \DateTime('NOW'));
+    }
+
+    public function updateMetaData($mediaType, Transcoder $transcoder)
+    {
+        $metaData = $this->getMetaData();
+        if ($metaData == null)
+            $metaData = new MetaData();
+
+        if (!is_file($this->getAbsolutePath()))
+            return; //TODO throw exception?
+
+        $metaData->setSize(filesize($this->getAbsolutePath()));
+
+        switch ($mediaType) {
+            case Media::TYPE_VIDEO:
+            case Media::TYPE_AUDIO:
+                $file = new File($this->getAbsolutePath());
+                $ffprobe = $transcoder->getFFprobe();
+                $ffprobe->setCache(new ArrayCache());
+                $format = $ffprobe->format($file->getRealPath());
+
+                $duration = $format->has('duration') ? $format->get('duration') : 0;
+                $metaData->setDuration($duration);
+
+                if ($mediaType == Media::TYPE_VIDEO) {
+                    /** @var $streams StreamCollection */
+                    $streams = $ffprobe->streams($file->getRealPath());
+
+                    $firstVideo = $streams->videos()->first();
+                    $videoWidth = $firstVideo->get('width');
+                    $videoHeight = $firstVideo->get('height');
+
+                    $metaData->setWidth($videoWidth);
+                    $metaData->setHeight($videoHeight);
+                }
+
+                break;
+            case Media::TYPE_IMAGE:
+                $imageSize = getimagesize($this->getAbsolutePath());
+
+                $metaData->setWidth($imageSize[0]);
+                $metaData->setHeight($imageSize[1]);
+
+                break;
+        }
+
+        $this->setMetaData($metaData);
+    }
+
+    public static function fromFile($file, $config)
+    {
+        $resource = new self($config);
+        $resource->setFile($file);
+        $resource->setCreated(new \DateTime());
+
+        return $resource;
     }
 
     /**

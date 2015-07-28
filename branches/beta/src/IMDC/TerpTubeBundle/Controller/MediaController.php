@@ -3,14 +3,26 @@
 namespace IMDC\TerpTubeBundle\Controller;
 
 use FFMpeg\FFProbe;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
+use IMDC\TerpTubeBundle\Consumer\Options\TrimConsumerOptions;
 use IMDC\TerpTubeBundle\Entity\Media;
+use IMDC\TerpTubeBundle\Rest\Exception\MediaException;
+use IMDC\TerpTubeBundle\Rest\MediaResponse;
+use IMDC\TerpTubeBundle\Rest\RestResponse;
 use IMDC\TerpTubeBundle\Utils\Utils;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\File\File;
+use OldSound\RabbitMqBundle\RabbitMq\Producer;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
-class MediaController extends Controller
+/**
+ * Class MediaController
+ *
+ * @Rest\View()
+ *
+ * @package IMDC\TerpTubeBundle\Controller
+ */
+class MediaController extends FOSRestController implements ClassResourceInterface
 {
     const FEEDBACK_MESSAGE_NOT_EXIST_MEDIA = 'Media does not exist';
     const FEEDBACK_MESSAGE_NOT_OWNER = 'Not the rightful owner';
@@ -19,15 +31,10 @@ class MediaController extends Controller
 
     /**
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return \FOS\RestBundle\View\View
      */
-    public function listAction(Request $request) //TODO api?
+    public function cgetAction(Request $request)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $ids = array_filter(explode(',', $request->get('id', '')));
 
         $em = $this->getDoctrine()->getManager();
@@ -35,70 +42,55 @@ class MediaController extends Controller
         if (!empty($ids)) {
             $qb->where($qb->expr()->in('m.id', $ids));
         }
-        $collection = Utils::orderMedia($qb->getQuery()->getResult(), $ids);
+        $media = Utils::orderMedia($qb->getQuery()->getResult(), $ids);
 
-        $serializer = $this->get('jms_serializer');
-        $content = array(
-            'media' => json_decode($serializer->serialize($collection, 'json'), true)
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        return $this->view(new MediaResponse($media), 200);
     }
 
     /**
-     * @param Request $request
      * @param $mediaId
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|Response
+     * @return \FOS\RestBundle\View\View
      */
-    public function editAction(Request $request, $mediaId) //TODO api?
+    public function getAction($mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
+        $em = $this->getDoctrine()->getManager();
+        $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
+        if (!$media) {
+            MediaException::NotFound();
         }
 
+        return $this->view(new MediaResponse($media), 200);
+    }
+
+    /**
+     * @Rest\Put() //TODO api?. decouple rest edit/put
+     *
+     * @param Request $request
+     * @param $mediaId
+     * @return \FOS\RestBundle\View\View
+     */
+    public function editAction(Request $request, $mediaId)
+    {
         $mediaPayload = json_decode($request->get('media'), true);
 
         $em = $this->getDoctrine()->getManager();
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media || !$mediaPayload || !array_key_exists('title', $mediaPayload)) {
-            //throw new \Exception('media not found');
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => self::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+            MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            //throw new AccessDeniedException();
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => self::FEEDBACK_MESSAGE_NOT_OWNER
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+            MediaException::AccessDenied();
         }
 
         $media->setTitle($mediaPayload['title']);
 
+        $em->persist($media);
         $em->flush();
 
-        $serializer = $this->get('jms_serializer');
-        $content = array(
-            'responseCode' => 200,
-            'feedback' => 'Successfully updated media!',
-            'media' => json_decode($serializer->serialize($media, 'json'), true)
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        return $this->view(new MediaResponse($media), 200);
     }
 
     /**
@@ -106,37 +98,21 @@ class MediaController extends Controller
      *
      * @param Request $request
      * @param $mediaId
-     * @return Response
+     * @return \FOS\RestBundle\View\View
+     * @throws \Exception
      */
-    public function deleteAction(Request $request, $mediaId) //TODO api?
+    public function deleteAction(Request $request, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            //throw new \Exception('media not found');
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => self::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+            MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            //throw new AccessDeniedException();
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => self::FEEDBACK_MESSAGE_NOT_OWNER
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+            MediaException::AccessDenied();
         }
 
         //TODO revise everything below
@@ -188,13 +164,7 @@ class MediaController extends Controller
         $confirm = filter_var($request->request->get('confirm', false), FILTER_VALIDATE_BOOLEAN);
         $this->get('logger')->info("confirm: " . $confirm);
         if ($needsConfirmation && !$confirm) {
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => self::FEEDBACK_MESSAGE_MEDIA_IN_USE,
-                'mediaInUse' => $mediaInUse
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+            return MediaException::InUse($mediaInUse);
         }
 
         // User has confirmed, remove the media from all the places and then remove it
@@ -220,14 +190,7 @@ class MediaController extends Controller
         $em->remove($media);
         $em->flush();
 
-        $content = array(
-            'responseCode' => 200,
-            'feedback' => self::FEEDBACK_MESSAGE_MEDIA_DELETE_SUCCESS
-        );
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        return $this->view(new MediaResponse(null, RestResponse::OK, MediaResponse::MESSAGE_DELETE_SUCCESS));
     }
 
     /**
@@ -235,120 +198,43 @@ class MediaController extends Controller
      *
      * @param Request $request
      * @param $mediaId
-     * @return Response
+     * @return \FOS\RestBundle\View\View
      */
-    public function trimAction(Request $request, $mediaId) //TODO api?
+    public function trimAction(Request $request, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         /* @var $media Media */
         $media = $em->getRepository('IMDCTerpTubeBundle:Media')->find($mediaId);
         if (!$media) {
-            //throw new \Exception('media not found');
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => self::FEEDBACK_MESSAGE_NOT_EXIST_MEDIA
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+            MediaException::NotFound();
         }
 
         $user = $this->getUser();
         if ($media->getOwner() != $user) {
-            //throw new AccessDeniedException();
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => self::FEEDBACK_MESSAGE_NOT_OWNER
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+            MediaException::NotFound();
         }
 
-        //TODO revise everything below
-
-        if ($media->getIsReady() != Media::READY_YES &&
-            $media->getIsReady() != Media::READY_WEBM
-        ) {
-            return new Response(json_encode(array(
-                'responseCode' => 400,
-                'feedback' => 'This should not happen!'
-            )), 200, array(
-                'Content-Type' => 'application/json'
-            ));
+        $startTime = max(floatval($request->get('startTime', 0)), 0);
+        $endTime = max(floatval($request->get('endTime', 0)), 0);
+        if ($startTime == 0 && $endTime == 0) {
+            MediaException::BadRequest(
+                'both start and end times must be specified, and not equal to zero');
         }
 
-        $startTime = floatval($request->get('startTime', 0));
-        $endTime = floatval($request->get('endTime', 0));
+        //** @var ResourceFile $resource */
+        //$resource = $media->getResources()->get(0);
 
-        // FIXME if video is being transcoded, need to queue the operation to execute once it completes
-        // FIXME check if start/end times are proper values
-        $resourceFile = $media->getResource();
-        //$webmFile = $resourceFile->getAbsolutePathWebm();
-        $webmFile = $resourceFile->getAbsolutePath();
-        //$mp4File = $resourceFile->getAbsolutePath();
-        $ffprobe = FFProbe::create();
-        $metaData = $media->getMetaData();
-        $transcoder = $this->container->get('imdc_terptube.transcoder');
-        // FIXME Throws exception at rename when trying to move the mp4 file.
+        $trimOpts = new TrimConsumerOptions();
+        $trimOpts->mediaId = $media->getId();
+        $trimOpts->startTime = $startTime;
+        $trimOpts->endTime = $endTime;
+        //$trimOpts->currentDuration = $resource->getMetaData()->getDuration();
 
-        $success = false;
+        /** @var Producer $trimProducer */
+        $trimProducer = $this->container->get('old_sound_rabbit_mq.trim_producer');
+        $trimProducer->publish($trimOpts->pack());
 
-        if ($media->getIsReady() == Media::READY_YES) {
-            $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
-            //$resultMp4 = $transcoder->trimVideo($mp4File, $startTime, $endTime);
-
-            //$success = $resultWebM && $resultMp4;
-            $success = !!$resultWebM;
-        }
-
-        if ($media->getIsReady() == Media::READY_WEBM) {
-            // FIXME this will encode a second time since the video was already queued for transcoding
-            // FIXME need to find out how to dequeue an item from the RabbitMQ queue
-            $resultWebM = $transcoder->trimVideo($webmFile, $startTime, $endTime);
-            $pendingOperations = $media->getPendingOperations();
-            if ($pendingOperations == null)
-                $pendingOperations = array();
-            array_push($pendingOperations, "trim,mp4," . $startTime . "," . $endTime);
-            $media->setPendingOperations($pendingOperations);
-
-            $success = !!$resultWebM;
-        }
-
-        $finalFile = new File($webmFile);
-        $videoDuration = 0;
-        if ($ffprobe->format($finalFile->getRealPath())
-            ->has('duration')
-        )
-            $videoDuration = $ffprobe->format($finalFile->getRealPath())
-                ->get('duration');;
-        $fileSize = filesize($finalFile->getRealPath());
-        $metaData->setDuration($videoDuration);
-        $metaData->setSize($fileSize);
-        $em->flush();
-        // $eventDispatcher = $this->container->get ( 'event_dispatcher' );
-        // $uploadedEvent = new UploadEvent ( $media );
-        // $eventDispatcher->dispatch ( UploadEvent::EVENT_UPLOAD, $uploadedEvent );
-
-        if ($success) {
-            $serializer = $this->get('jms_serializer');
-            $content = array(
-                'responseCode' => 200,
-                'feedback' => 'Successfully trimmed media!',
-                'media' => json_decode($serializer->serialize($media, 'json'), true)
-            );
-        } else {
-            $content = array(
-                'responseCode' => 400,
-                'feedback' => 'Trimming media failed!.'
-            );
-        }
-
-        return new Response(json_encode($content), 200, array(
-            'Content-Type' => 'application/json'
-        ));
+        //TODO return OK only since the entity would not have changed in this method
+        return $this->view(new MediaResponse($media), 200);
     }
 }
