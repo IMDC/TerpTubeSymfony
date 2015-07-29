@@ -28,7 +28,7 @@ _Home:index.html.twig
                     <p class="text-muted">
                         <i class="fa fa-user" title="Founder"></i> {{ group.userFounder.userName }}&ensp;
                         <i class="fa fa-users" title="Member count"></i> {{ group.members|length }} members<br />
-                        <i class="fa fa-clock-o" title="Date created"></i> {{ group.dateCreated|date('Y-m-d g:i a') }}
+                        <i class="fa fa-clock-o" title="Date created"></i> {{ group.dateCreated|date('M d Y h:i a') }}
                     </p>
                     {#TODO remove#}
                     <p><a class="btn btn-default" href="{{ path('imdc_group_view', {'groupId': group.id}) }}">View</a></p>

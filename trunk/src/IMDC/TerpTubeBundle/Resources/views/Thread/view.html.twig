@@ -151,9 +151,9 @@
 				<div class="row">
 					<div class="col-md-12">
 						<ul class="list-unstyled">
-							<li><span class="tt-date" title="{{ thread.creationDate|date('Y-m-d g:i a') }}">Created {{ time_diff(thread.creationDate)}}</span></li>
+							<li><span class="tt-date" title="{{ time_diff(thread.creationDate)}}">Created {{ thread.creationDate|date('M d Y h:i a') }}</span></li>
 							{% if thread.editedBy %}
-								<li><span class="tt-date" title="{{ thread.editedAt|date('Y-m-d g:i a') }}">Edited by {{ thread.editedBy }} {{ time_diff(thread.editedAt) }}</span></li>
+								<li><span class="tt-date" title="{{ time_diff(thread.editedAt) }}">Edited by {{ thread.editedBy }} {{ thread.editedAt|date('M d Y h:i a') }}</span></li>
 							{% endif %}
 						</ul>
 					</div>

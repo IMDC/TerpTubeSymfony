@@ -27,9 +27,9 @@ _Thread:view.html.twig
                     <div class="row">
                         <div class="col-md-12">
                             <div class="text-right tt-date">
-                                {{ post.created|date('Y-m-d g:i a') }}
+                                {{ post.created|date('M d Y h:i a') }}
                                 {% if post.editedBy %}
-                                    (edited {{ post.editedAt|date('Y-m-d g:i a') }} by {{ post.editedBy.username }})
+                                    (edited {{ post.editedAt|date('M d Y h:i a') }} by {{ post.editedBy.username }})
                                 {% endif %}
                             </div>
                         </div>

@@ -31,7 +31,7 @@ _Member:index.html.twig
                     </p>
                     <p class="text-muted">
                         <i class="fa fa-pencil-square-o" title="{{ 'member.infoBlock.postCount'|trans }}"></i> {{ member.postCount }} posts<br />
-                        <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ member.joinDate|date('M j Y') }}
+                        <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ member.joinDate|date('M d Y') }}
                     </p>
                     {{ _member.connect_tools(app.user, member, 'ul') }}
                 </div>

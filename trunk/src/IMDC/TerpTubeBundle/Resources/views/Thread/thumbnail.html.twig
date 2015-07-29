@@ -47,7 +47,7 @@ _Forum:view.html.twig
                             </p>
                             <p class="text-muted">
                                 <i class="fa fa-pencil-square-o" title="Reply count"></i> {{ thread.posts|length }} replies<br />
-                                <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(thread.lastPostAt) }}
+                                <i class="fa fa-clock-o" title="Last activity {{ time_diff(thread.lastPostAt) }}"></i> {{ thread.lastPostAt|date('M d Y h:i a') }}
                             </p>
                         </a>
                     </div>
