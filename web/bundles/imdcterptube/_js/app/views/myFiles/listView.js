@@ -317,7 +317,7 @@ define([
 	            shareTitle: Translator.trans('filesGateway.shareLink'),
 	            shareUrl: Routing.generate('imdc_thread_new_from_media', {mediaId: media.id}),
 	            mediaIcon: Helper.getIconForMediaType(media.type),
-	            timeUploaded: Helper.getTimeDateString(media.source_resource.meta_data.time_created),
+	            timeUploaded: dust.filters.date(media.source_resource.meta_data.time_created),
 	            spinner: spinner,
 	            formattedSize: size
 	        }, this.bind__onAddListElement);

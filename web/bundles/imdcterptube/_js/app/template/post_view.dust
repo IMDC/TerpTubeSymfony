@@ -21,9 +21,9 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="text-right tt-date">
-                                {created}
+                                {created|date}&nbsp;
                                 {?edited_by}
-                                    (edited {edited_at} by {edited_by.username})
+                                    (edited {edited_at|date} by {edited_by.username})
                                 {/edited_by}
                             </div>
                         </div>
