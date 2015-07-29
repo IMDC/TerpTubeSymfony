@@ -43,7 +43,7 @@ _Home:index.html.twig
                             <p class="text-muted">
                                 <i class="fa fa-user" title="Creator"></i> {{ forum.creator }}&ensp;
                                 <i class="fa fa-pencil-square-o" title="Topic count"></i> {{ forumThreadCount[loop.index0] }} topics<br />
-                                <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(forum.getLastActivity) }}
+                                <i class="fa fa-clock-o" title="Last activity {{ time_diff(forum.getLastActivity) }}"></i> {{ forum.getLastActivity|date('M d Y h:i a') }}
                             </p>
                             {#TODO remove#}
                             <p><a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.id}) }}">View</a></p>

@@ -43,7 +43,7 @@
                 '>From: ' ~ message.owner ~ "\n" ~
                 '>To: ' ~ message.recipients|join(', ') ~ "\n" ~
                 '>Subject: ' ~ message.subject ~ "\n" ~
-                '>Sent: ' ~ message.sentDate|date('g:ia M j') ~ "\n>\n" ~
+                '>Sent: ' ~ message.sentDate|date('M d h:i a') ~ "\n>\n" ~
                 ">----Original Message below----\n\n" ~
                 message.content,
                 'attr': {'class': 'autosize'}

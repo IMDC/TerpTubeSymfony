@@ -124,7 +124,7 @@
                                 <span>{{ _member.connect_tools(app.user, user, 'button') }}</span>
                             </td>
                             <td>{{ user.getPostCount }}</td>
-                            <td>{{ user.getJoinDate|date('M j Y') }}</td>
+                            <td>{{ user.getJoinDate|date('M d Y') }}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
@@ -164,7 +164,7 @@
                             </p>
                             <p class="text-muted">
                                 <i class="fa fa-pencil-square-o" title="{{ 'member.infoBlock.postCount'|trans }}"></i> {{ user.postCount }} posts<br />
-                                <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ user.joinDate|date('M j Y') }}
+                                <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ user.joinDate|date('M d Y') }}
                             </p>
                             {{ _member.connect_tools(app.user, user, 'ul') }}
                         </div>
