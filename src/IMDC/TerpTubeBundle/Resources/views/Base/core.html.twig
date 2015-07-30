@@ -53,7 +53,11 @@
         
         {% block header %}
             <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/player/player.css') }}?version={{ version }}">
-            <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/_css/terptube.css') }}?version={{ version }}">
+            {% if app.environment == 'dev' %}
+                <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/build/css/terptube.css') }}" />
+            {% else %}
+                <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/' ~ assets.sass) }}" />
+            {% endif %}
 
             <script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}?version={{ version }}"></script>
             {% if app.environment == 'dev' %}
@@ -61,33 +65,30 @@
                     requirejs.config({
                         baseUrl: '{{ app.request.basePath }}/bundles/imdcterptube/_js/app',
                         paths: {
-                            dust: 'lib/dust-full.min',
-                            'dust-helpers': 'lib/dust-helpers.min',
                             underscore: 'lib/underscore-min',
+                            dust: 'lib/dust-core.min',
+                            'dust-helpers': 'lib/dust-helpers.min',
                             Sortable: 'lib/Sortable.min',
                             sockjs: 'lib/sockjs.min',
                             stomp: 'lib/stomp.min',
-                            templates: 'template/templates',
+                            templates: 'lib/templates.min',
                             extra: 'lib/extra'
                         },
                         shim: {
                             'dust-helpers': {
                                 deps: ['dust']
                             },
-                            underscore: {
-                                exports: '_'
+                            templates: {
+                                deps: ['dust-helpers']
                             },
                             Sortable: {
                                 exports: 'Sortable'
                             },
                             stomp: {
-                                exports: 'Stomp'
-                            },
-                            templates: {
-                                deps: ['dust-helpers']
+                                exports: 'stomp'
                             },
                             main: {
-                                deps: ['underscore', 'templates', 'extra']
+                                deps: ['templates', 'extra']
                             }
                         }
                     });
@@ -95,7 +96,7 @@
                     require(['main']);
                 </script>
             {% else %}
-                <script src="{{ asset('bundles/imdcterptube/_js/terptube.js') }}?version={{ version }}"></script>
+                <script src="{{ asset('bundles/imdcterptube/' ~ assets.scripts) }}"></script>
             {% endif %}
 
             <script type="text/javascript">
