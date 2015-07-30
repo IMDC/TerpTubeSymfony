@@ -1,33 +1,30 @@
 requirejs.config({
     baseUrl: '/bundles/imdcterptube/_js/app',
     paths: {
-        dust: 'lib/dust-full.min',
-        'dust-helpers': 'lib/dust-helpers.min',
         underscore: 'lib/underscore-min',
+        dust: 'lib/dust-core.min',
+        'dust-helpers': 'lib/dust-helpers.min',
         Sortable: 'lib/Sortable.min',
         sockjs: 'lib/sockjs.min',
         stomp: 'lib/stomp.min',
-        templates: 'template/templates',
+        templates: 'lib/templates.min',
         extra: 'lib/extra'
     },
     shim: {
         'dust-helpers': {
             deps: ['dust']
         },
-        underscore: {
-            exports: '_'
+        templates: {
+            deps: ['dust-helpers']
         },
         Sortable: {
             exports: 'Sortable'
         },
         stomp: {
-            exports: 'Stomp'
-        },
-        templates: {
-            deps: ['dust-helpers']
+            exports: 'stomp'
         },
         main: {
-            deps: ['underscore', 'templates', 'extra']
+            deps: ['templates', 'extra']
         }
     }
 });
