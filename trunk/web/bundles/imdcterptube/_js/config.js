@@ -21,7 +21,7 @@ requirejs.config({
             exports: 'Sortable'
         },
         stomp: {
-            exports: 'stomp'
+            exports: 'Stomp'
         },
         main: {
             deps: ['templates', 'extra']
