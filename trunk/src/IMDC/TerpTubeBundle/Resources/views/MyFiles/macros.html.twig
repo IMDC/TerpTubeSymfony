@@ -97,7 +97,7 @@
                             <input type="checkbox" class="table-component-item" data-mid="{{ m.id }}" />
                         </div>
                         <div class="tt-grid-div-thumbnail my-files-selector-file-button" data-mid="{{ m.id }}" {{ preview_disabled }}>
-                            <div>{{ _media.thumbnail(m.getThumbnailPath) }}</div>
+                            {{ _media.thumbnail(m.getThumbnailPath) }}
                         </div>
                         <div class="tt-grid-div-primary">
                             <span>

@@ -6,38 +6,36 @@ _Home:index.html.twig
 
 {% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as _media %}
 
-{% for group in groups %}
-    {% if loop.index % 4 == 1 %}
-        <div class="row">
-            <ul class="list-unstyled">
-    {% endif %}
-    <li>
-        <div class="col-md-3">
-            <div class="thumbnail text-center">
-                <div class="tt-media-thumbnail">
-                    <div>
-                        {% if group.getMedia[0] is defined %}
-                            {{ _media.element(group.getMedia[0]) }}
-                        {% else %}
-                            {{ _media.no_element }}
-                        {% endif %}
+<div class="tt-grid-div">
+    {% for group in groups %}
+        {% if loop.index % 4 == 1 %}
+            <div class="row">
+                <ul class="list-unstyled">
+        {% endif %}
+        <li>
+            <div class="col-md-3">
+                <div class="thumbnail text-center tt-grid-div-body">
+                    <div class="tt-grid-div-thumbnail">
+                        <a href="{{ path('imdc_group_view', {'groupId': group.getId}) }}">
+                            {{ _media.element2(group.getMedia) }}
+                        </a>
+                    </div>
+                    <div class="tt-grid-div-primary">
+                        <a href="{{ path('imdc_group_view', {'groupId': group.getId}) }}" title="{{ group.getName }}">
+                            <span class="tt-title">{{ group.getName }}</span>
+                        </a>
+                        <p class="text-muted">
+                            <i class="fa fa-user" title="Founder"></i> {{ group.getUserFounder.getUsername }}&ensp;
+                            <i class="fa fa-users" title="Member count"></i> {{ group.getMembers|length }} members<br />
+                            <i class="fa fa-clock-o" title="Date created"></i> {{ group.getDateCreated|date('M d Y h:i a') }}
+                        </p>
                     </div>
                 </div>
-                <a href="{{ path('imdc_group_view', {'groupId': group.id}) }}" title="{{ group.getName }}">
-                    <p class="tt-thumbnail-title">{{ group.getName }}</p>
-                    <p class="text-muted">
-                        <i class="fa fa-user" title="Founder"></i> {{ group.userFounder.userName }}&ensp;
-                        <i class="fa fa-users" title="Member count"></i> {{ group.members|length }} members<br />
-                        <i class="fa fa-clock-o" title="Date created"></i> {{ group.dateCreated|date('M d Y h:i a') }}
-                    </p>
-                    {#TODO remove#}
-                    <p><a class="btn btn-default" href="{{ path('imdc_group_view', {'groupId': group.id}) }}">View</a></p>
-                </a>
             </div>
-        </div>
-    </li>
-    {% if loop.index % 4 == 0 or loop.last %}
-            </ul>
-        </div>
-    {% endif %}
-{% endfor %}
+        </li>
+        {% if loop.index % 4 == 0 or loop.last %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
