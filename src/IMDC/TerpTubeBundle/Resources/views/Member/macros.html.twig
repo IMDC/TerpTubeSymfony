@@ -158,7 +158,7 @@
                             <div>{% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}</div>
                         </div>
                         <div class="tt-grid-div-primary">
-                            <p>
+                            <p class="tt-title">
                                 {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
                                 {% if is_selection and app.user == user %} <span class="tt-this-is-you">(you)</span>{% endif %}
                             </p>
