@@ -12,6 +12,8 @@ else
     exit 1
 fi
 
+PID_PATH="/tmp"
+
 consumers=(
     'status'
     'multiplex'
@@ -31,7 +33,7 @@ then
 
     for consumer in ${consumers[@]}
     do
-        pid_file="${consumer}_consumer.pid"
+        pid_file="${PID_PATH}/${consumer}_consumer.pid"
 
         if [ -f $pid_file ] || [ -L $pid_file ]
         then

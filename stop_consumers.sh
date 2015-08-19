@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PID_PATH="/tmp"
+
 consumers=(
     'status'
     'multiplex'
@@ -16,7 +18,7 @@ fi
 
 for consumer in ${consumers[@]}
 do
-    pid_file="${consumer}_consumer.pid"
+    pid_file="${PID_PATH}/${consumer}_consumer.pid"
 
     kill -s $signal `cat "${pid_file}"`
 done
