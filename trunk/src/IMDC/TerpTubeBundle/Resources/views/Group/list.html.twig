@@ -8,6 +8,27 @@
     {% if isMyGroups %}My {% endif %}Groups
 {% endblock %}
 
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'controller/groupController', 'views/group/listView',
+            'main'
+        ], function(bootstrap, GroupController, GroupView) {
+            bootstrap(
+                    null,
+                    GroupController,
+                    GroupView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
 {% block nav_ul_my_groups %}
     {% if isMyGroups %}class="active"{% endif %}
 {% endblock %}

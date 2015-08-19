@@ -134,6 +134,16 @@
     {% endif %}
 {% endmacro %}
 
+{% macro expand(media) %}
+    {% if media|length > 0 %}
+        {% set m = media[0] %}
+
+        <div class="expand" data-mid="{{ m.getId }}">
+            <button class="btn btn-default"><i class="fa fa-expand"></i></button>
+        </div>
+    {% endif %}
+{% endmacro %}
+
 {% macro video_controls() %}
     <div class="tt-media-video-controls">
         <img id="videoSpeed" src="{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}" title="Click to change video playback speed" />

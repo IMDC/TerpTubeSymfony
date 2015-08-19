@@ -21,6 +21,7 @@ _Forum:view.html.twig
                             <a href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}">
                                 {{ _media.element2(thread.getMediaIncluded) }}
                             </a>
+                            {{ _media.expand(thread.getMediaIncluded) }}
                         </div>
                         <div class="tt-grid-div-primary">
                             <div class="row">
