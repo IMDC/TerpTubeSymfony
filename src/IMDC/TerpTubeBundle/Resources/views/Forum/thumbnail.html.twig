@@ -22,7 +22,7 @@ _Home:index.html.twig
                         <a href="{{ path('imdc_forum_view', {'forumid': forum.getId} ) }}">
                             {{ _media.element2(forum.getTitleMedia) }}
                         </a>
-                        {#<div><button class="btn btn-default"><i class="fa fa-play"></i></button></div>#}
+                        {{ _media.expand(forum.getTitleMedia) }}
                     </div>
                     <div class="tt-grid-div-primary">
                         <a href="{{ path('imdc_forum_view', {'forumid': forum.getId} ) }}" title="{{ forum.getTitleText}}">

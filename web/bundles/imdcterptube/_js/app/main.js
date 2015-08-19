@@ -62,10 +62,12 @@ define([
 
     'views/forum/newView',
     'views/forum/editView',
+    'views/forum/listView',
     'views/forum/viewView',
 
     'views/group/newView',
     'views/group/editView',
+    'views/group/listView',
     'views/group/viewView',
     'views/group/manageView',
 

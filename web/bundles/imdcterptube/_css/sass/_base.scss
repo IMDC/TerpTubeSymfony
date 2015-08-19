@@ -177,6 +177,7 @@ $tt-gd-tn-height: 125px;
 
   & div.tt-grid-div-thumbnail {
     height: $tt-gd-tn-height;
+    position: relative;
     margin-bottom: 5px;
     display: flex;
     align-items: center;
@@ -184,6 +185,12 @@ $tt-gd-tn-height: 125px;
 
     img {
       max-height: $tt-gd-tn-height;
+    }
+
+    .expand {
+      position: absolute;
+      top: 0;
+      left: 0;
     }
   }
 
