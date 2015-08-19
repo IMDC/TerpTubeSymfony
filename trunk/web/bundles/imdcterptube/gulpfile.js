@@ -85,10 +85,10 @@ gulp.task('build', function () {
 });
 
 gulp.task('watch', ['build'], function () {
-    watch(['_js/**/*.js'], {read: false}, function(events, done) {
+    watch(['_js/**/*.js', '!_js/app/bower_components/', '!_js/app/node_modules/'], {read: false}, function(events, done) {
         gulp.start('scripts');
     });
-    watch(['_css/sass/**/*.scss'], {read: false}, function (events, done) {
+    watch('_css/sass/**/*.scss', {read: false}, function (events, done) {
         gulp.start('sass');
     });
 });
