@@ -2,57 +2,66 @@
 
 namespace IMDC\TerpTubeBundle\Tests\Controller;
 
+use IMDC\TerpTubeBundle\Entity\User;
+use IMDC\TerpTubeBundle\Entity\UserGroup;
 use IMDC\TerpTubeBundle\Form\Type\UsersSelectType;
+use IMDC\TerpTubeBundle\Rest\UserGroupResponse;
+use IMDC\TerpTubeBundle\Tests\BaseWebTestCase;
 use IMDC\TerpTubeBundle\Tests\Common;
-use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Acl\Permission\MaskBuilder;
 
 /**
  * Class UserGroupControllerTest
  * @package IMDC\TerpTubeBundle\Tests\Controller
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class UserGroupControllerTest extends WebTestCase
+class UserGroupControllerTest extends BaseWebTestCase
 {
-    private static $userIds = array(13, 14);
-    private static $mediaIds = array(4, 1); // shuffle for order check
-
     /**
-     * @var Client
+     * @var User
      */
-    private $client;
-
-    /**
-     * @var \Doctrine\ORM\EntityManager
-     */
-    private $entityManager;
+    private $loggedInUser;
 
     public function setUp()
     {
+        $this->reloadDatabase(array(
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUsers',
+            'IMDC\TerpTubeBundle\DataFixtures\ORM\LoadTestUserGroups'
+        ));
+
         $this->client = static::createClient();
+        /** @var User $user1 */
+        $user1 = $this->referenceRepo->getReference('test_user_1');
+        Common::login($this->client, $user1->getUsername());
+        $this->loggedInUser = $user1;
 
-        Common::login($this->client);
+        // add users to friends list
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        $user3 = $this->referenceRepo->getReference('test_user_3');
 
-        $this->entityManager = $this->client->getContainer()
-            ->get('doctrine')
-            ->getManager();
+        $user1->addFriendsList($user2);
+        $user1->addFriendsList($user3);
 
-        // add users to friends list to bypass invitation step when adding users to a group
-        foreach (self::$userIds as $userId) {
-            $this->client->request('GET', '/member/friends/' . $userId . '/add');
-        }
+        $this->entityManager->persist($user1);
+        $this->entityManager->flush();
     }
 
     public function testList()
     {
         $crawler = $this->client->request('GET', '/group/');
-        $this->assertGreaterThanOrEqual(1, $crawler->filter('p:contains("No groups"), .tt-forum-thumbnail')->count(),
+        $this->logResponse(__FUNCTION__);
+
+        $this->assertGreaterThanOrEqual(1, $crawler->filter('p:contains("No groups"), .tt-media-thumbnail')->count(),
             'either "no groups" or groups should be present');
     }
 
     public function testNew_GetFormWithMembers()
     {
-        $users = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->findById(self::$userIds);
+        /** @var User $user2 */
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        /** @var User $user3 */
+        $user3 = $this->referenceRepo->getReference('test_user_3');
+        $users = array($user2, $user3);
 
         $form = $this->client->getContainer()
             ->get('form.factory')
@@ -69,6 +78,7 @@ class UserGroupControllerTest extends WebTestCase
         $values[$form->getName()]['_token'] = $token;
 
         $crawler = $this->client->request('POST', '/group/new', $values);
+        $this->logResponse(__FUNCTION__);
 
         $this->assertCount(1, $crawler->filter('form[name="user_group"]'), 'a single forum form should be present');
         $this->assertCount(1, $crawler->filter('input[name="user_group[visibleToRegisteredUsers]"]:checked'),
@@ -86,8 +96,12 @@ class UserGroupControllerTest extends WebTestCase
      */
     public function testNew_SubmitFormWithNameAndMembers()
     {
+        /** @var User $user2 */
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        /** @var User $user3 */
+        $user3 = $this->referenceRepo->getReference('test_user_3');
+        $users = array($user2, $user3);
         $name = 'test:new:' . rand();
-        $users = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->findById(self::$userIds);
 
         // members field is only available when user ids are posted
         $form = $this->client->getContainer()
@@ -105,24 +119,25 @@ class UserGroupControllerTest extends WebTestCase
         $values[$form->getName()]['_token'] = $token;
 
         $crawler = $this->client->request('POST', '/group/new', $values);
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="user_group"] > button:contains("Create")')->form(array(
             'user_group[name]' => $name
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
 
         $this->assertCount(1, $crawler->filter('title:contains("' . $name . '")'));
         $this->assertCount(count($users) + 1, $crawler->filter('.tt-member-grid-thumbnail')); // owner + members
-
-        $this->delete(Common::getModel($crawler));
     }
 
     public function testNew_GetForm()
     {
         $crawler = $this->client->request('GET', '/group/new');
+        $this->logResponse(__FUNCTION__);
 
         $this->assertCount(1, $crawler->filter('form[name="user_group"]'), 'a single forum form should be present');
         $this->assertCount(1, $crawler->filter('input[name="user_group[visibleToRegisteredUsers]"]:checked'),
@@ -137,277 +152,301 @@ class UserGroupControllerTest extends WebTestCase
     public function testNew_SubmitFormWithMedia()
     {
         $name = 'test:new:' . rand();
+        $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
+
         $crawler = $this->client->request('GET', '/group/new');
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="user_group"] > button:contains("Create")')->form();
         $values = $form->getPhpValues();
         $values['user_group']['name'] = $name;
-        $values['user_group']['media'] = self::$mediaIds;
+        $values['user_group']['media'] = $mediaIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
-
         $model = Common::getModel($crawler);
 
         $this->assertCount(1, $crawler->filter('title:contains("' . $name . '")'));
-        $this->assertTrue(is_array($model['ordered_media']));
-        $this->assertCount(count(self::$mediaIds), $model['ordered_media']);
-        // check existence
-        foreach ($model['ordered_media'] as $m) {
-            $this->assertContains($m['id'], self::$mediaIds);
-        }
-        // check order
-        foreach (self::$mediaIds as $key => $mediaId) {
-            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
-        }
-
-        $this->delete($model);
+        $this->assertArrayHasKey('ordered_media', $model);
+        $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
     /**
      * @depends testNew_GetForm
-     * @return array
      */
     public function testNew_SubmitFormWithName()
     {
         $name = 'test:new:' . rand();
+
         $crawler = $this->client->request('GET', '/group/new');
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="user_group"] > button:contains("Create")')->form(array(
             'user_group[name]' => $name
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
 
         $this->assertCount(1, $crawler->filter('title:contains("' . $name . '")'));
-
-        return Common::getModel($crawler);
     }
 
-    /**
-     * @depends testNew_SubmitFormWithName
-     * @param $model
-     * @return array
-     */
-    public function testView($model)
+    public function testView()
     {
-        $crawler = $this->client->request('GET', '/group/' . $model['id']);
-        $this->assertCount(1, $crawler->filter('title:contains("' . $model['name'] . '")'));
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
 
-        return $model;
+        $crawler = $this->client->request('GET', '/group/' . $group->getId());
+        $this->logResponse(__FUNCTION__);
+
+        $this->assertCount(1, $crawler->filter('title:contains("' . $group->getName() . '")'));
     }
 
-    /**
-     * @depends testView
-     * @param $model
-     * @return array
-     */
-    public function testEdit_GetForm($model)
+    public function testEdit_GetForm()
     {
-        $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/edit');
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/edit');
+        $this->logResponse(__FUNCTION__);
+
         $this->assertCount(1, $crawler->filter('form[name="user_group"]'), 'a single forum form should be present');
-
-        return $model;
     }
 
     /**
      * @depends testEdit_GetForm
-     * @param $model
-     * @return array
      */
-    public function testEdit_SubmitFormWithName($model)
+    public function testEdit_SubmitFormWithName()
     {
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
         $name = 'test:edit:' . rand();
-        $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/edit');
+
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/edit');
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="user_group"] > div > div > button:contains("Save")')->form(array(
             'user_group[name]' => $name
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
 
         $this->assertCount(1, $crawler->filter('title:contains("' . $name . '")'));
-
-        return Common::getModel($crawler);
     }
 
-    /**
-     * @depends testEdit_SubmitFormWithName
-     * @param $model
-     * @return array
-     */
-    public function testEdit_SubmitFormWithMedia($model)
+    public function testEdit_SubmitFormWithMedia()
     {
-        $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/edit');
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+        $mediaIds = BaseWebTestCase::getShuffledMediaIds($this->loggedInUser->getResourceFiles());
+
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/edit');
+        $this->logResponse(__FUNCTION__, 'form');
 
         $form = $crawler->filter('form[name="user_group"] > div > div > button:contains("Save")')->form();
         $values = $form->getPhpValues();
-        $values['user_group']['media'] = self::$mediaIds;
+        $values['user_group']['media'] = $mediaIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
 
         $this->assertTrue($this->client->getResponse()->isRedirect());
         $crawler = $this->client->followRedirect();
-
         $model = Common::getModel($crawler);
 
-        $this->assertTrue(is_array($model['ordered_media']));
-        $this->assertCount(count(self::$mediaIds), $model['ordered_media']);
-        // check existence
-        foreach ($model['ordered_media'] as $m) {
-            $this->assertContains($m['id'], self::$mediaIds);
-        }
-        // check order
-        foreach (self::$mediaIds as $key => $mediaId) {
-            $this->assertEquals($model['ordered_media'][$key]['id'], $mediaId);
-        }
-
-        return $model;
+        $this->assertArrayHasKey('ordered_media', $model);
+        $this->assertMedia($model['ordered_media'], $mediaIds);
     }
 
-    /**
-     * @depends testEdit_SubmitFormWithMedia
-     * @param $model
-     * @return array
-     */
-    public function testManage_GetForms($model)
+    public function testManage_GetForms()
     {
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+
         // list style
-        $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/manage?style=list');
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/manage?style=list');
+        $this->logResponse(__FUNCTION__, 'list');
         $tableCount = $crawler->filter('.tab-pane[id^=tab]');
 
         // grid style
-        $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/manage?style=grid');
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/manage?style=grid');
+        $this->logResponse(__FUNCTION__, 'grid');
         $gridCount = $crawler->filter('.tab-pane[id^=tab]');
 
-        // two tables/divs (group members, community)
-        $this->assertCount(2, $tableCount);
-        $this->assertCount(2, $gridCount);
-        $this->assertCount(1, $crawler->filter('form[name="user_group_manage_search"]'),
-            'a single "user_group_manage_search" form should be present');
-        $this->assertCount(2, $crawler->filter('form[name="user_group_manage_remove"], form[name="user_group_manage_add"]'),
+        // six tables/divs (group members, contacts (all, mentors, meentees, friends), community)
+        $this->assertCount(6, $tableCount);
+        $this->assertCount(6, $gridCount);
+        $this->assertCount(1, $crawler->filter('form[name="ugm_search"]'),
+            'a single "ugm_search" form should be present');
+        $this->assertCount(2, $crawler->filter('form[name="ugm_remove"], form[name="ugm_add"]'),
             '"users_select" forms should be present');
+    }
 
-        return $model;
+    /**
+     * @depend testManage_GetForms
+     */
+    public function testManage_SearchCommunity()
+    {
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+        /** @var User $user */
+        $user = $this->referenceRepo->getReference('test_user_4');
+
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/manage?style=list');
+        $this->logResponse(__FUNCTION__, 'form');
+
+        $form = $crawler->filter('form[name="ugm_search"]')->form(array(
+            'ugm_search[username]' => $user->getUsername()
+        ));
+        $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
+
+        $this->assertCount(1, $crawler->filter('.tab-pane[id=tabCommunity] [data-uid="' . $user->getId() . '"]'),
+            'user should be present');
     }
 
     /**
      * @depends testManage_GetForms
-     * @param $model
-     * @return array
      */
-    public function testManage_SearchCommunity($model)
+    public function testManage_AddMembers()
     {
-        $user = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->find(self::$userIds[0]);
-        $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/manage?style=list');
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+        /** @var User $user2 */
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        /** @var User $user3 */
+        $user3 = $this->referenceRepo->getReference('test_user_3');
+        $users = array($user2, $user3);
+        $userIds = array($user2->getId(), $user3->getId());
 
-        $form = $crawler->filter('form[name="user_group_manage_search"]')->form(array(
-            'user_group_manage_search[username]' => $user->getUsername()
-        ));
-        $this->client->submit($form);
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/manage');
+        $this->logResponse(__FUNCTION__, 'form');
 
-        $this->assertCount(1, $crawler->filter('.tab-pane[id^=tab] [data-uid="' . $user->getId() . '"]'),
-            'user should be present');
-
-        return $model;
-    }
-
-    /**
-     * @depends testManage_SearchCommunity
-     * @param $model
-     * @return array
-     */
-    public function testManage_AddMembers($model)
-    {
-        $groupId = $model['id'];
-        $crawler = $this->client->request('GET', '/group/' . $groupId . '/manage');
-
-        $form = $crawler->filter('form[name="user_group_manage_add"]')->form();
+        $form = $crawler->filter('form[name="ugm_add"]')->form();
         $values = $form->getPhpValues();
-        $values['user_group_manage_add']['users'] = self::$userIds;
+        $values['ugm_add']['users'] = $userIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
+        $this->logResponse(__FUNCTION__, 'result');
 
-        $this->entityManager->clear();
-        $group = $this->entityManager->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-        $users = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->findById(self::$userIds);
+        $this->entityManager->refresh($group);
         foreach ($users as $user) {
+            $this->entityManager->refresh($user);
             $this->assertTrue($group->getMembers()->contains($user), 'group should contain user as member');
         }
-
-        return $model;
     }
 
     /**
-     * @depends testManage_AddMembers
-     * @param $model
-     * @return array
+     * @depends testManage_GetForms
      */
-    public function testManage_SearchMembers($model)
+    public function testManage_SearchMembers()
     {
-        $user = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->find(self::$userIds[1]);
-        $crawler = $this->client->request('GET', '/group/' . $model['id'] . '/manage?style=list');
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        /** @var User $user */
+        $user = $this->referenceRepo->getReference('test_user_4');
+        $user->addUserGroup($group);
+        $this->entityManager->persist($user);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
 
-        $form = $crawler->filter('form[name="user_group_manage_search"]')->form(array(
-            'user_group_manage_search[username]' => $user->getUsername()
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/manage?style=list');
+        $this->logResponse(__FUNCTION__, 'form');
+
+        $form = $crawler->filter('form[name="ugm_search"]')->form(array(
+            'ugm_search[username]' => $user->getUsername()
         ));
         $this->client->submit($form);
+        $this->logResponse(__FUNCTION__, 'result');
 
-        $this->assertCount(1, $crawler->filter('.tab-pane[id^=tab] [data-uid="' . $user->getId() . '"]'),
+        $this->assertCount(1, $crawler->filter('.tab-pane[id=tabMembers] [data-uid="' . $user->getId() . '"]'),
             'user should be present');
-
-        return $model;
     }
 
     /**
-     * @depends testManage_SearchMembers
-     * @param $model
-     * @return array
+     * @depends testManage_GetForms
      */
-    public function testManage_RemoveMembers($model)
+    public function testManage_RemoveMembers()
     {
-        $groupId = $model['id'];
-        $crawler = $this->client->request('GET', '/group/' . $groupId . '/manage');
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        /** @var User $user2 */
+        $user2 = $this->referenceRepo->getReference('test_user_2');
+        $user2->addUserGroup($group);
+        /** @var User $user3 */
+        $user3 = $this->referenceRepo->getReference('test_user_3');
+        $user3->addUserGroup($group);
+        $this->entityManager->persist($user2);
+        $this->entityManager->persist($user3);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+        $users = array($user2, $user3);
+        $userIds = array($user2->getId(), $user3->getId());
 
-        $form = $crawler->filter('form[name="user_group_manage_remove"]')->form();
+        $crawler = $this->client->request('GET', '/group/' . $group->getId() . '/manage');
+        $this->logResponse(__FUNCTION__, 'form');
+
+        $form = $crawler->filter('form[name="ugm_remove"]')->form();
         $values = $form->getPhpValues();
-        $values['user_group_manage_remove']['users'] = self::$userIds;
+        $values['ugm_remove']['users'] = $userIds;
         $this->client->request($form->getMethod(), $form->getUri(), $values);
+        $this->logResponse(__FUNCTION__, 'result');
 
-        $this->entityManager->clear();
-        $group = $this->entityManager->getRepository('IMDCTerpTubeBundle:UserGroup')->find($groupId);
-        $users = $this->entityManager->getRepository('IMDCTerpTubeBundle:User')->findById(self::$userIds);
+        $this->entityManager->refresh($group);
         foreach ($users as $user) {
+            $this->entityManager->refresh($user);
             $this->assertFalse($group->getMembers()->contains($user), 'group should not contain user as member');
         }
-
-        return $model;
     }
 
-    /**
-     * @depends testManage_RemoveMembers
-     * @param $model
-     * @return array
-     */
-    public function testDelete($model)
+    public function testDelete()
     {
-        $this->client->request('POST', '/group/' . $model['id'] . '/delete');
+        /** @var UserGroup $group */
+        $group = $this->referenceRepo->getReference('test_group_1');
+        $group->setUserFounder($this->loggedInUser);
+        $this->grantAccessToObject($group, $this->loggedInUser, MaskBuilder::MASK_OWNER);
+        $this->entityManager->persist($group);
+        $this->entityManager->flush();
+
+        $this->client->request('DELETE', '/api/v1/groups/' . $group->getId());
+        $this->logResponse(__FUNCTION__);
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('wasDeleted', $response);
-        $this->assertArrayHasKey('redirectUrl', $response);
-        $this->assertTrue($response['wasDeleted']);
-        $this->assertRegExp('/\/group\/$/', $response['redirectUrl']);
-    }
-
-    private function delete($model)
-    {
-        // manually delete the group
-        $group = $this->entityManager->getRepository('IMDCTerpTubeBundle:UserGroup')->find($model['id']);
-        $this->entityManager->remove($group);
-        $this->entityManager->flush();
+        $this->assertArrayHasKey('code', $response);
+        $this->assertEquals(UserGroupResponse::OK, $response['code']);
+        $this->assertArrayHasKey('redirect_url', $response);
+        $this->assertRegExp('/\/group\/$/', $response['redirect_url']);
     }
 }

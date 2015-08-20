@@ -13,14 +13,14 @@ class UserGroup extends BaseGroup
     protected $id;
 
     /**
-     * @var \DateTime
-     */
-    private $dateCreated;
-
-    /**
      * @var string
      */
     private $description;
+
+    /**
+     * @var \DateTime
+     */
+    private $dateCreated;
 
     /**
      * @var boolean
@@ -56,7 +56,7 @@ class UserGroup extends BaseGroup
      * @var \Doctrine\Common\Collections\Collection
      */
     private $forums;
-    
+
     /**
      * @var \IMDC\TerpTubeBundle\Entity\User
      */
@@ -66,12 +66,12 @@ class UserGroup extends BaseGroup
      * @var \Doctrine\Common\Collections\Collection
      */
     private $members;
-    
+
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $moderators;
-    
+
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
@@ -81,13 +81,13 @@ class UserGroup extends BaseGroup
      * @var \Doctrine\Common\Collections\Collection
      */
     private $media;
-    
+
     /**
      * Constructor
      */
-    public function __construct()
+    public function __construct($name = '', $roles = array())
     {
-        parent::__construct(null);
+        parent::__construct($name, $roles);
 
         $this->forums       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->members      = new \Doctrine\Common\Collections\ArrayCollection();
@@ -95,7 +95,7 @@ class UserGroup extends BaseGroup
         $this->admins       = new \Doctrine\Common\Collections\ArrayCollection();
         $this->media        = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
     /**
      * Get id
      *
@@ -104,29 +104,6 @@ class UserGroup extends BaseGroup
     public function getId()
     {
         return $this->id;
-    }
-    
-    /**
-     * Set dateCreated
-     *
-     * @param \DateTime $dateCreated
-     * @return UserGroup
-     */
-    public function setDateCreated($dateCreated)
-    {
-        $this->dateCreated = $dateCreated;
-    
-        return $this;
-    }
-
-    /**
-     * Get dateCreated
-     *
-     * @return \DateTime 
-     */
-    public function getDateCreated()
-    {
-        return $this->dateCreated;
     }
 
     /**
@@ -150,6 +127,29 @@ class UserGroup extends BaseGroup
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set dateCreated
+     *
+     * @param \DateTime $dateCreated
+     * @return UserGroup
+     */
+    public function setDateCreated($dateCreated)
+    {
+        $this->dateCreated = $dateCreated;
+
+        return $this;
+    }
+
+    /**
+     * Get dateCreated
+     *
+     * @return \DateTime
+     */
+    public function getDateCreated()
+    {
+        return $this->dateCreated;
     }
 
     /**
@@ -332,14 +332,14 @@ class UserGroup extends BaseGroup
     public function setUserFounder(\IMDC\TerpTubeBundle\Entity\User $userFounder = null)
     {
         $this->userFounder = $userFounder;
-    
+
         return $this;
     }
 
     /**
      * Get userFounder
      *
-     * @return \IMDC\TerpTubeBundle\Entity\User 
+     * @return \IMDC\TerpTubeBundle\Entity\User
      */
     public function getUserFounder()
     {
@@ -355,7 +355,7 @@ class UserGroup extends BaseGroup
     public function addMember(\IMDC\TerpTubeBundle\Entity\User $members)
     {
         $this->members[] = $members;
-    
+
         return $this;
     }
 
@@ -372,7 +372,7 @@ class UserGroup extends BaseGroup
     /**
      * Get members
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getMembers()
     {
@@ -388,7 +388,7 @@ class UserGroup extends BaseGroup
     public function addModerator(\IMDC\TerpTubeBundle\Entity\User $moderators)
     {
         $this->moderators[] = $moderators;
-    
+
         return $this;
     }
 
@@ -405,7 +405,7 @@ class UserGroup extends BaseGroup
     /**
      * Get moderators
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getModerators()
     {
@@ -421,7 +421,7 @@ class UserGroup extends BaseGroup
     public function addAdmin(\IMDC\TerpTubeBundle\Entity\User $admins)
     {
         $this->admins[] = $admins;
-        
+
         return $this;
     }
 
@@ -438,7 +438,7 @@ class UserGroup extends BaseGroup
     /**
      * Get admins
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getAdmins()
     {
@@ -522,7 +522,7 @@ class UserGroup extends BaseGroup
     {
         return Utils::orderMedia($this->getMedia(), $this->getMediaDisplayOrder());
     }
-    
+
     public function __toString()
     {
         return (string)$this->getName();

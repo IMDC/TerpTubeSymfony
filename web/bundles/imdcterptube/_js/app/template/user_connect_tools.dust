@@ -1,0 +1,49 @@
+{#user}
+    <ul class="list-unstyled list-inline">
+        <li>
+            {@isLoggedInUser id=id}
+                <i class="fa fa-envelope-o" style="color: lightgray;"></i>
+            {:else}
+                <a href="{@generateRouteUrl name="imdc_message_new" str_params="userid:username" /}" title="Send a message to {username}"><i class="fa fa-envelope-o"></i></a>
+            {/isLoggedInUser}
+        </li>
+        &nbsp; <!-- match spaces that are still present between tags when rendering from twig -->
+        <li>
+            {@isLoggedInUser id=id}
+                <i class="fa fa-user" style="color: lightgray;" title="This is you"></i>
+            {:else}
+                {@isInUserOnList list="Friends" username=username}
+                    <a href="{@generateRouteUrl name="imdc_member_friend_remove" str_params="userid:id" /}" title="Remove {username} from your friends list"><i class="fa fa-minus"></i></a>
+                {:else}
+                    <a href="{@generateRouteUrl name="imdc_member_friend_add" str_params="userid:id" /}" title="Click to add {username} to your friends list"><i class="fa fa-plus"></i></a>
+                {/isInUserOnList}
+            {/isLoggedInUser}
+        </li>
+        {@isNotLoggedInUser id=id}
+            &nbsp;
+            <li>
+                {@isInUserOnList list="Mentor" username=username}
+                    <i class="fa fa-star" title="This user is your mentor"></i>
+                {:else}
+                    {@isInUserOnList list="InvitedMentor" username=username}
+                        <i class="fa fa-inbox" title="Invitation for mentorship already sent"></i>
+                    {:else}
+                        <a href="{@generateRouteUrl name="imdc_invitation_mentor" str_params="id:id" /}" title="Invite user to be your mentor"><i class="fa fa-inbox"></i></a>
+                    {/isInUserOnList}
+                {/isInUserOnList}
+            </li>
+            &nbsp;
+            <li>
+                {@isInUserOnList list="Mentee" username=username}
+                    <i class="fa fa-star" title="This user is your mentee"></i>
+                {:else}
+                    {@isInUserOnList list="InvitedMentee" username=username}
+                        <i class="fa fa-star-o" title="Invitation for menteeship already sent"></i>
+                    {:else}
+                        <a href="{@generateRouteUrl name="imdc_invitation_mentee" str_params="id:id" /}" title="Invite user to be your mentee"><i class="fa fa-star-o"></i></a>
+                    {/isInUserOnList}
+                {/isInUserOnList}
+            </li>
+        {/isNotLoggedInUser}
+    </ul>
+{/user}

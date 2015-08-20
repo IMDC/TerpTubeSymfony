@@ -1,5 +1,5 @@
 IMDC\TerpTubeBundle\Entity\ResourceFile:
-    type:  entity
+    type: entity
     table: resource_file
     id:
         id:
@@ -11,14 +11,19 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
             type: string
             length: 255
             nullable: true
-        webmExtension:
-            type: string
-            length: 5
+        created:
+            type: datetime
             nullable: true
         updated:
             type: datetime
             nullable: true
-               
+    oneToOne:
+        metaData:
+            targetEntity: MetaData
+            joinColumn:
+                name: meta_data
+                referencedColumnName: id
+            cascade: ["all"]
     lifecycleCallbacks:
         prePersist: [ preUpload ]
         postPersist: [ upload ]
@@ -26,4 +31,3 @@ IMDC\TerpTubeBundle\Entity\ResourceFile:
         postUpdate: [ upload ]
         preRemove: [ storeFilenameForRemove ]
         postRemove: [ removeUpload ]
-        

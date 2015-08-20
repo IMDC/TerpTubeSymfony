@@ -4,27 +4,26 @@ define(function () {
     var ContactFactory = {};
 
     ContactFactory.delete = function (userIds, contactList) {
+        var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_contact_delete'),
-            type: 'POST',
+            method: 'DELETE',
+            url: Routing.generate('imdc_delete_contact'),
             data: {
                 userIds: userIds,
                 contactList: contactList
             }
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                if (data.success) {
-                    return $.Deferred().resolve(data);
-                } else {
-                    return $.Deferred().reject(data);
-                }
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject(jqXHR.responseJSON);
             });
+
+        return deferred.promise();
     };
 
     return ContactFactory;

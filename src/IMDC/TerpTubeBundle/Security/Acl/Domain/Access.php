@@ -5,6 +5,9 @@ namespace IMDC\TerpTubeBundle\Security\Acl\Domain;
 use Doctrine\ORM\EntityManager;
 use FOS\UserBundle\Model\UserInterface;
 use IMDC\TerpTubeBundle\Entity\AccessType;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Security\Acl\Permission\MaskBuilder;
@@ -46,10 +49,10 @@ class Access
             case AccessType::TYPE_LINK_ONLY:
             case AccessType::TYPE_REGISTERED_USERS:
             case AccessType::TYPE_PRIVATE:
+            case AccessType::TYPE_FRIENDS:
                 // no other aces needed
                 break;
             case AccessType::TYPE_USERS:
-            case AccessType::TYPE_FRIENDS:
             case AccessType::TYPE_GROUP:
                 foreach ($this->objectIdentity->getSecurityIdentities() as $securityIdentity) {
                     if ($accessType == AccessType::TYPE_GROUP && $securityIdentity instanceof GroupSecurityIdentity)
@@ -119,10 +122,10 @@ class Access
                 };
 
                 $delAces = 0;
-                for ($a=0; $a<count($aces); $a++) {
+                for ($a = 0; $a < count($aces); $a++) {
                     $ace = $aces[$a];
                     if (!$sidExists($ace->getSecurityIdentity())) {
-                        $acl->deleteObjectAce($a-$delAces++);
+                        $acl->deleteObjectAce($a - $delAces++);
                     }
                 }
 
@@ -141,9 +144,14 @@ class Access
 
     /**
      * @param UserInterface $user
+     * @param Request $request
+     * @param Router $router
      * @return bool
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\TransactionRequiredException
      */
-    public function isGranted(UserInterface $user)
+    public function isGranted(UserInterface $user, Request $request = null, Router $router = null)
     {
         $acl = $this->accessProvider->getAcl();
 
@@ -152,8 +160,31 @@ class Access
                 // nothing to check
                 return true;
             case AccessType::TYPE_LINK_ONLY:
-                //TODO check request url
-                return true;
+                if (!$request || !$router) {
+                    return false;
+                }
+
+                $objectIdent = $this->objectIdentity->getObjectIdentity();
+                $resourceUrl = '';
+
+                if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Forum') {
+                    $resourceUrl = $router->generate('imdc_forum_view', array(
+                        'forumid' => (int)$objectIdent->getIdentifier()
+                    ), UrlGenerator::ABSOLUTE_PATH); // ensure absolute paths always
+                }
+
+                if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Thread') {
+                    $resourceUrl = $router->generate('imdc_thread_view', array(
+                        'threadid' => (int)$objectIdent->getIdentifier()
+                    ), UrlGenerator::ABSOLUTE_PATH);
+                }
+
+                // check base url with path info only as generated urls are just that
+                if ($resourceUrl === $request->getBaseUrl().$request->getPathInfo()) {
+                    return true;
+                }
+
+                return false;
             case AccessType::TYPE_REGISTERED_USERS:
                 // is the user logged in?
                 if ($user instanceof UserInterface) {
@@ -161,13 +192,29 @@ class Access
                 }
                 return false;
             case AccessType::TYPE_USERS:
-            case AccessType::TYPE_FRIENDS:
                 // handled by AclVoter
+                return false;
+            case AccessType::TYPE_FRIENDS:
+                $objectIdent = $this->objectIdentity->getObjectIdentity();
+
+                if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Forum') {
+                    $forum = $this->entityManager->find('IMDCTerpTubeBundle:Forum', $objectIdent->getIdentifier());
+                    if ($forum && $forum->getCreator()->getFriendsList()->contains($user)) {
+                        return true;
+                    }
+                }
+
+                if ($objectIdent->getType() === 'IMDC\TerpTubeBundle\Entity\Thread') {
+                    $thread = $this->entityManager->find('IMDCTerpTubeBundle:Thread', $objectIdent->getIdentifier());
+                    if ($thread && $thread->getCreator()->getFriendsList()->contains($user)) {
+                        return true;
+                    }
+                }
+
                 return false;
             case AccessType::TYPE_GROUP:
                 $aces = $acl->getObjectAces();
                 if (!$aces) {
-                    //throw new NoAceFoundException(); //FIXME revise this
                     return false;
                 }
 

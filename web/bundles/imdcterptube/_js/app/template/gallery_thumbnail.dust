@@ -1,6 +1,12 @@
 {#media}
-    <li style="float: left; list-style: none; margin-right: 5px; cursor: pointer; height: 100%; border: 2px solid black;" data-mid="{id}">
-        <img style="max-height: 100%; width: 100%;" src="{@generateUrl path=thumbnail_path /}" />
-        <span style="vertical-align: middle; display: inline-block; height: 100%;"></span>
+    <li data-mid="{data.id}">
+        {?can_edit}
+            <span class="gallery-thumb-remove" title="Remove" data-mid="{data.id}">
+                <i class="fa fa-times-circle"></i>
+            </span>
+        {/can_edit}
+        <div>
+            {?data.thumbnail_path}<img src="{@generateUrl path=data.thumbnail_path /}" />{/data.thumbnail_path}
+        </div> {! important !}
     </li>
 {/media}

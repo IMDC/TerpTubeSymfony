@@ -44,27 +44,14 @@ define([
             try {
                 model = new Model([]);
             } catch (err) {}
-            expect(model).to.be.undefined();
+            expect(model).to.be.undefined;
         });
 
         it('should have data equal given data at instantiation', function () {
             model = new Model(data);
+            model.subscribe(Model.Event.CHANGE, callback);
             expect(model.data).to.equal(data);
         });
-
-        /*it('should have subscribed to event', function () {
-            model.subscribe(Model.Event.CHANGE, callback);
-            var subs = model.subscriptions[Model.Event.CHANGE];
-
-            expect(subs).to.not.be.undefined();
-            expect(subs[0]).to.not.be.undefined();
-            expect(subs[0]).to.equal(callback);
-        });
-
-        it('should have unsubscribed from event', function () {
-            model.unsubscribe(callback);
-            expect(model.subscriptions.length).to.equal(0);
-        });*/
 
         it('should equal retrieved value', function () {
             var marco = model.get('name');
@@ -84,7 +71,7 @@ define([
 
         it('should not equal default value, but undefined', function () {
             var marco = model.get('nested.nonExist');
-            expect(marco).to.be.undefined();
+            expect(marco).to.be.undefined;
         });
 
         it('should have set undefined key path to new value', function () {
@@ -103,37 +90,45 @@ define([
         });
 
         it('should have dispatched event', function () {
-            model.subscribe(Model.Event.CHANGE, callback);
             var newVal = 'world';
             model.set('name', newVal);
-            model.unsubscribe(callback);
 
             expect(callbackResult).to.equal(newVal);
         });
 
         it('should not have dispatched event when dispatch is explicitly passed as false', function () {
-            model.subscribe(Model.Event.CHANGE, callback);
             var newVal = 'hello world';
             model.set('name', newVal, false);
-            model.unsubscribe(callback);
 
             expect(callbackResult).to.not.equal(newVal);
         });
 
         it('should not have dispatched event', function () {
-            model.subscribe(Model.Event.CHANGE, callback);
             model.set('name', data.name);
-            model.unsubscribe(callback);
 
             expect(callbackResult).to.not.equal(data.name);
         });
 
+        it('should update model', function () {
+            var newData = {name: 'hello:updated'};
+            model.update(newData);
+
+            expect(callbackResult).to.equal(newData.name);
+        });
+
+        it('should update model (nested)', function () {
+            var newData = {nested: {bar: {macro: 20}}};
+            model.update(newData);
+
+            expect(callbackResult).to.equal(newData.nested.bar.macro);
+        });
+
         it('should have dispatched change event', function () {
             model.forceChange();
-            expect(callbackResult).to.be.undefined();
+            expect(callbackResult).to.be.undefined;
 
             model.forceChange('nested.nonExist');
-            expect(callbackResult).to.be.undefined();
+            expect(callbackResult).to.be.undefined;
 
             model.forceChange('name');
             expect(callbackResult).to.equal(data.name);

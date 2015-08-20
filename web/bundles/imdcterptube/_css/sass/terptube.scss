@@ -1,12 +1,13 @@
 @import "base";
 @import "default";
 @import "forum";
+@import "gallery";
+@import "group";
 @import "help";
-@import "invitation";
+@import "invitation"; // dependencies: base
 @import "media";
-@import "message";
-@import "myFiles";
+@import "member";
+@import "message"; // dependencies: base
+@import "myFiles"; // dependencies: base
 @import "post";
 @import "thread";
-@import "group";
-@import "member";

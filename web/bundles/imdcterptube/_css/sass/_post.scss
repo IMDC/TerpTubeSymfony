@@ -10,7 +10,7 @@
 }
 
 .tt-post-container-highlight {
-  border: 2px solid red !important;
+  border: 1px solid red !important;
 }
 
 .tt-post-container-inner {
@@ -39,10 +39,6 @@
 
 .tt-post-content-container {
   min-height: 180px;
-
-  div[class*="col-"] > div {
-    margin-bottom: 10px;
-  }
 }
 
 .tt-post-timeline-container {

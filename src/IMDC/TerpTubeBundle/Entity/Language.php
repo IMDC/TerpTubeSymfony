@@ -29,11 +29,6 @@ class Language
      */
     private $proficiency;
 
-    public function __toString()
-    {
-        return $this->name;
-    }
-
     /**
      * Get id
      *
@@ -111,5 +106,10 @@ class Language
     public function getProficiency()
     {
         return $this->proficiency;
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 }

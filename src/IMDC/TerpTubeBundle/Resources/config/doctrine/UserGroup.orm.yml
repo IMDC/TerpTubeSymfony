@@ -8,11 +8,11 @@ IMDC\TerpTubeBundle\Entity\UserGroup:
             generator:
                 strategy: AUTO
     fields:
-        dateCreated:
-            type: datetime
         description:
             type: text
             nullable: true
+        dateCreated:
+            type: datetime
         visibleToPublic:
             type: boolean
             nullable: true

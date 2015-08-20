@@ -4,6 +4,7 @@
 namespace IMDC\TerpTubeBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\Common\Collections\Criteria;
 
 class User extends BaseUser
 {
@@ -119,6 +120,10 @@ class User extends BaseUser
     public function __construct()
     {
         parent::__construct();
+
+        $profile = new UserProfile();
+        $profile->setProfileVisibleToPublic(true);
+        $this->profile = $profile;
 
         $this->sentMessages         = new \Doctrine\Common\Collections\ArrayCollection();
         $this->receivedMessages     = new \Doctrine\Common\Collections\ArrayCollection();
@@ -787,6 +792,26 @@ class User extends BaseUser
     {
         return $this->mentorList->contains($user);
     }
+    
+    public function isUserOnInvitedMentorList(\IMDC\TerpTubeBundle\Entity\User $user)
+    {
+    	foreach ($this->createdInvitations as $invitation)
+    	{
+    		if ($invitation->getRecipient() ==  $user && $invitation->getType()->isMentor() && !$invitation->getIsDeclined() && !$invitation->getIsAccepted() && !$invitation->getIsCancelled())
+    			return true;
+    	}
+    	return false;
+    }
+    
+    public function isUserOnInvitedMenteeList(\IMDC\TerpTubeBundle\Entity\User $user)
+    {
+    	foreach ($this->createdInvitations as $invitation)
+    	{
+    		if ($invitation->getRecipient() ==  $user && $invitation->getType()->isMentee() && !$invitation->getIsDeclined() && !$invitation->getIsAccepted() && !$invitation->getIsCancelled())
+    			return true;
+    	}
+    	return false;
+    }
 
     /**
      * Add a user to the menteeList
@@ -921,6 +946,11 @@ class User extends BaseUser
         return $message;
     }
 
+    /**
+     * @param $mediaCollection
+     * @return bool
+     * @deprecated
+     */
     public function ownsMediaInCollection($mediaCollection)
     {
         if (empty($mediaCollection)) {
@@ -935,5 +965,48 @@ class User extends BaseUser
         }
 
         return true;
+    }
+
+    private static function createShallowUserList($list)
+    {
+        $list = array();
+
+        /** @var User $user */
+        foreach ($list as $user)
+            $list[] = $user->getUsername();
+
+        return $list;
+    }
+
+    public function getShallowFriendsList()
+    {
+        return User::createShallowUserList($this->getFriendsList());
+    }
+
+    public function getShallowMentorList()
+    {
+        return User::createShallowUserList($this->getMenteeList());
+    }
+
+    public function getShallowMenteeList()
+    {
+        return User::createShallowUserList($this->getMenteeList());
+    }
+
+    public function getShallowCreatedInvitations()
+    {
+        $list = array();
+
+        /** @var Invitation $invitation */
+        foreach ($this->getCreatedInvitations() as $invitation)
+            $list[] = array(
+                'creator' => $invitation->getCreator()->getUsername(),
+                'recipient' => $invitation->getRecipient()->getUsername(),
+                'isAccepted' => $invitation->getIsAccepted(),
+                'isCancelled' => $invitation->getIsCancelled(),
+                'isDeclined' => $invitation->getIsDeclined()
+            );
+
+        return $list;
     }
 }

@@ -1,7 +1,7 @@
 define([
     'model/model',
-    'views/post/editView'
-], function (Model, EditView) {
+    'component/galleryComponent'
+], function (Model, GalleryComponent) {
     'use strict';
 
     var ViewView = function (controller, options) {
@@ -15,6 +15,7 @@ define([
 
         this.$container = $(ViewView.Binder.CONTAINER + '[data-pid="' + this.controller.model.get('id') + '"]');
         this.$timelineKeyPoint = this.$container.find(ViewView.Binder.TIMELINE_KEYPOINT);
+        this.$gallery = this.$container.find(ViewView.Binder.GALLERY);
         this.$new = this.$container.find(ViewView.Binder.NEW);
         this.$edit = this.$container.find(ViewView.Binder.EDIT);
         this.$deleteModal = this.$container.find(ViewView.Binder.DELETE_MODAL);
@@ -31,6 +32,18 @@ define([
 
         this.controller.model.subscribe(Model.Event.CHANGE, this.bind__onModelChange);
 
+        var media = this.controller.model.get('ordered_media');
+        if (media && media.length > 0) {
+            GalleryComponent.render({
+                $container: this.$gallery,
+                mode: GalleryComponent.Mode.INLINE,
+                media: media
+            }, function (e) {
+                this.galleryCmp = e.galleryComponent;
+                this.galleryCmp.show();
+            }.bind(this));
+        }
+
         $tt._instances.push(this);
     };
 
@@ -39,6 +52,7 @@ define([
     ViewView.Binder = {
         CONTAINER: '.post-container',
         TIMELINE_KEYPOINT: '.post-timeline-keypoint',
+        GALLERY: '.post-gallery',
         NEW: '.post-new',
         EDIT: '.post-edit',
         DELETE_MODAL: '.post-delete-modal',
@@ -72,9 +86,9 @@ define([
         this.$new.hide();
         this.controller.new(null)
             .done(function (data) {
-                this.$container.after(data.html);
+                this.controller.addToThread(data.post);
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$new.show();
             }.bind(this));
     };
@@ -82,15 +96,17 @@ define([
     ViewView.prototype._onClickEdit = function (e) {
         e.preventDefault();
 
-        this.controller.edit(null)
+        this.controller.edit()
             .done(function (data) {
-                this.$container.replaceWith(data.html);
-                this.controller.removeKeyPoint();
-                var _self = this;
-                _self = new EditView(this.controller, this.controller.options);
-                this.controller.onViewLoaded();
-                this.controller.editKeyPoint({cancel: false});
-            }.bind(this));
+                this.controller.updateInThread('edit');
+
+                if (this.controller.model.get('is_temporal', false)) {
+                    this.controller.editKeyPoint({cancel: false});
+                }
+            }.bind(this))
+            .fail(function (data) {
+                //TODO
+            });
     };
 
     ViewView.prototype._onClickDelete = function (e) {
@@ -105,17 +121,14 @@ define([
 
                 if (this.$deleteModal.data('bs.modal').isShown) {
                     this.$deleteModal.on('hidden.bs.modal', function (e) {
-                        this.$container.remove();
+                        this.controller.removeFromThread();
                     }.bind(this));
                     this.$deleteModal.modal('hide');
-                    this.$container.fadeOut('slow');
                 } else {
-                    this.$container.fadeOut('slow', function (e) {
-                        this.$container.remove();
-                    }.bind(this));
+                    this.controller.removeFromThread();
                 }
             }.bind(this))
-            .fail(function () {
+            .fail(function (data) {
                 this.$container
                     .find('.modal-body')
                     .prepend('Something went wrong. Try again.');
@@ -164,6 +177,7 @@ define([
         this._clickKeyPoint(
             e.model.get('keyPoint.isPlayerPlaying', false)
         );
+        this.$new.show();
     };
 
     return ViewView;

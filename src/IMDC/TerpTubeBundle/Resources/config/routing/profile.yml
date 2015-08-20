@@ -5,6 +5,8 @@ imdc_profile_me:
 imdc_profile_user:
   pattern: /user/{userName}
   defaults: { _controller: IMDCTerpTubeBundle:Profile:showSpecific }
+  options:
+    expose: true
 
 imdc_profile_edit:
   pattern: /edit

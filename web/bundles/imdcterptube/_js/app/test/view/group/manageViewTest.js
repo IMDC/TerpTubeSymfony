@@ -10,13 +10,13 @@ casper.test.setUp(function (done) {
     common.login(done);
 });
 
-casper.test.begin('manageView tests', 1 + (2 * (userIds.length)), function suite(test) {
+casper.test.begin('manageView tests', 1 + (2 * userIds.length), function suite(test) {
     casper
         .start('https://terptube.devserv.net/app_dev.php/group/4/manage', function () {
-            test.comment('update search form');
+            test.comment('change tab');
 
             this.click('[href="#tabCommunity"]');
-            test.assertField('user_group_manage_search[active_tab]', '#tabCommunity');
+            test.assertUrlMatch(/(#.*)$/, '#Community');
         });
 
     casper

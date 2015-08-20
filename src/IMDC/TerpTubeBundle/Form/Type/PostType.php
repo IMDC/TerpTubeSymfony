@@ -11,8 +11,10 @@ class PostType extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
         $canTemporal = $options['canTemporal'];
+        $isPostReply = $options['is_post_reply'];
 
         $builder->add('attachedFile', 'media_chooser', array(
+            'section' => $isPostReply ? 'post_reply' : 'post',
             'label' => false
         ));
 
@@ -37,20 +39,18 @@ class PostType extends AbstractType
             'required' => false,
             'attr' => array(
                 'class' => 'autosize',
-                'style' => 'height: 35px;', //FIXME css me
                 'placeholder' => 'Write a reply...')
         ));
 	}
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'IMDC\TerpTubeBundle\Entity\Post'
-        ));
-
-        $resolver->setRequired(array(
-            'canTemporal'
-        ));
+        $resolver
+            ->setDefaults(array(
+                'is_post_reply' => false,
+                'data_class' => 'IMDC\TerpTubeBundle\Entity\Post'))
+            ->setRequired(array(
+                'canTemporal'));
     }
 
 	public function getName()

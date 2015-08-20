@@ -51,34 +51,60 @@
     {% endif %}
 {% endmacro %}
 
-{% macro element(media, enable_controls, preloadMedia) %}
-    {% set enable_controls = enable_controls is defined ? enable_controls : true %}
-    {% set preloadMedia = preloadMedia is defined ? preloadMedia : false %}
+{% macro element(media, enable_controls, preload_media) %}
+    {% set enable_controls = enable_controls is not null ? enable_controls : true %}
+    {% set preload_media = preload_media is not null ? preload_media : false %}
 
     {% if media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
-        <video class="tt-media-video" {% if enable_controls %}controls{% endif %} poster="{{ asset(media.getThumbnailPath) }}" preload="{% if preloadMedia %}auto{% else %}none{% endif %}">
-            <source src="{{ asset(media.getResource.getWebPath) }}" />
-        </video>
         {% if media.isInterpretation %}
-            <video class="tt-media-pip-video" poster="{{ asset(media.source.getThumbnailPath) }}" preload="preload">
-                <source src="{{ asset(media.source.getResource.getWebPath) }}" />
+            <video class="tt-media-pip-video"
+                    {% if enable_controls %} controls {% endif %}
+                    {% if media.source.getThumbnailPath is not empty %} poster="{{ asset(media.source.getThumbnailPath) }}" {% endif %}
+                   preload="{% if preload_media %}auto{% else %}none{% endif %}">
+                {% for resource in media.source.getResources %}
+                    <source src="{{ asset(resource.getWebPath) }}" />
+                {% endfor %}
             </video>
         {% endif %}
+        <video class="tt-media-video"
+                {% if enable_controls %} controls {% endif %}
+                {% if media.getThumbnailPath is not empty %} poster="{{ asset(media.getThumbnailPath) }}" {% endif %}
+               preload="{% if preload_media %}auto{% else %}none{% endif %}">
+            {% for resource in media.getResources %}
+                <source src="{{ asset(resource.getWebPath) }}" />
+            {% endfor %}
+        </video>
     {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
-        <audio class="tt-media-audio" {% if enable_controls %}controls{% endif %} preload="{% if preloadMedia %}auto{% else %}none{% endif %}">
-            <source src="{{ asset(media.getResource.getWebPath) }}" />
+        <audio class="tt-media-audio"
+                {% if enable_controls %} controls {% endif %}
+               preload="{% if preload_media %}auto{% else %}none{% endif %}">
+            {% for resource in media.getResources %}
+                <source src="{{ asset(resource.getWebPath) }}" />
+            {% endfor %}
             Your browser does not support the audio element, please upgrade to Google Chrome
         </audio>
     {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
-        <img class="img-responsive center-block tt-media-img" src="{{ asset(media.getResource.getWebPath) }}" alt="{{ media.title }}" title="{{ media.title }}" />
+        <img class="img-responsive center-block tt-media-img" src="{{ asset(media.getSourceResource.getWebPath) }}" alt="{{ media.title }}" title="{{ media.title }}" />
     {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
         <div class="row">
             <div class="col-md-3 thumbnail text-center">
-                <a href="{{ asset(media.getResource.getWebPath) }}">
+                <a href="{{ asset(media.getSourceResource.getWebPath) }}">
                     <p><i class="fa fa-file fa-5x"></i></p>
                     <div>{{ media.title }}</div>
                 </a>
             </div>
         </div>
     {% endif %}
+{% endmacro %}
+
+{% macro no_element() %}
+    <i class="fa fa-question fa-3x"></i><br />
+    <em>no media</em>
+{% endmacro %}
+
+{% macro video_controls() %}
+    <div class="tt-media-video-controls">
+        <img id="videoSpeed" src="{{ asset('bundles/imdcterptube/img/player/playback-speed-normal.png') }}" title="Click to change video playback speed" />
+        {#<img id="closedCaptions" src="{{ asset('bundles/imdcterptube/img/player/closedCaptioning.jpg') }}" title="Click to show/hide captions" />#}
+    </div>
 {% endmacro %}
