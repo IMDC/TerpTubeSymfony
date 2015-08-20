@@ -2,6 +2,27 @@
 
 {% block title %}{{ group.name }}{% endblock %}
 
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'model/groupModel', 'controller/groupController', 'views/group/viewView',
+            'main'
+        ], function(bootstrap, GroupModel, GroupController, GroupView) {
+            bootstrap(
+                    new GroupModel({{ group|serialize('json')|raw }}),
+                    GroupController,
+                    GroupView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
 {% block sidebarlinks_groups %}class="active"{% endblock %}
 
 {% block content %}
@@ -9,7 +30,7 @@
     <div class="col-md-12">
         <div class="row" style="margin-bottom: 20px;">
             <div class="col-md-6">
-                {% if isMember and group.membersCanAddForums %}
+                {% if isMember and group.membersCanAddForums or app.user == group.userFounder %}
                     <a class="btn btn-default" href="{{ path('imdc_forum_new', {'groupId': group.id}) }}"><i class="fa fa-plus"></i> Create Forum</a>
                 {% endif %}
                 {% if not isMember and group.openForNewMembers %}
@@ -36,32 +57,28 @@
                 {% endif %}
             </div>
         </div>
-        <div class="row group-container-media">
+        <div class="row">
             <div class="col-md-4">
-            </div>
-            <div class="col-md-4">
-                {% if group.media[0] is defined %}
-                    {% include 'IMDCTerpTubeBundle:Media:element.html.twig' with {'mediaFile': group.media[0]} %}
+                {% if group.getMedia|length > 0 %}
+                    <div class="group-gallery" style="height: 250px; width: 100%;"></div>
+                {% else %}
+                    <p>No media</p>
                 {% endif %}
             </div>
-            <div class="col-md-4">
-            </div>
-        </div>
-        <div class="row group-container-info">
-            <div class="col-md-12">
+            <div class="col-md-8">
                 <h1>{{ group.name }}</h1>
                 <div class="row">
                     <div class="col-xs-3">
                         <table class="table">
                             <tbody>
-                                <tr>
-                                    <td>Members</td>
-                                    <td>{{ group.members|length }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Created</td>
-                                    <td>{{ group.dateCreated|date('g:ia F j Y') }}</td>
-                                </tr>
+                            <tr>
+                                <td>Members</td>
+                                <td>{{ group.members|length }}</td>
+                            </tr>
+                            <tr>
+                                <td>Created</td>
+                                <td>{{ group.dateCreated|date('g:ia F j Y') }}</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -75,9 +92,7 @@
             </div>
         </div>
         <!-- group forums -->
-        <div class="group-container-forums">
-            {% include 'IMDCTerpTubeBundle:Forum:list.html.twig' %}
-        </div>
+        {% include 'IMDCTerpTubeBundle:Forum:list.html.twig' %}
         <!-- group members -->
         <div class="row">
             <div class="col-md-12">

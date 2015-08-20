@@ -1,3 +1,3 @@
 # This file is auto-generated during the composer install
 parameters:
-    app.version: 0.0.5
+    app.version: 0.0.15

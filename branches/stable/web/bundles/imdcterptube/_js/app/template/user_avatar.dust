@@ -1,0 +1,5 @@
+{#user}
+    <a href="{@generateRouteUrl name="imdc_profile_user" str_params="userName:username" /}">
+        <img class="img-responsive center-block tt-avatar" src="{?profile.avatar}{@generateUrl path=profile.avatar.source_resource.web_path /}{:else}{@generateUrl path="bundles/imdcterptube/img/no_avatar.jpg" /}{/profile.avatar}" />
+    </a>
+{/user}

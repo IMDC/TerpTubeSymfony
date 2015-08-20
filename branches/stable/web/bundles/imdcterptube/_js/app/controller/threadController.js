@@ -1,8 +1,9 @@
 define([
     'factory/threadFactory',
     'service',
-    'service/keyPointService'
-], function (ThreadFactory, Service, KeyPointService) {
+    'service/keyPointService',
+    'service/threadPostService'
+], function (ThreadFactory, Service, KeyPointService, ThreadPostService) {
     'use strict';
 
     var Thread = function (model, options) {
@@ -12,11 +13,15 @@ define([
         this.options = options;
 
         this.keyPointService = Service.get('keyPoint');
+        this.threadPostService = Service.get('threadPost');
 
         this.videoSpeed = 0;
 
-        // KeyPointService
-        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this);
+        this.bind__onKeyPointEvent = this._onKeyPointEvent.bind(this); // KeyPointService
+        this.bind__onThreadPostEvent = this._onThreadPostEvent.bind(this); // ThreadPostService
+
+        this.keyPointService.subscribe('all', this.bind__onKeyPointEvent);
+        this.threadPostService.subscribe(this.bind__onThreadPostEvent);
 
         $tt._instances.push(this);
     };
@@ -57,16 +62,30 @@ define([
                 this.model.setKeyPointProperty(e.keyPoint.id, 'isEditing', false);
                 this.model.setKeyPointProperty(e.keyPoint.id, 'options.drawOnTimeLine', true);
                 if (e.type == KeyPointService.Event.REMOVE) {
-                    setTimeout(function () {
+                    //setTimeout(function () {
                         this.model.removeKeyPoint(e.keyPoint.id);
-                    }.bind(this), 100);
+                    //}.bind(this), 100);
                 }
                 break;
         }
     };
 
+    Thread.prototype._onThreadPostEvent = function (e) {
+        switch (e.type) {
+            case ThreadPostService.Event.ADD:
+                this.model.addPost(e.post, e.post.get('id') < 0 ? 'new' : 'view');
+                break;
+            case ThreadPostService.Event.REPLACE:
+                this.model.forceChangePost(e.post, e.view);
+                break;
+            case ThreadPostService.Event.REMOVE:
+                this.model.removePost(e.post);
+                break;
+        }
+    };
+
     Thread.prototype.onViewLoaded = function () {
-        this.keyPointService.subscribe('all', this.bind__onKeyPointEvent);
+
     };
 
     Thread.prototype.updateKeyPointDuration = function (duration) {
@@ -90,13 +109,13 @@ define([
         this.keyPointService.dispatch(keyPointId, KeyPointService.Event.HOVER, args);
     };
 
-    Thread.prototype.clickKeyPoint = function (keyPointId) {
+    Thread.prototype.rightClickKeyPoint = function (keyPointId) {
         this.model.setKeyPointProperty(keyPointId, 'isPlayerPlaying', true);
         setTimeout(function () {
             this.model.setKeyPointProperty(keyPointId, 'isPlayerPlaying', false, false);
         }.bind(this), 100);
 
-        this.keyPointService.dispatch(keyPointId, KeyPointService.Event.CLICK);
+        this.keyPointService.dispatch(keyPointId, KeyPointService.Event.CLICK, {which: 'right'});
     };
 
     Thread.prototype.adjustVideoSpeed = function () {
@@ -116,7 +135,7 @@ define([
     Thread.prototype.delete = function () {
         return ThreadFactory.delete(this.model)
             .done(function (data) {
-                window.location.assign(data.redirectUrl);
+                window.location.assign(data.redirect_url);
             });
     };
 

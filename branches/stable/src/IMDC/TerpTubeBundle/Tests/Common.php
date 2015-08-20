@@ -7,16 +7,26 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class Common
 {
-    public static function login(Client $client)
+    public static function login(Client $client, $username = 'test', $password = 'test') //TODO drop default for username param
     {
         $crawler = $client->request('GET', '/login');
 
+        file_put_contents(
+            '../test_logs/' . substr(get_called_class(), strrpos(get_called_class(), '\\')) . '.' . __FUNCTION__ . '_form.html',
+            $client->getResponse()->getContent()
+        );
+
         $form = $crawler->selectButton('_submit')->form(array(
-            '_username'  => 'test',
-            '_password'  => 'test'
+            '_username' => $username,
+            '_password' => $password
         ));
 
         $client->submit($form);
+
+        file_put_contents(
+            '../test_logs/' . substr(get_called_class(), strrpos(get_called_class(), '\\')) . '.' . __FUNCTION__ . '_result.html',
+            $client->getResponse()->getContent()
+        );
 
         if (!$client->getResponse()->isRedirect()) {
             throw new \Exception('login failed');

@@ -2,13 +2,20 @@
 
 namespace IMDC\TerpTubeBundle\Controller;
 
-use IMDC\TerpTubeBundle\Entity\AccessType;
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\FOSRestController;
+use FOS\RestBundle\Routing\ClassResourceInterface;
+use IMDC\TerpTubeBundle\Component\Serializer\Exclusion\UserExclusionStrategy;
 use IMDC\TerpTubeBundle\Entity\Post;
 use IMDC\TerpTubeBundle\Entity\Thread;
 use IMDC\TerpTubeBundle\Form\Type\PostType;
 use IMDC\TerpTubeBundle\Form\Type\ThreadType;
+use IMDC\TerpTubeBundle\Rest\Exception\ThreadException;
+use IMDC\TerpTubeBundle\Rest\ThreadResponse;
 use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessObjectIdentity;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use IMDC\TerpTubeBundle\Security\Acl\Domain\AccessProvider;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,10 +25,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Controller for all Thread related actions including new, edit, delete
+ *
+ * @Rest\NoRoute()
+ *
  * @author paul
  * @author Jamal Edey <jamal.edey@ryerson.ca>
  */
-class ThreadController extends Controller
+class ThreadController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * @param Request $request
@@ -32,11 +42,6 @@ class ThreadController extends Controller
      */
     public function newAction(Request $request, $forumid, $mediaId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $forum = null;
         $media = null;
@@ -70,15 +75,15 @@ class ThreadController extends Controller
         $form = $this->createForm(new ThreadType($securityContext), $thread, $formOptions);
         $form->handleRequest($request);
 
-        if (!$form->isValid() && !$form->isSubmitted()) {
+        if (!$form->isSubmitted()) {
             if ($isNewFromMedia) {
                 $form->get('mediaIncluded')->setData(array($media));
             }
+        }
 
-            $form->get('accessType')->setData(
-                $em->getRepository('IMDCTerpTubeBundle:AccessType')->find(AccessType::TYPE_PUBLIC)
-            );
-        } else {
+        if ($form->isValid()) {
+            //TODO both media and title should not be empty
+
             if ($isNewFromMedia) {
                 $forum = $form->get('forum')->getData();
             }
@@ -90,12 +95,6 @@ class ThreadController extends Controller
             $thread->setSticky(false);
             $thread->setLastPostAt($currentDateTime);
             $thread->setParentForum($forum);
-
-            //TODO 'currently' only your own media should be here, but check anyway
-            if (!$user->ownsMediaInCollection($form->get('mediaIncluded')->getData())) {
-                throw new AccessDeniedException(); //TODO more appropriate exception?
-            }
-
             $thread->setMediaDisplayOrder($form->get('mediaIncluded')->getViewData());
 
             if (count($thread->getMediaIncluded()) > 0) {
@@ -113,13 +112,15 @@ class ThreadController extends Controller
             $em->persist($user);
             $em->flush();
 
+            /* @var $accessProvider AccessProvider */
             $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
             $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->createAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity, $form->get('accessType')->get('data'));
+            $accessProvider->setSecurityIdentities($objectIdentity, $thread);
             $access->insertEntries($securityIdentity);
-            $accessProvider->updateAccess($access);
+            $accessProvider->updateAccess();
 
             $this->get('session')->getFlashBag()->add(
                 'success', 'Thread created successfully!'
@@ -143,11 +144,6 @@ class ThreadController extends Controller
      */
     public function viewAction(Request $request, $threadid)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-        
         $em = $this->getDoctrine()->getManager();
         $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
         if (!$thread) {
@@ -162,10 +158,25 @@ class ThreadController extends Controller
         $form = $this->createForm(new PostType(), new Post(), array(
             'canTemporal' => $thread->getType() == 1
         ));
-        
+
+        // empty post
+        $post = new Post();
+        $post->setParentThread($thread);
+
+        /** @var UserExclusionStrategy $strategy */
+        $strategy = $this->get('imdc_terptube.serializer.exclusion.user_strategy');
+        $strategy->checkUser($this->getUser());
+        $context = new SerializationContext();
+        $context->addExclusionStrategy($strategy);
+        /** @var Serializer $serializer */
+        $serializer = $this->get('jms_serializer');
+        $userJson = $serializer->serialize($this->getUser(), 'json', $context);
+
         return $this->render('IMDCTerpTubeBundle:Thread:view.html.twig', array(
             'form' => $form->createView(),
-            'thread' => $thread
+            'thread' => $thread,
+            'post' => $post,
+            'user_json' => $userJson
         ));
     }
 
@@ -177,11 +188,6 @@ class ThreadController extends Controller
      */
     public function editAction(Request $request, $threadid)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
         $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
         if (!$thread) {
@@ -193,8 +199,14 @@ class ThreadController extends Controller
             throw new AccessDeniedException();
         }
 
+        /* @var $accessProvider AccessProvider */
+        $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+        $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
+        $accessProvider->loadAccessData($objectIdentity);
+
         $form = $this->createForm(new ThreadType(), $thread, array(
-            'canChooseMedia' => false //FIXME changing media not allowed?
+            //'canChooseMedia' => false, //FIXME changing media allowed?
+            'access_data' => $accessProvider->getAccessData()
         ));
         $form->handleRequest($request);
 
@@ -203,6 +215,12 @@ class ThreadController extends Controller
             $currentDateTime = new \DateTime('now');
             $thread->setEditedAt($currentDateTime);
             $thread->setEditedBy($user);
+            $thread->setMediaDisplayOrder($form->get('mediaIncluded')->getViewData());
+
+            if (count($thread->getMediaIncluded()) > 0) {
+                $ordered = $thread->getOrderedMedia();
+                $thread->setType($ordered[0]->getType()); // thread type is determined by the first associated media
+            }
 
             $forum = $thread->getParentForum();
             $forum->setLastActivity($currentDateTime);
@@ -211,13 +229,14 @@ class ThreadController extends Controller
             $em->persist($forum);
             $em->flush();
 
-            $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
+            // recreate object identity since entity has changed
             $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
             $securityIdentity = UserSecurityIdentity::fromAccount($user);
 
-            $access = $accessProvider->getAccess($objectIdentity);
+            $access = $accessProvider->createAccess($objectIdentity, $form->get('accessType')->get('data'));
+            $accessProvider->setSecurityIdentities($objectIdentity, $thread);
             $access->updateEntries($securityIdentity);
-            $accessProvider->updateAccess($access);
+            $accessProvider->updateAccess();
 
             $this->get('session')->getFlashBag()->add(
                 'success', 'Forum post edited successfully!'
@@ -227,7 +246,7 @@ class ThreadController extends Controller
                 'threadid' => $thread->getId()
             )));
         }
-         
+
         return $this->render('IMDCTerpTubeBundle:Thread:edit.html.twig', array(
             'form' => $form->createView(),
             'thread' => $thread
@@ -235,27 +254,23 @@ class ThreadController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param $threadid
-     * @return RedirectResponse|Response
-     * @throws \Exception
+     * @Rest\Route()
+     * @Rest\View()
+     *
+     * @param $threadId
+     * @return \FOS\RestBundle\View\View
      */
-    public function deleteAction(Request $request, $threadid) //TODO api?
+    public function deleteAction($threadId)
     {
-        // check if the user is logged in
-        if (!$this->container->get('imdc_terptube.authentication_manager')->isAuthenticated($request)) {
-            return $this->redirect($this->generateUrl('fos_user_security_login'));
-        }
-
         $em = $this->getDoctrine()->getManager();
-        $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadid);
+        $thread = $em->getRepository('IMDCTerpTubeBundle:Thread')->find($threadId);
         if (!$thread) {
-            throw new \Exception('thread not found');
+            ThreadException::NotFound();
         }
 
         $securityContext = $this->get('security.context');
         if ($securityContext->isGranted('DELETE', $thread) === false) {
-            throw new AccessDeniedException();
+            ThreadException::AccessDenied();
         }
 
         $user = $this->getUser();
@@ -268,18 +283,16 @@ class ThreadController extends Controller
         $em->persist($forum);
         $em->persist($user);
 
+        /* @var $accessProvider AccessProvider */
         $accessProvider = $this->get('imdc_terptube.security.acl.access_provider');
         $objectIdentity = AccessObjectIdentity::fromAccessObject($thread);
         $accessProvider->deleteAccess($objectIdentity);
 
         $em->flush();
 
-        $content = array(
-            'wasDeleted' => true,
-            'redirectUrl' => $this->generateUrl('imdc_forum_view', array(
-                'forumid' => $forum->getId()))
-        );
-
-        return new Response(json_encode($content), 200, array('Content-Type' => 'application/json'));
+        $resp = new ThreadResponse();
+        $resp->setRedirectUrl($this->generateUrl('imdc_forum_view', array(
+            'forumid' => $forum->getId())));
+        return $this->view($resp, 200);
     }
 }

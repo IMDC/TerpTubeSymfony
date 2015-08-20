@@ -3,24 +3,23 @@ define(function () {
 
     var ThreadFactory = {};
 
-    ThreadFactory.delete = function (thread) {
+    ThreadFactory.delete = function (model) {
+        var deferred = $.Deferred();
         var settings = {
-            url: Routing.generate('imdc_thread_delete', {threadid: thread.get('id')}),
-            type: 'POST'
+            method: 'DELETE',
+            url: Routing.generate('imdc_delete_thread', {threadId: model.get('id')})
         };
 
-        return $.ajax(settings)
+        $.ajax(settings)
             .then(function (data, textStatus, jqXHR) {
-                if (data.wasDeleted) {
-                    return $.Deferred().resolve(data);
-                } else {
-                    return $.Deferred().reject();
-                }
+                deferred.resolve(data);
             },
             function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText);
-                return $.Deferred().reject();
+                deferred.reject(jqXHR.responseJSON);
             });
+
+        return deferred.promise();
     };
 
     return ThreadFactory;

@@ -172,6 +172,9 @@ imdc_terp_tube:
         ffmpeg_binary: /usr/local/bin/ffmpeg
         ffprobe_binary: /usr/local/bin/ffprobe
         timeout: 3600
+    resource_file:
+        web_root_path: "%kernel.root_dir%/../web"
+        upload_path: "uploads/media"
 
 ac_transcoding:
     ffmpeg: 
@@ -212,23 +215,39 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
             vhost:     '/'
             lazy:      false
     producers:
-        upload_video:
-            connection: default
-            exchange_options: {name: 'upload-video', type: direct}
-        upload_audio:
-            connection: default
-            exchange_options: {name: 'upload-audio', type: direct}
+        multiplex:
+            connection:         default
+            exchange_options:   {name: 'multiplex', type: direct}
+        transcode:
+            connection:         default
+            exchange_options:   {name: 'transcode', type: direct}
+        trim:
+            connection:         default
+            exchange_options:   {name: 'trim', type: direct}
+        entity_status:
+            connection:         default
+            exchange_options:   {name: 'entity-status', type: fanout}
     consumers:
-        upload_video:
-            connection: default
-            exchange_options: {name: 'upload-video', type: direct}
-            queue_options:    {name: 'upload-video'}
-            callback:         upload_video_service
-        upload_audio:
-            connection: default
-            exchange_options: {name: 'upload-audio', type: direct}
-            queue_options:    {name: 'upload-audio'}
-            callback:         upload_audio_service
+        multiplex:
+            connection:         default
+            exchange_options:   {name: 'multiplex', type: direct}
+            queue_options:      {name: 'multiplex'}
+            callback:           multiplex_service
+        transcode:
+            connection:         default
+            exchange_options:   {name: 'transcode', type: direct}
+            queue_options:      {name: 'transcode'}
+            callback:           transcode_service
+        trim:
+            connection:         default
+            exchange_options:   {name: 'trim', type: direct}
+            queue_options:      {name: 'trim'}
+            callback:           trim_service
+        status:
+            connection:         default
+            exchange_options:   {name: 'entity-status', type: fanout}
+            queue_options:      {name: 'status-internal'}
+            callback:           status_service
 
 knp_time: ~ # Enable the helper for use in templates
 
@@ -267,3 +286,21 @@ jms_serializer:
             FOSUserBundle:
                 namespace_prefix: "FOS\\UserBundle"
                 path: "%kernel.root_dir%/Resources/FOSUserBundle/config/serializer"
+
+sensio_framework_extra:
+    view: { annotations: false }
+
+fos_rest:
+    param_fetcher_listener: true
+    routing_loader:
+        default_format: json
+        include_format: false
+    view:
+        formats:
+            json: true
+            xml: false
+            rss: false
+            html: false
+        view_response_listener: true
+    exception:
+        enabled: true

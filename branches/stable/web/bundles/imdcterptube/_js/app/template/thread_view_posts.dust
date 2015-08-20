@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="col-md-12">
+        {#posts}
+            {^is_post_reply}
+                {! post !}
+                {>"post_view" post=. /}
+                {! post replies !}
+                {#replies}
+                    {>"post_view" post=. /}
+                {/replies}
+            {/is_post_reply}
+        {:else}
+            <div class="lead text-center" style="padding-top: 30px;">No replies yet!</div>
+        {/posts}
+        <div class="thread-reply-spacer"></div>
+    </div>
+</div>

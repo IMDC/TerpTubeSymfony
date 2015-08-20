@@ -30,27 +30,44 @@
             <tbody>
                 {% if media|length > 0 %}
                     {% for m in media %}
-                        {% set preview_disabled = m.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
+                        {% set preview_disabled = m.getState != constant('IMDC\\TerpTubeBundle\\Entity\\MediaStateConst::READY') ? 'disabled' : '' %}
                         <tr>
                             <td class="tt-list-table-col-item">
                                 <input type="checkbox" class="table-component-item" data-mid="{{ m.id }}" />
                             </td>
-                            <td class="tt-list-table-col-thumbnail my-files-selector-file" data-mid="{{ m.id }}" {{ preview_disabled }}>
+                            <td class="tt-list-table-col-thumbnail my-files-selector-file-button" data-mid="{{ m.id }}" {{ preview_disabled }}>
                                 {{ _media.thumbnail(m.getThumbnailPath) }}
                             </td>
                             <td class="tt-list-table-col-primary tt-myFiles-nameColumn">
-                                <span class="edit-title my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ m.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}" {{ preview_disabled }}>
+                                <span class="edit-title my-files-selector-file-button" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ m.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}" {{ preview_disabled }}>
                                     {{ m.title }}
                                 </span>
                                 <span>
-                                    <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
-                                    <a class="btn btn-default" href="{{ asset(m.getResource.getWebPath) }}" download><i class="fa fa-download"></i></a>
-                                    <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': m.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                                    <div class="btn-group">
+                                        <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+                                        <div class="btn-group {% if loop.last %}dropup{% else %}dropdown{% endif %}">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa fa-download"></i> <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                {% for resource in m.getResources %}
+                                                    <li><a href="{{ asset(resource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ resource.getPath }}">{{ resource.getPath|upper }}</a></li>
+                                                {% endfor %}
+                                                {% if m.getResources|length > 0 and m.getSourceResource %}
+                                                    <li class="divider"></li>
+                                                {% endif %}
+                                                {% if m.getSourceResource %}
+                                                    <li><a href="{{ asset(m.getSourceResource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ m.getSourceResource.getPath }}">Original</a></li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                        <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': m.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                                    </div>
                                 </span>
                             </td>
-                            <td>{{ m.getMetaData.getTimeUploaded|date('M m Y h:i a') }}</td>
+                            <td>{% if m.getSourceResource %}{{ m.getSourceResource.getCreated|date('M d Y h:i a') }}{% else %}{{ m.getResources | first.getCreated|date('M d Y h:i a') }}{% endif %}</td>
                             <td>{{ _media.type_to_icon(m.type) }}</td>
-                            <td>{{ _media.format_size(m.metaData.size) }}</td>
+                            <td>{% if (m.getSourceResource) and (m.getSourceResource.getMetaData) %}{{ _media.format_size(m.getSourceResource.getMetaData.getSize) }}{% endif %}</td>
                         </tr>
                     {% endfor %}
                 {% else %}
@@ -73,23 +90,43 @@
                 {% if loop.index % 4 == 1 %}
                     <div class="row">
                 {% endif %}
-                {% set preview_disabled = m.getIsReady == constant('IMDC\\TerpTubeBundle\\Entity\\Media::READY_NO') ? 'disabled' : '' %}
+                {% set preview_disabled = m.getState != constant('IMDC\\TerpTubeBundle\\Entity\\MediaStateConst::READY') ? 'disabled' : '' %}
                 <div class="col-md-3">
                     <div class="thumbnail tt-grid-div-body">
                         <div class="tt-grid-div-item">
                             <input type="checkbox" class="table-component-item" data-mid="{{ m.id }}" />
                         </div>
-                        <div class="tt-grid-div-thumbnail my-files-selector-file" data-mid="{{ m.id }}" {{ preview_disabled }}>
+                        <div class="tt-grid-div-thumbnail my-files-selector-file-button" data-mid="{{ m.id }}" {{ preview_disabled }}>
                             <div>{{ _media.thumbnail(m.getThumbnailPath) }}</div>
                         </div>
                         <div class="tt-grid-div-primary">
-                            <span class="edit-title my-files-selector-file" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ m.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}" {{ preview_disabled }}>
-                                {{ _media.type_to_icon(m.type) }}{{ m.title }}
+                            <span>
+                                {{ _media.type_to_icon(m.type) }}
+                                <span class="edit-title my-files-selector-file-button" title="{{ 'filesGateway.previewLink'|trans }}" data-mid="{{ m.id }}" data-type="text" data-title="{{ 'form.media.title'|trans }}" {{ preview_disabled }}>
+                                    {{ m.title }}
+                                </span>
                             </span>
                             <span>
-                                <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
-                                <a class="btn btn-default" href="{{ asset(m.getResource.getWebPath) }}" download><i class="fa fa-download"></i></a>
-                                <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': m.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                                <div class="btn-group">
+                                    <button class="btn btn-default edit-title"><i class="fa fa-pencil"></i></button>
+                                    <div class="btn-group {% if (loop.length - loop.index) < 4 %}dropup{% else %}dropdown{% endif %}">
+                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa fa-download"></i> <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu {% if loop.index % 4 == 0 or loop.last %}dropdown-menu-right{% endif %}" role="menu">
+                                            {% for resource in m.getResources %}
+                                                <li><a href="{{ asset(resource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ resource.getPath }}">{{ resource.getPath|upper }}</a></li>
+                                            {% endfor %}
+                                            {% if m.getResources|length > 0 and m.getSourceResource %}
+                                                <li class="divider"></li>
+                                            {% endif %}
+                                            {% if m.getSourceResource %}
+                                                <li><a href="{{ asset(m.getSourceResource.getWebPath) }}" download="{{ m.getTitle ~ '.' ~ m.getSourceResource.getPath }}">Original</a></li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                    <a class="btn btn-default" target="_blank" href="{{ path('imdc_thread_new_from_media', {'mediaId': m.id} ) }}" title="{{ 'filesGateway.shareLink'|trans }}"><i class="fa fa-share-square-o"></i></a>
+                                </div>
                             </span>
                         </div>
                     </div>

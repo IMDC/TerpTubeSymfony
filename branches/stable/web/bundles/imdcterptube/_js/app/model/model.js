@@ -31,7 +31,11 @@ define([
 
         while (path.length !== 0) {
             var key = path.shift();
-            if (_.has(list, key)) {
+            var index = parseInt(key, 10);
+            key = _.isNumber(index) && !_.isNaN(index) ? index : key;
+            // _.has and _.contains are ?? under phantomjs
+            if ((_.isObject(list) && (_.has(list, key) && list.hasOwnProperty(key))) ||
+                (_.isArray(list) && (_.contains(list, key) && (list[key] !== undefined)))) {
                 list = list[key];
             } else {
                 return undefined;
@@ -46,11 +50,17 @@ define([
 
         while (path.length > 1) {
             var key = path.shift();
-            if (_.has(list, key)) {
-                list = list[key];
-            } else {
-                list[key] = {};
+            var index = parseInt(key, 10);
+            key = _.isNumber(index) && !_.isNaN(index) ? index : key;
+            // _.has and _.contains are ?? under phantomjs
+            if ((_.isObject(list) && (!_.has(list, key) && !list.hasOwnProperty(key))) ||
+                (_.isArray(list) && (!_.contains(list, key) && (list[key] === undefined))) ||
+                (_.isNull(list[key]))) {
+                console.log('defining key: ' + key);
+                var nextKey = parseInt(path[0], 10); // check the next key to predict type
+                list[key] = _.isNumber(nextKey) && !_.isNaN(nextKey) ? [] : {};
             }
+            list = list[key];
         }
 
         list[path.shift()] = value;
@@ -58,33 +68,12 @@ define([
 
     Model.prototype._dispatch = function (event, keyPath, args) {
         args = _.extend(args || {}, {
-            keyPath: keyPath,
+            keyPath: keyPath || '',
             model: this
         });
 
         Subscriber.prototype._dispatch.call(this, event, args);
     };
-
-    /*Model.prototype._dispatch = function (event, keyPath, args) {
-        var e = {
-            type: event,
-            keyPath: keyPath,
-            model: this
-        };
-
-        if (_.isObject(args) && !_.isArray(args) && !_.isFunction(args)) {
-            // add the extra args for this event to the event object
-            _.each(args, function (value, key, list) {
-                e[key] = value;
-            });
-        }
-
-        // loop through the callbacks
-        _.each(this.subscriptions[event], function (element, index, list) {
-            if (_.isFunction(element))
-                element.call(this, e);
-        }, this);
-    };*/
 
     Model.prototype.get = function (keyPath, defaultValue) {
         var result = this._findKeyPath(this.data, keyPath);
@@ -102,28 +91,29 @@ define([
         }
     };
 
-    /*Model.prototype.subscribe = function (event, callback) {
-        if (!_.contains(this.subscriptions, event)) {
-            this.subscriptions[event] = [];
-        }
+    Model.prototype.update = function (data, keyPath) {
+        _.each(data, function (value, key, list) {
+            var cKeyPath = keyPath ? (keyPath + '.' + key) : key;
 
-        if (!_.contains(this.subscriptions[event], callback)) {
-            this.subscriptions[event].push(callback);
-        }
+            if (_.isObject(value) || _.isArray(value)) {
+                console.log('update: ' + cKeyPath);
+                this.update(value, cKeyPath);
+            } else {
+                console.log('set: ' + cKeyPath + ' to:' + value);
+                this.set(cKeyPath, value);
+            }
+        }, this);
     };
 
-    Model.prototype.unsubscribe = function (callback) {
-        _.each(this.subscriptions, function (callbacks, index, list) {
-            if (_.contains(callbacks, callback)) {
-                var index = _.indexOf(callbacks, callback);
-                callbacks.splice(index, 1);
-            }
-        });
-    };*/
+    Model.prototype.forceChange = function (keyPath, args) {
+        this._dispatch(Model.Event.CHANGE, keyPath, args);
+    };
 
-    Model.prototype.forceChange = function (keyPath) {
-        keyPath = typeof keyPath !== 'undefined' ? keyPath : '';
-        this._dispatch(Model.Event.CHANGE, keyPath);
+    //TODO move to collection
+    Model.prototype.find = function (value, keyPath, collection) {
+        return _.findIndex(collection, function (model) {
+            return model.get(keyPath) == value;
+        });
     };
 
     return Model;

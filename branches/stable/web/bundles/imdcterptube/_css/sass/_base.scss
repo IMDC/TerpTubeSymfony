@@ -1,7 +1,7 @@
 @import 'bootstrap/variables';
 
 $line-height-base-top: 2; // FontAwesome fa-2x font size (em)
-$line-height-computed-top: floor(($font-size-base * $line-height-base-top));
+$line-height-computed-top: floor(($font-size-base /*bootstrap*/ * $line-height-base-top));
 
 $navbar-text-color: white;
 
@@ -9,9 +9,11 @@ $navbar-top-height: 70px;
 $navbar-top-padding-vertical: (($navbar-top-height - $line-height-computed-top) / 2);
 
 $navbar-bottom-height: 25px;
-$navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed) / 2);
+$navbar-bottom-padding-vertical: (($navbar-bottom-height - $line-height-computed /*bootstrap*/) / 2);
 
 $body-extra-padding: 15px;
+
+$title-font-size: 24px;
 
 $eku-primary: #5e213b;
 
@@ -85,7 +87,6 @@ ul.pagination {
   background-color: #888888;
 
   a {
-    color: #000000;
     font-size: 1.2em;
   }
 
@@ -192,7 +193,7 @@ $tt-gd-img-height: 125px;
       white-space: nowrap;
 
       > p:nth-of-type(1) {
-        font-size: 24px;
+        font-size: $title-font-size;
       }
     }
   }
@@ -206,10 +207,6 @@ $tt-lt-line-height: $tt-lt-row-height;
   @extend .tt-table;
 
   margin-top: 5px;
-
-  & span {
-    color: initial; /* override bootstrap span color under .active class */
-  }
 
   > thead > tr > th, > tbody > tr > td {
     line-height: $tt-lt-line-height;
@@ -230,7 +227,6 @@ $tt-lt-line-height: $tt-lt-row-height;
 
     &.tt-list-table-col-primary {
       width: 60%;
-      overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -253,4 +249,33 @@ $tt-lt-line-height: $tt-lt-row-height;
       }
     }
   }
+}
+
+.tt-thumbnail-title {
+  font-size: $title-font-size;
+}
+
+/*override bootstrap*/
+textarea.form-control {
+  height: $input-height-base; /*bootstrap*/
+}
+
+@mixin links {
+  a {
+    color: #000000;
+
+    &:hover, &:focus, &:visited {
+      text-decoration: none;
+    }
+  }
+}
+
+@include links;
+
+.btn-link:hover, .btn-link:focus {
+  text-decoration: none;
+}
+
+@media print {
+  @include links;
 }

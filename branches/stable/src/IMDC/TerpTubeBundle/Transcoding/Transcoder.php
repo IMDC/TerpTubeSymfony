@@ -17,6 +17,9 @@ class Transcoder
 
     private $ffmpeg;
 
+    /**
+     * @var FFProbe
+     */
     private $ffprobe;
 
     private $transcoder;
@@ -147,11 +150,11 @@ class Transcoder
             // $this->fs->rename ($videoFilePath, substr($videoFilePath, strrpos(0,$videoFilePath, ".")+1)."webm");
             // $uploadedFile =new UploadedFile($videoFilePath, "recording", "video/webm", filesize($videoFilePath),
             // UPLOAD_ERR_OK, false);
-            $isValid = $videoFile->isValid();
+            /*$isValid = $videoFile->isValid();
             if ($isValid)
                 $this->logger->info("Uploaded file valid ");
             else
-                $this->logger->info("Uploaded file invalid ");
+                $this->logger->info("Uploaded file invalid ");*/
             // $uploadedFile->move('/tmp','test.webm');
         }
         catch (\Exception $e)
@@ -390,6 +393,7 @@ class Transcoder
         }
         catch (\Exception $e)
         {
+            throw $e;
             $this->logger->error($e->getTraceAsString());
             if ($this->fs->exists($tempFileName))
                 $this->fs->remove($tempFileName);
@@ -400,6 +404,29 @@ class Transcoder
             return false;
         }
         return true;
+    }
+
+    public function transcode($container, $mediaType, File $inputFile, $preset)
+    {
+        switch ($container)
+        {
+            case ContainerConst::WEBM:
+                if ($mediaType == Media::TYPE_VIDEO)
+                    return $this->transcodeToWebM($inputFile, $preset);
+
+                if ($mediaType == Media::TYPE_AUDIO)
+                    return $this->transcodeAudioToWebM($inputFile, $preset);
+            case ContainerConst::MP4:
+                if ($mediaType == Media::TYPE_VIDEO)
+                    return $this->transcodeToX264($inputFile, $preset);
+
+                if ($mediaType == Media::TYPE_AUDIO)
+                    return $this->transcodeAudioToX264($inputFile, $preset);
+            default:
+                throw new \Exception("unknown container");
+        }
+
+        throw new \Exception("unsupported media type");
     }
 
     /**
@@ -832,11 +859,11 @@ class Transcoder
             $this->logger->info("Remuxing complete!");
             $this->fs->rename($outputFileWebm, $filePath, true);
             
-            $isValid = $file->isValid();
+            /*$isValid = $file->isValid();
             if ($isValid)
                 $this->logger->info("Uploaded file valid ");
             else
-                $this->logger->info("Uploaded file invalid ");
+                $this->logger->info("Uploaded file invalid ");*/
         }
         catch (\Exception $e)
         {

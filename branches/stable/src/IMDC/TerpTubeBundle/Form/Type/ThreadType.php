@@ -55,7 +55,8 @@ class ThreadType extends AbstractType
 	    ));
 
         $builder->add('accessType', 'access_type', array(
-            'class' => 'IMDC\TerpTubeBundle\Entity\Thread'
+            'class' => 'IMDC\TerpTubeBundle\Entity\Thread',
+            'access_data' => $options['access_data']
         ));
 	}
 
@@ -63,9 +64,10 @@ class ThreadType extends AbstractType
     {
         $resolver
             ->setDefaults(array(
-                'canChooseMedia' => true,
+                'canChooseMedia' => true, //TODO remove. no longer used
                 'canChooseForum' => false,
-                'data_class' => 'IMDC\TerpTubeBundle\Entity\Thread'))
+                'data_class' => 'IMDC\TerpTubeBundle\Entity\Thread',
+                'access_data' => null))
             ->setOptional(array(
                 'user',
                 'em'))

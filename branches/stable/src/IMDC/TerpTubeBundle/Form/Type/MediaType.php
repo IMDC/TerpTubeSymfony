@@ -18,7 +18,7 @@ class MediaType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('resource', new ResourceFileFormType());
+        $builder->add('source_resource', new ResourceFileFormType());
     }
 
     /**
@@ -27,7 +27,8 @@ class MediaType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'IMDC\TerpTubeBundle\Entity\Media'
+            'data_class' => 'IMDC\TerpTubeBundle\Entity\Media',
+            'intention' => $this->getName() // for dynamic csrf token generation
         ));
     }
 

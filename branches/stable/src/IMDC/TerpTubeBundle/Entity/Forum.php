@@ -23,6 +23,11 @@ class Forum
     private $titleText;
 
     /**
+     * @var string
+     */
+    private $description;
+
+    /**
      * @var \DateTime
      */
     private $lastActivity;
@@ -77,18 +82,11 @@ class Forum
      */
     public function __construct()
     {
-        $this->threads          = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->titleMedia       = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->forumAdmins      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->forumModerators  = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    public function __toString() 
-    {
-        //FIXME title being optional causes nulls (ex. new from media)
-        //return $this->getTitleText();
-
-        return $this->getId() . ':' . $this->getTitleText();
+        $this->mediaDisplayOrder = array();
+        $this->threads           = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->titleMedia        = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forumAdmins       = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->forumModerators   = new \Doctrine\Common\Collections\ArrayCollection();
     }
         
     /**
@@ -122,6 +120,29 @@ class Forum
     public function getTitleText()
     {
         return $this->titleText;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     * @return Forum
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
     }
 
     /**
@@ -404,5 +425,13 @@ class Forum
     public function getOrderedMedia()
     {
         return Utils::orderMedia($this->getTitleMedia(), $this->getMediaDisplayOrder());
+    }
+
+    public function __toString()
+    {
+        //FIXME title being optional causes nulls (ex. new from media)
+        //return $this->getTitleText();
+
+        return $this->getId() . ':' . $this->getTitleText();
     }
 }

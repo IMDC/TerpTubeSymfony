@@ -94,10 +94,24 @@ class Post
      */
     public function __construct()
     {
+        $this->id = -rand(); // random id for 'new' post api requests
         $this->attachedFile = new \Doctrine\Common\Collections\ArrayCollection();
         $this->replies      = new \Doctrine\Common\Collections\ArrayCollection();
         $this->isDeleted    = FALSE; // set to false as default
         $this->isTemporal   = FALSE; // set to false as default
+    }
+
+    /**
+     * Set id
+     *
+     * @param integer $id
+     * @return Post
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
     }
     
     /**
@@ -485,5 +499,20 @@ class Post
     public function getOrderedMedia()
     {
         return Utils::orderMedia($this->getAttachedFile(), $this->getMediaDisplayOrder());
+    }
+
+    public function isPostReply()
+    {
+        return !!$this->getParentPost();
+    }
+
+    public function getShallowParentPost()
+    {
+        return !$this->isPostReply() ? null : $this->getParentPost()->getId();
+    }
+
+    public function getShallowParentThread()
+    {
+        return $this->getParentThread()->getId();
     }
 }

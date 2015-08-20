@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace IMDC\TerpTubeBundle\Form\Type;
 
@@ -10,18 +10,25 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class ForumType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
-	{
+    {
         $user = $options['user'];
-        $group = array_key_exists('group', $options) ? $options['group'] : null;
+        $group = $options['group'];
 
         $builder->add('titleMedia', 'media_chooser');
 
-	    $builder->add('titleText', 'text', array(
+        $builder->add('titleText', 'text', array(
             'label' => 'Title'
         ));
 
+        $builder->add('description', 'textarea', array(
+            'required' => false,
+            'attr' => array(
+                'class' => 'autosize')
+        ));
+
         $builder->add('accessType', 'access_type', array(
-            'class' => 'IMDC\TerpTubeBundle\Entity\Forum'
+            'class' => 'IMDC\TerpTubeBundle\Entity\Forum',
+            'access_data' => $options['access_data']
         ));
 
         $queryBuilder = function (EntityRepository $repo) use ($user, $group) {
@@ -53,24 +60,28 @@ class ForumType extends AbstractType
             'required' => false,
             'attr' => $attr
         ));
-	}
+
+        // TODO access: null group if access type doesn't match
+    }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver
             ->setDefaults(array(
-                'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum'))
+                'data_class' => 'IMDC\TerpTubeBundle\Entity\Forum',
+                'group' => null,
+                'access_data' => null))
             ->setRequired(array(
                 'user'))
             ->setOptional(array(
                 'group'))
             ->setAllowedTypes(array(
                 'user' => 'Symfony\Component\Security\Core\User\UserInterface',
-                'group' => 'IMDC\TerpTubeBundle\Entity\UserGroup'));
+                'group' => array('null', 'IMDC\TerpTubeBundle\Entity\UserGroup')));
     }
 
-	public function getName()
-	{
-		return 'forum';
-	}
+    public function getName()
+    {
+        return 'forum';
+    }
 }

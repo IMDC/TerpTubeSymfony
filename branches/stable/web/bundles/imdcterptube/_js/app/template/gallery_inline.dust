@@ -1,0 +1,3 @@
+<div id="{identifier}" class="tt-gallery-inline gallery-inner">
+    {>"gallery_common" /}
+</div>

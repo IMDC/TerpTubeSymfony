@@ -24,7 +24,7 @@ define([
 
         before(function () {
             model = new GroupModel({
-                id: 10
+                id: 1
             });
             controller = new GroupController(model, {});
             controller.onViewLoaded();
@@ -41,39 +41,39 @@ define([
             $.mockjax.clear();
         });
 
-        it('should not have redirected', function () {
+        it('should not have redirected', function (done) {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
-                responseText: {
-                    wasDeleted: false
-                }
+                url: Routing.generate('imdc_delete_user_group', {groupId: model.get('id')}),
+                status: 400
             });
 
-            // don't return promise
-            controller.delete()
+            return controller.delete()
                 .done(function (data) {
                     assert.fail('done', 'fail', 'request should have failed');
+                    done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.isUndefined(pageUrl, 'pageUrl should be null');
+                    done();
                 });
         });
 
-        it('should have redirected', function () {
+        it('should have redirected', function (done) {
             $.mockjax({
-                url: Routing.generate('imdc_group_delete', {groupId: model.get('id')}),
+                url: Routing.generate('imdc_delete_user_group', {groupId: model.get('id')}),
                 responseText: {
-                    wasDeleted: true,
-                    redirectUrl: Common.BASE_URL + '/group/'
+                    redirect_url: Common.BASE_URL + '/group/'
                 }
             });
 
             return controller.delete()
                 .done(function (data) {
-                    assert.equal(pageUrl, data.redirectUrl, 'pageUrl should equal key:redirectUrl');
+                    assert.equal(pageUrl, data.redirect_url, 'pageUrl should equal key:redirect_url');
+                    done();
                 })
-                .fail(function () {
+                .fail(function (data) {
                     assert.fail('fail', 'done', 'request should not have failed');
+                    done();
                 });
         });
 

@@ -12,6 +12,9 @@ IMDC\TerpTubeBundle\Entity\Forum:
             type: string
             length: '255'
             nullable: true
+        description:
+            type: text
+            nullable: true
         lastActivity:
             type: datetime
         creationDate:
