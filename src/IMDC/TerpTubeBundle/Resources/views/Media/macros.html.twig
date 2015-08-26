@@ -103,12 +103,17 @@
     {% endif %}
 {% endmacro %}
 
-{% macro element2(media) %}
+{% macro element2(media, entity, name) %}
     {% import _self as _media %}
 
     {% if media|length == 0 %}
-        <i class="fa fa-question fa-3x"></i><br />
-        <em>no media</em>
+        {% set shape = entity == 'group' ? 'circle' : 'square' %}
+        {% set color = random(['sky', 'green', 'orange', 'red', 'blue', 'purple']) %}
+        {% set name = name ?: 'n' %}
+
+        <div class="tt-media-no-thumbnail tt-mnt-{{ shape }} tt-mnt-{{ color }}">
+            <span class="tt-mnt-text">{{ name|first|upper }}</span>
+        </div>
     {% else %}
         {% set m = media[0] %}
 
