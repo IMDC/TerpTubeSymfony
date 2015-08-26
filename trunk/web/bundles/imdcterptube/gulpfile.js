@@ -48,19 +48,25 @@ gulp.task('scripts', ['rjs', 'dust'], function () {
         .pipe(gulp.dest('./build/js'));
 });
 
-gulp.task('sass', function () {
+gulp.task('sass', ['fonts'], function () {
     return gulp.src('_css/sass/*.scss')
         .pipe(compass({
-            project: __dirname + '/_css',
-            config_file: 'config.rb',
-            css: '../build/css',
+            config_file: __dirname + '/_css/config.rb',
+            css: 'css',
             sass: __dirname + '/_css/sass'//, debug: true
         }))
+        .pipe(gulp.dest('./build/css'))
         .pipe(minifyCss())
         .pipe(rename(function (path) {
             path.basename += '.min'
         }))
-        .pipe(gulp.dest('../build/css'));
+        .pipe(gulp.dest('./build/css'));
+});
+
+gulp.task('fonts', function () {
+    return gulp.src(['_css/fonts/*'])
+        .pipe(gulp.dest('./build/fonts'))
+        .pipe(gulp.dest('./fonts'));
 });
 
 var hashes = {};

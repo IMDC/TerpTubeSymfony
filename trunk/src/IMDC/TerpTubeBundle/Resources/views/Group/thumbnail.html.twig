@@ -17,7 +17,7 @@ _Home:index.html.twig
                 <div class="thumbnail text-center tt-grid-div-body">
                     <div class="tt-grid-div-thumbnail">
                         <a href="{{ path('imdc_group_view', {'groupId': group.getId}) }}">
-                            {{ _media.element2(group.getMedia) }}
+                            {{ _media.element2(group.getMedia, 'group', group.getName) }}
                         </a>
                         {{ _media.expand(group.getMedia) }}
                     </div>

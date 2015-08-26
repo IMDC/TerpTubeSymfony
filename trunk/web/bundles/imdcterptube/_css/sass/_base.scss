@@ -1,3 +1,4 @@
+@import 'compass/css3';
 @import 'bootstrap/variables';
 
 $line-height-base-top: 2; // FontAwesome fa-2x font size (em)
@@ -16,6 +17,9 @@ $body-extra-padding: 15px;
 $title-font-size: 24px;
 
 $eku-primary: #5e213b;
+
+
+@include font-face('Mini Pics ASL', font-files('Mini_Pics_ASL.ttf'));
 
 
 
