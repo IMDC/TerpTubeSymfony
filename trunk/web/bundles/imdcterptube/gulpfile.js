@@ -98,3 +98,5 @@ gulp.task('watch', ['build'], function () {
         gulp.start('sass');
     });
 });
+
+gulp.task('default', ['build']);
