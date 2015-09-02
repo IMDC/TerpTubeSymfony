@@ -9,9 +9,6 @@ var rjs = require('gulp-requirejs');
 var compass = require('gulp-compass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
-var rev = require('gulp-rev');
-var fs = require('fs');
-var replace = require('gulp-replace');
 var watch = require('gulp-watch');
 
 gulp.task('clean', function () {
@@ -69,24 +66,16 @@ gulp.task('fonts', function () {
         .pipe(gulp.dest('./fonts'));
 });
 
-var hashes = {};
-
-gulp.task('revision', function () {
+gulp.task('output', function () {
     return gulp.src('./build/**/*.min.{css,js}')
-        .pipe(rev())
-        .pipe(gulp.dest('.'))
-        .pipe(rev.manifest())
-        .pipe(gulp.dest('./build'));
+        .pipe(gulp.dest('.'));
 });
 
 gulp.task('build', function () {
-    return runSequence('clean', ['scripts', 'sass'], 'revision', function () {
-        var manifest = JSON.parse(fs.readFileSync('./build/rev-manifest.json', 'utf8'));
-
-        gulp.src('../../../src/IMDC/TerpTubeBundle/Resources/config/version.yml')
-            .pipe(replace(/scripts:.*/g, 'scripts: ' + manifest['js/terptube.min.js']))
-            .pipe(replace(/sass:.*/g, 'sass: ' + manifest['css/terptube.min.css']))
-            .pipe(gulp.dest('../../../src/IMDC/TerpTubeBundle/Resources/config'));
+    return runSequence('clean', ['scripts', 'sass'], 'output', function () {
+        return del([
+            './css/terptube.css'
+        ]);
     });
 });
 

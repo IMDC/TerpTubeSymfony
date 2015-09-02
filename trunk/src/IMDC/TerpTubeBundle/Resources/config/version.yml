@@ -1,5 +1,2 @@
 parameters:
     app.version: 0.0.15
-    app.assets:
-        scripts: js/terptube.min-7746c27742.js
-        sass: css/terptube.min-59cef12636.css
