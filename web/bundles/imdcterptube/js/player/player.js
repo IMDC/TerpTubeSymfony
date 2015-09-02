@@ -156,7 +156,7 @@ Player.prototype.createControls = function()
 	{
 	    instance.setVolumeBarVisible(true);
 	});
-	videoOverlayElement.find(".videoControlsContainer.volumeControl").eq(0).append('<img alt="volume control" />')
+	videoOverlayElement.find(".videoControlsContainer.volumeControl").eq(0).append('<img />')
 		.append('<div class="videoControlsContainer track volumeControl volumeSlider"></div>');
 	$(this.elementID).find(".videoControlsContainer.volumeControl img").eq(0).click(function()
 	{
