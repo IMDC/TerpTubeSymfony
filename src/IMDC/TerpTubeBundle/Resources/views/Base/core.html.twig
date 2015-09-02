@@ -56,7 +56,7 @@
             {% if app.environment == 'dev' %}
                 <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/build/css/terptube.css') }}" />
             {% else %}
-                <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/' ~ assets.sass) }}" />
+                <link rel="stylesheet" type="text/css" href="{{ asset('bundles/imdcterptube/css/terptube.min.css?version=' ~ version) }}" />
             {% endif %}
 
             <script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}?version={{ version }}"></script>
@@ -96,7 +96,7 @@
                     require(['main']);
                 </script>
             {% else %}
-                <script src="{{ asset('bundles/imdcterptube/' ~ assets.scripts) }}"></script>
+                <script src="{{ asset('bundles/imdcterptube/js/terptube.min.js?version=' ~ version) }}"></script>
             {% endif %}
 
             <script type="text/javascript">

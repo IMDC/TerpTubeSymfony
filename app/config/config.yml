@@ -34,7 +34,6 @@ twig:
             - 'IMDCTerpTubeBundle:Form:fields.html.twig'
     globals:
         version: %app.version%
-        assets: %app.assets%
 
 braincrafted_bootstrap:
     less_filter: lessphp
