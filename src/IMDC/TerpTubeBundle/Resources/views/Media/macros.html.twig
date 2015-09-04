@@ -103,6 +103,23 @@
     {% endif %}
 {% endmacro %}
 
+{#poor way to accomodate 'Mini Pics ASL' font#}
+{#TODO twig ext??#}
+{% macro num2symbol(num) %}
+    {% if num == '1' %}!
+    {% elseif num == '2' %}@
+    {% elseif num == '3' %}#
+    {% elseif num == '4' %}$
+    {% elseif num == '5' %}%
+    {% elseif num == '6' %}^
+    {% elseif num == '7' %}&
+    {% elseif num == '8' %}*
+    {% elseif num == '9' %}(
+    {% elseif num == '0' %})
+    {% else %}{{ num }}
+    {% endif %}
+{% endmacro %}
+
 {% macro element2(media, entity, name) %}
     {% import _self as _media %}
 
@@ -112,7 +129,7 @@
         {% set name = name ?: 'n' %}
 
         <div class="tt-media-no-thumbnail tt-mnt-{{ shape }} tt-mnt-{{ color }}">
-            <span class="tt-mnt-text">{{ name|first|upper }}</span>
+            <span class="tt-mnt-text">{{ _media.num2symbol(name|first|upper) }}</span>
         </div>
     {% else %}
         {% set m = media[0] %}

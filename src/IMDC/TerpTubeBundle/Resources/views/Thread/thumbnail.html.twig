@@ -26,10 +26,10 @@ _Forum:view.html.twig
                         <div class="tt-grid-div-primary">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <p>
+                                    <span>
                                         {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': thread.getCreator} %}
                                         {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': thread.getCreator} %}
-                                    </p>
+                                    </span>
                                 </div>
                                 <div class="col-md-8" style="border-left: 1px solid #dddddd;">
                                     <a href="{{ path('imdc_thread_view', {'threadid': thread.getId}) }}" title="{{ thread.getTitle }}">
@@ -41,10 +41,10 @@ _Forum:view.html.twig
                                             {% endif %}
                                         </span>
                                     </a>
-                                    <p class="text-muted">
+                                    <span class="text-muted">
                                         <i class="fa fa-pencil-square-o" title="Reply count"></i> {{ thread.getPosts|length }} replies<br />
                                         <i class="fa fa-clock-o" title="Last activity {{ time_diff(thread.getLastPostAt) }}"></i> {{ thread.getLastPostAt|date('M d Y h:i a') }}
-                                    </p>
+                                    </span>
                                 </div>
                             </div>
                         </div>

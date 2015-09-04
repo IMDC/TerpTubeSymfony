@@ -1,3 +1,5 @@
+@import "mixins";
+
 .tt-myFiles-previewColumn
 {
 	padding: 0 !important;
@@ -59,6 +61,7 @@ $tt-mgd-tn-height: 175px;
     /*white-space: nowrap;
     display: inline-block;*/
     cursor: pointer;
+    @include ttm-text-overflow;
 
     > span:nth-of-type(1) i.fa {
       vertical-align: middle;

@@ -25,11 +25,11 @@ _Home:index.html.twig
                         <a href="{{ path('imdc_group_view', {'groupId': group.getId}) }}" title="{{ group.getName }}">
                             <span class="tt-title">{{ group.getName }}</span>
                         </a>
-                        <p class="text-muted">
+                        <span class="text-muted">
                             <i class="fa fa-user" title="Founder"></i> {{ group.getUserFounder.getUsername }}&ensp;
                             <i class="fa fa-users" title="Member count"></i> {{ group.getMembers|length }} members<br />
                             <i class="fa fa-clock-o" title="Date created"></i> {{ group.getDateCreated|date('M d Y h:i a') }}
-                        </p>
+                        </span>
                     </div>
                 </div>
             </div>

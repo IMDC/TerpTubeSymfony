@@ -1,3 +1,5 @@
 {#user}
-    <a href="{@generateRouteUrl name="imdc_profile_user" str_params="userName:username" /}" title="{username}">{username}</a>
+    <a href="{@generateRouteUrl name="imdc_profile_user" str_params="userName:username" /}" title="{username}">
+        <span class="tt-username">{username}</span>
+    </a>
 {/user}
