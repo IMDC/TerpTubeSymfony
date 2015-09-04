@@ -102,16 +102,18 @@ class MyFilesController extends Controller
             }
         }
 
-        $umask = umask();
-        umask(0000);
-        chmod($video->getRealPath(), 0666);
-        chmod($audio->getRealPath(), 0666);
-        umask($umask);
+       
         //TODO revise? will the uploaded file container always be webm or wav?
         if (!$isFirefox)
             $video = $video->move('/tmp/terptube-recordings', tempnam('', 'hello_video_') . '.webm');
         $audio = $audio->move('/tmp/terptube-recordings', tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
 
+        $umask = umask();
+        umask(0000);
+        chmod($video->getRealPath(), 0666);
+        chmod($audio->getRealPath(), 0666);
+        umask($umask);
+        
         if ($isInterpretation) {
             $media = new Interpretation();
             $media->setSourceStartTime($sourceStartTime);
