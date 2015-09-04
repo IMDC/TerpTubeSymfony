@@ -1,0 +1,7 @@
+# This file is auto-generated during the composer install
+parameters:
+    app.prefix: "eku-"
+twig:
+    globals:
+      app_parameters: 
+        prefix: "%app.prefix%"

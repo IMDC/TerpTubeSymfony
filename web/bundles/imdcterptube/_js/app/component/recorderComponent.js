@@ -148,7 +148,7 @@ define([
         }.bind(this);
         this.bind__onConnect = function (e) {
             this.subscription = this.rabbitmqWebStompService.subscribe(
-                '/exchange/entity-status',
+                '/exchange/'+window.parameters.prefix+"entity-status',
                 RabbitmqWebStompService.Event.MESSAGE, this.bind__onMessage);
         }.bind(this);
 
