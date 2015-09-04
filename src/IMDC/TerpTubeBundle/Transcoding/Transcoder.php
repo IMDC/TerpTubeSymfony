@@ -160,7 +160,7 @@ class Transcoder
         }
         catch (\Exception $e)
         {
-            $this->logger->info($e->__toString ());
+            $this->logger->error($e->__toString ());
             if ($this->fs->exists($tempFileName))
                 $this->fs->remove($tempFileName);
             if ($this->fs->exists($outputFileWebm))
