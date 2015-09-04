@@ -158,7 +158,7 @@ class Transcoder
                 $this->logger->info("Uploaded file invalid ");*/
             // $uploadedFile->move('/tmp','test.webm');
         }
-        catch (IOException $e)
+        catch (\Symfony\Component\Filesystem\Exception\IOException $e)
         {
             $this->logger->info("IO EXCEPTION ERROR!!!");
             $this->logger->info($e->__toString ());
