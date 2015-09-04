@@ -9,6 +9,7 @@ use FFMpeg\FFProbe;
 use FFMpeg\FFMpeg;
 use Symfony\Component\Filesystem\Filesystem;
 use AC\Transcoding\Exception\InvalidInputException;
+use Symfony\Component\Filesystem\Exception\IOException;
 
 class Transcoder
 {
@@ -157,11 +158,14 @@ class Transcoder
                 $this->logger->info("Uploaded file invalid ");*/
             // $uploadedFile->move('/tmp','test.webm');
         }
-        catch (\Exception $e)
+        catch (IOException $e)
         {
             $this->logger->error("STUPID ERROR!!!");
             $this->logger->error($e->__toString ());
             $this->logger->error($e->getTraceAsString());
+        }
+        catch (\Exception $e)
+        {
             if ($this->fs->exists($tempFileName))
                 $this->fs->remove($tempFileName);
             if ($this->fs->exists($outputFileWebm))
