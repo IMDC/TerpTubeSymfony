@@ -145,7 +145,7 @@ class Transcoder
             
             // set correct permissions
             $old = umask(0);
-            chmod($videoFilePath, 0664);
+            chmod($videoFilePath, 0666);
             umask($old);
             
             // $this->fs->rename ($videoFilePath, substr($videoFilePath, strrpos(0,$videoFilePath, ".")+1)."webm");
@@ -158,20 +158,13 @@ class Transcoder
                 $this->logger->info("Uploaded file invalid ");*/
             // $uploadedFile->move('/tmp','test.webm');
         }
-        catch (\Symfony\Component\Filesystem\Exception\IOException $e)
-        {
-            $this->logger->info("IO EXCEPTION ERROR!!!");
-            $this->logger->info($e->__toString ());
-            $this->logger->error($e->getTraceAsString());
-        }
         catch (\Exception $e)
         {
-            $this->logger->info("STUPID ERROR!!!");
             $this->logger->info($e->__toString ());
-//             if ($this->fs->exists($tempFileName))
-//                 $this->fs->remove($tempFileName);
-//             if ($this->fs->exists($outputFileWebm))
-//                 $this->fs->remove($outputFileWebm);
+            if ($this->fs->exists($tempFileName))
+                $this->fs->remove($tempFileName);
+            if ($this->fs->exists($outputFileWebm))
+                $this->fs->remove($outputFileWebm);
             return null;
         }
         return $videoFile;
