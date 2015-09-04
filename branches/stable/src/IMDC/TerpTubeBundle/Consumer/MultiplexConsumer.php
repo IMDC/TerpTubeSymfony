@@ -87,6 +87,7 @@ class MultiplexConsumer extends AbstractMediaConsumer
             $em->persist($this->media);
             $em->flush();
         } catch (\Exception $e) {
+            $this->logger->error("STUPID ERROR 2!!!");
             $this->logger->error($e->__toString ());
             $this->logger->error($e->getTraceAsString());
             $this->sendStatusUpdate('Error');

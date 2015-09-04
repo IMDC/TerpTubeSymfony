@@ -159,6 +159,7 @@ class Transcoder
         }
         catch (\Exception $e)
         {
+            $this->logger->error("STUPID ERROR!!!");
             $this->logger->error($e->__toString ());
             $this->logger->error($e->getTraceAsString());
             if ($this->fs->exists($tempFileName))
