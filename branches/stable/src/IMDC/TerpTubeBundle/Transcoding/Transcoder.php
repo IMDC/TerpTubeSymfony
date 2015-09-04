@@ -160,16 +160,18 @@ class Transcoder
         }
         catch (IOException $e)
         {
-            $this->logger->error("STUPID ERROR!!!");
-            $this->logger->error($e->__toString ());
+            $this->logger->info("IO EXCEPTION ERROR!!!");
+            $this->logger->info($e->__toString ());
             $this->logger->error($e->getTraceAsString());
         }
         catch (\Exception $e)
         {
-            if ($this->fs->exists($tempFileName))
-                $this->fs->remove($tempFileName);
-            if ($this->fs->exists($outputFileWebm))
-                $this->fs->remove($outputFileWebm);
+            $this->logger->info("STUPID ERROR!!!");
+            $this->logger->info($e->__toString ());
+//             if ($this->fs->exists($tempFileName))
+//                 $this->fs->remove($tempFileName);
+//             if ($this->fs->exists($outputFileWebm))
+//                 $this->fs->remove($outputFileWebm);
             return null;
         }
         return $videoFile;
