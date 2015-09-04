@@ -1,79 +1,77 @@
-{% macro _message(user, user2, button) %}
-    <a {% if button %}class="btn btn-default" {% endif %}
+{% macro _message(user, user2) %}
+    <a class="btn btn-default"
        href="{{ path('imdc_message_new', {'userid': user2.username}) }}"
        title="Send a message to {{ user2.username }}">
         <i class="fa fa-envelope-o"></i>
     </a>
 {% endmacro %}
 
-{% macro _mentor(user, user2, button) %}
-    {% if user.isUserOnMentorList(user2) %}
-        {% if not button %}
-            <i class="fa fa-star" title="This user is your mentor"></i>
-        {% endif %}
-    {% else %}
-        <a {% if button %}class="btn btn-default" {% endif %}
-           href="{{ path('imdc_invitation_mentor', {'id': user2.id}) }}"
-           title="Invite user to be your mentor">
-            <i class="fa fa-inbox"></i>
-        </a>
+{% macro _mentor(user, user2) %}
+    {% set title = 'Invite user to be your mentor' %}
+    {% set icon = 'fa-inbox' %}
+
+    {% set no_action = user.isUserOnMentorList(user2) %}
+    {% if no_action %}
+        {% set title = "This user is your mentor" %}
+        {% set icon = 'fa-star' %}
     {% endif %}
+
+    <a class="btn btn-default{% if no_action %} disabled{% endif %}"
+       href="{{ path('imdc_invitation_mentor', {'id': user2.id}) }}"
+       title="{{ title }}">
+        <i class="fa {{ icon }}"></i>
+    </a>
 {% endmacro %}
 
-{% macro _mentee(user, user2, button) %}
-    {% if user.isUserOnMenteeList(user2) %}
-        {% if not button %}
-            <i class="fa fa-star" title="This user is your mentee"></i>
-        {% endif %}
-    {% else %}
-        <a {% if button %}class="btn btn-default" {% endif %}
-           href="{{ path('imdc_invitation_mentee', {'id': user2.id}) }}"
-           title="Invite user to be your mentee">
-            <i class="fa fa-star-o"></i>
-        </a>
+{% macro _mentee(user, user2) %}
+    {% set title = 'Invite user to be your mentee' %}
+    {% set icon = 'fa-star-o' %}
+
+    {% set no_action = user.isUserOnMenteeList(user2) %}
+    {% if no_action %}
+        {% set title = "This user is your mentee" %}
+        {% set icon = 'fa-star' %}
     {% endif %}
+
+    <a class="btn btn-default{% if no_action %} disabled{% endif %}"
+       href="{{ path('imdc_invitation_mentee', {'id': user2.id}) }}"
+       title="{{ title }}">
+        <i class="fa {{ icon }}"></i>
+    </a>
 {% endmacro %}
 
-{% macro _friend(user, user2, button) %}
-    {% if user.isUserOnFriendsList(user2) %}
-        {% if not button %}
-            <i class="fa fa-minus" title="This user is your friend"></i>
-        {% endif %}
-    {% else %}
-        <a {% if button %}class="btn btn-default" {% endif %}
-           href="{{ path('imdc_member_friend_add', {'userid': user2.id}) }}"
-           title="Click to add {{ user2.username }} to your friends list">
-            <i class="fa fa-plus"></i>
-        </a>
+{% macro _friend(user, user2) %}
+    {% set title = 'Click to add ' ~ user2.username ~ ' to your friends list' %}
+    {% set icon = 'fa-plus' %}
+
+    {% set no_action = user.isUserOnFriendsList(user2) %}
+    {% if no_action %}
+        {% set title = "This user is your friend" %}
+        {% set icon = 'fa-minus' %}
     {% endif %}
+
+    <a class="btn btn-default"
+       href="{{ path('imdc_member_friend_add', {'userid': user2.id}) }}"
+       title="{{ title }}">
+        <i class="fa {{ icon }}"></i>
+    </a>
 {% endmacro %}
 
-{% macro connect_tools(user, user2, style) %}
+{% macro connect_tools(user, user2) %}
     {% import _self as _member %}
 
-    {% set button = style == 'button' %}
-    {% set message = _member._message(user, user2, button) %}
-    {% set mentor = _member._mentor(user, user2, button) %}
-    {% set mentee = _member._mentee(user, user2, button) %}
-    {% set friend = _member._friend(user, user2, button) %}
-
-    {% if style == 'button' %}
-        {% if user.id != user2.id %}
-            {{ message }}
-            {{ mentor }}
-            {{ mentee }}
-            {{ friend }}
+    <div class="btn-group">
+        {% if user.id == user2.id %}
+            <button class="btn btn-default disabled">
+                <i class="fa fa-user"></i>
+            </button>
+        {% else %}
+            {{ _member._message(user, user2) }}
+            {{ _member._mentor(user, user2) }}
+            {{ _member._mentee(user, user2) }}
+            {{ _member._friend(user, user2) }}
         {% endif %}
-    {% else %}
-        <ul class="list-unstyled list-inline">
-            {% if user.id != user2.id %}
-                <li>{{ message }}</li>
-                <li>{{ mentor }}</li>
-                <li>{{ mentee }}</li>
-                <li>{{ friend }}</li>
-            {% endif %}
-        </ul>
-    {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro _controls(style) %}
@@ -117,11 +115,10 @@
                                 {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}
                             </td>
                             <td class="tt-list-table-col-primary">
-                                    <span>
-                                        {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
-                                        {% if app.user == user %} <span class="tt-this-is-you">(you)</span>{% endif %}
-                                    </span>
-                                <span>{{ _member.connect_tools(app.user, user, 'button') }}</span>
+                                <span>
+                                    {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
+                                </span>
+                                <span>{{ _member.connect_tools(app.user, user) }}</span>
                             </td>
                             <td>{{ user.getPostCount }}</td>
                             <td>{{ user.getJoinDate|date('M d Y') }}</td>
@@ -155,18 +152,17 @@
                             </div>
                         {% endif %}
                         <div class="tt-grid-div-thumbnail">
-                            <div>{% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}</div>
+                            {% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' with {'member': user} %}
                         </div>
                         <div class="tt-grid-div-primary">
-                            <p class="tt-title">
+                            <span>
                                 {% include 'IMDCTerpTubeBundle:Member:username.html.twig' with {'member': user} %}
-                                {% if is_selection and app.user == user %} <span class="tt-this-is-you">(you)</span>{% endif %}
-                            </p>
+                            </span>
                             <p class="text-muted">
                                 <i class="fa fa-pencil-square-o" title="{{ 'member.infoBlock.postCount'|trans }}"></i> {{ user.postCount }} posts<br />
                                 <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ user.joinDate|date('M d Y') }}
                             </p>
-                            {{ _member.connect_tools(app.user, user, 'ul') }}
+                            <div>{{ _member.connect_tools(app.user, user) }}</div>
                         </div>
                     </div>
                 </div>

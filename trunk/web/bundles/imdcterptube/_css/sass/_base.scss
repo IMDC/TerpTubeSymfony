@@ -1,5 +1,7 @@
-@import 'compass/css3';
-@import 'bootstrap/variables';
+@import "compass/css3";
+@import "bootstrap/variables";
+
+@import "mixins";
 
 $line-height-base-top: 2; // FontAwesome fa-2x font size (em)
 $line-height-computed-top: floor(($font-size-base /*bootstrap*/ * $line-height-base-top));
@@ -201,9 +203,6 @@ $tt-gd-tn-height: 125px;
   & div.tt-grid-div-primary {
     padding-right: 15px;
     padding-left: 15px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }
 
@@ -235,8 +234,6 @@ $tt-lt-line-height: $tt-lt-row-height;
 
     &.tt-list-table-col-primary {
       width: 60%;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .tt-avatar, .tt-thumbnail {
@@ -246,6 +243,10 @@ $tt-lt-line-height: $tt-lt-row-height;
 
   > tbody > tr > td {
     &.tt-list-table-col-primary {
+      & span.tt-username {
+        display: initial;
+      }
+
       > span:nth-of-type(2) {
         float: right;
         margin-bottom: -1px;
@@ -261,6 +262,12 @@ $tt-lt-line-height: $tt-lt-row-height;
 
 .tt-title {
   font-size: $title-font-size;
+  display: block;
+  @include ttm-text-overflow(block);
+}
+
+.tt-username {
+  @include ttm-text-overflow(block);
 }
 
 /*override bootstrap*/
@@ -268,22 +275,12 @@ textarea.form-control {
   height: $input-height-base; /*bootstrap*/
 }
 
-@mixin links {
-  a {
-    color: #000000;
-
-    &:hover, &:focus, &:visited {
-      text-decoration: none;
-    }
-  }
-}
-
-@include links;
+@include ttm-links;
 
 .btn-link:hover, .btn-link:focus {
   text-decoration: none;
 }
 
 @media print {
-  @include links;
+  @include ttm-links;
 }

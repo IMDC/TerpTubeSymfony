@@ -34,11 +34,11 @@ _Home:index.html.twig
                                 {% endif %}
                             </span>
                         </a>
-                        <p class="text-muted">
+                        <span class="text-muted">
                             <i class="fa fa-user" title="Creator"></i> {{ forum.getCreator }}&ensp;
                             <i class="fa fa-pencil-square-o" title="Topic count"></i> {{ forumThreadCount[loop.index0] }} topics<br />
                             <i class="fa fa-clock-o" title="Last activity {{ time_diff(forum.getLastActivity) }}"></i> {{ forum.getLastActivity|date('M d Y h:i a') }}
-                        </p>
+                        </span>
                     </div>
                 </div>
             </div>

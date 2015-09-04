@@ -12,32 +12,4 @@ _Member:index.html.twig
     {% set isSelection = false %}
 {% endif %}
 
-{% for member in members %}
-    {% if loop.index % 4 == 1 %}
-        <div class="row">
-    {% endif %}
-        <div class="col-md-3">
-            <div class="thumbnail text-center tt-member-grid-thumbnail">
-                {% if isSelection %}
-                    <input type="checkbox" data-uid="{{ member.id }}" {% if app.user == member %}disabled {% endif %}/>
-                {% endif %}
-                <div>
-                    <div>{% include 'IMDCTerpTubeBundle:Member:avatar.html.twig' %}</div>
-                </div>
-                <div>
-                    <p>
-                        {% include 'IMDCTerpTubeBundle:Member:username.html.twig' %}
-                        {% if isSelection and app.user == member %} <span class="tt-this-is-you">(you)</span>{% endif %}
-                    </p>
-                    <p class="text-muted">
-                        <i class="fa fa-pencil-square-o" title="{{ 'member.infoBlock.postCount'|trans }}"></i> {{ member.postCount }} posts<br />
-                        <i class="fa fa-clock-o" title="{{ 'member.infoBlock.joined'|trans }}"></i> {{ member.joinDate|date('M d Y') }}
-                    </p>
-                    {{ _member.connect_tools(app.user, member, 'ul') }}
-                </div>
-            </div>
-        </div>
-    {% if loop.index % 4 == 0 or loop.last %}
-        </div>
-    {% endif %}
-{% endfor %}
+{{ _member.list_users_grid(members) }}
