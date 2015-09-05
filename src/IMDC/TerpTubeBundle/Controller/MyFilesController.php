@@ -104,9 +104,14 @@ class MyFilesController extends Controller
 
        
         //TODO revise? will the uploaded file container always be webm or wav?
+        if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_RECORDING))
+        {
+            mkdir(Transcoder::TEMPORARY_DIRECTORY_RECORDING);
+            chmod(Transcoder::TEMPORARY_DIRECTORY_RECORDING, 0777);
+        }
         if (!$isFirefox)
-            $video = $video->move('/tmp/terptube-recordings', tempnam('', 'hello_video_') . '.webm');
-        $audio = $audio->move('/tmp/terptube-recordings', tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
+            $video = $video->move(Transcoder::TEMPORARY_DIRECTORY_RECORDIN, tempnam('', 'hello_video_') . '.webm');
+        $audio = $audio->move(Transcoder::TEMPORARY_DIRECTORY_RECORDIN, tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
 
         $umask = umask();
         umask(0000);
