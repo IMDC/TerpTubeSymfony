@@ -60,6 +60,11 @@
             {% endif %}
 
             <script src="{{ asset('bundles/imdcterptube/js/player/player.js') }}?version={{ version }}"></script>
+            
+            <script>
+            window.parameters = {{ app_parameters|json_encode|raw }};;
+            </script>
+            
             {% if app.environment == 'dev' %}
                 <script type="text/javascript">
                     requirejs.config({
