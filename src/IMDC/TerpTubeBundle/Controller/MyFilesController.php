@@ -110,8 +110,8 @@ class MyFilesController extends Controller
             chmod(Transcoder::TEMPORARY_DIRECTORY_RECORDING, 0777);
         }
         if (!$isFirefox)
-            $video = $video->move(Transcoder::TEMPORARY_DIRECTORY_RECORDIN, tempnam('', 'hello_video_') . '.webm');
-        $audio = $audio->move(Transcoder::TEMPORARY_DIRECTORY_RECORDIN, tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
+            $video = $video->move(Transcoder::TEMPORARY_DIRECTORY_RECORDING, tempnam('', 'hello_video_') . '.webm');
+        $audio = $audio->move(Transcoder::TEMPORARY_DIRECTORY_RECORDING, tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
 
         $umask = umask();
         umask(0000);
