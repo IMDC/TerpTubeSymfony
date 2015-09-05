@@ -102,7 +102,10 @@ class Transcoder
             $umask = umask();
             umask(0000);
             if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_RECORDING))
+            {
                 mkdir(Transcoder::TEMPORARY_DIRECTORY_RECORDING);
+                chmod(Transcoder::TEMPORARY_DIRECTORY_RECORDING, 0777);
+            }
             $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_RECORDING, "MergedVideo");
             
             // //Will this fix the problem on the server with executing the command?
@@ -179,7 +182,10 @@ class Transcoder
             $umask = umask();
             umask(0000);
             if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING))
+            {
                 mkdir(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING);
+                chmod(Transcoder::TEMPORARY_DIRECTORY_RECORDING, 0777);
+            }
             $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_TRANSCODING, "thumbnail");
             
             $dir = getcwd();
@@ -835,7 +841,10 @@ class Transcoder
             $umask = umask();
             umask(0000);
             if (! file_exists(Transcoder::TEMPORARY_DIRECTORY_RECORDING))
+            {
                 mkdir(Transcoder::TEMPORARY_DIRECTORY_RECORDING);
+                chmod(Transcoder::TEMPORARY_DIRECTORY_RECORDING, 0777);
+            }
             $tempFileName = tempnam(Transcoder::TEMPORARY_DIRECTORY_RECORDING, "RemuxedFile");
             
             umask($umask);
