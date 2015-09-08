@@ -43,6 +43,7 @@ define([
     'controller/contactController',
     'controller/forumController',
     'controller/groupController',
+    'controller/homeController',
     'controller/messageController',
     'controller/myFilesController',
     'controller/postController',
@@ -70,6 +71,8 @@ define([
     'views/group/listView',
     'views/group/viewView',
     'views/group/manageView',
+
+    'views/home/indexView',
 
     'views/message/newView',
     'views/message/replyView',

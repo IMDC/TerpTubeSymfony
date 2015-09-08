@@ -2,6 +2,27 @@
 
 {% block title %}Home{% endblock %}
 
+{% block header %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        require([
+            'bootstrap',
+            'controller/homeController', 'views/home/indexView',
+            'main'
+        ], function(bootstrap, HomeController, HomeView) {
+            bootstrap(
+                    null,
+                    HomeController,
+                    HomeView,
+                    {
+                        container: $('body')
+                    }
+            );
+        });
+    </script>
+{% endblock header %}
+
 {% block sidebarlinks_home %}class="active"{% endblock %}
 
 {% block content %}
