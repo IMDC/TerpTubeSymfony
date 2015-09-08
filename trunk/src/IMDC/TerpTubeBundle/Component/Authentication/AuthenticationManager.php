@@ -20,7 +20,7 @@ class AuthenticationManager
         'fos_js_routing_js',
         'bazinga_jstranslation_js',
         'webfactory_exceptions_test_testerrorpage',
-        'imdc_index'
+        'imdc_default_index'
     );
 
     /**
