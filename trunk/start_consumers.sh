@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+readonly SCRIPT_NAME=$(basename $0)
+
 CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ $# = 1 ]
 then
@@ -12,8 +14,6 @@ else
     exit 1
 fi
 
-PID_PATH="/tmp"
-
 consumers=(
     'status'
     'multiplex'
@@ -21,8 +21,18 @@ consumers=(
     'trim'
 )
 
+log() {
+  echo "$@"
+  logger -p user.notice -t $SCRIPT_NAME "$@"
+}
+
+err() {
+  echo "$@" >&2
+  logger -p user.error -t $SCRIPT_NAME "$@"
+}
+
 startConsumer() {
-    php "${SYMFONY_DIR}/app/console" rabbitmq:consumer "${1}" &
+    /usr/bin/php "${SYMFONY_DIR}/app/console" rabbitmq:consumer "${1}" &
     pid=$!
     echo $pid > "${2}"
 }
@@ -33,17 +43,19 @@ then
 
     for consumer in ${consumers[@]}
     do
-        pid_file="${PID_PATH}/${consumer}_consumer.pid"
+        pid_file="${SYMFONY_DIR}/${consumer}_consumer.pid"
 
         if [ -f $pid_file ] || [ -L $pid_file ]
         then
+	 #   log "PiD file $pid_file exists"
             read pid < $pid_file
-            if ps -p $pid > /dev/null
+            if /bin/ps -p $pid > /dev/null
             then
+	#	log "Pid file $pid_file with $pid is running"
                 continue
             fi
         fi
-
+	log "starting consumer $consumer $pid_file"
         startConsumer $consumer $pid_file
     done
 
