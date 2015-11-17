@@ -1,7 +1,7 @@
 #!/bin/bash
 
 libs=(
-    'dustjs-linkedin/dist/dust-full.min.js'
+    'dustjs-linkedin/dist/dust-core.min.js'
     'dustjs-linkedin-helpers/dist/dust-helpers.min.js'
     'underscore/underscore-min.js'
     'underscore/underscore-min.map'

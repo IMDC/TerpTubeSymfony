@@ -46,11 +46,10 @@ define([
         this.bind__onPageAnimate = this._onPageAnimate.bind(this);
         this.bind__onRecordingStarted = this._onRecordingStarted.bind(this);
         this.bind__onRecordingStopped = this._onRecordingStopped.bind(this);
-        this.bind__preview = this._preview.bind(this);
-        this.bind__cut = this._cut.bind(this);
-        this.bind__back = this._back.bind(this);
-        this.bind__done = this._done.bind(this);
-        this.bind__doneAndPost = this._doneAndPost.bind(this);
+        this.bind__onClickTrim = this._onClickTrim.bind(this);
+        this.bind__onClickBack = this._onClickBack.bind(this);
+        this.bind__onClickDone = this._onClickDone.bind(this);
+        this.bind__onClickDoneAndPost = this._onClickDoneAndPost.bind(this);
 
         this.$container = this.options.$container;
         this.$modalDialog = this.$container.find(RecorderComponent.Binder.MODAL_DIALOG);
@@ -148,7 +147,7 @@ define([
         }.bind(this);
         this.bind__onConnect = function (e) {
             this.subscription = this.rabbitmqWebStompService.subscribe(
-                '/exchange/entity-status',
+                '/exchange/'+window.parameters.prefix+'entity-status',
                 RabbitmqWebStompService.Event.MESSAGE, this.bind__onMessage);
         }.bind(this);
 
@@ -177,18 +176,18 @@ define([
         var forwardFunctions = [];
         if (this.isOnNormalTab || inPreviewMode) {
             forwardButtons.push(this.doneButton);
-            forwardFunctions.push(inPreviewMode ? this.bind__cut : this.bind__done);
+            forwardFunctions.push(inPreviewMode ? this.bind__onClickTrim : this.bind__onClickDone);
         }
         if (this.options.enableDoneAndPost && inPreviewMode) {
             forwardButtons.push(this.doneAndPostButton);
-            forwardFunctions.push(this.bind__doneAndPost);
+            forwardFunctions.push(this.bind__onClickDoneAndPost);
         }
 
         var backButtons;
         var backFunctions;
         if (inPreviewMode && wasRecording) {
             backButtons = [this.backButton];
-            backFunctions = [this.bind__back];
+            backFunctions = [this.bind__onClickBack];
         }
 
         var container = this.isOnNormalTab
@@ -227,8 +226,8 @@ define([
         }
     };
 
-    RecorderComponent.prototype._cut = function (e) {
-        console.log('%s: %s', RecorderComponent.TAG, '_cut');
+    RecorderComponent.prototype._onClickTrim = function (e) {
+        console.log('%s: %s', RecorderComponent.TAG, '_onClickTrim');
         e.preventDefault();
 
         var previousMinMaxTimes = this.recorder.getCurrentMinMaxTime();
@@ -246,16 +245,17 @@ define([
         };
 
         //cut should always also call the done function
-        this._done(e);
+        this._onClickDone(e);
     };
 
-    RecorderComponent.prototype._back = function (e) {
-        console.log('%s: %s', RecorderComponent.TAG, '_back');
+    RecorderComponent.prototype._onClickBack = function (e) {
+        console.log('%s: %s', RecorderComponent.TAG, '_onClickBack');
         e.preventDefault();
 
         this._destroyPlayers();
 
         // Go back to recording
+        this._clearCurrents();
         this.setRecordedMedia(null);
         this.options.mode = RecorderComponent.Mode.RECORD;
         if (this.isOnInterpTab)
@@ -266,21 +266,9 @@ define([
     RecorderComponent.prototype._createRecorder = function () {
         console.log('%s: %s', RecorderComponent.TAG, '_createRecorder');
 
-        var forwardButtons = [this.forwardButton, this.doneButton];
-        var forwardFunctions = [this.bind__preview, this.bind__done];
-        if (this.options.enableDoneAndPost) {
-            forwardButtons.push(this.doneAndPostButton);
-            forwardFunctions.push(this.bind__doneAndPost);
-        }
-
         var container = this.isOnNormalTab
             ? this.$normalVideo
             : this.$interpVideoR;
-
-        //TODO remove after player.js changes. force invoke post upload success
-        Player.prototype.postRecordings = function() {
-            this.recording_recordingStopped(true, {});
-        };
 
         this.recorder = new Player(container, {
             areaSelectionEnabled: false,
@@ -289,13 +277,7 @@ define([
             controlBarElement: this.$controls,
             type: Player.DENSITY_BAR_TYPE_RECORDER,
             volumeControl: false,
-            maxRecordingTime: RecorderComponent.MAX_RECORDING_TIME,
-            //TODO remove after player.js changes. force invoke post upload success
-            recordingSuccessFunction: (function () {}),
-            recordingErrorFunction: (function () {}),
-            //
-            forwardButtons: forwardButtons,
-            forwardFunctions: forwardFunctions
+            maxRecordingTime: RecorderComponent.MAX_RECORDING_TIME
         });
         $(this.recorder).on(Player.EVENT_RECORDING_STARTED, this.bind__onRecordingStarted);
         $(this.recorder).on(Player.EVENT_RECORDING_STOPPED, this.bind__onRecordingStopped);
@@ -338,11 +320,6 @@ define([
             this.player.pause();
             this.player.setControlsEnabled(true);
         }
-    };
-
-    RecorderComponent.prototype._preview = function (e) {
-        console.log('%s: %s', RecorderComponent.TAG, '_preview');
-        e.preventDefault();
 
         this._destroyPlayers();
 
@@ -460,8 +437,8 @@ define([
         });
     };
 
-    RecorderComponent.prototype._done = function (e) {
-        console.log('%s: %s', RecorderComponent.TAG, '_done');
+    RecorderComponent.prototype._onClickDone = function (e) {
+        console.log('%s: %s', RecorderComponent.TAG, '_onClickDone');
         e.preventDefault();
 
         this.$containerRecord.hide();
@@ -518,9 +495,9 @@ define([
         });
     };
 
-    RecorderComponent.prototype._doneAndPost = function (e) {
+    RecorderComponent.prototype._onClickDoneAndPost = function (e) {
         this.doPost = true;
-        this._done(e);
+        this._onClickDone(e);
     };
 
     RecorderComponent.prototype._clearCurrents = function () {

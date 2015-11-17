@@ -68,3 +68,65 @@
     width: 100%;
   }
 }
+
+.tt-media-no-thumbnail {
+  padding: 20px;
+  width: 125px;
+  height: 125px;
+  position: relative;
+}
+
+// tt-media-no-thumbnail (tt-mnt)
+.tt-mnt {
+  @mixin shape-color($border-color, $bg-color) {
+    border: 3px solid $border-color;
+    background-color: $bg-color;
+  }
+
+  &-square {
+    border-radius: 24px;
+  }
+
+  &-circle {
+    border-radius: 60px;
+  }
+
+  &-sky {
+    @include shape-color(#418FA2, #59BAD1);
+  }
+
+  &-green {
+    @include shape-color(#839950, #AAC46C);
+  }
+
+  &-orange {
+    @include shape-color(#C4803F, #FAA757);
+  }
+
+  &-red {
+    @include shape-color(#9F4B46, #CD665F);
+  }
+
+  &-purple {
+    @include shape-color(#715D89, #937AB2);
+  }
+
+  &-blue {
+    @include shape-color(#47729C, #6095C9);
+  }
+
+  &-text {
+    font-family: 'Mini Pics ASL';
+    font-size: 7em;
+    color: white;
+    text-shadow: 0 0 8px #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+}

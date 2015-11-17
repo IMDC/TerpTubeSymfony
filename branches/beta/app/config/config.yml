@@ -5,6 +5,7 @@ imports:
     - { resource: "@IMDCTerpTubeBundle/Resources/config/constants/Filters.xml" }
     - { resource: "@IMDCTerpTubeBundle/Resources/config/admin.yml" }
     - { resource: "@IMDCTerpTubeBundle/Resources/config/version.yml" }
+    - { resource: "@IMDCTerpTubeBundle/Resources/config/install-prefix.yml" }
 
 framework:
     #esi:             ~
@@ -217,36 +218,36 @@ old_sound_rabbit_mq: # see https://github.com/videlalvaro/rabbitmqbundle
     producers:
         multiplex:
             connection:         default
-            exchange_options:   {name: 'multiplex', type: direct}
+            exchange_options:   {name: "%app.prefix%multiplex", type: direct}
         transcode:
             connection:         default
-            exchange_options:   {name: 'transcode', type: direct}
+            exchange_options:   {name: "%app.prefix%transcode", type: direct}
         trim:
             connection:         default
-            exchange_options:   {name: 'trim', type: direct}
+            exchange_options:   {name: "%app.prefix%trim", type: direct}
         entity_status:
             connection:         default
-            exchange_options:   {name: 'entity-status', type: fanout}
+            exchange_options:   {name: "%app.prefix%entity-status", type: fanout}
     consumers:
         multiplex:
             connection:         default
-            exchange_options:   {name: 'multiplex', type: direct}
-            queue_options:      {name: 'multiplex'}
+            exchange_options:   {name: "%app.prefix%multiplex", type: direct}
+            queue_options:      {name: "%app.prefix%multiplex"}
             callback:           multiplex_service
         transcode:
             connection:         default
-            exchange_options:   {name: 'transcode', type: direct}
-            queue_options:      {name: 'transcode'}
+            exchange_options:   {name: "%app.prefix%transcode", type: direct}
+            queue_options:      {name: "%app.prefix%transcode"}
             callback:           transcode_service
         trim:
             connection:         default
-            exchange_options:   {name: 'trim', type: direct}
-            queue_options:      {name: 'trim'}
+            exchange_options:   {name: "%app.prefix%trim", type: direct}
+            queue_options:      {name: "%app.prefix%trim"}
             callback:           trim_service
         status:
             connection:         default
-            exchange_options:   {name: 'entity-status', type: fanout}
-            queue_options:      {name: 'status-internal'}
+            exchange_options:   {name: "%app.prefix%entity-status", type: fanout}
+            queue_options:      {name: "%app.prefix%status-internal"}
             callback:           status_service
 
 knp_time: ~ # Enable the helper for use in templates

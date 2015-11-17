@@ -1,0 +1,40 @@
+@mixin ttm-text-overflow($display: 'initial') {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  @if $display != 'initial' {
+    display: $display;
+  }
+}
+
+@mixin ttm-links {
+  a {
+    color: #000000;
+
+    &:hover, &:focus, &:visited {
+      text-decoration: none;
+    }
+  }
+}
+
+@mixin ttm-parent-center {
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+@mixin ttm-center {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin ttm-no-select {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}

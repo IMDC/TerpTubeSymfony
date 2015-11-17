@@ -352,6 +352,13 @@ div.videoControlsContainer.controlsBar.backButtons
 	content: url(../../img/player/audioOn.png);
 }
 
+.videoControlsContainer.volumeControl img:after
+{
+	width: 80%;
+	height: 80%;
+	content: url(../../img/player/audioOn.png);
+}
+
 .videoControlsContainer.controlsBar.audioButtonsBar label.audioOn img
 {
 	content: url(../../img/player/audioOn.png);
@@ -363,6 +370,11 @@ div.videoControlsContainer.controlsBar.backButtons
 }
 
 .videoControlsContainer.volumeControl img.mute
+{
+	content: url(../../img/player/audioOff.png);
+}
+
+.videoControlsContainer.volumeControl img.mute:after
 {
 	content: url(../../img/player/audioOff.png);
 }

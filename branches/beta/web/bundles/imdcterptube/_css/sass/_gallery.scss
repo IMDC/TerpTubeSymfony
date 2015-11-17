@@ -1,31 +1,9 @@
+@import "mixins";
+
 .tt-gallery {
   $carousel-height: 75px;
   $thumb-border-width: 2px;
   $thumb-width-height: 75px;
-
-  //TODO move to mixin scss
-  @mixin parent-center {
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-  }
-
-  //TODO move to mixin scss
-  @mixin center {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  //TODO move to mixin scss
-  @mixin no-select {
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-  }
 
   @mixin controls {
     & i {
@@ -47,7 +25,7 @@
   }
 
   &-inline {
-    @include no-select;
+    @include ttm-no-select;
 
     position: relative;
     height: 100%;
@@ -60,7 +38,7 @@
   }
 
   &-preview {
-    @include no-select;
+    @include ttm-no-select;
 
     position: fixed;
     top: 0;
@@ -129,7 +107,7 @@
   }
 
   &-carousel {
-    @include no-select;
+    @include ttm-no-select;
 
     margin-top: 10px;
     margin-bottom: 10px;
@@ -194,7 +172,7 @@
         }
 
         > div {
-          @include parent-center;
+          @include ttm-parent-center;
 
           border: $thumb-border-width solid #000;
           height: $thumb-width-height;
@@ -208,7 +186,7 @@
           }
 
           & img {
-            @include center;
+            @include ttm-center;
 
             height: 100%;
             cursor: pointer;
