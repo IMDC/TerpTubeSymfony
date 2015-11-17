@@ -29,7 +29,7 @@ define([
 
             return chunk.write(Routing.generate(params.name, opt_params, params.absolute));
         },
-        //TODO unused. consider dropping
+        // TODO unused. consider dropping
         sizeOf: function (chunk, context, bodies, params) {
             // pass a dummy chunk object so that @size doesn't write the resulting value,
             // so it doesn't render if bodies.block is present but its context(s) return(s) false
@@ -72,6 +72,22 @@ define([
                 return chunk;
 
             var result = window.user['isUserOn' + params.list + 'List'](params.username);
+            if (bodies) {
+                if (result && bodies.block)
+                    chunk.render(bodies.block, context);
+                if (!result && bodies.else)
+                    chunk.render(bodies.else, context);
+            } else {
+                chunk = chunk.write(result ? 'Yes' : 'No');
+            }
+            return chunk;
+        },
+        isCurrentUser: function (chunk, context, bodies, params) {
+            if (!params || !params.hasOwnProperty('id') || !window.user)
+                return chunk;
+            var result = params.id == window.user.get('id');
+            if (params.inverse)
+                result = !result;
             if (bodies) {
                 if (result && bodies.block)
                     chunk.render(bodies.block, context);

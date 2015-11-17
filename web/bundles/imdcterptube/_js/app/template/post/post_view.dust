@@ -56,10 +56,10 @@
                         {?is_temporal}
                             <li><a class="post-timeline-keypoint" href="#" title="Jump to selected timeline region"><i class="fa fa-clock-o"></i></a></li>
                         {/is_temporal}
-                        {!@isCurrentUser id=author.id!}
+                        {@isCurrentUser id=author.id}
                             <li><a class="post-edit" href="#" title="Edit this post"><i class="fa fa-pencil"></i></a></li>
                             <li><a href="#" title="Delete this post" data-toggle="modal" data-target=".post-delete-modal[data-pid={id}]"><i class="fa fa-trash-o"></i></a></li>
-                        {!/isCurrentUser!}
+                        {/isCurrentUser}
                     </ul>
                     <div class="modal fade post-delete-modal" data-pid="{id}">
                         <div class="modal-dialog">
