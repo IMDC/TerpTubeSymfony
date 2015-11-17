@@ -90,7 +90,7 @@
                                             <a href="{{ path('imdc_message_view', {'messageid': message.id}) }}">{{ message.content|truncate(50) }}</a>
                                         </td>
                                         <!-- sent -->
-                                        <td>{{ message.sentDate|date('g:ia M j') }}</td>
+                                        <td>{{ message.sentDate|date('M d h:i a') }}</td>
                                     </tr>
                                 {% endfor %}
                             {% else %}

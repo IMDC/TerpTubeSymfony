@@ -1,0 +1,7 @@
+# This file is auto-generated during the composer install
+parameters:
+    app.prefix: ""
+twig:
+    globals:
+      app_parameters: 
+        prefix: "%app.prefix%"

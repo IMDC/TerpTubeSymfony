@@ -10,7 +10,9 @@ IMDC\TerpTubeBundle\Entity\Post:
       expose: true
     content:
       expose: true
-    edited_at:
+    created:
+      expose: true
+    editedAt:
       expose: true
     startTime:
       expose: true

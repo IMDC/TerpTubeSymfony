@@ -286,7 +286,6 @@ define([
         this.$right.find('i.fa').toggleClass('disabled',
             (slidePosition + this.thumbsBounds.width) >= this.thumbsBounds.thumbsWidth);
         $selThumbnail.find('div').addClass('selected');
-        //this.$carousel.show();
     };
 
     GalleryComponent.prototype._focusSelectedThumbnail = function () {
@@ -328,12 +327,18 @@ define([
     };
 
     GalleryComponent.prototype._onWindowResize = function (e) {
+        // hide the carousel if there's less than two media
+        this.options.media.length <= 1 && !this.options.canEdit
+            ? this.$carousel.hide()
+            : this.$carousel.show();
+
         var container = this.$container.prop('tagName').toLowerCase() === 'body'
             ? $(window)
             : this.$container;
+        var carouselHeight = this.$carousel.is(':hidden') ? 0 : this.$carousel.outerHeight(true);
         var itemHeight = Helper.isFullscreen()
             ? $(window).height()
-            : container.height() - this.$carousel.outerHeight(true);
+            : container.height() - carouselHeight;
 
         // container widths/heights/positioning
         var thumbsWidth = container.width() - (this.$left.outerWidth(true) + this.$right.outerWidth(true)) - 0.5;
@@ -372,7 +377,6 @@ define([
             this.$next.addClass('disabled');
             this.$left.find('i.fa').addClass('disabled');
             this.$right.find('i.fa').addClass('disabled');
-            //this.$carousel.hide();
             return;
         }
 

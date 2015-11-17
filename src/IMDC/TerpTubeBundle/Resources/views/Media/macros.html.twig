@@ -52,54 +52,118 @@
 {% endmacro %}
 
 {% macro element(media, enable_controls, preload_media) %}
-    {% set enable_controls = enable_controls is not null ? enable_controls : true %}
-    {% set preload_media = preload_media is not null ? preload_media : false %}
+    {% if media|length == 0 %}
+        <i class="fa fa-question fa-3x"></i><br />
+        <em>no media</em>
+    {% else %}
+        {% set m = media[0] %}
+        {% set enable_controls = enable_controls is not null ? enable_controls : true %}
+        {% set preload_media = preload_media is not null ? preload_media : false %}
 
-    {% if media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
-        {% if media.isInterpretation %}
-            <video class="tt-media-pip-video"
+        {% if m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
+            {% if m.isInterpretation %}
+                <video class="tt-media-pip-video"
+                        {% if enable_controls %} controls {% endif %}
+                        {% if m.getSource.getThumbnailPath is not empty %} poster="{{ asset(m.getSource.getThumbnailPath) }}" {% endif %}
+                       preload="{% if preload_media %}auto{% else %}none{% endif %}">
+                    {% for resource in m.getSource.getResources %}
+                        <source src="{{ asset(resource.getWebPath) }}" />
+                    {% endfor %}
+                </video>
+            {% endif %}
+            <video class="tt-media-video"
                     {% if enable_controls %} controls {% endif %}
-                    {% if media.source.getThumbnailPath is not empty %} poster="{{ asset(media.source.getThumbnailPath) }}" {% endif %}
+                    {% if m.getThumbnailPath is not empty %} poster="{{ asset(m.getThumbnailPath) }}" {% endif %}
                    preload="{% if preload_media %}auto{% else %}none{% endif %}">
-                {% for resource in media.source.getResources %}
+                {% for resource in m.getResources %}
                     <source src="{{ asset(resource.getWebPath) }}" />
                 {% endfor %}
             </video>
-        {% endif %}
-        <video class="tt-media-video"
-                {% if enable_controls %} controls {% endif %}
-                {% if media.getThumbnailPath is not empty %} poster="{{ asset(media.getThumbnailPath) }}" {% endif %}
-               preload="{% if preload_media %}auto{% else %}none{% endif %}">
-            {% for resource in media.getResources %}
-                <source src="{{ asset(resource.getWebPath) }}" />
-            {% endfor %}
-        </video>
-    {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
-        <audio class="tt-media-audio"
-                {% if enable_controls %} controls {% endif %}
-               preload="{% if preload_media %}auto{% else %}none{% endif %}">
-            {% for resource in media.getResources %}
-                <source src="{{ asset(resource.getWebPath) }}" />
-            {% endfor %}
-            Your browser does not support the audio element, please upgrade to Google Chrome
-        </audio>
-    {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
-        <img class="img-responsive center-block tt-media-img" src="{{ asset(media.getSourceResource.getWebPath) }}" alt="{{ media.title }}" title="{{ media.title }}" />
-    {% elseif media.type == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
-        <div class="row">
-            <div class="col-md-3 thumbnail text-center">
-                <a href="{{ asset(media.getSourceResource.getWebPath) }}">
-                    <p><i class="fa fa-file fa-5x"></i></p>
-                    <div>{{ media.title }}</div>
-                </a>
+        {% elseif m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
+            <audio class="tt-media-audio"
+                    {% if enable_controls %} controls {% endif %}
+                   preload="{% if preload_media %}auto{% else %}none{% endif %}">
+                {% for resource in m.getResources %}
+                    <source src="{{ asset(resource.getWebPath) }}" />
+                {% endfor %}
+                Your browser does not support the audio element, please upgrade to Google Chrome
+            </audio>
+        {% elseif m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
+            <img class="img-responsive center-block tt-media-img" src="{{ asset(m.getSourceResource.getWebPath) }}" alt="{{ m.getTitle }}" title="{{ m.getTitle }}" />
+        {% elseif m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
+            <div class="row">
+                <div class="col-md-3 thumbnail text-center">
+                    <a href="{{ asset(m.getSourceResource.getWebPath) }}">
+                        <p><i class="fa fa-file fa-5x"></i></p>
+                        <div>{{ m.getTitle }}</div>
+                    </a>
+                </div>
             </div>
-        </div>
+        {% endif %}
     {% endif %}
 {% endmacro %}
 
-{% macro no_element() %}
-    <i class="fa fa-question fa-3x"></i><br />
-    <em>no media</em>
+{#poor way to accomodate 'Mini Pics ASL' font#}
+{#TODO twig ext??#}
+{% macro num2symbol(num) %}
+    {% if num == '1' %}!
+    {% elseif num == '2' %}@
+    {% elseif num == '3' %}#
+    {% elseif num == '4' %}$
+    {% elseif num == '5' %}%
+    {% elseif num == '6' %}^
+    {% elseif num == '7' %}&
+    {% elseif num == '8' %}*
+    {% elseif num == '9' %}(
+    {% elseif num == '0' %})
+    {% else %}{{ num }}
+    {% endif %}
+{% endmacro %}
+
+{% macro element2(media, entity, name) %}
+    {% import _self as _media %}
+
+    {% if media|length == 0 %}
+        {% set shape = entity == 'group' ? 'circle' : 'square' %}
+        {% set color = random(['sky', 'green', 'orange', 'red', 'blue', 'purple']) %}
+        {% set name = name ?: 'n' %}
+
+        <div class="tt-media-no-thumbnail tt-mnt-{{ shape }} tt-mnt-{{ color }}">
+            <span class="tt-mnt-text">{{ _media.num2symbol(name|first|upper) }}</span>
+        </div>
+    {% else %}
+        {% set m = media[0] %}
+
+        {% if m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_VIDEO') %}
+            {% if m.isInterpretation %}
+
+            {% endif %}
+            {{ _media.thumbnail(m.getThumbnailPath) }}
+        {% elseif m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_AUDIO') %}
+
+        {% elseif m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_IMAGE') %}
+            <img class="img-responsive center-block tt-media-img" src="{{ asset(m.getSourceResource.getWebPath) }}" alt="{{ m.getTitle }}" title="{{ m.getTitle }}" />
+        {% elseif m.getType == constant('IMDC\\TerpTubeBundle\\Entity\\Media::TYPE_OTHER') %}
+            <div class="row">
+                <div class="col-md-3 thumbnail text-center">
+                    <a href="{{ asset(m.getSourceResource.getWebPath) }}">
+                        <p><i class="fa fa-file fa-5x"></i></p>
+                        <div>{{ m.getTitle }}</div>
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro expand(media) %}
+    {% if media|length > 0 %}
+        {% set m = media[0] %}
+
+        <div class="expand" data-mid="{{ m.getId }}">
+            <button class="btn btn-default"><i class="fa fa-expand"></i></button>
+        </div>
+    {% endif %}
 {% endmacro %}
 
 {% macro video_controls() %}
