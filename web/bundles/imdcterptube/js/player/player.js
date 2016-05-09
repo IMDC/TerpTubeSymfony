@@ -1859,10 +1859,10 @@ Player.prototype.destroyRecorder = function()
     $(this.videoID)[0].src = "";
     if (typeof (this.stream) != 'undefined')
     {
-    	tracks = this.stream.getTracks();
-    	for (track in tracks) 
+    	var tracks = this.stream.getTracks();
+    	for (var i=0; i < tracks.length; i++) 
 		{
-    		track.stop();
+    		tracks[i].stop();
 		}
 //	this.stream.stop();
     }
