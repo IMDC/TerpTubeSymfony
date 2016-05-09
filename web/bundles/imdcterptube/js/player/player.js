@@ -1859,7 +1859,12 @@ Player.prototype.destroyRecorder = function()
     $(this.videoID)[0].src = "";
     if (typeof (this.stream) != 'undefined')
     {
-	this.stream.stop();
+    	tracks = this.stream.getTracks();
+    	for (track in tracks) 
+		{
+    		track.stop();
+		}
+//	this.stream.stop();
     }
 };
 
