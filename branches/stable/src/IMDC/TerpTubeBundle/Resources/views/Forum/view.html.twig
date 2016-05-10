@@ -47,11 +47,11 @@
 							<tbody>
 							<tr>
 								<td>Topics</td>
-								<td>{{ threads|length }}</td>
+								<td>{{ thread_count }}</td>
 							</tr>
 							<tr>
 								<td>Created</td>
-								<td>{{ forum.getCreationDate|date('g:ia F j Y') }}</td>
+								<td>{{ forum.getCreationDate|date('M d Y h:i a') }}</td>
 							</tr>
 							</tbody>
 						</table>

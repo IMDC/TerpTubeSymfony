@@ -1,4 +1,7 @@
-@import 'bootstrap/variables';
+@import "compass/css3";
+@import "bootstrap/variables";
+
+@import "mixins";
 
 $line-height-base-top: 2; // FontAwesome fa-2x font size (em)
 $line-height-computed-top: floor(($font-size-base /*bootstrap*/ * $line-height-base-top));
@@ -16,6 +19,9 @@ $body-extra-padding: 15px;
 $title-font-size: 24px;
 
 $eku-primary: #5e213b;
+
+
+@include font-face('Mini Pics ASL', font-files('Mini_Pics_ASL.ttf'));
 
 
 
@@ -154,48 +160,49 @@ ul.pagination {
 }
 
 // tt-grid-div (tt-gd)
-$tt-gd-img-height: 125px;
+$tt-gd-tn-height: 125px;
 
 .tt-grid-div {
   margin-top: 5px;
 
   & div.tt-grid-div-body {
-    min-height: 265px;
+    /*min-height: 265px;*/
+  }
 
-    & div.tt-grid-div-item {
+  & div.tt-grid-div-item {
+    position: absolute;
+    margin-left: 4px;
+    z-index: 1;
+  }
+
+  & div.tt-grid-div-perms {
+    position: absolute;
+    right: 20px;
+    z-index: 1;
+  }
+
+  & div.tt-grid-div-thumbnail {
+    height: $tt-gd-tn-height;
+    position: relative;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      max-height: $tt-gd-tn-height;
+    }
+
+    .expand {
       position: absolute;
-      margin-left: 4px;
-      z-index: 1;
+      top: 0;
+      left: 0;
     }
+  }
 
-    & div.tt-grid-div-thumbnail {
-      height: $tt-gd-img-height;
-      margin-bottom: 5px;
-      text-align: center;
-      -webkit-transform-style: preserve-3d;
-      -moz-transform-style: preserve-3d;
-      transform-style: preserve-3d;
-
-      > div {
-        position: relative;
-        top: 50%;
-        transform: translateY(-50%);
-
-        img {
-          max-height: $tt-gd-img-height;
-        }
-      }
-    }
-
-    & div.tt-grid-div-primary {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      > p:nth-of-type(1) {
-        font-size: $title-font-size;
-      }
-    }
+  & div.tt-grid-div-primary {
+    padding-right: 15px;
+    padding-left: 15px;
   }
 }
 
@@ -227,8 +234,6 @@ $tt-lt-line-height: $tt-lt-row-height;
 
     &.tt-list-table-col-primary {
       width: 60%;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .tt-avatar, .tt-thumbnail {
@@ -238,6 +243,10 @@ $tt-lt-line-height: $tt-lt-row-height;
 
   > tbody > tr > td {
     &.tt-list-table-col-primary {
+      & span.tt-username {
+        display: initial;
+      }
+
       > span:nth-of-type(2) {
         float: right;
         margin-bottom: -1px;
@@ -251,8 +260,14 @@ $tt-lt-line-height: $tt-lt-row-height;
   }
 }
 
-.tt-thumbnail-title {
+.tt-title {
   font-size: $title-font-size;
+  display: block;
+  @include ttm-text-overflow(block);
+}
+
+.tt-username {
+  @include ttm-text-overflow(block);
 }
 
 /*override bootstrap*/
@@ -260,22 +275,12 @@ textarea.form-control {
   height: $input-height-base; /*bootstrap*/
 }
 
-@mixin links {
-  a {
-    color: #000000;
-
-    &:hover, &:focus, &:visited {
-      text-decoration: none;
-    }
-  }
-}
-
-@include links;
+@include ttm-links;
 
 .btn-link:hover, .btn-link:focus {
   text-decoration: none;
 }
 
 @media print {
-  @include links;
+  @include ttm-links;
 }

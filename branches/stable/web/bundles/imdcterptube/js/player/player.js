@@ -156,7 +156,7 @@ Player.prototype.createControls = function()
 	{
 	    instance.setVolumeBarVisible(true);
 	});
-	videoOverlayElement.find(".videoControlsContainer.volumeControl").eq(0).append('<img alt="volume control" />')
+	videoOverlayElement.find(".videoControlsContainer.volumeControl").eq(0).append('<img />')
 		.append('<div class="videoControlsContainer track volumeControl volumeSlider"></div>');
 	$(this.elementID).find(".videoControlsContainer.volumeControl img").eq(0).click(function()
 	{
@@ -1859,7 +1859,12 @@ Player.prototype.destroyRecorder = function()
     $(this.videoID)[0].src = "";
     if (typeof (this.stream) != 'undefined')
     {
-	this.stream.stop();
+    	var tracks = this.stream.getTracks();
+    	for (var i=0; i < tracks.length; i++) 
+		{
+    		tracks[i].stop();
+		}
+//	this.stream.stop();
     }
 };
 
