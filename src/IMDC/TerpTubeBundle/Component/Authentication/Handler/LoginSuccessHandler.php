@@ -23,6 +23,6 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token)
     {
-        return new RedirectResponse($this->router->generate('imdc_home_user_home'));
+        return new RedirectResponse($this->router->generate('imdc_home_index'));
     }
 }

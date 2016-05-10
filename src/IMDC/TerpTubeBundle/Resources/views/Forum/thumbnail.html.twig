@@ -6,55 +6,46 @@ _Home:index.html.twig
 
 {% import 'IMDCTerpTubeBundle:Media:macros.html.twig' as _media %}
 
-{% for forum in forums %}
-	{% if loop.index % 4 == 1 %}
-		<div class="row">
-			<ul class="list-unstyled">
-	{% endif %}
-	<li>
-		<div class="col-md-3">
-            <div class="thumbnail text-center">
-                <div class="row">
-                    <div class="col-md-12 text-right">
+<div class="tt-grid-div">
+    {% for forum in forums %}
+        {% if loop.index % 4 == 1 %}
+            <div class="row">
+                <ul class="list-unstyled">
+        {% endif %}
+        <li>
+            <div class="col-md-3">
+                <div class="thumbnail text-center tt-grid-div-body">
+                    <div class="text-right tt-grid-div-perms">
                         {% include 'IMDCTerpTubeBundle:Base:permissionIcons.html.twig' with {'object': forum} %}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 tt-media-thumbnail">
-                        <div>
-                            {% if forum.getTitleMedia[0] is defined %}
-                                {{ _media.element(forum.getTitleMedia[0]) }}
-                            {% else %}
-                                {{ _media.no_element }}
-                            {% endif %}
-                        </div>
+                    <div class="tt-grid-div-thumbnail">
+                        <a href="{{ path('imdc_forum_view', {'forumid': forum.getId} ) }}">
+                            {{ _media.element2(forum.getTitleMedia, 'forum', forum.getTitleText) }}
+                        </a>
+                        {{ _media.expand(forum.getTitleMedia) }}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <a href="{{ path('imdc_forum_view', {'forumid': forum.id} ) }}" title="{{ forum.titleText}}">
-                            <p class="tt-thumbnail-title">
+                    <div class="tt-grid-div-primary">
+                        <a href="{{ path('imdc_forum_view', {'forumid': forum.getId} ) }}" title="{{ forum.getTitleText}}">
+                            <span class="tt-title">
                                 {% if forum.getTitleText %}
-                                    {{ forum.getTitleText|truncate(20) }}
+                                    {{ forum.getTitleText }}
                                 {% else %}
                                     {{ '<em>no title</em>'|raw }}
                                 {% endif %}
-                            </p>
-                            <p class="text-muted">
-                                <i class="fa fa-user" title="Creator"></i> {{ forum.creator }}&ensp;
-                                <i class="fa fa-pencil-square-o" title="Topic count"></i> {{ forumThreadCount[loop.index0] }} topics<br />
-                                <i class="fa fa-clock-o" title="Last activity"></i> {{ time_diff(forum.getLastActivity) }}
-                            </p>
-                            {#TODO remove#}
-                            <p><a class="btn btn-default" href="{{ path('imdc_forum_view', {'forumid': forum.id}) }}">View</a></p>
+                            </span>
                         </a>
+                        <span class="text-muted">
+                            <i class="fa fa-user" title="Creator"></i> {{ forum.getCreator }}&ensp;
+                            <i class="fa fa-pencil-square-o" title="Topic count"></i> {{ forumThreadCount[loop.index0] }} topics<br />
+                            <i class="fa fa-clock-o" title="Last activity {{ time_diff(forum.getLastActivity) }}"></i> {{ forum.getLastActivity|date('M d Y h:i a') }}
+                        </span>
                     </div>
                 </div>
             </div>
-		</div>
-	</li>
-	{% if loop.index % 4 == 0 or loop.last %}
-			</ul>
-		</div>
-	{% endif %}
-{% endfor %}
+        </li>
+        {% if loop.index % 4 == 0 or loop.last %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>

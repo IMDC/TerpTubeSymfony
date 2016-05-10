@@ -175,9 +175,12 @@ class ForumController extends FOSRestController implements ClassResourceInterfac
             'direction' => $request->query->get('direction', 'desc')
         );
 
+        $threads = $threadRepo->getViewableToUser($forum->getId(), $securityContext, $sortParams);
+        $threadCount = count($threads);
+
         $paginator = $this->get('knp_paginator');
         $threads = $paginator->paginate(
-            $threadRepo->getViewableToUser($forum->getId(), $securityContext, $sortParams),
+            $threads,
             $request->query->get('page', 1) /* page number */,
             8 /* limit per page */
         );
@@ -188,7 +191,8 @@ class ForumController extends FOSRestController implements ClassResourceInterfac
 
         return $this->render('IMDCTerpTubeBundle:Forum:view.html.twig', array(
             'forum' => $forum,
-            'threads' => $threads
+            'threads' => $threads,
+            'thread_count' => $threadCount
         ));
     }
 

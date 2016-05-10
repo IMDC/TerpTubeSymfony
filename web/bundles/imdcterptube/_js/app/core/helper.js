@@ -53,41 +53,14 @@ define(function () {
         progressBar.html(percentComplete + "%");
     };
 
-    Helper.generateUrl = function (path, root) {
-        // ignore full and blob urls
-        if (path.indexOf('://') > 0 || path.indexOf('blob:') == 0)
-            return path;
-
-        root = typeof root !== "undefined" ? root : false;
-        var baseUrl = Routing.getBaseUrl() + "/";
-        return root
-            ? baseUrl + path
-            : baseUrl.replace(/\w+\.php\/$/gi, "") + path;
-    };
-
+    //TODO move to core/dust as filter
     Helper.formatSize = function (size) {
         if (size == -1)
             return size;
         return (Number(size) / 1024 / 1024).toFixed(2) + " MB";
-    }
-    Helper.getTimeDateString = function (dbTime) {
-        var dateTime = new Date(dbTime);
-        var amPM = "am";
-        if (dateTime.getHours() > 11)
-            amPM = "pm"
-        var hours = dateTime.getHours() % 12;
-        var minutes = dateTime.getMinutes();
-        if (hours == 0)
-            hours = 12;
-        if (hours < 10)
-            hours = "0" + hours;
-        if (minutes < 10)
-            minutes = "0" + minutes;
-        var dateString = dateTime.toDateString();
-        dateString = dateString.substring(dateString.indexOf(" ") + 1);
-        return dateString + " " + hours + ":" + minutes + " " + amPM;
+    };
 
-    }
+    //TODO move to core/dust as two separate filters
     Helper.getIconForMediaType = function (type) {
         var icon;
         var text;
@@ -110,7 +83,7 @@ define(function () {
                 break;
         }
         return {icon: icon, text: text};
-    }
+    };
 
     Helper.autoSize = function () {
         // make all elements with class 'autosize' expand to fit its contents
