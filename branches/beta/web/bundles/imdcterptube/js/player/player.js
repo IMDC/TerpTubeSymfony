@@ -376,8 +376,9 @@ Player.prototype.createControls = function()
 	// console.log($(this.videoID)[0].duration);
 
 	// Check if we have already missed the metadata event
-	$(this.videoID)[0].addEventListener('loadedmetadata', function()
+	$(this.videoID)[0].addEventListener('durationchange', function()
 	{
+		console.log("Metadata loaded")
 	    instance.setupVideo();
 	});
 	if (!isNaN($(this.videoID)[0].duration))
@@ -721,22 +722,30 @@ Player.prototype.checkStop = function()
 {
     // if (video.paused)
     // return;
+	console.log(this)
+	if (!this.initializedDuration)
+	{
+		console.log("resetting time to 0")
+		this.initializedDuration = true;
+		video.currentTime = 0;
+		return;
+	}
     if ($(this.videoID)[0].currentTime > this.currentMaxTimeSelected)
     {
-	// $(this.videoID)[0].removeEventListener('timeupdate');
-	if (!$(this.videoID)[0].paused)
-	{
-	    this.pause();
-	    $(this).trigger(Player.EVENT_PLAYBACK_FINISHED);
-	    $(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
-	}
-	else
-	{
-	    $(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
-	}
-
-	// this.jumpTo(this.currentMinTimeSelected);
-	console.log("Checkstop");
+		// $(this.videoID)[0].removeEventListener('timeupdate');
+		if (!$(this.videoID)[0].paused)
+		{
+		    this.pause();
+		    $(this).trigger(Player.EVENT_PLAYBACK_FINISHED);
+		    $(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
+		}
+		else
+		{
+		    $(this.videoID)[0].currentTime = this.currentMaxTimeSelected;
+		}
+	
+		// this.jumpTo(this.currentMinTimeSelected);
+		console.log("Checkstop");
     }
     this.checkKeyPointsTime();
     this.repaint();
@@ -1349,15 +1358,15 @@ Player.prototype.setupVideoPlayback = function()
     var instance = this;
     $(this.videoID)[0].addEventListener('timeupdate', function()
     {
-	instance.checkStop();
+    	instance.checkStop();
     }, false);
     $(this.videoID)[0].addEventListener('play', function()
     {
-	instance.setPlayButtonIconSelected(false);
+    	instance.setPlayButtonIconSelected(false);
     }, false);
     $(this.videoID)[0].addEventListener('pause', function()
     {
-	instance.setPlayButtonIconSelected(true);
+    	instance.setPlayButtonIconSelected(true);
     }, false);
     // Detect fullScreen Change
     // $(document).unbind("fullscreenchange mozfullscreenchange
@@ -1378,6 +1387,12 @@ Player.prototype.setupVideoPlayback = function()
     });
 
     this.duration = $(this.videoID)[0].duration;
+    video = $(this.videoID)[0]
+    if(this.duration === Infinity){
+        // set it to bigger than the actual duration
+    	video.currentTime = 1e101;
+    	this.initializedDuration = false;
+    }
     // this.minTimeCoordinate = this.getXForTime(this.minTime);
     this.minTimeCoordinate = this.getXForTime(this.minTime) - this.trackPadding;
     this.currentMinSelected = this.minSelected;
@@ -1390,6 +1405,9 @@ Player.prototype.setupVideoPlayback = function()
     this.currentMaxTime = this.currentMaxTimeSelected;
     // this.drawComments();
     // this.drawSignLinks();
+    console.log("duration:"+this.duration);
+    console.log("minTime:"+this.currentMinTime);
+    console.log("maxTime:"+this.currentMaxTime);
     this.repaint();
 
     $(this.elementID).find(".videoControlsContainer.track").eq(0).on('mouseleave', function()
@@ -1484,13 +1502,13 @@ Player.prototype.setupVideoRecording = function()
 	{
 	    video :
 	    {
-		mandatory :
-		{
-		    minHeight : 480,
-		    minWidth : 640,
-		    maxWidth : 1280,
-		    maxHeight : 720
-		}
+			mandatory :
+			{
+			    minHeight : 480,
+			    minWidth : 640,
+			    maxWidth : 1280,
+			    maxHeight : 720
+			}
 	    },
 	    audio : true
 	};
@@ -1615,35 +1633,37 @@ Player.prototype.recording_startRecording = function()
     this.isRecording = true;
     this.hasRecorded = -1;
     var instance = this;
-    this.recordAudio = RecordRTC(this.stream,
-    {
-	// bufferSize: 16384,
-	// sampleRate: 45000
-	onAudioProcessStarted : function()
-	{
-	    if (!instance.isFirefox)
-	    {
-		instance.recordVideo.startRecording();
-	    }
-	}
-    });
+//    this.recordAudio = RecordRTC(this.stream,
+//    {
+//	// bufferSize: 16384,
+//	// sampleRate: 45000
+//	onAudioProcessStarted : function()
+//	{
+//	    if (!instance.isFirefox)
+//	    {
+//		instance.recordVideo.startRecording();
+//	    }
+//	}
+//    });
+    var recordingOptions = {
+    		recorderType: MediaStreamRecorder,
+    		mimeType: 'video/webm\;codecs=vp8',
+    		bitsPerSecond:128000,
+    		video :
+    		{
+    		    width : 640,
+    		    height : 480
+    		},
+    		canvas :
+    		{
+    		    width : 640,
+    		    height : 480
+    		}
+    }
 
-    this.recordVideo = RecordRTC(this.stream,
-    {
-	type : 'video',
-	video :
-	{
-	    width : 640,
-	    height : 480
-	},
-	canvas :
-	{
-	    width : 640,
-	    height : 480
-	}
-    });
-    this.recordAudio.startRecording();
-    // this.recordVideo.startRecording();
+    this.recordVideo = RecordRTC(this.stream, recordingOptions);
+//    this.recordAudio.startRecording();
+     this.recordVideo.startRecording();
 
     this.clearPlayer();
     this.recording_recordingStarted();
@@ -1697,17 +1717,22 @@ Player.prototype.recording_stopRecording = function()
 	$(instance).trigger(Player.EVENT_RECORDING_STOPPED);
 //	instance.postRecordings(instance.options.recordingPostURL, instance.options.additionalDataToPost);
     };
-    this.recordAudio.stopRecording(function()
+    this.recordVideo.stopRecording(function()
     {
-	if (!instance.isFirefox)
-	{
-	    instance.recordVideo.stopRecording(callback);
-	}
-	else
-	{
 	    callback();
-	}
     });
+    
+//    this.recordAudio.stopRecording(function()
+//    {
+//	if (!instance.isFirefox)
+//	{
+//	    instance.recordVideo.stopRecording(callback);
+//	}
+//	else
+//	{
+//	    callback();
+//	}
+//    });
     // this.recordVideo.stopRecording();
     /*
      * $(this).trigger(Player.EVENT_RECORDING_STOPPED); this.postRecordings(this.options.recordingPostURL,
@@ -1733,11 +1758,11 @@ Player.prototype.postRecordings = function(address, additionalDataObject)
 	    formData.append(key, additionalDataObject[key]);
 	});
     }
-    formData.append('audio-blob', this.recordAudio.getBlob());
-    if (!this.isFirefox)
-    {
+//    formData.append('audio-blob', this.recordAudio.getBlob());
+//    if (!this.isFirefox)
+//    {
 	formData.append('video-blob', this.recordVideo.getBlob());
-    }
+//    }
     var instance = this;
     // POST the Blobs
     $.ajax(

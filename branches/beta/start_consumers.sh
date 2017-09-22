@@ -55,7 +55,7 @@ then
                 continue
             fi
         fi
-	log "starting consumer $consumer $pid_file"
+	#log "starting consumer $consumer $pid_file"
         startConsumer $consumer $pid_file
     done
 
