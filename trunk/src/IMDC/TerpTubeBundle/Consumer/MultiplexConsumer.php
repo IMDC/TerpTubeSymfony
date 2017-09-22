@@ -56,20 +56,21 @@ class MultiplexConsumer extends AbstractMediaConsumer
         }
 
         try {
-            $resourceFile = null;
+//             $resourceFile = null;
+			$resourceFile = $multiplexOpts->video;
 
-            switch ($multiplexOpts->operation) {
-                case MultiplexOperation::MUX:
-                    $this->sendStatusUpdate('Multiplexing');
-                    $resourceFile = $this->transcoder->mergeAudioVideo($multiplexOpts->audio, $multiplexOpts->video);
-                    break;
-                case MultiplexOperation::REMUX:
-                    $this->sendStatusUpdate('Re-multiplexing');
-                    $resourceFile = $this->transcoder->remuxWebM($multiplexOpts->audio);
-                    break;
-                default:
-                    throw new \Exception("unknown multiplex operation");
-            }
+//             switch ($multiplexOpts->operation) {
+//                 case MultiplexOperation::MUX:
+//                     $this->sendStatusUpdate('Multiplexing');
+//                     $resourceFile = $this->transcoder->mergeAudioVideo($multiplexOpts->audio, $multiplexOpts->video);
+//                     break;
+//                 case MultiplexOperation::REMUX:
+//                     $this->sendStatusUpdate('Re-multiplexing');
+//                     $resourceFile = $this->transcoder->remuxWebM($multiplexOpts->audio);
+//                     break;
+//                 default:
+//                     throw new \Exception("unknown multiplex operation");
+//             }
 
             if ($resourceFile == null)
                 throw new \Exception("Could not transcode the video for some reason");
