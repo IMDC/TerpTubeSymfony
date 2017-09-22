@@ -79,12 +79,12 @@ class MyFilesController extends Controller
         $currentTime = new \DateTime('now');
         $em = $this->getDoctrine()->getManager();
 
-        $isFirefox = filter_var($request->request->get('isFirefox'), FILTER_VALIDATE_BOOLEAN);
+//         $isFirefox = filter_var($request->request->get('isFirefox'), FILTER_VALIDATE_BOOLEAN);
         /** @var UploadedFile $video */
         $video = $request->files->get('video-blob', null);
         /** @var UploadedFile $audio */
         $audio = $request->files->get('audio-blob', null);
-        if (($isFirefox && empty($audio)) || (!$isFirefox && (empty($video) || empty($audio)))) {
+        if (empty($video)) {
             throw new \Exception('no media data found in request');
         }
 
@@ -109,14 +109,14 @@ class MyFilesController extends Controller
             mkdir(Transcoder::TEMPORARY_DIRECTORY_RECORDING);
             chmod(Transcoder::TEMPORARY_DIRECTORY_RECORDING, 0777);
         }
-        if (!$isFirefox)
-            $video = $video->move(Transcoder::TEMPORARY_DIRECTORY_RECORDING, tempnam('', 'hello_video_') . '.webm');
-        $audio = $audio->move(Transcoder::TEMPORARY_DIRECTORY_RECORDING, tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
+//         if (!$isFirefox)
+        $video = $video->move(Transcoder::TEMPORARY_DIRECTORY_RECORDING, tempnam('', 'hello_video_') . '.webm');
+//         $audio = $audio->move(Transcoder::TEMPORARY_DIRECTORY_RECORDING, tempnam('', 'hello_audio_') . ($isFirefox ? '.webm' : '.wav'));
 
         $umask = umask();
         umask(0000);
         chmod($video->getRealPath(), 0666);
-        chmod($audio->getRealPath(), 0666);
+//         chmod($audio->getRealPath(), 0666);
         umask($umask);
         
         if ($isInterpretation) {
@@ -135,7 +135,19 @@ class MyFilesController extends Controller
             new IMDCFile(tempnam('/tmp/terptube-recordings', 'hello_')),
             $this->container->getParameter('imdc_terptube.resource_file'));
         $resourceFile->setPath('placeholder');
+//         $resourceFile->setPath("webm");
+        
+        
+//         $transcoder = $this->get('imdc_terptube.transcoder');
+        
         $media->setSourceResource($resourceFile);
+//         $em->persist($resourceFile);
+//         $em->flush();
+        
+//         $resourceFile->updateMetaData($media->getType(), $transcoder);
+//         $media->createThumbnail($transcoder);
+//         $em->persist($media);
+//         $em->flush();
 
         $user->addResourceFile($media);
 
@@ -146,9 +158,9 @@ class MyFilesController extends Controller
 
         $eventDispatcher = $this->container->get('event_dispatcher');
         $uploadEvent = new UploadEvent($media);
-        if (!$isFirefox)
-            $uploadEvent->setTmpVideoPath($video->getPathname());
-        $uploadEvent->setTmpAudioPath($audio->getPathname());
+//         if (!$isFirefox)
+        $uploadEvent->setTmpVideoPath($video->getPathname());
+        $uploadEvent->setTmpAudioPath($video->getPathname());
         $eventDispatcher->dispatch(UploadEvent::EVENT_UPLOAD, $uploadEvent);
 
         $serializer = $this->get('jms_serializer');
