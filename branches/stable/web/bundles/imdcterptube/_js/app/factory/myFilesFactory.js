@@ -32,11 +32,11 @@ define([
             url: Routing.generate('imdc_myfiles_add_recording')
         };
 
-        formData.append('isFirefox', isFirefox);
-        if (!isFirefox) {
-            formData.append('video-blob', params.video);
-        }
-        formData.append('audio-blob', params.audio);
+//        formData.append('isFirefox', isFirefox);
+//        if (!isFirefox) {
+        formData.append('video-blob', params.video);
+//        }
+//        formData.append('audio-blob', params.audio);
         formData.append('title', params.title);
         formData.append('isInterpretation', params.isInterpretation);
         formData.append('sourceStartTime', params.sourceStartTime);

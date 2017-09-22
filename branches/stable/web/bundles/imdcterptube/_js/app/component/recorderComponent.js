@@ -314,7 +314,7 @@ define([
 
     RecorderComponent.prototype._onRecordingStopped = function () {
         this.currentRecording.video = this.recorder.recordVideo.getBlob();
-        this.currentRecording.audio = this.recorder.recordAudio.getBlob();
+//        this.currentRecording.audio = this.recorder.recordAudio.getBlob();
 
         if (this.isOnInterpTab) {
             this.player.pause();
@@ -376,7 +376,7 @@ define([
 
         var params = {
             video: this.currentRecording.video,
-            audio: this.currentRecording.audio,
+//            audio: this.currentRecording.audio,
             title: this._getCurrentTitleElement().val()
         };
 
@@ -681,7 +681,7 @@ define([
         var options = {
             resources: [
                 {web_path: URL.createObjectURL(this.currentRecording.video)},
-                {web_path: URL.createObjectURL(this.currentRecording.audio)}
+//                {web_path: URL.createObjectURL(this.currentRecording.audio)}
             ]
         };
 
